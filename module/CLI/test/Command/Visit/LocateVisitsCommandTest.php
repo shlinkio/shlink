@@ -100,7 +100,7 @@ class LocateVisitsCommandTest extends TestCase
         }
     }
 
-    public function provideArgs(): iterable
+    public static function provideArgs(): iterable
     {
         yield 'no args' => [1, 0, 0, false, []];
         yield 'retry' => [1, 1, 0, false, ['--retry' => true]];
@@ -131,7 +131,7 @@ class LocateVisitsCommandTest extends TestCase
         self::assertStringContainsString($message, $output);
     }
 
-    public function provideIgnoredAddresses(): iterable
+    public static function provideIgnoredAddresses(): iterable
     {
         yield 'empty address' => [IpCannotBeLocatedException::forEmptyAddress(), 'Ignored visit with no IP address'];
         yield 'localhost address' => [IpCannotBeLocatedException::forLocalhost(), 'Ignored localhost address'];
@@ -226,7 +226,7 @@ class LocateVisitsCommandTest extends TestCase
         $this->commandTester->execute(['--all' => true, '--retry' => true]);
     }
 
-    public function provideAbortInputs(): iterable
+    public static function provideAbortInputs(): iterable
     {
         yield 'n' => [['n']];
         yield 'no' => [['no']];

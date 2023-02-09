@@ -139,7 +139,7 @@ class CreateShortUrlCommandTest extends TestCase
         self::assertEquals(ExitCodes::EXIT_SUCCESS, $this->commandTester->getStatusCode());
     }
 
-    public function provideDomains(): iterable
+    public static function provideDomains(): iterable
     {
         yield 'no domain' => [[], null];
         yield 'non-default domain foo' => [['--domain' => 'foo.com'], 'foo.com'];
@@ -166,7 +166,7 @@ class CreateShortUrlCommandTest extends TestCase
         $this->commandTester->execute($options);
     }
 
-    public function provideFlags(): iterable
+    public static function provideFlags(): iterable
     {
         yield 'no flags' => [[], null];
         yield 'validate-url' => [['--validate-url' => true], true];

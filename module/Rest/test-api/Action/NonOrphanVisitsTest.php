@@ -24,7 +24,7 @@ class NonOrphanVisitsTest extends ApiTestCase
         self::assertCount($returnedItems, $payload['visits']['data'] ?? []);
     }
 
-    public function provideQueries(): iterable
+    public static function provideQueries(): iterable
     {
         yield 'all data' => [[], 7, 7];
         yield 'middle page' => [['page' => 2, 'itemsPerPage' => 3], 7, 3];

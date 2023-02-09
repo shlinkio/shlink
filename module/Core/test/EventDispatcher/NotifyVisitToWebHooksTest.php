@@ -120,13 +120,13 @@ class NotifyVisitToWebHooksTest extends TestCase
         $this->createListener($webhooks)(new VisitLocated('1'));
     }
 
-    public function provideVisits(): iterable
+    public static function provideVisits(): iterable
     {
         yield 'regular visit' => [
             Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance()),
             ['shortUrl', 'visit'],
         ];
-        yield 'orphan visit' => [Visit::forBasePath(Visitor::emptyInstance()), ['visit'],];
+        yield 'orphan visit' => [Visit::forBasePath(Visitor::emptyInstance()), ['visit']];
     }
 
     private function createListener(array $webhooks, bool $notifyOrphanVisits = true): NotifyVisitToWebHooks

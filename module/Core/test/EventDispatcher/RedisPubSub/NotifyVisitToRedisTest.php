@@ -68,7 +68,7 @@ class NotifyVisitToRedisTest extends TestCase
         $this->createListener()(new VisitLocated($visitId));
     }
 
-    public function provideExceptions(): iterable
+    public static function provideExceptions(): iterable
     {
         yield [new RuntimeException('RuntimeException Error')];
         yield [new Exception('Exception Error')];

@@ -39,7 +39,7 @@ class VisitToLocationHelperTest extends TestCase
         $this->helper->resolveVisitLocation($visit);
     }
 
-    public function provideNonLocatableVisits(): iterable
+    public static function provideNonLocatableVisits(): iterable
     {
         yield [Visit::forBasePath(Visitor::emptyInstance()), IpCannotBeLocatedException::forEmptyAddress()];
         yield [

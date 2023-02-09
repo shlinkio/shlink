@@ -146,7 +146,7 @@ class LocateVisitTest extends TestCase
         self::assertEquals($visit->getVisitLocation(), VisitLocation::fromGeolocation(Location::emptyInstance()));
     }
 
-    public function provideNonLocatableVisits(): iterable
+    public static function provideNonLocatableVisits(): iterable
     {
         $shortUrl = ShortUrl::createFake();
 
@@ -180,7 +180,7 @@ class LocateVisitTest extends TestCase
         self::assertEquals($visit->getVisitLocation(), VisitLocation::fromGeolocation($location));
     }
 
-    public function provideIpAddresses(): iterable
+    public static function provideIpAddresses(): iterable
     {
         yield 'no original IP address' => [
             Visit::forValidShortUrl(ShortUrl::createFake(), new Visitor('', '', '1.2.3.4', '')),

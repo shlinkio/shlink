@@ -29,7 +29,7 @@ class DeviceLongUrlsValidatorTest extends TestCase
         self::assertEquals(['NOT_ARRAY' => 'Provided value is not an array.'], $this->validator->getMessages());
     }
 
-    public function provideNonArrayValues(): iterable
+    public static function provideNonArrayValues(): iterable
     {
         yield 'int' => [0];
         yield 'float' => [100.45];

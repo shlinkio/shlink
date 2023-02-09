@@ -37,7 +37,7 @@ class BodyParserMiddlewareTest extends TestCase
         $this->assertHandlingRequestJustFallsBackToNext($request);
     }
 
-    public function provideIgnoredRequestMethods(): iterable
+    public static function provideIgnoredRequestMethods(): iterable
     {
         yield 'GET' => ['GET'];
         yield 'HEAD' => ['HEAD'];

@@ -34,7 +34,7 @@ class OrphanVisitDataTransformerTest extends TestCase
         self::assertEquals($expectedResult, $result);
     }
 
-    public function provideVisits(): iterable
+    public static function provideVisits(): iterable
     {
         yield 'base path visit' => [
             $visit = Visit::forBasePath(Visitor::emptyInstance()),

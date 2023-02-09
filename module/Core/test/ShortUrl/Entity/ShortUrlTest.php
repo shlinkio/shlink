@@ -41,7 +41,7 @@ class ShortUrlTest extends TestCase
         $shortUrl->regenerateShortCode(ShortUrlMode::STRICT);
     }
 
-    public function provideInvalidShortUrls(): iterable
+    public static function provideInvalidShortUrls(): iterable
     {
         yield 'with custom slug' => [
             ShortUrl::create(ShortUrlCreation::fromRawData(['customSlug' => 'custom-slug', 'longUrl' => 'longUrl'])),
@@ -68,7 +68,7 @@ class ShortUrlTest extends TestCase
         self::assertNotEquals($firstShortCode, $secondShortCode);
     }
 
-    public function provideValidShortUrls(): iterable
+    public static function provideValidShortUrls(): iterable
     {
         yield 'no custom slug' => [ShortUrl::createFake()];
         yield 'imported with custom slug' => [ShortUrl::fromImport(
@@ -90,7 +90,7 @@ class ShortUrlTest extends TestCase
         self::assertEquals($expectedLength, strlen($shortUrl->getShortCode()));
     }
 
-    public function provideLengths(): iterable
+    public static function provideLengths(): iterable
     {
         yield [null, DEFAULT_SHORT_CODES_LENGTH];
         yield from map(range(4, 10), fn (int $value) => [$value, $value]);

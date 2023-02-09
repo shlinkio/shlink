@@ -27,7 +27,7 @@ class DomainRedirectsTest extends ApiTestCase
         self::assertEquals('Invalid data', $payload['title']);
     }
 
-    public function provideInvalidDomains(): iterable
+    public static function provideInvalidDomains(): iterable
     {
         yield 'no domain' => [[]];
         yield 'empty domain' => [['domain' => '']];
@@ -50,7 +50,7 @@ class DomainRedirectsTest extends ApiTestCase
         self::assertEquals($expectedResponse, $payload);
     }
 
-    public function provideRequests(): iterable
+    public static function provideRequests(): iterable
     {
         yield 'new domain' => [[
             'domain' => 'my-new-domain.com',

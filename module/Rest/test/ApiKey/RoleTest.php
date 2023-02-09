@@ -26,7 +26,7 @@ class RoleTest extends TestCase
         self::assertEquals($expected, Role::toSpec($apiKeyRole));
     }
 
-    public function provideRoles(): iterable
+    public static function provideRoles(): iterable
     {
         $apiKey = ApiKey::create();
 
@@ -49,7 +49,7 @@ class RoleTest extends TestCase
         self::assertEquals($expected, Role::toInlinedSpec($apiKeyRole));
     }
 
-    public function provideInlinedRoles(): iterable
+    public static function provideInlinedRoles(): iterable
     {
         $apiKey = ApiKey::create();
 
@@ -72,7 +72,7 @@ class RoleTest extends TestCase
         self::assertEquals($expectedDomainId, Role::domainIdFromMeta($meta));
     }
 
-    public function provideMetasWithDomainId(): iterable
+    public static function provideMetasWithDomainId(): iterable
     {
         yield 'empty meta' => [[], '-1'];
         yield 'meta without domain_id' => [['foo' => 'bar'], '-1'];
@@ -88,7 +88,7 @@ class RoleTest extends TestCase
         self::assertEquals($expectedAuthority, Role::domainAuthorityFromMeta($meta));
     }
 
-    public function provideMetasWithAuthority(): iterable
+    public static function provideMetasWithAuthority(): iterable
     {
         yield 'empty meta' => [[], ''];
         yield 'meta without authority' => [['foo' => 'bar'], ''];
@@ -104,7 +104,7 @@ class RoleTest extends TestCase
         self::assertEquals($expectedFriendlyName, $role->toFriendlyName());
     }
 
-    public function provideRoleNames(): iterable
+    public static function provideRoleNames(): iterable
     {
         yield Role::AUTHORED_SHORT_URLS->value => [Role::AUTHORED_SHORT_URLS, 'Author only'];
         yield Role::DOMAIN_SPECIFIC->value => [Role::DOMAIN_SPECIFIC, 'Domain only'];

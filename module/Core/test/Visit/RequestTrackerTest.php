@@ -57,7 +57,7 @@ class RequestTrackerTest extends TestCase
         $this->requestTracker->trackIfApplicable($shortUrl, $request);
     }
 
-    public function provideNonTrackingRequests(): iterable
+    public static function provideNonTrackingRequests(): iterable
     {
         yield 'forwarded from head' => [ServerRequestFactory::fromGlobals()->withAttribute(
             ImplicitHeadMiddleware::FORWARDED_HTTP_METHOD_ATTRIBUTE,

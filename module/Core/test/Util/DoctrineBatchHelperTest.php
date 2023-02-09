@@ -43,7 +43,7 @@ class DoctrineBatchHelperTest extends TestCase
         }
     }
 
-    public function provideIterables(): iterable
+    public static function provideIterables(): iterable
     {
         yield [[], 100, 1];
         yield [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 3, 4];

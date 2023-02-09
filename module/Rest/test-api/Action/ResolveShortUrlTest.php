@@ -34,7 +34,7 @@ class ResolveShortUrlTest extends ApiTestCase
         self::assertEquals(self::STATUS_OK, $fetchResp->getStatusCode());
     }
 
-    public function provideDisabledMeta(): iterable
+    public static function provideDisabledMeta(): iterable
     {
         $now = Chronos::now();
 

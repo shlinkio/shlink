@@ -21,7 +21,7 @@ class ListTagsTest extends ApiTestCase
         self::assertEquals(['tags' => $expectedTags], $payload);
     }
 
-    public function provideQueries(): iterable
+    public static function provideQueries(): iterable
     {
         yield 'admin API key' => ['valid_api_key', [], [
             'data' => ['bar', 'baz', 'foo'],

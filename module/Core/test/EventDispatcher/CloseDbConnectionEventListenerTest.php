@@ -46,7 +46,7 @@ class CloseDbConnectionEventListenerTest extends TestCase
         self::assertTrue($wrappedWasCalled);
     }
 
-    public function provideWrapped(): iterable
+    public static function provideWrapped(): iterable
     {
         yield 'does not throw exception' => (static function (): array {
             $wrappedWasCalled = false;

@@ -29,7 +29,7 @@ class ShortUrlMethodsProcessorTest extends TestCase
         self::assertEquals($expectedRoutes, ($this->processor)($config)['routes'] ?? null);
     }
 
-    public function provideConfigs(): iterable
+    public static function provideConfigs(): iterable
     {
         $buildConfigWithStatus = static fn (int $status, ?array $expectedAllowedMethods) => [[
             'routes' => [

@@ -94,7 +94,7 @@ class BackwardsCompatibleProblemDetailsExceptionTest extends TestCase
         }
     }
 
-    public function provideTypes(): iterable
+    public static function provideTypes(): iterable
     {
         yield ['foo', 'foo', true];
         yield ['bar', 'bar', true];

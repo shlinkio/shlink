@@ -56,7 +56,7 @@ class VisitLocationRepositoryTest extends DatabaseTestCase
         self::assertCount(6, [...$all]);
     }
 
-    public function provideBlockSize(): iterable
+    public static function provideBlockSize(): iterable
     {
         return map(range(1, 10), fn (int $value) => [$value]);
     }

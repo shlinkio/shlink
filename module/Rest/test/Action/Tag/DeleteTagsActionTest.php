@@ -41,7 +41,7 @@ class DeleteTagsActionTest extends TestCase
         self::assertEquals(204, $response->getStatusCode());
     }
 
-    public function provideTags(): iterable
+    public static function provideTags(): iterable
     {
         yield 'three tags' => [['foo', 'bar', 'baz']];
         yield 'two tags' => [['some', 'thing']];

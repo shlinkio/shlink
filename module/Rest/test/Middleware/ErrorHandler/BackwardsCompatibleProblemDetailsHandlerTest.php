@@ -40,7 +40,7 @@ class BackwardsCompatibleProblemDetailsHandlerTest extends TestCase
         $this->handler->process($request, $handler);
     }
 
-    public function provideExceptions(): iterable
+    public static function provideExceptions(): iterable
     {
         $baseRequest = ServerRequestFactory::fromGlobals();
 

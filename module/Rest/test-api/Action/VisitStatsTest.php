@@ -20,7 +20,7 @@ class VisitStatsTest extends ApiTestCase
         self::assertEquals(['visits' => $expectedPayload], $payload);
     }
 
-    public function provideApiKeysAndResults(): iterable
+    public static function provideApiKeysAndResults(): iterable
     {
         yield 'valid API key' => ['valid_api_key', [
             'nonOrphanVisits' => [

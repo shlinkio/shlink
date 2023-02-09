@@ -28,7 +28,7 @@ class AuthenticationTest extends ApiTestCase
         self::assertEquals('Invalid authorization', $payload['title']);
     }
 
-    public function provideApiVersions(): iterable
+    public static function provideApiVersions(): iterable
     {
         yield 'version 1' => ['1', 'INVALID_AUTHORIZATION'];
         yield 'version 2' => ['2', 'INVALID_AUTHORIZATION'];
@@ -60,7 +60,7 @@ class AuthenticationTest extends ApiTestCase
         self::assertEquals('Invalid API key', $payload['title']);
     }
 
-    public function provideInvalidApiKeys(): iterable
+    public static function provideInvalidApiKeys(): iterable
     {
         yield 'key which does not exist' => ['invalid', '2', 'INVALID_API_KEY'];
         yield 'key which is expired' => ['expired_api_key', '2', 'INVALID_API_KEY'];

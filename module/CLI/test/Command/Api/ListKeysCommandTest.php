@@ -43,7 +43,7 @@ class ListKeysCommandTest extends TestCase
         self::assertEquals($expected, $output);
     }
 
-    public function provideKeysAndOutputs(): iterable
+    public static function provideKeysAndOutputs(): iterable
     {
         $dateInThePast = Chronos::createFromFormat('Y-m-d H:i:s', '2020-01-01 00:00:00');
 
@@ -84,14 +84,14 @@ class ListKeysCommandTest extends TestCase
         yield 'with roles' => [
             [
                 $apiKey1 = ApiKey::create(),
-                $apiKey2 = $this->apiKeyWithRoles([RoleDefinition::forAuthoredShortUrls()]),
-                $apiKey3 = $this->apiKeyWithRoles(
-                    [RoleDefinition::forDomain($this->domainWithId(Domain::withAuthority('example.com')))],
+                $apiKey2 = self::apiKeyWithRoles([RoleDefinition::forAuthoredShortUrls()]),
+                $apiKey3 = self::apiKeyWithRoles(
+                    [RoleDefinition::forDomain(self::domainWithId(Domain::withAuthority('example.com')))],
                 ),
                 $apiKey4 = ApiKey::create(),
-                $apiKey5 = $this->apiKeyWithRoles([
+                $apiKey5 = self::apiKeyWithRoles([
                     RoleDefinition::forAuthoredShortUrls(),
-                    RoleDefinition::forDomain($this->domainWithId(Domain::withAuthority('example.com'))),
+                    RoleDefinition::forDomain(self::domainWithId(Domain::withAuthority('example.com'))),
                 ]),
                 $apiKey6 = ApiKey::create(),
             ],
@@ -141,7 +141,7 @@ class ListKeysCommandTest extends TestCase
         ];
     }
 
-    private function apiKeyWithRoles(array $roles): ApiKey
+    private static function apiKeyWithRoles(array $roles): ApiKey
     {
         $apiKey = ApiKey::create();
         foreach ($roles as $role) {
@@ -151,7 +151,7 @@ class ListKeysCommandTest extends TestCase
         return $apiKey;
     }
 
-    private function domainWithId(Domain $domain): Domain
+    private static function domainWithId(Domain $domain): Domain
     {
         $domain->setId('1');
         return $domain;

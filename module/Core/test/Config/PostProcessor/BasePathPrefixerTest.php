@@ -31,7 +31,7 @@ class BasePathPrefixerTest extends TestCase
         self::assertEquals($expectedMiddlewares, $middlewares);
     }
 
-    public function provideConfig(): iterable
+    public static function provideConfig(): iterable
     {
         yield 'with empty options' => [['routes' => []], [], []];
         yield 'with non-empty options' => [

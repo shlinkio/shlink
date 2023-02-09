@@ -12,7 +12,6 @@ use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\ErrorHandler\Model\NotFoundType;
@@ -26,6 +25,7 @@ use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Util\RedirectResponseHelperInterface;
 use Shlinkio\Shlink\Core\Visit\RequestTrackerInterface;
 
+use function Laminas\Stratigility\middleware;
 use function str_starts_with;
 
 class ExtraPathRedirectMiddlewareTest extends TestCase
@@ -68,7 +68,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         $this->middleware($options)->process($request, $this->handler);
     }
 
-    public function provideNonRedirectingRequests(): iterable
+    public static function provideNonRedirectingRequests(): iterable
     {
         $baseReq = ServerRequestFactory::fromGlobals();
         $buildReq = static fn (?NotFoundType $type): ServerRequestInterface =>
@@ -84,7 +84,8 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
                 RouteResult::class,
                 RouteResult::fromRoute(new Route(
                     '/foo',
-                    $this->createMock(MiddlewareInterface::class),
+                    middleware(function (): void {
+                    }),
                     ['GET'],
                     RedirectAction::class,
                 )),
@@ -170,7 +171,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         $this->middleware($options)->process($request, $this->handler);
     }
 
-    public function provideResolves(): iterable
+    public static function provideResolves(): iterable
     {
         yield [false, 1, '/bar/baz'];
         yield [true, 3, null];

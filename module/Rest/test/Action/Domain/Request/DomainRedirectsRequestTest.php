@@ -22,7 +22,7 @@ class DomainRedirectsRequestTest extends TestCase
         DomainRedirectsRequest::fromRawData($data);
     }
 
-    public function provideInvalidData(): iterable
+    public static function provideInvalidData(): iterable
     {
         yield 'missing domain' => [[]];
         yield 'invalid domain' => [['domain' => 'foo:bar:baz']];
@@ -49,7 +49,7 @@ class DomainRedirectsRequestTest extends TestCase
         self::assertEquals($expectedInvalidShortUrlRedirect, $notFound->invalidShortUrlRedirect);
     }
 
-    public function provideValidData(): iterable
+    public static function provideValidData(): iterable
     {
         yield 'no values' => [['domain' => 'foo'], null, 'foo', null, null, null];
         yield 'some values' => [['domain' => 'foo', 'regular404Redirect' => 'bar'], null, 'foo', null, 'bar', null];

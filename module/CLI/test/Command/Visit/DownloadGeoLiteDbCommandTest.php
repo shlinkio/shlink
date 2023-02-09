@@ -61,7 +61,7 @@ class DownloadGeoLiteDbCommandTest extends TestCase
         self::assertSame($expectedExitCode, $exitCode);
     }
 
-    public function provideFailureParams(): iterable
+    public static function provideFailureParams(): iterable
     {
         yield 'existing db' => [
             true,
@@ -93,7 +93,7 @@ class DownloadGeoLiteDbCommandTest extends TestCase
         self::assertSame(ExitCodes::EXIT_SUCCESS, $exitCode);
     }
 
-    public function provideSuccessParams(): iterable
+    public static function provideSuccessParams(): iterable
     {
         yield 'up to date db' => [fn () => GeolocationResult::CHECK_SKIPPED, '[INFO] GeoLite2 db file is up to date.'];
         yield 'outdated db' => [function (callable $beforeDownload): GeolocationResult {

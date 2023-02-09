@@ -42,7 +42,7 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
         );
     }
 
-    public function provideTitles(): iterable
+    public static function provideTitles(): iterable
     {
         yield 'no title' => [null, 1, 0];
         yield 'title' => ['link title', 0, 1];

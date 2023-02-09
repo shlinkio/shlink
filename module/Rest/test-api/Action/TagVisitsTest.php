@@ -32,7 +32,7 @@ class TagVisitsTest extends ApiTestCase
         self::assertCount($expectedVisitsAmount, $payload['visits']['data']);
     }
 
-    public function provideTags(): iterable
+    public static function provideTags(): iterable
     {
         yield 'foo with admin API key' => ['valid_api_key', 'foo', false, 5];
         yield 'foo with admin API key and no bots' => ['valid_api_key', 'foo', true, 4];
@@ -62,7 +62,7 @@ class TagVisitsTest extends ApiTestCase
         self::assertEquals('Tag not found', $payload['title']);
     }
 
-    public function provideApiKeysAndTags(): iterable
+    public static function provideApiKeysAndTags(): iterable
     {
         yield 'admin API key with invalid tag' => ['valid_api_key', 'invalid_tag'];
         yield 'domain API key with valid tag not used' => ['domain_api_key', 'bar'];

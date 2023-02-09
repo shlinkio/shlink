@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\Visit;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Laminas\Stdlib\ArrayUtils;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
@@ -53,13 +54,17 @@ class VisitsStatsHelperTest extends TestCase
     public function returnsExpectedVisitsStats(int $expectedCount): void
     {
         $repo = $this->createMock(VisitRepository::class);
-        $repo->expects($this->exactly(2))->method('countNonOrphanVisits')->withConsecutive(
-            [new VisitsCountFiltering()],
-            [new VisitsCountFiltering(excludeBots: true)],
-        )->willReturn($expectedCount * 3);
-        $repo->expects($this->exactly(2))->method('countOrphanVisits')->withConsecutive(
-            [$this->isInstanceOf(VisitsCountFiltering::class)],
-            [$this->isInstanceOf(VisitsCountFiltering::class)],
+        $callCount = 0;
+        $repo->expects($this->exactly(2))->method('countNonOrphanVisits')->willReturnCallback(
+            function (VisitsCountFiltering $options) use ($expectedCount, &$callCount) {
+                Assert::assertEquals($callCount !== 0, $options->excludeBots);
+                $callCount++;
+
+                return $expectedCount * 3;
+            },
+        );
+        $repo->expects($this->exactly(2))->method('countOrphanVisits')->with(
+            $this->isInstanceOf(VisitsCountFiltering::class),
         )->willReturn($expectedCount);
         $this->em->expects($this->once())->method('getRepository')->with(Visit::class)->willReturn($repo);
 
@@ -68,7 +73,7 @@ class VisitsStatsHelperTest extends TestCase
         self::assertEquals(new VisitsStats($expectedCount * 3, $expectedCount), $stats);
     }
 
-    public function provideCounts(): iterable
+    public static function provideCounts(): iterable
     {
         return map(range(0, 50, 5), fn (int $value) => [$value]);
     }

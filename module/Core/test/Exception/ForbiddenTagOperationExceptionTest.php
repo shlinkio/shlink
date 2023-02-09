@@ -29,7 +29,7 @@ class ForbiddenTagOperationExceptionTest extends TestCase
         self::assertEquals(403, $e->getStatus());
     }
 
-    public function provideExceptions(): iterable
+    public static function provideExceptions(): iterable
     {
         yield 'deletion' => [ForbiddenTagOperationException::forDeletion(), 'You are not allowed to delete tags'];
         yield 'renaming' => [ForbiddenTagOperationException::forRenaming(), 'You are not allowed to rename tags'];

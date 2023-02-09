@@ -32,7 +32,7 @@ class EnvVarsTest extends TestCase
         self::assertEquals($exists, $envVar->existsInEnv());
     }
 
-    public function provideExistingEnvVars(): iterable
+    public static function provideExistingEnvVars(): iterable
     {
         yield 'DB_NAME' => [EnvVars::DB_NAME, true];
         yield 'BASE_PATH' => [EnvVars::BASE_PATH, true];
@@ -49,7 +49,7 @@ class EnvVarsTest extends TestCase
         self::assertEquals($expected, $envVar->loadFromEnv($default));
     }
 
-    public function provideEnvVarsValues(): iterable
+    public static function provideEnvVarsValues(): iterable
     {
         yield 'DB_NAME without default' => [EnvVars::DB_NAME, 'shlink', null];
         yield 'DB_NAME with default' => [EnvVars::DB_NAME, 'shlink', 'foobar'];

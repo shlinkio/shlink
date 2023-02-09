@@ -34,7 +34,7 @@ class SimpleShortUrlRelationResolverTest extends TestCase
         }
     }
 
-    public function provideDomains(): iterable
+    public static function provideDomains(): iterable
     {
         yield 'empty domain' => [null];
         yield 'non-empty domain' => ['domain.com'];

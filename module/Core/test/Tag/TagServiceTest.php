@@ -74,7 +74,7 @@ class TagServiceTest extends TestCase
         self::assertEquals($expected, $result->getCurrentPageResults());
     }
 
-    public function provideApiKeysAndSearchTerm(): iterable
+    public static function provideApiKeysAndSearchTerm(): iterable
     {
         yield 'no API key, no filter' => [
             null,
@@ -156,7 +156,7 @@ class TagServiceTest extends TestCase
         self::assertEquals($newName, (string) $tag);
     }
 
-    public function provideValidRenames(): iterable
+    public static function provideValidRenames(): iterable
     {
         yield 'same names' => ['foo', 'foo', 1];
         yield 'different names names' => ['foo', 'bar', 0];

@@ -79,7 +79,7 @@ class ShortUrlRepositoryAdapterTest extends TestCase
         $adapter->getNbResults();
     }
 
-    public function provideFilteringArgs(): iterable
+    public static function provideFilteringArgs(): iterable
     {
         yield [];
         yield ['search'];

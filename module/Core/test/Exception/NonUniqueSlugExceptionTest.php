@@ -30,7 +30,7 @@ class NonUniqueSlugExceptionTest extends TestCase
         self::assertEquals($expectedAdditional, $e->getAdditionalData());
     }
 
-    public function provideMessages(): iterable
+    public static function provideMessages(): iterable
     {
         yield 'without domain' => [
             'Provided slug "foo" is already in use.',

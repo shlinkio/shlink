@@ -22,7 +22,7 @@ class SingleStepCreateShortUrlTest extends ApiTestCase
         self::assertEquals($expectedContentType, $resp->getHeaderLine('Content-Type'));
     }
 
-    public function provideFormats(): iterable
+    public static function provideFormats(): iterable
     {
         yield 'txt format' => ['txt', 'text/plain'];
         yield 'json format' => ['json', 'application/json'];

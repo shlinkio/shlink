@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use Cake\Chronos\Chronos;
-use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use GuzzleHttp\Psr7\Query;
 use GuzzleHttp\RequestOptions;
 use Laminas\Diactoros\Uri;
@@ -16,7 +15,6 @@ use function sprintf;
 
 class EditShortUrlTest extends ApiTestCase
 {
-    use ArraySubsetAsserts;
     use NotFoundUrlHelpersTrait;
 
     /**
@@ -47,7 +45,14 @@ class EditShortUrlTest extends ApiTestCase
         self::assertArraySubset($meta, $metaAfterEditing);
     }
 
-    public function provideMeta(): iterable
+    private static function assertArraySubset(array $a, array $b): void
+    {
+        foreach ($a as $key => $expectedValue) {
+            self::assertEquals($expectedValue, $b[$key]);
+        }
+    }
+
+    public static function provideMeta(): iterable
     {
         $now = Chronos::now();
 
@@ -92,7 +97,7 @@ class EditShortUrlTest extends ApiTestCase
         }
     }
 
-    public function provideLongUrls(): iterable
+    public static function provideLongUrls(): iterable
     {
         yield 'valid URL' => ['https://shlink.io', self::STATUS_OK, null];
         yield 'invalid URL' => ['htt:foo', self::STATUS_BAD_REQUEST, 'INVALID_URL'];
@@ -162,7 +167,7 @@ class EditShortUrlTest extends ApiTestCase
         self::assertEquals(100, $editedShortUrl['meta']['maxVisits'] ?? null);
     }
 
-    public function provideDomains(): iterable
+    public static function provideDomains(): iterable
     {
         yield 'domain' => [
             'example.com',

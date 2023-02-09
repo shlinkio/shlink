@@ -45,7 +45,7 @@ class TagsStatsTest extends ApiTestCase
         self::assertArrayHasKey('data', $tags);
     }
 
-    public function provideQueries(): iterable
+    public static function provideQueries(): iterable
     {
         yield 'admin API key' => ['valid_api_key', [], [
             [

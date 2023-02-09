@@ -39,7 +39,7 @@ class RobotsActionTest extends TestCase
         self::assertEquals('text/plain', $response->getHeaderLine('Content-Type'));
     }
 
-    public function provideShortCodes(): iterable
+    public static function provideShortCodes(): iterable
     {
         yield 'three short codes' => [['foo', 'bar', 'baz'], <<<ROBOTS
         # For more information about the robots.txt standard, see:

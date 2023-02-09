@@ -50,7 +50,7 @@ class DeleteShortUrlTest extends ApiTestCase
         self::assertEquals($expectedType, $payload['type']);
     }
 
-    public function provideApiVersions(): iterable
+    public static function provideApiVersions(): iterable
     {
         yield ['1', 'INVALID_SHORTCODE'];
         yield ['2', 'INVALID_SHORTCODE'];

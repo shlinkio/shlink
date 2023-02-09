@@ -22,7 +22,7 @@ class RedirectTest extends ApiTestCase
         self::assertEquals($expectedRedirect, $response->getHeaderLine('Location'));
     }
 
-    public function provideUserAgents(): iterable
+    public static function provideUserAgents(): iterable
     {
         yield 'android' => [ANDROID_USER_AGENT, 'https://blog.alejandrocelaya.com/android'];
         yield 'ios' => [IOS_USER_AGENT, 'https://blog.alejandrocelaya.com/ios'];

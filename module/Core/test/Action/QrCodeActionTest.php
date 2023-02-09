@@ -87,7 +87,7 @@ class QrCodeActionTest extends TestCase
         self::assertEquals($expectedContentType, $resp->getHeaderLine('Content-Type'));
     }
 
-    public function provideQueries(): iterable
+    public static function provideQueries(): iterable
     {
         yield 'no format, png default' => ['png', [], 'image/png'];
         yield 'no format, svg default' => ['svg', [], 'image/svg+xml'];
@@ -122,7 +122,7 @@ class QrCodeActionTest extends TestCase
         self::assertEquals($expectedSize, $size);
     }
 
-    public function provideRequestsWithSize(): iterable
+    public static function provideRequestsWithSize(): iterable
     {
         yield 'different margin and size defaults' => [
             new QrCodeOptions(size: 660, margin: 40),
@@ -215,7 +215,7 @@ class QrCodeActionTest extends TestCase
         self::assertEquals($color, $expectedColor);
     }
 
-    public function provideRoundBlockSize(): iterable
+    public static function provideRoundBlockSize(): iterable
     {
         yield 'no round block param' => [new QrCodeOptions(), null, self::WHITE];
         yield 'no round block param, but disabled by default' => [

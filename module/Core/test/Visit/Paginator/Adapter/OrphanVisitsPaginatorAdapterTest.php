@@ -59,7 +59,7 @@ class OrphanVisitsPaginatorAdapterTest extends TestCase
         self::assertEquals($list, $result);
     }
 
-    public function provideLimitAndOffset(): iterable
+    public static function provideLimitAndOffset(): iterable
     {
         yield [1, 5];
         yield [10, 4];

@@ -41,7 +41,7 @@ class CorsTest extends ApiTestCase
         self::assertFalse($resp->hasHeader('Access-Control-Allow-Headers'));
     }
 
-    public function provideOrigins(): iterable
+    public static function provideOrigins(): iterable
     {
         yield 'foo.com' => ['foo.com', '/short-urls', 200];
         yield 'bar.io' => ['bar.io', '/foo/bar', 404];
@@ -69,7 +69,7 @@ class CorsTest extends ApiTestCase
         self::assertEquals($allowedHeaders, $resp->getHeaderLine('Access-Control-Allow-Headers'));
     }
 
-    public function providePreflightEndpoints(): iterable
+    public static function providePreflightEndpoints(): iterable
     {
         yield 'invalid route' => ['/foo/bar', 'GET,POST,PUT,PATCH,DELETE']; // TODO This won't work with multi-segment
         yield 'short URLs route' => ['/short-urls', 'GET,POST'];

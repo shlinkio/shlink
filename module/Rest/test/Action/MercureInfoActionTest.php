@@ -37,7 +37,7 @@ class MercureInfoActionTest extends TestCase
         $action->handle(ServerRequestFactory::fromGlobals());
     }
 
-    public function provideNoHostConfigs(): iterable
+    public static function provideNoHostConfigs(): iterable
     {
         yield 'host not defined' => [[]];
         yield 'host is null' => [['public_hub_url' => null]];
@@ -76,7 +76,7 @@ class MercureInfoActionTest extends TestCase
         );
     }
 
-    public function provideDays(): iterable
+    public static function provideDays(): iterable
     {
         yield 'days not defined' => [null];
         yield 'days defined' => [10];

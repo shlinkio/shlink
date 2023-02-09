@@ -41,7 +41,7 @@ class DeleteShortUrlExceptionTest extends TestCase
         self::assertEquals(422, $e->getStatus());
     }
 
-    public function provideThresholds(): array
+    public static function provideThresholds(): array
     {
         return map(range(5, 50, 5), function (int $number) {
             return [$number, $shortCode = generateRandomShortCode(6), sprintf(

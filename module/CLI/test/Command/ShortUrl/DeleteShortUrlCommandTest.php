@@ -98,7 +98,7 @@ class DeleteShortUrlCommandTest extends TestCase
         self::assertStringContainsString($expectedMessage, $output);
     }
 
-    public function provideRetryDeleteAnswers(): iterable
+    public static function provideRetryDeleteAnswers(): iterable
     {
         yield 'answering yes to retry' => [['yes'], 2, 'Short URL with short code "abc123" successfully deleted.'];
         yield 'answering no to retry' => [['no'], 1, 'Short URL was not deleted.'];

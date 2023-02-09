@@ -70,7 +70,7 @@ class OverrideDomainMiddlewareTest extends TestCase
         $this->middleware->process($request, $this->handler);
     }
 
-    public function provideBodies(): iterable
+    public static function provideBodies(): iterable
     {
         yield 'no domain provided' => [
             Domain::withAuthority('foo.com'),
@@ -117,7 +117,7 @@ class OverrideDomainMiddlewareTest extends TestCase
         $this->middleware->process($request, $this->handler);
     }
 
-    public function provideMethods(): iterable
+    public static function provideMethods(): iterable
     {
         yield 'GET' => ['GET'];
         yield 'PUT' => ['PUT'];

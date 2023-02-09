@@ -4,6 +4,7 @@
     xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
     bootstrap="./config/test/bootstrap_db_tests.php"
     colors="true"
+    cacheDirectory="build/.phpunit/db-tests.cache"
 >
     <testsuites>
         <testsuite name="Shlink database tests">
@@ -11,7 +12,7 @@
         </testsuite>
     </testsuites>
 
-    <coverage processUncoveredFiles="true">
+    <coverage>
         <include>
             <directory suffix=".php">./module/*/src/Repository</directory>
             <directory suffix=".php">./module/*/src/**/Repository</directory>

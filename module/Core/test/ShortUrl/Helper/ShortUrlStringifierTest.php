@@ -26,7 +26,7 @@ class ShortUrlStringifierTest extends TestCase
         self::assertEquals($expected, $stringifier->stringify($shortUrl));
     }
 
-    public function provideConfigAndShortUrls(): iterable
+    public static function provideConfigAndShortUrls(): iterable
     {
         $shortUrlWithShortCode = fn (string $shortCode, ?string $domain = null) => ShortUrl::create(
             ShortUrlCreation::fromRawData([

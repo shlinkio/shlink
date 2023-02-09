@@ -34,7 +34,7 @@ class ShortUrlNotFoundExceptionTest extends TestCase
         self::assertEquals($expectedAdditional, $e->getAdditionalData());
     }
 
-    public function provideMessages(): iterable
+    public static function provideMessages(): iterable
     {
         yield 'without domain' => [
             'No URL found with short code "abc123"',

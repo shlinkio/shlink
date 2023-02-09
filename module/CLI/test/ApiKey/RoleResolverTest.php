@@ -32,24 +32,25 @@ class RoleResolverTest extends TestCase
      * @dataProvider provideRoles
      */
     public function properRolesAreResolvedBasedOnInput(
-        InputInterface $input,
+        callable $createInput,
         array $expectedRoles,
         int $expectedDomainCalls,
     ): void {
+        $input = $createInput($this);
         $this->domainService->expects($this->exactly($expectedDomainCalls))->method('getOrCreate')->with(
             'example.com',
-        )->willReturn($this->domainWithId(Domain::withAuthority('example.com')));
+        )->willReturn(self::domainWithId(Domain::withAuthority('example.com')));
 
         $result = $this->resolver->determineRoles($input);
 
         self::assertEquals($expectedRoles, $result);
     }
 
-    public function provideRoles(): iterable
+    public static function provideRoles(): iterable
     {
-        $domain = $this->domainWithId(Domain::withAuthority('example.com'));
-        $buildInput = function (array $definition): InputInterface {
-            $input = $this->createStub(InputInterface::class);
+        $domain = self::domainWithId(Domain::withAuthority('example.com'));
+        $buildInput = static fn (array $definition) => function (TestCase $test) use ($definition): InputInterface {
+            $input = $test->createStub(InputInterface::class);
             $input->method('getOption')->willReturnMap(
                 map($definition, static fn (mixed $returnValue, string $param) => [$param, $returnValue]),
             );
@@ -114,7 +115,7 @@ class RoleResolverTest extends TestCase
         $this->resolver->determineRoles($input);
     }
 
-    private function domainWithId(Domain $domain): Domain
+    private static function domainWithId(Domain $domain): Domain
     {
         $domain->setId('1');
         return $domain;

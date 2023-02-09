@@ -56,7 +56,7 @@ class VisitsTrackerTest extends TestCase
         $this->visitsTracker(new TrackingOptions(disableTracking: true))->{$method}(...$args);
     }
 
-    public function provideTrackingMethodNames(): iterable
+    public static function provideTrackingMethodNames(): iterable
     {
         yield 'track' => ['track', [ShortUrl::createFake(), Visitor::emptyInstance()]];
         yield 'trackInvalidShortUrlVisit' => ['trackInvalidShortUrlVisit', [Visitor::emptyInstance()]];
@@ -77,7 +77,7 @@ class VisitsTrackerTest extends TestCase
         $this->visitsTracker(new TrackingOptions(trackOrphanVisits: false))->{$method}(Visitor::emptyInstance());
     }
 
-    public function provideOrphanTrackingMethodNames(): iterable
+    public static function provideOrphanTrackingMethodNames(): iterable
     {
         yield 'trackInvalidShortUrlVisit' => ['trackInvalidShortUrlVisit'];
         yield 'trackBaseUrlVisit' => ['trackBaseUrlVisit'];

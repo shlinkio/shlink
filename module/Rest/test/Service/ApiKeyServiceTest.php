@@ -48,7 +48,7 @@ class ApiKeyServiceTest extends TestCase
         }
     }
 
-    public function provideCreationDate(): iterable
+    public static function provideCreationDate(): iterable
     {
         $domain = Domain::withAuthority('');
         $domain->setId('123');
@@ -79,7 +79,7 @@ class ApiKeyServiceTest extends TestCase
         self::assertSame($invalidKey, $result->apiKey);
     }
 
-    public function provideInvalidApiKeys(): iterable
+    public static function provideInvalidApiKeys(): iterable
     {
         yield 'non-existent api key' => [null];
         yield 'disabled api key' => [ApiKey::create()->disable()];

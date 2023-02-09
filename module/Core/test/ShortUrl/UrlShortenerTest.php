@@ -95,7 +95,7 @@ class UrlShortenerTest extends TestCase
         self::assertSame($expected, $result);
     }
 
-    public function provideExistingShortUrls(): iterable
+    public static function provideExistingShortUrls(): iterable
     {
         $url = 'http://foo.com';
 

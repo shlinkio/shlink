@@ -22,7 +22,7 @@ class VisitLocationTest extends TestCase
         self::assertEquals($isEmpty, $location->isEmpty());
     }
 
-    public function provideArgs(): iterable
+    public static function provideArgs(): iterable
     {
         yield [['', '', '', '', 0.0, 0.0, ''], true];
         yield [['', '', '', '', 0.0, 0.0, 'dd'], false];

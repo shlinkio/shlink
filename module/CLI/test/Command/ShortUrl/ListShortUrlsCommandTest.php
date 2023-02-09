@@ -137,7 +137,7 @@ class ListShortUrlsCommandTest extends TestCase
         }
     }
 
-    public function provideOptionalFlags(): iterable
+    public static function provideOptionalFlags(): iterable
     {
         $apiKey = ApiKey::fromMeta(ApiKeyMeta::withName('my api key'));
         $key = $apiKey->toString();
@@ -200,7 +200,7 @@ class ListShortUrlsCommandTest extends TestCase
         $this->commandTester->execute($commandArgs);
     }
 
-    public function provideArgs(): iterable
+    public static function provideArgs(): iterable
     {
         yield [[], 1, null, [], TagsMode::ANY->value];
         yield [['--page' => $page = 3], $page, null, [], TagsMode::ANY->value];
@@ -255,7 +255,7 @@ class ListShortUrlsCommandTest extends TestCase
         $this->commandTester->execute($commandArgs);
     }
 
-    public function provideOrderBy(): iterable
+    public static function provideOrderBy(): iterable
     {
         yield [[], null];
         yield [['--order-by' => 'visits'], 'visits'];

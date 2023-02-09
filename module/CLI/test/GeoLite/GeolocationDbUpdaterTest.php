@@ -84,7 +84,7 @@ class GeolocationDbUpdaterTest extends TestCase
         }
     }
 
-    public function provideBigDays(): iterable
+    public static function provideBigDays(): iterable
     {
         yield [36];
         yield [50];
@@ -109,7 +109,7 @@ class GeolocationDbUpdaterTest extends TestCase
         self::assertEquals(GeolocationResult::DB_IS_UP_TO_DATE, $result);
     }
 
-    public function provideSmallDays(): iterable
+    public static function provideSmallDays(): iterable
     {
         $generateParamsWithTimestamp = static function (int $days) {
             $timestamp = Chronos::now()->subDays($days)->getTimestamp();
@@ -164,7 +164,7 @@ class GeolocationDbUpdaterTest extends TestCase
         self::assertEquals(GeolocationResult::CHECK_SKIPPED, $result);
     }
 
-    public function provideTrackingOptions(): iterable
+    public static function provideTrackingOptions(): iterable
     {
         yield 'disableTracking' => [new TrackingOptions(disableTracking: true)];
         yield 'disableIpTracking' => [new TrackingOptions(disableIpTracking: true)];

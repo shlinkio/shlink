@@ -29,7 +29,7 @@ class DeleteTagsTest extends ApiTestCase
         self::assertEquals('Forbidden tag operation', $payload['title']);
     }
 
-    public function provideNonAdminApiKeys(): iterable
+    public static function provideNonAdminApiKeys(): iterable
     {
         yield 'author' => ['author_api_key', '2', 'FORBIDDEN_OPERATION'];
         yield 'domain' => ['domain_api_key', '2', 'FORBIDDEN_OPERATION'];

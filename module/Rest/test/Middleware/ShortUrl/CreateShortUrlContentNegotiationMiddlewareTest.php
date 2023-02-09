@@ -58,7 +58,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
         self::assertEquals($expectedContentType, $response->getHeaderLine('Content-type'));
     }
 
-    public function provideData(): iterable
+    public static function provideData(): iterable
     {
         yield [null, [], 'application/json'];
         yield [null, ['format' => 'json'], 'application/json'];
@@ -88,7 +88,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
         self::assertEquals($expectedBody, (string) $response->getBody());
     }
 
-    public function provideTextBodies(): iterable
+    public static function provideTextBodies(): iterable
     {
         yield 'shortUrl key' => [['shortUrl' => 'foobar'], 'foobar'];
         yield 'error key' => [['error' => 'FOO_BAR'], 'FOO_BAR'];

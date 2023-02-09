@@ -19,7 +19,7 @@ class ListShortUrlsTest extends CliTestCase
         self::assertStringContainsString($expectedOutput, $output);
     }
 
-    public function provideFlagsAndOutput(): iterable
+    public static function provideFlagsAndOutput(): iterable
     {
         // phpcs:disable Generic.Files.LineLength
         yield 'no flags' => [[], <<<OUTPUT

@@ -55,7 +55,7 @@ class ShortCodeUniquenessHelperTest extends TestCase
         self::assertTrue($result);
     }
 
-    public function provideDomains(): iterable
+    public static function provideDomains(): iterable
     {
         yield 'no domain' => [null, null];
         yield 'domain' => [Domain::withAuthority($authority = 's.test'), $authority];

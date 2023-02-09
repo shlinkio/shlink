@@ -100,7 +100,7 @@ class CrossDomainMiddlewareTest extends TestCase
         self::assertEquals(204, $response->getStatusCode());
     }
 
-    public function provideRouteResults(): iterable
+    public static function provideRouteResults(): iterable
     {
         yield 'no allow header in response' => [null, 'GET,POST,PUT,PATCH,DELETE'];
         yield 'allow header in response' => ['POST,GET', 'POST,GET'];
@@ -126,7 +126,7 @@ class CrossDomainMiddlewareTest extends TestCase
         self::assertEquals($expectedStatus, $response->getStatusCode());
     }
 
-    public function provideMethods(): iterable
+    public static function provideMethods(): iterable
     {
         yield 'POST 200' => ['POST', 200, 200];
         yield 'POST 400' => ['POST', 400, 400];

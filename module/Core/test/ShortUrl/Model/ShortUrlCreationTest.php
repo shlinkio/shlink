@@ -31,7 +31,7 @@ class ShortUrlCreationTest extends TestCase
         ShortUrlCreation::fromRawData($data);
     }
 
-    public function provideInvalidData(): iterable
+    public static function provideInvalidData(): iterable
     {
         yield [[]];
         yield [[
@@ -136,7 +136,7 @@ class ShortUrlCreationTest extends TestCase
         self::assertNull($creation->maxVisits);
     }
 
-    public function provideCustomSlugs(): iterable
+    public static function provideCustomSlugs(): iterable
     {
         yield ['🔥', '🔥'];
         yield ['🦣 🍅', '🦣-🍅'];
@@ -175,7 +175,7 @@ class ShortUrlCreationTest extends TestCase
         self::assertEquals($expectedTitle, $creation->title);
     }
 
-    public function provideTitles(): iterable
+    public static function provideTitles(): iterable
     {
         yield [null, null];
         yield ['foo', 'foo'];
@@ -201,7 +201,7 @@ class ShortUrlCreationTest extends TestCase
         self::assertSame($expectedDomain, $creation->domain);
     }
 
-    public function provideDomains(): iterable
+    public static function provideDomains(): iterable
     {
         yield 'null domain' => [null, null];
         yield 'empty domain' => ['', null];

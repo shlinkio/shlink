@@ -72,7 +72,7 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertEquals($expectedType, $payload['type']);
     }
 
-    public function provideDuplicatedSlugApiVersions(): iterable
+    public static function provideDuplicatedSlugApiVersions(): iterable
     {
         yield ['1', 'INVALID_SLUG'];
         yield ['2', 'INVALID_SLUG'];
@@ -91,7 +91,7 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertEquals($expectedTags, $tags);
     }
 
-    public function provideTags(): iterable
+    public static function provideTags(): iterable
     {
         yield 'simple tags' => [$simpleTags = ['foo', 'bar', 'baz'], $simpleTags];
         yield 'tags with spaces' => [['fo o', '  bar', 'b az'], ['fo-o', 'bar', 'b-az']];
@@ -116,7 +116,7 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertEquals(self::STATUS_NOT_FOUND, $lastResp->getStatusCode());
     }
 
-    public function provideMaxVisits(): array
+    public static function provideMaxVisits(): array
     {
         return map(range(10, 15), fn(int $i) => [$i]);
     }
@@ -165,7 +165,7 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertEquals($firstShortCode, $secondShortCode);
     }
 
-    public function provideMatchingBodies(): iterable
+    public static function provideMatchingBodies(): iterable
     {
         $longUrl = 'https://www.alejandrocelaya.com';
 
@@ -202,7 +202,7 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertEquals(self::STATUS_BAD_REQUEST, $secondStatusCode);
     }
 
-    public function provideConflictingSlugs(): iterable
+    public static function provideConflictingSlugs(): iterable
     {
         yield 'without domain' => ['custom', null];
         yield 'with domain' => ['custom-with-domain', 'some-domain.com'];
@@ -236,7 +236,7 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertEquals($payload['longUrl'], $longUrl);
     }
 
-    public function provideIdn(): iterable
+    public static function provideIdn(): iterable
     {
         yield ['http://tést.shlink.io']; // Redirects to https://shlink.io
         yield ['http://test.shlink.io']; // Redirects to http://tést.shlink.io
@@ -261,7 +261,7 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertEquals($url, $payload['url']);
     }
 
-    public function provideInvalidUrls(): iterable
+    public static function provideInvalidUrls(): iterable
     {
         yield 'API version 2' => ['https://this-has-to-be-invalid.com', '2', 'INVALID_URL'];
         yield 'API version 3' => ['https://this-has-to-be-invalid.com', '3', 'https://shlink.io/api/error/invalid-url'];
@@ -287,7 +287,7 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertEquals('Invalid data', $payload['title']);
     }
 
-    public function provideInvalidArgumentApiVersions(): iterable
+    public static function provideInvalidArgumentApiVersions(): iterable
     {
         yield 'missing long url v2' => [[], '2', 'INVALID_ARGUMENT'];
         yield 'missing long url v3' => [[], '3', 'https://shlink.io/api/error/invalid-data'];
@@ -338,7 +338,7 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertEquals('example.com', $returnedDomain);
     }
 
-    public function provideDomains(): iterable
+    public static function provideDomains(): iterable
     {
         yield 'no domain' => [null];
         yield 'invalid domain' => ['this-will-be-overwritten.com'];
@@ -355,7 +355,7 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertEquals(self::STATUS_OK, $statusCode);
     }
 
-    public function provideTwitterUrls(): iterable
+    public static function provideTwitterUrls(): iterable
     {
         yield ['https://twitter.com/shlinkio'];
         yield ['https://mobile.twitter.com/shlinkio'];

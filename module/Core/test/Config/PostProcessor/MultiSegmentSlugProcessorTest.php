@@ -25,7 +25,7 @@ class MultiSegmentSlugProcessorTest extends TestCase
         self::assertEquals($expectedRoutes, ($this->processor)($config)['routes'] ?? []);
     }
 
-    public function provideConfigs(): iterable
+    public static function provideConfigs(): iterable
     {
         yield [[], []];
         yield [['url_shortener' => []], []];

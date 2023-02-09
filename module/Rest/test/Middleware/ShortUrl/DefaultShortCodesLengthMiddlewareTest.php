@@ -45,7 +45,7 @@ class DefaultShortCodesLengthMiddlewareTest extends TestCase
         $this->middleware->process($request, $this->handler);
     }
 
-    public function provideBodies(): iterable
+    public static function provideBodies(): iterable
     {
         yield 'value provided' => [[ShortUrlInputFilter::SHORT_CODE_LENGTH => 6], 6];
         yield 'value not provided' => [[], 8];

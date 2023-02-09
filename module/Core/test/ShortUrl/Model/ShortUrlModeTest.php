@@ -18,7 +18,7 @@ class ShortUrlModeTest extends TestCase
         self::assertSame($expected, ShortUrlMode::tryDeprecated($mode));
     }
 
-    public function provideModes(): iterable
+    public static function provideModes(): iterable
     {
         yield 'invalid' => ['invalid', null];
         yield 'foo' => ['foo', null];

@@ -66,7 +66,7 @@ class ShortUrlVisitsTest extends ApiTestCase
         self::assertCount($expectedAmountOfVisits, $payload['visits']['data'] ?? []);
     }
 
-    public function provideDomains(): iterable
+    public static function provideDomains(): iterable
     {
         yield 'domain' => ['example.com', 0];
         yield 'no domain' => [null, 2];
@@ -95,7 +95,7 @@ class ShortUrlVisitsTest extends ApiTestCase
         self::assertCount($expectedAmountOfVisits, $payload['visits']['data'] ?? []);
     }
 
-    public function provideVisitsForBots(): iterable
+    public static function provideVisitsForBots(): iterable
     {
         yield 'bots excluded' => [true, 1];
         yield 'bots not excluded' => [false, 2];

@@ -27,7 +27,7 @@ class ShortUrlEditionTest extends TestCase
         self::assertEquals($expectedDevicesToRemove, $edition->devicesToRemove);
     }
 
-    public function provideDeviceLongUrls(): iterable
+    public static function provideDeviceLongUrls(): iterable
     {
         yield 'null' => [null, [], []];
         yield 'empty' => [[], [], []];

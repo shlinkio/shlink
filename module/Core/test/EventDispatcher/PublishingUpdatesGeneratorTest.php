@@ -77,7 +77,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
         ], $update->payload);
     }
 
-    public function provideMethod(): iterable
+    public static function provideMethod(): iterable
     {
         yield 'newVisitUpdate' => ['newVisitUpdate', 'https://shlink.io/new-visit', 'the cool title'];
         yield 'newShortUrlVisitUpdate' => ['newShortUrlVisitUpdate', 'https://shlink.io/new-visit/foo', null];
@@ -105,7 +105,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
         ], $update->payload);
     }
 
-    public function provideOrphanVisits(): iterable
+    public static function provideOrphanVisits(): iterable
     {
         $visitor = Visitor::emptyInstance();
 

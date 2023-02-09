@@ -39,7 +39,7 @@ class UpdateTagActionTest extends TestCase
         $this->action->handle($request);
     }
 
-    public function provideParams(): iterable
+    public static function provideParams(): iterable
     {
         yield 'old name only' => [['oldName' => 'foo']];
         yield 'new name only' => [['newName' => 'foo']];

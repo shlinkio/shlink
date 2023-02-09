@@ -61,7 +61,7 @@ class ListTagsActionTest extends TestCase
         ], $payload);
     }
 
-    public function provideNoStatsQueries(): iterable
+    public static function provideNoStatsQueries(): iterable
     {
         yield 'no query' => [[]];
         yield 'withStats is false' => [['withStats' => 'withStats']];

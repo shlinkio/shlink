@@ -43,7 +43,7 @@ class DropDefaultDomainFromRequestMiddlewareTest extends TestCase
         $this->middleware->process($req, $this->next);
     }
 
-    public function provideQueryParams(): iterable
+    public static function provideQueryParams(): iterable
     {
         yield [[], []];
         yield [['foo' => 'bar'], ['foo' => 'bar']];

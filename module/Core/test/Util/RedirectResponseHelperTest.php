@@ -33,7 +33,7 @@ class RedirectResponseHelperTest extends TestCase
         self::assertEquals($expectedCacheControl ?? '', $response->getHeaderLine('Cache-Control'));
     }
 
-    public function provideRedirectConfigs(): iterable
+    public static function provideRedirectConfigs(): iterable
     {
         yield 'status 302' => [302, 20, 302, null];
         yield 'status 307' => [307, 20, 307, null];

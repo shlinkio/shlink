@@ -26,7 +26,7 @@ class FunctionsTest extends TestCase
         self::assertEquals($expectedValues, enumValues($enum));
     }
 
-    public function provideEnums(): iterable
+    public static function provideEnums(): iterable
     {
         yield EnvVars::class => [EnvVars::class, map(EnvVars::cases(), static fn (EnvVars $envVar) => $envVar->value)];
         yield VisitType::class => [

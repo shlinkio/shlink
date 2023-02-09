@@ -34,7 +34,7 @@ class InvalidUrlExceptionTest extends TestCase
         self::assertEquals($prev, $e->getPrevious());
     }
 
-    public function providePrevious(): iterable
+    public static function providePrevious(): iterable
     {
         yield 'null previous' => [null];
         yield 'instance previous' => [new Exception('Previous error', 10)];

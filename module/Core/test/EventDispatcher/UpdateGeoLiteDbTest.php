@@ -67,7 +67,7 @@ class UpdateGeoLiteDbTest extends TestCase
         ($this->listener)();
     }
 
-    public function provideFlags(): iterable
+    public static function provideFlags(): iterable
     {
         yield 'existing old db' => [true, 'Updating GeoLite2 db file...'];
         yield 'not existing old db' => [false, 'Downloading GeoLite2 db file...'];
@@ -101,7 +101,7 @@ class UpdateGeoLiteDbTest extends TestCase
         ($this->listener)();
     }
 
-    public function provideDownloaded(): iterable
+    public static function provideDownloaded(): iterable
     {
         yield [100, 0, true, null];
         yield [100, 0, false, null];
@@ -129,7 +129,7 @@ class UpdateGeoLiteDbTest extends TestCase
         ($this->listener)();
     }
 
-    public function provideGeolocationResults(): iterable
+    public static function provideGeolocationResults(): iterable
     {
         return map(GeolocationResult::cases(), static fn (GeolocationResult $value) => [
             $value,

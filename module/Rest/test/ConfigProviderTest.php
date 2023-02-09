@@ -39,7 +39,7 @@ class ConfigProviderTest extends TestCase
         self::assertEquals($expected, ConfigProvider::applyRoutesPrefix($routes));
     }
 
-    public function provideRoutesConfig(): iterable
+    public static function provideRoutesConfig(): iterable
     {
         yield 'health action present' => [
             [

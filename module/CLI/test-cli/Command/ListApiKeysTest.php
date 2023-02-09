@@ -23,7 +23,7 @@ class ListApiKeysTest extends CliTestCase
         self::assertEquals(ExitCodes::EXIT_SUCCESS, $exitCode);
     }
 
-    public function provideFlags(): iterable
+    public static function provideFlags(): iterable
     {
         $expiredApiKeyDate = Chronos::now()->subDay()->startOfDay()->toAtomString();
         $enabledOnlyOutput = <<<OUT

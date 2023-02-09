@@ -50,7 +50,7 @@ class ShortUrlRedirectionBuilderTest extends TestCase
         self::assertEquals($expectedUrl, $result);
     }
 
-    public function provideData(): iterable
+    public static function provideData(): iterable
     {
         $request = static fn (array $query = []) => ServerRequestFactory::fromGlobals()->withQueryParams($query);
 

@@ -72,7 +72,7 @@ class VisitLocatorTest extends TestCase
         });
     }
 
-    public function provideMethodNames(): iterable
+    public static function provideMethodNames(): iterable
     {
         yield 'locateUnlocatedVisits' => ['locateUnlocatedVisits', 'findUnlocatedVisits'];
         yield 'locateVisitsWithEmptyLocation' => ['locateVisitsWithEmptyLocation', 'findVisitsWithEmptyLocation'];
@@ -120,7 +120,7 @@ class VisitLocatorTest extends TestCase
         );
     }
 
-    public function provideIsNonLocatableAddress(): iterable
+    public static function provideIsNonLocatableAddress(): iterable
     {
         yield 'locateUnlocatedVisits - locatable address' => ['locateUnlocatedVisits', 'findUnlocatedVisits', false];
         yield 'locateUnlocatedVisits - non-locatable address' => ['locateUnlocatedVisits', 'findUnlocatedVisits', true];

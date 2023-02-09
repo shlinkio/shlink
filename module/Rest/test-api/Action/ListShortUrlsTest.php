@@ -168,7 +168,7 @@ class ListShortUrlsTest extends ApiTestCase
         ], $respPayload);
     }
 
-    public function provideFilteredLists(): iterable
+    public static function provideFilteredLists(): iterable
     {
         // FIXME Cannot use enums in constants in PHP 8.1. Change this once support for PHP 8.1 is dropped
         $withDeviceLongUrls = static fn (array $shortUrl, ?array $longUrls = null) => [
@@ -321,7 +321,7 @@ class ListShortUrlsTest extends ApiTestCase
         ], $respPayload);
     }
 
-    public function provideInvalidFiltering(): iterable
+    public static function provideInvalidFiltering(): iterable
     {
         yield [['tagsMode' => 'invalid'], ['tagsMode']];
         yield [['orderBy' => 'invalid'], ['orderBy']];

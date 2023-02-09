@@ -113,7 +113,7 @@ class ShortUrlResolverTest extends TestCase
         $this->urlResolver->resolveEnabledShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode));
     }
 
-    public function provideDisabledShortUrls(): iterable
+    public static function provideDisabledShortUrls(): iterable
     {
         $now = Chronos::now();
 

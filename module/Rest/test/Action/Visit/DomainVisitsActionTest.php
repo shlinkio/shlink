@@ -46,7 +46,7 @@ class DomainVisitsActionTest extends TestCase
         self::assertEquals(200, $response->getStatusCode());
     }
 
-    public function provideDomainAuthorities(): iterable
+    public static function provideDomainAuthorities(): iterable
     {
         yield 'no default domain' => ['foo.com', 'foo.com'];
         yield 'default domain' => ['the_default.com', 'DEFAULT'];

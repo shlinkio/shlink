@@ -46,7 +46,7 @@ class ValidationExceptionTest extends TestCase
         self::assertStringContainsString($expectedStringRepresentation, (string) $e);
     }
 
-    public function provideExceptions(): iterable
+    public static function provideExceptions(): iterable
     {
         return [[null], [new RuntimeException()], [new LogicException()]];
     }

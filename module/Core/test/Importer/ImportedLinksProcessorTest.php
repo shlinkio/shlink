@@ -188,7 +188,7 @@ class ImportedLinksProcessorTest extends TestCase
         $this->processor->process($this->io, ImportResult::withShortUrls([$importedUrl]), $this->buildParams());
     }
 
-    public function provideUrlsWithVisits(): iterable
+    public static function provideUrlsWithVisits(): iterable
     {
         $now = Chronos::now();
         $createImportedUrl = static fn (array $visits) =>
@@ -262,7 +262,7 @@ class ImportedLinksProcessorTest extends TestCase
         );
     }
 
-    public function provideOrphanVisits(): iterable
+    public static function provideOrphanVisits(): iterable
     {
         yield 'import orphan disable without visits' => [false, [], null, 0];
         yield 'import orphan enabled without visits' => [true, [], null, 0];

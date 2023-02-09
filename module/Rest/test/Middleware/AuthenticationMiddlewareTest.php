@@ -54,9 +54,9 @@ class AuthenticationMiddlewareTest extends TestCase
         $this->middleware->process($request, $this->handler);
     }
 
-    public function provideRequestsWithoutAuth(): iterable
+    public static function provideRequestsWithoutAuth(): iterable
     {
-        $dummyMiddleware = $this->getDummyMiddleware();
+        $dummyMiddleware = self::getDummyMiddleware();
 
         yield 'no route result' => [new ServerRequest()];
         yield 'failure route result' => [(new ServerRequest())->withAttribute(
@@ -91,11 +91,11 @@ class AuthenticationMiddlewareTest extends TestCase
         $this->middleware->process($request, $this->handler);
     }
 
-    public function provideRequestsWithoutApiKey(): iterable
+    public static function provideRequestsWithoutApiKey(): iterable
     {
         $baseRequest = fn (string $routeName) => ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
-            RouteResult::fromRoute(new Route($routeName, $this->getDummyMiddleware())), // @phpstan-ignore-line
+            RouteResult::fromRoute(new Route($routeName, self::getDummyMiddleware())), // @phpstan-ignore-line
         );
         $apiKeyMessage = 'Expected one of the following authentication headers, ["X-Api-Key"], but none were provided';
         $queryMessage = 'Expected authentication to be provided in "apiKey" query param';
@@ -116,7 +116,7 @@ class AuthenticationMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals()
             ->withAttribute(
                 RouteResult::class,
-                RouteResult::fromRoute(new Route('bar', $this->getDummyMiddleware()), []),
+                RouteResult::fromRoute(new Route('bar', self::getDummyMiddleware()), []),
             )
             ->withHeader('X-Api-Key', $apiKey);
 
@@ -138,7 +138,7 @@ class AuthenticationMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals()
             ->withAttribute(
                 RouteResult::class,
-                RouteResult::fromRoute(new Route('bar', $this->getDummyMiddleware()), []),
+                RouteResult::fromRoute(new Route('bar', self::getDummyMiddleware()), []),
             )
             ->withHeader('X-Api-Key', $key);
 
@@ -152,7 +152,7 @@ class AuthenticationMiddlewareTest extends TestCase
         $this->middleware->process($request, $this->handler);
     }
 
-    private function getDummyMiddleware(): MiddlewareInterface
+    private static function getDummyMiddleware(): MiddlewareInterface
     {
         return middleware(fn () => new Response\EmptyResponse());
     }

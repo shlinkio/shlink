@@ -44,7 +44,7 @@ class DomainRedirectsActionTest extends TestCase
         $this->action->handle($request);
     }
 
-    public function provideInvalidBodies(): iterable
+    public static function provideInvalidBodies(): iterable
     {
         yield 'no domain' => [[]];
         yield 'empty domain' => [['domain' => '']];
@@ -91,7 +91,7 @@ class DomainRedirectsActionTest extends TestCase
         self::assertEquals($expectedResult, $payload->jsonSerialize());
     }
 
-    public function provideDomainsAndRedirects(): iterable
+    public static function provideDomainsAndRedirects(): iterable
     {
         yield 'full overwrite' => [Domain::withAuthority(''), [
             DomainRedirectsInputFilter::BASE_URL_REDIRECT => 'foo',

@@ -53,7 +53,7 @@ class IpCannotBeLocatedExceptionTest extends TestCase
         self::assertEquals(UnlocatableIpType::ERROR, $e->type);
     }
 
-    public function provideErrors(): iterable
+    public static function provideErrors(): iterable
     {
         yield 'Simple exception with positive code' => [new Exception('Some message', 100)];
         yield 'Runtime exception with negative code' => [new RuntimeException('Something went wrong', -50)];

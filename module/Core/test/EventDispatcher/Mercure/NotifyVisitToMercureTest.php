@@ -121,7 +121,7 @@ class NotifyVisitToMercureTest extends TestCase
         ($this->listener)(new VisitLocated($visitId));
     }
 
-    public function provideOrphanVisits(): iterable
+    public static function provideOrphanVisits(): iterable
     {
         $visitor = Visitor::emptyInstance();
 

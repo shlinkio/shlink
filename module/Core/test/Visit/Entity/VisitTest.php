@@ -29,7 +29,7 @@ class VisitTest extends TestCase
         ], $visit->jsonSerialize());
     }
 
-    public function provideUserAgents(): iterable
+    public static function provideUserAgents(): iterable
     {
         yield 'Chrome' => [
             'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36',
@@ -56,7 +56,7 @@ class VisitTest extends TestCase
         self::assertEquals($expectedAddress, $visit->getRemoteAddr());
     }
 
-    public function provideAddresses(): iterable
+    public static function provideAddresses(): iterable
     {
         yield 'anonymized null address' => [true, null, null];
         yield 'non-anonymized null address' => [false, null, null];

@@ -48,7 +48,7 @@ class InitialApiKeyDelegatorTest extends TestCase
         self::assertSame($result, $app);
     }
 
-    public function provideConfigs(): iterable
+    public static function provideConfigs(): iterable
     {
         yield 'no api key' => [[], 0];
         yield 'null api key' => [['initial_api_key' => null], 0];

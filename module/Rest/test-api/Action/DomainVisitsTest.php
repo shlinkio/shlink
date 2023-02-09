@@ -32,7 +32,7 @@ class DomainVisitsTest extends ApiTestCase
         self::assertCount($expectedVisitsAmount, $payload['visits']['data']);
     }
 
-    public function provideDomains(): iterable
+    public static function provideDomains(): iterable
     {
         yield 'example.com with admin API key' => ['valid_api_key', 'example.com', false, 0];
         yield 'DEFAULT with admin API key' => ['valid_api_key', 'DEFAULT', false, 7];
@@ -59,7 +59,7 @@ class DomainVisitsTest extends ApiTestCase
         self::assertEquals($domain, $payload['authority']);
     }
 
-    public function provideApiKeysAndTags(): iterable
+    public static function provideApiKeysAndTags(): iterable
     {
         yield 'admin API key with invalid domain' => ['valid_api_key', 'invalid_domain.com'];
         yield 'domain API key with not-owned valid domain' => ['domain_api_key', 'this_domain_is_detached.com'];
@@ -78,7 +78,7 @@ class DomainVisitsTest extends ApiTestCase
         self::assertEquals($expectedType, $payload['type']);
     }
 
-    public function provideApiVersions(): iterable
+    public static function provideApiVersions(): iterable
     {
         yield ['1', 'DOMAIN_NOT_FOUND'];
         yield ['2', 'DOMAIN_NOT_FOUND'];

@@ -33,7 +33,7 @@ class ShortUrlDataTransformerTest extends TestCase
         self::assertEquals($expectedMeta, $meta);
     }
 
-    public function provideShortUrls(): iterable
+    public static function provideShortUrls(): iterable
     {
         $maxVisits = random_int(1, 1000);
         $now = Chronos::now();

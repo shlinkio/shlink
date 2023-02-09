@@ -57,7 +57,7 @@ class ListDomainsCommandTest extends TestCase
         self::assertEquals(ExitCodes::EXIT_SUCCESS, $this->commandTester->getStatusCode());
     }
 
-    public function provideInputsAndOutputs(): iterable
+    public static function provideInputsAndOutputs(): iterable
     {
         $withoutRedirectsOutput = <<<OUTPUT
         +---------+------------+

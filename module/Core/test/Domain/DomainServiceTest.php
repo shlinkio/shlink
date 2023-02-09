@@ -44,7 +44,7 @@ class DomainServiceTest extends TestCase
         self::assertEquals($expectedResult, $result);
     }
 
-    public function provideExcludedDomains(): iterable
+    public static function provideExcludedDomains(): iterable
     {
         $default = DomainItem::forDefaultDomain('default.com', new EmptyNotFoundRedirectConfig());
         $adminApiKey = ApiKey::create();
@@ -190,7 +190,7 @@ class DomainServiceTest extends TestCase
         self::assertEquals('baz.com', $result->invalidShortUrlRedirect());
     }
 
-    public function provideFoundDomains(): iterable
+    public static function provideFoundDomains(): iterable
     {
         $domain = Domain::withAuthority('');
         $adminApiKey = ApiKey::create();

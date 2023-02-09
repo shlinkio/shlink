@@ -52,7 +52,7 @@ class TagsPaginatorAdapterTest extends DatabaseTestCase
         self::assertEquals($expectedTotalCount, $adapter->getNbResults());
     }
 
-    public function provideFilters(): iterable
+    public static function provideFilters(): iterable
     {
         yield [null, null, 0, 10, ['another', 'bar', 'baz', 'foo'], 4];
         yield [null, null, 2, 10, ['baz', 'foo'], 4];

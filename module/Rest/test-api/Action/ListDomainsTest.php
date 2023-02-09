@@ -30,7 +30,7 @@ class ListDomainsTest extends ApiTestCase
         ], $respPayload);
     }
 
-    public function provideApiKeysAndDomains(): iterable
+    public static function provideApiKeysAndDomains(): iterable
     {
         yield 'admin API key' => ['valid_api_key', [
             [

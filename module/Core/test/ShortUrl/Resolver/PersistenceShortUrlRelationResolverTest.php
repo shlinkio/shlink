@@ -55,7 +55,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
         self::assertEquals($authority, $result->authority);
     }
 
-    public function provideFoundDomains(): iterable
+    public static function provideFoundDomains(): iterable
     {
         $authority = 's.test';
 
@@ -89,7 +89,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
         self::assertEquals($expectedTags, $result->toArray());
     }
 
-    public function provideTags(): iterable
+    public static function provideTags(): iterable
     {
         yield 'no duplicated tags' => [['foo', 'bar', 'baz'], [new Tag('foo'), new Tag('bar'), new Tag('baz')]];
         yield 'duplicated tags' => [['foo', 'bar', 'bar'], [new Tag('foo'), new Tag('bar')]];

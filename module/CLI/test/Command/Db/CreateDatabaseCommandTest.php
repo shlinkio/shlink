@@ -124,7 +124,7 @@ class CreateDatabaseCommandTest extends TestCase
         self::assertStringContainsString('Database properly created!', $output);
     }
 
-    public function provideEmptyDatabase(): iterable
+    public static function provideEmptyDatabase(): iterable
     {
         yield 'no tables' => [[]];
         yield 'migrations table' => [[MIGRATIONS_TABLE]];

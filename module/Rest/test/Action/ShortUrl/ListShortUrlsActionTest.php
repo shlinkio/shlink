@@ -70,7 +70,7 @@ class ListShortUrlsActionTest extends TestCase
         self::assertEquals(200, $response->getStatusCode());
     }
 
-    public function provideFilteringData(): iterable
+    public static function provideFilteringData(): iterable
     {
         yield [[], 1, null, [], null];
         yield [['page' => 10], 10, null, [], null];

@@ -31,7 +31,7 @@ class MissingAuthenticationExceptionTest extends TestCase
         self::assertEquals(['expectedHeaders' => $expectedHeaders], $e->getAdditionalData());
     }
 
-    public function provideExpectedHeaders(): iterable
+    public static function provideExpectedHeaders(): iterable
     {
         yield [['foo', 'bar']];
         yield [['something']];
@@ -55,7 +55,7 @@ class MissingAuthenticationExceptionTest extends TestCase
         self::assertEquals(['param' => $param], $e->getAdditionalData());
     }
 
-    public function provideExpectedParam(): iterable
+    public static function provideExpectedParam(): iterable
     {
         yield ['foo'];
         yield ['bar'];

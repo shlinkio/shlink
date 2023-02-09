@@ -60,7 +60,7 @@ class DomainRedirectsCommandTest extends TestCase
         self::assertEquals(3, substr_count($output, '(Leave empty for no redirect)'));
     }
 
-    public function provideDomains(): iterable
+    public static function provideDomains(): iterable
     {
         yield 'no domain' => [null];
         yield 'domain without redirects' => [Domain::withAuthority('')];

@@ -24,7 +24,7 @@ class GlobalVisitsTest extends ApiTestCase
         self::assertEquals(3, $payload['visits']['orphanVisitsCount']);
     }
 
-    public function provideApiKeys(): iterable
+    public static function provideApiKeys(): iterable
     {
         yield 'admin API key' => ['valid_api_key', 7];
         yield 'domain API key' => ['domain_api_key', 0];

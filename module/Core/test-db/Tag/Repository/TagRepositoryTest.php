@@ -109,7 +109,7 @@ class TagRepositoryTest extends DatabaseTestCase
         }
     }
 
-    public function provideFilters(): iterable
+    public static function provideFilters(): iterable
     {
         $defaultList = [
             ['another', 0, 0, 0],

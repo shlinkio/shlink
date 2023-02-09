@@ -46,7 +46,7 @@ class GeolocationDbUpdateFailedExceptionTest extends TestCase
         self::assertEquals($prev, $e->getPrevious());
     }
 
-    public function providePrev(): iterable
+    public static function providePrev(): iterable
     {
         yield 'no prev' => [null];
         yield 'RuntimeException' => [new RuntimeException('prev')];

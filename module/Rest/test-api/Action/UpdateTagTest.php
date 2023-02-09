@@ -29,7 +29,7 @@ class UpdateTagTest extends ApiTestCase
         self::assertEquals('Invalid data', $payload['title']);
     }
 
-    public function provideInvalidBody(): iterable
+    public static function provideInvalidBody(): iterable
     {
         yield [[]];
         yield [['oldName' => 'foo']];
@@ -57,7 +57,7 @@ class UpdateTagTest extends ApiTestCase
         self::assertEquals('Tag not found', $payload['title']);
     }
 
-    public function provideTagNotFoundApiVersions(): iterable
+    public static function provideTagNotFoundApiVersions(): iterable
     {
         yield 'version 1' => ['1', 'TAG_NOT_FOUND'];
         yield 'version 2' => ['2', 'TAG_NOT_FOUND'];
@@ -85,7 +85,7 @@ class UpdateTagTest extends ApiTestCase
         self::assertEquals('Tag conflict', $payload['title']);
     }
 
-    public function provideTagConflictsApiVersions(): iterable
+    public static function provideTagConflictsApiVersions(): iterable
     {
         yield 'version 1' => ['1', 'TAG_CONFLICT'];
         yield 'version 2' => ['2', 'TAG_CONFLICT'];

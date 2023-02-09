@@ -43,7 +43,7 @@ class TrimTrailingSlashMiddlewareTest extends TestCase
         $this->middleware($trailingSlashEnabled)->process($inputRequest, $this->requestHandler);
     }
 
-    public function provideRequests(): iterable
+    public static function provideRequests(): iterable
     {
         yield 'trailing slash disabled' => [
             false,

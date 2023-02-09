@@ -85,7 +85,7 @@ class CreateShortUrlActionTest extends TestCase
         $this->action->handle($request);
     }
 
-    public function provideInvalidDomains(): iterable
+    public static function provideInvalidDomains(): iterable
     {
         yield ['localhost:80000'];
         yield ['127.0.0.1'];
