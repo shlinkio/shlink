@@ -9,6 +9,8 @@ use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Uri;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
@@ -32,10 +34,7 @@ class NotFoundTemplateHandlerTest extends TestCase
         $this->handler = new NotFoundTemplateHandler($readFile);
     }
 
-    /**
-     * @test
-     * @dataProvider provideTemplates
-     */
+    #[Test, DataProvider('provideTemplates')]
     public function properErrorTemplateIsRendered(ServerRequestInterface $request, string $expectedTemplate): void
     {
         $resp = $this->handler->handle($request->withHeader('Accept', 'text/html'));

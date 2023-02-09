@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\CreateShortUrlCommand;
@@ -45,7 +47,7 @@ class CreateShortUrlCommandTest extends TestCase
         $this->commandTester = $this->testerForCommand($command);
     }
 
-    /** @test */
+    #[Test]
     public function properShortCodeIsCreatedIfLongUrlIsCorrect(): void
     {
         $shortUrl = ShortUrl::createFake();
@@ -64,7 +66,7 @@ class CreateShortUrlCommandTest extends TestCase
         self::assertStringContainsString('stringified_short_url', $output);
     }
 
-    /** @test */
+    #[Test]
     public function exceptionWhileParsingLongUrlOutputsError(): void
     {
         $url = 'http://domain.com/invalid';
@@ -80,7 +82,7 @@ class CreateShortUrlCommandTest extends TestCase
         self::assertStringContainsString('Provided URL http://domain.com/invalid is invalid.', $output);
     }
 
-    /** @test */
+    #[Test]
     public function providingNonUniqueSlugOutputsError(): void
     {
         $this->urlShortener->expects($this->once())->method('shorten')->withAnyParameters()->willThrowException(
@@ -95,7 +97,7 @@ class CreateShortUrlCommandTest extends TestCase
         self::assertStringContainsString('Provided slug "my-slug" is already in use', $output);
     }
 
-    /** @test */
+    #[Test]
     public function properlyProcessesProvidedTags(): void
     {
         $shortUrl = ShortUrl::createFake();
@@ -119,10 +121,7 @@ class CreateShortUrlCommandTest extends TestCase
         self::assertStringContainsString('stringified_short_url', $output);
     }
 
-    /**
-     * @test
-     * @dataProvider provideDomains
-     */
+    #[Test, DataProvider('provideDomains')]
     public function properlyProcessesProvidedDomain(array $input, ?string $expectedDomain): void
     {
         $this->urlShortener->expects($this->once())->method('shorten')->with(
@@ -147,10 +146,7 @@ class CreateShortUrlCommandTest extends TestCase
         yield 'default domain' => [['--domain' => self::DEFAULT_DOMAIN], null];
     }
 
-    /**
-     * @test
-     * @dataProvider provideFlags
-     */
+    #[Test, DataProvider('provideFlags')]
     public function urlValidationHasExpectedValueBasedOnProvidedFlags(array $options, ?bool $expectedValidateUrl): void
     {
         $shortUrl = ShortUrl::createFake();

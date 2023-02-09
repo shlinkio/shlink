@@ -6,6 +6,8 @@ namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use Cake\Chronos\Chronos;
 use GuzzleHttp\RequestOptions;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
@@ -150,10 +152,7 @@ class ListShortUrlsTest extends ApiTestCase
         'forwardQuery' => true,
     ];
 
-    /**
-     * @test
-     * @dataProvider provideFilteredLists
-     */
+    #[Test, DataProvider('provideFilteredLists')]
     public function shortUrlsAreProperlyListed(array $query, array $expectedShortUrls, string $apiKey): void
     {
         $resp = $this->callApiWithKey(self::METHOD_GET, '/short-urls', [RequestOptions::QUERY => $query], $apiKey);
@@ -302,10 +301,7 @@ class ListShortUrlsTest extends ApiTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider provideInvalidFiltering
-     */
+    #[Test, DataProvider('provideInvalidFiltering')]
     public function errorIsReturnedWhenProvidingInvalidValues(array $query, array $expectedInvalidElements): void
     {
         $resp = $this->callApiWithKey(self::METHOD_GET, '/short-urls', [RequestOptions::QUERY => $query]);

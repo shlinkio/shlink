@@ -6,6 +6,8 @@ namespace ShlinkioTest\Shlink\Core\Exception;
 
 use Exception;
 use LogicException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\Exception\RuntimeException;
@@ -14,7 +16,7 @@ use Throwable;
 
 class IpCannotBeLocatedExceptionTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function forEmptyAddressInitializesException(): void
     {
         $e = IpCannotBeLocatedException::forEmptyAddress();
@@ -26,7 +28,7 @@ class IpCannotBeLocatedExceptionTest extends TestCase
         self::assertEquals(UnlocatableIpType::EMPTY_ADDRESS, $e->type);
     }
 
-    /** @test */
+    #[Test]
     public function forLocalhostInitializesException(): void
     {
         $e = IpCannotBeLocatedException::forLocalhost();
@@ -38,10 +40,7 @@ class IpCannotBeLocatedExceptionTest extends TestCase
         self::assertEquals(UnlocatableIpType::LOCALHOST, $e->type);
     }
 
-    /**
-     * @test
-     * @dataProvider provideErrors
-     */
+    #[Test, DataProvider('provideErrors')]
     public function forErrorInitializesException(Throwable $prev): void
     {
         $e = IpCannotBeLocatedException::forError($prev);

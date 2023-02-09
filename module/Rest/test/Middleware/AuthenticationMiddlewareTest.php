@@ -10,6 +10,8 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -42,10 +44,7 @@ class AuthenticationMiddlewareTest extends TestCase
         $this->handler = $this->createMock(RequestHandlerInterface::class);
     }
 
-    /**
-     * @test
-     * @dataProvider provideRequestsWithoutAuth
-     */
+    #[Test, DataProvider('provideRequestsWithoutAuth')]
     public function someSituationsFallbackToNextMiddleware(ServerRequestInterface $request): void
     {
         $this->handler->expects($this->once())->method('handle')->with($request)->willReturn(new Response());
@@ -75,10 +74,7 @@ class AuthenticationMiddlewareTest extends TestCase
         )->withMethod(RequestMethodInterface::METHOD_OPTIONS)];
     }
 
-    /**
-     * @test
-     * @dataProvider provideRequestsWithoutApiKey
-     */
+    #[Test, DataProvider('provideRequestsWithoutApiKey')]
     public function throwsExceptionWhenNoApiKeyIsProvided(
         ServerRequestInterface $request,
         string $expectedMessage,
@@ -109,7 +105,7 @@ class AuthenticationMiddlewareTest extends TestCase
         ];
     }
 
-    /** @test */
+    #[Test]
     public function throwsExceptionWhenProvidedApiKeyIsInvalid(): void
     {
         $apiKey = 'abc123';
@@ -130,7 +126,7 @@ class AuthenticationMiddlewareTest extends TestCase
         $this->middleware->process($request, $this->handler);
     }
 
-    /** @test */
+    #[Test]
     public function validApiKeyFallsBackToNextMiddleware(): void
     {
         $apiKey = ApiKey::create();

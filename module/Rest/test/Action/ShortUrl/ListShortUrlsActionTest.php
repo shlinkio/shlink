@@ -8,6 +8,8 @@ use Cake\Chronos\Chronos;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
@@ -35,10 +37,7 @@ class ListShortUrlsActionTest extends TestCase
         ));
     }
 
-    /**
-     * @test
-     * @dataProvider provideFilteringData
-     */
+    #[Test, DataProvider('provideFilteringData')]
     public function properListReturnsSuccessResponse(
         array $query,
         int $expectedPage,

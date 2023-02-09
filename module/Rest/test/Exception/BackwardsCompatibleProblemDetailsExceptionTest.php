@@ -6,6 +6,8 @@ namespace ShlinkioTest\Shlink\Rest\Exception;
 
 use Exception;
 use Mezzio\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\DeleteShortUrlException;
 use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
@@ -23,10 +25,7 @@ use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 
 class BackwardsCompatibleProblemDetailsExceptionTest extends TestCase
 {
-    /**
-     * @test
-     * @dataProvider provideTypes
-     */
+    #[Test, DataProvider('provideTypes')]
     public function typeIsRemappedOnWrappedException(
         string $wrappedType,
         string $expectedType,

@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace ShlinkioApiTest\Shlink\Rest\Middleware;
 
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use function explode;
 
 class ImplicitOptionsTest extends ApiTestCase
 {
-    /** @test */
+    #[Test]
     public function optionsRequestsReturnEmptyResponse(): void
     {
         $resp = $this->callApi(self::METHOD_OPTIONS, '/short-urls');
@@ -19,7 +20,7 @@ class ImplicitOptionsTest extends ApiTestCase
         self::assertEmpty((string) $resp->getBody());
     }
 
-    /** @test */
+    #[Test]
     public function optionsRequestsReturnAllowedMethodsForEndpoint(): void
     {
         $resp = $this->callApi(self::METHOD_OPTIONS, '/short-urls');

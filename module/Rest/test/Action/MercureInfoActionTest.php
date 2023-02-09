@@ -7,6 +7,8 @@ namespace ShlinkioTest\Shlink\Rest\Action;
 use Cake\Chronos\Chronos;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Mercure\JwtProviderInterface;
@@ -22,10 +24,7 @@ class MercureInfoActionTest extends TestCase
         $this->provider = $this->createMock(JwtProviderInterface::class);
     }
 
-    /**
-     * @test
-     * @dataProvider provideNoHostConfigs
-     */
+    #[Test, DataProvider('provideNoHostConfigs')]
     public function throwsExceptionWhenConfigDoesNotHavePublicHost(array $mercureConfig): void
     {
         $this->provider->expects($this->never())->method('buildSubscriptionToken');
@@ -49,10 +48,7 @@ class MercureInfoActionTest extends TestCase
         yield 'days defined' => [['public_hub_url' => 'http://foobar.com', 'jwt_days_duration' => 20]];
     }
 
-    /**
-     * @test
-     * @dataProvider provideDays
-     */
+    #[Test, DataProvider('provideDays')]
     public function returnsExpectedInfoWhenEverythingIsOk(?int $days): void
     {
         $this->provider->expects($this->once())->method('buildSubscriptionToken')->willReturn('abc.123');

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use Laminas\Diactoros\ServerRequest;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
@@ -33,7 +34,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function properDataIsPassedWhenGeneratingShortCode(): void
     {
         $apiKey = ApiKey::create();

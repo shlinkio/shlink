@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\ShortUrl\Helper;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
@@ -11,10 +13,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 
 class ShortUrlStringifierTest extends TestCase
 {
-    /**
-     * @test
-     * @dataProvider provideConfigAndShortUrls
-     */
+    #[Test, DataProvider('provideConfigAndShortUrls')]
     public function generatesExpectedOutputBasedOnConfigAndShortUrl(
         array $config,
         string $basePath,

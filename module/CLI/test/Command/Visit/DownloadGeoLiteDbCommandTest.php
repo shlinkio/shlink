@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Visit;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Visit\DownloadGeoLiteDbCommand;
@@ -29,10 +31,7 @@ class DownloadGeoLiteDbCommandTest extends TestCase
         $this->commandTester = $this->testerForCommand(new DownloadGeoLiteDbCommand($this->dbUpdater));
     }
 
-    /**
-     * @test
-     * @dataProvider provideFailureParams
-     */
+    #[Test, DataProvider('provideFailureParams')]
     public function showsProperMessageWhenGeoLiteUpdateFails(
         bool $olderDbExists,
         string $expectedMessage,
@@ -75,10 +74,7 @@ class DownloadGeoLiteDbCommandTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider provideSuccessParams
-     */
+    #[Test, DataProvider('provideSuccessParams')]
     public function printsExpectedMessageWhenNoErrorOccurs(callable $checkUpdateBehavior, string $expectedMessage): void
     {
         $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willReturnCallback(

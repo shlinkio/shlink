@@ -6,6 +6,8 @@ namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use Cake\Chronos\Chronos;
 use GuzzleHttp\RequestOptions;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use function Functional\map;
@@ -14,7 +16,7 @@ use function sprintf;
 
 class CreateShortUrlTest extends ApiTestCase
 {
-    /** @test */
+    #[Test]
     public function createsNewShortUrlWhenOnlyLongUrlIsProvided(): void
     {
         $expectedKeys = ['shortCode', 'shortUrl', 'longUrl', 'dateCreated', 'visitsCount', 'tags'];
@@ -26,7 +28,7 @@ class CreateShortUrlTest extends ApiTestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function createsNewShortUrlWithCustomSlug(): void
     {
         [$statusCode, $payload] = $this->createShortUrl(['customSlug' => 'my cool slug']);
@@ -35,10 +37,7 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertEquals('my-cool-slug', $payload['shortCode']);
     }
 
-    /**
-     * @test
-     * @dataProvider provideConflictingSlugs
-     */
+    #[Test, DataProvider('provideConflictingSlugs')]
     public function failsToCreateShortUrlWithDuplicatedSlug(string $slug, ?string $domain): void
     {
         $suffix = $domain === null ? '' : sprintf(' for domain "%s"', $domain);
@@ -60,10 +59,7 @@ class CreateShortUrlTest extends ApiTestCase
         }
     }
 
-    /**
-     * @test
-     * @dataProvider provideDuplicatedSlugApiVersions
-     */
+    #[Test, DataProvider('provideDuplicatedSlugApiVersions')]
     public function expectedTypeIsReturnedForConflictingSlugBasedOnApiVersion(
         string $version,
         string $expectedType,
@@ -79,10 +75,7 @@ class CreateShortUrlTest extends ApiTestCase
         yield ['3', 'https://shlink.io/api/error/non-unique-slug'];
     }
 
-    /**
-     * @test
-     * @dataProvider provideTags
-     */
+    #[Test, DataProvider('provideTags')]
     public function createsNewShortUrlWithTags(array $providedTags, array $expectedTags): void
     {
         [$statusCode, ['tags' => $tags]] = $this->createShortUrl(['tags' => $providedTags]);
@@ -98,10 +91,7 @@ class CreateShortUrlTest extends ApiTestCase
         yield 'tags with special chars' => [['UUU', 'Aäa'], ['uuu', 'aäa']];
     }
 
-    /**
-     * @test
-     * @dataProvider provideMaxVisits
-     */
+    #[Test, DataProvider('provideMaxVisits')]
     public function createsNewShortUrlWithVisitsLimit(int $maxVisits): void
     {
         [$statusCode, ['shortCode' => $shortCode]] = $this->createShortUrl(['maxVisits' => $maxVisits]);
@@ -121,7 +111,7 @@ class CreateShortUrlTest extends ApiTestCase
         return map(range(10, 15), fn(int $i) => [$i]);
     }
 
-    /** @test */
+    #[Test]
     public function createsShortUrlWithValidSince(): void
     {
         [$statusCode, ['shortCode' => $shortCode]] = $this->createShortUrl([
@@ -135,7 +125,7 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertEquals(self::STATUS_NOT_FOUND, $lastResp->getStatusCode());
     }
 
-    /** @test */
+    #[Test]
     public function createsShortUrlWithValidUntil(): void
     {
         [$statusCode, ['shortCode' => $shortCode]] = $this->createShortUrl([
@@ -149,10 +139,7 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertEquals(self::STATUS_NOT_FOUND, $lastResp->getStatusCode());
     }
 
-    /**
-     * @test
-     * @dataProvider provideMatchingBodies
-     */
+    #[Test, DataProvider('provideMatchingBodies')]
     public function returnsAnExistingShortUrlWhenRequested(array $body): void
     {
         [$firstStatusCode, ['shortCode' => $firstShortCode]] = $this->createShortUrl($body);
@@ -182,10 +169,7 @@ class CreateShortUrlTest extends ApiTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider provideConflictingSlugs
-     */
+    #[Test, DataProvider('provideConflictingSlugs')]
     public function returnsErrorWhenRequestingReturnExistingButCustomSlugIsInUse(string $slug, ?string $domain): void
     {
         $longUrl = 'https://www.alejandrocelaya.com';
@@ -208,7 +192,7 @@ class CreateShortUrlTest extends ApiTestCase
         yield 'with domain' => ['custom-with-domain', 'some-domain.com'];
     }
 
-    /** @test */
+    #[Test]
     public function createsNewShortUrlIfRequestedToFindButThereIsNoMatch(): void
     {
         [$firstStatusCode, ['shortCode' => $firstShortCode]] = $this->createShortUrl([
@@ -224,10 +208,7 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertNotEquals($firstShortCode, $secondShortCode);
     }
 
-    /**
-     * @test
-     * @dataProvider provideIdn
-     */
+    #[Test, DataProvider('provideIdn')]
     public function createsNewShortUrlWithInternationalizedDomainName(string $longUrl): void
     {
         [$statusCode, $payload] = $this->createShortUrl(['longUrl' => $longUrl]);
@@ -243,10 +224,7 @@ class CreateShortUrlTest extends ApiTestCase
         yield ['http://téstb.shlink.io']; // Redirects to http://tést.shlink.io
     }
 
-    /**
-     * @test
-     * @dataProvider provideInvalidUrls
-     */
+    #[Test, DataProvider('provideInvalidUrls')]
     public function failsToCreateShortUrlWithInvalidLongUrl(string $url, string $version, string $expectedType): void
     {
         $expectedDetail = sprintf('Provided URL %s is invalid. Try with a different one.', $url);
@@ -267,10 +245,7 @@ class CreateShortUrlTest extends ApiTestCase
         yield 'API version 3' => ['https://this-has-to-be-invalid.com', '3', 'https://shlink.io/api/error/invalid-url'];
     }
 
-    /**
-     * @test
-     * @dataProvider provideInvalidArgumentApiVersions
-     */
+    #[Test, DataProvider('provideInvalidArgumentApiVersions')]
     public function failsToCreateShortUrlWithoutLongUrl(array $payload, string $version, string $expectedType): void
     {
         $resp = $this->callApiWithKey(
@@ -307,7 +282,7 @@ class CreateShortUrlTest extends ApiTestCase
         ], '3', 'https://shlink.io/api/error/invalid-data'];
     }
 
-    /** @test */
+    #[Test]
     public function defaultDomainIsDroppedIfProvided(): void
     {
         [$createStatusCode, ['shortCode' => $shortCode]] = $this->createShortUrl([
@@ -323,10 +298,7 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertNull($payload['domain']);
     }
 
-    /**
-     * @test
-     * @dataProvider provideDomains
-     */
+    #[Test, DataProvider('provideDomains')]
     public function apiKeyDomainIsEnforced(?string $providedDomain): void
     {
         [$statusCode, ['domain' => $returnedDomain]] = $this->createShortUrl(
@@ -345,10 +317,7 @@ class CreateShortUrlTest extends ApiTestCase
         yield 'example domain' => ['example.com'];
     }
 
-    /**
-     * @test
-     * @dataProvider provideTwitterUrls
-     */
+    #[Test, DataProvider('provideTwitterUrls')]
     public function urlsWithBothProtectionCanBeShortenedWithUrlValidationEnabled(string $longUrl): void
     {
         [$statusCode] = $this->createShortUrl(['longUrl' => $longUrl, 'validateUrl' => true]);
@@ -363,7 +332,7 @@ class CreateShortUrlTest extends ApiTestCase
         yield ['https://mobile.twitter.com/shlinkio/status/1360637738421268481'];
     }
 
-    /** @test */
+    #[Test]
     public function canCreateShortUrlsWithEmojis(): void
     {
         [$statusCode, $payload] = $this->createShortUrl([
@@ -377,7 +346,7 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertEquals('http://s.test/🦣🦣🦣', $payload['shortUrl']);
     }
 
-    /** @test */
+    #[Test]
     public function canCreateShortUrlsWithDeviceLongUrls(): void
     {
         [$statusCode, $payload] = $this->createShortUrl([

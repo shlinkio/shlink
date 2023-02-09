@@ -7,6 +7,8 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl;
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
@@ -40,10 +42,7 @@ class ShortUrlResolverTest extends TestCase
         $this->urlResolver = new ShortUrlResolver($this->em, new UrlShortenerOptions());
     }
 
-    /**
-     * @test
-     * @dataProvider provideAdminApiKeys
-     */
+    #[Test, DataProvider('provideAdminApiKeys')]
     public function shortCodeIsProperlyParsed(?ApiKey $apiKey): void
     {
         $shortUrl = ShortUrl::withLongUrl('expected_url');
@@ -60,10 +59,7 @@ class ShortUrlResolverTest extends TestCase
         self::assertSame($shortUrl, $result);
     }
 
-    /**
-     * @test
-     * @dataProvider provideAdminApiKeys
-     */
+    #[Test, DataProvider('provideAdminApiKeys')]
     public function exceptionIsThrownIfShortcodeIsNotFound(?ApiKey $apiKey): void
     {
         $shortCode = 'abc123';
@@ -77,7 +73,7 @@ class ShortUrlResolverTest extends TestCase
         $this->urlResolver->resolveShortUrl($identifier, $apiKey);
     }
 
-    /** @test */
+    #[Test]
     public function shortCodeToEnabledShortUrlProperlyParsesShortCode(): void
     {
         $shortUrl = ShortUrl::withLongUrl('expected_url');
@@ -94,10 +90,7 @@ class ShortUrlResolverTest extends TestCase
         self::assertSame($shortUrl, $result);
     }
 
-    /**
-     * @test
-     * @dataProvider provideDisabledShortUrls
-     */
+    #[Test, DataProvider('provideDisabledShortUrls')]
     public function shortCodeToEnabledShortUrlThrowsExceptionIfUrlIsNotEnabled(ShortUrl $shortUrl): void
     {
         $shortCode = $shortUrl->getShortCode();

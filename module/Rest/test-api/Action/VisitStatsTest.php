@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace ShlinkioApiTest\Shlink\Rest\Action;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 class VisitStatsTest extends ApiTestCase
 {
-    /**
-     * @test
-     * @dataProvider provideApiKeysAndResults
-     */
+    #[Test, DataProvider('provideApiKeysAndResults')]
     public function expectedStatsAreReturned(string $apiKey, array $expectedPayload): void
     {
         $resp = $this->callApiWithKey(self::METHOD_GET, '/visits', apiKey: $apiKey);

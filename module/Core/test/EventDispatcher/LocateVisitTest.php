@@ -6,6 +6,8 @@ namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
 use Doctrine\ORM\EntityManagerInterface;
 use OutOfRangeException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -49,7 +51,7 @@ class LocateVisitTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function invalidVisitLogsWarning(): void
     {
         $event = new UrlVisited('123');
@@ -65,7 +67,7 @@ class LocateVisitTest extends TestCase
         ($this->locateVisit)($event);
     }
 
-    /** @test */
+    #[Test]
     public function nonExistingGeoLiteDbLogsWarning(): void
     {
         $event = new UrlVisited('123');
@@ -84,7 +86,7 @@ class LocateVisitTest extends TestCase
         ($this->locateVisit)($event);
     }
 
-    /** @test */
+    #[Test]
     public function invalidAddressLogsWarning(): void
     {
         $event = new UrlVisited('123');
@@ -105,7 +107,7 @@ class LocateVisitTest extends TestCase
         ($this->locateVisit)($event);
     }
 
-    /** @test */
+    #[Test]
     public function unhandledExceptionLogsError(): void
     {
         $event = new UrlVisited('123');
@@ -126,10 +128,7 @@ class LocateVisitTest extends TestCase
         ($this->locateVisit)($event);
     }
 
-    /**
-     * @test
-     * @dataProvider provideNonLocatableVisits
-     */
+    #[Test, DataProvider('provideNonLocatableVisits')]
     public function nonLocatableVisitsResolveToEmptyLocations(Visit $visit): void
     {
         $event = new UrlVisited('123');
@@ -155,10 +154,7 @@ class LocateVisitTest extends TestCase
         yield 'localhost' => [Visit::forValidShortUrl($shortUrl, new Visitor('', '', IpAddress::LOCALHOST, ''))];
     }
 
-    /**
-     * @test
-     * @dataProvider provideIpAddresses
-     */
+    #[Test, DataProvider('provideIpAddresses')]
     public function locatableVisitsResolveToLocation(Visit $visit, ?string $originalIpAddress): void
     {
         $ipAddr = $originalIpAddress ?? $visit->getRemoteAddr();

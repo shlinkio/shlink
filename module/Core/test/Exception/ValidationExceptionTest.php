@@ -7,6 +7,8 @@ namespace ShlinkioTest\Shlink\Core\Exception;
 use Fig\Http\Message\StatusCodeInterface;
 use Laminas\InputFilter\InputFilterInterface;
 use LogicException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
@@ -17,10 +19,7 @@ use function print_r;
 
 class ValidationExceptionTest extends TestCase
 {
-    /**
-     * @test
-     * @dataProvider provideExceptions
-     */
+    #[Test, DataProvider('provideExceptions')]
     public function createsExceptionFromInputFilter(?Throwable $prev): void
     {
         $invalidData = [

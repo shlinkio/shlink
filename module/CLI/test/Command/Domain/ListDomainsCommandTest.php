@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Domain;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Domain\ListDomainsCommand;
@@ -29,10 +31,7 @@ class ListDomainsCommandTest extends TestCase
         $this->commandTester = $this->testerForCommand(new ListDomainsCommand($this->domainService));
     }
 
-    /**
-     * @test
-     * @dataProvider provideInputsAndOutputs
-     */
+    #[Test, DataProvider('provideInputsAndOutputs')]
     public function allDomainsAreProperlyPrinted(array $input, string $expectedOutput): void
     {
         $bazDomain = Domain::withAuthority('baz.com');

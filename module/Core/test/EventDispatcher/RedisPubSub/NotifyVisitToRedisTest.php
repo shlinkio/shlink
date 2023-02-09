@@ -7,6 +7,8 @@ namespace ShlinkioTest\Shlink\Core\EventDispatcher\RedisPubSub;
 use Doctrine\ORM\EntityManagerInterface;
 use DomainException;
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -35,7 +37,7 @@ class NotifyVisitToRedisTest extends TestCase
         $this->logger = $this->createMock(LoggerInterface::class);
     }
 
-    /** @test */
+    #[Test]
     public function doesNothingWhenTheFeatureIsNotEnabled(): void
     {
         $this->helper->expects($this->never())->method('publishUpdate');
@@ -46,10 +48,7 @@ class NotifyVisitToRedisTest extends TestCase
         $this->createListener(false)(new VisitLocated('123'));
     }
 
-    /**
-     * @test
-     * @dataProvider provideExceptions
-     */
+    #[Test, DataProvider('provideExceptions')]
     public function printsDebugMessageInCaseOfError(Throwable $e): void
     {
         $visitId = '123';

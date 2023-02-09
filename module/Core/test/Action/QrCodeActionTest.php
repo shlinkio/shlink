@@ -7,6 +7,8 @@ namespace ShlinkioTest\Shlink\Core\Action;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -37,7 +39,7 @@ class QrCodeActionTest extends TestCase
         $this->urlResolver = $this->createMock(ShortUrlResolverInterface::class);
     }
 
-    /** @test */
+    #[Test]
     public function aNotFoundShortCodeWillDelegateIntoNextMiddleware(): void
     {
         $shortCode = 'abc123';
@@ -50,7 +52,7 @@ class QrCodeActionTest extends TestCase
         $this->action()->process((new ServerRequest())->withAttribute('shortCode', $shortCode), $delegate);
     }
 
-    /** @test */
+    #[Test]
     public function aCorrectRequestReturnsTheQrCodeResponse(): void
     {
         $shortCode = 'abc123';
@@ -66,10 +68,7 @@ class QrCodeActionTest extends TestCase
         self::assertEquals(200, $resp->getStatusCode());
     }
 
-    /**
-     * @test
-     * @dataProvider provideQueries
-     */
+    #[Test, DataProvider('provideQueries')]
     public function imageIsReturnedWithExpectedContentTypeBasedOnProvidedFormat(
         string $defaultFormat,
         array $query,
@@ -99,10 +98,7 @@ class QrCodeActionTest extends TestCase
         yield 'unsupported format, svg default' => ['svg', ['format' => 'jpg'], 'image/svg+xml'];
     }
 
-    /**
-     * @test
-     * @dataProvider provideRequestsWithSize
-     */
+    #[Test, DataProvider('provideRequestsWithSize')]
     public function imageIsReturnedWithExpectedSize(
         QrCodeOptions $defaultOptions,
         ServerRequestInterface $req,
@@ -188,10 +184,7 @@ class QrCodeActionTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider provideRoundBlockSize
-     */
+    #[Test, DataProvider('provideRoundBlockSize')]
     public function imageCanRemoveExtraMarginWhenBlockRoundIsDisabled(
         QrCodeOptions $defaultOptions,
         ?string $roundBlockSize,

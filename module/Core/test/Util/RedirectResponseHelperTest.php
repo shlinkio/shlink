@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Util;
 
 use Laminas\Diactoros\Response\RedirectResponse;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Options\RedirectOptions;
 use Shlinkio\Shlink\Core\Util\RedirectResponseHelper;
 
 class RedirectResponseHelperTest extends TestCase
 {
-    /**
-     * @test
-     * @dataProvider provideRedirectConfigs
-     */
+    #[Test, DataProvider('provideRedirectConfigs')]
     public function expectedStatusCodeAndCacheIsReturnedBasedOnConfig(
         int $configuredStatus,
         int $configuredLifetime,

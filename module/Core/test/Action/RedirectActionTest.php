@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\Action;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -44,7 +45,7 @@ class RedirectActionTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function redirectionIsPerformedToLongUrl(): void
     {
         $shortCode = 'abc123';
@@ -64,7 +65,7 @@ class RedirectActionTest extends TestCase
         self::assertSame($expectedResp, $response);
     }
 
-    /** @test */
+    #[Test]
     public function nextMiddlewareIsInvokedIfLongUrlIsNotFound(): void
     {
         $shortCode = 'abc123';

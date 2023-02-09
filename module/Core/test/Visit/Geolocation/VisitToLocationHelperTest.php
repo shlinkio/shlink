@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Visit\Geolocation;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Util\IpAddress;
@@ -25,10 +27,7 @@ class VisitToLocationHelperTest extends TestCase
         $this->helper = new VisitToLocationHelper($this->ipLocationResolver);
     }
 
-    /**
-     * @test
-     * @dataProvider provideNonLocatableVisits
-     */
+    #[Test, DataProvider('provideNonLocatableVisits')]
     public function throwsExpectedErrorForNonLocatableVisit(
         Visit $visit,
         IpCannotBeLocatedException $expectedException,
@@ -48,7 +47,7 @@ class VisitToLocationHelperTest extends TestCase
         ];
     }
 
-    /** @test */
+    #[Test]
     public function throwsGenericErrorWhenResolvingIpFails(): void
     {
         $e = new WrongIpException('');

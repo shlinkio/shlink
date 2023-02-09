@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use GuzzleHttp\RequestOptions;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use function sprintf;
 
 class DomainVisitsTest extends ApiTestCase
 {
-    /**
-     * @test
-     * @dataProvider provideDomains
-     */
+    #[Test, DataProvider('provideDomains')]
     public function expectedVisitsAreReturned(
         string $apiKey,
         string $domain,
@@ -42,10 +41,7 @@ class DomainVisitsTest extends ApiTestCase
         yield 'DEFAULT with author API key and no bots' => ['author_api_key', 'DEFAULT', true, 4];
     }
 
-    /**
-     * @test
-     * @dataProvider provideApiKeysAndTags
-     */
+    #[Test, DataProvider('provideApiKeysAndTags')]
     public function notFoundErrorIsReturnedForInvalidTags(string $apiKey, string $domain): void
     {
         $resp = $this->callApiWithKey(self::METHOD_GET, sprintf('/domains/%s/visits', $domain), [], $apiKey);
@@ -66,10 +62,7 @@ class DomainVisitsTest extends ApiTestCase
         yield 'author API key with valid domain not used in URLs' => ['author_api_key', 'this_domain_is_detached.com'];
     }
 
-    /**
-     * @test
-     * @dataProvider provideApiVersions
-     */
+    #[Test, DataProvider('provideApiVersions')]
     public function expectedNotFoundTypeIsReturnedForApiVersion(string $version, string $expectedType): void
     {
         $resp = $this->callApiWithKey(self::METHOD_GET, sprintf('/rest/v%s/domains/invalid.com/visits', $version));

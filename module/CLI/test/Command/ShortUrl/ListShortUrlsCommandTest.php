@@ -6,6 +6,8 @@ namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use Cake\Chronos\Chronos;
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\ListShortUrlsCommand;
@@ -41,7 +43,7 @@ class ListShortUrlsCommandTest extends TestCase
         $this->commandTester = $this->testerForCommand($command);
     }
 
-    /** @test */
+    #[Test]
     public function loadingMorePagesCallsListMoreTimes(): void
     {
         // The paginator will return more than one page
@@ -63,7 +65,7 @@ class ListShortUrlsCommandTest extends TestCase
         self::assertStringNotContainsString('Continue with page 5?', $output);
     }
 
-    /** @test */
+    #[Test]
     public function havingMorePagesButAnsweringNoCallsListJustOnce(): void
     {
         // The paginator will return more than one page
@@ -89,7 +91,7 @@ class ListShortUrlsCommandTest extends TestCase
         self::assertStringNotContainsString('Continue with page 3?', $output);
     }
 
-    /** @test */
+    #[Test]
     public function passingPageWillMakeListStartOnThatPage(): void
     {
         $page = 5;
@@ -101,10 +103,7 @@ class ListShortUrlsCommandTest extends TestCase
         $this->commandTester->execute(['--page' => $page]);
     }
 
-    /**
-     * @test
-     * @dataProvider provideOptionalFlags
-     */
+    #[Test, DataProvider('provideOptionalFlags')]
     public function provideOptionalFlagsMakesNewColumnsToBeIncluded(
         array $input,
         array $expectedContents,
@@ -174,10 +173,7 @@ class ListShortUrlsCommandTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider provideArgs
-     */
+    #[Test, DataProvider('provideArgs')]
     public function serviceIsInvokedWithProvidedArgs(
         array $commandArgs,
         ?int $page,
@@ -241,10 +237,7 @@ class ListShortUrlsCommandTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider provideOrderBy
-     */
+    #[Test, DataProvider('provideOrderBy')]
     public function orderByIsProperlyComputed(array $commandArgs, ?string $expectedOrderBy): void
     {
         $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(ShortUrlsParams::fromRawData([
@@ -264,7 +257,7 @@ class ListShortUrlsCommandTest extends TestCase
         yield [['--order-by' => 'title-DESC'], 'title-DESC'];
     }
 
-    /** @test */
+    #[Test]
     public function requestingAllElementsWillSetItemsPerPage(): void
     {
         $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(ShortUrlsParams::fromRawData([

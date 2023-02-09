@@ -6,6 +6,8 @@ namespace ShlinkioTest\Shlink\Rest\Action\Visit;
 
 use Laminas\Diactoros\ServerRequestFactory;
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
@@ -25,10 +27,7 @@ class DomainVisitsActionTest extends TestCase
         $this->action = new DomainVisitsAction($this->visitsHelper, 'the_default.com');
     }
 
-    /**
-     * @test
-     * @dataProvider provideDomainAuthorities
-     */
+    #[Test, DataProvider('provideDomainAuthorities')]
     public function providingCorrectDomainReturnsVisits(string $providedDomain, string $expectedDomain): void
     {
         $apiKey = ApiKey::create();

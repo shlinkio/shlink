@@ -9,6 +9,8 @@ use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Uri;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -33,10 +35,7 @@ class NotFoundRedirectResolverTest extends TestCase
         $this->resolver = new NotFoundRedirectResolver($this->helper, new NullLogger());
     }
 
-    /**
-     * @test
-     * @dataProvider provideRedirects
-     */
+    #[Test, DataProvider('provideRedirects')]
     public function expectedRedirectionIsReturnedDependingOnTheCase(
         UriInterface $uri,
         NotFoundType $notFoundType,
@@ -113,7 +112,7 @@ class NotFoundRedirectResolverTest extends TestCase
         ];
     }
 
-    /** @test */
+    #[Test]
     public function noResponseIsReturnedIfNoConditionsMatch(): void
     {
         $notFoundType = self::notFoundType(self::requestForRoute('foo'));

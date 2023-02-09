@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use GuzzleHttp\RequestOptions;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 class ListTagsTest extends ApiTestCase
 {
-    /**
-     * @test
-     * @dataProvider provideQueries
-     */
+    #[Test, DataProvider('provideQueries')]
     public function expectedListOfTagsIsReturned(string $apiKey, array $query, array $expectedTags): void
     {
         $resp = $this->callApiWithKey(self::METHOD_GET, '/tags', [RequestOptions::QUERY => $query], $apiKey);

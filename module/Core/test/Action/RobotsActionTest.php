@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Action;
 
 use Laminas\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Action\RobotsAction;
@@ -21,10 +23,7 @@ class RobotsActionTest extends TestCase
         $this->action = new RobotsAction($this->helper);
     }
 
-    /**
-     * @test
-     * @dataProvider provideShortCodes
-     */
+    #[Test, DataProvider('provideShortCodes')]
     public function buildsRobotsLinesFromCrawlableShortCodes(array $shortCodes, string $expected): void
     {
         $this->helper

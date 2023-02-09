@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioDbTest\Shlink\Core\Visit\Repository;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
@@ -25,10 +27,7 @@ class VisitLocationRepositoryTest extends DatabaseTestCase
         $this->repo = new VisitLocationRepository($em, $em->getClassMetadata(Visit::class));
     }
 
-    /**
-     * @test
-     * @dataProvider provideBlockSize
-     */
+    #[Test, DataProvider('provideBlockSize')]
     public function findVisitsReturnsProperVisits(int $blockSize): void
     {
         $shortUrl = ShortUrl::createFake();

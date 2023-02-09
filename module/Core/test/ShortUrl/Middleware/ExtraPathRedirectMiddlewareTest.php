@@ -9,6 +9,8 @@ use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Uri;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -46,10 +48,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         $this->handler->method('handle')->willReturn(new RedirectResponse(''));
     }
 
-    /**
-     * @test
-     * @dataProvider provideNonRedirectingRequests
-     */
+    #[Test, DataProvider('provideNonRedirectingRequests')]
     public function handlerIsCalledWhenConfigPreventsRedirectWithExtraPath(
         bool $appendExtraPath,
         bool $multiSegmentEnabled,
@@ -101,10 +100,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider provideResolves
-     */
+    #[Test, DataProvider('provideResolves')]
     public function handlerIsCalledWhenNoShortUrlIsFoundAfterExpectedAmountOfIterations(
         bool $multiSegmentEnabled,
         int $expectedResolveCalls,
@@ -127,10 +123,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         $this->middleware($options)->process($request, $this->handler);
     }
 
-    /**
-     * @test
-     * @dataProvider provideResolves
-     */
+    #[Test, DataProvider('provideResolves')]
     public function visitIsTrackedAndRedirectIsReturnedWhenShortUrlIsFoundAfterExpectedAmountOfIterations(
         bool $multiSegmentEnabled,
         int $expectedResolveCalls,

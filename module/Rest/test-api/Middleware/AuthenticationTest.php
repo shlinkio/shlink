@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace ShlinkioApiTest\Shlink\Rest\Middleware;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use function sprintf;
 
 class AuthenticationTest extends ApiTestCase
 {
-    /**
-     * @test
-     * @dataProvider provideApiVersions
-     */
+    #[Test, DataProvider('provideApiVersions')]
     public function authorizationErrorIsReturnedIfNoApiKeyIsSent(string $version, string $expectedType): void
     {
         $expectedDetail = 'Expected one of the following authentication headers, ["X-Api-Key"], but none were provided';
@@ -35,10 +34,7 @@ class AuthenticationTest extends ApiTestCase
         yield 'version 3' => ['3', 'https://shlink.io/api/error/missing-authentication'];
     }
 
-    /**
-     * @test
-     * @dataProvider provideInvalidApiKeys
-     */
+    #[Test, DataProvider('provideInvalidApiKeys')]
     public function apiKeyErrorIsReturnedWhenProvidedApiKeyIsInvalid(
         string $apiKey,
         string $version,

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioDbTest\Shlink\Core\Visit\Repository;
 
 use Cake\Chronos\Chronos;
+use PHPUnit\Framework\Attributes\Test;
 use ReflectionObject;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
@@ -40,7 +41,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->relationResolver = new PersistenceShortUrlRelationResolver($this->getEntityManager());
     }
 
-    /** @test */
+    #[Test]
     public function findVisitsByShortCodeReturnsProperData(): void
     {
         [$shortCode, $domain] = $this->createShortUrlsAndVisits();
@@ -89,7 +90,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         ));
     }
 
-    /** @test */
+    #[Test]
     public function countVisitsByShortCodeReturnsProperData(): void
     {
         [$shortCode, $domain] = $this->createShortUrlsAndVisits();
@@ -126,7 +127,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         ));
     }
 
-    /** @test */
+    #[Test]
     public function findVisitsByShortCodeReturnsProperDataWhenUsingAPiKeys(): void
     {
         $adminApiKey = ApiKey::create();
@@ -158,7 +159,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         ));
     }
 
-    /** @test */
+    #[Test]
     public function findVisitsByTagReturnsProperData(): void
     {
         $foo = 'foo';
@@ -183,7 +184,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         )));
     }
 
-    /** @test */
+    #[Test]
     public function countVisitsByTagReturnsProperData(): void
     {
         $foo = 'foo';
@@ -205,7 +206,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         )));
     }
 
-    /** @test */
+    #[Test]
     public function findVisitsByDomainReturnsProperData(): void
     {
         $this->createShortUrlsAndVisits('s.test');
@@ -229,7 +230,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         )));
     }
 
-    /** @test */
+    #[Test]
     public function countVisitsByDomainReturnsProperData(): void
     {
         $this->createShortUrlsAndVisits('s.test');
@@ -253,7 +254,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         )));
     }
 
-    /** @test */
+    #[Test]
     public function countVisitsReturnsExpectedResultBasedOnApiKey(): void
     {
         $domain = Domain::withAuthority('foo.com');
@@ -316,7 +317,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertEquals(3, $this->repo->countOrphanVisits(new VisitsCountFiltering(null, true)));
     }
 
-    /** @test */
+    #[Test]
     public function findOrphanVisitsReturnsExpectedResult(): void
     {
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(['longUrl' => 'longUrl']));
@@ -365,7 +366,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         )));
     }
 
-    /** @test */
+    #[Test]
     public function countOrphanVisitsReturnsExpectedResult(): void
     {
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(['longUrl' => 'longUrl']));
@@ -402,7 +403,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         ));
     }
 
-    /** @test */
+    #[Test]
     public function findNonOrphanVisitsReturnsExpectedResult(): void
     {
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(['longUrl' => '1']));
@@ -445,7 +446,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertCount(5, $this->repo->findNonOrphanVisits(new VisitsListFiltering(null, false, null, 5, 5)));
     }
 
-    /** @test */
+    #[Test]
     public function findMostRecentOrphanVisitReturnsExpectedVisit(): void
     {
         $this->assertNull($this->repo->findMostRecentOrphanVisit());

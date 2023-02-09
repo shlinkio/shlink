@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\ApiKey\Model;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
@@ -11,7 +12,7 @@ use Shlinkio\Shlink\Rest\ApiKey\Role;
 
 class RoleDefinitionTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function forAuthoredShortUrlsCreatesRoleDefinitionAsExpected(): void
     {
         $definition = RoleDefinition::forAuthoredShortUrls();
@@ -20,7 +21,7 @@ class RoleDefinitionTest extends TestCase
         self::assertEquals([], $definition->meta);
     }
 
-    /** @test */
+    #[Test]
     public function forDomainCreatesRoleDefinitionAsExpected(): void
     {
         $domain = Domain::withAuthority('foo.com');

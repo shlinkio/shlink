@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\ShortUrl\Transformer;
 
 use Cake\Chronos\Chronos;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
@@ -22,10 +24,7 @@ class ShortUrlDataTransformerTest extends TestCase
         $this->transformer = new ShortUrlDataTransformer(new ShortUrlStringifier([]));
     }
 
-    /**
-     * @test
-     * @dataProvider provideShortUrls
-     */
+    #[Test, DataProvider('provideShortUrls')]
     public function properMetadataIsReturned(ShortUrl $shortUrl, array $expectedMeta): void
     {
         ['meta' => $meta] = $this->transformer->transform($shortUrl);

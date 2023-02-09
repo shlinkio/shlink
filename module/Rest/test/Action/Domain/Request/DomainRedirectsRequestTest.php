@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Action\Domain\Request;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirectConfigInterface;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
@@ -12,10 +14,7 @@ use Shlinkio\Shlink\Rest\Action\Domain\Request\DomainRedirectsRequest;
 
 class DomainRedirectsRequestTest extends TestCase
 {
-    /**
-     * @test
-     * @dataProvider provideInvalidData
-     */
+    #[Test, DataProvider('provideInvalidData')]
     public function throwsExceptionWhenCreatingWithInvalidData(array $data): void
     {
         $this->expectException(ValidationException::class);
@@ -28,10 +27,7 @@ class DomainRedirectsRequestTest extends TestCase
         yield 'invalid domain' => [['domain' => 'foo:bar:baz']];
     }
 
-    /**
-     * @test
-     * @dataProvider provideValidData
-     */
+    #[Test, DataProvider('provideValidData')]
     public function isProperlyCastToNotFoundRedirects(
         array $data,
         ?NotFoundRedirectConfigInterface $defaults,

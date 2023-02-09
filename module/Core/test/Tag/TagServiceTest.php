@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Tag;
 
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\ForbiddenTagOperationException;
@@ -39,7 +41,7 @@ class TagServiceTest extends TestCase
         $this->service = new TagService($this->em);
     }
 
-    /** @test */
+    #[Test]
     public function listTagsDelegatesOnRepository(): void
     {
         $expected = [new Tag('foo'), new Tag('bar')];
@@ -52,10 +54,7 @@ class TagServiceTest extends TestCase
         self::assertEquals($expected, $result->getCurrentPageResults());
     }
 
-    /**
-     * @test
-     * @dataProvider provideApiKeysAndSearchTerm
-     */
+    #[Test, DataProvider('provideApiKeysAndSearchTerm')]
     public function tagsInfoDelegatesOnRepository(
         ?ApiKey $apiKey,
         TagsParams $params,
@@ -102,17 +101,14 @@ class TagServiceTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider provideAdminApiKeys
-     */
+    #[Test, DataProvider('provideAdminApiKeys')]
     public function deleteTagsDelegatesOnRepository(?ApiKey $apiKey): void
     {
         $this->repo->expects($this->once())->method('deleteByName')->with(['foo', 'bar'])->willReturn(4);
         $this->service->deleteTags(['foo', 'bar'], $apiKey);
     }
 
-    /** @test */
+    #[Test]
     public function deleteTagsThrowsExceptionWhenProvidedApiKeyIsNotAdmin(): void
     {
         $this->repo->expects($this->never())->method('deleteByName');
@@ -126,10 +122,7 @@ class TagServiceTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @dataProvider provideAdminApiKeys
-     */
+    #[Test, DataProvider('provideAdminApiKeys')]
     public function renameInvalidTagThrowsException(?ApiKey $apiKey): void
     {
         $this->repo->expects($this->once())->method('findOneBy')->willReturn(null);
@@ -138,10 +131,7 @@ class TagServiceTest extends TestCase
         $this->service->renameTag(TagRenaming::fromNames('foo', 'bar'), $apiKey);
     }
 
-    /**
-     * @test
-     * @dataProvider provideValidRenames
-     */
+    #[Test, DataProvider('provideValidRenames')]
     public function renameValidTagChangesItsName(string $oldName, string $newName, int $count): void
     {
         $expected = new Tag('foo');
@@ -162,10 +152,7 @@ class TagServiceTest extends TestCase
         yield 'different names names' => ['foo', 'bar', 0];
     }
 
-    /**
-     * @test
-     * @dataProvider provideAdminApiKeys
-     */
+    #[Test, DataProvider('provideAdminApiKeys')]
     public function renameTagToAnExistingNameThrowsException(?ApiKey $apiKey): void
     {
         $this->repo->expects($this->once())->method('findOneBy')->willReturn(new Tag('foo'));
@@ -177,7 +164,7 @@ class TagServiceTest extends TestCase
         $this->service->renameTag(TagRenaming::fromNames('foo', 'bar'), $apiKey);
     }
 
-    /** @test */
+    #[Test]
     public function renamingTagThrowsExceptionWhenProvidedApiKeyIsNotAdmin(): void
     {
         $this->em->expects($this->never())->method('getRepository')->with(Tag::class);

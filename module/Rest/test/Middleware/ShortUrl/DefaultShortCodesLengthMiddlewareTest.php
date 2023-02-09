@@ -7,6 +7,8 @@ namespace ShlinkioTest\Shlink\Rest\Middleware\ShortUrl;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -25,10 +27,7 @@ class DefaultShortCodesLengthMiddlewareTest extends TestCase
         $this->middleware = new DefaultShortCodesLengthMiddleware(8);
     }
 
-    /**
-     * @test
-     * @dataProvider provideBodies
-     */
+    #[Test, DataProvider('provideBodies')]
     public function defaultValueIsInjectedInBodyWhenNotProvided(array $body, int $expectedLength): void
     {
         $request = ServerRequestFactory::fromGlobals()->withParsedBody($body);

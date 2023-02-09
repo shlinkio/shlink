@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Api;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Api\DisableKeyCommand;
@@ -25,7 +26,7 @@ class DisableKeyCommandTest extends TestCase
         $this->commandTester = $this->testerForCommand(new DisableKeyCommand($this->apiKeyService));
     }
 
-    /** @test */
+    #[Test]
     public function providedApiKeyIsDisabled(): void
     {
         $apiKey = 'abcd1234';
@@ -39,7 +40,7 @@ class DisableKeyCommandTest extends TestCase
         self::assertStringContainsString('API key "abcd1234" properly disabled', $output);
     }
 
-    /** @test */
+    #[Test]
     public function errorIsReturnedIfServiceThrowsException(): void
     {
         $apiKey = 'abcd1234';

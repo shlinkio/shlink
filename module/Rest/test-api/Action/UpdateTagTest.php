@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use GuzzleHttp\RequestOptions;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use function sprintf;
 
 class UpdateTagTest extends ApiTestCase
 {
-    /**
-     * @test
-     * @dataProvider provideInvalidBody
-     */
+    #[Test, DataProvider('provideInvalidBody')]
     public function notProvidingTagsReturnsBadRequest(array $body): void
     {
         $expectedDetail = 'Provided data is not valid';
@@ -36,10 +35,7 @@ class UpdateTagTest extends ApiTestCase
         yield [['newName' => 'foo']];
     }
 
-    /**
-     * @test
-     * @dataProvider provideTagNotFoundApiVersions
-     */
+    #[Test, DataProvider('provideTagNotFoundApiVersions')]
     public function tryingToRenameInvalidTagReturnsNotFound(string $version, string $expectedType): void
     {
         $expectedDetail = 'Tag with name "invalid_tag" could not be found';
@@ -64,10 +60,7 @@ class UpdateTagTest extends ApiTestCase
         yield 'version 3' => ['3', 'https://shlink.io/api/error/tag-not-found'];
     }
 
-    /**
-     * @test
-     * @dataProvider provideTagConflictsApiVersions
-     */
+    #[Test, DataProvider('provideTagConflictsApiVersions')]
     public function errorIsThrownWhenTryingToRenameTagToAnotherTagName(string $version, string $expectedType): void
     {
         $expectedDetail = 'You cannot rename tag foo to bar, because it already exists';
@@ -92,7 +85,7 @@ class UpdateTagTest extends ApiTestCase
         yield 'version 3' => ['3', 'https://shlink.io/api/error/tag-conflict'];
     }
 
-    /** @test */
+    #[Test]
     public function tagIsProperlyRenamedWhenRenamingToItself(): void
     {
         $resp = $this->callApiWithKey(self::METHOD_PUT, '/tags', [RequestOptions::JSON => [

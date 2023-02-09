@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioDbTest\Shlink\Core\Tag\Repository;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Model\Ordering;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -34,13 +36,13 @@ class TagRepositoryTest extends DatabaseTestCase
         $this->relationResolver = new PersistenceShortUrlRelationResolver($this->getEntityManager());
     }
 
-    /** @test */
+    #[Test]
     public function deleteByNameDoesNothingWhenEmptyListIsProvided(): void
     {
         self::assertEquals(0, $this->repo->deleteByName([]));
     }
 
-    /** @test */
+    #[Test]
     public function allTagsWhichMatchNameAreDeleted(): void
     {
         $names = ['foo', 'bar', 'baz'];
@@ -54,10 +56,7 @@ class TagRepositoryTest extends DatabaseTestCase
         self::assertEquals(2, $this->repo->deleteByName($toDelete));
     }
 
-    /**
-     * @test
-     * @dataProvider provideFilters
-     */
+    #[Test, DataProvider('provideFilters')]
     public function properTagsInfoIsReturned(?TagsListFiltering $filtering, array $expectedList): void
     {
         $names = ['foo', 'bar', 'baz', 'another'];
@@ -221,7 +220,7 @@ class TagRepositoryTest extends DatabaseTestCase
         ]];
     }
 
-    /** @test */
+    #[Test]
     public function tagExistsReturnsExpectedResultBasedOnApiKey(): void
     {
         $domain = Domain::withAuthority('foo.com');

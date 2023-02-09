@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Visit\Model;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
@@ -15,10 +17,7 @@ use function substr;
 
 class VisitorTest extends TestCase
 {
-    /**
-     * @test
-     * @dataProvider provideParams
-     */
+    #[Test, DataProvider('provideParams')]
     public function providedFieldsValuesAreCropped(array $params, array $expected): void
     {
         $visitor = new Visitor(...$params);
@@ -73,7 +72,7 @@ class VisitorTest extends TestCase
         return $randomString;
     }
 
-    /** @test */
+    #[Test]
     public function newNormalizedInstanceIsCreatedFromTrackingOptions(): void
     {
         $visitor = new Visitor(

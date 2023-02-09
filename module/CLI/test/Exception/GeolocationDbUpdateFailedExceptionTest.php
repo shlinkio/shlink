@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Exception;
 
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
@@ -12,10 +14,7 @@ use Throwable;
 
 class GeolocationDbUpdateFailedExceptionTest extends TestCase
 {
-    /**
-     * @test
-     * @dataProvider providePrev
-     */
+    #[Test, DataProvider('providePrev')]
     public function withOlderDbBuildsException(?Throwable $prev): void
     {
         $e = GeolocationDbUpdateFailedException::withOlderDb($prev);
@@ -29,10 +28,7 @@ class GeolocationDbUpdateFailedExceptionTest extends TestCase
         self::assertEquals($prev, $e->getPrevious());
     }
 
-    /**
-     * @test
-     * @dataProvider providePrev
-     */
+    #[Test, DataProvider('providePrev')]
     public function withoutOlderDbBuildsException(?Throwable $prev): void
     {
         $e = GeolocationDbUpdateFailedException::withoutOlderDb($prev);
@@ -53,7 +49,7 @@ class GeolocationDbUpdateFailedExceptionTest extends TestCase
         yield 'Exception' => [new Exception('prev')];
     }
 
-    /** @test */
+    #[Test]
     public function withInvalidEpochInOldDbBuildsException(): void
     {
         $e = GeolocationDbUpdateFailedException::withInvalidEpochInOldDb('foobar');

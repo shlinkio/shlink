@@ -8,6 +8,8 @@ use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -24,10 +26,7 @@ class BodyParserMiddlewareTest extends TestCase
         $this->middleware = new BodyParserMiddleware();
     }
 
-    /**
-     * @test
-     * @dataProvider provideIgnoredRequestMethods
-     */
+    #[Test, DataProvider('provideIgnoredRequestMethods')]
     public function requestsFromOtherMethodsJustFallbackToNextMiddleware(string $method): void
     {
         $request = $this->createMock(ServerRequestInterface::class);
@@ -44,7 +43,7 @@ class BodyParserMiddlewareTest extends TestCase
         yield 'OPTIONS' => ['OPTIONS'];
     }
 
-    /** @test */
+    #[Test]
     public function requestsWithNonEmptyBodyJustFallbackToNextMiddleware(): void
     {
         $request = $this->createMock(ServerRequestInterface::class);
@@ -64,7 +63,7 @@ class BodyParserMiddlewareTest extends TestCase
         $this->middleware->process($request, $nextHandler);
     }
 
-    /** @test */
+    #[Test]
     public function jsonRequestsAreJsonDecoded(): void
     {
         $body = new Stream('php://temp', 'wr');
@@ -86,7 +85,7 @@ class BodyParserMiddlewareTest extends TestCase
         $this->middleware->process($request, $handler);
     }
 
-    /** @test */
+    #[Test]
     public function invalidBodyResultsInException(): void
     {
         $body = new Stream('php://temp', 'wr');

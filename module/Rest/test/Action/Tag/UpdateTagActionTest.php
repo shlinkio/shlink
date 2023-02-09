@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 
 use Laminas\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -26,10 +28,7 @@ class UpdateTagActionTest extends TestCase
         $this->action = new UpdateTagAction($this->tagService);
     }
 
-    /**
-     * @test
-     * @dataProvider provideParams
-     */
+    #[Test, DataProvider('provideParams')]
     public function whenInvalidParamsAreProvidedAnErrorIsReturned(array $bodyParams): void
     {
         $request = $this->requestWithApiKey()->withParsedBody($bodyParams);
@@ -46,7 +45,7 @@ class UpdateTagActionTest extends TestCase
         yield 'no params' => [[]];
     }
 
-    /** @test */
+    #[Test]
     public function correctInvocationRenamesTag(): void
     {
         $request = $this->requestWithApiKey()->withParsedBody([

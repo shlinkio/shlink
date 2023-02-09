@@ -6,6 +6,8 @@ namespace ShlinkioTest\Shlink\Core\Visit\Geolocation;
 
 use Doctrine\ORM\EntityManager;
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
@@ -38,10 +40,7 @@ class VisitLocatorTest extends TestCase
         $this->visitService = new VisitLocator($this->em, $this->repo);
     }
 
-    /**
-     * @test
-     * @dataProvider provideMethodNames
-     */
+    #[Test, DataProvider('provideMethodNames')]
     public function locateVisitsIteratesAndLocatesExpectedVisits(
         string $serviceMethodName,
         string $expectedRepoMethodName,
@@ -79,10 +78,7 @@ class VisitLocatorTest extends TestCase
         yield 'locateAllVisits' => ['locateAllVisits', 'findAllVisits'];
     }
 
-    /**
-     * @test
-     * @dataProvider provideIsNonLocatableAddress
-     */
+    #[Test, DataProvider('provideIsNonLocatableAddress')]
     public function visitsWhichCannotBeLocatedAreIgnoredOrLocatedAsEmpty(
         string $serviceMethodName,
         string $expectedRepoMethodName,

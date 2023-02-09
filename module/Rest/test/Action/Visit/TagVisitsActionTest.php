@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\Visit;
 
 use Laminas\Diactoros\ServerRequestFactory;
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
@@ -25,7 +26,7 @@ class TagVisitsActionTest extends TestCase
         $this->action = new TagVisitsAction($this->visitsHelper);
     }
 
-    /** @test */
+    #[Test]
     public function providingCorrectTagReturnsVisits(): void
     {
         $tag = 'foo';

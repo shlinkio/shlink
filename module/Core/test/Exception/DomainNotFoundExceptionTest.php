@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Exception;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
 
@@ -11,7 +12,7 @@ use function sprintf;
 
 class DomainNotFoundExceptionTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function properlyCreatesExceptionFromId(): void
     {
         $id = '123';
@@ -26,7 +27,7 @@ class DomainNotFoundExceptionTest extends TestCase
         self::assertEquals(404, $e->getStatus());
     }
 
-    /** @test */
+    #[Test]
     public function properlyCreatesExceptionFromAuthority(): void
     {
         $authority = 'example.com';

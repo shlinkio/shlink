@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\Visit;
 
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsStats;
@@ -24,7 +25,7 @@ class GlobalVisitsActionTest extends TestCase
         $this->action = new GlobalVisitsAction($this->helper);
     }
 
-    /** @test */
+    #[Test]
     public function statsAreReturnedFromHelper(): void
     {
         $apiKey = ApiKey::create();

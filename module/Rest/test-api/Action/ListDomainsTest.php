@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace ShlinkioApiTest\Shlink\Rest\Action;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 class ListDomainsTest extends ApiTestCase
 {
-    /**
-     * @test
-     * @dataProvider provideApiKeysAndDomains
-     */
+    #[Test, DataProvider('provideApiKeysAndDomains')]
     public function domainsAreProperlyListed(string $apiKey, array $expectedDomains): void
     {
         $resp = $this->callApiWithKey(self::METHOD_GET, '/domains', [], $apiKey);

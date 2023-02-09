@@ -7,6 +7,8 @@ namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -30,10 +32,7 @@ class ListTagsActionTest extends TestCase
         $this->action = new ListTagsAction($this->tagService);
     }
 
-    /**
-     * @test
-     * @dataProvider provideNoStatsQueries
-     */
+    #[Test, DataProvider('provideNoStatsQueries')]
     public function returnsBaseDataWhenStatsAreNotRequested(array $query): void
     {
         $tags = [new Tag('foo'), new Tag('bar')];
@@ -68,7 +67,7 @@ class ListTagsActionTest extends TestCase
         yield 'withStats is something else' => [['withStats' => 'foo']];
     }
 
-    /** @test */
+    #[Test]
     public function returnsStatsWhenRequested(): void
     {
         $stats = [

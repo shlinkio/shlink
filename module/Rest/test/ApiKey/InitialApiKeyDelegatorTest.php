@@ -7,6 +7,8 @@ namespace ShlinkioTest\Shlink\Rest\ApiKey;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Mezzio\Application;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -25,10 +27,7 @@ class InitialApiKeyDelegatorTest extends TestCase
         $this->container = $this->createMock(ContainerInterface::class);
     }
 
-    /**
-     * @test
-     * @dataProvider provideConfigs
-     */
+    #[Test, DataProvider('provideConfigs')]
     public function apiKeyIsInitializedWhenAppropriate(array $config, int $expectedCalls): void
     {
         $app = $this->createMock(Application::class);

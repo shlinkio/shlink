@@ -7,6 +7,8 @@ namespace ShlinkioTest\Shlink\Rest\Middleware\ShortUrl;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -34,7 +36,7 @@ class OverrideDomainMiddlewareTest extends TestCase
         $this->middleware = new OverrideDomainMiddleware($this->domainService);
     }
 
-    /** @test */
+    #[Test]
     public function nextMiddlewareIsCalledWhenApiKeyDoesNotHaveProperRole(): void
     {
         $request = $this->requestWithApiKey();
@@ -48,10 +50,7 @@ class OverrideDomainMiddlewareTest extends TestCase
         self::assertSame($response, $result);
     }
 
-    /**
-     * @test
-     * @dataProvider provideBodies
-     */
+    #[Test, DataProvider('provideBodies')]
     public function overwritesRequestBodyWhenMethodIsPost(Domain $domain, array $body, array $expectedBody): void
     {
         $request = $this->requestWithApiKey()->withMethod('POST')->withParsedBody($body);
@@ -94,10 +93,7 @@ class OverrideDomainMiddlewareTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider provideMethods
-     */
+    #[Test, DataProvider('provideMethods')]
     public function setsRequestAttributeWhenMethodIsNotPost(string $method): void
     {
         $domain = Domain::withAuthority('something.com');

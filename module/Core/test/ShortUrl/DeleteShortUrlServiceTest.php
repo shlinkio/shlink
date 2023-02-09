@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\DeleteShortUrlException;
@@ -40,7 +41,7 @@ class DeleteShortUrlServiceTest extends TestCase
         $this->urlResolver->method('resolveShortUrl')->willReturn($shortUrl);
     }
 
-    /** @test */
+    #[Test]
     public function deleteByShortCodeThrowsExceptionWhenThresholdIsReached(): void
     {
         $service = $this->createService();
@@ -54,7 +55,7 @@ class DeleteShortUrlServiceTest extends TestCase
         $service->deleteByShortCode(ShortUrlIdentifier::fromShortCodeAndDomain($this->shortCode));
     }
 
-    /** @test */
+    #[Test]
     public function deleteByShortCodeDeletesUrlWhenThresholdIsReachedButExplicitlyIgnored(): void
     {
         $service = $this->createService();
@@ -67,7 +68,7 @@ class DeleteShortUrlServiceTest extends TestCase
         $service->deleteByShortCode(ShortUrlIdentifier::fromShortCodeAndDomain($this->shortCode), true);
     }
 
-    /** @test */
+    #[Test]
     public function deleteByShortCodeDeletesUrlWhenThresholdIsReachedButCheckIsDisabled(): void
     {
         $service = $this->createService(false);
@@ -80,7 +81,7 @@ class DeleteShortUrlServiceTest extends TestCase
         $service->deleteByShortCode(ShortUrlIdentifier::fromShortCodeAndDomain($this->shortCode));
     }
 
-    /** @test */
+    #[Test]
     public function deleteByShortCodeDeletesUrlWhenThresholdIsNotReached(): void
     {
         $service = $this->createService(true, 100);

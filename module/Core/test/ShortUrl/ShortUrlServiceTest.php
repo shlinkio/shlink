@@ -6,6 +6,8 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl;
 
 use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Rule\InvocationOrder;
 use PHPUnit\Framework\MockObject\Rule\InvokedCount;
@@ -49,10 +51,7 @@ class ShortUrlServiceTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @dataProvider provideShortUrlEdits
-     */
+    #[Test, DataProvider('provideShortUrlEdits')]
     public function updateShortUrlUpdatesProvidedData(
         InvocationOrder $expectedValidateCalls,
         ShortUrlEdition $shortUrlEdit,

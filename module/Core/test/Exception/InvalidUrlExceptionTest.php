@@ -6,6 +6,8 @@ namespace ShlinkioTest\Shlink\Core\Exception;
 
 use Exception;
 use Fig\Http\Message\StatusCodeInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Throwable;
@@ -14,10 +16,7 @@ use function sprintf;
 
 class InvalidUrlExceptionTest extends TestCase
 {
-    /**
-     * @test
-     * @dataProvider providePrevious
-     */
+    #[Test, DataProvider('providePrevious')]
     public function properlyCreatesExceptionFromUrl(?Throwable $prev): void
     {
         $url = 'http://the_url.com';

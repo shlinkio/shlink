@@ -7,6 +7,8 @@ namespace ShlinkioTest\Shlink\Core\ErrorHandler;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -43,10 +45,7 @@ class NotFoundRedirectHandlerTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @dataProvider provideNonRedirectScenarios
-     */
+    #[Test, DataProvider('provideNonRedirectScenarios')]
     public function nextIsCalledWhenNoRedirectIsResolved(callable $setUp): void
     {
         $expectedResp = new Response();
@@ -95,7 +94,7 @@ class NotFoundRedirectHandlerTest extends TestCase
         }];
     }
 
-    /** @test */
+    #[Test]
     public function globalRedirectIsUsedIfDomainRedirectIsNotFound(): void
     {
         $expectedResp = new Response();
@@ -113,7 +112,7 @@ class NotFoundRedirectHandlerTest extends TestCase
         self::assertSame($expectedResp, $result);
     }
 
-    /** @test */
+    #[Test]
     public function domainRedirectIsUsedIfFound(): void
     {
         $expectedResp = new Response();

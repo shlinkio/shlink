@@ -9,6 +9,8 @@ use Doctrine\DBAL\Driver;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Db\CreateDatabaseCommand;
@@ -63,7 +65,7 @@ class CreateDatabaseCommandTest extends TestCase
         $this->commandTester = $this->testerForCommand($command);
     }
 
-    /** @test */
+    #[Test]
     public function successMessageIsPrintedIfDatabaseAlreadyExists(): void
     {
         $shlinkDatabase = 'shlink_database';
@@ -81,7 +83,7 @@ class CreateDatabaseCommandTest extends TestCase
         self::assertStringContainsString('Database already exists. Run "db:migrate" command', $output);
     }
 
-    /** @test */
+    #[Test]
     public function databaseIsCreatedIfItDoesNotExist(): void
     {
         $shlinkDatabase = 'shlink_database';
@@ -96,10 +98,7 @@ class CreateDatabaseCommandTest extends TestCase
         $this->commandTester->execute([]);
     }
 
-    /**
-     * @test
-     * @dataProvider provideEmptyDatabase
-     */
+    #[Test, DataProvider('provideEmptyDatabase')]
     public function tablesAreCreatedIfDatabaseIsEmpty(array $tables): void
     {
         $shlinkDatabase = 'shlink_database';
@@ -130,7 +129,7 @@ class CreateDatabaseCommandTest extends TestCase
         yield 'migrations table' => [[MIGRATIONS_TABLE]];
     }
 
-    /** @test */
+    #[Test]
     public function databaseCheckIsSkippedForSqlite(): void
     {
         $this->driver->method('getDatabasePlatform')->willReturn($this->createMock(SqlitePlatform::class));

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Config\PostProcessor;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Config\PostProcessor\MultiSegmentSlugProcessor;
 
@@ -16,10 +18,7 @@ class MultiSegmentSlugProcessorTest extends TestCase
         $this->processor = new MultiSegmentSlugProcessor();
     }
 
-    /**
-     * @test
-     * @dataProvider provideConfigs
-     */
+    #[Test, DataProvider('provideConfigs')]
     public function parsesRoutesAsExpected(array $config, array $expectedRoutes): void
     {
         self::assertEquals($expectedRoutes, ($this->processor)($config)['routes'] ?? []);

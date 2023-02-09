@@ -6,6 +6,8 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl;
 
 use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManager;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -46,7 +48,7 @@ class UrlShortenerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function urlIsProperlyShortened(): void
     {
         $longUrl = 'http://foobar.com/12345/hello?foo=bar';
@@ -61,7 +63,7 @@ class UrlShortenerTest extends TestCase
         self::assertEquals($longUrl, $shortUrl->getLongUrl());
     }
 
-    /** @test */
+    #[Test]
     public function exceptionIsThrownWhenNonUniqueSlugIsProvided(): void
     {
         $meta = ShortUrlCreation::fromRawData(
@@ -78,10 +80,7 @@ class UrlShortenerTest extends TestCase
         $this->urlShortener->shorten($meta);
     }
 
-    /**
-     * @test
-     * @dataProvider provideExistingShortUrls
-     */
+    #[Test, DataProvider('provideExistingShortUrls')]
     public function existingShortUrlIsReturnedWhenRequested(ShortUrlCreation $meta, ShortUrl $expected): void
     {
         $repo = $this->createMock(ShortUrlRepository::class);

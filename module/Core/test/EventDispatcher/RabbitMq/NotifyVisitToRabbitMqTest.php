@@ -8,6 +8,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use DomainException;
 use Exception;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -44,7 +46,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         $this->logger = $this->createMock(LoggerInterface::class);
     }
 
-    /** @test */
+    #[Test]
     public function doesNothingWhenTheFeatureIsNotEnabled(): void
     {
         $this->helper->expects($this->never())->method('publishUpdate');
@@ -55,7 +57,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         ($this->listener(new RabbitMqOptions(enabled: false)))(new VisitLocated('123'));
     }
 
-    /** @test */
+    #[Test]
     public function notificationsAreNotSentWhenVisitCannotBeFound(): void
     {
         $visitId = '123';
@@ -70,10 +72,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         ($this->listener())(new VisitLocated($visitId));
     }
 
-    /**
-     * @test
-     * @dataProvider provideVisits
-     */
+    #[Test, DataProvider('provideVisits')]
     public function expectedChannelsAreNotifiedBasedOnTheVisitType(Visit $visit, array $expectedChannels): void
     {
         $visitId = '123';
@@ -108,10 +107,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider provideExceptions
-     */
+    #[Test, DataProvider('provideExceptions')]
     public function printsDebugMessageInCaseOfError(Throwable $e): void
     {
         $visitId = '123';
@@ -137,10 +133,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         yield [new DomainException('DomainException Error')];
     }
 
-    /**
-     * @test
-     * @dataProvider provideLegacyPayloads
-     */
+    #[Test, DataProvider('provideLegacyPayloads')]
     public function expectedPayloadIsPublishedDependingOnConfig(
         bool $legacy,
         Visit $visit,

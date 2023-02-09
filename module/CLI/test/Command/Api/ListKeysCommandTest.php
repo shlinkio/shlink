@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Api;
 
 use Cake\Chronos\Chronos;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Api\ListKeysCommand;
@@ -29,10 +31,7 @@ class ListKeysCommandTest extends TestCase
         $this->commandTester = $this->testerForCommand(new ListKeysCommand($this->apiKeyService));
     }
 
-    /**
-     * @test
-     * @dataProvider provideKeysAndOutputs
-     */
+    #[Test, DataProvider('provideKeysAndOutputs')]
     public function returnsExpectedOutput(array $keys, bool $enabledOnly, string $expected): void
     {
         $this->apiKeyService->expects($this->once())->method('listKeys')->with($enabledOnly)->willReturn($keys);

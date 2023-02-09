@@ -7,6 +7,8 @@ namespace ShlinkioTest\Shlink\CLI\GeoLite;
 use Cake\Chronos\Chronos;
 use GeoIp2\Database\Reader;
 use MaxMind\Db\Reader\Metadata;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
@@ -35,7 +37,7 @@ class GeolocationDbUpdaterTest extends TestCase
         $this->lock->method('acquire')->with($this->isTrue())->willReturn(true);
     }
 
-    /** @test */
+    #[Test]
     public function exceptionIsThrownWhenOlderDbDoesNotExistAndDownloadFails(): void
     {
         $mustBeUpdated = fn () => self::assertTrue(true);
@@ -58,10 +60,7 @@ class GeolocationDbUpdaterTest extends TestCase
         }
     }
 
-    /**
-     * @test
-     * @dataProvider provideBigDays
-     */
+    #[Test, DataProvider('provideBigDays')]
     public function exceptionIsThrownWhenOlderDbIsTooOldAndDownloadFails(int $days): void
     {
         $prev = new DbUpdateException('');
@@ -92,10 +91,7 @@ class GeolocationDbUpdaterTest extends TestCase
         yield [100];
     }
 
-    /**
-     * @test
-     * @dataProvider provideSmallDays
-     */
+    #[Test, DataProvider('provideSmallDays')]
     public function databaseIsNotUpdatedIfItIsNewEnough(string|int $buildEpoch): void
     {
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(true);
@@ -119,7 +115,7 @@ class GeolocationDbUpdaterTest extends TestCase
         return map(range(0, 34), $generateParamsWithTimestamp);
     }
 
-    /** @test */
+    #[Test]
     public function exceptionIsThrownWhenCheckingExistingDatabaseWithInvalidBuildEpoch(): void
     {
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(true);
@@ -151,10 +147,7 @@ class GeolocationDbUpdaterTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     * @dataProvider provideTrackingOptions
-     */
+    #[Test, DataProvider('provideTrackingOptions')]
     public function downloadDbIsSkippedIfTrackingIsDisabled(TrackingOptions $options): void
     {
         $result = $this->geolocationDbUpdater($options)->checkDbUpdate();

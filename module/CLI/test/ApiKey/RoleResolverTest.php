@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\ApiKey;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\ApiKey\RoleResolver;
@@ -27,10 +29,7 @@ class RoleResolverTest extends TestCase
         $this->resolver = new RoleResolver($this->domainService, 'default.com');
     }
 
-    /**
-     * @test
-     * @dataProvider provideRoles
-     */
+    #[Test, DataProvider('provideRoles')]
     public function properRolesAreResolvedBasedOnInput(
         callable $createInput,
         array $expectedRoles,
@@ -99,7 +98,7 @@ class RoleResolverTest extends TestCase
         ];
     }
 
-    /** @test */
+    #[Test]
     public function exceptionIsThrownWhenTryingToAddDomainOnlyLinkedToDefaultDomain(): void
     {
         $input = $this->createStub(InputInterface::class);

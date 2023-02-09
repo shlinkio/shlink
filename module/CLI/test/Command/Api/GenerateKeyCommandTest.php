@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Api;
 
 use Cake\Chronos\Chronos;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\ApiKey\RoleResolverInterface;
@@ -32,7 +33,7 @@ class GenerateKeyCommandTest extends TestCase
         $this->commandTester = $this->testerForCommand($command);
     }
 
-    /** @test */
+    #[Test]
     public function noExpirationDateIsDefinedIfNotProvided(): void
     {
         $this->apiKeyService->expects($this->once())->method('create')->with(
@@ -46,7 +47,7 @@ class GenerateKeyCommandTest extends TestCase
         self::assertStringContainsString('Generated API key: ', $output);
     }
 
-    /** @test */
+    #[Test]
     public function expirationDateIsDefinedIfProvided(): void
     {
         $this->apiKeyService->expects($this->once())->method('create')->with(
@@ -59,7 +60,7 @@ class GenerateKeyCommandTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function nameIsDefinedIfProvided(): void
     {
         $this->apiKeyService->expects($this->once())->method('create')->with(

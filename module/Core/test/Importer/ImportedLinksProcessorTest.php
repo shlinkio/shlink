@@ -7,6 +7,8 @@ namespace ShlinkioTest\Shlink\Core\Importer;
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -61,7 +63,7 @@ class ImportedLinksProcessorTest extends TestCase
         $this->io = $this->createMock(StyleInterface::class);
     }
 
-    /** @test */
+    #[Test]
     public function newUrlsWithNoErrorsAreAllPersisted(): void
     {
         $urls = [
@@ -84,7 +86,7 @@ class ImportedLinksProcessorTest extends TestCase
         $this->processor->process($this->io, ImportResult::withShortUrls($urls), $this->buildParams());
     }
 
-    /** @test */
+    #[Test]
     public function newUrlsWithErrorsAreSkipped(): void
     {
         $urls = [
@@ -111,7 +113,7 @@ class ImportedLinksProcessorTest extends TestCase
         self::assertEquals(1, $textCalls->skippedCount);
     }
 
-    /** @test */
+    #[Test]
     public function alreadyImportedUrlsAreSkipped(): void
     {
         $urls = [
@@ -137,7 +139,7 @@ class ImportedLinksProcessorTest extends TestCase
         self::assertEquals(3, $textCalls->skippedCount);
     }
 
-    /** @test */
+    #[Test]
     public function nonUniqueShortCodesAreAskedToUser(): void
     {
         $urls = [
@@ -165,10 +167,7 @@ class ImportedLinksProcessorTest extends TestCase
         self::assertEquals(3, $textCalls->skippedCount);
     }
 
-    /**
-     * @test
-     * @dataProvider provideUrlsWithVisits
-     */
+    #[Test, DataProvider('provideUrlsWithVisits')]
     public function properAmountOfVisitsIsImported(
         ImportedShlinkUrl $importedUrl,
         string $expectedOutput,
@@ -230,9 +229,8 @@ class ImportedLinksProcessorTest extends TestCase
 
     /**
      * @param iterable<ImportedShlinkOrphanVisit> $visits
-     * @test
-     * @dataProvider provideOrphanVisits
      */
+    #[Test, DataProvider('provideOrphanVisits')]
     public function properAmountOfOrphanVisitsIsImported(
         bool $importOrphanVisits,
         iterable $visits,

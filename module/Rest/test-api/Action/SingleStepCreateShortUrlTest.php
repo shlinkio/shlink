@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use GuzzleHttp\RequestOptions;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\ResponseInterface;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 class SingleStepCreateShortUrlTest extends ApiTestCase
 {
-    /**
-     * @test
-     * @dataProvider provideFormats
-     */
+    #[Test, DataProvider('provideFormats')]
     public function createsNewShortUrlWithExpectedResponse(?string $format, string $expectedContentType): void
     {
         $resp = $this->createShortUrl($format, 'valid_api_key');
@@ -29,7 +28,7 @@ class SingleStepCreateShortUrlTest extends ApiTestCase
         yield '<empty> format' => [null, 'application/json'];
     }
 
-    /** @test */
+    #[Test]
     public function authorizationErrorIsReturnedIfNoApiKeyIsSent(): void
     {
         $expectedDetail = 'Expected authentication to be provided in "apiKey" query param';

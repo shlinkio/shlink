@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Visit\Entity;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -12,10 +14,7 @@ use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 
 class VisitTest extends TestCase
 {
-    /**
-     * @test
-     * @dataProvider provideUserAgents
-     */
+    #[Test, DataProvider('provideUserAgents')]
     public function isProperlyJsonSerialized(string $userAgent, bool $expectedToBePotentialBot): void
     {
         $visit = Visit::forValidShortUrl(ShortUrl::createFake(), new Visitor($userAgent, 'some site', '1.2.3.4', ''));
@@ -41,10 +40,7 @@ class VisitTest extends TestCase
         yield 'Guzzle' => ['guzzlehttp', true];
     }
 
-    /**
-     * @test
-     * @dataProvider provideAddresses
-     */
+    #[Test, DataProvider('provideAddresses')]
     public function addressIsAnonymizedWhenRequested(bool $anonymize, ?string $address, ?string $expectedAddress): void
     {
         $visit = Visit::forValidShortUrl(

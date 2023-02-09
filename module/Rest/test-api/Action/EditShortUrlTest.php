@@ -8,6 +8,8 @@ use Cake\Chronos\Chronos;
 use GuzzleHttp\Psr7\Query;
 use GuzzleHttp\RequestOptions;
 use Laminas\Diactoros\Uri;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 use ShlinkioApiTest\Shlink\Rest\Utils\NotFoundUrlHelpersTrait;
 
@@ -17,10 +19,7 @@ class EditShortUrlTest extends ApiTestCase
 {
     use NotFoundUrlHelpersTrait;
 
-    /**
-     * @test
-     * @dataProvider provideMeta
-     */
+    #[Test, DataProvider('provideMeta')]
     public function metadataCanBeReset(array $meta): void
     {
         $shortCode = 'abc123';
@@ -76,10 +75,7 @@ class EditShortUrlTest extends ApiTestCase
         return $matchingShortUrl['meta'] ?? [];
     }
 
-    /**
-     * @test
-     * @dataProvider provideLongUrls
-     */
+    #[Test, DataProvider('provideLongUrls')]
     public function longUrlCanBeEditedIfItIsValid(string $longUrl, int $expectedStatus, ?string $expectedError): void
     {
         $shortCode = 'abc123';
@@ -103,10 +99,7 @@ class EditShortUrlTest extends ApiTestCase
         yield 'invalid URL' => ['htt:foo', self::STATUS_BAD_REQUEST, 'INVALID_URL'];
     }
 
-    /**
-     * @test
-     * @dataProvider provideInvalidUrls
-     */
+    #[Test, DataProvider('provideInvalidUrls')]
     public function tryingToEditInvalidUrlReturnsNotFoundError(
         string $shortCode,
         ?string $domain,
@@ -126,7 +119,7 @@ class EditShortUrlTest extends ApiTestCase
         self::assertEquals($domain, $payload['domain'] ?? null);
     }
 
-    /** @test */
+    #[Test]
     public function providingInvalidDataReturnsBadRequest(): void
     {
         $expectedDetail = 'Provided data is not valid';
@@ -143,10 +136,7 @@ class EditShortUrlTest extends ApiTestCase
         self::assertEquals('Invalid data', $payload['title']);
     }
 
-    /**
-     * @test
-     * @dataProvider provideDomains
-     */
+    #[Test, DataProvider('provideDomains')]
     public function metadataIsEditedOnProperShortUrlBasedOnDomain(?string $domain, string $expectedUrl): void
     {
         $shortCode = 'ghi789';
@@ -176,7 +166,7 @@ class EditShortUrlTest extends ApiTestCase
         yield 'no domain' => [null, 'https://shlink.io/documentation/'];
     }
 
-    /** @test */
+    #[Test]
     public function deviceLongUrlsCanBeEdited(): void
     {
         $shortCode = 'def456';

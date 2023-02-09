@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioDbTest\Shlink\Core\ShortUrl\Repository;
 
 use Cake\Chronos\Chronos;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
@@ -30,7 +31,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->relationResolver = new PersistenceShortUrlRelationResolver($this->getEntityManager());
     }
 
-    /** @test */
+    #[Test]
     public function findOneWithDomainFallbackReturnsProperData(): void
     {
         $regularOne = ShortUrl::create(ShortUrlCreation::fromRawData(['customSlug' => 'Foo', 'longUrl' => 'foo']));
@@ -97,7 +98,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         ));
     }
 
-    /** @test */
+    #[Test]
     public function shortCodeIsInUseLooksForShortUrlInProperSetOfTables(): void
     {
         $shortUrlWithoutDomain = ShortUrl::create(
@@ -126,7 +127,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         ));
     }
 
-    /** @test */
+    #[Test]
     public function findOneLooksForShortUrlInProperSetOfTables(): void
     {
         $shortUrlWithoutDomain = ShortUrl::create(
@@ -153,7 +154,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         ));
     }
 
-    /** @test */
+    #[Test]
     public function findOneMatchingReturnsNullForNonExistingShortUrls(): void
     {
         self::assertNull($this->repo->findOneMatching(ShortUrlCreation::fromRawData(['longUrl' => 'foobar'])));
@@ -168,7 +169,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         ])));
     }
 
-    /** @test */
+    #[Test]
     public function findOneMatchingAppliesProperConditions(): void
     {
         $start = Chronos::parse('2020-03-05 20:18:30');
@@ -237,7 +238,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function findOneMatchingReturnsOldestOneWhenThereAreMultipleMatches(): void
     {
         $start = Chronos::parse('2020-03-05 20:18:30');
@@ -265,7 +266,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         self::assertNotSame($shortUrl3, $result);
     }
 
-    /** @test */
+    #[Test]
     public function findOneMatchingAppliesProvidedApiKeyConditions(): void
     {
         $start = Chronos::parse('2020-03-05 20:18:30');
@@ -391,7 +392,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function importedShortUrlsAreFoundWhenExpected(): void
     {
         $buildImported = static fn (string $shortCode, ?String $domain = null) =>

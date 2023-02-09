@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace ShlinkioApiTest\Shlink\Rest\Middleware;
 
 use GuzzleHttp\RequestOptions;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 class CorsTest extends ApiTestCase
 {
-    /** @test */
+    #[Test]
     public function responseDoesNotIncludeCorsHeadersWhenOriginIsNotSent(): void
     {
         $resp = $this->callApiWithKey(self::METHOD_GET, '/short-urls');
@@ -21,10 +23,7 @@ class CorsTest extends ApiTestCase
         self::assertFalse($resp->hasHeader('Access-Control-Allow-Headers'));
     }
 
-    /**
-     * @test
-     * @dataProvider provideOrigins
-     */
+    #[Test, DataProvider('provideOrigins')]
     public function responseIncludesCorsHeadersIfOriginIsSent(
         string $origin,
         string $endpoint,
@@ -48,10 +47,7 @@ class CorsTest extends ApiTestCase
         yield 'baz.dev' => ['baz.dev', '/short-urls', 200];
     }
 
-    /**
-     * @test
-     * @dataProvider providePreflightEndpoints
-     */
+    #[Test, DataProvider('providePreflightEndpoints')]
     public function preflightRequestsIncludeExtraCorsHeaders(string $endpoint, string $expectedAllowedMethods): void
     {
         $allowedHeaders = 'Authorization';

@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace ShlinkioApiTest\Shlink\Rest\Middleware;
 
 use GuzzleHttp\RequestOptions;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 class BodyParserTest extends ApiTestCase
 {
-    /** @test */
+    #[Test]
     public function returnsErrorWhenRequestBodyIsInvalidJson(): void
     {
         $resp = $this->callApiWithKey(self::METHOD_POST, '/short-urls', [

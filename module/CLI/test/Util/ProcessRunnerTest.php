@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Util;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Util\ProcessRunner;
@@ -34,7 +35,7 @@ class ProcessRunnerTest extends TestCase
         $this->runner = new ProcessRunner($this->helper, fn () => $this->process);
     }
 
-    /** @test */
+    #[Test]
     public function noMessagesAreWrittenWhenOutputIsNotVerbose(): void
     {
         $this->output->expects($this->exactly(2))->method('isVeryVerbose')->with()->willReturn(false);
@@ -50,7 +51,7 @@ class ProcessRunnerTest extends TestCase
         $this->runner->run($this->output, []);
     }
 
-    /** @test */
+    #[Test]
     public function someMessagesAreWrittenWhenOutputIsVerbose(): void
     {
         $this->output->expects($this->exactly(2))->method('isVeryVerbose')->with()->willReturn(true);
@@ -66,7 +67,7 @@ class ProcessRunnerTest extends TestCase
         $this->runner->run($this->output, []);
     }
 
-    /** @test */
+    #[Test]
     public function wrapsCallbackWhenOutputIsDebug(): void
     {
         $this->output->expects($this->exactly(2))->method('isVeryVerbose')->with()->willReturn(false);

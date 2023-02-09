@@ -6,6 +6,8 @@ namespace ShlinkioTest\Shlink\Rest\Middleware;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -22,7 +24,7 @@ class CrossDomainMiddlewareTest extends TestCase
         $this->handler = $this->createMock(RequestHandlerInterface::class);
     }
 
-    /** @test */
+    #[Test]
     public function nonCrossDomainRequestsAreNotAffected(): void
     {
         $originalResponse = (new Response())->withStatus(404);
@@ -39,7 +41,7 @@ class CrossDomainMiddlewareTest extends TestCase
         self::assertArrayNotHasKey('Access-Control-Allow-Headers', $headers);
     }
 
-    /** @test */
+    #[Test]
     public function anyRequestIncludesTheAllowAccessHeader(): void
     {
         $originalResponse = new Response();
@@ -56,7 +58,7 @@ class CrossDomainMiddlewareTest extends TestCase
         self::assertArrayNotHasKey('Access-Control-Allow-Headers', $headers);
     }
 
-    /** @test */
+    #[Test]
     public function optionsRequestIncludesMoreHeaders(): void
     {
         $originalResponse = new Response();
@@ -78,10 +80,7 @@ class CrossDomainMiddlewareTest extends TestCase
         self::assertEquals(204, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     * @dataProvider provideRouteResults
-     */
+    #[Test, DataProvider('provideRouteResults')]
     public function optionsRequestParsesRouteMatchToDetermineAllowedMethods(
         ?string $allowHeader,
         string $expectedAllowedMethods,
@@ -107,10 +106,7 @@ class CrossDomainMiddlewareTest extends TestCase
         yield 'also allow header in response' => ['DELETE,PATCH,PUT', 'DELETE,PATCH,PUT'];
     }
 
-    /**
-     * @test
-     * @dataProvider provideMethods
-     */
+    #[Test, DataProvider('provideMethods')]
     public function expectedStatusCodeIsReturnDependingOnRequestMethod(
         string $method,
         int $status,

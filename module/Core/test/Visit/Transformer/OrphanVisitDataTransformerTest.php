@@ -6,6 +6,8 @@ namespace ShlinkioTest\Shlink\Core\Visit\Transformer;
 
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Uri;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
@@ -23,10 +25,7 @@ class OrphanVisitDataTransformerTest extends TestCase
         $this->transformer = new OrphanVisitDataTransformer();
     }
 
-    /**
-     * @test
-     * @dataProvider provideVisits
-     */
+    #[Test, DataProvider('provideVisits')]
     public function visitsAreParsedAsExpected(Visit $visit, array $expectedResult): void
     {
         $result = $this->transformer->transform($visit);

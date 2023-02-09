@@ -6,6 +6,8 @@ namespace ShlinkioTest\Shlink\Rest\Action\Domain;
 
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
@@ -29,10 +31,7 @@ class DomainRedirectsActionTest extends TestCase
         $this->action = new DomainRedirectsAction($this->domainService);
     }
 
-    /**
-     * @test
-     * @dataProvider provideInvalidBodies
-     */
+    #[Test, DataProvider('provideInvalidBodies')]
     public function invalidDataThrowsException(array $body): void
     {
         $request = ServerRequestFactory::fromGlobals()->withParsedBody($body);
@@ -51,10 +50,7 @@ class DomainRedirectsActionTest extends TestCase
         yield 'invalid domain' => [['domain' => '192.168.1.20']];
     }
 
-    /**
-     * @test
-     * @dataProvider provideDomainsAndRedirects
-     */
+    #[Test, DataProvider('provideDomainsAndRedirects')]
     public function domainIsFetchedAndUsedToGetItConfigured(
         Domain $domain,
         array $redirects,

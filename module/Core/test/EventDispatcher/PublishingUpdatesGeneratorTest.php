@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGenerator;
@@ -30,10 +32,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @dataProvider provideMethod
-     */
+    #[Test, DataProvider('provideMethod')]
     public function visitIsProperlySerializedIntoUpdate(string $method, string $expectedTopic, ?string $title): void
     {
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
@@ -83,10 +82,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
         yield 'newShortUrlVisitUpdate' => ['newShortUrlVisitUpdate', 'https://shlink.io/new-visit/foo', null];
     }
 
-    /**
-     * @test
-     * @dataProvider provideOrphanVisits
-     */
+    #[Test, DataProvider('provideOrphanVisits')]
     public function orphanVisitIsProperlySerializedIntoUpdate(Visit $orphanVisit): void
     {
         $update = $this->generator->newOrphanVisitUpdate($orphanVisit);
@@ -114,7 +110,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
         yield VisitType::BASE_URL->value => [Visit::forBasePath($visitor)];
     }
 
-    /** @test */
+    #[Test]
     public function shortUrlIsProperlySerializedIntoUpdate(): void
     {
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([

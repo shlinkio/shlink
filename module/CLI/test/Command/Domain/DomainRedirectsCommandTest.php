@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Domain;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Domain\DomainRedirectsCommand;
@@ -30,10 +32,7 @@ class DomainRedirectsCommandTest extends TestCase
         $this->commandTester = $this->testerForCommand(new DomainRedirectsCommand($this->domainService));
     }
 
-    /**
-     * @test
-     * @dataProvider provideDomains
-     */
+    #[Test, DataProvider('provideDomains')]
     public function onlyPlainQuestionsAreAskedForNewDomainsAndDomainsWithNoRedirects(?Domain $domain): void
     {
         $domainAuthority = 'my-domain.com';
@@ -66,7 +65,7 @@ class DomainRedirectsCommandTest extends TestCase
         yield 'domain without redirects' => [Domain::withAuthority('')];
     }
 
-    /** @test */
+    #[Test]
     public function offersNewOptionsForDomainsWithExistingRedirects(): void
     {
         $domainAuthority = 'example.com';
@@ -95,7 +94,7 @@ class DomainRedirectsCommandTest extends TestCase
         self::assertEquals(3, substr_count($output, 'Remove redirect'));
     }
 
-    /** @test */
+    #[Test]
     public function authorityIsRequestedWhenNotProvidedAndNoOtherDomainsExist(): void
     {
         $domainAuthority = 'example.com';
@@ -117,7 +116,7 @@ class DomainRedirectsCommandTest extends TestCase
         self::assertStringContainsString('Domain authority for which you want to set specific redirects', $output);
     }
 
-    /** @test */
+    #[Test]
     public function oneOfTheExistingDomainsCanBeSelected(): void
     {
         $domainAuthority = 'existing-two.com';
@@ -146,7 +145,7 @@ class DomainRedirectsCommandTest extends TestCase
         self::assertStringContainsString($domainAuthority, $output);
     }
 
-    /** @test */
+    #[Test]
     public function aNewDomainCanBeCreatedEvenIfOthersAlreadyExist(): void
     {
         $domainAuthority = 'new-domain.com';

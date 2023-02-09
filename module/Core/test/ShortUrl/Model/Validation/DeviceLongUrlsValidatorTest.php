@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\ShortUrl\Model\Validation;
 
 use Laminas\Validator\NotEmpty;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\DeviceLongUrlsValidator;
@@ -19,10 +21,7 @@ class DeviceLongUrlsValidatorTest extends TestCase
         $this->validator = new DeviceLongUrlsValidator(new NotEmpty());
     }
 
-    /**
-     * @test
-     * @dataProvider provideNonArrayValues
-     */
+    #[Test, DataProvider('provideNonArrayValues')]
     public function nonArrayValuesAreNotValid(mixed $invalidValue): void
     {
         self::assertFalse($this->validator->isValid($invalidValue));
@@ -39,7 +38,7 @@ class DeviceLongUrlsValidatorTest extends TestCase
         yield 'null' => [null];
     }
 
-    /** @test */
+    #[Test]
     public function unrecognizedKeysAreNotValid(): void
     {
         self::assertFalse($this->validator->isValid(['foo' => 'bar']));
@@ -49,7 +48,7 @@ class DeviceLongUrlsValidatorTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function everyUrlMustMatchLongUrlValidator(): void
     {
         self::assertFalse($this->validator->isValid([DeviceType::ANDROID->value => '']));
@@ -59,7 +58,7 @@ class DeviceLongUrlsValidatorTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function validValuesResultInValidResult(): void
     {
         self::assertTrue($this->validator->isValid([

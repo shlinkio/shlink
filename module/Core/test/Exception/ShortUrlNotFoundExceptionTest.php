@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Exception;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 
 class ShortUrlNotFoundExceptionTest extends TestCase
 {
-    /**
-     * @test
-     * @dataProvider provideMessages
-     */
+    #[Test, DataProvider('provideMessages')]
     public function properlyCreatesExceptionFromNotFoundShortCode(
         string $expectedMessage,
         string $shortCode,

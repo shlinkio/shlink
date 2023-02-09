@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\ShortUrl\Model;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\ShortUrl\Model\DeviceLongUrlPair;
@@ -12,10 +14,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 
 class ShortUrlEditionTest extends TestCase
 {
-    /**
-     * @test
-     * @dataProvider provideDeviceLongUrls
-     */
+    #[Test, DataProvider('provideDeviceLongUrls')]
     public function expectedDeviceLongUrlsAreResolved(
         ?array $deviceLongUrls,
         array $expectedDeviceLongUrls,
