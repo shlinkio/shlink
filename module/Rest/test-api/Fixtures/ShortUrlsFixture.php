@@ -62,6 +62,7 @@ class ShortUrlsFixture extends AbstractFixture implements DependentFixtureInterf
             'maxVisits' => 2,
             'apiKey' => $authorApiKey,
             'longUrl' => 'https://shlink.io',
+            'crawlable' => true,
             'forwardQuery' => false,
         ])), '2019-01-01 00:00:20');
         $manager->persist($customShortUrl);

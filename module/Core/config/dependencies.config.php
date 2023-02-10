@@ -187,7 +187,7 @@ return [
             Util\DoctrineBatchHelper::class,
         ],
 
-        Crawling\CrawlingHelper::class => ['em'],
+        Crawling\CrawlingHelper::class => [ShortUrl\Repository\CrawlableShortCodesQuery::class],
     ],
 
 ];
