@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* *Nothing*
+* [#1698](https://github.com/shlinkio/shlink/issues/1698) Fixed error 500 in `robots.txt`.
 
 
 ## [3.5.1] - 2023-02-04

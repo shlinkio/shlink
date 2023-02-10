@@ -124,7 +124,7 @@ class ListShortUrlsTest extends ApiTestCase
         ],
         'domain' => null,
         'title' => null,
-        'crawlable' => false,
+        'crawlable' => true,
         'forwardQuery' => false,
     ];
     private const SHORT_URL_CUSTOM_DOMAIN = [
