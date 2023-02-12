@@ -64,13 +64,13 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
                 ? $commonJoinCondition
                 : $visitsSubQuery->expr()->and(
                     $commonJoinCondition,
-                    $visitsSubQuery->expr()->eq('v.potential_bot', $conn->quote('0'))
+                    $visitsSubQuery->expr()->eq('v.potential_bot', $conn->quote('0')),
                 );
 
             return $visitsSubQuery
                 ->select('st.tag_id AS tag_id', 'COUNT(DISTINCT v.id) AS ' . $aggregateAlias)
                 ->from('visits', 'v')
-                ->join('v', 'short_urls', 's', $visitsJoin)
+                ->join('v', 'short_urls', 's', $visitsJoin) // @phpstan-ignore-line
                 ->join('s', 'short_urls_in_tags', 'st', $visitsSubQuery->expr()->eq('st.short_url_id', 's.id'))
                 ->groupBy('st.tag_id');
         };
