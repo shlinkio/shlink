@@ -107,8 +107,8 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
             ->select(
                 't.id_0 AS id',
                 't.name_1 AS name',
-                'v.visits',
-                'v2.non_bot_visits',
+                'COALESCE(v.visits, 0) AS visits', // COALESCE required for postgres to properly order
+                'COALESCE(v2.non_bot_visits, 0) AS non_bot_visits', // COALESCE required for postgres to properly order
                 'COUNT(DISTINCT s.id) AS short_urls_count',
             )
             ->from('(' . $subQb->getQuery()->getSQL() . ')', 't') // @phpstan-ignore-line
