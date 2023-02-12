@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Tag\Repository;
 
+use Doctrine\DBAL\Query\QueryBuilder as NativeQueryBuilder;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Happyr\DoctrineSpecification\Spec;
@@ -45,7 +46,6 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         $orderDir = $filtering?->orderBy?->direction;
         $orderMainQuery = $orderField !== null && OrderableField::isAggregateField($orderField);
 
-        $conn = $this->getEntityManager()->getConnection();
         $subQb = $this->createQueryBuilder('t');
         $subQb->select('t.id', 't.name');
 
@@ -53,15 +53,51 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
             $subQb->orderBy('t.name', $orderDir ?? 'ASC')
                   ->setMaxResults($filtering?->limit ?? PHP_INT_MAX)
                   ->setFirstResult($filtering?->offset ?? 0);
+            // TODO Check if applying limit/offset ot visits sub-queries is needed with large amounts of tags
         }
+
+        $conn = $this->getEntityManager()->getConnection();
+        $buildVisitsSubQuery = static function (bool $excludeBots, string $aggregateAlias) use ($conn) {
+            $visitsSubQuery = $conn->createQueryBuilder();
+            $commonJoinCondition = $visitsSubQuery->expr()->eq('v.short_url_id', 's.id');
+            $visitsJoin = ! $excludeBots
+                ? $commonJoinCondition
+                : $visitsSubQuery->expr()->and(
+                    $commonJoinCondition,
+                    $visitsSubQuery->expr()->eq('v.potential_bot', $conn->quote('0'))
+                );
+
+            return $visitsSubQuery
+                ->select('st.tag_id AS tag_id', 'COUNT(DISTINCT v.id) AS ' . $aggregateAlias)
+                ->from('visits', 'v')
+                ->join('v', 'short_urls', 's', $visitsJoin)
+                ->join('s', 'short_urls_in_tags', 'st', $visitsSubQuery->expr()->eq('st.short_url_id', 's.id'))
+                ->groupBy('st.tag_id');
+        };
+        $allVisitsSubQuery = $buildVisitsSubQuery(false, 'visits');
+        $nonBotVisitsSubQuery = $buildVisitsSubQuery(true, 'non_bot_visits');
 
         $searchTerm = $filtering?->searchTerm;
         if ($searchTerm !== null) {
             $subQb->andWhere($subQb->expr()->like('t.name', $conn->quote('%' . $searchTerm . '%')));
+            // TODO Check if applying this to all sub-queries makes it faster or slower
         }
 
         $apiKey = $filtering?->apiKey;
+        $applyApiKeyToNativeQuery = static fn (?ApiKey $apiKey, NativeQueryBuilder $nativeQueryBuilder) =>
+            $apiKey?->mapRoles(static fn (Role $role, array $meta) => match ($role) {
+                Role::DOMAIN_SPECIFIC => $nativeQueryBuilder->andWhere(
+                    $nativeQueryBuilder->expr()->eq('s.domain_id', $conn->quote(Role::domainIdFromMeta($meta))),
+                ),
+                Role::AUTHORED_SHORT_URLS => $nativeQueryBuilder->andWhere(
+                    $nativeQueryBuilder->expr()->eq('s.author_api_key_id', $conn->quote($apiKey->getId())),
+                ),
+            });
+
+        // Apply API key specification to all sub-queries
         $this->applySpecification($subQb, new WithInlinedApiKeySpecsEnsuringJoin($apiKey), 't');
+        $applyApiKeyToNativeQuery($apiKey, $allVisitsSubQuery);
+        $applyApiKeyToNativeQuery($apiKey, $nonBotVisitsSubQuery);
 
         // A native query builder needs to be used here, because DQL and ORM query builders do not support
         // sub-queries at "from" and "join" level.
@@ -71,29 +107,22 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
             ->select(
                 't.id_0 AS id',
                 't.name_1 AS name',
+                'v.visits',
+                'v2.non_bot_visits',
                 'COUNT(DISTINCT s.id) AS short_urls_count',
-                'COUNT(DISTINCT v.id) AS visits', // Native queries require snake_case for cross-db compatibility
-                'COUNT(DISTINCT v2.id) AS non_bot_visits',
             )
             ->from('(' . $subQb->getQuery()->getSQL() . ')', 't') // @phpstan-ignore-line
             ->leftJoin('t', 'short_urls_in_tags', 'st', $nativeQb->expr()->eq('t.id_0', 'st.tag_id'))
             ->leftJoin('st', 'short_urls', 's', $nativeQb->expr()->eq('s.id', 'st.short_url_id'))
-            ->leftJoin('st', 'visits', 'v', $nativeQb->expr()->eq('st.short_url_id', 'v.short_url_id'))
-            ->leftJoin('st', 'visits', 'v2', $nativeQb->expr()->and( // @phpstan-ignore-line
-                $nativeQb->expr()->eq('st.short_url_id', 'v2.short_url_id'),
-                $nativeQb->expr()->eq('v2.potential_bot', $conn->quote('0')),
+            ->leftJoin('t', '(' . $allVisitsSubQuery->getSQL() . ')', 'v', $nativeQb->expr()->eq('t.id_0', 'v.tag_id'))
+            ->leftJoin('t', '(' . $nonBotVisitsSubQuery->getSQL() . ')', 'v2', $nativeQb->expr()->eq(
+                't.id_0',
+                'v2.tag_id',
             ))
-            ->groupBy('t.id_0', 't.name_1');
+            ->groupBy('t.id_0', 't.name_1', 'v.visits', 'v2.non_bot_visits');
 
         // Apply API key role conditions to the native query too, as they will affect the amounts on the aggregates
-        $apiKey?->mapRoles(static fn (Role $role, array $meta) => match ($role) {
-            Role::DOMAIN_SPECIFIC => $nativeQb->andWhere(
-                $nativeQb->expr()->eq('s.domain_id', $conn->quote(Role::domainIdFromMeta($meta))),
-            ),
-            Role::AUTHORED_SHORT_URLS => $nativeQb->andWhere(
-                $nativeQb->expr()->eq('s.author_api_key_id', $conn->quote($apiKey->getId())),
-            ),
-        });
+        $applyApiKeyToNativeQuery($apiKey, $nativeQb);
 
         if ($orderMainQuery) {
             $nativeQb
@@ -107,9 +136,9 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
 
         $rsm = new ResultSetMappingBuilder($this->getEntityManager());
         $rsm->addScalarResult('name', 'tag');
-        $rsm->addScalarResult('short_urls_count', 'shortUrlsCount');
         $rsm->addScalarResult('visits', 'visits');
         $rsm->addScalarResult('non_bot_visits', 'nonBotVisits');
+        $rsm->addScalarResult('short_urls_count', 'shortUrlsCount');
 
         return map(
             $this->getEntityManager()->createNativeQuery($nativeQb->getSQL(), $rsm)->getResult(),

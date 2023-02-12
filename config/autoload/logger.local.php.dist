@@ -5,14 +5,16 @@ declare(strict_types=1);
 use Monolog\Level;
 use Shlinkio\Shlink\Common\Logger\LoggerType;
 
-$isSwoole = extension_loaded('openswoole');
+use function Shlinkio\Shlink\Config\runningInOpenswoole;
+
+$logToStream = runningInOpenswoole();
 
 return [
 
     'logger' => [
         'Shlink' => [
-            // For swoole, send logs as stream
-            'type' => $isSwoole ? LoggerType::STREAM->value : LoggerType::FILE->value,
+            // For openswoole, send logs as stream
+            'type' => $logToStream ? LoggerType::STREAM->value : LoggerType::FILE->value,
             'level' => Level::Debug->value,
         ],
     ],
