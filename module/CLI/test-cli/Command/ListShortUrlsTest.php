@@ -4,22 +4,21 @@ declare(strict_types=1);
 
 namespace ShlinkioCliTest\Shlink\CLI\Command;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\ListShortUrlsCommand;
 use Shlinkio\Shlink\TestUtils\CliTest\CliTestCase;
 
 class ListShortUrlsTest extends CliTestCase
 {
-    /**
-     * @test
-     * @dataProvider provideFlagsAndOutput
-     */
+    #[Test, DataProvider('provideFlagsAndOutput')]
     public function generatesExpectedOutput(array $flags, string $expectedOutput): void
     {
         [$output] = $this->exec([ListShortUrlsCommand::NAME, ...$flags], ['no']);
         self::assertStringContainsString($expectedOutput, $output);
     }
 
-    public function provideFlagsAndOutput(): iterable
+    public static function provideFlagsAndOutput(): iterable
     {
         // phpcs:disable Generic.Files.LineLength
         yield 'no flags' => [[], <<<OUTPUT

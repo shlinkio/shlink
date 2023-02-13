@@ -6,6 +6,8 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl\Resolver;
 
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
@@ -29,17 +31,14 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
         $this->resolver = new PersistenceShortUrlRelationResolver($this->em);
     }
 
-    /** @test */
+    #[Test]
     public function returnsEmptyWhenNoDomainIsProvided(): void
     {
         $this->em->expects($this->never())->method('getRepository')->with(Domain::class);
         self::assertNull($this->resolver->resolveDomain(null));
     }
 
-    /**
-     * @test
-     * @dataProvider provideFoundDomains
-     */
+    #[Test, DataProvider('provideFoundDomains')]
     public function findsOrCreatesDomainWhenValueIsProvided(?Domain $foundDomain, string $authority): void
     {
         $repo = $this->createMock(DomainRepositoryInterface::class);
@@ -55,7 +54,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
         self::assertEquals($authority, $result->authority);
     }
 
-    public function provideFoundDomains(): iterable
+    public static function provideFoundDomains(): iterable
     {
         $authority = 's.test';
 
@@ -63,10 +62,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
         yield 'found domain' => [Domain::withAuthority($authority), $authority];
     }
 
-    /**
-     * @test
-     * @dataProvider provideTags
-     */
+    #[Test, DataProvider('provideTags')]
     public function findsAndPersistsTagsWrappedIntoCollection(array $tags, array $expectedTags): void
     {
         $expectedPersistedTags = count($expectedTags);
@@ -89,13 +85,13 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
         self::assertEquals($expectedTags, $result->toArray());
     }
 
-    public function provideTags(): iterable
+    public static function provideTags(): iterable
     {
         yield 'no duplicated tags' => [['foo', 'bar', 'baz'], [new Tag('foo'), new Tag('bar'), new Tag('baz')]];
         yield 'duplicated tags' => [['foo', 'bar', 'bar'], [new Tag('foo'), new Tag('bar')]];
     }
 
-    /** @test */
+    #[Test]
     public function returnsEmptyCollectionWhenProvidingEmptyListOfTags(): void
     {
         $this->em->expects($this->never())->method('getRepository')->with(Tag::class);
@@ -106,7 +102,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
         self::assertEmpty($result);
     }
 
-    /** @test */
+    #[Test]
     public function newDomainsAreMemoizedUntilStateIsCleared(): void
     {
         $repo = $this->createMock(DomainRepositoryInterface::class);
@@ -125,7 +121,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
         self::assertNotSame($domain1, $domain3);
     }
 
-    /** @test */
+    #[Test]
     public function newTagsAreMemoizedUntilStateIsCleared(): void
     {
         $tagRepo = $this->createMock(TagRepositoryInterface::class);

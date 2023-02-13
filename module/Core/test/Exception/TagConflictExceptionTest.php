@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Exception;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
@@ -12,7 +13,7 @@ use function sprintf;
 
 class TagConflictExceptionTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function properlyCreatesExceptionForExistingTag(): void
     {
         $oldName = 'foo';

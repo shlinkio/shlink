@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Rest\Middleware\Mercure;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
 use Mezzio\ProblemDetails\ProblemDetailsResponseFactory;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -29,7 +30,7 @@ class NotConfiguredMercureErrorHandlerTest extends TestCase
         $this->handler = $this->createMock(RequestHandlerInterface::class);
     }
 
-    /** @test */
+    #[Test]
     public function requestHandlerIsInvokedWhenNotErrorOccurs(): void
     {
         $req = ServerRequestFactory::fromGlobals();
@@ -40,7 +41,7 @@ class NotConfiguredMercureErrorHandlerTest extends TestCase
         $this->middleware->process($req, $this->handler);
     }
 
-    /** @test */
+    #[Test]
     public function exceptionIsParsedToResponse(): void
     {
         $req = ServerRequestFactory::fromGlobals();

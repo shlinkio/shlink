@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use GuzzleHttp\RequestOptions;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
@@ -38,10 +40,7 @@ class OrphanVisitsTest extends ApiTestCase
         'type' => 'base_url',
     ];
 
-    /**
-     * @test
-     * @dataProvider provideQueries
-     */
+    #[Test, DataProvider('provideQueries')]
     public function properVisitsAreReturnedBasedInQuery(
         array $query,
         int $totalItems,
@@ -57,7 +56,7 @@ class OrphanVisitsTest extends ApiTestCase
         self::assertEquals($expectedVisits, $visits);
     }
 
-    public function provideQueries(): iterable
+    public static function provideQueries(): iterable
     {
         yield 'all data' => [[], 3, 3, [self::INVALID_SHORT_URL, self::REGULAR_NOT_FOUND, self::BASE_URL]];
         yield 'limit items' => [['itemsPerPage' => 2], 3, 2, [self::INVALID_SHORT_URL, self::REGULAR_NOT_FOUND]];

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -32,7 +34,7 @@ class UpdateGeoLiteDbTest extends TestCase
         $this->listener = new UpdateGeoLiteDb($this->dbUpdater, $this->logger, $this->eventDispatcher);
     }
 
-    /** @test */
+    #[Test]
     public function exceptionWhileUpdatingDbLogsError(): void
     {
         $e = new RuntimeException();
@@ -48,10 +50,7 @@ class UpdateGeoLiteDbTest extends TestCase
         ($this->listener)();
     }
 
-    /**
-     * @test
-     * @dataProvider provideFlags
-     */
+    #[Test, DataProvider('provideFlags')]
     public function noticeMessageIsPrintedWhenFirstCallbackIsInvoked(bool $oldDbExists, string $expectedMessage): void
     {
         $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willReturnCallback(
@@ -67,16 +66,13 @@ class UpdateGeoLiteDbTest extends TestCase
         ($this->listener)();
     }
 
-    public function provideFlags(): iterable
+    public static function provideFlags(): iterable
     {
         yield 'existing old db' => [true, 'Updating GeoLite2 db file...'];
         yield 'not existing old db' => [false, 'Downloading GeoLite2 db file...'];
     }
 
-    /**
-     * @test
-     * @dataProvider provideDownloaded
-     */
+    #[Test, DataProvider('provideDownloaded')]
     public function noticeMessageIsPrintedWhenSecondCallbackIsInvoked(
         int $total,
         int $downloaded,
@@ -101,7 +97,7 @@ class UpdateGeoLiteDbTest extends TestCase
         ($this->listener)();
     }
 
-    public function provideDownloaded(): iterable
+    public static function provideDownloaded(): iterable
     {
         yield [100, 0, true, null];
         yield [100, 0, false, null];
@@ -113,10 +109,7 @@ class UpdateGeoLiteDbTest extends TestCase
         yield [100, 101, false, 'Finished downloading GeoLite2 db file'];
     }
 
-    /**
-     * @test
-     * @dataProvider provideGeolocationResults
-     */
+    #[Test, DataProvider('provideGeolocationResults')]
     public function dispatchesEventOnlyWhenDbFileHasBeenCreatedForTheFirstTime(
         GeolocationResult $result,
         int $expectedDispatches,
@@ -129,7 +122,7 @@ class UpdateGeoLiteDbTest extends TestCase
         ($this->listener)();
     }
 
-    public function provideGeolocationResults(): iterable
+    public static function provideGeolocationResults(): iterable
     {
         return map(GeolocationResult::cases(), static fn (GeolocationResult $value) => [
             $value,

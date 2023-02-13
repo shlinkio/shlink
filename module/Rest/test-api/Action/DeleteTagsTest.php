@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use GuzzleHttp\RequestOptions;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use function sprintf;
 
 class DeleteTagsTest extends ApiTestCase
 {
-    /**
-     * @test
-     * @dataProvider provideNonAdminApiKeys
-     */
+    #[Test, DataProvider('provideNonAdminApiKeys')]
     public function anErrorIsReturnedWithNonAdminApiKeys(string $apiKey, string $version, string $expectedType): void
     {
         $resp = $this->callApiWithKey(self::METHOD_DELETE, sprintf('/rest/v%s/tags', $version), [
@@ -29,7 +28,7 @@ class DeleteTagsTest extends ApiTestCase
         self::assertEquals('Forbidden tag operation', $payload['title']);
     }
 
-    public function provideNonAdminApiKeys(): iterable
+    public static function provideNonAdminApiKeys(): iterable
     {
         yield 'author' => ['author_api_key', '2', 'FORBIDDEN_OPERATION'];
         yield 'domain' => ['domain_api_key', '2', 'FORBIDDEN_OPERATION'];

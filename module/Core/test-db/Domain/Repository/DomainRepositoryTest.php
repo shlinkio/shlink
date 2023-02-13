@@ -6,6 +6,7 @@ namespace ShlinkioDbTest\Shlink\Core\Domain\Repository;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepository;
@@ -26,7 +27,7 @@ class DomainRepositoryTest extends DatabaseTestCase
         $this->repo = $this->getEntityManager()->getRepository(Domain::class);
     }
 
-    /** @test */
+    #[Test]
     public function expectedDomainsAreFoundWhenNoApiKeyIsInvolved(): void
     {
         $fooDomain = Domain::withAuthority('foo.com');
@@ -61,7 +62,7 @@ class DomainRepositoryTest extends DatabaseTestCase
         self::assertTrue($this->repo->domainExists('detached.com'));
     }
 
-    /** @test */
+    #[Test]
     public function expectedDomainsAreFoundWhenApiKeyIsProvided(): void
     {
         $authorApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));

@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use GuzzleHttp\RequestOptions;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 class TagsStatsTest extends ApiTestCase
 {
-    /**
-     * @test
-     * @dataProvider provideQueries
-     */
+    #[Test, DataProvider('provideQueries')]
     public function expectedListOfTagsIsReturned(
         string $apiKey,
         array $query,
@@ -26,10 +25,7 @@ class TagsStatsTest extends ApiTestCase
         self::assertEquals($expectedPagination, $tags['pagination']);
     }
 
-    /**
-     * @test
-     * @dataProvider provideQueries
-     */
+    #[Test, DataProvider('provideQueries')]
     public function expectedListOfTagsIsReturnedForDeprecatedApproach(
         string $apiKey,
         array $query,
@@ -45,7 +41,7 @@ class TagsStatsTest extends ApiTestCase
         self::assertArrayHasKey('data', $tags);
     }
 
-    public function provideQueries(): iterable
+    public static function provideQueries(): iterable
     {
         yield 'admin API key' => ['valid_api_key', [], [
             [

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Visit;
 
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Visit\GetOrphanVisitsCommand;
@@ -30,7 +31,7 @@ class GetOrphanVisitsCommandTest extends TestCase
         $this->commandTester = $this->testerForCommand(new GetOrphanVisitsCommand($this->visitsHelper));
     }
 
-    /** @test */
+    #[Test]
     public function outputIsProperlyGenerated(): void
     {
         $visit = Visit::forBasePath(new Visitor('bar', 'foo', '', ''))->locate(

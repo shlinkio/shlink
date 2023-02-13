@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Tag\Paginator\Adapter;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
@@ -21,7 +22,7 @@ class TagsPaginatorAdapterTest extends TestCase
         $this->adapter = new TagsPaginatorAdapter($this->repo, TagsParams::fromRawData([]), null);
     }
 
-    /** @test */
+    #[Test]
     public function getSliceDelegatesToRepository(): void
     {
         $this->repo->expects($this->once())->method('match')->willReturn([]);

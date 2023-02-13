@@ -7,6 +7,8 @@ namespace ShlinkioTest\Shlink\Core\EventDispatcher\RabbitMq;
 use Doctrine\ORM\EntityManagerInterface;
 use DomainException;
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -36,7 +38,7 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
         $this->logger = $this->createMock(LoggerInterface::class);
     }
 
-    /** @test */
+    #[Test]
     public function doesNothingWhenTheFeatureIsNotEnabled(): void
     {
         $this->helper->expects($this->never())->method('publishUpdate');
@@ -47,7 +49,7 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
         ($this->listener(false))(new ShortUrlCreated('123'));
     }
 
-    /** @test */
+    #[Test]
     public function notificationsAreNotSentWhenShortUrlCannotBeFound(): void
     {
         $shortUrlId = '123';
@@ -62,7 +64,7 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
         ($this->listener())(new ShortUrlCreated($shortUrlId));
     }
 
-    /** @test */
+    #[Test]
     public function expectedChannelIsNotified(): void
     {
         $shortUrlId = '123';
@@ -79,10 +81,7 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
         ($this->listener())(new ShortUrlCreated($shortUrlId));
     }
 
-    /**
-     * @test
-     * @dataProvider provideExceptions
-     */
+    #[Test, DataProvider('provideExceptions')]
     public function printsDebugMessageInCaseOfError(Throwable $e): void
     {
         $shortUrlId = '123';
@@ -102,7 +101,7 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
         ($this->listener())(new ShortUrlCreated($shortUrlId));
     }
 
-    public function provideExceptions(): iterable
+    public static function provideExceptions(): iterable
     {
         yield [new RuntimeException('RuntimeException Error')];
         yield [new Exception('Exception Error')];

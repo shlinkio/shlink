@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Factory;
 
 use Laminas\ServiceManager\ServiceManager;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Factory\ApplicationFactory;
 use Shlinkio\Shlink\Core\Options\AppOptions;
@@ -21,7 +22,7 @@ class ApplicationFactoryTest extends TestCase
         $this->factory = new ApplicationFactory();
     }
 
-    /** @test */
+    #[Test]
     public function allCommandsWhichAreServicesAreAdded(): void
     {
         $sm = $this->createServiceManager([

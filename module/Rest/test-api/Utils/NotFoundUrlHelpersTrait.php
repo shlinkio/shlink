@@ -11,7 +11,7 @@ use function sprintf;
 
 trait NotFoundUrlHelpersTrait
 {
-    public function provideInvalidUrls(): iterable
+    public static function provideInvalidUrls(): iterable
     {
         yield 'invalid shortcode' => ['invalid', null, 'No URL found with short code "invalid"', 'valid_api_key'];
         yield 'invalid shortcode without domain' => [

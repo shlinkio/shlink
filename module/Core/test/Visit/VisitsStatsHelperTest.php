@@ -6,6 +6,9 @@ namespace ShlinkioTest\Shlink\Core\Visit;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Laminas\Stdlib\ArrayUtils;
+use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
@@ -46,20 +49,21 @@ class VisitsStatsHelperTest extends TestCase
         $this->helper = new VisitsStatsHelper($this->em);
     }
 
-    /**
-     * @test
-     * @dataProvider provideCounts
-     */
+    #[Test, DataProvider('provideCounts')]
     public function returnsExpectedVisitsStats(int $expectedCount): void
     {
         $repo = $this->createMock(VisitRepository::class);
-        $repo->expects($this->exactly(2))->method('countNonOrphanVisits')->withConsecutive(
-            [new VisitsCountFiltering()],
-            [new VisitsCountFiltering(excludeBots: true)],
-        )->willReturn($expectedCount * 3);
-        $repo->expects($this->exactly(2))->method('countOrphanVisits')->withConsecutive(
-            [$this->isInstanceOf(VisitsCountFiltering::class)],
-            [$this->isInstanceOf(VisitsCountFiltering::class)],
+        $callCount = 0;
+        $repo->expects($this->exactly(2))->method('countNonOrphanVisits')->willReturnCallback(
+            function (VisitsCountFiltering $options) use ($expectedCount, &$callCount) {
+                Assert::assertEquals($callCount !== 0, $options->excludeBots);
+                $callCount++;
+
+                return $expectedCount * 3;
+            },
+        );
+        $repo->expects($this->exactly(2))->method('countOrphanVisits')->with(
+            $this->isInstanceOf(VisitsCountFiltering::class),
         )->willReturn($expectedCount);
         $this->em->expects($this->once())->method('getRepository')->with(Visit::class)->willReturn($repo);
 
@@ -68,15 +72,12 @@ class VisitsStatsHelperTest extends TestCase
         self::assertEquals(new VisitsStats($expectedCount * 3, $expectedCount), $stats);
     }
 
-    public function provideCounts(): iterable
+    public static function provideCounts(): iterable
     {
         return map(range(0, 50, 5), fn (int $value) => [$value]);
     }
 
-    /**
-     * @test
-     * @dataProvider provideAdminApiKeys
-     */
+    #[Test, DataProvider('provideAdminApiKeys')]
     public function infoReturnsVisitsForCertainShortCode(?ApiKey $apiKey): void
     {
         $shortCode = '123ABC';
@@ -107,7 +108,7 @@ class VisitsStatsHelperTest extends TestCase
         self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentPageResults()));
     }
 
-    /** @test */
+    #[Test]
     public function throwsExceptionWhenRequestingVisitsForInvalidShortCode(): void
     {
         $shortCode = '123ABC';
@@ -122,7 +123,7 @@ class VisitsStatsHelperTest extends TestCase
         $this->helper->visitsForShortUrl($identifier, new VisitsParams());
     }
 
-    /** @test */
+    #[Test]
     public function throwsExceptionWhenRequestingVisitsForInvalidTag(): void
     {
         $tag = 'foo';
@@ -136,10 +137,7 @@ class VisitsStatsHelperTest extends TestCase
         $this->helper->visitsForTag($tag, new VisitsParams(), $apiKey);
     }
 
-    /**
-     * @test
-     * @dataProvider provideAdminApiKeys
-     */
+    #[Test, DataProvider('provideAdminApiKeys')]
     public function visitsForTagAreReturnedAsExpected(?ApiKey $apiKey): void
     {
         $tag = 'foo';
@@ -163,7 +161,7 @@ class VisitsStatsHelperTest extends TestCase
         self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentPageResults()));
     }
 
-    /** @test */
+    #[Test]
     public function throwsExceptionWhenRequestingVisitsForInvalidDomain(): void
     {
         $domain = 'foo.com';
@@ -177,10 +175,7 @@ class VisitsStatsHelperTest extends TestCase
         $this->helper->visitsForDomain($domain, new VisitsParams(), $apiKey);
     }
 
-    /**
-     * @test
-     * @dataProvider provideAdminApiKeys
-     */
+    #[Test, DataProvider('provideAdminApiKeys')]
     public function visitsForNonDefaultDomainAreReturnedAsExpected(?ApiKey $apiKey): void
     {
         $domain = 'foo.com';
@@ -208,10 +203,7 @@ class VisitsStatsHelperTest extends TestCase
         self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentPageResults()));
     }
 
-    /**
-     * @test
-     * @dataProvider provideAdminApiKeys
-     */
+    #[Test, DataProvider('provideAdminApiKeys')]
     public function visitsForDefaultDomainAreReturnedAsExpected(?ApiKey $apiKey): void
     {
         $repo = $this->createMock(DomainRepository::class);
@@ -238,7 +230,7 @@ class VisitsStatsHelperTest extends TestCase
         self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentPageResults()));
     }
 
-    /** @test */
+    #[Test]
     public function orphanVisitsAreReturnedAsExpected(): void
     {
         $list = map(range(0, 3), fn () => Visit::forBasePath(Visitor::emptyInstance()));
@@ -256,7 +248,7 @@ class VisitsStatsHelperTest extends TestCase
         self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentPageResults()));
     }
 
-    /** @test */
+    #[Test]
     public function nonOrphanVisitsAreReturnedAsExpected(): void
     {
         $list = map(range(0, 3), fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance()));

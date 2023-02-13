@@ -12,6 +12,7 @@ use GuzzleHttp\RequestOptions;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Stream;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
@@ -27,7 +28,7 @@ class UrlValidatorTest extends TestCase
         $this->httpClient = $this->createMock(ClientInterface::class);
     }
 
-    /** @test */
+    #[Test]
     public function exceptionIsThrownWhenUrlIsInvalid(): void
     {
         $this->httpClient->expects($this->once())->method('request')->willThrowException($this->clientException());
@@ -36,7 +37,7 @@ class UrlValidatorTest extends TestCase
         $this->urlValidator()->validateUrl('http://foobar.com/12345/hello?foo=bar', true);
     }
 
-    /** @test */
+    #[Test]
     public function expectedUrlIsCalledWhenTryingToVerify(): void
     {
         $expectedUrl = 'http://foobar.com';
@@ -59,14 +60,14 @@ class UrlValidatorTest extends TestCase
         $this->urlValidator()->validateUrl($expectedUrl, true);
     }
 
-    /** @test */
+    #[Test]
     public function noCheckIsPerformedWhenUrlValidationIsDisabled(): void
     {
         $this->httpClient->expects($this->never())->method('request');
         $this->urlValidator()->validateUrl('', false);
     }
 
-    /** @test */
+    #[Test]
     public function validateUrlWithTitleReturnsNullWhenRequestFailsAndValidationIsDisabled(): void
     {
         $this->httpClient->expects($this->once())->method('request')->willThrowException($this->clientException());
@@ -76,7 +77,7 @@ class UrlValidatorTest extends TestCase
         self::assertNull($result);
     }
 
-    /** @test */
+    #[Test]
     public function validateUrlWithTitleReturnsNullWhenAutoResolutionIsDisabled(): void
     {
         $this->httpClient->expects($this->never())->method('request');
@@ -86,7 +87,7 @@ class UrlValidatorTest extends TestCase
         self::assertNull($result);
     }
 
-    /** @test */
+    #[Test]
     public function validateUrlWithTitleReturnsNullWhenAutoResolutionIsDisabledAndValidationIsEnabled(): void
     {
         $this->httpClient->expects($this->once())->method('request')->with(
@@ -100,7 +101,7 @@ class UrlValidatorTest extends TestCase
         self::assertNull($result);
     }
 
-    /** @test */
+    #[Test]
     public function validateUrlWithTitleResolvesTitleWhenAutoResolutionIsEnabled(): void
     {
         $this->httpClient->expects($this->once())->method('request')->with(
@@ -114,7 +115,7 @@ class UrlValidatorTest extends TestCase
         self::assertEquals('Resolved "title"', $result);
     }
 
-    /** @test */
+    #[Test]
     public function validateUrlWithTitleReturnsNullWhenAutoResolutionIsEnabledAndReturnedContentTypeIsInvalid(): void
     {
         $this->httpClient->expects($this->once())->method('request')->with(
@@ -128,7 +129,7 @@ class UrlValidatorTest extends TestCase
         self::assertNull($result);
     }
 
-    /** @test */
+    #[Test]
     public function validateUrlWithTitleReturnsNullWhenAutoResolutionIsEnabledAndBodyDoesNotContainTitle(): void
     {
         $this->httpClient->expects($this->once())->method('request')->with(

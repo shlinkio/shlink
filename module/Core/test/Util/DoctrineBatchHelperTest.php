@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Util;
 
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -21,10 +23,7 @@ class DoctrineBatchHelperTest extends TestCase
         $this->helper = new DoctrineBatchHelper($this->em);
     }
 
-    /**
-     * @test
-     * @dataProvider provideIterables
-     */
+    #[Test, DataProvider('provideIterables')]
     public function entityManagerIsFlushedAndClearedTheExpectedAmountOfTimes(
         array $iterable,
         int $batchSize,
@@ -43,14 +42,14 @@ class DoctrineBatchHelperTest extends TestCase
         }
     }
 
-    public function provideIterables(): iterable
+    public static function provideIterables(): iterable
     {
         yield [[], 100, 1];
         yield [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 3, 4];
         yield [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 11, 1];
     }
 
-    /** @test */
+    #[Test]
     public function transactionIsRolledBackWhenAnErrorOccurs(): void
     {
         $this->em->expects($this->once())->method('flush')->willThrowException(new RuntimeException());

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\ShortUrl\Helper;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelper;
@@ -21,10 +23,7 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
         $this->helper = new ShortUrlTitleResolutionHelper($this->urlValidator);
     }
 
-    /**
-     * @test
-     * @dataProvider provideTitles
-     */
+    #[Test, DataProvider('provideTitles')]
     public function urlIsProperlyShortened(?string $title, int $validateWithTitleCallsNum, int $validateCallsNum): void
     {
         $longUrl = 'http://foobar.com/12345/hello?foo=bar';
@@ -42,7 +41,7 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
         );
     }
 
-    public function provideTitles(): iterable
+    public static function provideTitles(): iterable
     {
         yield 'no title' => [null, 1, 0];
         yield 'title' => ['link title', 0, 1];

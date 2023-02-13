@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Exception;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Exception\InvalidRoleConfigException;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
@@ -12,7 +13,7 @@ use function sprintf;
 
 class InvalidRoleConfigExceptionTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function forDomainOnlyWithDefaultDomainGeneratesExpectedException(): void
     {
         $e = InvalidRoleConfigException::forDomainOnlyWithDefaultDomain();

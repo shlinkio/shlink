@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Visit;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Visit\DownloadGeoLiteDbCommand;
@@ -55,10 +57,7 @@ class LocateVisitsCommandTest extends TestCase
         $this->commandTester = $this->testerForCommand($command, $this->downloadDbCommand);
     }
 
-    /**
-     * @test
-     * @dataProvider provideArgs
-     */
+    #[Test, DataProvider('provideArgs')]
     public function expectedSetOfVisitsIsProcessedBasedOnArgs(
         int $expectedUnlocatedCalls,
         int $expectedEmptyCalls,
@@ -100,17 +99,14 @@ class LocateVisitsCommandTest extends TestCase
         }
     }
 
-    public function provideArgs(): iterable
+    public static function provideArgs(): iterable
     {
         yield 'no args' => [1, 0, 0, false, []];
         yield 'retry' => [1, 1, 0, false, ['--retry' => true]];
         yield 'all' => [0, 0, 1, true, ['--retry' => true, '--all' => true]];
     }
 
-    /**
-     * @test
-     * @dataProvider provideIgnoredAddresses
-     */
+    #[Test, DataProvider('provideIgnoredAddresses')]
     public function localhostAndEmptyAddressesAreIgnored(IpCannotBeLocatedException $e, string $message): void
     {
         $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance());
@@ -131,13 +127,13 @@ class LocateVisitsCommandTest extends TestCase
         self::assertStringContainsString($message, $output);
     }
 
-    public function provideIgnoredAddresses(): iterable
+    public static function provideIgnoredAddresses(): iterable
     {
         yield 'empty address' => [IpCannotBeLocatedException::forEmptyAddress(), 'Ignored visit with no IP address'];
         yield 'localhost address' => [IpCannotBeLocatedException::forLocalhost(), 'Ignored localhost address'];
     }
 
-    /** @test */
+    #[Test]
     public function errorWhileLocatingIpIsDisplayed(): void
     {
         $visit = Visit::forValidShortUrl(ShortUrl::createFake(), new Visitor('', '', '1.2.3.4', ''));
@@ -168,7 +164,7 @@ class LocateVisitsCommandTest extends TestCase
         };
     }
 
-    /** @test */
+    #[Test]
     public function noActionIsPerformedIfLockIsAcquired(): void
     {
         $this->lock->method('acquire')->with($this->isFalse())->willReturn(false);
@@ -186,7 +182,7 @@ class LocateVisitsCommandTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function showsProperMessageWhenGeoLiteUpdateFails(): void
     {
         $this->lock->method('acquire')->with($this->isFalse())->willReturn(true);
@@ -199,7 +195,7 @@ class LocateVisitsCommandTest extends TestCase
         self::assertStringContainsString('It is not possible to locate visits without a GeoLite2 db file.', $output);
     }
 
-    /** @test */
+    #[Test]
     public function providingAllFlagOnItsOwnDisplaysNotice(): void
     {
         $this->lock->method('acquire')->with($this->isFalse())->willReturn(true);
@@ -211,10 +207,7 @@ class LocateVisitsCommandTest extends TestCase
         self::assertStringContainsString('The --all flag has no effect on its own', $output);
     }
 
-    /**
-     * @test
-     * @dataProvider provideAbortInputs
-     */
+    #[Test, DataProvider('provideAbortInputs')]
     public function processingAllCancelsCommandIfUserDoesNotActivelyAgreeToConfirmation(array $inputs): void
     {
         $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCodes::EXIT_SUCCESS);
@@ -226,7 +219,7 @@ class LocateVisitsCommandTest extends TestCase
         $this->commandTester->execute(['--all' => true, '--retry' => true]);
     }
 
-    public function provideAbortInputs(): iterable
+    public static function provideAbortInputs(): iterable
     {
         yield 'n' => [['n']];
         yield 'no' => [['no']];

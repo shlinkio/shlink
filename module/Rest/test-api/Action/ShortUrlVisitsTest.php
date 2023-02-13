@@ -6,6 +6,8 @@ namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use GuzzleHttp\Psr7\Query;
 use Laminas\Diactoros\Uri;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 use ShlinkioApiTest\Shlink\Rest\Utils\NotFoundUrlHelpersTrait;
@@ -16,10 +18,7 @@ class ShortUrlVisitsTest extends ApiTestCase
 {
     use NotFoundUrlHelpersTrait;
 
-    /**
-     * @test
-     * @dataProvider provideInvalidUrls
-     */
+    #[Test, DataProvider('provideInvalidUrls')]
     public function tryingToGetVisitsForInvalidUrlReturnsNotFoundError(
         string $shortCode,
         ?string $domain,
@@ -43,10 +42,7 @@ class ShortUrlVisitsTest extends ApiTestCase
         self::assertEquals($domain, $payload['domain'] ?? null);
     }
 
-    /**
-     * @test
-     * @dataProvider provideDomains
-     */
+    #[Test, DataProvider('provideDomains')]
     public function properVisitsAreReturnedWhenDomainIsProvided(?string $domain, int $expectedAmountOfVisits): void
     {
         $shortCode = 'ghi789';
@@ -66,16 +62,13 @@ class ShortUrlVisitsTest extends ApiTestCase
         self::assertCount($expectedAmountOfVisits, $payload['visits']['data'] ?? []);
     }
 
-    public function provideDomains(): iterable
+    public static function provideDomains(): iterable
     {
         yield 'domain' => ['example.com', 0];
         yield 'no domain' => [null, 2];
     }
 
-    /**
-     * @test
-     * @dataProvider provideVisitsForBots
-     */
+    #[Test, DataProvider('provideVisitsForBots')]
     public function properVisitsAreReturnedWhenExcludingBots(bool $excludeBots, int $expectedAmountOfVisits): void
     {
         $shortCode = 'def456';
@@ -95,7 +88,7 @@ class ShortUrlVisitsTest extends ApiTestCase
         self::assertCount($expectedAmountOfVisits, $payload['visits']['data'] ?? []);
     }
 
-    public function provideVisitsForBots(): iterable
+    public static function provideVisitsForBots(): iterable
     {
         yield 'bots excluded' => [true, 1];
         yield 'bots not excluded' => [false, 2];

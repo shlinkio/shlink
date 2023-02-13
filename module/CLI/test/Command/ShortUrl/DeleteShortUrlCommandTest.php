@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\DeleteShortUrlCommand;
@@ -30,7 +32,7 @@ class DeleteShortUrlCommandTest extends TestCase
         $this->commandTester = $this->testerForCommand(new DeleteShortUrlCommand($this->service));
     }
 
-    /** @test */
+    #[Test]
     public function successMessageIsPrintedIfUrlIsProperlyDeleted(): void
     {
         $shortCode = 'abc123';
@@ -48,7 +50,7 @@ class DeleteShortUrlCommandTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function invalidShortCodePrintsMessage(): void
     {
         $shortCode = 'abc123';
@@ -64,10 +66,7 @@ class DeleteShortUrlCommandTest extends TestCase
         self::assertStringContainsString(sprintf('No URL found with short code "%s"', $shortCode), $output);
     }
 
-    /**
-     * @test
-     * @dataProvider provideRetryDeleteAnswers
-     */
+    #[Test, DataProvider('provideRetryDeleteAnswers')]
     public function deleteIsRetriedWhenThresholdIsReachedAndQuestionIsAccepted(
         array $retryAnswer,
         int $expectedDeleteCalls,
@@ -98,14 +97,14 @@ class DeleteShortUrlCommandTest extends TestCase
         self::assertStringContainsString($expectedMessage, $output);
     }
 
-    public function provideRetryDeleteAnswers(): iterable
+    public static function provideRetryDeleteAnswers(): iterable
     {
         yield 'answering yes to retry' => [['yes'], 2, 'Short URL with short code "abc123" successfully deleted.'];
         yield 'answering no to retry' => [['no'], 1, 'Short URL was not deleted.'];
         yield 'answering default to retry' => [[PHP_EOL], 1, 'Short URL was not deleted.'];
     }
 
-    /** @test */
+    #[Test]
     public function deleteIsNotRetriedWhenThresholdIsReachedAndQuestionIsDeclined(): void
     {
         $shortCode = 'abc123';

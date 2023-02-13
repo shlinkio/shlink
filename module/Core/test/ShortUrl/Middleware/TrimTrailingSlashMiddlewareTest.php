@@ -7,6 +7,8 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl\Middleware;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -26,10 +28,7 @@ class TrimTrailingSlashMiddlewareTest extends TestCase
         $this->requestHandler = $this->createMock(RequestHandlerInterface::class);
     }
 
-    /**
-     * @test
-     * @dataProvider provideRequests
-     */
+    #[Test, DataProvider('provideRequests')]
     public function returnsExpectedResponse(
         bool $trailingSlashEnabled,
         ServerRequestInterface $inputRequest,
@@ -43,7 +42,7 @@ class TrimTrailingSlashMiddlewareTest extends TestCase
         $this->middleware($trailingSlashEnabled)->process($inputRequest, $this->requestHandler);
     }
 
-    public function provideRequests(): iterable
+    public static function provideRequests(): iterable
     {
         yield 'trailing slash disabled' => [
             false,

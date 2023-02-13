@@ -9,12 +9,15 @@ use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Uri;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\ErrorHandler\Model\NotFoundType;
 use Shlinkio\Shlink\Core\ErrorHandler\NotFoundTemplateHandler;
+
+use function Laminas\Stratigility\middleware;
 
 class NotFoundTemplateHandlerTest extends TestCase
 {
@@ -31,10 +34,7 @@ class NotFoundTemplateHandlerTest extends TestCase
         $this->handler = new NotFoundTemplateHandler($readFile);
     }
 
-    /**
-     * @test
-     * @dataProvider provideTemplates
-     */
+    #[Test, DataProvider('provideTemplates')]
     public function properErrorTemplateIsRendered(ServerRequestInterface $request, string $expectedTemplate): void
     {
         $resp = $this->handler->handle($request->withHeader('Accept', 'text/html'));
@@ -44,19 +44,20 @@ class NotFoundTemplateHandlerTest extends TestCase
         self::assertTrue($this->readFileCalled);
     }
 
-    public function provideTemplates(): iterable
+    public static function provideTemplates(): iterable
     {
         $request = ServerRequestFactory::fromGlobals()->withUri(new Uri('/foo'));
 
-        yield 'base url' => [$this->withNotFoundType($request, '/foo'), NotFoundTemplateHandler::NOT_FOUND_TEMPLATE];
-        yield 'regular not found' => [$this->withNotFoundType($request), NotFoundTemplateHandler::NOT_FOUND_TEMPLATE];
+        yield 'base url' => [self::withNotFoundType($request, '/foo'), NotFoundTemplateHandler::NOT_FOUND_TEMPLATE];
+        yield 'regular not found' => [self::withNotFoundType($request), NotFoundTemplateHandler::NOT_FOUND_TEMPLATE];
         yield 'invalid short code' => [
-            $this->withNotFoundType($request->withAttribute(
+            self::withNotFoundType($request->withAttribute(
                 RouteResult::class,
                 RouteResult::fromRoute(
                     new Route(
                         'foo',
-                        $this->createMock(MiddlewareInterface::class),
+                        middleware(function (): void {
+                        }),
                         ['GET'],
                         RedirectAction::class,
                     ),
@@ -66,7 +67,7 @@ class NotFoundTemplateHandlerTest extends TestCase
         ];
     }
 
-    private function withNotFoundType(ServerRequestInterface $req, string $baseUrl = ''): ServerRequestInterface
+    private static function withNotFoundType(ServerRequestInterface $req, string $baseUrl = ''): ServerRequestInterface
     {
         $type = NotFoundType::fromRequest($req, $baseUrl);
         return $req->withAttribute(NotFoundType::class, $type);

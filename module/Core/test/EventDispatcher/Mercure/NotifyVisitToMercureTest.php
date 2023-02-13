@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\EventDispatcher\Mercure;
 
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -37,7 +39,7 @@ class NotifyVisitToMercureTest extends TestCase
         $this->listener = new NotifyVisitToMercure($this->helper, $this->updatesGenerator, $this->em, $this->logger);
     }
 
-    /** @test */
+    #[Test]
     public function notificationsAreNotSentWhenVisitCannotBeFound(): void
     {
         $visitId = '123';
@@ -55,7 +57,7 @@ class NotifyVisitToMercureTest extends TestCase
         ($this->listener)(new VisitLocated($visitId));
     }
 
-    /** @test */
+    #[Test]
     public function notificationsAreSentWhenVisitIsFound(): void
     {
         $visitId = '123';
@@ -75,7 +77,7 @@ class NotifyVisitToMercureTest extends TestCase
         ($this->listener)(new VisitLocated($visitId));
     }
 
-    /** @test */
+    #[Test]
     public function debugIsLoggedWhenExceptionIsThrown(): void
     {
         $visitId = '123';
@@ -99,10 +101,7 @@ class NotifyVisitToMercureTest extends TestCase
         ($this->listener)(new VisitLocated($visitId));
     }
 
-    /**
-     * @test
-     * @dataProvider provideOrphanVisits
-     */
+    #[Test, DataProvider('provideOrphanVisits')]
     public function notificationsAreSentForOrphanVisits(Visit $visit): void
     {
         $visitId = '123';
@@ -121,7 +120,7 @@ class NotifyVisitToMercureTest extends TestCase
         ($this->listener)(new VisitLocated($visitId));
     }
 
-    public function provideOrphanVisits(): iterable
+    public static function provideOrphanVisits(): iterable
     {
         $visitor = Visitor::emptyInstance();
 

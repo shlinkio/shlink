@@ -6,6 +6,8 @@ namespace ShlinkioTest\Shlink\Core\Visit\Geolocation;
 
 use Doctrine\ORM\EntityManager;
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
@@ -38,10 +40,7 @@ class VisitLocatorTest extends TestCase
         $this->visitService = new VisitLocator($this->em, $this->repo);
     }
 
-    /**
-     * @test
-     * @dataProvider provideMethodNames
-     */
+    #[Test, DataProvider('provideMethodNames')]
     public function locateVisitsIteratesAndLocatesExpectedVisits(
         string $serviceMethodName,
         string $expectedRepoMethodName,
@@ -72,17 +71,14 @@ class VisitLocatorTest extends TestCase
         });
     }
 
-    public function provideMethodNames(): iterable
+    public static function provideMethodNames(): iterable
     {
         yield 'locateUnlocatedVisits' => ['locateUnlocatedVisits', 'findUnlocatedVisits'];
         yield 'locateVisitsWithEmptyLocation' => ['locateVisitsWithEmptyLocation', 'findVisitsWithEmptyLocation'];
         yield 'locateAllVisits' => ['locateAllVisits', 'findAllVisits'];
     }
 
-    /**
-     * @test
-     * @dataProvider provideIsNonLocatableAddress
-     */
+    #[Test, DataProvider('provideIsNonLocatableAddress')]
     public function visitsWhichCannotBeLocatedAreIgnoredOrLocatedAsEmpty(
         string $serviceMethodName,
         string $expectedRepoMethodName,
@@ -120,7 +116,7 @@ class VisitLocatorTest extends TestCase
         );
     }
 
-    public function provideIsNonLocatableAddress(): iterable
+    public static function provideIsNonLocatableAddress(): iterable
     {
         yield 'locateUnlocatedVisits - locatable address' => ['locateUnlocatedVisits', 'findUnlocatedVisits', false];
         yield 'locateUnlocatedVisits - non-locatable address' => ['locateUnlocatedVisits', 'findUnlocatedVisits', true];

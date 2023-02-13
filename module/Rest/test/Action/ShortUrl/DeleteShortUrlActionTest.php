@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use Laminas\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\ShortUrl\DeleteShortUrlServiceInterface;
@@ -22,7 +23,7 @@ class DeleteShortUrlActionTest extends TestCase
         $this->action = new DeleteShortUrlAction($this->service);
     }
 
-    /** @test */
+    #[Test]
     public function emptyResponseIsReturnedIfProperlyDeleted(): void
     {
         $apiKey = ApiKey::create();

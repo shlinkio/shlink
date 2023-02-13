@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Exception;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 
@@ -11,7 +12,7 @@ use function sprintf;
 
 class TagNotFoundExceptionTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function properlyCreatesExceptionFromNotFoundTag(): void
     {
         $tag = 'foo';

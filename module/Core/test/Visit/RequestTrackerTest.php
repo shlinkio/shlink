@@ -7,6 +7,8 @@ namespace ShlinkioTest\Shlink\Core\Visit;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\ServerRequestFactory;
 use Mezzio\Router\Middleware\ImplicitHeadMiddleware;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -45,10 +47,7 @@ class RequestTrackerTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @dataProvider provideNonTrackingRequests
-     */
+    #[Test, DataProvider('provideNonTrackingRequests')]
     public function trackingIsDisabledWhenRequestDoesNotMeetConditions(ServerRequestInterface $request): void
     {
         $this->visitsTracker->expects($this->never())->method('track');
@@ -57,7 +56,7 @@ class RequestTrackerTest extends TestCase
         $this->requestTracker->trackIfApplicable($shortUrl, $request);
     }
 
-    public function provideNonTrackingRequests(): iterable
+    public static function provideNonTrackingRequests(): iterable
     {
         yield 'forwarded from head' => [ServerRequestFactory::fromGlobals()->withAttribute(
             ImplicitHeadMiddleware::FORWARDED_HTTP_METHOD_ATTRIBUTE,
@@ -81,7 +80,7 @@ class RequestTrackerTest extends TestCase
         )];
     }
 
-    /** @test */
+    #[Test]
     public function trackingHappensOverShortUrlsWhenRequestMeetsConditions(): void
     {
         $shortUrl = ShortUrl::withLongUrl(self::LONG_URL);
@@ -93,7 +92,7 @@ class RequestTrackerTest extends TestCase
         $this->requestTracker->trackIfApplicable($shortUrl, $this->request);
     }
 
-    /** @test */
+    #[Test]
     public function baseUrlErrorIsTracked(): void
     {
         $this->notFoundType->expects($this->once())->method('isBaseUrl')->willReturn(true);
@@ -108,7 +107,7 @@ class RequestTrackerTest extends TestCase
         $this->requestTracker->trackNotFoundIfApplicable($this->request);
     }
 
-    /** @test */
+    #[Test]
     public function regularNotFoundErrorIsTracked(): void
     {
         $this->notFoundType->expects($this->once())->method('isBaseUrl')->willReturn(false);
@@ -123,7 +122,7 @@ class RequestTrackerTest extends TestCase
         $this->requestTracker->trackNotFoundIfApplicable($this->request);
     }
 
-    /** @test */
+    #[Test]
     public function invalidShortUrlErrorIsTracked(): void
     {
         $this->notFoundType->expects($this->once())->method('isBaseUrl')->willReturn(false);
@@ -138,10 +137,7 @@ class RequestTrackerTest extends TestCase
         $this->requestTracker->trackNotFoundIfApplicable($this->request);
     }
 
-    /**
-     * @test
-     * @dataProvider provideNonTrackingRequests
-     */
+    #[Test, DataProvider('provideNonTrackingRequests')]
     public function notFoundIsNotTrackedIfRequestDoesNotMeetConditions(ServerRequestInterface $request): void
     {
         $this->visitsTracker->expects($this->never())->method('trackBaseUrlVisit');

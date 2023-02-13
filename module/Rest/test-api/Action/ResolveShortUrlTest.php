@@ -6,6 +6,8 @@ namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use Cake\Chronos\Chronos;
 use GuzzleHttp\RequestOptions;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 use ShlinkioApiTest\Shlink\Rest\Utils\NotFoundUrlHelpersTrait;
 
@@ -15,10 +17,7 @@ class ResolveShortUrlTest extends ApiTestCase
 {
     use NotFoundUrlHelpersTrait;
 
-    /**
-     * @test
-     * @dataProvider provideDisabledMeta
-     */
+    #[Test, DataProvider('provideDisabledMeta')]
     public function shortUrlIsProperlyResolvedEvenWhenNotEnabled(array $disabledMeta): void
     {
         $shortCode = 'abc123';
@@ -34,7 +33,7 @@ class ResolveShortUrlTest extends ApiTestCase
         self::assertEquals(self::STATUS_OK, $fetchResp->getStatusCode());
     }
 
-    public function provideDisabledMeta(): iterable
+    public static function provideDisabledMeta(): iterable
     {
         $now = Chronos::now();
 
@@ -43,10 +42,7 @@ class ResolveShortUrlTest extends ApiTestCase
         yield 'maxVisits reached' => [['maxVisits' => 1]];
     }
 
-    /**
-     * @test
-     * @dataProvider provideInvalidUrls
-     */
+    #[Test, DataProvider('provideInvalidUrls')]
     public function tryingToResolveInvalidUrlReturnsNotFoundError(
         string $shortCode,
         ?string $domain,

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use Laminas\Diactoros\ServerRequest;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -28,7 +29,7 @@ class ResolveShortUrlActionTest extends TestCase
         ));
     }
 
-    /** @test */
+    #[Test]
     public function correctShortCodeReturnsSuccess(): void
     {
         $shortCode = 'abc123';

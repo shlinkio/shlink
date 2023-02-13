@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Domain;
 
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Config\EmptyNotFoundRedirectConfig;
@@ -29,10 +31,7 @@ class DomainServiceTest extends TestCase
         $this->domainService = new DomainService($this->em, 'default.com');
     }
 
-    /**
-     * @test
-     * @dataProvider provideExcludedDomains
-     */
+    #[Test, DataProvider('provideExcludedDomains')]
     public function listDomainsDelegatesIntoRepository(array $domains, array $expectedResult, ?ApiKey $apiKey): void
     {
         $repo = $this->createMock(DomainRepositoryInterface::class);
@@ -44,7 +43,7 @@ class DomainServiceTest extends TestCase
         self::assertEquals($expectedResult, $result);
     }
 
-    public function provideExcludedDomains(): iterable
+    public static function provideExcludedDomains(): iterable
     {
         $default = DomainItem::forDefaultDomain('default.com', new EmptyNotFoundRedirectConfig());
         $adminApiKey = ApiKey::create();
@@ -102,7 +101,7 @@ class DomainServiceTest extends TestCase
         ];
     }
 
-    /** @test */
+    #[Test]
     public function getDomainThrowsExceptionWhenDomainIsNotFound(): void
     {
         $this->em->expects($this->once())->method('find')->with(Domain::class, '123')->willReturn(null);
@@ -112,7 +111,7 @@ class DomainServiceTest extends TestCase
         $this->domainService->getDomain('123');
     }
 
-    /** @test */
+    #[Test]
     public function getDomainReturnsEntityWhenFound(): void
     {
         $domain = Domain::withAuthority('');
@@ -123,10 +122,7 @@ class DomainServiceTest extends TestCase
         self::assertSame($domain, $result);
     }
 
-    /**
-     * @test
-     * @dataProvider provideFoundDomains
-     */
+    #[Test, DataProvider('provideFoundDomains')]
     public function getOrCreateAlwaysPersistsDomain(?Domain $foundDomain, ?ApiKey $apiKey): void
     {
         $authority = 'example.com';
@@ -145,7 +141,7 @@ class DomainServiceTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function getOrCreateThrowsExceptionForApiKeysWithDomainRole(): void
     {
         $authority = 'example.com';
@@ -163,10 +159,7 @@ class DomainServiceTest extends TestCase
         $this->domainService->getOrCreate($authority, $apiKey);
     }
 
-    /**
-     * @test
-     * @dataProvider provideFoundDomains
-     */
+    #[Test, DataProvider('provideFoundDomains')]
     public function configureNotFoundRedirectsConfiguresFetchedDomain(?Domain $foundDomain, ?ApiKey $apiKey): void
     {
         $authority = 'example.com';
@@ -190,7 +183,7 @@ class DomainServiceTest extends TestCase
         self::assertEquals('baz.com', $result->invalidShortUrlRedirect());
     }
 
-    public function provideFoundDomains(): iterable
+    public static function provideFoundDomains(): iterable
     {
         $domain = Domain::withAuthority('');
         $adminApiKey = ApiKey::create();

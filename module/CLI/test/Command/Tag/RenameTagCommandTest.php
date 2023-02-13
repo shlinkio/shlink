@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Tag\RenameTagCommand;
@@ -27,7 +28,7 @@ class RenameTagCommandTest extends TestCase
         $this->commandTester = $this->testerForCommand(new RenameTagCommand($this->tagService));
     }
 
-    /** @test */
+    #[Test]
     public function errorIsPrintedIfExceptionIsThrown(): void
     {
         $oldName = 'foo';
@@ -45,7 +46,7 @@ class RenameTagCommandTest extends TestCase
         self::assertStringContainsString('Tag with name "foo" could not be found', $output);
     }
 
-    /** @test */
+    #[Test]
     public function successIsPrintedIfNoErrorOccurs(): void
     {
         $oldName = 'foo';

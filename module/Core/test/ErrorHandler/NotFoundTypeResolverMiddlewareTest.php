@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Core\ErrorHandler;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -25,7 +26,7 @@ class NotFoundTypeResolverMiddlewareTest extends TestCase
         $this->handler = $this->createMock(RequestHandlerInterface::class);
     }
 
-    /** @test */
+    #[Test]
     public function notFoundTypeIsAddedToRequest(): void
     {
         $request = ServerRequestFactory::fromGlobals();

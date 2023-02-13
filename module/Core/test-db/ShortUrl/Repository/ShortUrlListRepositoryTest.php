@@ -6,6 +6,7 @@ namespace ShlinkioDbTest\Shlink\Core\ShortUrl\Repository;
 
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
+use PHPUnit\Framework\Attributes\Test;
 use ReflectionObject;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Model\Ordering;
@@ -37,7 +38,7 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         $this->relationResolver = new PersistenceShortUrlRelationResolver($em);
     }
 
-    /** @test */
+    #[Test]
     public function countListReturnsProperNumberOfResults(): void
     {
         $count = 5;
@@ -49,7 +50,7 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         self::assertEquals($count, $this->repo->countList(new ShortUrlsCountFiltering()));
     }
 
-    /** @test */
+    #[Test]
     public function findListProperlyFiltersResult(): void
     {
         $foo = ShortUrl::create(
@@ -143,7 +144,7 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         ));
     }
 
-    /** @test */
+    #[Test]
     public function findListProperlyMapsFieldNamesToColumnNamesWhenOrdering(): void
     {
         $urls = ['a', 'z', 'c', 'b'];
@@ -164,7 +165,7 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         self::assertEquals('z', $result[3]->getLongUrl());
     }
 
-    /** @test */
+    #[Test]
     public function findListReturnsOnlyThoseWithMatchingTags(): void
     {
         $shortUrl1 = ShortUrl::create(ShortUrlCreation::fromRawData([
@@ -273,7 +274,7 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         ));
     }
 
-    /** @test */
+    #[Test]
     public function findListReturnsOnlyThoseWithMatchingDomains(): void
     {
         $shortUrl1 = ShortUrl::create(ShortUrlCreation::fromRawData([
@@ -309,7 +310,7 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         self::assertCount(0, $this->repo->findList($buildFiltering('no results')));
     }
 
-    /** @test */
+    #[Test]
     public function findListReturnsOnlyThoseWithoutExcludedUrls(): void
     {
         $shortUrl1 = ShortUrl::create(ShortUrlCreation::fromRawData([

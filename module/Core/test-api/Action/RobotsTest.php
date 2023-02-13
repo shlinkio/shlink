@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace ShlinkioApiTest\Shlink\Core\Action;
 
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 class RobotsTest extends ApiTestCase
 {
-    /** @test */
+    #[Test]
     public function expectedListOfCrawlableShortCodesIsReturned(): void
     {
         $resp = $this->callShortUrl('robots.txt');

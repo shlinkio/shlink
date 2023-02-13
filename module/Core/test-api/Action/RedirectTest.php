@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioApiTest\Shlink\Core\Action;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use const ShlinkioTest\Shlink\ANDROID_USER_AGENT;
@@ -12,17 +14,14 @@ use const ShlinkioTest\Shlink\IOS_USER_AGENT;
 
 class RedirectTest extends ApiTestCase
 {
-    /**
-     * @test
-     * @dataProvider provideUserAgents
-     */
+    #[Test, DataProvider('provideUserAgents')]
     public function properRedirectHappensBasedOnUserAgent(?string $userAgent, string $expectedRedirect): void
     {
         $response = $this->callShortUrl('def456', $userAgent);
         self::assertEquals($expectedRedirect, $response->getHeaderLine('Location'));
     }
 
-    public function provideUserAgents(): iterable
+    public static function provideUserAgents(): iterable
     {
         yield 'android' => [ANDROID_USER_AGENT, 'https://blog.alejandrocelaya.com/android'];
         yield 'ios' => [IOS_USER_AGENT, 'https://blog.alejandrocelaya.com/ios'];

@@ -8,6 +8,8 @@ use Cake\Chronos\Chronos;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
@@ -33,7 +35,7 @@ class CreateShortUrlActionTest extends TestCase
         $this->action = new CreateShortUrlAction($this->urlShortener, $this->transformer, new UrlShortenerOptions());
     }
 
-    /** @test */
+    #[Test]
     public function properShortcodeConversionReturnsData(): void
     {
         $apiKey = ApiKey::create();
@@ -66,10 +68,7 @@ class CreateShortUrlActionTest extends TestCase
         self::assertEquals('stringified_short_url', $payload['shortUrl']);
     }
 
-    /**
-     * @test
-     * @dataProvider provideInvalidDomains
-     */
+    #[Test, DataProvider('provideInvalidDomains')]
     public function anInvalidDomainReturnsError(string $domain): void
     {
         $this->urlShortener->expects($this->never())->method('shorten');
@@ -85,7 +84,7 @@ class CreateShortUrlActionTest extends TestCase
         $this->action->handle($request);
     }
 
-    public function provideInvalidDomains(): iterable
+    public static function provideInvalidDomains(): iterable
     {
         yield ['localhost:80000'];
         yield ['127.0.0.1'];

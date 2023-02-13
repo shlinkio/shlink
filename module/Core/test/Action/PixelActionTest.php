@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Action;
 
 use Laminas\Diactoros\ServerRequest;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -29,7 +30,7 @@ class PixelActionTest extends TestCase
         $this->action = new PixelAction($this->urlResolver, $this->requestTracker);
     }
 
-    /** @test */
+    #[Test]
     public function imageIsReturned(): void
     {
         $shortCode = 'abc123';

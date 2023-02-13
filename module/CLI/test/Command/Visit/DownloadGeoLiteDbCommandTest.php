@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Visit;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Visit\DownloadGeoLiteDbCommand;
@@ -29,10 +31,7 @@ class DownloadGeoLiteDbCommandTest extends TestCase
         $this->commandTester = $this->testerForCommand(new DownloadGeoLiteDbCommand($this->dbUpdater));
     }
 
-    /**
-     * @test
-     * @dataProvider provideFailureParams
-     */
+    #[Test, DataProvider('provideFailureParams')]
     public function showsProperMessageWhenGeoLiteUpdateFails(
         bool $olderDbExists,
         string $expectedMessage,
@@ -61,7 +60,7 @@ class DownloadGeoLiteDbCommandTest extends TestCase
         self::assertSame($expectedExitCode, $exitCode);
     }
 
-    public function provideFailureParams(): iterable
+    public static function provideFailureParams(): iterable
     {
         yield 'existing db' => [
             true,
@@ -75,10 +74,7 @@ class DownloadGeoLiteDbCommandTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider provideSuccessParams
-     */
+    #[Test, DataProvider('provideSuccessParams')]
     public function printsExpectedMessageWhenNoErrorOccurs(callable $checkUpdateBehavior, string $expectedMessage): void
     {
         $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willReturnCallback(
@@ -93,7 +89,7 @@ class DownloadGeoLiteDbCommandTest extends TestCase
         self::assertSame(ExitCodes::EXIT_SUCCESS, $exitCode);
     }
 
-    public function provideSuccessParams(): iterable
+    public static function provideSuccessParams(): iterable
     {
         yield 'up to date db' => [fn () => GeolocationResult::CHECK_SKIPPED, '[INFO] GeoLite2 db file is up to date.'];
         yield 'outdated db' => [function (callable $beforeDownload): GeolocationResult {
