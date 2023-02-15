@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Fixed
 * [#1698](https://github.com/shlinkio/shlink/issues/1698) Fixed error 500 in `robots.txt`.
 * [#1688](https://github.com/shlinkio/shlink/issues/1688) Fixed huge performance degradation on `/tags/stats` endpoint.
+* [#1693](https://github.com/shlinkio/shlink/issues/1693) Fixed Shlink thinking database already exists if it finds foreign tables.
 
 
 ## [3.5.1] - 2023-02-04
