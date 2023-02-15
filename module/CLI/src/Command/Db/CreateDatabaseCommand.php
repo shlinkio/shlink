@@ -6,6 +6,8 @@ namespace Shlinkio\Shlink\CLI\Command\Db;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\SqlitePlatform;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\ProcessRunnerInterface;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,12 +17,13 @@ use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Process\PhpExecutableFinder;
 
 use function Functional\contains;
-use function Functional\filter;
-
-use const Shlinkio\Shlink\MIGRATIONS_TABLE;
+use function Functional\map;
+use function Functional\some;
 
 class CreateDatabaseCommand extends AbstractDatabaseCommand
 {
+    private readonly Connection $regularConn;
+
     public const NAME = 'db:create';
     public const DOCTRINE_SCRIPT = 'bin/doctrine';
     public const DOCTRINE_CREATE_SCHEMA_COMMAND = 'orm:schema-tool:create';
@@ -29,9 +32,10 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
         LockFactory $locker,
         ProcessRunnerInterface $processRunner,
         PhpExecutableFinder $phpFinder,
-        private Connection $regularConn,
-        private Connection $noDbNameConn,
+        private readonly EntityManagerInterface $em,
+        private readonly Connection $noDbNameConn,
     ) {
+        $this->regularConn = $this->em->getConnection();
         parent::__construct($locker, $processRunner, $phpFinder);
     }
 
@@ -74,6 +78,8 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
         // Otherwise, it will fail to connect and will not be able to create the new database
         $schemaManager = $this->noDbNameConn->createSchemaManager();
         $databases = $schemaManager->listDatabases();
+        // We cannot use getDatabase() to get the database name here, because then the driver will try to connect, and
+        // it does not exist yet. We need to read from the raw params instead.
         $shlinkDatabase = $this->regularConn->getParams()['dbname'] ?? null;
 
         if ($shlinkDatabase !== null && ! contains($databases, $shlinkDatabase)) {
@@ -83,10 +89,14 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
 
     private function schemaExists(): bool
     {
-        // If at least one of the shlink tables exist, we will consider the database exists somehow.
-        // We exclude the migrations table, in case db:migrate was run first by mistake.
-        // Any other inconsistency will be taken care by the migrations.
         $schemaManager = $this->regularConn->createSchemaManager();
-        return ! empty(filter($schemaManager->listTableNames(), fn (string $table) => $table !== MIGRATIONS_TABLE));
+        $existingTables = $schemaManager->listTableNames();
+
+        $allMetadata = $this->em->getMetadataFactory()->getAllMetadata();
+        $shlinkTables = map($allMetadata, static fn (ClassMetadata $metadata) => $metadata->getTableName());
+
+        // If at least one of the shlink tables exist, we will consider the database exists somehow.
+        // Any other inconsistency will be taken care of by the migrations.
+        return some($shlinkTables, static fn (string $shlinkTable) => contains($existingTables, $shlinkTable));
     }
 }

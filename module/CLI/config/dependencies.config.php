@@ -116,7 +116,7 @@ return [
             LockFactory::class,
             Util\ProcessRunner::class,
             PhpExecutableFinder::class,
-            Connection::class,
+            'em',
             NoDbNameConnectionFactory::SERVICE_NAME,
         ],
         Command\Db\MigrateDatabaseCommand::class => [
