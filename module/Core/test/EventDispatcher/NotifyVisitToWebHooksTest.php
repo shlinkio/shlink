@@ -12,6 +12,8 @@ use GuzzleHttp\Promise\FulfilledPromise;
 use GuzzleHttp\Promise\RejectedPromise;
 use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -41,7 +43,7 @@ class NotifyVisitToWebHooksTest extends TestCase
         $this->logger = $this->createMock(LoggerInterface::class);
     }
 
-    /** @test */
+    #[Test]
     public function emptyWebhooksMakeNoFurtherActions(): void
     {
         $this->em->expects($this->never())->method('find');
@@ -49,7 +51,7 @@ class NotifyVisitToWebHooksTest extends TestCase
         $this->createListener([])(new VisitLocated('1'));
     }
 
-    /** @test */
+    #[Test]
     public function invalidVisitDoesNotPerformAnyRequest(): void
     {
         $this->em->expects($this->once())->method('find')->with(Visit::class, '1')->willReturn(null);
@@ -62,7 +64,7 @@ class NotifyVisitToWebHooksTest extends TestCase
         $this->createListener(['foo', 'bar'])(new VisitLocated('1'));
     }
 
-    /** @test */
+    #[Test]
     public function orphanVisitDoesNotPerformAnyRequestWhenDisabled(): void
     {
         $this->em->expects($this->once())->method('find')->with(Visit::class, '1')->willReturn(
@@ -74,10 +76,7 @@ class NotifyVisitToWebHooksTest extends TestCase
         $this->createListener(['foo', 'bar'], false)(new VisitLocated('1'));
     }
 
-    /**
-     * @test
-     * @dataProvider provideVisits
-     */
+    #[Test, DataProvider('provideVisits')]
     public function expectedRequestsArePerformedToWebhooks(Visit $visit, array $expectedResponseKeys): void
     {
         $webhooks = ['foo', 'invalid', 'bar', 'baz'];
@@ -120,13 +119,13 @@ class NotifyVisitToWebHooksTest extends TestCase
         $this->createListener($webhooks)(new VisitLocated('1'));
     }
 
-    public function provideVisits(): iterable
+    public static function provideVisits(): iterable
     {
         yield 'regular visit' => [
             Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance()),
             ['shortUrl', 'visit'],
         ];
-        yield 'orphan visit' => [Visit::forBasePath(Visitor::emptyInstance()), ['visit'],];
+        yield 'orphan visit' => [Visit::forBasePath(Visitor::emptyInstance()), ['visit']];
     }
 
     private function createListener(array $webhooks, bool $notifyOrphanVisits = true): NotifyVisitToWebHooks

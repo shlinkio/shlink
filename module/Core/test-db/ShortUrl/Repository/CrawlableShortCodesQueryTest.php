@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioDbTest\Shlink\Core\ShortUrl\Repository;
 
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Repository\CrawlableShortCodesQuery;
@@ -19,7 +20,7 @@ class CrawlableShortCodesQueryTest extends DatabaseTestCase
         $this->query = new CrawlableShortCodesQuery($em, $em->getClassMetadata(ShortUrl::class));
     }
 
-    /** @test */
+    #[Test]
     public function invokingQueryReturnsExpectedResult(): void
     {
         $createShortUrl = fn (bool $crawlable) => ShortUrl::create(

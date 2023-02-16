@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Visit\Model;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
@@ -15,10 +17,7 @@ use function substr;
 
 class VisitorTest extends TestCase
 {
-    /**
-     * @test
-     * @dataProvider provideParams
-     */
+    #[Test, DataProvider('provideParams')]
     public function providedFieldsValuesAreCropped(array $params, array $expected): void
     {
         $visitor = new Visitor(...$params);
@@ -29,7 +28,7 @@ class VisitorTest extends TestCase
         self::assertEquals($remoteAddress, $visitor->remoteAddress);
     }
 
-    public function provideParams(): iterable
+    public static function provideParams(): iterable
     {
         yield 'all values are bigger' => [
             [str_repeat('a', 1000), str_repeat('b', 2000), str_repeat('c', 500), ''],
@@ -49,8 +48,8 @@ class VisitorTest extends TestCase
         ];
         yield 'random strings' => [
             [
-                $userAgent = $this->generateRandomString(2000),
-                $referer = $this->generateRandomString(50),
+                $userAgent = self::generateRandomString(2000),
+                $referer = self::generateRandomString(50),
                 null,
                 '',
             ],
@@ -62,7 +61,7 @@ class VisitorTest extends TestCase
         ];
     }
 
-    private function generateRandomString(int $length): string
+    private static function generateRandomString(int $length): string
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
@@ -73,14 +72,14 @@ class VisitorTest extends TestCase
         return $randomString;
     }
 
-    /** @test */
+    #[Test]
     public function newNormalizedInstanceIsCreatedFromTrackingOptions(): void
     {
         $visitor = new Visitor(
-            $this->generateRandomString(2000),
-            $this->generateRandomString(2000),
-            $this->generateRandomString(2000),
-            $this->generateRandomString(2000),
+            self::generateRandomString(2000),
+            self::generateRandomString(2000),
+            self::generateRandomString(2000),
+            self::generateRandomString(2000),
         );
         $normalizedVisitor = $visitor->normalizeForTrackingOptions(new TrackingOptions(
             disableIpTracking: true,

@@ -7,6 +7,8 @@ namespace ShlinkioTest\Shlink\Rest\Service;
 use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
@@ -30,10 +32,9 @@ class ApiKeyServiceTest extends TestCase
     }
 
     /**
-     * @test
-     * @dataProvider provideCreationDate
      * @param RoleDefinition[] $roles
      */
+    #[Test, DataProvider('provideCreationDate')]
     public function apiKeyIsProperlyCreated(?Chronos $date, ?string $name, array $roles): void
     {
         $this->em->expects($this->once())->method('flush');
@@ -48,7 +49,7 @@ class ApiKeyServiceTest extends TestCase
         }
     }
 
-    public function provideCreationDate(): iterable
+    public static function provideCreationDate(): iterable
     {
         $domain = Domain::withAuthority('');
         $domain->setId('123');
@@ -64,10 +65,7 @@ class ApiKeyServiceTest extends TestCase
         yield 'empty name' => [null, '', []];
     }
 
-    /**
-     * @test
-     * @dataProvider provideInvalidApiKeys
-     */
+    #[Test, DataProvider('provideInvalidApiKeys')]
     public function checkReturnsFalseForInvalidApiKeys(?ApiKey $invalidKey): void
     {
         $this->repo->expects($this->once())->method('findOneBy')->with(['key' => '12345'])->willReturn($invalidKey);
@@ -79,14 +77,14 @@ class ApiKeyServiceTest extends TestCase
         self::assertSame($invalidKey, $result->apiKey);
     }
 
-    public function provideInvalidApiKeys(): iterable
+    public static function provideInvalidApiKeys(): iterable
     {
         yield 'non-existent api key' => [null];
         yield 'disabled api key' => [ApiKey::create()->disable()];
         yield 'expired api key' => [ApiKey::fromMeta(ApiKeyMeta::withExpirationDate(Chronos::now()->subDay()))];
     }
 
-    /** @test */
+    #[Test]
     public function checkReturnsTrueWhenConditionsAreFavorable(): void
     {
         $apiKey = ApiKey::create();
@@ -100,7 +98,7 @@ class ApiKeyServiceTest extends TestCase
         self::assertSame($apiKey, $result->apiKey);
     }
 
-    /** @test */
+    #[Test]
     public function disableThrowsExceptionWhenNoApiKeyIsFound(): void
     {
         $this->repo->expects($this->once())->method('findOneBy')->with(['key' => '12345'])->willReturn(null);
@@ -111,7 +109,7 @@ class ApiKeyServiceTest extends TestCase
         $this->service->disable('12345');
     }
 
-    /** @test */
+    #[Test]
     public function disableReturnsDisabledApiKeyWhenFound(): void
     {
         $key = ApiKey::create();
@@ -125,7 +123,7 @@ class ApiKeyServiceTest extends TestCase
         self::assertSame($key, $returnedKey);
     }
 
-    /** @test */
+    #[Test]
     public function listFindsAllApiKeys(): void
     {
         $expectedApiKeys = [ApiKey::create(), ApiKey::create(), ApiKey::create()];
@@ -138,7 +136,7 @@ class ApiKeyServiceTest extends TestCase
         self::assertEquals($expectedApiKeys, $result);
     }
 
-    /** @test */
+    #[Test]
     public function listEnabledFindsOnlyEnabledApiKeys(): void
     {
         $expectedApiKeys = [ApiKey::create(), ApiKey::create(), ApiKey::create()];

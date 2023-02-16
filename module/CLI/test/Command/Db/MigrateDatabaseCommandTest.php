@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Db;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Db\MigrateDatabaseCommand;
@@ -38,7 +39,7 @@ class MigrateDatabaseCommandTest extends TestCase
         $this->commandTester = $this->testerForCommand($command);
     }
 
-    /** @test */
+    #[Test]
     public function migrationsCommandIsRunWithProperVerbosity(): void
     {
         $this->processHelper->expects($this->once())->method('run')->with($this->isInstanceOf(OutputInterface::class), [

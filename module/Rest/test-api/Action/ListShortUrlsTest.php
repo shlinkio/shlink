@@ -6,6 +6,8 @@ namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use Cake\Chronos\Chronos;
 use GuzzleHttp\RequestOptions;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
@@ -122,7 +124,7 @@ class ListShortUrlsTest extends ApiTestCase
         ],
         'domain' => null,
         'title' => null,
-        'crawlable' => false,
+        'crawlable' => true,
         'forwardQuery' => false,
     ];
     private const SHORT_URL_CUSTOM_DOMAIN = [
@@ -150,10 +152,7 @@ class ListShortUrlsTest extends ApiTestCase
         'forwardQuery' => true,
     ];
 
-    /**
-     * @test
-     * @dataProvider provideFilteredLists
-     */
+    #[Test, DataProvider('provideFilteredLists')]
     public function shortUrlsAreProperlyListed(array $query, array $expectedShortUrls, string $apiKey): void
     {
         $resp = $this->callApiWithKey(self::METHOD_GET, '/short-urls', [RequestOptions::QUERY => $query], $apiKey);
@@ -168,7 +167,7 @@ class ListShortUrlsTest extends ApiTestCase
         ], $respPayload);
     }
 
-    public function provideFilteredLists(): iterable
+    public static function provideFilteredLists(): iterable
     {
         // FIXME Cannot use enums in constants in PHP 8.1. Change this once support for PHP 8.1 is dropped
         $withDeviceLongUrls = static fn (array $shortUrl, ?array $longUrls = null) => [
@@ -302,10 +301,7 @@ class ListShortUrlsTest extends ApiTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider provideInvalidFiltering
-     */
+    #[Test, DataProvider('provideInvalidFiltering')]
     public function errorIsReturnedWhenProvidingInvalidValues(array $query, array $expectedInvalidElements): void
     {
         $resp = $this->callApiWithKey(self::METHOD_GET, '/short-urls', [RequestOptions::QUERY => $query]);
@@ -321,7 +317,7 @@ class ListShortUrlsTest extends ApiTestCase
         ], $respPayload);
     }
 
-    public function provideInvalidFiltering(): iterable
+    public static function provideInvalidFiltering(): iterable
     {
         yield [['tagsMode' => 'invalid'], ['tagsMode']];
         yield [['orderBy' => 'invalid'], ['orderBy']];

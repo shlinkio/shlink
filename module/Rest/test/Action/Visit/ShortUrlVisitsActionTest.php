@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\Visit;
 use Cake\Chronos\Chronos;
 use Laminas\Diactoros\ServerRequestFactory;
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -29,7 +30,7 @@ class ShortUrlVisitsActionTest extends TestCase
         $this->action = new ShortUrlVisitsAction($this->visitsHelper);
     }
 
-    /** @test */
+    #[Test]
     public function providingCorrectShortCodeReturnsVisits(): void
     {
         $shortCode = 'abc123';
@@ -43,7 +44,7 @@ class ShortUrlVisitsActionTest extends TestCase
         self::assertEquals(200, $response->getStatusCode());
     }
 
-    /** @test */
+    #[Test]
     public function paramsAreReadFromQuery(): void
     {
         $shortCode = 'abc123';

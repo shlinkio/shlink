@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\ShortUrl\Helper;
 
 use Laminas\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Model\DeviceType;
@@ -27,10 +29,7 @@ class ShortUrlRedirectionBuilderTest extends TestCase
         $this->redirectionBuilder = new ShortUrlRedirectionBuilder($trackingOptions);
     }
 
-    /**
-     * @test
-     * @dataProvider provideData
-     */
+    #[Test, DataProvider('provideData')]
     public function buildShortUrlRedirectBuildsExpectedUrl(
         string $expectedUrl,
         ServerRequestInterface $request,
@@ -50,7 +49,7 @@ class ShortUrlRedirectionBuilderTest extends TestCase
         self::assertEquals($expectedUrl, $result);
     }
 
-    public function provideData(): iterable
+    public static function provideData(): iterable
     {
         $request = static fn (array $query = []) => ServerRequestFactory::fromGlobals()->withQueryParams($query);
 

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\ShortUrl\Paginator\Adapter;
 
 use Cake\Chronos\Chronos;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
@@ -24,10 +26,7 @@ class ShortUrlRepositoryAdapterTest extends TestCase
         $this->repo = $this->createMock(ShortUrlListRepositoryInterface::class);
     }
 
-    /**
-     * @test
-     * @dataProvider provideFilteringArgs
-     */
+    #[Test, DataProvider('provideFilteringArgs')]
     public function getItemsFallsBackToFindList(
         ?string $searchTerm = null,
         array $tags = [],
@@ -53,10 +52,7 @@ class ShortUrlRepositoryAdapterTest extends TestCase
         $adapter->getSlice(5, 10);
     }
 
-    /**
-     * @test
-     * @dataProvider provideFilteringArgs
-     */
+    #[Test, DataProvider('provideFilteringArgs')]
     public function countFallsBackToCountList(
         ?string $searchTerm = null,
         array $tags = [],
@@ -79,7 +75,7 @@ class ShortUrlRepositoryAdapterTest extends TestCase
         $adapter->getNbResults();
     }
 
-    public function provideFilteringArgs(): iterable
+    public static function provideFilteringArgs(): iterable
     {
         yield [];
         yield ['search'];

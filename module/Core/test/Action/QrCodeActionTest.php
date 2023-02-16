@@ -7,6 +7,8 @@ namespace ShlinkioTest\Shlink\Core\Action;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -37,7 +39,7 @@ class QrCodeActionTest extends TestCase
         $this->urlResolver = $this->createMock(ShortUrlResolverInterface::class);
     }
 
-    /** @test */
+    #[Test]
     public function aNotFoundShortCodeWillDelegateIntoNextMiddleware(): void
     {
         $shortCode = 'abc123';
@@ -50,7 +52,7 @@ class QrCodeActionTest extends TestCase
         $this->action()->process((new ServerRequest())->withAttribute('shortCode', $shortCode), $delegate);
     }
 
-    /** @test */
+    #[Test]
     public function aCorrectRequestReturnsTheQrCodeResponse(): void
     {
         $shortCode = 'abc123';
@@ -66,10 +68,7 @@ class QrCodeActionTest extends TestCase
         self::assertEquals(200, $resp->getStatusCode());
     }
 
-    /**
-     * @test
-     * @dataProvider provideQueries
-     */
+    #[Test, DataProvider('provideQueries')]
     public function imageIsReturnedWithExpectedContentTypeBasedOnProvidedFormat(
         string $defaultFormat,
         array $query,
@@ -87,7 +86,7 @@ class QrCodeActionTest extends TestCase
         self::assertEquals($expectedContentType, $resp->getHeaderLine('Content-Type'));
     }
 
-    public function provideQueries(): iterable
+    public static function provideQueries(): iterable
     {
         yield 'no format, png default' => ['png', [], 'image/png'];
         yield 'no format, svg default' => ['svg', [], 'image/svg+xml'];
@@ -99,10 +98,7 @@ class QrCodeActionTest extends TestCase
         yield 'unsupported format, svg default' => ['svg', ['format' => 'jpg'], 'image/svg+xml'];
     }
 
-    /**
-     * @test
-     * @dataProvider provideRequestsWithSize
-     */
+    #[Test, DataProvider('provideRequestsWithSize')]
     public function imageIsReturnedWithExpectedSize(
         QrCodeOptions $defaultOptions,
         ServerRequestInterface $req,
@@ -122,7 +118,7 @@ class QrCodeActionTest extends TestCase
         self::assertEquals($expectedSize, $size);
     }
 
-    public function provideRequestsWithSize(): iterable
+    public static function provideRequestsWithSize(): iterable
     {
         yield 'different margin and size defaults' => [
             new QrCodeOptions(size: 660, margin: 40),
@@ -188,10 +184,7 @@ class QrCodeActionTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider provideRoundBlockSize
-     */
+    #[Test, DataProvider('provideRoundBlockSize')]
     public function imageCanRemoveExtraMarginWhenBlockRoundIsDisabled(
         QrCodeOptions $defaultOptions,
         ?string $roundBlockSize,
@@ -215,7 +208,7 @@ class QrCodeActionTest extends TestCase
         self::assertEquals($color, $expectedColor);
     }
 
-    public function provideRoundBlockSize(): iterable
+    public static function provideRoundBlockSize(): iterable
     {
         yield 'no round block param' => [new QrCodeOptions(), null, self::WHITE];
         yield 'no round block param, but disabled by default' => [

@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -29,7 +30,7 @@ class TagsStatsActionTest extends TestCase
         $this->action = new TagsStatsAction($this->tagService);
     }
 
-    /** @test */
+    #[Test]
     public function returnsTagsStatsWhenRequested(): void
     {
         $stats = [

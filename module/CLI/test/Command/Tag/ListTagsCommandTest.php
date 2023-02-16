@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Tag\ListTagsCommand;
@@ -27,7 +28,7 @@ class ListTagsCommandTest extends TestCase
         $this->commandTester = $this->testerForCommand(new ListTagsCommand($this->tagService));
     }
 
-    /** @test */
+    #[Test]
     public function noTagsPrintsEmptyMessage(): void
     {
         $this->tagService->expects($this->once())->method('tagsInfo')->withAnyParameters()->willReturn(
@@ -40,7 +41,7 @@ class ListTagsCommandTest extends TestCase
         self::assertStringContainsString('No tags found', $output);
     }
 
-    /** @test */
+    #[Test]
     public function listOfTagsIsPrinted(): void
     {
         $this->tagService->expects($this->once())->method('tagsInfo')->withAnyParameters()->willReturn(

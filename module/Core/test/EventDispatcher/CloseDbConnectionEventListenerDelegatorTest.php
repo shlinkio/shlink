@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -21,7 +22,7 @@ class CloseDbConnectionEventListenerDelegatorTest extends TestCase
         $this->delegator = new CloseDbConnectionEventListenerDelegator();
     }
 
-    /** @test */
+    #[Test]
     public function properDependenciesArePassed(): void
     {
         $callbackInvoked = false;

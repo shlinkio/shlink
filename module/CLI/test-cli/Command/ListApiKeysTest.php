@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace ShlinkioCliTest\Shlink\CLI\Command;
 
 use Cake\Chronos\Chronos;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\CLI\Command\Api\ListKeysCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\TestUtils\CliTest\CliTestCase;
 
 class ListApiKeysTest extends CliTestCase
 {
-    /**
-     * @test
-     * @dataProvider provideFlags
-     */
+    #[Test, DataProvider('provideFlags')]
     public function generatesExpectedOutput(array $flags, string $expectedOutput): void
     {
         [$output, $exitCode] = $this->exec([ListKeysCommand::NAME, ...$flags]);
@@ -23,7 +22,7 @@ class ListApiKeysTest extends CliTestCase
         self::assertEquals(ExitCodes::EXIT_SUCCESS, $exitCode);
     }
 
-    public function provideFlags(): iterable
+    public static function provideFlags(): iterable
     {
         $expiredApiKeyDate = Chronos::now()->subDay()->startOfDay()->toAtomString();
         $enabledOnlyOutput = <<<OUT

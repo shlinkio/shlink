@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Config\PostProcessor;
 
 use Mezzio\Router\Route;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Config\PostProcessor\ShortUrlMethodsProcessor;
@@ -18,10 +20,7 @@ class ShortUrlMethodsProcessorTest extends TestCase
         $this->processor = new ShortUrlMethodsProcessor();
     }
 
-    /**
-     * @test
-     * @dataProvider provideConfigs
-     */
+    #[Test, DataProvider('provideConfigs')]
     public function onlyFirstRouteIdentifiedAsRedirectIsEditedWithProperAllowedMethods(
         array $config,
         ?array $expectedRoutes,
@@ -29,7 +28,7 @@ class ShortUrlMethodsProcessorTest extends TestCase
         self::assertEquals($expectedRoutes, ($this->processor)($config)['routes'] ?? null);
     }
 
-    public function provideConfigs(): iterable
+    public static function provideConfigs(): iterable
     {
         $buildConfigWithStatus = static fn (int $status, ?array $expectedAllowedMethods) => [[
             'routes' => [

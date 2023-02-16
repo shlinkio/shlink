@@ -10,6 +10,8 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -42,10 +44,7 @@ class AuthenticationMiddlewareTest extends TestCase
         $this->handler = $this->createMock(RequestHandlerInterface::class);
     }
 
-    /**
-     * @test
-     * @dataProvider provideRequestsWithoutAuth
-     */
+    #[Test, DataProvider('provideRequestsWithoutAuth')]
     public function someSituationsFallbackToNextMiddleware(ServerRequestInterface $request): void
     {
         $this->handler->expects($this->once())->method('handle')->with($request)->willReturn(new Response());
@@ -54,9 +53,9 @@ class AuthenticationMiddlewareTest extends TestCase
         $this->middleware->process($request, $this->handler);
     }
 
-    public function provideRequestsWithoutAuth(): iterable
+    public static function provideRequestsWithoutAuth(): iterable
     {
-        $dummyMiddleware = $this->getDummyMiddleware();
+        $dummyMiddleware = self::getDummyMiddleware();
 
         yield 'no route result' => [new ServerRequest()];
         yield 'failure route result' => [(new ServerRequest())->withAttribute(
@@ -75,10 +74,7 @@ class AuthenticationMiddlewareTest extends TestCase
         )->withMethod(RequestMethodInterface::METHOD_OPTIONS)];
     }
 
-    /**
-     * @test
-     * @dataProvider provideRequestsWithoutApiKey
-     */
+    #[Test, DataProvider('provideRequestsWithoutApiKey')]
     public function throwsExceptionWhenNoApiKeyIsProvided(
         ServerRequestInterface $request,
         string $expectedMessage,
@@ -91,11 +87,11 @@ class AuthenticationMiddlewareTest extends TestCase
         $this->middleware->process($request, $this->handler);
     }
 
-    public function provideRequestsWithoutApiKey(): iterable
+    public static function provideRequestsWithoutApiKey(): iterable
     {
         $baseRequest = fn (string $routeName) => ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
-            RouteResult::fromRoute(new Route($routeName, $this->getDummyMiddleware())), // @phpstan-ignore-line
+            RouteResult::fromRoute(new Route($routeName, self::getDummyMiddleware())), // @phpstan-ignore-line
         );
         $apiKeyMessage = 'Expected one of the following authentication headers, ["X-Api-Key"], but none were provided';
         $queryMessage = 'Expected authentication to be provided in "apiKey" query param';
@@ -109,14 +105,14 @@ class AuthenticationMiddlewareTest extends TestCase
         ];
     }
 
-    /** @test */
+    #[Test]
     public function throwsExceptionWhenProvidedApiKeyIsInvalid(): void
     {
         $apiKey = 'abc123';
         $request = ServerRequestFactory::fromGlobals()
             ->withAttribute(
                 RouteResult::class,
-                RouteResult::fromRoute(new Route('bar', $this->getDummyMiddleware()), []),
+                RouteResult::fromRoute(new Route('bar', self::getDummyMiddleware()), []),
             )
             ->withHeader('X-Api-Key', $apiKey);
 
@@ -130,7 +126,7 @@ class AuthenticationMiddlewareTest extends TestCase
         $this->middleware->process($request, $this->handler);
     }
 
-    /** @test */
+    #[Test]
     public function validApiKeyFallsBackToNextMiddleware(): void
     {
         $apiKey = ApiKey::create();
@@ -138,7 +134,7 @@ class AuthenticationMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals()
             ->withAttribute(
                 RouteResult::class,
-                RouteResult::fromRoute(new Route('bar', $this->getDummyMiddleware()), []),
+                RouteResult::fromRoute(new Route('bar', self::getDummyMiddleware()), []),
             )
             ->withHeader('X-Api-Key', $key);
 
@@ -152,7 +148,7 @@ class AuthenticationMiddlewareTest extends TestCase
         $this->middleware->process($request, $this->handler);
     }
 
-    private function getDummyMiddleware(): MiddlewareInterface
+    private static function getDummyMiddleware(): MiddlewareInterface
     {
         return middleware(fn () => new Response\EmptyResponse());
     }

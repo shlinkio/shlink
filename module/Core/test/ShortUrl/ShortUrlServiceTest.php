@@ -6,8 +6,11 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl;
 
 use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Rule\InvocationOrder;
+use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -48,10 +51,7 @@ class ShortUrlServiceTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @dataProvider provideShortUrlEdits
-     */
+    #[Test, DataProvider('provideShortUrlEdits')]
     public function updateShortUrlUpdatesProvidedData(
         InvocationOrder $expectedValidateCalls,
         ShortUrlEdition $shortUrlEdit,
@@ -93,23 +93,23 @@ class ShortUrlServiceTest extends TestCase
         self::assertEquals($resolveDeviceLongUrls(), $shortUrl->deviceLongUrls());
     }
 
-    public function provideShortUrlEdits(): iterable
+    public static function provideShortUrlEdits(): iterable
     {
-        yield 'no long URL' => [$this->never(), ShortUrlEdition::fromRawData([
+        yield 'no long URL' => [new InvokedCount(0), ShortUrlEdition::fromRawData([
             'validSince' => Chronos::parse('2017-01-01 00:00:00')->toAtomString(),
             'validUntil' => Chronos::parse('2017-01-05 00:00:00')->toAtomString(),
             'maxVisits' => 5,
         ]), null];
-        yield 'long URL and API key' => [$this->once(), ShortUrlEdition::fromRawData([
+        yield 'long URL and API key' => [new InvokedCount(1), ShortUrlEdition::fromRawData([
             'validSince' => Chronos::parse('2017-01-01 00:00:00')->toAtomString(),
             'maxVisits' => 10,
             'longUrl' => 'modifiedLongUrl',
         ]), ApiKey::create()];
-        yield 'long URL with validation' => [$this->once(), ShortUrlEdition::fromRawData([
+        yield 'long URL with validation' => [new InvokedCount(1), ShortUrlEdition::fromRawData([
             'longUrl' => 'modifiedLongUrl',
             'validateUrl' => true,
         ]), null];
-        yield 'device redirects' => [$this->never(), ShortUrlEdition::fromRawData([
+        yield 'device redirects' => [new InvokedCount(0), ShortUrlEdition::fromRawData([
             'deviceLongUrls' => [
                 DeviceType::IOS->value => 'iosLongUrl',
                 DeviceType::ANDROID->value => 'androidLongUrl',

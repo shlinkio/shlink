@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\GeoLiteDbCreated;
@@ -28,14 +29,14 @@ class LocateUnlocatedVisitsTest extends TestCase
         $this->listener = new LocateUnlocatedVisits($this->locator, $this->visitToLocation);
     }
 
-    /** @test */
+    #[Test]
     public function locatorIsCalledWhenInvoked(): void
     {
         $this->locator->expects($this->once())->method('locateUnlocatedVisits')->with($this->listener);
         ($this->listener)(new GeoLiteDbCreated());
     }
 
-    /** @test */
+    #[Test]
     public function visitToLocationHelperIsCalledToGeolocateVisits(): void
     {
         $visit = Visit::forBasePath(Visitor::emptyInstance());

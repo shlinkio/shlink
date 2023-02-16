@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioDbTest\Shlink\Rest\ApiKey\Repository;
 
+use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Rest\ApiKey\Repository\ApiKeyRepository;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
@@ -17,7 +18,7 @@ class ApiKeyRepositoryTest extends DatabaseTestCase
         $this->repo = $this->getEntityManager()->getRepository(ApiKey::class);
     }
 
-    /** @test */
+    #[Test]
     public function initialApiKeyIsCreatedOnlyOfNoApiKeysExistYet(): void
     {
         self::assertCount(0, $this->repo->findAll());

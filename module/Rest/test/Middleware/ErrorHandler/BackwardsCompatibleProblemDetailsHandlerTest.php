@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Middleware\ErrorHandler;
 
 use Laminas\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -24,9 +26,8 @@ class BackwardsCompatibleProblemDetailsHandlerTest extends TestCase
 
     /**
      * @param class-string<Throwable> $expectedException
-     * @test
-     * @dataProvider provideExceptions
      */
+    #[Test, DataProvider('provideExceptions')]
     public function expectedExceptionIsThrownBasedOnTheRequestVersion(
         ServerRequestInterface $request,
         Throwable $thrownException,
@@ -40,7 +41,7 @@ class BackwardsCompatibleProblemDetailsHandlerTest extends TestCase
         $this->handler->process($request, $handler);
     }
 
-    public function provideExceptions(): iterable
+    public static function provideExceptions(): iterable
     {
         $baseRequest = ServerRequestFactory::fromGlobals();
 

@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\Visit;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
@@ -26,7 +27,7 @@ class NonOrphanVisitsActionTest extends TestCase
         $this->action = new NonOrphanVisitsAction($this->visitsHelper);
     }
 
-    /** @test */
+    #[Test]
     public function requestIsHandled(): void
     {
         $apiKey = ApiKey::create();

@@ -27,14 +27,14 @@ jobs:
           path: build
       - name: Resolve infection args
         id: infection_args
-        run: echo "::set-output name=args::--logger-github=false"
+        run: echo "args=--logger-github=false" >> $GITHUB_OUTPUT
 #        TODO Try to filter mutation tests to improve execution times. Investigate why --git-diff-lines --git-diff-base=develop does not work
 #        run: |
 #          BRANCH="${GITHUB_REF#refs/heads/}" |
 #          if [[ $BRANCH == 'main' || $BRANCH == 'develop' ]]; then
-#            echo "::set-output name=args::--logger-github=false"
+#            echo "args=--logger-github=false" >> $GITHUB_OUTPUT
 #          else
-#            echo "::set-output name=args::--logger-github=false --git-diff-lines --git-diff-base=develop"
+#            echo "args=--logger-github=false --git-diff-lines --git-diff-base=develop" >> $GITHUB_OUTPUT
 #          fi;
         shell: bash
       - if: ${{ inputs.test-group == 'unit' }}

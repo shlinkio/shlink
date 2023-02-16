@@ -6,12 +6,32 @@ return [
 
     'entity_manager' => [
         'connection' => [
+            // MySQL
             'user' => 'root',
             'password' => 'root',
             'driver' => 'pdo_mysql',
             'host' => 'shlink_db_mysql',
             'dbname' => 'shlink',
+//            'dbname' => 'shlink_foo',
             'charset' => 'utf8mb4',
+
+            // Postgres
+//            'user' => 'postgres',
+//            'password' => 'root',
+//            'driver' => 'pdo_pgsql',
+//            'host' => 'shlink_db_postgres',
+//            'dbname' => 'shlink_foo',
+//            'charset' => 'utf8',
+
+            // MSSQL
+//            'user' => 'sa',
+//            'password' => 'Passw0rd!',
+//            'driver' => 'pdo_sqlsrv',
+//            'host' => 'shlink_db_ms',
+//            'dbname' => 'shlink_foo',
+//            'driverOptions' => [
+//                'TrustServerCertificate' => 'true',
+//            ],
         ],
     ],
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI;
 
-use Doctrine\DBAL\Connection;
 use GeoIp2\Database\Reader;
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
@@ -116,7 +115,7 @@ return [
             LockFactory::class,
             Util\ProcessRunner::class,
             PhpExecutableFinder::class,
-            Connection::class,
+            'em',
             NoDbNameConnectionFactory::SERVICE_NAME,
         ],
         Command\Db\MigrateDatabaseCommand::class => [

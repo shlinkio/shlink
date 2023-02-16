@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Visit\Paginator\Adapter;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Util\DateRange;
@@ -24,7 +25,7 @@ class ShortUrlVisitsPaginatorAdapterTest extends TestCase
         $this->repo = $this->createMock(VisitRepositoryInterface::class);
     }
 
-    /** @test */
+    #[Test]
     public function repoIsCalledEveryTimeItemsAreFetched(): void
     {
         $count = 3;
@@ -41,7 +42,7 @@ class ShortUrlVisitsPaginatorAdapterTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function repoIsCalledOnlyOnceForCount(): void
     {
         $count = 3;

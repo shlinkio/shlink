@@ -8,6 +8,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use DomainException;
 use Exception;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -44,7 +46,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         $this->logger = $this->createMock(LoggerInterface::class);
     }
 
-    /** @test */
+    #[Test]
     public function doesNothingWhenTheFeatureIsNotEnabled(): void
     {
         $this->helper->expects($this->never())->method('publishUpdate');
@@ -55,7 +57,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         ($this->listener(new RabbitMqOptions(enabled: false)))(new VisitLocated('123'));
     }
 
-    /** @test */
+    #[Test]
     public function notificationsAreNotSentWhenVisitCannotBeFound(): void
     {
         $visitId = '123';
@@ -70,10 +72,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         ($this->listener())(new VisitLocated($visitId));
     }
 
-    /**
-     * @test
-     * @dataProvider provideVisits
-     */
+    #[Test, DataProvider('provideVisits')]
     public function expectedChannelsAreNotifiedBasedOnTheVisitType(Visit $visit, array $expectedChannels): void
     {
         $visitId = '123';
@@ -91,7 +90,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         ($this->listener())(new VisitLocated($visitId));
     }
 
-    public function provideVisits(): iterable
+    public static function provideVisits(): iterable
     {
         $visitor = Visitor::emptyInstance();
 
@@ -108,10 +107,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider provideExceptions
-     */
+    #[Test, DataProvider('provideExceptions')]
     public function printsDebugMessageInCaseOfError(Throwable $e): void
     {
         $visitId = '123';
@@ -130,17 +126,14 @@ class NotifyVisitToRabbitMqTest extends TestCase
         ($this->listener())(new VisitLocated($visitId));
     }
 
-    public function provideExceptions(): iterable
+    public static function provideExceptions(): iterable
     {
         yield [new RuntimeException('RuntimeException Error')];
         yield [new Exception('Exception Error')];
         yield [new DomainException('DomainException Error')];
     }
 
-    /**
-     * @test
-     * @dataProvider provideLegacyPayloads
-     */
+    #[Test, DataProvider('provideLegacyPayloads')]
     public function expectedPayloadIsPublishedDependingOnConfig(
         bool $legacy,
         Visit $visit,
@@ -155,14 +148,14 @@ class NotifyVisitToRabbitMqTest extends TestCase
         ($this->listener(new RabbitMqOptions(true, $legacy)))(new VisitLocated($visitId));
     }
 
-    public function provideLegacyPayloads(): iterable
+    public static function provideLegacyPayloads(): iterable
     {
         yield 'legacy non-orphan visit' => [
             true,
             $visit = Visit::forValidShortUrl(ShortUrl::withLongUrl('longUrl'), Visitor::emptyInstance()),
             noop(...),
             function (MockObject & PublishingHelperInterface $helper) use ($visit): void {
-                $helper->method('publishUpdate')->with($this->callback(function (Update $update) use ($visit): bool {
+                $helper->method('publishUpdate')->with(self::callback(function (Update $update) use ($visit): bool {
                     $payload = $update->payload;
                     Assert::assertEquals($payload, $visit->jsonSerialize());
                     Assert::assertArrayNotHasKey('visitedUrl', $payload);
@@ -179,7 +172,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
             Visit::forBasePath(Visitor::emptyInstance()),
             noop(...),
             function (MockObject & PublishingHelperInterface $helper): void {
-                $helper->method('publishUpdate')->with($this->callback(function (Update $update): bool {
+                $helper->method('publishUpdate')->with(self::callback(function (Update $update): bool {
                     $payload = $update->payload;
                     Assert::assertArrayHasKey('visitedUrl', $payload);
                     Assert::assertArrayHasKey('type', $payload);
@@ -193,14 +186,14 @@ class NotifyVisitToRabbitMqTest extends TestCase
             Visit::forValidShortUrl(ShortUrl::withLongUrl('longUrl'), Visitor::emptyInstance()),
             function (MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator): void {
                 $update = Update::forTopicAndPayload('', []);
-                $updatesGenerator->expects($this->never())->method('newOrphanVisitUpdate');
-                $updatesGenerator->expects($this->once())->method('newVisitUpdate')->withAnyParameters()->willReturn(
+                $updatesGenerator->expects(self::never())->method('newOrphanVisitUpdate');
+                $updatesGenerator->expects(self::once())->method('newVisitUpdate')->withAnyParameters()->willReturn(
                     $update,
                 );
-                $updatesGenerator->expects($this->once())->method('newShortUrlVisitUpdate')->willReturn($update);
+                $updatesGenerator->expects(self::once())->method('newShortUrlVisitUpdate')->willReturn($update);
             },
             function (MockObject & PublishingHelperInterface $helper): void {
-                $helper->expects($this->exactly(2))->method('publishUpdate')->with($this->isInstanceOf(Update::class));
+                $helper->expects(self::exactly(2))->method('publishUpdate')->with(self::isInstanceOf(Update::class));
             },
         ];
         yield 'non-legacy orphan visit' => [
@@ -208,12 +201,12 @@ class NotifyVisitToRabbitMqTest extends TestCase
             Visit::forBasePath(Visitor::emptyInstance()),
             function (MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator): void {
                 $update = Update::forTopicAndPayload('', []);
-                $updatesGenerator->expects($this->once())->method('newOrphanVisitUpdate')->willReturn($update);
-                $updatesGenerator->expects($this->never())->method('newVisitUpdate');
-                $updatesGenerator->expects($this->never())->method('newShortUrlVisitUpdate');
+                $updatesGenerator->expects(self::once())->method('newOrphanVisitUpdate')->willReturn($update);
+                $updatesGenerator->expects(self::never())->method('newVisitUpdate');
+                $updatesGenerator->expects(self::never())->method('newShortUrlVisitUpdate');
             },
             function (MockObject & PublishingHelperInterface $helper): void {
-                $helper->expects($this->once())->method('publishUpdate')->with($this->isInstanceOf(Update::class));
+                $helper->expects(self::once())->method('publishUpdate')->with(self::isInstanceOf(Update::class));
             },
         ];
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Tag\DeleteTagsCommand;
@@ -24,7 +25,7 @@ class DeleteTagsCommandTest extends TestCase
         $this->commandTester = $this->testerForCommand(new DeleteTagsCommand($this->tagService));
     }
 
-    /** @test */
+    #[Test]
     public function errorIsReturnedWhenNoTagsAreProvided(): void
     {
         $this->commandTester->execute([]);
@@ -33,7 +34,7 @@ class DeleteTagsCommandTest extends TestCase
         self::assertStringContainsString('You have to provide at least one tag name', $output);
     }
 
-    /** @test */
+    #[Test]
     public function serviceIsInvokedOnSuccess(): void
     {
         $tagNames = ['foo', 'bar'];

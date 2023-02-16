@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Config\PostProcessor;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Config\PostProcessor\BasePathPrefixer;
 
@@ -16,10 +18,7 @@ class BasePathPrefixerTest extends TestCase
         $this->prefixer = new BasePathPrefixer();
     }
 
-    /**
-     * @test
-     * @dataProvider provideConfig
-     */
+    #[Test, DataProvider('provideConfig')]
     public function parsesConfigAsExpected(
         array $originalConfig,
         array $expectedRoutes,
@@ -31,7 +30,7 @@ class BasePathPrefixerTest extends TestCase
         self::assertEquals($expectedMiddlewares, $middlewares);
     }
 
-    public function provideConfig(): iterable
+    public static function provideConfig(): iterable
     {
         yield 'with empty options' => [['routes' => []], [], []];
         yield 'with non-empty options' => [

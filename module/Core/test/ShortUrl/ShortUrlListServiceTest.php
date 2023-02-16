@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\ShortUrl;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
@@ -29,10 +31,7 @@ class ShortUrlListServiceTest extends TestCase
         $this->service = new ShortUrlListService($this->repo, new UrlShortenerOptions());
     }
 
-    /**
-     * @test
-     * @dataProvider provideAdminApiKeys
-     */
+    #[Test, DataProvider('provideAdminApiKeys')]
     public function listedUrlsAreReturnedFromEntityManager(?ApiKey $apiKey): void
     {
         $list = [

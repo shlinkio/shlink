@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\ResolveUrlCommand;
@@ -31,7 +32,7 @@ class ResolveUrlCommandTest extends TestCase
         $this->commandTester = $this->testerForCommand(new ResolveUrlCommand($this->urlResolver));
     }
 
-    /** @test */
+    #[Test]
     public function correctShortCodeResolvesUrl(): void
     {
         $shortCode = 'abc123';
@@ -46,7 +47,7 @@ class ResolveUrlCommandTest extends TestCase
         self::assertEquals('Long URL: ' . $expectedUrl . PHP_EOL, $output);
     }
 
-    /** @test */
+    #[Test]
     public function incorrectShortCodeOutputsErrorMessage(): void
     {
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain('abc123');

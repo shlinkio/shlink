@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\ShortUrl\Helper;
 
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
@@ -29,10 +31,7 @@ class ShortCodeUniquenessHelperTest extends TestCase
         $this->shortUrl->method('getShortCode')->willReturn('abc123');
     }
 
-    /**
-     * @test
-     * @dataProvider provideDomains
-     */
+    #[Test, DataProvider('provideDomains')]
     public function shortCodeIsRegeneratedIfAlreadyInUse(?Domain $domain, ?string $expectedAuthority): void
     {
         $callIndex = 0;
@@ -55,13 +54,13 @@ class ShortCodeUniquenessHelperTest extends TestCase
         self::assertTrue($result);
     }
 
-    public function provideDomains(): iterable
+    public static function provideDomains(): iterable
     {
         yield 'no domain' => [null, null];
         yield 'domain' => [Domain::withAuthority($authority = 's.test'), $authority];
     }
 
-    /** @test */
+    #[Test]
     public function inUseSlugReturnsError(): void
     {
         $repo = $this->createMock(ShortUrlRepository::class);

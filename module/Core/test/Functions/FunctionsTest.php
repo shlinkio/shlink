@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Functions;
 
 use BackedEnum;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Config\EnvVars;
 use Shlinkio\Shlink\Core\Model\DeviceType;
@@ -18,15 +20,14 @@ class FunctionsTest extends TestCase
 {
     /**
      * @param class-string<BackedEnum> $enum
-     * @test
-     * @dataProvider provideEnums
      */
+    #[Test, DataProvider('provideEnums')]
     public function enumValuesReturnsExpectedValueForEnum(string $enum, array $expectedValues): void
     {
         self::assertEquals($expectedValues, enumValues($enum));
     }
 
-    public function provideEnums(): iterable
+    public static function provideEnums(): iterable
     {
         yield EnvVars::class => [EnvVars::class, map(EnvVars::cases(), static fn (EnvVars $envVar) => $envVar->value)];
         yield VisitType::class => [

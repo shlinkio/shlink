@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Domain;
 
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Domain\GetDomainVisitsCommand;
@@ -37,7 +38,7 @@ class GetDomainVisitsCommandTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function outputIsProperlyGenerated(): void
     {
         $shortUrl = ShortUrl::createFake();

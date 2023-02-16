@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 
 use Laminas\Diactoros\ServerRequest;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
@@ -22,10 +24,7 @@ class DeleteTagsActionTest extends TestCase
         $this->action = new DeleteTagsAction($this->tagService);
     }
 
-    /**
-     * @test
-     * @dataProvider provideTags
-     */
+    #[Test, DataProvider('provideTags')]
     public function processDelegatesIntoService(?array $tags): void
     {
         $request = (new ServerRequest())
@@ -41,7 +40,7 @@ class DeleteTagsActionTest extends TestCase
         self::assertEquals(204, $response->getStatusCode());
     }
 
-    public function provideTags(): iterable
+    public static function provideTags(): iterable
     {
         yield 'three tags' => [['foo', 'bar', 'baz']];
         yield 'two tags' => [['some', 'thing']];

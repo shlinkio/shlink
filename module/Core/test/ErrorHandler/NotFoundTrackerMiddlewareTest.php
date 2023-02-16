@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\ErrorHandler;
 
 use Laminas\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -32,7 +33,7 @@ class NotFoundTrackerMiddlewareTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function delegatesIntoRequestTracker(): void
     {
         $this->handler->expects($this->once())->method('handle')->with($this->request);

@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [3.5.2] - 2023-02-16
+### Added
+* *Nothing*
+
+### Changed
+* [#1696](https://github.com/shlinkio/shlink/issues/1696) Migrated to PHPUnit 10.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1698](https://github.com/shlinkio/shlink/issues/1698) Fixed error 500 in `robots.txt`.
+* [#1688](https://github.com/shlinkio/shlink/issues/1688) Fixed huge performance degradation on `/tags/stats` endpoint.
+* [#1693](https://github.com/shlinkio/shlink/issues/1693) Fixed Shlink thinking database already exists if it finds foreign tables.
+
+
 ## [3.5.1] - 2023-02-04
 ### Added
 * *Nothing*

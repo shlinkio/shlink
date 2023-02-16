@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Exception;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\DeleteShortUrlException;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
@@ -15,10 +17,7 @@ use function sprintf;
 
 class DeleteShortUrlExceptionTest extends TestCase
 {
-    /**
-     * @test
-     * @dataProvider provideThresholds
-     */
+    #[Test, DataProvider('provideThresholds')]
     public function fromVisitsThresholdGeneratesMessageProperly(
         int $threshold,
         string $shortCode,
@@ -41,7 +40,7 @@ class DeleteShortUrlExceptionTest extends TestCase
         self::assertEquals(422, $e->getStatus());
     }
 
-    public function provideThresholds(): array
+    public static function provideThresholds(): array
     {
         return map(range(5, 50, 5), function (int $number) {
             return [$number, $shortCode = generateRandomShortCode(6), sprintf(
@@ -52,7 +51,7 @@ class DeleteShortUrlExceptionTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function domainIsPartOfAdditionalWhenProvidedInIdentifier(): void
     {
         $e = DeleteShortUrlException::fromVisitsThreshold(

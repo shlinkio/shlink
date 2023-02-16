@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use Cake\Chronos\Chronos;
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\GetShortUrlVisitsCommand;
@@ -39,7 +40,7 @@ class GetShortUrlVisitsCommandTest extends TestCase
         $this->commandTester = $this->testerForCommand($command);
     }
 
-    /** @test */
+    #[Test]
     public function noDateFlagsTriesToListWithoutDateRange(): void
     {
         $shortCode = 'abc123';
@@ -51,7 +52,7 @@ class GetShortUrlVisitsCommandTest extends TestCase
         $this->commandTester->execute(['shortCode' => $shortCode]);
     }
 
-    /** @test */
+    #[Test]
     public function providingDateFlagsTheListGetsFiltered(): void
     {
         $shortCode = 'abc123';
@@ -69,7 +70,7 @@ class GetShortUrlVisitsCommandTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function providingInvalidDatesPrintsWarning(): void
     {
         $shortCode = 'abc123';
@@ -91,7 +92,7 @@ class GetShortUrlVisitsCommandTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function outputIsProperlyGenerated(): void
     {
         $visit = Visit::forValidShortUrl(ShortUrl::createFake(), new Visitor('bar', 'foo', '', ''))->locate(

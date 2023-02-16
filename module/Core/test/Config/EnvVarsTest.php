@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Config;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Config\EnvVars;
 
@@ -23,16 +25,13 @@ class EnvVarsTest extends TestCase
         putenv(EnvVars::DB_NAME->value . '=');
     }
 
-    /**
-     * @test
-     * @dataProvider provideExistingEnvVars
-     */
+    #[Test, DataProvider('provideExistingEnvVars')]
     public function existsInEnvReturnsExpectedValue(EnvVars $envVar, bool $exists): void
     {
         self::assertEquals($exists, $envVar->existsInEnv());
     }
 
-    public function provideExistingEnvVars(): iterable
+    public static function provideExistingEnvVars(): iterable
     {
         yield 'DB_NAME' => [EnvVars::DB_NAME, true];
         yield 'BASE_PATH' => [EnvVars::BASE_PATH, true];
@@ -40,16 +39,13 @@ class EnvVarsTest extends TestCase
         yield 'DEFAULT_REGULAR_404_REDIRECT' => [EnvVars::DEFAULT_REGULAR_404_REDIRECT, false];
     }
 
-    /**
-     * @test
-     * @dataProvider provideEnvVarsValues
-     */
+    #[Test, DataProvider('provideEnvVarsValues')]
     public function expectedValueIsLoadedFromEnv(EnvVars $envVar, mixed $expected, mixed $default): void
     {
         self::assertEquals($expected, $envVar->loadFromEnv($default));
     }
 
-    public function provideEnvVarsValues(): iterable
+    public static function provideEnvVarsValues(): iterable
     {
         yield 'DB_NAME without default' => [EnvVars::DB_NAME, 'shlink', null];
         yield 'DB_NAME with default' => [EnvVars::DB_NAME, 'shlink', 'foobar'];

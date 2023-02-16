@@ -4,6 +4,7 @@
     xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
     bootstrap="./vendor/autoload.php"
     colors="true"
+    cacheDirectory="build/.phpunit/unit-tests.cache"
 >
     <testsuites>
         <testsuite name="Core">
@@ -17,7 +18,7 @@
         </testsuite>
     </testsuites>
 
-    <coverage processUncoveredFiles="true">
+    <coverage>
         <include>
             <directory suffix=".php">./module/*/src</directory>
         </include>

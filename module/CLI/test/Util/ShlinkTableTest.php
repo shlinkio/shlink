@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Util;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionObject;
@@ -23,7 +24,7 @@ class ShlinkTableTest extends TestCase
         $this->shlinkTable = ShlinkTable::fromBaseTable($this->baseTable);
     }
 
-    /** @test */
+    #[Test]
     public function renderMakesTableToBeRenderedWithProvidedInfo(): void
     {
         $headers = [];
@@ -43,7 +44,7 @@ class ShlinkTableTest extends TestCase
         $this->shlinkTable->render($headers, $rows, $footerTitle, $headerTitle);
     }
 
-    /** @test */
+    #[Test]
     public function newTableIsCreatedForFactoryMethod(): void
     {
         $instance = ShlinkTable::default($this->createMock(OutputInterface::class));

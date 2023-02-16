@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequest;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Options\AppOptions;
@@ -34,7 +35,7 @@ class HealthActionTest extends TestCase
         $this->action = new HealthAction($em, new AppOptions(version: '1.2.3'));
     }
 
-    /** @test */
+    #[Test]
     public function passResponseIsReturnedWhenDummyQuerySucceeds(): void
     {
         $this->conn->expects($this->once())->method('executeQuery')->willReturn($this->createMock(Result::class));
@@ -53,7 +54,7 @@ class HealthActionTest extends TestCase
         self::assertEquals('application/health+json', $resp->getHeaderLine('Content-type'));
     }
 
-    /** @test */
+    #[Test]
     public function failResponseIsReturnedWhenDummyQueryThrowsException(): void
     {
         $this->conn->expects($this->once())->method('executeQuery')->willThrowException(new Exception());

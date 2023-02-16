@@ -7,6 +7,8 @@ namespace ShlinkioTest\Shlink\Rest\Middleware\ShortUrl;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -24,10 +26,7 @@ class DropDefaultDomainFromRequestMiddlewareTest extends TestCase
         $this->middleware = new DropDefaultDomainFromRequestMiddleware('s.test');
     }
 
-    /**
-     * @test
-     * @dataProvider provideQueryParams
-     */
+    #[Test, DataProvider('provideQueryParams')]
     public function domainIsDroppedWhenDefaultOneIsProvided(array $providedPayload, array $expectedPayload): void
     {
         $req = ServerRequestFactory::fromGlobals()->withQueryParams($providedPayload)->withParsedBody($providedPayload);
@@ -43,7 +42,7 @@ class DropDefaultDomainFromRequestMiddlewareTest extends TestCase
         $this->middleware->process($req, $this->next);
     }
 
-    public function provideQueryParams(): iterable
+    public static function provideQueryParams(): iterable
     {
         yield [[], []];
         yield [['foo' => 'bar'], ['foo' => 'bar']];

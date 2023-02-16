@@ -6,12 +6,13 @@ namespace ShlinkioTest\Shlink\Core\Exception;
 
 use Fig\Http\Message\StatusCodeInterface;
 use JsonException;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\MalformedBodyException;
 
 class MalformedBodyExceptionTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function createsExpectedException(): void
     {
         $prev = new JsonException();

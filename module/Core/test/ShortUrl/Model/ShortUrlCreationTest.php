@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\ShortUrl\Model;
 
 use Cake\Chronos\Chronos;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Model\DeviceType;
@@ -20,18 +22,14 @@ use const STR_PAD_BOTH;
 
 class ShortUrlCreationTest extends TestCase
 {
-    /**
-     * @param array $data
-     * @test
-     * @dataProvider provideInvalidData
-     */
+    #[Test, DataProvider('provideInvalidData')]
     public function exceptionIsThrownIfProvidedDataIsInvalid(array $data): void
     {
         $this->expectException(ValidationException::class);
         ShortUrlCreation::fromRawData($data);
     }
 
-    public function provideInvalidData(): iterable
+    public static function provideInvalidData(): iterable
     {
         yield [[]];
         yield [[
@@ -107,10 +105,7 @@ class ShortUrlCreationTest extends TestCase
         ]];
     }
 
-    /**
-     * @test
-     * @dataProvider provideCustomSlugs
-     */
+    #[Test, DataProvider('provideCustomSlugs')]
     public function properlyCreatedInstanceReturnsValues(
         string $customSlug,
         string $expectedSlug,
@@ -136,7 +131,7 @@ class ShortUrlCreationTest extends TestCase
         self::assertNull($creation->maxVisits);
     }
 
-    public function provideCustomSlugs(): iterable
+    public static function provideCustomSlugs(): iterable
     {
         yield ['🔥', '🔥'];
         yield ['🦣 🍅', '🦣-🍅'];
@@ -161,10 +156,7 @@ class ShortUrlCreationTest extends TestCase
         yield ['гугл', 'гугл'];
     }
 
-    /**
-     * @test
-     * @dataProvider provideTitles
-     */
+    #[Test, DataProvider('provideTitles')]
     public function titleIsCroppedIfTooLong(?string $title, ?string $expectedTitle): void
     {
         $creation = ShortUrlCreation::fromRawData([
@@ -175,7 +167,7 @@ class ShortUrlCreationTest extends TestCase
         self::assertEquals($expectedTitle, $creation->title);
     }
 
-    public function provideTitles(): iterable
+    public static function provideTitles(): iterable
     {
         yield [null, null];
         yield ['foo', 'foo'];
@@ -187,10 +179,7 @@ class ShortUrlCreationTest extends TestCase
         yield [str_pad('', 800, 'e'), str_pad('', 512, 'e')];
     }
 
-    /**
-     * @test
-     * @dataProvider provideDomains
-     */
+    #[Test, DataProvider('provideDomains')]
     public function emptyDomainIsDiscarded(?string $domain, ?string $expectedDomain): void
     {
         $creation = ShortUrlCreation::fromRawData([
@@ -201,7 +190,7 @@ class ShortUrlCreationTest extends TestCase
         self::assertSame($expectedDomain, $creation->domain);
     }
 
-    public function provideDomains(): iterable
+    public static function provideDomains(): iterable
     {
         yield 'null domain' => [null, null];
         yield 'empty domain' => ['', null];

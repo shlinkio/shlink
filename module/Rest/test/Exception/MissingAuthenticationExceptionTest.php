@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Exception;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Rest\Exception\MissingAuthenticationException;
 
@@ -12,10 +14,7 @@ use function sprintf;
 
 class MissingAuthenticationExceptionTest extends TestCase
 {
-    /**
-     * @test
-     * @dataProvider provideExpectedHeaders
-     */
+    #[Test, DataProvider('provideExpectedHeaders')]
     public function exceptionIsProperlyCreatedFromExpectedHeaders(array $expectedHeaders): void
     {
         $expectedMessage = sprintf(
@@ -31,7 +30,7 @@ class MissingAuthenticationExceptionTest extends TestCase
         self::assertEquals(['expectedHeaders' => $expectedHeaders], $e->getAdditionalData());
     }
 
-    public function provideExpectedHeaders(): iterable
+    public static function provideExpectedHeaders(): iterable
     {
         yield [['foo', 'bar']];
         yield [['something']];
@@ -39,10 +38,7 @@ class MissingAuthenticationExceptionTest extends TestCase
         yield [['foo', 'bar', 'baz']];
     }
 
-    /**
-     * @test
-     * @dataProvider provideExpectedParam
-     */
+    #[Test, DataProvider('provideExpectedParam')]
     public function exceptionIsProperlyCreatedFromExpectedQueryParam(string $param): void
     {
         $expectedMessage = sprintf('Expected authentication to be provided in "%s" query param', $param);
@@ -55,7 +51,7 @@ class MissingAuthenticationExceptionTest extends TestCase
         self::assertEquals(['param' => $param], $e->getAdditionalData());
     }
 
-    public function provideExpectedParam(): iterable
+    public static function provideExpectedParam(): iterable
     {
         yield ['foo'];
         yield ['bar'];
