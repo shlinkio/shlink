@@ -47,7 +47,12 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
 
         $conn = $this->getEntityManager()->getConnection();
         $tagsSubQb = $conn->createQueryBuilder();
-        $tagsSubQb->select('t.id', 't.name')->from('tags', 't');
+        $tagsSubQb
+            ->select('t.id', 't.name', 'COUNT(DISTINCT s.id) AS short_urls_count')
+            ->from('tags', 't')
+            ->leftJoin('t', 'short_urls_in_tags', 'st', $tagsSubQb->expr()->eq('st.tag_id', 't.id'))
+            ->leftJoin('st', 'short_urls', 's', $tagsSubQb->expr()->eq('st.short_url_id', 's.id'))
+            ->groupBy('t.id', 't.name');
 
         if (! $orderMainQuery) {
             $tagsSubQb
@@ -95,11 +100,6 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
             });
 
         // Apply API key specification to all sub-queries
-        if ($apiKey && ! $apiKey->isAdmin()) {
-            $tagsSubQb
-                ->join('t', 'short_urls_in_tags', 'st', $tagsSubQb->expr()->eq('st.tag_id', 't.id'))
-                ->join('st', 'short_urls', 's', $tagsSubQb->expr()->eq('st.short_url_id', 's.id'));
-        }
         $applyApiKeyToNativeQb($apiKey, $tagsSubQb);
         $applyApiKeyToNativeQb($apiKey, $allVisitsSubQb);
         $applyApiKeyToNativeQb($apiKey, $nonBotVisitsSubQb);
@@ -113,21 +113,15 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
                 't.id AS id',
                 't.name AS name',
                 'COALESCE(v.visits, 0) AS visits', // COALESCE required for postgres to properly order
-                'COALESCE(v2.non_bot_visits, 0) AS non_bot_visits', // COALESCE required for postgres to properly order
-                'COUNT(DISTINCT s.id) AS short_urls_count',
+                'COALESCE(v2.non_bot_visits, 0) AS non_bot_visits',
+                'COALESCE(t.short_urls_count, 0) AS short_urls_count',
             )
             ->from('(' . $tagsSubQb->getSQL() . ')', 't')
-            ->leftJoin('t', 'short_urls_in_tags', 'st', $mainQb->expr()->eq('t.id', 'st.tag_id'))
-            ->leftJoin('st', 'short_urls', 's', $mainQb->expr()->eq('s.id', 'st.short_url_id'))
             ->leftJoin('t', '(' . $allVisitsSubQb->getSQL() . ')', 'v', $mainQb->expr()->eq('t.id', 'v.tag_id'))
             ->leftJoin('t', '(' . $nonBotVisitsSubQb->getSQL() . ')', 'v2', $mainQb->expr()->eq(
                 't.id',
                 'v2.tag_id',
-            ))
-            ->groupBy('t.id', 't.name', 'v.visits', 'v2.non_bot_visits');
-
-        // Apply API key role conditions to the native query too, as they will affect the amounts on the aggregates
-        $applyApiKeyToNativeQb($apiKey, $mainQb);
+            ));
 
         if ($orderMainQuery) {
             $mainQb
