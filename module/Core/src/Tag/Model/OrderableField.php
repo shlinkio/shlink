@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Tag\Model;
 
-use function Shlinkio\Shlink\Core\camelCaseToSnakeCase;
-
 enum OrderableField: string
 {
     case TAG = 'tag';
@@ -15,14 +13,12 @@ enum OrderableField: string
     /** @deprecated Use VISITS instead */
     case VISITS_COUNT = 'visitsCount';
 
-    public static function toSnakeCaseValidField(?string $field): string
+    public static function toSnakeCaseValidField(?string $field): self
     {
-        $parsed = $field !== null ? self::tryFrom($field) : self::VISITS;
-        $normalized = match ($parsed) {
+        $parsed = $field !== null ? self::tryFrom($field) : self::TAG;
+        return match ($parsed) {
             self::VISITS_COUNT, null => self::VISITS,
             default => $parsed,
         };
-
-        return camelCaseToSnakeCase($normalized->value);
     }
 }

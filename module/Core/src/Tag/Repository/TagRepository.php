@@ -19,6 +19,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function Functional\each;
 use function Functional\map;
+use function Shlinkio\Shlink\Core\camelCaseToSnakeCase;
 
 use const PHP_INT_MAX;
 
@@ -42,17 +43,26 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
      */
     public function findTagsWithInfo(?TagsListFiltering $filtering = null): array
     {
-        $orderField = $filtering?->orderBy?->field;
-        $orderDir = $filtering?->orderBy?->direction;
+        $orderField = OrderableField::toSnakeCaseValidField($filtering?->orderBy?->field);
+        $orderDir = $filtering?->orderBy?->direction ?? 'ASC';
         $apiKey = $filtering?->apiKey;
-
         $conn = $this->getEntityManager()->getConnection();
-        $tagsSubQb = $conn->createQueryBuilder();
+
+        $applyApiKeyToNativeQb = static fn (NativeQueryBuilder $qb) =>
+            $apiKey?->mapRoles(static fn (Role $role, array $meta) => match ($role) {
+                Role::DOMAIN_SPECIFIC => $qb->andWhere(
+                    $qb->expr()->eq('s.domain_id', $conn->quote(Role::domainIdFromMeta($meta))),
+                ),
+                Role::AUTHORED_SHORT_URLS => $qb->andWhere(
+                    $qb->expr()->eq('s.author_api_key_id', $conn->quote($apiKey->getId())),
+                ),
+            });
 
         // For admins and when no API key is present, we'll return tags which are not linked to any short URL
         $joiningMethod = ApiKey::isAdmin($apiKey) ? 'leftJoin' : 'join';
+        $tagsSubQb = $conn->createQueryBuilder();
         $tagsSubQb
-            ->select('t.id', 't.name', 'COUNT(DISTINCT s.id) AS short_urls_count')
+            ->select('t.id AS tag_id', 't.name AS tag', 'COUNT(DISTINCT s.id) AS short_urls_count')
             ->from('tags', 't')
             ->groupBy('t.id', 't.name')
             ->{$joiningMethod}('t', 'short_urls_in_tags', 'st', $tagsSubQb->expr()->eq('st.tag_id', 't.id'))
@@ -84,15 +94,6 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         $nonBotVisitsSubQb = $buildVisitsSubQb(true, 'non_bot_visits');
 
         // Apply API key specification to all sub-queries
-        $applyApiKeyToNativeQb = static fn (NativeQueryBuilder $qb) =>
-            $apiKey?->mapRoles(static fn (Role $role, array $meta) => match ($role) {
-                Role::DOMAIN_SPECIFIC => $qb->andWhere(
-                    $qb->expr()->eq('s.domain_id', $conn->quote(Role::domainIdFromMeta($meta))),
-                ),
-                Role::AUTHORED_SHORT_URLS => $qb->andWhere(
-                    $qb->expr()->eq('s.author_api_key_id', $conn->quote($apiKey->getId())),
-                ),
-            });
         each([$tagsSubQb, $allVisitsSubQb, $nonBotVisitsSubQb], $applyApiKeyToNativeQb);
 
         // A native query builder needs to be used here, because DQL and ORM query builders do not support
@@ -101,32 +102,25 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         $mainQb = $conn->createQueryBuilder();
         $mainQb
             ->select(
-                't.name AS name',
+                't.tag AS tag',
                 'COALESCE(v.visits, 0) AS visits', // COALESCE required for postgres to properly order
-                'COALESCE(v2.non_bot_visits, 0) AS non_bot_visits',
+                'COALESCE(b.non_bot_visits, 0) AS non_bot_visits',
                 'COALESCE(t.short_urls_count, 0) AS short_urls_count',
             )
             ->from('(' . $tagsSubQb->getSQL() . ')', 't')
-            ->leftJoin('t', '(' . $allVisitsSubQb->getSQL() . ')', 'v', $mainQb->expr()->eq('t.id', 'v.tag_id'))
-            ->leftJoin('t', '(' . $nonBotVisitsSubQb->getSQL() . ')', 'v2', $mainQb->expr()->eq(
-                't.id',
-                'v2.tag_id',
-            ))
+            ->leftJoin('t', '(' . $allVisitsSubQb->getSQL() . ')', 'v', $mainQb->expr()->eq('t.tag_id', 'v.tag_id'))
+            ->leftJoin('t', '(' . $nonBotVisitsSubQb->getSQL() . ')', 'b', $mainQb->expr()->eq('t.tag_id', 'b.tag_id'))
             ->setMaxResults($filtering?->limit ?? PHP_INT_MAX)
             ->setFirstResult($filtering?->offset ?? 0);
 
-        $orderByTag = $orderField === null || $orderField === OrderableField::TAG->value;
-        if ($orderByTag) {
-            $mainQb->orderBy('t.name', $orderDir ?? 'ASC');
-        } else {
-            $mainQb
-                ->orderBy(OrderableField::toSnakeCaseValidField($orderField), $orderDir ?? 'ASC')
-                // Add ordering by tag name, as a fallback in case of same amount
-                ->addOrderBy('t.name', 'ASC');
+        $mainQb->orderBy(camelCaseToSnakeCase($orderField->value), $orderDir);
+        if ($orderField !== OrderableField::TAG) {
+            // Add ordering by tag name, as a fallback in case of same amounts
+            $mainQb->addOrderBy('tag', 'ASC');
         }
 
         $rsm = new ResultSetMappingBuilder($this->getEntityManager());
-        $rsm->addScalarResult('name', 'tag');
+        $rsm->addScalarResult('tag', 'tag');
         $rsm->addScalarResult('visits', 'visits');
         $rsm->addScalarResult('non_bot_visits', 'nonBotVisits');
         $rsm->addScalarResult('short_urls_count', 'shortUrlsCount');
