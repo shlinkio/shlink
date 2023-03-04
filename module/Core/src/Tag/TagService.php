@@ -59,7 +59,7 @@ class TagService implements TagServiceInterface
      */
     public function deleteTags(array $tagNames, ?ApiKey $apiKey = null): void
     {
-        if ($apiKey !== null && ! $apiKey->isAdmin()) {
+        if (! ApiKey::isAdmin($apiKey)) {
             throw ForbiddenTagOperationException::forDeletion();
         }
 
@@ -75,7 +75,7 @@ class TagService implements TagServiceInterface
      */
     public function renameTag(TagRenaming $renaming, ?ApiKey $apiKey = null): Tag
     {
-        if ($apiKey !== null && ! $apiKey->isAdmin()) {
+        if (! ApiKey::isAdmin($apiKey)) {
             throw ForbiddenTagOperationException::forRenaming();
         }
 

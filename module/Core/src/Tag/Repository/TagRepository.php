@@ -17,8 +17,8 @@ use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\ApiKey\Spec\WithApiKeySpecsEnsuringJoin;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-use function Functional\map;
 use function Functional\each;
+use function Functional\map;
 
 use const PHP_INT_MAX;
 
@@ -50,13 +50,13 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         $tagsSubQb = $conn->createQueryBuilder();
 
         // For admins and when no API key is present, we'll return tags which are not linked to any short URL
-        $joiningMethod = $apiKey === null || $apiKey->isAdmin() ? 'leftJoin' : 'join';
+        $joiningMethod = ApiKey::isAdmin($apiKey) ? 'leftJoin' : 'join';
         $tagsSubQb
             ->select('t.id', 't.name', 'COUNT(DISTINCT s.id) AS short_urls_count')
             ->from('tags', 't')
+            ->groupBy('t.id', 't.name')
             ->{$joiningMethod}('t', 'short_urls_in_tags', 'st', $tagsSubQb->expr()->eq('st.tag_id', 't.id'))
-            ->{$joiningMethod}('st', 'short_urls', 's', $tagsSubQb->expr()->eq('st.short_url_id', 's.id'))
-            ->groupBy('t.id', 't.name');
+            ->{$joiningMethod}('st', 'short_urls', 's', $tagsSubQb->expr()->eq('st.short_url_id', 's.id'));
 
         $searchTerm = $filtering?->searchTerm;
         if ($searchTerm !== null) {
@@ -115,7 +115,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
             ->setMaxResults($filtering?->limit ?? PHP_INT_MAX)
             ->setFirstResult($filtering?->offset ?? 0);
 
-        $orderByTag = $orderField == null || $orderField === OrderableField::TAG->value;
+        $orderByTag = $orderField === null || $orderField === OrderableField::TAG->value;
         if ($orderByTag) {
             $mainQb->orderBy('t.name', $orderDir ?? 'ASC');
         } else {
