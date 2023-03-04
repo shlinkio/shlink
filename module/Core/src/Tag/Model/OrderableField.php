@@ -15,12 +15,6 @@ enum OrderableField: string
     /** @deprecated Use VISITS instead */
     case VISITS_COUNT = 'visitsCount';
 
-    public static function isAggregateField(string $field): bool
-    {
-        $parsed = self::tryFrom($field);
-        return $parsed !== null && $parsed !== self::TAG;
-    }
-
     public static function toSnakeCaseValidField(?string $field): string
     {
         $parsed = $field !== null ? self::tryFrom($field) : self::VISITS;

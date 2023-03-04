@@ -18,6 +18,7 @@ use Shlinkio\Shlink\Rest\ApiKey\Spec\WithApiKeySpecsEnsuringJoin;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function Functional\map;
+use function Functional\each;
 
 use const PHP_INT_MAX;
 
@@ -43,23 +44,23 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
     {
         $orderField = $filtering?->orderBy?->field;
         $orderDir = $filtering?->orderBy?->direction;
-        $orderMainQuery = $orderField !== null && OrderableField::isAggregateField($orderField);
+        $apiKey = $filtering?->apiKey;
 
         $conn = $this->getEntityManager()->getConnection();
         $tagsSubQb = $conn->createQueryBuilder();
+
+        // For admins and when no API key is present, we'll return tags which are not linked to any short URL
+        $joiningMethod = $apiKey === null || $apiKey->isAdmin() ? 'leftJoin' : 'join';
         $tagsSubQb
             ->select('t.id', 't.name', 'COUNT(DISTINCT s.id) AS short_urls_count')
             ->from('tags', 't')
-            ->leftJoin('t', 'short_urls_in_tags', 'st', $tagsSubQb->expr()->eq('st.tag_id', 't.id'))
-            ->leftJoin('st', 'short_urls', 's', $tagsSubQb->expr()->eq('st.short_url_id', 's.id'))
+            ->{$joiningMethod}('t', 'short_urls_in_tags', 'st', $tagsSubQb->expr()->eq('st.tag_id', 't.id'))
+            ->{$joiningMethod}('st', 'short_urls', 's', $tagsSubQb->expr()->eq('st.short_url_id', 's.id'))
             ->groupBy('t.id', 't.name');
 
-        if (! $orderMainQuery) {
-            $tagsSubQb
-                ->orderBy('t.name', $orderDir ?? 'ASC')
-                ->setMaxResults($filtering?->limit ?? PHP_INT_MAX)
-                ->setFirstResult($filtering?->offset ?? 0);
-            // TODO Check if applying limit/offset ot visits sub-queries is needed with large amounts of tags
+        $searchTerm = $filtering?->searchTerm;
+        if ($searchTerm !== null) {
+            $tagsSubQb->andWhere($tagsSubQb->expr()->like('t.name', $conn->quote('%' . $searchTerm . '%')));
         }
 
         $buildVisitsSubQb = static function (bool $excludeBots, string $aggregateAlias) use ($conn) {
@@ -82,14 +83,8 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         $allVisitsSubQb = $buildVisitsSubQb(false, 'visits');
         $nonBotVisitsSubQb = $buildVisitsSubQb(true, 'non_bot_visits');
 
-        $searchTerm = $filtering?->searchTerm;
-        if ($searchTerm !== null) {
-            $tagsSubQb->andWhere($tagsSubQb->expr()->like('t.name', $conn->quote('%' . $searchTerm . '%')));
-            // TODO Check if applying this to all sub-queries makes it faster or slower
-        }
-
-        $apiKey = $filtering?->apiKey;
-        $applyApiKeyToNativeQb = static fn (?ApiKey $apiKey, NativeQueryBuilder $qb) =>
+        // Apply API key specification to all sub-queries
+        $applyApiKeyToNativeQb = static fn (NativeQueryBuilder $qb) =>
             $apiKey?->mapRoles(static fn (Role $role, array $meta) => match ($role) {
                 Role::DOMAIN_SPECIFIC => $qb->andWhere(
                     $qb->expr()->eq('s.domain_id', $conn->quote(Role::domainIdFromMeta($meta))),
@@ -98,11 +93,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
                     $qb->expr()->eq('s.author_api_key_id', $conn->quote($apiKey->getId())),
                 ),
             });
-
-        // Apply API key specification to all sub-queries
-        $applyApiKeyToNativeQb($apiKey, $tagsSubQb);
-        $applyApiKeyToNativeQb($apiKey, $allVisitsSubQb);
-        $applyApiKeyToNativeQb($apiKey, $nonBotVisitsSubQb);
+        each([$tagsSubQb, $allVisitsSubQb, $nonBotVisitsSubQb], $applyApiKeyToNativeQb);
 
         // A native query builder needs to be used here, because DQL and ORM query builders do not support
         // sub-queries at "from" and "join" level.
@@ -110,7 +101,6 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         $mainQb = $conn->createQueryBuilder();
         $mainQb
             ->select(
-                't.id AS id',
                 't.name AS name',
                 'COALESCE(v.visits, 0) AS visits', // COALESCE required for postgres to properly order
                 'COALESCE(v2.non_bot_visits, 0) AS non_bot_visits',
@@ -121,17 +111,19 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
             ->leftJoin('t', '(' . $nonBotVisitsSubQb->getSQL() . ')', 'v2', $mainQb->expr()->eq(
                 't.id',
                 'v2.tag_id',
-            ));
+            ))
+            ->setMaxResults($filtering?->limit ?? PHP_INT_MAX)
+            ->setFirstResult($filtering?->offset ?? 0);
 
-        if ($orderMainQuery) {
+        $orderByTag = $orderField == null || $orderField === OrderableField::TAG->value;
+        if ($orderByTag) {
+            $mainQb->orderBy('t.name', $orderDir ?? 'ASC');
+        } else {
             $mainQb
                 ->orderBy(OrderableField::toSnakeCaseValidField($orderField), $orderDir ?? 'ASC')
-                ->setMaxResults($filtering?->limit ?? PHP_INT_MAX)
-                ->setFirstResult($filtering?->offset ?? 0);
+                // Add ordering by tag name, as a fallback in case of same amount
+                ->addOrderBy('t.name', 'ASC');
         }
-
-        // Add ordering by tag name, as a fallback in case of same amount, or as default ordering
-        $mainQb->addOrderBy('t.name', $orderMainQuery || $orderDir === null ? 'ASC' : $orderDir);
 
         $rsm = new ResultSetMappingBuilder($this->getEntityManager());
         $rsm->addScalarResult('name', 'tag');
