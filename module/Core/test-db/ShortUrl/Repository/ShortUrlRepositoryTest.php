@@ -395,7 +395,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     #[Test]
     public function importedShortUrlsAreFoundWhenExpected(): void
     {
-        $buildImported = static fn (string $shortCode, ?String $domain = null) =>
+        $buildImported = static fn (string $shortCode, ?string $domain = null) =>
             new ImportedShlinkUrl(ImportSource::BITLY, 'foo', [], Chronos::now(), $domain, $shortCode, null);
 
         $shortUrlWithoutDomain = ShortUrl::fromImport($buildImported('my-cool-slug'), true);
