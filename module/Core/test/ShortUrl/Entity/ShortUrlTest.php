@@ -98,26 +98,26 @@ class ShortUrlTest extends TestCase
 
         $shortUrl->update(ShortUrlEdition::fromRawData([
             ShortUrlInputFilter::DEVICE_LONG_URLS => [
-                DeviceType::ANDROID->value => 'android',
-                DeviceType::IOS->value => 'ios',
+                DeviceType::ANDROID->value => 'https://android',
+                DeviceType::IOS->value => 'https://ios',
             ],
         ]));
         self::assertEquals([
-            DeviceType::ANDROID->value => 'android',
-            DeviceType::IOS->value => 'ios',
+            DeviceType::ANDROID->value => 'https://android',
+            DeviceType::IOS->value => 'https://ios',
             DeviceType::DESKTOP->value => null,
         ], $shortUrl->deviceLongUrls());
 
         $shortUrl->update(ShortUrlEdition::fromRawData([
             ShortUrlInputFilter::DEVICE_LONG_URLS => [
                 DeviceType::ANDROID->value => null,
-                DeviceType::DESKTOP->value => 'desktop',
+                DeviceType::DESKTOP->value => 'https://desktop',
             ],
         ]));
         self::assertEquals([
             DeviceType::ANDROID->value => null,
-            DeviceType::IOS->value => 'ios',
-            DeviceType::DESKTOP->value => 'desktop',
+            DeviceType::IOS->value => 'https://ios',
+            DeviceType::DESKTOP->value => 'https://desktop',
         ], $shortUrl->deviceLongUrls());
 
         $shortUrl->update(ShortUrlEdition::fromRawData([
@@ -129,7 +129,7 @@ class ShortUrlTest extends TestCase
         self::assertEquals([
             DeviceType::ANDROID->value => null,
             DeviceType::IOS->value => null,
-            DeviceType::DESKTOP->value => 'desktop',
+            DeviceType::DESKTOP->value => 'https://desktop',
         ], $shortUrl->deviceLongUrls());
     }
 
@@ -139,7 +139,7 @@ class ShortUrlTest extends TestCase
         $range = range(1, 1000); // Use a "big" number to reduce false negatives
         $allFor = static fn (ShortUrlMode $mode): bool => every($range, static function () use ($mode): bool {
             $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(
-                [ShortUrlInputFilter::LONG_URL => 'foo'],
+                [ShortUrlInputFilter::LONG_URL => 'https://foo'],
                 new UrlShortenerOptions(mode: $mode),
             ));
             $shortCode = $shortUrl->getShortCode();

@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Common\Validation;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
+use function is_string;
 use function preg_match;
 use function substr;
 
@@ -134,7 +135,8 @@ class ShortUrlInputFilter extends InputFilter
         return (new Validator\ValidatorChain())
             ->attach(new Validator\NotEmpty($emptyModifiers))
             ->attach(new Validator\Callback(
-                fn (?string $value) => ($allowNull && $value === null) || preg_match(LOOSE_URI_MATCHER, $value) === 1
+                // Non-strings is always allowed. Other validators will take care of those
+                static fn (mixed $value) => ! is_string($value) || preg_match(LOOSE_URI_MATCHER, $value) === 1,
             ));
     }
 }
