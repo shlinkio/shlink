@@ -54,7 +54,7 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
     public function findListProperlyFiltersResult(): void
     {
         $foo = ShortUrl::create(
-            ShortUrlCreation::fromRawData(['longUrl' => 'foo', 'tags' => ['https://bar']]),
+            ShortUrlCreation::fromRawData(['longUrl' => 'https://foo', 'tags' => ['bar']]),
             $this->relationResolver,
         );
         $this->getEntityManager()->persist($foo);

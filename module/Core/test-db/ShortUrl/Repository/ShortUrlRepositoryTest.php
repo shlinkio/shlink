@@ -108,9 +108,9 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         );
         $this->getEntityManager()->persist($shortUrlWithoutDomain);
 
-        $shortUrlWithDomain = ShortUrl::create(
-            ShortUrlCreation::fromRawData(['domain' => 's.test', 'customSlug' => 'another-slug', 'longUrl' => 'foo']),
-        );
+        $shortUrlWithDomain = ShortUrl::create(ShortUrlCreation::fromRawData(
+            ['domain' => 's.test', 'customSlug' => 'another-slug', 'longUrl' => 'https://foo'],
+        ));
         $this->getEntityManager()->persist($shortUrlWithDomain);
 
         $this->getEntityManager()->flush();
@@ -133,13 +133,13 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     public function findOneLooksForShortUrlInProperSetOfTables(): void
     {
         $shortUrlWithoutDomain = ShortUrl::create(
-            ShortUrlCreation::fromRawData(['customSlug' => 'my-cool-slug', 'longUrl' => 'foo']),
+            ShortUrlCreation::fromRawData(['customSlug' => 'my-cool-slug', 'longUrl' => 'https://foo']),
         );
         $this->getEntityManager()->persist($shortUrlWithoutDomain);
 
-        $shortUrlWithDomain = ShortUrl::create(
-            ShortUrlCreation::fromRawData(['domain' => 's.test', 'customSlug' => 'another-slug', 'longUrl' => 'foo']),
-        );
+        $shortUrlWithDomain = ShortUrl::create(ShortUrlCreation::fromRawData(
+            ['domain' => 's.test', 'customSlug' => 'another-slug', 'longUrl' => 'https://foo'],
+        ));
         $this->getEntityManager()->persist($shortUrlWithDomain);
 
         $this->getEntityManager()->flush();
@@ -159,14 +159,14 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     #[Test]
     public function findOneMatchingReturnsNullForNonExistingShortUrls(): void
     {
-        self::assertNull($this->repo->findOneMatching(ShortUrlCreation::fromRawData(['longUrl' => 'foobar'])));
+        self::assertNull($this->repo->findOneMatching(ShortUrlCreation::fromRawData(['longUrl' => 'https://foobar'])));
         self::assertNull($this->repo->findOneMatching(
-            ShortUrlCreation::fromRawData(['longUrl' => 'foobar', 'tags' => ['foo', 'bar']]),
+            ShortUrlCreation::fromRawData(['longUrl' => 'https://foobar', 'tags' => ['foo', 'bar']]),
         ));
         self::assertNull($this->repo->findOneMatching(ShortUrlCreation::fromRawData([
             'validSince' => Chronos::parse('2020-03-05 20:18:30'),
             'customSlug' => 'this_slug_does_not_exist',
-            'longUrl' => 'foobar',
+            'longUrl' => 'https://foobar',
             'tags' => ['foo', 'bar'],
         ])));
     }
@@ -177,49 +177,54 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $start = Chronos::parse('2020-03-05 20:18:30');
         $end = Chronos::parse('2021-03-05 20:18:30');
 
-        $shortUrl = ShortUrl::create(
-            ShortUrlCreation::fromRawData(['validSince' => $start, 'longUrl' => 'foo', 'tags' => ['foo', 'bar']]),
-            $this->relationResolver,
-        );
+        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(
+            ['validSince' => $start, 'longUrl' => 'https://foo', 'tags' => ['foo', 'bar']],
+        ), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl);
 
-        $shortUrl2 = ShortUrl::create(ShortUrlCreation::fromRawData(['validUntil' => $end, 'longUrl' => 'bar']));
+        $shortUrl2 = ShortUrl::create(
+            ShortUrlCreation::fromRawData(['validUntil' => $end, 'longUrl' => 'https://bar']),
+        );
         $this->getEntityManager()->persist($shortUrl2);
 
         $shortUrl3 = ShortUrl::create(
-            ShortUrlCreation::fromRawData(['validSince' => $start, 'validUntil' => $end, 'longUrl' => 'baz']),
+            ShortUrlCreation::fromRawData(['validSince' => $start, 'validUntil' => $end, 'longUrl' => 'https://baz']),
         );
         $this->getEntityManager()->persist($shortUrl3);
 
         $shortUrl4 = ShortUrl::create(
-            ShortUrlCreation::fromRawData(['customSlug' => 'custom', 'validUntil' => $end, 'longUrl' => 'foo']),
+            ShortUrlCreation::fromRawData(['customSlug' => 'custom', 'validUntil' => $end, 'longUrl' => 'https://foo']),
         );
         $this->getEntityManager()->persist($shortUrl4);
 
-        $shortUrl5 = ShortUrl::create(ShortUrlCreation::fromRawData(['maxVisits' => 3, 'longUrl' => 'foo']));
+        $shortUrl5 = ShortUrl::create(ShortUrlCreation::fromRawData(['maxVisits' => 3, 'longUrl' => 'https://foo']));
         $this->getEntityManager()->persist($shortUrl5);
 
-        $shortUrl6 = ShortUrl::create(ShortUrlCreation::fromRawData(['domain' => 's.test', 'longUrl' => 'foo']));
+        $shortUrl6 = ShortUrl::create(
+            ShortUrlCreation::fromRawData(['domain' => 's.test', 'longUrl' => 'https://foo']),
+        );
         $this->getEntityManager()->persist($shortUrl6);
 
         $this->getEntityManager()->flush();
 
         self::assertSame(
             $shortUrl,
-            $this->repo->findOneMatching(
-                ShortUrlCreation::fromRawData(['validSince' => $start, 'longUrl' => 'foo', 'tags' => ['foo', 'bar']]),
-            ),
+            $this->repo->findOneMatching(ShortUrlCreation::fromRawData(
+                ['validSince' => $start, 'longUrl' => 'https://foo', 'tags' => ['foo', 'bar']]
+            )),
         );
         self::assertSame(
             $shortUrl2,
-            $this->repo->findOneMatching(ShortUrlCreation::fromRawData(['validUntil' => $end, 'longUrl' => 'bar'])),
+            $this->repo->findOneMatching(
+                ShortUrlCreation::fromRawData(['validUntil' => $end, 'longUrl' => 'https://bar']),
+            ),
         );
         self::assertSame(
             $shortUrl3,
             $this->repo->findOneMatching(ShortUrlCreation::fromRawData([
                 'validSince' => $start,
                 'validUntil' => $end,
-                'longUrl' => 'baz',
+                'longUrl' => 'https://baz',
             ])),
         );
         self::assertSame(
@@ -227,16 +232,18 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             $this->repo->findOneMatching(ShortUrlCreation::fromRawData([
                 'customSlug' => 'custom',
                 'validUntil' => $end,
-                'longUrl' => 'foo',
+                'longUrl' => 'https://foo',
             ])),
         );
         self::assertSame(
             $shortUrl5,
-            $this->repo->findOneMatching(ShortUrlCreation::fromRawData(['maxVisits' => 3, 'longUrl' => 'foo'])),
+            $this->repo->findOneMatching(ShortUrlCreation::fromRawData(['maxVisits' => 3, 'longUrl' => 'https://foo'])),
         );
         self::assertSame(
             $shortUrl6,
-            $this->repo->findOneMatching(ShortUrlCreation::fromRawData(['domain' => 's.test', 'longUrl' => 'foo'])),
+            $this->repo->findOneMatching(
+                ShortUrlCreation::fromRawData(['domain' => 's.test', 'longUrl' => 'https://foo']),
+            ),
         );
     }
 
@@ -246,7 +253,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $start = Chronos::parse('2020-03-05 20:18:30');
         $tags = ['foo', 'bar'];
         $meta = ShortUrlCreation::fromRawData(
-            ['validSince' => $start, 'maxVisits' => 50, 'longUrl' => 'foo', 'tags' => $tags],
+            ['validSince' => $start, 'maxVisits' => 50, 'longUrl' => 'https://foo', 'tags' => $tags],
         );
 
         $shortUrl1 = ShortUrl::create($meta, $this->relationResolver);
@@ -295,14 +302,14 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             'validSince' => $start,
             'apiKey' => $apiKey,
             'domain' => $rightDomain->authority,
-            'longUrl' => 'foo',
+            'longUrl' => 'https://foo',
             'tags' => ['foo', 'bar'],
         ]), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl);
 
         $nonDomainShortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
             'apiKey' => $apiKey,
-            'longUrl' => 'non-domain',
+            'longUrl' => 'https://non-domain',
         ]), $this->relationResolver);
         $this->getEntityManager()->persist($nonDomainShortUrl);
 
@@ -310,26 +317,26 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
 
         self::assertSame(
             $shortUrl,
-            $this->repo->findOneMatching(
-                ShortUrlCreation::fromRawData(['validSince' => $start, 'longUrl' => 'foo', 'tags' => ['foo', 'bar']]),
-            ),
+            $this->repo->findOneMatching(ShortUrlCreation::fromRawData(
+                ['validSince' => $start, 'longUrl' => 'https://foo', 'tags' => ['foo', 'bar']],
+            )),
         );
         self::assertSame($shortUrl, $this->repo->findOneMatching(ShortUrlCreation::fromRawData([
             'validSince' => $start,
             'apiKey' => $apiKey,
-            'longUrl' => 'foo',
+            'longUrl' => 'https://foo',
             'tags' => ['foo', 'bar'],
         ])));
         self::assertSame($shortUrl, $this->repo->findOneMatching(ShortUrlCreation::fromRawData([
             'validSince' => $start,
             'apiKey' => $adminApiKey,
-            'longUrl' => 'foo',
+            'longUrl' => 'https://foo',
             'tags' => ['foo', 'bar'],
         ])));
         self::assertNull($this->repo->findOneMatching(ShortUrlCreation::fromRawData([
             'validSince' => $start,
             'apiKey' => $otherApiKey,
-            'longUrl' => 'foo',
+            'longUrl' => 'https://foo',
             'tags' => ['foo', 'bar'],
         ])));
 
@@ -338,7 +345,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             $this->repo->findOneMatching(ShortUrlCreation::fromRawData([
                 'validSince' => $start,
                 'domain' => $rightDomain->authority,
-                'longUrl' => 'foo',
+                'longUrl' => 'https://foo',
                 'tags' => ['foo', 'bar'],
             ])),
         );
@@ -348,7 +355,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
                 'validSince' => $start,
                 'domain' => $rightDomain->authority,
                 'apiKey' => $rightDomainApiKey,
-                'longUrl' => 'foo',
+                'longUrl' => 'https://foo',
                 'tags' => ['foo', 'bar'],
             ])),
         );
@@ -358,7 +365,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
                 'validSince' => $start,
                 'domain' => $rightDomain->authority,
                 'apiKey' => $apiKey,
-                'longUrl' => 'foo',
+                'longUrl' => 'https://foo',
                 'tags' => ['foo', 'bar'],
             ])),
         );
@@ -367,7 +374,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
                 'validSince' => $start,
                 'domain' => $rightDomain->authority,
                 'apiKey' => $wrongDomainApiKey,
-                'longUrl' => 'foo',
+                'longUrl' => 'https://foo',
                 'tags' => ['foo', 'bar'],
             ])),
         );
@@ -376,20 +383,20 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             $nonDomainShortUrl,
             $this->repo->findOneMatching(ShortUrlCreation::fromRawData([
                 'apiKey' => $apiKey,
-                'longUrl' => 'non-domain',
+                'longUrl' => 'https://non-domain',
             ])),
         );
         self::assertSame(
             $nonDomainShortUrl,
             $this->repo->findOneMatching(ShortUrlCreation::fromRawData([
                 'apiKey' => $adminApiKey,
-                'longUrl' => 'non-domain',
+                'longUrl' => 'https://non-domain',
             ])),
         );
         self::assertNull(
             $this->repo->findOneMatching(ShortUrlCreation::fromRawData([
                 'apiKey' => $otherApiKey,
-                'longUrl' => 'non-domain',
+                'longUrl' => 'https://non-domain',
             ])),
         );
     }
