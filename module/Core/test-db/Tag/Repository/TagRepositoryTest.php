@@ -240,10 +240,9 @@ class TagRepositoryTest extends DatabaseTestCase
 
         [$firstUrlTags, $secondUrlTags] = array_chunk($names, 3);
 
-        $shortUrl = ShortUrl::create(
-            ShortUrlCreation::fromRawData(['apiKey' => $authorApiKey, 'longUrl' => 'https://longUrl', 'tags' => $firstUrlTags]),
-            $this->relationResolver,
-        );
+        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(
+            ['apiKey' => $authorApiKey, 'longUrl' => 'https://longUrl', 'tags' => $firstUrlTags],
+        ), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl);
 
         $shortUrl2 = ShortUrl::create(

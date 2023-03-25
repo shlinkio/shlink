@@ -210,7 +210,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         self::assertSame(
             $shortUrl,
             $this->repo->findOneMatching(ShortUrlCreation::fromRawData(
-                ['validSince' => $start, 'longUrl' => 'https://foo', 'tags' => ['foo', 'bar']]
+                ['validSince' => $start, 'longUrl' => 'https://foo', 'tags' => ['foo', 'bar']],
             )),
         );
         self::assertSame(

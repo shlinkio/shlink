@@ -33,7 +33,6 @@ use function Shlinkio\Shlink\Core\enumValues;
 use function Shlinkio\Shlink\Core\generateRandomShortCode;
 use function Shlinkio\Shlink\Core\normalizeDate;
 use function Shlinkio\Shlink\Core\normalizeOptionalDate;
-use function str_contains;
 
 class ShortUrl extends AbstractEntity
 {

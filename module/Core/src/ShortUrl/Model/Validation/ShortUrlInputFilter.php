@@ -68,7 +68,7 @@ class ShortUrlInputFilter extends InputFilter
 
         $deviceLongUrlsInput = $this->createInput(self::DEVICE_LONG_URLS, false);
         $deviceLongUrlsInput->getValidatorChain()->attach(
-            new DeviceLongUrlsValidator($this->longUrlValidators(allowNull: ! $requireLongUrl))
+            new DeviceLongUrlsValidator($this->longUrlValidators(allowNull: ! $requireLongUrl)),
         );
         $this->add($deviceLongUrlsInput);
 
