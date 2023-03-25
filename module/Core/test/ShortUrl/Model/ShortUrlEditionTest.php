@@ -31,23 +31,29 @@ class ShortUrlEditionTest extends TestCase
         yield 'null' => [null, [], []];
         yield 'empty' => [[], [], []];
         yield 'only new urls' => [[
-            DeviceType::DESKTOP->value => 'foo',
-            DeviceType::IOS->value => 'bar',
+            DeviceType::DESKTOP->value => 'https://foo',
+            DeviceType::IOS->value => 'https://bar',
         ], [
-            DeviceType::DESKTOP->value => DeviceLongUrlPair::fromRawTypeAndLongUrl(DeviceType::DESKTOP->value, 'foo'),
-            DeviceType::IOS->value => DeviceLongUrlPair::fromRawTypeAndLongUrl(DeviceType::IOS->value, 'bar'),
+            DeviceType::DESKTOP->value => DeviceLongUrlPair::fromRawTypeAndLongUrl(
+                DeviceType::DESKTOP->value,
+                'https://foo',
+            ),
+            DeviceType::IOS->value => DeviceLongUrlPair::fromRawTypeAndLongUrl(DeviceType::IOS->value, 'https://bar'),
         ], []];
         yield 'only urls to remove' => [[
             DeviceType::ANDROID->value => null,
             DeviceType::IOS->value => null,
         ], [], [DeviceType::ANDROID, DeviceType::IOS]];
         yield 'both' => [[
-            DeviceType::DESKTOP->value => 'bar',
-            DeviceType::IOS->value => 'foo',
+            DeviceType::DESKTOP->value => 'https://bar',
+            DeviceType::IOS->value => 'https://foo',
             DeviceType::ANDROID->value => null,
         ], [
-            DeviceType::DESKTOP->value => DeviceLongUrlPair::fromRawTypeAndLongUrl(DeviceType::DESKTOP->value, 'bar'),
-            DeviceType::IOS->value => DeviceLongUrlPair::fromRawTypeAndLongUrl(DeviceType::IOS->value, 'foo'),
+            DeviceType::DESKTOP->value => DeviceLongUrlPair::fromRawTypeAndLongUrl(
+                DeviceType::DESKTOP->value,
+                'https://bar',
+            ),
+            DeviceType::IOS->value => DeviceLongUrlPair::fromRawTypeAndLongUrl(DeviceType::IOS->value, 'https://foo'),
         ], [DeviceType::ANDROID]];
     }
 }

@@ -49,7 +49,7 @@ class ListShortUrlsCommandTest extends TestCase
         // The paginator will return more than one page
         $data = [];
         for ($i = 0; $i < 50; $i++) {
-            $data[] = ShortUrl::withLongUrl('url_' . $i);
+            $data[] = ShortUrl::withLongUrl('https://url_' . $i);
         }
 
         $this->shortUrlService->expects($this->exactly(3))->method('listShortUrls')->withAnyParameters()
@@ -71,7 +71,7 @@ class ListShortUrlsCommandTest extends TestCase
         // The paginator will return more than one page
         $data = [];
         for ($i = 0; $i < 30; $i++) {
-            $data[] = ShortUrl::withLongUrl('url_' . $i);
+            $data[] = ShortUrl::withLongUrl('https://url_' . $i);
         }
 
         $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(
@@ -114,7 +114,7 @@ class ListShortUrlsCommandTest extends TestCase
             ShortUrlsParams::emptyInstance(),
         )->willReturn(new Paginator(new ArrayAdapter([
             ShortUrl::create(ShortUrlCreation::fromRawData([
-                'longUrl' => 'foo.com',
+                'longUrl' => 'https://foo.com',
                 'tags' => ['foo', 'bar', 'baz'],
                 'apiKey' => $apiKey,
             ])),

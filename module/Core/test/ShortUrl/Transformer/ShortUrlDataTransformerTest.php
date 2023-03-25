@@ -44,7 +44,7 @@ class ShortUrlDataTransformerTest extends TestCase
         ]];
         yield 'max visits only' => [ShortUrl::create(ShortUrlCreation::fromRawData([
             'maxVisits' => $maxVisits,
-            'longUrl' => 'longUrl',
+            'longUrl' => 'https://longUrl',
         ])), [
             'validSince' => null,
             'validUntil' => null,
@@ -52,7 +52,7 @@ class ShortUrlDataTransformerTest extends TestCase
         ]];
         yield 'max visits and valid since' => [
             ShortUrl::create(ShortUrlCreation::fromRawData(
-                ['validSince' => $now, 'maxVisits' => $maxVisits, 'longUrl' => 'longUrl'],
+                ['validSince' => $now, 'maxVisits' => $maxVisits, 'longUrl' => 'https://longUrl'],
             )),
             [
                 'validSince' => $now->toAtomString(),
@@ -62,7 +62,7 @@ class ShortUrlDataTransformerTest extends TestCase
         ];
         yield 'both dates' => [
             ShortUrl::create(ShortUrlCreation::fromRawData(
-                ['validSince' => $now, 'validUntil' => $now->subDays(10), 'longUrl' => 'longUrl'],
+                ['validSince' => $now, 'validUntil' => $now->subDays(10), 'longUrl' => 'https://longUrl'],
             )),
             [
                 'validSince' => $now->toAtomString(),
@@ -75,7 +75,7 @@ class ShortUrlDataTransformerTest extends TestCase
                 'validSince' => $now,
                 'validUntil' => $now->subDays(5),
                 'maxVisits' => $maxVisits,
-                'longUrl' => 'longUrl',
+                'longUrl' => 'https://longUrl',
             ])),
             [
                 'validSince' => $now->toAtomString(),
