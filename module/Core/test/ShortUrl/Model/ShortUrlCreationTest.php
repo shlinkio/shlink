@@ -102,6 +102,12 @@ class ShortUrlCreationTest extends TestCase
         yield [[
             ShortUrlInputFilter::LONG_URL => 'https://foo',
             ShortUrlInputFilter::DEVICE_LONG_URLS => [
+                DeviceType::ANDROID->value => 'missing_schema',
+            ],
+        ]];
+        yield [[
+            ShortUrlInputFilter::LONG_URL => 'https://foo',
+            ShortUrlInputFilter::DEVICE_LONG_URLS => [
                 DeviceType::IOS->value => 'https://bar',
                 DeviceType::ANDROID->value => [],
             ],
