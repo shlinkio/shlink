@@ -34,16 +34,18 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     #[Test]
     public function findOneWithDomainFallbackReturnsProperData(): void
     {
-        $regularOne = ShortUrl::create(ShortUrlCreation::fromRawData(['customSlug' => 'Foo', 'longUrl' => 'foo']));
+        $regularOne = ShortUrl::create(
+            ShortUrlCreation::fromRawData(['customSlug' => 'Foo', 'longUrl' => 'https://foo']),
+        );
         $this->getEntityManager()->persist($regularOne);
 
         $withDomain = ShortUrl::create(ShortUrlCreation::fromRawData(
-            ['domain' => 'example.com', 'customSlug' => 'domain-short-code', 'longUrl' => 'foo'],
+            ['domain' => 'example.com', 'customSlug' => 'domain-short-code', 'longUrl' => 'https://foo'],
         ));
         $this->getEntityManager()->persist($withDomain);
 
         $withDomainDuplicatingRegular = ShortUrl::create(ShortUrlCreation::fromRawData(
-            ['domain' => 's.test', 'customSlug' => 'Foo', 'longUrl' => 'foo_with_domain'],
+            ['domain' => 's.test', 'customSlug' => 'Foo', 'longUrl' => 'https://foo_with_domain'],
         ));
         $this->getEntityManager()->persist($withDomainDuplicatingRegular);
 
@@ -102,7 +104,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     public function shortCodeIsInUseLooksForShortUrlInProperSetOfTables(): void
     {
         $shortUrlWithoutDomain = ShortUrl::create(
-            ShortUrlCreation::fromRawData(['customSlug' => 'my-cool-slug', 'longUrl' => 'foo']),
+            ShortUrlCreation::fromRawData(['customSlug' => 'my-cool-slug', 'longUrl' => 'https://foo']),
         );
         $this->getEntityManager()->persist($shortUrlWithoutDomain);
 
@@ -396,7 +398,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     public function importedShortUrlsAreFoundWhenExpected(): void
     {
         $buildImported = static fn (string $shortCode, ?string $domain = null) =>
-            new ImportedShlinkUrl(ImportSource::BITLY, 'foo', [], Chronos::now(), $domain, $shortCode, null);
+            new ImportedShlinkUrl(ImportSource::BITLY, 'https://foo', [], Chronos::now(), $domain, $shortCode, null);
 
         $shortUrlWithoutDomain = ShortUrl::fromImport($buildImported('my-cool-slug'), true);
         $this->getEntityManager()->persist($shortUrlWithoutDomain);

@@ -33,6 +33,7 @@ use function Shlinkio\Shlink\Core\enumValues;
 use function Shlinkio\Shlink\Core\generateRandomShortCode;
 use function Shlinkio\Shlink\Core\normalizeDate;
 use function Shlinkio\Shlink\Core\normalizeOptionalDate;
+use function str_contains;
 
 class ShortUrl extends AbstractEntity
 {
@@ -68,7 +69,7 @@ class ShortUrl extends AbstractEntity
      */
     public static function createFake(): self
     {
-        return self::withLongUrl('foo');
+        return self::withLongUrl('https://foo');
     }
 
     /**

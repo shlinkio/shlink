@@ -117,11 +117,11 @@ class ImportedLinksProcessorTest extends TestCase
     public function alreadyImportedUrlsAreSkipped(): void
     {
         $urls = [
-            new ImportedShlinkUrl(ImportSource::BITLY, 'foo', [], Chronos::now(), null, 'foo', null),
-            new ImportedShlinkUrl(ImportSource::BITLY, 'bar', [], Chronos::now(), null, 'bar', null),
-            new ImportedShlinkUrl(ImportSource::BITLY, 'baz', [], Chronos::now(), null, 'baz', null),
-            new ImportedShlinkUrl(ImportSource::BITLY, 'baz2', [], Chronos::now(), null, 'baz2', null),
-            new ImportedShlinkUrl(ImportSource::BITLY, 'baz3', [], Chronos::now(), null, 'baz3', null),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'https://foo', [], Chronos::now(), null, 'foo', null),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'https://bar', [], Chronos::now(), null, 'bar', null),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'https://baz', [], Chronos::now(), null, 'baz', null),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'https://baz2', [], Chronos::now(), null, 'baz2', null),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'https://baz3', [], Chronos::now(), null, 'baz3', null),
         ];
 
         $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);

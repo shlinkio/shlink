@@ -43,7 +43,9 @@ class ShortUrlTest extends TestCase
     public static function provideInvalidShortUrls(): iterable
     {
         yield 'with custom slug' => [
-            ShortUrl::create(ShortUrlCreation::fromRawData(['customSlug' => 'custom-slug', 'longUrl' => 'longUrl'])),
+            ShortUrl::create(
+                ShortUrlCreation::fromRawData(['customSlug' => 'custom-slug', 'longUrl' => 'https://longUrl']),
+            ),
             'The short code cannot be regenerated on ShortUrls where a custom slug was provided.',
         ];
         yield 'already persisted' => [
@@ -68,7 +70,7 @@ class ShortUrlTest extends TestCase
     {
         yield 'no custom slug' => [ShortUrl::createFake()];
         yield 'imported with custom slug' => [ShortUrl::fromImport(
-            new ImportedShlinkUrl(ImportSource::BITLY, 'longUrl', [], Chronos::now(), null, 'custom-slug', null),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'https://url', [], Chronos::now(), null, 'custom-slug', null),
             true,
         )];
     }
@@ -77,7 +79,7 @@ class ShortUrlTest extends TestCase
     public function shortCodesHaveExpectedLength(?int $length, int $expectedLength): void
     {
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(
-            [ShortUrlInputFilter::SHORT_CODE_LENGTH => $length, 'longUrl' => 'longUrl'],
+            [ShortUrlInputFilter::SHORT_CODE_LENGTH => $length, 'longUrl' => 'https://longUrl'],
         ));
 
         self::assertEquals($expectedLength, strlen($shortUrl->getShortCode()));
@@ -92,7 +94,7 @@ class ShortUrlTest extends TestCase
     #[Test]
     public function deviceLongUrlsAreUpdated(): void
     {
-        $shortUrl = ShortUrl::withLongUrl('foo');
+        $shortUrl = ShortUrl::withLongUrl('https://foo');
 
         $shortUrl->update(ShortUrlEdition::fromRawData([
             ShortUrlInputFilter::DEVICE_LONG_URLS => [

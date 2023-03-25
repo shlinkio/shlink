@@ -115,7 +115,7 @@ class ShortUrlCreationTest extends TestCase
         $creation = ShortUrlCreation::fromRawData([
             'validSince' => Chronos::parse('2015-01-01')->toAtomString(),
             'customSlug' => $customSlug,
-            'longUrl' => 'longUrl',
+            'longUrl' => 'https://longUrl',
         ], new UrlShortenerOptions(multiSegmentSlugsEnabled: $multiSegmentEnabled, mode: $shortUrlMode));
 
         self::assertTrue($creation->hasValidSince());
@@ -161,7 +161,7 @@ class ShortUrlCreationTest extends TestCase
     {
         $creation = ShortUrlCreation::fromRawData([
             'title' => $title,
-            'longUrl' => 'longUrl',
+            'longUrl' => 'https://longUrl',
         ]);
 
         self::assertEquals($expectedTitle, $creation->title);
@@ -184,7 +184,7 @@ class ShortUrlCreationTest extends TestCase
     {
         $creation = ShortUrlCreation::fromRawData([
             'domain' => $domain,
-            'longUrl' => 'longUrl',
+            'longUrl' => 'https://longUrl',
         ]);
 
         self::assertSame($expectedDomain, $creation->domain);

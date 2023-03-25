@@ -136,7 +136,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         $type->method('isInvalidShortUrl')->willReturn(true);
         $request = ServerRequestFactory::fromGlobals()->withAttribute(NotFoundType::class, $type)
                                                       ->withUri(new Uri('https://s.test/shortCode/bar/baz'));
-        $shortUrl = ShortUrl::withLongUrl('longUrl');
+        $shortUrl = ShortUrl::withLongUrl('https://longUrl');
 
         $currentIteration = 1;
         $this->resolver->expects($this->exactly($expectedResolveCalls))->method('resolveEnabledShortUrl')->with(

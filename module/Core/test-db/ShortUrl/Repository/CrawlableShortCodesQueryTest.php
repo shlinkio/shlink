@@ -24,7 +24,7 @@ class CrawlableShortCodesQueryTest extends DatabaseTestCase
     public function invokingQueryReturnsExpectedResult(): void
     {
         $createShortUrl = fn (bool $crawlable) => ShortUrl::create(
-            ShortUrlCreation::fromRawData(['crawlable' => $crawlable, 'longUrl' => 'foo.com']),
+            ShortUrlCreation::fromRawData(['crawlable' => $crawlable, 'longUrl' => 'https://foo.com']),
         );
 
         $shortUrl1 = $createShortUrl(true);
