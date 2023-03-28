@@ -45,7 +45,7 @@ class ShortUrlResolverTest extends TestCase
     #[Test, DataProvider('provideAdminApiKeys')]
     public function shortCodeIsProperlyParsed(?ApiKey $apiKey): void
     {
-        $shortUrl = ShortUrl::withLongUrl('https://expected_url');
+        $shortUrl = ShortUrl::withLongUrl('expected_url');
         $shortCode = $shortUrl->getShortCode();
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
 
@@ -76,7 +76,7 @@ class ShortUrlResolverTest extends TestCase
     #[Test]
     public function shortCodeToEnabledShortUrlProperlyParsesShortCode(): void
     {
-        $shortUrl = ShortUrl::withLongUrl('https://expected_url');
+        $shortUrl = ShortUrl::withLongUrl('expected_url');
         $shortCode = $shortUrl->getShortCode();
 
         $this->repo->expects($this->once())->method('findOneWithDomainFallback')->with(
@@ -111,9 +111,7 @@ class ShortUrlResolverTest extends TestCase
         $now = Chronos::now();
 
         yield 'maxVisits reached' => [(function () {
-            $shortUrl = ShortUrl::create(
-                ShortUrlCreation::fromRawData(['maxVisits' => 3, 'longUrl' => 'https://longUrl']),
-            );
+            $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(['maxVisits' => 3, 'longUrl' => 'longUrl']));
             $shortUrl->setVisits(new ArrayCollection(map(
                 range(0, 4),
                 fn () => Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()),
@@ -122,16 +120,16 @@ class ShortUrlResolverTest extends TestCase
             return $shortUrl;
         })()];
         yield 'future validSince' => [ShortUrl::create(ShortUrlCreation::fromRawData(
-            ['validSince' => $now->addMonth()->toAtomString(), 'longUrl' => 'https://longUrl'],
+            ['validSince' => $now->addMonth()->toAtomString(), 'longUrl' => 'longUrl'],
         ))];
         yield 'past validUntil' => [ShortUrl::create(ShortUrlCreation::fromRawData(
-            ['validUntil' => $now->subMonth()->toAtomString(), 'longUrl' => 'https://longUrl'],
+            ['validUntil' => $now->subMonth()->toAtomString(), 'longUrl' => 'longUrl'],
         ))];
         yield 'mixed' => [(function () use ($now) {
             $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
                 'maxVisits' => 3,
                 'validUntil' => $now->subMonth()->toAtomString(),
-                'longUrl' => 'https://longUrl',
+                'longUrl' => 'longUrl',
             ]));
             $shortUrl->setVisits(new ArrayCollection(map(
                 range(0, 4),

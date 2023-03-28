@@ -57,7 +57,7 @@ class ShortUrlServiceTest extends TestCase
         ShortUrlEdition $shortUrlEdit,
         ?ApiKey $apiKey,
     ): void {
-        $originalLongUrl = 'https://originalLongUrl';
+        $originalLongUrl = 'originalLongUrl';
         $shortUrl = ShortUrl::withLongUrl($originalLongUrl);
 
         $this->urlResolver->expects($this->once())->method('resolveShortUrl')->with(
@@ -103,16 +103,16 @@ class ShortUrlServiceTest extends TestCase
         yield 'long URL and API key' => [new InvokedCount(1), ShortUrlEdition::fromRawData([
             'validSince' => Chronos::parse('2017-01-01 00:00:00')->toAtomString(),
             'maxVisits' => 10,
-            'longUrl' => 'https://modifiedLongUrl',
+            'longUrl' => 'modifiedLongUrl',
         ]), ApiKey::create()];
         yield 'long URL with validation' => [new InvokedCount(1), ShortUrlEdition::fromRawData([
-            'longUrl' => 'https://modifiedLongUrl',
+            'longUrl' => 'modifiedLongUrl',
             'validateUrl' => true,
         ]), null];
         yield 'device redirects' => [new InvokedCount(0), ShortUrlEdition::fromRawData([
             'deviceLongUrls' => [
-                DeviceType::IOS->value => 'https://iosLongUrl',
-                DeviceType::ANDROID->value => 'https://androidLongUrl',
+                DeviceType::IOS->value => 'iosLongUrl',
+                DeviceType::ANDROID->value => 'androidLongUrl',
             ],
         ]), null];
     }

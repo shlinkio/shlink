@@ -33,37 +33,37 @@ class ShortUrlCreationTest extends TestCase
     {
         yield [[]];
         yield [[
-            ShortUrlInputFilter::LONG_URL => 'https://foo',
+            ShortUrlInputFilter::LONG_URL => 'foo',
             ShortUrlInputFilter::VALID_SINCE => '',
             ShortUrlInputFilter::VALID_UNTIL => '',
             ShortUrlInputFilter::CUSTOM_SLUG => 'foobar',
             ShortUrlInputFilter::MAX_VISITS => 'invalid',
         ]];
         yield [[
-            ShortUrlInputFilter::LONG_URL => 'https://foo',
+            ShortUrlInputFilter::LONG_URL => 'foo',
             ShortUrlInputFilter::VALID_SINCE => '2017',
             ShortUrlInputFilter::MAX_VISITS => 5,
         ]];
         yield [[
-            ShortUrlInputFilter::LONG_URL => 'https://foo',
+            ShortUrlInputFilter::LONG_URL => 'foo',
             ShortUrlInputFilter::VALID_SINCE => new stdClass(),
             ShortUrlInputFilter::VALID_UNTIL => 'foo',
         ]];
         yield [[
-            ShortUrlInputFilter::LONG_URL => 'https://foo',
+            ShortUrlInputFilter::LONG_URL => 'foo',
             ShortUrlInputFilter::VALID_UNTIL => 500,
             ShortUrlInputFilter::DOMAIN => 4,
         ]];
         yield [[
-            ShortUrlInputFilter::LONG_URL => 'https://foo',
+            ShortUrlInputFilter::LONG_URL => 'foo',
             ShortUrlInputFilter::SHORT_CODE_LENGTH => 3,
         ]];
         yield [[
-            ShortUrlInputFilter::LONG_URL => 'https://foo',
+            ShortUrlInputFilter::LONG_URL => 'foo',
             ShortUrlInputFilter::CUSTOM_SLUG => '',
         ]];
         yield [[
-            ShortUrlInputFilter::LONG_URL => 'https://foo',
+            ShortUrlInputFilter::LONG_URL => 'foo',
             ShortUrlInputFilter::CUSTOM_SLUG => '   ',
         ]];
         yield [[
@@ -73,42 +73,33 @@ class ShortUrlCreationTest extends TestCase
             ShortUrlInputFilter::LONG_URL => null,
         ]];
         yield [[
-            ShortUrlInputFilter::LONG_URL => 'missing_schema',
-        ]];
-        yield [[
-            ShortUrlInputFilter::LONG_URL => 'https://foo',
+            ShortUrlInputFilter::LONG_URL => 'foo',
             ShortUrlInputFilter::DEVICE_LONG_URLS => [
                 'invalid' => 'https://shlink.io',
             ],
         ]];
         yield [[
-            ShortUrlInputFilter::LONG_URL => 'https://foo',
+            ShortUrlInputFilter::LONG_URL => 'foo',
             ShortUrlInputFilter::DEVICE_LONG_URLS => [
                 DeviceType::DESKTOP->value => '',
             ],
         ]];
         yield [[
-            ShortUrlInputFilter::LONG_URL => 'https://foo',
+            ShortUrlInputFilter::LONG_URL => 'foo',
             ShortUrlInputFilter::DEVICE_LONG_URLS => [
                 DeviceType::DESKTOP->value => null,
             ],
         ]];
         yield [[
-            ShortUrlInputFilter::LONG_URL => 'https://foo',
+            ShortUrlInputFilter::LONG_URL => 'foo',
             ShortUrlInputFilter::DEVICE_LONG_URLS => [
                 DeviceType::IOS->value => '   ',
             ],
         ]];
         yield [[
-            ShortUrlInputFilter::LONG_URL => 'https://foo',
+            ShortUrlInputFilter::LONG_URL => 'foo',
             ShortUrlInputFilter::DEVICE_LONG_URLS => [
-                DeviceType::ANDROID->value => 'missing_schema',
-            ],
-        ]];
-        yield [[
-            ShortUrlInputFilter::LONG_URL => 'https://foo',
-            ShortUrlInputFilter::DEVICE_LONG_URLS => [
-                DeviceType::IOS->value => 'https://bar',
+                DeviceType::IOS->value => 'bar',
                 DeviceType::ANDROID->value => [],
             ],
         ]];
@@ -124,7 +115,7 @@ class ShortUrlCreationTest extends TestCase
         $creation = ShortUrlCreation::fromRawData([
             'validSince' => Chronos::parse('2015-01-01')->toAtomString(),
             'customSlug' => $customSlug,
-            'longUrl' => 'https://longUrl',
+            'longUrl' => 'longUrl',
         ], new UrlShortenerOptions(multiSegmentSlugsEnabled: $multiSegmentEnabled, mode: $shortUrlMode));
 
         self::assertTrue($creation->hasValidSince());
@@ -170,7 +161,7 @@ class ShortUrlCreationTest extends TestCase
     {
         $creation = ShortUrlCreation::fromRawData([
             'title' => $title,
-            'longUrl' => 'https://longUrl',
+            'longUrl' => 'longUrl',
         ]);
 
         self::assertEquals($expectedTitle, $creation->title);
@@ -193,7 +184,7 @@ class ShortUrlCreationTest extends TestCase
     {
         $creation = ShortUrlCreation::fromRawData([
             'domain' => $domain,
-            'longUrl' => 'https://longUrl',
+            'longUrl' => 'longUrl',
         ]);
 
         self::assertSame($expectedDomain, $creation->domain);

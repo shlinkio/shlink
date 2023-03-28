@@ -268,8 +268,6 @@ class CreateShortUrlTest extends ApiTestCase
         yield 'missing long url v3' => [[], '3', 'https://shlink.io/api/error/invalid-data'];
         yield 'empty long url v2' => [['longUrl' => null], '2', 'INVALID_ARGUMENT'];
         yield 'empty long url v3' => [['longUrl' => '  '], '3', 'https://shlink.io/api/error/invalid-data'];
-        yield 'missing url schema v2' => [['longUrl' => 'foo.com'], '2', 'INVALID_ARGUMENT'];
-        yield 'missing url schema v3' => [['longUrl' => 'foo.com'], '3', 'https://shlink.io/api/error/invalid-data'];
         yield 'empty device long url v2' => [[
             'longUrl' => 'foo',
             'deviceLongUrls' => [

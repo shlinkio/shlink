@@ -96,7 +96,7 @@ class EditShortUrlTest extends ApiTestCase
     public static function provideLongUrls(): iterable
     {
         yield 'valid URL' => ['https://shlink.io', self::STATUS_OK, null];
-        yield 'invalid URL' => ['http://foo', self::STATUS_BAD_REQUEST, 'INVALID_URL'];
+        yield 'invalid URL' => ['htt:foo', self::STATUS_BAD_REQUEST, 'INVALID_URL'];
     }
 
     #[Test, DataProvider('provideInvalidUrls')]

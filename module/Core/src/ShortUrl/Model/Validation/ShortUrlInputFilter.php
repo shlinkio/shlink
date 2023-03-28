@@ -12,11 +12,8 @@ use Shlinkio\Shlink\Common\Validation;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-use function is_string;
-use function preg_match;
 use function substr;
 
-use const Shlinkio\Shlink\LOOSE_URI_MATCHER;
 use const Shlinkio\Shlink\MIN_SHORT_CODES_LENGTH;
 
 /**
@@ -62,13 +59,27 @@ class ShortUrlInputFilter extends InputFilter
 
     private function initialize(bool $requireLongUrl, UrlShortenerOptions $options): void
     {
+        $longUrlNotEmptyCommonOptions = [
+            Validator\NotEmpty::OBJECT,
+            Validator\NotEmpty::SPACE,
+            Validator\NotEmpty::EMPTY_ARRAY,
+            Validator\NotEmpty::BOOLEAN,
+            Validator\NotEmpty::STRING,
+        ];
+
         $longUrlInput = $this->createInput(self::LONG_URL, $requireLongUrl);
-        $longUrlInput->getValidatorChain()->merge($this->longUrlValidators());
+        $longUrlInput->getValidatorChain()->attach(new Validator\NotEmpty([
+            ...$longUrlNotEmptyCommonOptions,
+            Validator\NotEmpty::NULL,
+        ]));
         $this->add($longUrlInput);
 
         $deviceLongUrlsInput = $this->createInput(self::DEVICE_LONG_URLS, false);
         $deviceLongUrlsInput->getValidatorChain()->attach(
-            new DeviceLongUrlsValidator($this->longUrlValidators(allowNull: ! $requireLongUrl)),
+            new DeviceLongUrlsValidator(new Validator\NotEmpty([
+                ...$longUrlNotEmptyCommonOptions,
+                ...($requireLongUrl ? [Validator\NotEmpty::NULL] : []),
+            ])),
         );
         $this->add($deviceLongUrlsInput);
 
@@ -117,26 +128,5 @@ class ShortUrlInputFilter extends InputFilter
         $this->add($title);
 
         $this->add($this->createBooleanInput(self::CRAWLABLE, false));
-    }
-
-    private function longUrlValidators(bool $allowNull = false): Validator\ValidatorChain
-    {
-        $emptyModifiers = [
-            Validator\NotEmpty::OBJECT,
-            Validator\NotEmpty::SPACE,
-            Validator\NotEmpty::EMPTY_ARRAY,
-            Validator\NotEmpty::BOOLEAN,
-            Validator\NotEmpty::STRING,
-        ];
-        if (! $allowNull) {
-            $emptyModifiers[] = Validator\NotEmpty::NULL;
-        }
-
-        return (new Validator\ValidatorChain())
-            ->attach(new Validator\NotEmpty($emptyModifiers))
-            ->attach(new Validator\Callback(
-                // Non-strings is always allowed. Other validators will take care of those
-                static fn (mixed $value) => ! is_string($value) || preg_match(LOOSE_URI_MATCHER, $value) === 1,
-            ));
     }
 }

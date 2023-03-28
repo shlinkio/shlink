@@ -29,7 +29,7 @@ class ShortUrlStringifierTest extends TestCase
     {
         $shortUrlWithShortCode = fn (string $shortCode, ?string $domain = null) => ShortUrl::create(
             ShortUrlCreation::fromRawData([
-                'longUrl' => 'https://longUrl',
+                'longUrl' => 'longUrl',
                 'customSlug' => $shortCode,
                 'domain' => $domain,
             ]),

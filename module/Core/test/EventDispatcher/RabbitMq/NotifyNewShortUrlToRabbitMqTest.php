@@ -70,7 +70,7 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
         $shortUrlId = '123';
         $update = Update::forTopicAndPayload(Topic::NEW_SHORT_URL->value, []);
         $this->em->expects($this->once())->method('find')->with(ShortUrl::class, $shortUrlId)->willReturn(
-            ShortUrl::withLongUrl('https://longUrl'),
+            ShortUrl::withLongUrl('longUrl'),
         );
         $this->updatesGenerator->expects($this->once())->method('newShortUrlUpdate')->with(
             $this->isInstanceOf(ShortUrl::class),
@@ -87,7 +87,7 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
         $shortUrlId = '123';
         $update = Update::forTopicAndPayload(Topic::NEW_SHORT_URL->value, []);
         $this->em->expects($this->once())->method('find')->with(ShortUrl::class, $shortUrlId)->willReturn(
-            ShortUrl::withLongUrl('https://longUrl'),
+            ShortUrl::withLongUrl('longUrl'),
         );
         $this->updatesGenerator->expects($this->once())->method('newShortUrlUpdate')->with(
             $this->isInstanceOf(ShortUrl::class),

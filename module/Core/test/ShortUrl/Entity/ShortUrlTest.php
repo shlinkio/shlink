@@ -43,9 +43,7 @@ class ShortUrlTest extends TestCase
     public static function provideInvalidShortUrls(): iterable
     {
         yield 'with custom slug' => [
-            ShortUrl::create(
-                ShortUrlCreation::fromRawData(['customSlug' => 'custom-slug', 'longUrl' => 'https://longUrl']),
-            ),
+            ShortUrl::create(ShortUrlCreation::fromRawData(['customSlug' => 'custom-slug', 'longUrl' => 'longUrl'])),
             'The short code cannot be regenerated on ShortUrls where a custom slug was provided.',
         ];
         yield 'already persisted' => [
@@ -70,7 +68,7 @@ class ShortUrlTest extends TestCase
     {
         yield 'no custom slug' => [ShortUrl::createFake()];
         yield 'imported with custom slug' => [ShortUrl::fromImport(
-            new ImportedShlinkUrl(ImportSource::BITLY, 'https://url', [], Chronos::now(), null, 'custom-slug', null),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'longUrl', [], Chronos::now(), null, 'custom-slug', null),
             true,
         )];
     }
@@ -79,7 +77,7 @@ class ShortUrlTest extends TestCase
     public function shortCodesHaveExpectedLength(?int $length, int $expectedLength): void
     {
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(
-            [ShortUrlInputFilter::SHORT_CODE_LENGTH => $length, 'longUrl' => 'https://longUrl'],
+            [ShortUrlInputFilter::SHORT_CODE_LENGTH => $length, 'longUrl' => 'longUrl'],
         ));
 
         self::assertEquals($expectedLength, strlen($shortUrl->getShortCode()));
@@ -94,30 +92,30 @@ class ShortUrlTest extends TestCase
     #[Test]
     public function deviceLongUrlsAreUpdated(): void
     {
-        $shortUrl = ShortUrl::withLongUrl('https://foo');
+        $shortUrl = ShortUrl::withLongUrl('foo');
 
         $shortUrl->update(ShortUrlEdition::fromRawData([
             ShortUrlInputFilter::DEVICE_LONG_URLS => [
-                DeviceType::ANDROID->value => 'https://android',
-                DeviceType::IOS->value => 'https://ios',
+                DeviceType::ANDROID->value => 'android',
+                DeviceType::IOS->value => 'ios',
             ],
         ]));
         self::assertEquals([
-            DeviceType::ANDROID->value => 'https://android',
-            DeviceType::IOS->value => 'https://ios',
+            DeviceType::ANDROID->value => 'android',
+            DeviceType::IOS->value => 'ios',
             DeviceType::DESKTOP->value => null,
         ], $shortUrl->deviceLongUrls());
 
         $shortUrl->update(ShortUrlEdition::fromRawData([
             ShortUrlInputFilter::DEVICE_LONG_URLS => [
                 DeviceType::ANDROID->value => null,
-                DeviceType::DESKTOP->value => 'https://desktop',
+                DeviceType::DESKTOP->value => 'desktop',
             ],
         ]));
         self::assertEquals([
             DeviceType::ANDROID->value => null,
-            DeviceType::IOS->value => 'https://ios',
-            DeviceType::DESKTOP->value => 'https://desktop',
+            DeviceType::IOS->value => 'ios',
+            DeviceType::DESKTOP->value => 'desktop',
         ], $shortUrl->deviceLongUrls());
 
         $shortUrl->update(ShortUrlEdition::fromRawData([
@@ -129,7 +127,7 @@ class ShortUrlTest extends TestCase
         self::assertEquals([
             DeviceType::ANDROID->value => null,
             DeviceType::IOS->value => null,
-            DeviceType::DESKTOP->value => 'https://desktop',
+            DeviceType::DESKTOP->value => 'desktop',
         ], $shortUrl->deviceLongUrls());
     }
 
@@ -139,7 +137,7 @@ class ShortUrlTest extends TestCase
         $range = range(1, 1000); // Use a "big" number to reduce false negatives
         $allFor = static fn (ShortUrlMode $mode): bool => every($range, static function () use ($mode): bool {
             $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(
-                [ShortUrlInputFilter::LONG_URL => 'https://foo'],
+                [ShortUrlInputFilter::LONG_URL => 'foo'],
                 new UrlShortenerOptions(mode: $mode),
             ));
             $shortCode = $shortUrl->getShortCode();
