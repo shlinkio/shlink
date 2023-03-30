@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#1715](https://github.com/shlinkio/shlink/issues/1715) Fix short URL creation/edition allowing long URLs without schema. Now a validation error is thrown.
+* [#1537](https://github.com/shlinkio/shlink/issues/1537) Fix incorrect list of tags being returned for some author-only API keys.
 
 
 ## [3.5.2] - 2023-02-16
