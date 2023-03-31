@@ -9,6 +9,7 @@ use Shlinkio\Shlink\CLI\ApiKey\RoleResolverInterface;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -99,7 +100,7 @@ class GenerateKeyCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $io->success(sprintf('Generated API key: "%s"', $apiKey->toString()));
 
-        if (! $apiKey->isAdmin()) {
+        if (! ApiKey::isAdmin($apiKey)) {
             ShlinkTable::default($io)->render(
                 ['Role name', 'Role metadata'],
                 $apiKey->mapRoles(fn (Role $role, array $meta) => [$role->value, arrayToString($meta, 0)]),

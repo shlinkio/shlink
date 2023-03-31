@@ -20,7 +20,8 @@ class CrawlableShortCodesQuery extends EntitySpecificationRepository implements 
            ->from(ShortUrl::class, 's')
            ->where($qb->expr()->eq('s.crawlable', ':crawlable'))
            ->setParameter('crawlable', true)
-           ->setMaxResults($blockSize);
+           ->setMaxResults($blockSize)
+           ->orderBy('s.shortCode');
 
         $page = 0;
         do {

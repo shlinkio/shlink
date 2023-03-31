@@ -18,7 +18,6 @@ use Shlinkio\Shlink\Importer\Model\ImportedShlinkOrphanVisit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Model\ImportResult;
 use Shlinkio\Shlink\Importer\Params\ImportParams;
-use Shlinkio\Shlink\Importer\Sources\ImportSource;
 use Symfony\Component\Console\Style\OutputStyle;
 use Symfony\Component\Console\Style\StyleInterface;
 use Throwable;
@@ -55,8 +54,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
     private function importShortUrls(StyleInterface $io, iterable $shlinkUrls, ImportParams $params): void
     {
         $importShortCodes = $params->importShortCodes;
-        $source = $params->source;
-        $iterable = $this->batchHelper->wrapIterable($shlinkUrls, $source === ImportSource::SHLINK ? 10 : 100);
+        $iterable = $this->batchHelper->wrapIterable($shlinkUrls, $params->importVisits ? 10 : 100);
 
         foreach ($iterable as $importedUrl) {
             $skipOnShortCodeConflict = static fn (): bool => $io->choice(sprintf(
@@ -82,7 +80,10 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
                 continue;
             }
 
-            $resultMessage = $shortUrlImporting->importVisits($importedUrl->visits, $this->em);
+            $resultMessage = $shortUrlImporting->importVisits(
+                $this->batchHelper->wrapIterable($importedUrl->visits, 100),
+                $this->em,
+            );
             $io->text(sprintf('%s: %s', $longUrl, $resultMessage));
         }
     }

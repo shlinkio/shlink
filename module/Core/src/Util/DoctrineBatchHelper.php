@@ -17,12 +17,14 @@ class DoctrineBatchHelper implements DoctrineBatchHelperInterface
     }
 
     /**
+     * @template T
+     * @param iterable<T> $resultSet
+     * @return iterable<T>
      * @throws Throwable
      */
     public function wrapIterable(iterable $resultSet, int $batchSize): iterable
     {
         $iteration = 0;
-
         $this->em->beginTransaction();
 
         try {
@@ -33,7 +35,6 @@ class DoctrineBatchHelper implements DoctrineBatchHelperInterface
             }
         } catch (Throwable $e) {
             $this->em->rollback();
-
             throw $e;
         }
 

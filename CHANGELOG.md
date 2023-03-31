@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [3.5.3] - 2023-03-31
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1715](https://github.com/shlinkio/shlink/issues/1715) Fix short URL creation/edition allowing long URLs without schema. Now a validation error is thrown.
+* [#1537](https://github.com/shlinkio/shlink/issues/1537) Fix incorrect list of tags being returned for some author-only API keys.
+* [#1738](https://github.com/shlinkio/shlink/issues/1738) Fix memory leak when importing short URLs with many visits.
+
+
 ## [3.5.2] - 2023-02-16
 ### Added
 * *Nothing*

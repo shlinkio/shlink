@@ -15,6 +15,14 @@ return [
 //            'dbname' => 'shlink_foo',
             'charset' => 'utf8mb4',
 
+            // MariaDB
+//            'user' => 'root',
+//            'password' => 'root',
+//            'driver' => 'pdo_mysql',
+//            'host' => 'shlink_db_maria',
+//            'dbname' => 'shlink_foo',
+//            'charset' => 'utf8mb4',
+
             // Postgres
 //            'user' => 'postgres',
 //            'password' => 'root',

@@ -59,7 +59,7 @@ class ListKeysCommand extends Command
                 $rowData[] = sprintf($messagePattern, $this->getEnabledSymbol($apiKey));
             }
             $rowData[] = $expiration?->toAtomString() ?? '-';
-            $rowData[] = $apiKey->isAdmin() ? 'Admin' : implode("\n", $apiKey->mapRoles(
+            $rowData[] = ApiKey::isAdmin($apiKey) ? 'Admin' : implode("\n", $apiKey->mapRoles(
                 fn (Role $role, array $meta) =>
                     empty($meta)
                         ? $role->toFriendlyName()

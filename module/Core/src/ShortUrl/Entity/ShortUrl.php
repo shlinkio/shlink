@@ -68,7 +68,7 @@ class ShortUrl extends AbstractEntity
      */
     public static function createFake(): self
     {
-        return self::withLongUrl('foo');
+        return self::withLongUrl('https://foo');
     }
 
     /**

@@ -114,9 +114,12 @@ class ApiKey extends AbstractEntity
         return Spec::andX(...$specs);
     }
 
-    public function isAdmin(): bool
+    /**
+     * @return ($apiKey is null ? true : boolean)
+     */
+    public static function isAdmin(?ApiKey $apiKey): bool
     {
-        return $this->roles->isEmpty();
+        return $apiKey === null || $apiKey->roles->isEmpty();
     }
 
     public function hasRole(Role $role): bool
