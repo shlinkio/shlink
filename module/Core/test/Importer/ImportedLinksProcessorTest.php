@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Core\Importer;
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -184,6 +185,7 @@ class ImportedLinksProcessorTest extends TestCase
         $this->em->expects($this->exactly($amountOfPersistedVisits + ($foundShortUrl === null ? 1 : 0)))->method(
             'persist',
         )->with($this->callback(fn (object $arg) => $arg instanceof ShortUrl || $arg instanceof Visit));
+        $this->em->expects($this->any())->method('find')->willReturn(null);
         $this->io->expects($this->once())->method('text')->with($this->stringContains($expectedOutput));
 
         $this->processor->process($this->io, ImportResult::withShortUrls([$importedUrl]), $this->buildParams());
@@ -227,6 +229,32 @@ class ImportedLinksProcessorTest extends TestCase
                 Visit::fromImport(ShortUrl::createFake(), new ImportedShlinkVisit('', '', $now, null)),
             ])),
         ];
+    }
+
+    #[Test, DataProvider('provideFoundShortUrls')]
+    public function visitsArePersistedWithProperShortUrl(?ShortUrl $foundShortUrl): void
+    {
+        $originalShortUrl = ShortUrl::withLongUrl('https://foo');
+
+        $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
+        $this->repo->expects($this->once())->method('findOneByImportedUrl')->willReturn($originalShortUrl);
+        $this->em->expects($this->exactly(2))->method('find')->willReturn($foundShortUrl);
+        $this->em->expects($this->once())->method('persist')->willReturnCallback(
+            static fn (Visit $visit)  => Assert::assertSame($foundShortUrl ?? $originalShortUrl, $visit->getShortUrl()),
+        );
+
+        $now = Chronos::now();
+        $this->processor->process($this->io, ImportResult::withShortUrls([
+            new ImportedShlinkUrl(ImportSource::SHLINK, 'https://s', [], $now, null, 's', null, [
+                new ImportedShlinkVisit('', '', $now, null),
+            ]),
+        ]), $this->buildParams());
+    }
+
+    public static function provideFoundShortUrls(): iterable
+    {
+        yield [null];
+        yield [ShortUrl::withLongUrl('https://bar')];
     }
 
     /**

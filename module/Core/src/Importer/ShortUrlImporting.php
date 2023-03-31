@@ -33,7 +33,7 @@ final class ShortUrlImporting
      */
     public function importVisits(iterable $visits, EntityManagerInterface $em): string
     {
-        $mostRecentImportedDate = $this->shortUrl->mostRecentImportedVisitDate();
+        $mostRecentImportedDate = $this->resolveShortUrl($em)->mostRecentImportedVisitDate();
 
         $importedVisits = 0;
         foreach ($visits as $importedVisit) {
@@ -42,7 +42,7 @@ final class ShortUrlImporting
                 continue;
             }
 
-            $em->persist(Visit::fromImport($this->shortUrl, $importedVisit));
+            $em->persist(Visit::fromImport($this->resolveShortUrl($em), $importedVisit));
             $importedVisits++;
         }
 
@@ -53,5 +53,15 @@ final class ShortUrlImporting
         return $this->isNew
             ? sprintf('<info>Imported</info> with <info>%s</info> visits', $importedVisits)
             : sprintf('<comment>Skipped</comment>. Imported <info>%s</info> visits', $importedVisits);
+    }
+
+    private function resolveShortUrl(EntityManagerInterface $em): ShortUrl
+    {
+        // Instead of directly accessing wrapped ShortUrl entity, try to get it from the EM.
+        // With this, we will get the same entity from memory if it is known by the EM, but if it was cleared, the EM
+        // will fetch it again from the database, preventing errors at runtime.
+        // However, if the EM was not flushed yet, the entity will not be found by ID, but it is known by the EM.
+        // In that case, we fall back to wrapped ShortUrl entity directly.
+        return $em->find(ShortUrl::class, $this->shortUrl->getId()) ?? $this->shortUrl;
     }
 }

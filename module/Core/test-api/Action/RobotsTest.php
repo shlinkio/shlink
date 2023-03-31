@@ -22,8 +22,8 @@ class RobotsTest extends ApiTestCase
             # https://www.robotstxt.org/orig.html
             
             User-agent: *
-            Allow: /custom
             Allow: /abc123
+            Allow: /custom
             Disallow: /
             ROBOTS,
             $body,
