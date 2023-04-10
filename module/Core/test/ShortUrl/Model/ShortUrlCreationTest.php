@@ -165,6 +165,20 @@ class ShortUrlCreationTest extends TestCase
         yield ['гугл', 'гугл'];
     }
 
+    #[Test, DataProvider('provideValidLongUrls')]
+    public function supportsDifferentTypesOfSchemas(string $longUrl): void
+    {
+        $creation = ShortUrlCreation::fromRawData(['longUrl' => $longUrl]);
+        self::assertEquals($longUrl, $creation->longUrl);
+    }
+
+    public static function provideValidLongUrls(): iterable
+    {
+        yield 'mailto' => ['mailto:foo@example.com'];
+        yield 'file' => ['file:///foo/bar'];
+        yield 'https' => ['https://example.com'];
+    }
+
     #[Test, DataProvider('provideTitles')]
     public function titleIsCroppedIfTooLong(?string $title, ?string $expectedTitle): void
     {
