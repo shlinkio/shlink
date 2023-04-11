@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1742](https://github.com/shlinkio/shlink/issues/1742) Fix URLs using schemas which do not contain `//`, like `mailto:`, to no longer be considered valid.
+
+
 ## [3.5.3] - 2023-03-31
 ### Added
 * *Nothing*
