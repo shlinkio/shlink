@@ -177,6 +177,7 @@ class ShortUrlCreationTest extends TestCase
         yield 'mailto' => ['mailto:foo@example.com'];
         yield 'file' => ['file:///foo/bar'];
         yield 'https' => ['https://example.com'];
+        yield 'deeplink' => ['shlink://some/path'];
     }
 
     #[Test, DataProvider('provideTitles')]
