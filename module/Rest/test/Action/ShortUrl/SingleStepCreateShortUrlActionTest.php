@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
+use Shlinkio\Shlink\Core\ShortUrl\Model\UrlShorteningResult;
 use Shlinkio\Shlink\Core\ShortUrl\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\SingleStepCreateShortUrlAction;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -44,7 +45,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
         ])->withAttribute(ApiKey::class, $apiKey);
         $this->urlShortener->expects($this->once())->method('shorten')->with(
             ShortUrlCreation::fromRawData(['apiKey' => $apiKey, 'longUrl' => 'http://foobar.com']),
-        )->willReturn(ShortUrl::createFake());
+        )->willReturn(UrlShorteningResult::withoutErrorOnEventDispatching(ShortUrl::createFake()));
 
         $resp = $this->action->handle($request);
 

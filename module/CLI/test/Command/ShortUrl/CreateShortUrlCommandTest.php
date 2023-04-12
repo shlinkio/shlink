@@ -17,6 +17,7 @@ use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
+use Shlinkio\Shlink\Core\ShortUrl\Model\UrlShorteningResult;
 use Shlinkio\Shlink\Core\ShortUrl\UrlShortenerInterface;
 use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -51,7 +52,9 @@ class CreateShortUrlCommandTest extends TestCase
     public function properShortCodeIsCreatedIfLongUrlIsCorrect(): void
     {
         $shortUrl = ShortUrl::createFake();
-        $this->urlShortener->expects($this->once())->method('shorten')->withAnyParameters()->willReturn($shortUrl);
+        $this->urlShortener->expects($this->once())->method('shorten')->withAnyParameters()->willReturn(
+            UrlShorteningResult::withoutErrorOnEventDispatching($shortUrl),
+        );
         $this->stringifier->expects($this->once())->method('stringify')->with($shortUrl)->willReturn(
             'stringified_short_url',
         );
@@ -106,7 +109,7 @@ class CreateShortUrlCommandTest extends TestCase
                 Assert::assertEquals(['foo', 'bar', 'baz', 'boo', 'zar'], $creation->tags);
                 return true;
             }),
-        )->willReturn($shortUrl);
+        )->willReturn(UrlShorteningResult::withoutErrorOnEventDispatching($shortUrl));
         $this->stringifier->expects($this->once())->method('stringify')->with($shortUrl)->willReturn(
             'stringified_short_url',
         );
@@ -129,7 +132,7 @@ class CreateShortUrlCommandTest extends TestCase
                 Assert::assertEquals($expectedDomain, $meta->domain);
                 return true;
             }),
-        )->willReturn(ShortUrl::createFake());
+        )->willReturn(UrlShorteningResult::withoutErrorOnEventDispatching(ShortUrl::createFake()));
         $this->stringifier->method('stringify')->with($this->isInstanceOf(ShortUrl::class))->willReturn('');
 
         $input['longUrl'] = 'http://domain.com/foo/bar';
@@ -155,7 +158,7 @@ class CreateShortUrlCommandTest extends TestCase
                 Assert::assertEquals($expectedValidateUrl, $meta->doValidateUrl());
                 return true;
             }),
-        )->willReturn($shortUrl);
+        )->willReturn(UrlShorteningResult::withoutErrorOnEventDispatching($shortUrl));
         $this->stringifier->method('stringify')->with($this->isInstanceOf(ShortUrl::class))->willReturn('');
 
         $options['longUrl'] = 'http://domain.com/foo/bar';

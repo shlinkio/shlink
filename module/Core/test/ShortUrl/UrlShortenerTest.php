@@ -58,9 +58,9 @@ class UrlShortenerTest extends TestCase
         )->willReturnArgument(0);
         $this->shortCodeHelper->method('ensureShortCodeUniqueness')->willReturn(true);
 
-        $shortUrl = $this->urlShortener->shorten($meta);
+        $result = $this->urlShortener->shorten($meta);
 
-        self::assertEquals($longUrl, $shortUrl->getLongUrl());
+        self::assertEquals($longUrl, $result->shortUrl->getLongUrl());
     }
 
     #[Test]
@@ -91,7 +91,7 @@ class UrlShortenerTest extends TestCase
 
         $result = $this->urlShortener->shorten($meta);
 
-        self::assertSame($expected, $result);
+        self::assertSame($expected, $result->shortUrl);
     }
 
     public static function provideExistingShortUrls(): iterable

@@ -161,7 +161,7 @@ class CreateShortUrlCommand extends Command
         $doValidateUrl = $input->getOption('validate-url');
 
         try {
-            $shortUrl = $this->urlShortener->shorten(ShortUrlCreation::fromRawData([
+            $result = $this->urlShortener->shorten(ShortUrlCreation::fromRawData([
                 ShortUrlInputFilter::LONG_URL => $longUrl,
                 ShortUrlInputFilter::VALID_SINCE => $input->getOption('valid-since'),
                 ShortUrlInputFilter::VALID_UNTIL => $input->getOption('valid-until'),
@@ -178,7 +178,7 @@ class CreateShortUrlCommand extends Command
 
             $io->writeln([
                 sprintf('Processed long URL: <info>%s</info>', $longUrl),
-                sprintf('Generated short URL: <info>%s</info>', $this->stringifier->stringify($shortUrl)),
+                sprintf('Generated short URL: <info>%s</info>', $this->stringifier->stringify($result->shortUrl)),
             ]);
             return ExitCodes::EXIT_SUCCESS;
         } catch (InvalidUrlException | NonUniqueSlugException $e) {

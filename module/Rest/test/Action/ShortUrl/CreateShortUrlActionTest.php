@@ -17,6 +17,7 @@ use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
+use Shlinkio\Shlink\Core\ShortUrl\Model\UrlShorteningResult;
 use Shlinkio\Shlink\Core\ShortUrl\UrlShortener;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\CreateShortUrlAction;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -53,7 +54,7 @@ class CreateShortUrlActionTest extends TestCase
 
         $this->urlShortener->expects($this->once())->method('shorten')->with(
             ShortUrlCreation::fromRawData($expectedMeta),
-        )->willReturn($shortUrl);
+        )->willReturn(UrlShorteningResult::withoutErrorOnEventDispatching($shortUrl));
         $this->transformer->expects($this->once())->method('transform')->with($shortUrl)->willReturn(
             ['shortUrl' => 'stringified_short_url'],
         );
