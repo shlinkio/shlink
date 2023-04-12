@@ -69,7 +69,7 @@ class CreateShortUrlCommandTest extends TestCase
 
         self::assertEquals(ExitCodes::EXIT_SUCCESS, $this->commandTester->getStatusCode());
         self::assertStringContainsString('stringified_short_url', $output);
-        self::assertStringNotContainsString('but the real-time updates cannot be notified', $output);
+        self::assertStringNotContainsString('but the real-time updates cannot', $output);
     }
 
     #[Test]
@@ -195,11 +195,11 @@ class CreateShortUrlCommandTest extends TestCase
     public static function provideDispatchBehavior(): iterable
     {
         $containsAssertion = static fn (string $output) => self::assertStringContainsString(
-            'but the real-time updates cannot be notified',
+            'but the real-time updates cannot',
             $output,
         );
         $doesNotContainAssertion = static fn (string $output) => self::assertStringNotContainsString(
-            'but the real-time updates cannot be notified',
+            'but the real-time updates cannot',
             $output,
         );
 

@@ -65,7 +65,7 @@ class UrlShortenerTest extends TestCase
 
         $result = $this->urlShortener->shorten($meta);
         $thereIsError = false;
-        $result->onEventDispatchingError(function () use (&$thereIsError) {
+        $result->onEventDispatchingError(function () use (&$thereIsError): void {
             $thereIsError = true;
         });
 
@@ -75,7 +75,8 @@ class UrlShortenerTest extends TestCase
 
     public static function provideDispatchBehavior(): iterable
     {
-        yield 'no dispatch error' => [false, static function (): void {}];
+        yield 'no dispatch error' => [false, static function (): void {
+        }];
         yield 'dispatch error' => [true, static function (): void {
             throw new ServiceNotFoundException();
         }];
