@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [3.5.4] - 2023-04-12
 ### Added
 * *Nothing*
 
@@ -19,6 +19,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#1742](https://github.com/shlinkio/shlink/issues/1742) Fix URLs using schemas which do not contain `//`, like `mailto:`, to no longer be considered valid.
+* [#1743](https://github.com/shlinkio/shlink/issues/1743) Fix Error when trying to create short URLs from CLI on an openswoole context.
+
+  Unfortunately the reason are real-time updates do not work with openswoole when outside an openswoole request, so the feature has been disabled for that context.
 
 
 ## [3.5.3] - 2023-03-31
