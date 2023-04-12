@@ -49,11 +49,7 @@ jobs:
   delete-artifacts:
     needs: ['publish']
     runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        php-version: ['8.1', '8.2']
-        swoole: ['yes', 'no']
     steps:
-      - uses: geekyeggo/delete-artifact@v1
+      - uses: geekyeggo/delete-artifact@v2
         with:
-          name: dist-files-${{ matrix.php-version }}-${{ matrix.swoole }}
+          name: dist-files-*
