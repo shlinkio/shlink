@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl;
 
 use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManager;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -26,6 +27,7 @@ class UrlShortenerTest extends TestCase
     private MockObject & EntityManager $em;
     private MockObject & ShortUrlTitleResolutionHelperInterface $titleResolutionHelper;
     private MockObject & ShortCodeUniquenessHelperInterface $shortCodeHelper;
+    private MockObject & EventDispatcherInterface $dispatcher;
 
     protected function setUp(): void
     {
@@ -39,17 +41,19 @@ class UrlShortenerTest extends TestCase
             fn (callable $callback) => $callback(),
         );
 
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+
         $this->urlShortener = new UrlShortener(
             $this->titleResolutionHelper,
             $this->em,
             new SimpleShortUrlRelationResolver(),
             $this->shortCodeHelper,
-            $this->createMock(EventDispatcherInterface::class),
+            $this->dispatcher,
         );
     }
 
-    #[Test]
-    public function urlIsProperlyShortened(): void
+    #[Test, DataProvider('provideDispatchBehavior')]
+    public function urlIsProperlyShortened(bool $expectDispatchError, callable $dispatchBehavior): void
     {
         $longUrl = 'http://foobar.com/12345/hello?foo=bar';
         $meta = ShortUrlCreation::fromRawData(['longUrl' => $longUrl]);
@@ -57,10 +61,24 @@ class UrlShortenerTest extends TestCase
             $meta,
         )->willReturnArgument(0);
         $this->shortCodeHelper->method('ensureShortCodeUniqueness')->willReturn(true);
+        $this->dispatcher->expects($this->once())->method('dispatch')->willReturnCallback($dispatchBehavior);
 
         $result = $this->urlShortener->shorten($meta);
+        $thereIsError = false;
+        $result->onEventDispatchingError(function () use (&$thereIsError) {
+            $thereIsError = true;
+        });
 
         self::assertEquals($longUrl, $result->shortUrl->getLongUrl());
+        self::assertEquals($expectDispatchError, $thereIsError);
+    }
+
+    public static function provideDispatchBehavior(): iterable
+    {
+        yield 'no dispatch error' => [false, static function (): void {}];
+        yield 'dispatch error' => [true, static function (): void {
+            throw new ServiceNotFoundException();
+        }];
     }
 
     #[Test]

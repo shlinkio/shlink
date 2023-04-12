@@ -176,6 +176,11 @@ class CreateShortUrlCommand extends Command
                 ShortUrlInputFilter::FORWARD_QUERY => !$input->getOption('no-forward-query'),
             ], $this->options));
 
+            $result->onEventDispatchingError(static fn () => $io->isVerbose() && $io->warning(
+                'Short URL properly created, but the real-time updates cannot be notified when generating the '
+                . 'short URL from the command line. Migrate to roadrunner in order to bypass this limitation.',
+            ));
+
             $io->writeln([
                 sprintf('Processed long URL: <info>%s</info>', $longUrl),
                 sprintf('Generated short URL: <info>%s</info>', $this->stringifier->stringify($result->shortUrl)),

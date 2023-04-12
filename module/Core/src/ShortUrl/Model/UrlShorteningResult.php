@@ -16,7 +16,7 @@ final class UrlShorteningResult
     }
 
     /**
-     * @param callable(Throwable $errorOnEventDispatching): void $handler
+     * @param callable(Throwable $errorOnEventDispatching): mixed $handler
      */
     public function onEventDispatchingError(callable $handler): void
     {

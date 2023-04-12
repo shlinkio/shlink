@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -20,6 +21,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\UrlShorteningResult;
 use Shlinkio\Shlink\Core\ShortUrl\UrlShortenerInterface;
 use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class CreateShortUrlCommandTest extends TestCase
@@ -62,11 +64,12 @@ class CreateShortUrlCommandTest extends TestCase
         $this->commandTester->execute([
             'longUrl' => 'http://domain.com/foo/bar',
             '--max-visits' => '3',
-        ]);
+        ], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
         $output = $this->commandTester->getDisplay();
 
         self::assertEquals(ExitCodes::EXIT_SUCCESS, $this->commandTester->getStatusCode());
         self::assertStringContainsString('stringified_short_url', $output);
+        self::assertStringNotContainsString('but the real-time updates cannot be notified', $output);
     }
 
     #[Test]
@@ -169,5 +172,41 @@ class CreateShortUrlCommandTest extends TestCase
     {
         yield 'no flags' => [[], null];
         yield 'validate-url' => [['--validate-url' => true], true];
+    }
+
+    /**
+     * @param callable(string $output): void $assert
+     */
+    #[Test, DataProvider('provideDispatchBehavior')]
+    public function warningIsPrintedInVerboseModeWhenDispatchErrors(int $verbosity, callable $assert): void
+    {
+        $shortUrl = ShortUrl::createFake();
+        $this->urlShortener->expects($this->once())->method('shorten')->withAnyParameters()->willReturn(
+            UrlShorteningResult::withErrorOnEventDispatching($shortUrl, new ServiceNotFoundException()),
+        );
+        $this->stringifier->method('stringify')->willReturn('stringified_short_url');
+
+        $this->commandTester->execute(['longUrl' => 'http://domain.com/foo/bar'], ['verbosity' => $verbosity]);
+        $output = $this->commandTester->getDisplay();
+
+        $assert($output);
+    }
+
+    public static function provideDispatchBehavior(): iterable
+    {
+        $containsAssertion = static fn (string $output) => self::assertStringContainsString(
+            'but the real-time updates cannot be notified',
+            $output,
+        );
+        $doesNotContainAssertion = static fn (string $output) => self::assertStringNotContainsString(
+            'but the real-time updates cannot be notified',
+            $output,
+        );
+
+        yield 'quiet' => [OutputInterface::VERBOSITY_QUIET, $doesNotContainAssertion];
+        yield 'normal' => [OutputInterface::VERBOSITY_NORMAL, $doesNotContainAssertion];
+        yield 'verbose' => [OutputInterface::VERBOSITY_VERBOSE, $containsAssertion];
+        yield 'very verbose' => [OutputInterface::VERBOSITY_VERY_VERBOSE, $containsAssertion];
+        yield 'debug' => [OutputInterface::VERBOSITY_DEBUG, $containsAssertion];
     }
 }
