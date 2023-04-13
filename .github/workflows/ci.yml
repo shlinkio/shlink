@@ -168,10 +168,7 @@ jobs:
       - upload-coverage
     runs-on: ubuntu-22.04
     steps:
-      - uses: geekyeggo/delete-artifact@v1
+      - uses: geekyeggo/delete-artifact@v2
         with:
           name: |
-            coverage-unit
-            coverage-db
-            coverage-api
-            coverage-cli
+            coverage-*
