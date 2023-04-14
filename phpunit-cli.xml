@@ -12,10 +12,10 @@
         </testsuite>
     </testsuites>
 
-    <coverage>
+    <source>
         <include>
-            <directory suffix=".php">./module/CLI/src</directory>
-            <directory suffix=".php">./module/Core/src</directory>
+            <directory>./module/CLI/src</directory>
+            <directory>./module/Core/src</directory>
         </include>
-    </coverage>
+    </source>
 </phpunit>
