@@ -12,6 +12,16 @@ chdir(dirname(__DIR__));
 
 require 'vendor/autoload.php';
 
+// Workaround to make this compatible with both openswoole 22 and earlier versions.
+if (! function_exists('swoole_set_process_name')) {
+    // phpcs:disable
+    function swoole_set_process_name(string $name): void
+    {
+        OpenSwoole\Util::setProcessName($name);
+    }
+    // phpcs:enable
+}
+
 // This is one of the first files loaded. Configure the timezone here
 date_default_timezone_set(EnvVars::TIMEZONE->loadFromEnv(date_default_timezone_get()));
 
@@ -21,7 +31,6 @@ if (! class_exists(LOCAL_LOCK_FACTORY)) {
     class_alias(Lock\LockFactory::class, LOCAL_LOCK_FACTORY);
 }
 
-// Build container
 return (static function (): ServiceManager {
     $config = require __DIR__ . '/config.php';
     $container = new ServiceManager($config['dependencies']);
