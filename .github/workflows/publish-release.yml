@@ -17,7 +17,7 @@ jobs:
       - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          php-extensions: openswoole-4.12.1
+          php-extensions: openswoole-22.0.0
           extensions-cache-key: publish-swagger-spec-extensions-${{ matrix.php-version }}
           install-deps: 'no'
       - if: ${{ matrix.swoole == 'yes' }}

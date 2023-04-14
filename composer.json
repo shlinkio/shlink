@@ -63,7 +63,7 @@
         "cebe/php-openapi": "^1.7",
         "devster/ubench": "^2.1",
         "infection/infection": "^0.26.19",
-        "openswoole/ide-helper": "~4.11.5",
+        "openswoole/ide-helper": "~22.0.0",
         "phpstan/phpstan": "^1.9",
         "phpstan/phpstan-doctrine": "^1.3",
         "phpstan/phpstan-phpunit": "^1.3",
@@ -107,7 +107,7 @@
             "@parallel cs stan swagger:validate test:unit:ci test:db:sqlite:ci test:db:mysql test:db:maria test:db:postgres test:db:ms",
             "@parallel infect:test:api infect:test:cli infect:ci:unit infect:ci:db"
         ],
-        "cs": "phpcs",
+        "cs": "phpcs -s",
         "cs:fix": "phpcbf",
         "stan": "APP_ENV=test php vendor/bin/phpstan analyse module/*/src module/*/test* module/*/config config docker/config data/migrations --level=8",
         "test": [
