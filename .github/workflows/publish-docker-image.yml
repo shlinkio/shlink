@@ -2,8 +2,6 @@ name: Build and publish docker image
 
 on:
   push:
-    branches:
-      - develop
     paths-ignore:
       - 'LICENSE'
       - '.*'
@@ -12,24 +10,29 @@ on:
       - '*.yml*'
       - '*.json5'
       - '*.neon'
+    branches:
+      - develop
     tags:
       - 'v*'
 
 jobs:
-  build-openswoole:
+  build-image:
+    strategy:
+      matrix:
+        include:
+          - runtime: 'rr'
+            platforms: 'linux/arm64/v8,linux/amd64'
+          - runtime: 'rr'
+            tag-suffix: 'roadrunner'
+            platforms: 'linux/arm64/v8,linux/amd64'
+          - runtime: 'openswoole'
+            tag-suffix: 'openswoole'
     uses: shlinkio/github-actions/.github/workflows/docker-build-and-publish.yml@main
     secrets: inherit
     with:
       image-name: shlinkio/shlink
       version-arg-name: SHLINK_VERSION
-
-  build-roadrunner:
-    uses: shlinkio/github-actions/.github/workflows/docker-build-and-publish.yml@main
-    secrets: inherit
-    with:
-      image-name: shlinkio/shlink
-      version-arg-name: SHLINK_VERSION
-      platforms: 'linux/arm64/v8,linux/amd64'
-      tags-suffix: roadrunner
+      platforms: ${{ matrix.platforms }}
+      tags-suffix: ${{ matrix.tag-suffix }}
       extra-build-args: |
-        SHLINK_RUNTIME=rr
+        SHLINK_RUNTIME=${{ matrix.runtime }}
