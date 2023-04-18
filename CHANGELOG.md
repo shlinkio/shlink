@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#1656](https://github.com/shlinkio/shlink/issues/1656) Add support for openswoole 22
 
 ### Changed
-* *Nothing*
+* [#1755](https://github.com/shlinkio/shlink/issues/1755) Update to roadrunner 2023
 
 ### Deprecated
 * *Nothing*
