@@ -45,7 +45,7 @@ COPY --from=composer:2 /usr/bin/composer ./composer.phar
 RUN apk add --no-cache git && \
     php composer.phar install --no-dev --prefer-dist --optimize-autoloader --no-progress --no-interaction && \
     if [ "$SHLINK_RUNTIME" == 'openswoole' ]; then \
-        php composer.phar remove spiral/roadrunner spiral/roadrunner-jobs --with-all-dependencies --update-no-dev --optimize-autoloader --no-progress --no-interactionc ; \
+        php composer.phar remove spiral/roadrunner spiral/roadrunner-jobs spiral/roadrunner-cli spiral/roadrunner-http --with-all-dependencies --update-no-dev --optimize-autoloader --no-progress --no-interactionc ; \
     elif [ $SHLINK_RUNTIME == 'rr' ]; then \
         php composer.phar remove mezzio/mezzio-swoole --with-all-dependencies --update-no-dev --optimize-autoloader --no-progress --no-interaction ; \
     fi; \
