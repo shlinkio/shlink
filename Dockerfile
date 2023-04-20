@@ -43,10 +43,11 @@ FROM base as builder
 COPY . .
 COPY --from=composer:2 /usr/bin/composer ./composer.phar
 RUN apk add --no-cache git && \
-    php composer.phar install --no-dev --prefer-dist --optimize-autoloader --no-progress --no-interaction && \
+    # FIXME Ignoring ext-openswoole platform req, as it makes install fail with roadrunner, even though it's a dev dependency and we are passing --no-dev
+    php composer.phar install --no-dev --prefer-dist --optimize-autoloader --no-progress --no-interaction --ignore-platform-req=ext-openswoole && \
     if [ "$SHLINK_RUNTIME" == 'openswoole' ]; then \
-        php composer.phar remove spiral/roadrunner spiral/roadrunner-jobs spiral/roadrunner-cli spiral/roadrunner-http --with-all-dependencies --update-no-dev --optimize-autoloader --no-progress --no-interactionc ; \
-    elif [ $SHLINK_RUNTIME == 'rr' ]; then \
+        php composer.phar remove spiral/roadrunner spiral/roadrunner-jobs spiral/roadrunner-cli spiral/roadrunner-http --with-all-dependencies --update-no-dev --optimize-autoloader --no-progress --no-interaction ; \
+    elif [ "$SHLINK_RUNTIME" == 'rr' ]; then \
         php composer.phar remove mezzio/mezzio-swoole --with-all-dependencies --update-no-dev --optimize-autoloader --no-progress --no-interaction ; \
     fi; \
     php composer.phar clear-cache && \
