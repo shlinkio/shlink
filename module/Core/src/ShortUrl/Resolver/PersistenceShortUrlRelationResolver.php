@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 
 use function Functional\map;
@@ -21,15 +22,17 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
     /** @var array<string, Tag> */
     private array $memoizedNewTags = [];
 
-    public function __construct(private readonly EntityManagerInterface $em)
-    {
+    public function __construct(
+        private readonly EntityManagerInterface $em,
+        private readonly UrlShortenerOptions $options = new UrlShortenerOptions(),
+    ) {
         // Registering this as an event listener will make the postFlush method to be called automatically
         $this->em->getEventManager()->addEventListener(Events::postFlush, $this);
     }
 
     public function resolveDomain(?string $domain): ?Domain
     {
-        if ($domain === null) {
+        if ($domain === null || $domain === $this->options->defaultDomain()) {
             return null;
         }
 
@@ -42,9 +45,7 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
 
     private function memoizeNewDomain(string $domain): Domain
     {
-        return $this->memoizedNewDomains[$domain] = $this->memoizedNewDomains[$domain] ?? Domain::withAuthority(
-            $domain,
-        );
+        return $this->memoizedNewDomains[$domain] ??= Domain::withAuthority($domain);
     }
 
     /**
@@ -71,7 +72,7 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
 
     private function memoizeNewTag(string $tagName): Tag
     {
-        return $this->memoizedNewTags[$tagName] = $this->memoizedNewTags[$tagName] ?? new Tag($tagName);
+        return $this->memoizedNewTags[$tagName] ??= new Tag($tagName);
     }
 
     public function postFlush(): void

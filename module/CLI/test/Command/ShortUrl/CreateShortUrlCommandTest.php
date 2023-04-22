@@ -28,8 +28,6 @@ class CreateShortUrlCommandTest extends TestCase
 {
     use CliTestUtilsTrait;
 
-    private const DEFAULT_DOMAIN = 'default.com';
-
     private CommandTester $commandTester;
     private MockObject & UrlShortenerInterface $urlShortener;
     private MockObject & ShortUrlStringifierInterface $stringifier;
@@ -43,7 +41,7 @@ class CreateShortUrlCommandTest extends TestCase
             $this->urlShortener,
             $this->stringifier,
             new UrlShortenerOptions(
-                domain: ['hostname' => self::DEFAULT_DOMAIN, 'schema' => ''],
+                domain: ['hostname' => 'example.com', 'schema' => ''],
                 defaultShortCodesLength: 5,
             ),
         );
@@ -147,9 +145,8 @@ class CreateShortUrlCommandTest extends TestCase
     public static function provideDomains(): iterable
     {
         yield 'no domain' => [[], null];
-        yield 'non-default domain foo' => [['--domain' => 'foo.com'], 'foo.com'];
-        yield 'non-default domain bar' => [['-d' => 'bar.com'], 'bar.com'];
-        yield 'default domain' => [['--domain' => self::DEFAULT_DOMAIN], null];
+        yield 'domain foo' => [['--domain' => 'foo.com'], 'foo.com'];
+        yield 'domain bar' => [['-d' => 'bar.com'], 'bar.com'];
     }
 
     #[Test, DataProvider('provideFlags')]
