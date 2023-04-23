@@ -103,6 +103,12 @@ class ListShortUrlsCommand extends Command
                 'Whether to display the tags or not.',
             )
             ->addOption(
+                'show-domain',
+                null,
+                InputOption::VALUE_NONE,
+                'Whether to display the domain or not. Those belonging to default domain will have value "DEFAULT".',
+            )
+            ->addOption(
                 'show-api-key',
                 'k',
                 InputOption::VALUE_NONE,
@@ -216,6 +222,10 @@ class ListShortUrlsCommand extends Command
         ];
         if ($input->getOption('show-tags')) {
             $columnsMap['Tags'] = static fn (array $shortUrl): string => implode(', ', $shortUrl['tags']);
+        }
+        if ($input->getOption('show-domain')) {
+            $columnsMap['Domain'] = static fn (array $_, ShortUrl $shortUrl): string =>
+                $shortUrl->getDomain()?->authority ?? 'DEFAULT';
         }
         if ($input->getOption('show-api-key')) {
             $columnsMap['API Key'] = static fn (array $_, ShortUrl $shortUrl): string =>
