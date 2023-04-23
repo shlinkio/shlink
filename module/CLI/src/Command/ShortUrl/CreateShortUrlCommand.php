@@ -31,7 +31,6 @@ class CreateShortUrlCommand extends Command
     public const NAME = 'short-url:create';
 
     private ?SymfonyStyle $io;
-    private string $defaultDomain;
 
     public function __construct(
         private readonly UrlShortenerInterface $urlShortener,
@@ -39,7 +38,6 @@ class CreateShortUrlCommand extends Command
         private readonly UrlShortenerOptions $options,
     ) {
         parent::__construct();
-        $this->defaultDomain = $this->options->domain['hostname'] ?? '';
     }
 
     protected function configure(): void
@@ -121,7 +119,6 @@ class CreateShortUrlCommand extends Command
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
         $this->verifyLongUrlArgument($input, $output);
-        $this->verifyDomainArgument($input);
     }
 
     private function verifyLongUrlArgument(InputInterface $input, OutputInterface $output): void
@@ -136,12 +133,6 @@ class CreateShortUrlCommand extends Command
         if (! empty($longUrl)) {
             $input->setArgument('longUrl', $longUrl);
         }
-    }
-
-    private function verifyDomainArgument(InputInterface $input): void
-    {
-        $domain = $input->getOption('domain');
-        $input->setOption('domain', $domain === $this->defaultDomain ? null : $domain);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int

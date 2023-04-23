@@ -12,6 +12,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
+use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Repository\TagRepositoryInterface;
@@ -28,14 +29,22 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
         $this->em = $this->createMock(EntityManagerInterface::class);
         $this->em->method('getEventManager')->willReturn(new EventManager());
 
-        $this->resolver = new PersistenceShortUrlRelationResolver($this->em);
+        $this->resolver = new PersistenceShortUrlRelationResolver($this->em, new UrlShortenerOptions(
+            domain: ['schema' => 'https', 'hostname' => 'default.com'],
+        ));
     }
 
-    #[Test]
-    public function returnsEmptyWhenNoDomainIsProvided(): void
+    #[Test, DataProvider('provideDomainsThatEmpty')]
+    public function returnsEmptyInSomeCases(?string $domain): void
     {
         $this->em->expects($this->never())->method('getRepository')->with(Domain::class);
-        self::assertNull($this->resolver->resolveDomain(null));
+        self::assertNull($this->resolver->resolveDomain($domain));
+    }
+
+    public static function provideDomainsThatEmpty(): iterable
+    {
+        yield 'null' => [null];
+        yield 'default domain' => ['default.com'];
     }
 
     #[Test, DataProvider('provideFoundDomains')]

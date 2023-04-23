@@ -26,4 +26,9 @@ final class UrlShortenerOptions
     {
         return $this->mode === ShortUrlMode::LOOSE;
     }
+
+    public function defaultDomain(): string
+    {
+        return $this->domain['hostname'] ?? '';
+    }
 }
