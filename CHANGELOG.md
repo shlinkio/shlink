@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#1760](https://github.com/shlinkio/shlink/issues/1760) Fix domain not being set to null when importing short URLs with default domain.
+* Fix Shlink trying to connect to RabbitMQ even if configuration set to not connect.
 
 
 ## [3.5.4] - 2023-04-12
