@@ -73,14 +73,10 @@ COPY docker/docker-entrypoint.sh docker-entrypoint.sh
 COPY docker/config/shlink_in_docker.local.php config/autoload/shlink_in_docker.local.php
 COPY docker/config/php.ini ${PHP_INI_DIR}/conf.d/
 
-# Change the ownership of /etc/shlink/data to be writable, then change the user to non-root
-# FIXME Disabled for now, as it conflicts with ENABLE_PERIODIC_VISIT_LOCATE, which is used to configure a cron as root.
-#       Ref: https://github.com/shlinkio/shlink/issues/1132
-#RUN chown 1001 /etc/shlink/data
-#RUN chown 1001 /etc/shlink/data/locks
-#RUN chown 1001 /etc/shlink/data/proxies
-#RUN chown 1001 /etc/shlink/data/cache
-#RUN chown 1001 /etc/shlink/data/log
-#USER 1001
+# Change the ownership of /etc/shlink to be writable, then change the user to non-root
+RUN chown -R 1001 /etc/shlink
+RUN chmod -R g=u /etc/shlink
+
+USER 1001
 
 ENTRYPOINT ["/bin/sh", "./docker-entrypoint.sh"]
