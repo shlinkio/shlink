@@ -27,8 +27,8 @@ fi
 # Periodically run visit:locate every hour, if ENABLE_PERIODIC_VISIT_LOCATE=true was provided
 if [ "${ENABLE_PERIODIC_VISIT_LOCATE}" = "true" ]; then
   echo "Configuring periodic visit location..."
-  echo "0 * * * * php /etc/shlink/bin/cli visit:locate -q" > /etc/crontabs/root
-  /usr/sbin/crond &
+  echo "0 * * * * php /etc/shlink/bin/cli visit:locate -q" > /tmp/crontab
+  supercronic -passthrough-logs /tmp/crontab &
 fi
 
 # RoadRunner config needs these to have been set, so falling back to default values if not set yet
