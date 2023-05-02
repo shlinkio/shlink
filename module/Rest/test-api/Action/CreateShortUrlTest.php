@@ -12,6 +12,7 @@ use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use function Functional\map;
 use function range;
+use function Shlinkio\Shlink\Config\env;
 use function sprintf;
 
 class CreateShortUrlTest extends ApiTestCase
@@ -320,8 +321,14 @@ class CreateShortUrlTest extends ApiTestCase
     }
 
     #[Test, DataProvider('provideTwitterUrls')]
-    public function urlsWithBothProtectionCanBeShortenedWithUrlValidationEnabled(string $longUrl): void
+    public function urlsWithBotProtectionCanBeShortenedWithUrlValidationEnabled(string $longUrl): void
     {
+        // Requests to Twitter are randomly failing from GitHub actions. Let's skip this test there.
+        // This is a deprecated and low-used feature anyway.
+        if (env('CI', false)) {
+            $this->markTestSkipped();
+        }
+
         [$statusCode] = $this->createShortUrl(['longUrl' => $longUrl, 'validateUrl' => true]);
         self::assertEquals(self::STATUS_OK, $statusCode);
     }
