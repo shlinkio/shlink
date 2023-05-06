@@ -49,7 +49,7 @@
         "shlinkio/shlink-config": "^2.4",
         "shlinkio/shlink-event-dispatcher": "dev-main#8c677ae as 3.0",
         "shlinkio/shlink-importer": "dev-main#6b63b12 as 5.1",
-        "shlinkio/shlink-installer": "^8.3",
+        "shlinkio/shlink-installer": "dev-develop#0e015f8 as 8.4",
         "shlinkio/shlink-ip-geolocation": "^3.2",
         "shlinkio/shlink-json": "^1.0",
         "spiral/roadrunner": "^2023.1",
