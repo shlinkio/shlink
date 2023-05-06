@@ -70,7 +70,7 @@ jobs:
           php-version: ${{ matrix.php-version }}
           tools: composer
       - run: composer install --no-interaction --prefer-dist --ignore-platform-req=ext-openswoole
-      - run: ./vendor/bin/rr get --no-interaction  --no-config --location bin/ && chmod +x bin/rr
+      - run: ./vendor/bin/rr get --no-interaction --no-config --location bin/ && chmod +x bin/rr
       - run: composer test:api:rr
 
   sqlite-db-tests:
