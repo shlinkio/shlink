@@ -5,16 +5,12 @@ declare(strict_types=1);
 use Monolog\Level;
 use Shlinkio\Shlink\Common\Logger\LoggerType;
 
-use function Shlinkio\Shlink\Config\runningInOpenswoole;
-
-$logToStream = runningInOpenswoole();
-
 return [
 
     'logger' => [
         'Shlink' => [
-            // For openswoole, send logs as stream
-            'type' => $logToStream ? LoggerType::STREAM->value : LoggerType::FILE->value,
+            'type' => LoggerType::STREAM->value,
+            'destination' => 'php://stderr',
             'level' => Level::Debug->value,
         ],
     ],

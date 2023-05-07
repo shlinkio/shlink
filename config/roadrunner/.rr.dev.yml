@@ -31,7 +31,7 @@ logs:
   mode: development
   channels:
     http:
-      level: debug
+      mode: 'off' # Disable logging as Shlink handles it internally
     server:
       level: debug
     metrics:
