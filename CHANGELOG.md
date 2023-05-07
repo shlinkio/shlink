@@ -10,6 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Changed
 * [#1755](https://github.com/shlinkio/shlink/issues/1755) Update to roadrunner 2023
+* [#1745](https://github.com/shlinkio/shlink/issues/1745) Roadrunner is now the default docker runtime.
+
+  There are now three different docker images published:
+
+  * Versions without suffix (like `3.6.0`) will contain the default runtime, whichever it is.
+  * Versions with `-roadrunner` suffix (like `3.6.0-roadrunner`) will always use roadrunner as the runtime, even if default one changes in the future.
+  * Versions with `-openswoole` suffix (like `3.6.0-openswoole`) will always use openswoole as the runtime, even if default one changes in the future.
 
 ### Deprecated
 * *Nothing*

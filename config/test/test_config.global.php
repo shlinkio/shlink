@@ -121,6 +121,7 @@ $buildTestLoggerConfig = static fn (string $filename) => [
     'level' => Level::Debug->value,
     'type' => LoggerType::STREAM->value,
     'destination' => sprintf('data/log/api-tests/%s', $filename),
+    'add_new_line' => true,
 ];
 
 return [

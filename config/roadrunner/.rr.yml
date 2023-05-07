@@ -31,6 +31,6 @@ logs:
   mode: production
   channels:
     http:
-      level: info # Log all http requests, set to info to disable
+      mode: 'off' # Disable logging as Shlink handles it internally
     server:
       level: debug # Everything written to worker stderr is logged
