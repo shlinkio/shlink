@@ -27,6 +27,7 @@ jobs:
             platforms: 'linux/arm64/v8,linux/amd64'
           - runtime: 'openswoole'
             tag-suffix: 'openswoole'
+            platforms: 'linux/arm/v7,linux/arm64/v8,linux/amd64'
     uses: shlinkio/github-actions/.github/workflows/docker-build-and-publish.yml@main
     secrets: inherit
     with:
