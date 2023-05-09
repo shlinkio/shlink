@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Shlinkio\Shlink\CLI\Util\ExitCodes;
 use Shlinkio\Shlink\CLI\Util\ProcessRunnerInterface;
+use Shlinkio\Shlink\Core\Config\EnvVars;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -53,7 +54,10 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
     {
         $io = new SymfonyStyle($input, $output);
 
-        $this->checkDbExists();
+        $checkIsDbExists = (bool) EnvVars::DB_CHECK_IS_EXISTS->loadFromEnv(true);
+        if ($checkIsDbExists) {
+          $this->checkDbExists();
+        }
 
         if ($this->schemaExists()) {
             $io->success('Database already exists. Run "db:migrate" command to make sure it is up to date.');
