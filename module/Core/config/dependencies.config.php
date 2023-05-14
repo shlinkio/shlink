@@ -38,6 +38,7 @@ return [
             ShortUrl\ShortUrlListService::class => ConfigAbstractFactory::class,
             ShortUrl\DeleteShortUrlService::class => ConfigAbstractFactory::class,
             ShortUrl\ShortUrlResolver::class => ConfigAbstractFactory::class,
+            ShortUrl\ShortUrlVisitsDeleter::class => ConfigAbstractFactory::class,
             ShortUrl\Helper\ShortCodeUniquenessHelper::class => ConfigAbstractFactory::class,
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => ConfigAbstractFactory::class,
             ShortUrl\Helper\ShortUrlStringifier::class => ConfigAbstractFactory::class,
@@ -66,6 +67,10 @@ return [
             Visit\VisitsStatsHelper::class => ConfigAbstractFactory::class,
             Visit\Transformer\OrphanVisitDataTransformer::class => InvokableFactory::class,
             Visit\Repository\VisitLocationRepository::class => [
+                EntityRepositoryFactory::class,
+                Visit\Entity\Visit::class,
+            ],
+            Visit\Repository\VisitDeleterRepository::class => [
                 EntityRepositoryFactory::class,
                 Visit\Entity\Visit::class,
             ],
@@ -137,6 +142,10 @@ return [
             ShortUrl\ShortUrlResolver::class,
         ],
         ShortUrl\ShortUrlResolver::class => ['em', Options\UrlShortenerOptions::class],
+        ShortUrl\ShortUrlVisitsDeleter::class => [
+            Visit\Repository\VisitDeleterRepository::class,
+            ShortUrl\ShortUrlResolver::class,
+        ],
         ShortUrl\Helper\ShortCodeUniquenessHelper::class => ['em', Options\UrlShortenerOptions::class],
         Domain\DomainService::class => ['em', 'config.url_shortener.domain.hostname'],
 

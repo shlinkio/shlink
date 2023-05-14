@@ -53,6 +53,7 @@ return (static function (): array {
                 ]),
                 Action\ShortUrl\EditShortUrlAction::getRouteDef([$dropDomainMiddleware]),
                 Action\ShortUrl\DeleteShortUrlAction::getRouteDef([$dropDomainMiddleware]),
+                Action\ShortUrl\DeleteShortUrlVisitsAction::getRouteDef([$dropDomainMiddleware]),
                 Action\ShortUrl\ResolveShortUrlAction::getRouteDef([$dropDomainMiddleware]),
                 Action\ShortUrl\ListShortUrlsAction::getRouteDef(),
 
