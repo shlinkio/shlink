@@ -1,0 +1,9 @@
+{
+    "name": "shortCode",
+    "in": "path",
+    "description": "The short code for the short URL.",
+    "required": true,
+    "schema": {
+        "type": "string"
+    }
+}

@@ -11,13 +11,7 @@
                 "$ref": "../parameters/version.json"
             },
             {
-                "name": "shortCode",
-                "in": "path",
-                "description": "The short code for the short URL from which we want to get the visits.",
-                "required": true,
-                "schema": {
-                    "type": "string"
-                }
+                "$ref": "../parameters/shortCode.json"
             },
             {
                 "$ref": "../parameters/domain.json"
@@ -139,6 +133,80 @@
                                     "totalItems": 115
                                 }
                             }
+                        }
+                    }
+                }
+            },
+            "404": {
+                "description": "The short code does not belong to any short URL.",
+                "content": {
+                    "application/problem+json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        },
+                        "examples": {
+                            "Short URL not found with API v3 and newer": {
+                                "$ref": "../examples/short-url-not-found-v3.json"
+                            },
+                            "Short URL not found previous to API v3": {
+                                "$ref": "../examples/short-url-not-found-v2.json"
+                            }
+                        }
+                    }
+                }
+            },
+            "default": {
+                "description": "Unexpected error.",
+                "content": {
+                    "application/problem+json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
+                }
+            }
+        }
+    },
+
+    "delete": {
+        "operationId": "deleteShortUrlVisits",
+        "tags": [
+            "Visits"
+        ],
+        "summary": "Delete visits for short URL",
+        "description": "Delete all existing visits on the short URL behind provided short code.",
+        "parameters": [
+            {
+                "$ref": "../parameters/version.json"
+            },
+            {
+                "$ref": "../parameters/shortCode.json"
+            },
+            {
+                "$ref": "../parameters/domain.json"
+            }
+        ],
+        "security": [
+            {
+                "ApiKey": []
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "Deleted visits",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "deletedVisits": {
+                                    "description": "Amount of affected visits",
+                                    "type": "number"
+                                }
+                            }
+                        },
+                        "example": {
+                            "deletedVisits": 536
                         }
                     }
                 }
