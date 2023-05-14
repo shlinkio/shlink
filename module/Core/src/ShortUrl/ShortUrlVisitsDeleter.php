@@ -23,7 +23,7 @@ class ShortUrlVisitsDeleter implements ShortUrlVisitsDeleterInterface
      */
     public function deleteShortUrlVisits(ShortUrlIdentifier $identifier, ?ApiKey $apiKey): BulkDeleteResult
     {
-        $this->resolver->resolveShortUrl($identifier, $apiKey);
-        return new BulkDeleteResult($this->repository->deleteShortUrlVisits($identifier, $apiKey));
+        $shortUrl = $this->resolver->resolveShortUrl($identifier, $apiKey);
+        return new BulkDeleteResult($this->repository->deleteShortUrlVisits($shortUrl));
     }
 }

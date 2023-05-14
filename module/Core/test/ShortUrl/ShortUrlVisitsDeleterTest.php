@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlVisitsDeleter;
@@ -31,9 +32,12 @@ class ShortUrlVisitsDeleterTest extends TestCase
     public function returnsDeletedVisitsFromRepo(int $visitsCount): void
     {
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain('');
+        $shortUrl = ShortUrl::withLongUrl('https://example.com');
 
-        $this->resolver->expects($this->once())->method('resolveShortUrl')->with($identifier, null);
-        $this->repository->expects($this->once())->method('deleteShortUrlVisits')->with($identifier, null)->willReturn(
+        $this->resolver->expects($this->once())->method('resolveShortUrl')->with($identifier, null)->willReturn(
+            $shortUrl,
+        );
+        $this->repository->expects($this->once())->method('deleteShortUrlVisits')->with($shortUrl)->willReturn(
             $visitsCount,
         );
 

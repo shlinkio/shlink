@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Visit\Repository;
 
-use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
-use Shlinkio\Shlink\Rest\Entity\ApiKey;
+use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 
 interface VisitDeleterRepositoryInterface
 {
-    public function deleteShortUrlVisits(ShortUrlIdentifier $identifier, ?ApiKey $apiKey): int;
+    public function deleteShortUrlVisits(ShortUrl $shortUrl): int;
 }
