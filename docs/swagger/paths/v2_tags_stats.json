@@ -45,7 +45,7 @@
             {
                 "name": "orderBy",
                 "in": "query",
-                "description": "To determine how to order the results.<br /><br />**Important!** Ordering by `shortUrlsCount` or `visitsCount` has a [known performance issue](https://github.com/shlinkio/shlink/issues/1346) which makes loading a subset of the list take as much as loading the whole list.<br />If you plan to order by any of these fields, it's worth loading the whole list with no pagination.",
+                "description": "To determine how to order the results.<br /><br />**Important!** Ordering by `shortUrlsCount`, `visits` or `nonBotVisits` has a [known performance issue](https://github.com/shlinkio/shlink/issues/1346) which makes loading a subset of the list take as much as loading the whole list.<br />If you plan to order by any of these fields, it's worth loading the whole list with no pagination.",
                 "required": false,
                 "schema": {
                     "type": "string",
@@ -54,8 +54,10 @@
                         "tag-DESC",
                         "shortUrlsCount-ASC",
                         "shortUrlsCount-DESC",
-                        "visitsCount-ASC",
-                        "visitsCount-DESC"
+                        "visits-ASC",
+                        "visits-DESC",
+                        "nonBotVisits-ASC",
+                        "nonBotVisits-DESC"
                     ]
                 }
             }
@@ -73,7 +75,6 @@
                                     "required": ["data"],
                                     "properties": {
                                         "data": {
-                                            "description": "The tag stats will be returned only if the withStats param was provided with value 'true'",
                                             "type": "array",
                                             "items": {
                                                 "$ref": "../definitions/TagInfo.json"
@@ -92,12 +93,20 @@
                                     {
                                         "tag": "games",
                                         "shortUrlsCount": 10,
-                                        "visitsCount": 521
+                                        "visitsSummary": {
+                                            "total": 521,
+                                            "nonBots": 521,
+                                            "bots": 0
+                                        }
                                     },
                                     {
                                         "tag": "shlink",
                                         "shortUrlsCount": 7,
-                                        "visitsCount": 1087
+                                        "visitsSummary": {
+                                            "total": 1087,
+                                            "nonBots": 1000,
+                                            "bots": 87
+                                        }
                                     }
                                 ],
                                 "pagination": {

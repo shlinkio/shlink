@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Transformer;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
+use Shlinkio\Shlink\Core\Visit\Model\VisitsSummary;
 
 use function Functional\invoke;
 use function Functional\invoke_if;
@@ -33,7 +34,10 @@ class ShortUrlDataTransformer implements DataTransformerInterface
             'title' => $shortUrl->title(),
             'crawlable' => $shortUrl->crawlable(),
             'forwardQuery' => $shortUrl->forwardQuery(),
-            'visitsSummary' => $this->buildVisitsSummary($shortUrl),
+            'visitsSummary' => VisitsSummary::fromTotalAndNonBots(
+                $shortUrl->getVisitsCount(),
+                $shortUrl->nonBotVisitsCount(),
+            ),
 
             // Deprecated
             'visitsCount' => $shortUrl->getVisitsCount(),
@@ -50,18 +54,6 @@ class ShortUrlDataTransformer implements DataTransformerInterface
             'validSince' => invoke_if($validSince, 'toAtomString'),
             'validUntil' => invoke_if($validUntil, 'toAtomString'),
             'maxVisits' => $maxVisits,
-        ];
-    }
-
-    private function buildVisitsSummary(ShortUrl $shortUrl): array
-    {
-        $totalVisits = $shortUrl->getVisitsCount();
-        $nonBotVisits = $shortUrl->nonBotVisitsCount();
-
-        return [
-            'total' => $totalVisits,
-            'nonBots' => $nonBotVisits,
-            'bots' => $totalVisits - $nonBotVisits,
         ];
     }
 }

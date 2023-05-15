@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* [#1632](https://github.com/shlinkio/shlink/issues/1632) Added amount of bots, non-bots and total visits to the visits summary endpoint.
+* [#1633](https://github.com/shlinkio/shlink/issues/1633) Added amount of bots, non-bots and total visits to the tag stats endpoint.
+* [#1653](https://github.com/shlinkio/shlink/issues/1653) Added support for all HTTP methods in short URLs, together with two new redirect status codes, 307 and 308.
+
+  Existing Shlink instances will continue to work the same. However, if you decide to set the redirect status codes as 307 or 308, Shlink will also return a redirect for short URLs even when the request method is different from `GET`.
+
+  The status 308 is equivalent to 301, and 307 is equivalent to 302. The difference is that the spec requires the client to respect the original HTTP method when performing the redirect. With 301 and 302, some old clients might perform a `GET` request during the redirect, regardless the original request method.
+
+* [#1662](https://github.com/shlinkio/shlink/issues/1662) Added support to provide openswoole-specific config options via env vars prefixed with `OPENSWOOLE_`.
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1639](https://github.com/shlinkio/shlink/issues/1639) Fixed 500 error returned when request body is not valid JSON, instead of a proper descriptive error.
+
+
 ## [3.4.0] - 2022-12-16
 ### Added
 * [#1612](https://github.com/shlinkio/shlink/issues/1612) Allowed to filter short URLs out of lists, when `validUntil` date is in the past or have reached their maximum amount of visits.

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Config;
+namespace ShlinkioTest\Shlink\Core\Config\PostProcessor;
 
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Core\Config\MultiSegmentSlugProcessor;
+use Shlinkio\Shlink\Core\Config\PostProcessor\MultiSegmentSlugProcessor;
 
 class MultiSegmentSlugProcessorTest extends TestCase
 {

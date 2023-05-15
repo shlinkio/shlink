@@ -12,26 +12,25 @@ use Shlinkio\Shlink\Core\Visit\Repository\VisitRepositoryInterface;
 
 class OrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
 {
-    public function __construct(private VisitRepositoryInterface $repo, private VisitsParams $params)
+    public function __construct(private readonly VisitRepositoryInterface $repo, private readonly VisitsParams $params)
     {
     }
 
     protected function doCount(): int
     {
         return $this->repo->countOrphanVisits(new VisitsCountFiltering(
-            $this->params->dateRange,
-            $this->params->excludeBots,
+            dateRange: $this->params->dateRange,
+            excludeBots: $this->params->excludeBots,
         ));
     }
 
     public function getSlice(int $offset, int $length): iterable
     {
         return $this->repo->findOrphanVisits(new VisitsListFiltering(
-            $this->params->dateRange,
-            $this->params->excludeBots,
-            null,
-            $length,
-            $offset,
+            dateRange: $this->params->dateRange,
+            excludeBots: $this->params->excludeBots,
+            limit: $length,
+            offset: $offset,
         ));
     }
 }

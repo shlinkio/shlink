@@ -18,6 +18,7 @@ final class ShortUrlIdentifier
     {
         $shortCode = $request->getAttribute('shortCode', '');
         $domain = $request->getQueryParams()['domain'] ?? null;
+        $domain = self::overrideDomain($domain);
 
         return new self($shortCode, $domain);
     }
@@ -26,6 +27,7 @@ final class ShortUrlIdentifier
     {
         $shortCode = $request->getAttribute('shortCode', '');
         $domain = $request->getUri()->getAuthority();
+        $domain = self::overrideDomain($domain);
 
         return new self($shortCode, $domain);
     }
@@ -38,6 +40,7 @@ final class ShortUrlIdentifier
         $shortCode = $input->getArguments()['shortCode'] ?? '';
         /** @var string|null $domain */
         $domain = $input->getOptions()['domain'] ?? null;
+        $domain = self::overrideDomain($domain);
 
         return new self($shortCode, $domain);
     }
@@ -46,6 +49,7 @@ final class ShortUrlIdentifier
     {
         $domain = $shortUrl->getDomain();
         $domainAuthority = $domain?->getAuthority();
+        $domainAuthority = self::overrideDomain($domainAuthority);
 
         return new self($shortUrl->getShortCode(), $domainAuthority);
     }
@@ -53,5 +57,17 @@ final class ShortUrlIdentifier
     public static function fromShortCodeAndDomain(string $shortCode, ?string $domain = null): self
     {
         return new self($shortCode, $domain);
+    }
+
+    public static function overrideDomain(?string $domain = null): ?string
+    {
+        if ('qa-shortener.salesmsgdev.com' === $domain) {
+            $domain = 'salesmsgdev.com';
+        }
+        if ('shortener.salesmsg.io' === $domain) {
+            $domain = 'salesmsg.io';
+        }
+
+        return $domain;
     }
 }

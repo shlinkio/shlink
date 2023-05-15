@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Middleware;
 
 use Fig\Http\Message\RequestMethodInterface;
+use JsonException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Shlinkio\Shlink\Core\Exception\MalformedBodyException;
 
 use function Functional\contains;
 use function Shlinkio\Shlink\Common\json_decode;
@@ -42,7 +44,11 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
             return $request;
         }
 
-        $parsedJson = json_decode($rawBody);
-        return $request->withParsedBody($parsedJson);
+        try {
+            $parsedJson = json_decode($rawBody);
+            return $request->withParsedBody($parsedJson);
+        } catch (JsonException $e) {
+            throw MalformedBodyException::forInvalidJson($e);
+        }
     }
 }

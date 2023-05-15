@@ -95,7 +95,7 @@ class AuthenticationMiddlewareTest extends TestCase
     {
         $baseRequest = fn (string $routeName) => ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
-            RouteResult::fromRoute(new Route($routeName, $this->getDummyMiddleware()), []),
+            RouteResult::fromRoute(new Route($routeName, $this->getDummyMiddleware())), // @phpstan-ignore-line
         );
         $apiKeyMessage = 'Expected one of the following authentication headers, ["X-Api-Key"], but none were provided';
         $queryMessage = 'Expected authentication to be provided in "apiKey" query param';

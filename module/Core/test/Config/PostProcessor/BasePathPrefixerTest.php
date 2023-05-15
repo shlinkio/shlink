@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\Core\Config;
+namespace ShlinkioTest\Shlink\Core\Config\PostProcessor;
 
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Core\Config\BasePathPrefixer;
+use Shlinkio\Shlink\Core\Config\PostProcessor\BasePathPrefixer;
 
 class BasePathPrefixerTest extends TestCase
 {

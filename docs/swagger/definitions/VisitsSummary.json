@@ -3,7 +3,7 @@
     "required": ["total", "nonBots", "bots"],
     "properties": {
         "total": {
-            "description": "The total amount of visits that this short URL has received.",
+            "description": "The total amount of visits.",
             "type": "integer"
         },
         "nonBots": {

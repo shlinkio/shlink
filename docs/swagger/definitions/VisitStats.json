@@ -1,14 +1,22 @@
 {
     "type": "object",
-    "required": ["visitsCount", "orphanVisitsCount"],
+    "required": ["nonOrphanVisits", "orphanVisits", "visitsCount", "orphanVisitsCount"],
     "properties": {
+        "nonOrphanVisits": {
+            "$ref": "./VisitsSummary.json"
+        },
+        "orphanVisits": {
+            "$ref": "./VisitsSummary.json"
+        },
         "visitsCount": {
+            "deprecated": true,
             "type": "number",
-            "description": "The total amount of visits received on any short URL."
+            "description": "**[DEPRECATED]** Use nonOrphanVisits.total instead"
         },
         "orphanVisitsCount": {
+            "deprecated": true,
             "type": "number",
-            "description": "The total amount of visits that could not be matched to a short URL (visits to the base URL, an invalid short URL or any other kind of 404)."
+            "description": "**[DEPRECATED]** Use orphanVisits.total instead"
         }
     }
 }

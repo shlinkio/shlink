@@ -14,6 +14,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
+use Shlinkio\Shlink\Core\Visit\Model\VisitsSummary;
 use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 use Shlinkio\Shlink\Core\Visit\Transformer\OrphanVisitDataTransformer;
 
@@ -63,11 +64,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
                 'title' => $title,
                 'crawlable' => false,
                 'forwardQuery' => true,
-                'visitsSummary' => [
-                    'total' => 0,
-                    'nonBots' => 0,
-                    'bots' => 0,
-                ],
+                'visitsSummary' => VisitsSummary::fromTotalAndNonBots(0, 0),
             ],
             'visit' => [
                 'referer' => '',
@@ -144,11 +141,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
             'title' => $shortUrl->title(),
             'crawlable' => false,
             'forwardQuery' => true,
-            'visitsSummary' => [
-                'total' => 0,
-                'nonBots' => 0,
-                'bots' => 0,
-            ],
+            'visitsSummary' => VisitsSummary::fromTotalAndNonBots(0, 0),
         ]], $update->payload);
     }
 }

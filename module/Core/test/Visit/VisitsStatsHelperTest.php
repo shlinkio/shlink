@@ -53,11 +53,13 @@ class VisitsStatsHelperTest extends TestCase
     public function returnsExpectedVisitsStats(int $expectedCount): void
     {
         $repo = $this->createMock(VisitRepository::class);
-        $repo->expects($this->once())->method('countNonOrphanVisits')->with(new VisitsCountFiltering())->willReturn(
-            $expectedCount * 3,
-        );
-        $repo->expects($this->once())->method('countOrphanVisits')->with(
-            $this->isInstanceOf(VisitsCountFiltering::class),
+        $repo->expects($this->exactly(2))->method('countNonOrphanVisits')->withConsecutive(
+            [new VisitsCountFiltering()],
+            [new VisitsCountFiltering(excludeBots: true)],
+        )->willReturn($expectedCount * 3);
+        $repo->expects($this->exactly(2))->method('countOrphanVisits')->withConsecutive(
+            [$this->isInstanceOf(VisitsCountFiltering::class)],
+            [$this->isInstanceOf(VisitsCountFiltering::class)],
         )->willReturn($expectedCount);
         $this->em->expects($this->once())->method('getRepository')->with(Visit::class)->willReturn($repo);
 

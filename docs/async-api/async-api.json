@@ -116,7 +116,11 @@
                         "format": "date-time",
                         "description": "The date in which the short URL was created in ISO format."
                     },
+                    "visitsSummary": {
+                        "$ref": "#/components/schemas/VisitsSummary"
+                    },
                     "visitsCount": {
+                        "deprecated": true,
                         "type": "integer",
                         "description": "The number of visits that this short URL has received."
                     },
@@ -149,7 +153,11 @@
                     "shortUrl": "https://doma.in/12C18",
                     "longUrl": "https://store.steampowered.com",
                     "dateCreated": "2016-08-21T20:34:16+02:00",
-                    "visitsCount": 328,
+                    "visitsSummary": {
+                        "total": 328,
+                        "nonBots": 285,
+                        "bots": 43
+                    },
                     "tags": [
                         "games",
                         "tech"
@@ -186,6 +194,24 @@
                         "description": "The maximum number of allowed visits for this short code",
                         "type": "number",
                         "nullable": true
+                    }
+                }
+            },
+            "VisitsSummary": {
+                "type": "object",
+                "required": ["total", "nonBots", "bots"],
+                "properties": {
+                    "total": {
+                        "description": "The total amount of visits",
+                        "type": "number"
+                    },
+                    "nonBots": {
+                        "description": "The amount of visits which were not identified as bots",
+                        "type": "number"
+                    },
+                    "bots": {
+                        "description": "The amount of visits that were identified as potential bots",
+                        "type": "number"
                     }
                 }
             },
