@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
-use Shlinkio\Shlink\CLI\Util\ExitCodes;
+use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
@@ -141,7 +141,7 @@ class CreateShortUrlCommand extends Command
         $longUrl = $input->getArgument('longUrl');
         if (empty($longUrl)) {
             $io->error('A URL was not provided!');
-            return ExitCodes::EXIT_FAILURE;
+            return ExitCode::EXIT_FAILURE;
         }
 
         $explodeWithComma = curry(explode(...))(',');
@@ -176,10 +176,10 @@ class CreateShortUrlCommand extends Command
                 sprintf('Processed long URL: <info>%s</info>', $longUrl),
                 sprintf('Generated short URL: <info>%s</info>', $this->stringifier->stringify($result->shortUrl)),
             ]);
-            return ExitCodes::EXIT_SUCCESS;
+            return ExitCode::EXIT_SUCCESS;
         } catch (InvalidUrlException | NonUniqueSlugException $e) {
             $io->error($e->getMessage());
-            return ExitCodes::EXIT_FAILURE;
+            return ExitCode::EXIT_FAILURE;
         }
     }
 

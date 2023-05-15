@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\CLI\Command\Visit;
 
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdaterInterface;
-use Shlinkio\Shlink\CLI\Util\ExitCodes;
+use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
@@ -56,7 +56,7 @@ class DownloadGeoLiteDbCommand extends Command
                 $io->success('GeoLite2 db file properly downloaded.');
             }
 
-            return ExitCodes::EXIT_SUCCESS;
+            return ExitCode::EXIT_SUCCESS;
         } catch (GeolocationDbUpdateFailedException $e) {
             $olderDbExists = $e->olderDbExists();
 
@@ -72,7 +72,7 @@ class DownloadGeoLiteDbCommand extends Command
                 $this->getApplication()?->renderThrowable($e, $io);
             }
 
-            return $olderDbExists ? ExitCodes::EXIT_WARNING : ExitCodes::EXIT_FAILURE;
+            return $olderDbExists ? ExitCode::EXIT_WARNING : ExitCode::EXIT_FAILURE;
         }
     }
 }

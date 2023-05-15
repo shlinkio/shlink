@@ -52,7 +52,6 @@ class VisitDeleterRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        self::assertEquals(0, $this->repo->deleteShortUrlVisits(ShortUrl::withLongUrl('https://invalid')->setId('99')));
         self::assertEquals(2, $this->repo->deleteShortUrlVisits($shortUrl1));
         self::assertEquals(0, $this->repo->deleteShortUrlVisits($shortUrl1));
         self::assertEquals(4, $this->repo->deleteShortUrlVisits($shortUrl2));

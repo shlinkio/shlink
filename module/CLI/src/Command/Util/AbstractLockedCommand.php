@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Util;
 
-use Shlinkio\Shlink\CLI\Util\ExitCodes;
+use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,7 +28,7 @@ abstract class AbstractLockedCommand extends Command
             $output->writeln(
                 sprintf('<comment>Command "%s" is already in progress. Skipping.</comment>', $lockConfig->lockName),
             );
-            return ExitCodes::EXIT_WARNING;
+            return ExitCode::EXIT_WARNING;
         }
 
         try {

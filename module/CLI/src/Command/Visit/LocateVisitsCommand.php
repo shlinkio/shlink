@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\CLI\Command\Visit;
 
 use Shlinkio\Shlink\CLI\Command\Util\AbstractLockedCommand;
 use Shlinkio\Shlink\CLI\Command\Util\LockedCommandConfig;
-use Shlinkio\Shlink\CLI\Util\ExitCodes;
+use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
@@ -116,14 +116,14 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
             }
 
             $this->io->success('Finished locating visits');
-            return ExitCodes::EXIT_SUCCESS;
+            return ExitCode::EXIT_SUCCESS;
         } catch (Throwable $e) {
             $this->io->error($e->getMessage());
             if ($this->io->isVerbose()) {
                 $this->getApplication()?->renderThrowable($e, $this->io);
             }
 
-            return ExitCodes::EXIT_FAILURE;
+            return ExitCode::EXIT_FAILURE;
         }
     }
 
@@ -171,7 +171,7 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
         $downloadDbCommand = $cliApp->find(DownloadGeoLiteDbCommand::NAME);
         $exitCode = $downloadDbCommand->run(new ArrayInput([]), $this->io);
 
-        if ($exitCode === ExitCodes::EXIT_FAILURE) {
+        if ($exitCode === ExitCode::EXIT_FAILURE) {
             throw new RuntimeException('It is not possible to locate visits without a GeoLite2 db file.');
         }
     }

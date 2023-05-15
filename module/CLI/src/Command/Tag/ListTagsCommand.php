@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Tag;
 
-use Shlinkio\Shlink\CLI\Util\ExitCodes;
+use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
@@ -34,7 +34,7 @@ class ListTagsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         ShlinkTable::default($output)->render(['Name', 'URLs amount', 'Visits amount'], $this->getTagsRows());
-        return ExitCodes::EXIT_SUCCESS;
+        return ExitCode::EXIT_SUCCESS;
     }
 
     private function getTagsRows(): array

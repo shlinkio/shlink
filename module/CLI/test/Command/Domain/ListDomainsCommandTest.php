@@ -9,7 +9,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Domain\ListDomainsCommand;
-use Shlinkio\Shlink\CLI\Util\ExitCodes;
+use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
@@ -53,7 +53,7 @@ class ListDomainsCommandTest extends TestCase
         $this->commandTester->execute($input);
 
         self::assertEquals($expectedOutput, $this->commandTester->getDisplay());
-        self::assertEquals(ExitCodes::EXIT_SUCCESS, $this->commandTester->getStatusCode());
+        self::assertEquals(ExitCode::EXIT_SUCCESS, $this->commandTester->getStatusCode());
     }
 
     public static function provideInputsAndOutputs(): iterable
