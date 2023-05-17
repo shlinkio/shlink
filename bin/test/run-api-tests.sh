@@ -2,7 +2,7 @@
 
 export APP_ENV=test
 export TEST_ENV=api
-export TEST_RUNTIME="${TEST_RUNTIME:-"openswoole"}"
+export TEST_RUNTIME="${TEST_RUNTIME:-"rr"}"
 export DB_DRIVER="${DB_DRIVER:-"postgres"}"
 export GENERATE_COVERAGE="${GENERATE_COVERAGE:-"no"}"
 

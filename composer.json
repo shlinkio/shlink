@@ -128,7 +128,7 @@
         "test:db:postgres": "DB_DRIVER=postgres composer test:db:sqlite",
         "test:db:ms": "DB_DRIVER=mssql composer test:db:sqlite",
         "test:api": "bin/test/run-api-tests.sh",
-        "test:api:rr": "TEST_RUNTIME=rr bin/test/run-api-tests.sh",
+        "test:api:openswoole": "TEST_RUNTIME=openswoole bin/test/run-api-tests.sh",
         "test:api:ci": "GENERATE_COVERAGE=yes composer test:api",
         "test:api:pretty": "GENERATE_COVERAGE=pretty composer test:api",
         "test:cli": "APP_ENV=test DB_DRIVER=maria TEST_ENV=cli php vendor/bin/phpunit --order-by=random --colors=always --testdox -c phpunit-cli.xml --log-junit=build/coverage-cli/junit.xml",
