@@ -8,7 +8,7 @@ use Cake\Chronos\Chronos;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\CLI\Command\Api\ListKeysCommand;
-use Shlinkio\Shlink\CLI\Util\ExitCodes;
+use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\TestUtils\CliTest\CliTestCase;
 
 class ListApiKeysTest extends CliTestCase
@@ -19,7 +19,7 @@ class ListApiKeysTest extends CliTestCase
         [$output, $exitCode] = $this->exec([ListKeysCommand::NAME, ...$flags]);
 
         self::assertEquals($expectedOutput, $output);
-        self::assertEquals(ExitCodes::EXIT_SUCCESS, $exitCode);
+        self::assertEquals(ExitCode::EXIT_SUCCESS, $exitCode);
     }
 
     public static function provideFlags(): iterable

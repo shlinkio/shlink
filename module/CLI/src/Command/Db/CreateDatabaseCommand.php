@@ -8,7 +8,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Shlinkio\Shlink\CLI\Util\ExitCodes;
+use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\CLI\Util\ProcessRunnerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -57,7 +57,7 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
 
         if ($this->schemaExists()) {
             $io->success('Database already exists. Run "db:migrate" command to make sure it is up to date.');
-            return ExitCodes::EXIT_SUCCESS;
+            return ExitCode::EXIT_SUCCESS;
         }
 
         // Create database
@@ -65,7 +65,7 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
         $this->runPhpCommand($output, [self::DOCTRINE_SCRIPT, self::DOCTRINE_CREATE_SCHEMA_COMMAND]);
         $io->success('Database properly created!');
 
-        return ExitCodes::EXIT_SUCCESS;
+        return ExitCode::EXIT_SUCCESS;
     }
 
     private function checkDbExists(): void

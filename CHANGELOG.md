@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
+* [#1148](https://github.com/shlinkio/shlink/issues/1148) Add support to delete short URL visits.
+
+  This can be done via `DELETE /short-urls/{shortCode}/visits` REST endpoint or via `short-url:delete-visits` console command.
+
+  The CLI command includes a warning and requires the user to confirm before proceeding.
+
 * [#1656](https://github.com/shlinkio/shlink/issues/1656) Add support for openswoole 22
 
 ### Changed

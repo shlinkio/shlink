@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\CLI\Option;
+namespace Shlinkio\Shlink\CLI\Input;
 
 use Cake\Chronos\Chronos;
 use Symfony\Component\Console\Command\Command;

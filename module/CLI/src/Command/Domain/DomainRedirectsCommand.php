@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Domain;
 
-use Shlinkio\Shlink\CLI\Util\ExitCodes;
+use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
@@ -109,6 +109,6 @@ class DomainRedirectsCommand extends Command
 
         $io->success(sprintf('"Not found" redirects properly set for "%s"', $domainAuthority));
 
-        return ExitCodes::EXIT_SUCCESS;
+        return ExitCode::EXIT_SUCCESS;
     }
 }

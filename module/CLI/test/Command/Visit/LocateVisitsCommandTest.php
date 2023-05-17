@@ -10,7 +10,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Visit\DownloadGeoLiteDbCommand;
 use Shlinkio\Shlink\CLI\Command\Visit\LocateVisitsCommand;
-use Shlinkio\Shlink\CLI\Util\ExitCodes;
+use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
@@ -85,7 +85,7 @@ class LocateVisitsCommandTest extends TestCase
         $this->visitToLocation->expects(
             $this->exactly($expectedUnlocatedCalls + $expectedEmptyCalls + $expectedAllCalls),
         )->method('resolveVisitLocation')->withAnyParameters()->willReturn(Location::emptyInstance());
-        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCodes::EXIT_SUCCESS);
+        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCode::EXIT_SUCCESS);
 
         $this->commandTester->setInputs(['y']);
         $this->commandTester->execute($args);
@@ -118,7 +118,7 @@ class LocateVisitsCommandTest extends TestCase
                            ->withAnyParameters()
                            ->willReturnCallback($this->invokeHelperMethods($visit, $location));
         $this->visitToLocation->expects($this->once())->method('resolveVisitLocation')->willThrowException($e);
-        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCodes::EXIT_SUCCESS);
+        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCode::EXIT_SUCCESS);
 
         $this->commandTester->execute([], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
 
@@ -147,7 +147,7 @@ class LocateVisitsCommandTest extends TestCase
         $this->visitToLocation->expects($this->once())->method('resolveVisitLocation')->willThrowException(
             IpCannotBeLocatedException::forError(WrongIpException::fromIpAddress('1.2.3.4')),
         );
-        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCodes::EXIT_SUCCESS);
+        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCode::EXIT_SUCCESS);
 
         $this->commandTester->execute([], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
 
@@ -171,7 +171,7 @@ class LocateVisitsCommandTest extends TestCase
 
         $this->visitService->expects($this->never())->method('locateUnlocatedVisits');
         $this->visitToLocation->expects($this->never())->method('resolveVisitLocation');
-        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCodes::EXIT_SUCCESS);
+        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCode::EXIT_SUCCESS);
 
         $this->commandTester->execute([], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
         $output = $this->commandTester->getDisplay();
@@ -186,7 +186,7 @@ class LocateVisitsCommandTest extends TestCase
     public function showsProperMessageWhenGeoLiteUpdateFails(): void
     {
         $this->lock->method('acquire')->with($this->isFalse())->willReturn(true);
-        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCodes::EXIT_FAILURE);
+        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCode::EXIT_FAILURE);
         $this->visitService->expects($this->never())->method('locateUnlocatedVisits');
 
         $this->commandTester->execute([]);
@@ -199,7 +199,7 @@ class LocateVisitsCommandTest extends TestCase
     public function providingAllFlagOnItsOwnDisplaysNotice(): void
     {
         $this->lock->method('acquire')->with($this->isFalse())->willReturn(true);
-        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCodes::EXIT_SUCCESS);
+        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCode::EXIT_SUCCESS);
 
         $this->commandTester->execute(['--all' => true]);
         $output = $this->commandTester->getDisplay();
@@ -210,7 +210,7 @@ class LocateVisitsCommandTest extends TestCase
     #[Test, DataProvider('provideAbortInputs')]
     public function processingAllCancelsCommandIfUserDoesNotActivelyAgreeToConfirmation(array $inputs): void
     {
-        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCodes::EXIT_SUCCESS);
+        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCode::EXIT_SUCCESS);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Execution aborted');

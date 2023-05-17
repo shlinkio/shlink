@@ -42,6 +42,7 @@ return [
             Command\ShortUrl\ListShortUrlsCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\GetShortUrlVisitsCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\DeleteShortUrlCommand::class => ConfigAbstractFactory::class,
+            Command\ShortUrl\DeleteShortUrlVisitsCommand::class => ConfigAbstractFactory::class,
 
             Command\Visit\DownloadGeoLiteDbCommand::class => ConfigAbstractFactory::class,
             Command\Visit\LocateVisitsCommand::class => ConfigAbstractFactory::class,
@@ -88,6 +89,7 @@ return [
         ],
         Command\ShortUrl\GetShortUrlVisitsCommand::class => [Visit\VisitsStatsHelper::class],
         Command\ShortUrl\DeleteShortUrlCommand::class => [ShortUrl\DeleteShortUrlService::class],
+        Command\ShortUrl\DeleteShortUrlVisitsCommand::class => [ShortUrl\ShortUrlVisitsDeleter::class],
 
         Command\Visit\DownloadGeoLiteDbCommand::class => [GeoLite\GeolocationDbUpdater::class],
         Command\Visit\LocateVisitsCommand::class => [

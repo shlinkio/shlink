@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use GuzzleHttp\Client;
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
+use Mezzio\Application;
 use Mezzio\Container;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
@@ -20,7 +21,7 @@ return [
         ],
 
         'delegators' => [
-            Mezzio\Application::class => [
+            Application::class => [
                 Container\ApplicationConfigInjectionDelegator::class,
             ],
         ],

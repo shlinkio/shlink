@@ -11,13 +11,7 @@
                 "$ref": "../parameters/version.json"
             },
             {
-                "name": "shortCode",
-                "in": "path",
-                "description": "The short code to resolve.",
-                "required": true,
-                "schema": {
-                    "type": "string"
-                }
+                "$ref": "../parameters/shortCode.json"
             },
             {
                 "$ref": "../parameters/domain.json"
@@ -127,13 +121,7 @@
                 "$ref": "../parameters/version.json"
             },
             {
-                "name": "shortCode",
-                "in": "path",
-                "description": "The short code to edit.",
-                "required": true,
-                "schema": {
-                    "type": "string"
-                }
+                "$ref": "../parameters/shortCode.json"
             },
             {
                 "$ref": "../parameters/domain.json"
@@ -295,13 +283,7 @@
                 "$ref": "../parameters/version.json"
             },
             {
-                "name": "shortCode",
-                "in": "path",
-                "description": "The short code to edit.",
-                "required": true,
-                "schema": {
-                    "type": "string"
-                }
+                "$ref": "../parameters/shortCode.json"
             },
             {
                 "$ref": "../parameters/domain.json"
