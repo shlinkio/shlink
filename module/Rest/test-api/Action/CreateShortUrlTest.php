@@ -12,7 +12,6 @@ use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use function Functional\map;
 use function range;
-use function Shlinkio\Shlink\Config\env;
 use function sprintf;
 
 class CreateShortUrlTest extends ApiTestCase
