@@ -12,6 +12,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
   The CLI command includes a warning and requires the user to confirm before proceeding.
 
+* [#1681](https://github.com/shlinkio/shlink/issues/1681) Add support to delete orphan visits.
+
+  This can be done via `DELETE /visits/orphan` REST endpoint or via `visit:orphan-delete` console command.
+
+  The CLI command includes a warning and requires the user to confirm before proceeding.
+
 * [#1656](https://github.com/shlinkio/shlink/issues/1656) Add support for openswoole 22
 
 ### Changed
