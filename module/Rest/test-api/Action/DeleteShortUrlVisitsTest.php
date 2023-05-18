@@ -22,8 +22,8 @@ class DeleteShortUrlVisitsTest extends ApiTestCase
 
         self::assertEquals(200, $resp->getStatusCode());
         self::assertEquals(3, $payload['deletedVisits']);
-        self::assertEquals(4, $this->getTotalVisits());
-        self::assertEquals(3, $this->getOrphanVisits());
+        self::assertEquals(4, $this->getTotalVisits()); // This verifies that other visits have not been affected
+        self::assertEquals(3, $this->getOrphanVisits()); // This verifies that orphan visits have not been affected
     }
 
     private function getTotalVisits(): int
