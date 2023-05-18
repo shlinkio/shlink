@@ -18,6 +18,7 @@ return [
             Command\Visit\LocateVisitsCommand::NAME => Command\Visit\LocateVisitsCommand::class,
             Command\Visit\DownloadGeoLiteDbCommand::NAME => Command\Visit\DownloadGeoLiteDbCommand::class,
             Command\Visit\GetOrphanVisitsCommand::NAME => Command\Visit\GetOrphanVisitsCommand::class,
+            Command\Visit\DeleteOrphanVisitsCommand::NAME => Command\Visit\DeleteOrphanVisitsCommand::class,
             Command\Visit\GetNonOrphanVisitsCommand::NAME => Command\Visit\GetNonOrphanVisitsCommand::class,
 
             Command\Api\GenerateKeyCommand::NAME => Command\Api\GenerateKeyCommand::class,
