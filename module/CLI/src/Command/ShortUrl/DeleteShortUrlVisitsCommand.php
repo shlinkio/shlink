@@ -19,7 +19,7 @@ use function sprintf;
 
 class DeleteShortUrlVisitsCommand extends Command
 {
-    public const NAME = 'short-url:delete-visits';
+    public const NAME = 'short-url:visits-delete';
 
     public function __construct(private readonly ShortUrlVisitsDeleterInterface $deleter)
     {

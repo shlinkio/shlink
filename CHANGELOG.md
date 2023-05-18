@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Added
 * [#1148](https://github.com/shlinkio/shlink/issues/1148) Add support to delete short URL visits.
 
-  This can be done via `DELETE /short-urls/{shortCode}/visits` REST endpoint or via `short-url:delete-visits` console command.
+  This can be done via `DELETE /short-urls/{shortCode}/visits` REST endpoint or via `short-url:visits-delete` console command.
 
   The CLI command includes a warning and requires the user to confirm before proceeding.
 
