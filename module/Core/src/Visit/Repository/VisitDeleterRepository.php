@@ -19,4 +19,13 @@ class VisitDeleterRepository extends EntitySpecificationRepository implements Vi
 
         return $qb->getQuery()->execute();
     }
+
+    public function deleteOrphanVisits(): int
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->delete(Visit::class, 'v')
+           ->where($qb->expr()->isNull('v.shortUrl'));
+
+        return $qb->getQuery()->execute();
+    }
 }

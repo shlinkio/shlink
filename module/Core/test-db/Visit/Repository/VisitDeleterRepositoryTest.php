@@ -25,7 +25,7 @@ class VisitDeleterRepositoryTest extends DatabaseTestCase
     }
 
     #[Test]
-    public function deletesExpectedVisits(): void
+    public function deletesExpectedShortUrlVisits(): void
     {
         $shortUrl1 = ShortUrl::withLongUrl('https://foo.com');
         $this->getEntityManager()->persist($shortUrl1);
@@ -58,5 +58,22 @@ class VisitDeleterRepositoryTest extends DatabaseTestCase
         self::assertEquals(0, $this->repo->deleteShortUrlVisits($shortUrl2));
         self::assertEquals(1, $this->repo->deleteShortUrlVisits($shortUrl3));
         self::assertEquals(0, $this->repo->deleteShortUrlVisits($shortUrl3));
+    }
+
+    #[Test]
+    public function deletesExpectedOrphanVisits(): void
+    {
+        $visitor = Visitor::emptyInstance();
+        $this->getEntityManager()->persist(Visit::forBasePath($visitor));
+        $this->getEntityManager()->persist(Visit::forInvalidShortUrl($visitor));
+        $this->getEntityManager()->persist(Visit::forRegularNotFound($visitor));
+        $this->getEntityManager()->persist(Visit::forBasePath($visitor));
+        $this->getEntityManager()->persist(Visit::forInvalidShortUrl($visitor));
+        $this->getEntityManager()->persist(Visit::forRegularNotFound($visitor));
+
+        $this->getEntityManager()->flush();
+
+        self::assertEquals(6, $this->repo->deleteOrphanVisits());
+        self::assertEquals(0, $this->repo->deleteOrphanVisits());
     }
 }

@@ -47,6 +47,7 @@ return [
             Command\Visit\DownloadGeoLiteDbCommand::class => ConfigAbstractFactory::class,
             Command\Visit\LocateVisitsCommand::class => ConfigAbstractFactory::class,
             Command\Visit\GetOrphanVisitsCommand::class => ConfigAbstractFactory::class,
+            Command\Visit\DeleteOrphanVisitsCommand::class => ConfigAbstractFactory::class,
             Command\Visit\GetNonOrphanVisitsCommand::class => ConfigAbstractFactory::class,
 
             Command\Api\GenerateKeyCommand::class => ConfigAbstractFactory::class,
@@ -98,6 +99,7 @@ return [
             LockFactory::class,
         ],
         Command\Visit\GetOrphanVisitsCommand::class => [Visit\VisitsStatsHelper::class],
+        Command\Visit\DeleteOrphanVisitsCommand::class => [Visit\VisitsDeleter::class],
         Command\Visit\GetNonOrphanVisitsCommand::class => [Visit\VisitsStatsHelper::class, ShortUrlStringifier::class],
 
         Command\Api\GenerateKeyCommand::class => [ApiKeyService::class, ApiKey\RoleResolver::class],

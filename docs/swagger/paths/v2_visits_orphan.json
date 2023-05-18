@@ -148,5 +148,55 @@
                 }
             }
         }
+    },
+
+    "delete": {
+        "operationId": "deleteOrphanVisits",
+        "tags": [
+            "Visits"
+        ],
+        "summary": "Delete orphan visits",
+        "description": "Delete all visits to invalid short URLs, the base URL or any other 404.",
+        "parameters": [
+            {
+                "$ref": "../parameters/version.json"
+            }
+        ],
+        "security": [
+            {
+                "ApiKey": []
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "Deleted visits",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "deletedVisits": {
+                                    "description": "Amount of affected visits",
+                                    "type": "number"
+                                }
+                            }
+                        },
+                        "example": {
+                            "deletedVisits": 536
+                        }
+                    }
+                }
+            },
+            "default": {
+                "description": "Unexpected error.",
+                "content": {
+                    "application/problem+json": {
+                        "schema": {
+                            "$ref": "../definitions/Error.json"
+                        }
+                    }
+                }
+            }
+        }
     }
 }

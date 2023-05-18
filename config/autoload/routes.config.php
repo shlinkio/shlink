@@ -38,6 +38,7 @@ return (static function (): array {
                 Action\Visit\DomainVisitsAction::getRouteDef(),
                 Action\Visit\GlobalVisitsAction::getRouteDef(),
                 Action\Visit\OrphanVisitsAction::getRouteDef(),
+                Action\Visit\DeleteOrphanVisitsAction::getRouteDef(),
                 Action\Visit\NonOrphanVisitsAction::getRouteDef(),
 
                 // Short URLs

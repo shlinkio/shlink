@@ -4,22 +4,21 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
+use Shlinkio\Shlink\CLI\Command\Visit\AbstractDeleteVisitsCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlVisitsDeleterInterface;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function sprintf;
 
-class DeleteShortUrlVisitsCommand extends Command
+class DeleteShortUrlVisitsCommand extends AbstractDeleteVisitsCommand
 {
-    public const NAME = 'short-url:delete-visits';
+    public const NAME = 'short-url:visits-delete';
 
     public function __construct(private readonly ShortUrlVisitsDeleterInterface $deleter)
     {
@@ -44,15 +43,9 @@ class DeleteShortUrlVisitsCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function doExecute(InputInterface $input, SymfonyStyle $io): ?int
     {
         $identifier = ShortUrlIdentifier::fromCli($input);
-        $io = new SymfonyStyle($input, $output);
-        if (! $this->confirm($io)) {
-            $io->info('Operation aborted');
-            return ExitCode::EXIT_SUCCESS;
-        }
-
         try {
             $result = $this->deleter->deleteShortUrlVisits($identifier);
             $io->success(sprintf('Successfully deleted %s visits', $result->affectedItems));
@@ -64,9 +57,8 @@ class DeleteShortUrlVisitsCommand extends Command
         }
     }
 
-    private function confirm(SymfonyStyle $io): bool
+    protected function getWarningMessage(): string
     {
-        $io->warning('You are about to delete all visits for a short URL. This operation cannot be undone.');
-        return $io->confirm('<comment>Continue deleting visits?</comment>', false);
+        return 'You are about to delete all visits for a short URL. This operation cannot be undone.';
     }
 }

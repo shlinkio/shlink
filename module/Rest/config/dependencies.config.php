@@ -38,6 +38,7 @@ return [
             Action\Visit\DomainVisitsAction::class => ConfigAbstractFactory::class,
             Action\Visit\GlobalVisitsAction::class => ConfigAbstractFactory::class,
             Action\Visit\OrphanVisitsAction::class => ConfigAbstractFactory::class,
+            Action\Visit\DeleteOrphanVisitsAction::class => ConfigAbstractFactory::class,
             Action\Visit\NonOrphanVisitsAction::class => ConfigAbstractFactory::class,
             Action\Tag\ListTagsAction::class => ConfigAbstractFactory::class,
             Action\Tag\TagsStatsAction::class => ConfigAbstractFactory::class,
@@ -90,6 +91,7 @@ return [
             Visit\VisitsStatsHelper::class,
             Visit\Transformer\OrphanVisitDataTransformer::class,
         ],
+        Action\Visit\DeleteOrphanVisitsAction::class => [Visit\VisitsDeleter::class],
         Action\Visit\NonOrphanVisitsAction::class => [Visit\VisitsStatsHelper::class],
         Action\ShortUrl\ListShortUrlsAction::class => [
             ShortUrl\ShortUrlListService::class,

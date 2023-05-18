@@ -21,8 +21,8 @@ class OrphanVisitsAction extends AbstractRestAction
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
     public function __construct(
-        private VisitsStatsHelperInterface $visitsHelper,
-        private DataTransformerInterface $orphanVisitTransformer,
+        private readonly VisitsStatsHelperInterface $visitsHelper,
+        private readonly DataTransformerInterface $orphanVisitTransformer,
     ) {
     }
 

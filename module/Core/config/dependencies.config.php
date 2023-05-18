@@ -62,6 +62,7 @@ return [
 
             Visit\VisitsTracker::class => ConfigAbstractFactory::class,
             Visit\RequestTracker::class => ConfigAbstractFactory::class,
+            Visit\VisitsDeleter::class => ConfigAbstractFactory::class,
             Visit\Geolocation\VisitLocator::class => ConfigAbstractFactory::class,
             Visit\Geolocation\VisitToLocationHelper::class => ConfigAbstractFactory::class,
             Visit\VisitsStatsHelper::class => ConfigAbstractFactory::class,
@@ -122,6 +123,7 @@ return [
             Options\TrackingOptions::class,
         ],
         Visit\RequestTracker::class => [Visit\VisitsTracker::class, Options\TrackingOptions::class],
+        Visit\VisitsDeleter::class => [Visit\Repository\VisitDeleterRepository::class],
         ShortUrl\ShortUrlService::class => [
             'em',
             ShortUrl\ShortUrlResolver::class,
