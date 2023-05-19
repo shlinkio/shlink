@@ -55,6 +55,9 @@ RUN apk add --no-cache git && \
     sed -i "s/%SHLINK_VERSION%/${SHLINK_VERSION}/g" config/autoload/app_options.global.php
 
 
+RUN chown -R 1001 /etc/shlink && \
+  chmod -R g=u /etc/shlink
+
 # Prepare final image
 FROM base
 LABEL maintainer="Alejandro Celaya <alejandro@alejandrocelaya.com>"
@@ -69,13 +72,10 @@ RUN ln -s /etc/shlink/bin/cli /usr/local/bin/shlink && \
 EXPOSE 8080
 
 # Copy config specific for the image
-COPY docker/docker-entrypoint.sh docker-entrypoint.sh
-COPY docker/config/shlink_in_docker.local.php config/autoload/shlink_in_docker.local.php
+COPY --chown=1001:0 --chmod=664 docker/docker-entrypoint.sh docker-entrypoint.sh
+COPY --chown=1001:0 --chmod=664 docker/config/shlink_in_docker.local.php config/autoload/shlink_in_docker.local.php
 COPY docker/config/php.ini ${PHP_INI_DIR}/conf.d/
 
-# Change the ownership of /etc/shlink to be writable, then change the user to non-root
-RUN chown -R 1001 /etc/shlink
-RUN chmod -R g=u /etc/shlink
 
 USER 1001
 
