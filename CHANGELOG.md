@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
   The CLI command includes a warning and requires the user to confirm before proceeding.
 
 * [#1656](https://github.com/shlinkio/shlink/issues/1656) Add support for openswoole 22
+* [#1784](https://github.com/shlinkio/shlink/issues/1784) Add new docker tag where the container runs as a non-root user.
 
 ### Changed
 * [#1755](https://github.com/shlinkio/shlink/issues/1755) Update to roadrunner 2023
