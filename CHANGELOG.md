@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#1656](https://github.com/shlinkio/shlink/issues/1656) Add support for openswoole 22
 * [#1784](https://github.com/shlinkio/shlink/issues/1784) Add new docker tag where the container runs as a non-root user.
+* [#953](https://github.com/shlinkio/shlink/issues/953) Add locks that prevent errors on duplicated keys when creating short URLs in parallel that depend on the same new tag or domain.
 
 ### Changed
 * [#1755](https://github.com/shlinkio/shlink/issues/1755) Update to roadrunner 2023
@@ -45,6 +46,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#1760](https://github.com/shlinkio/shlink/issues/1760) Fix domain not being set to null when importing short URLs with default domain.
+* [#953](https://github.com/shlinkio/shlink/issues/953) Fix duplicated key errors and short URL creation failing when creating short URLs in parallel that depend on the same new tag or domain.
 * Fix Shlink trying to connect to RabbitMQ even if configuration set to not connect.
 
 

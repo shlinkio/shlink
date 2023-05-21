@@ -74,10 +74,12 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
     #[Test, DataProvider('provideTags')]
     public function findsAndPersistsTagsWrappedIntoCollection(array $tags, array $expectedTags): void
     {
-        $expectedPersistedTags = count($expectedTags);
+        $expectedLookedOutTags = count($expectedTags);
+        // One of the tags will already exist. The rest will be new
+        $expectedPersistedTags = $expectedLookedOutTags - 1;
 
         $tagRepo = $this->createMock(TagRepositoryInterface::class);
-        $tagRepo->expects($this->exactly($expectedPersistedTags))->method('findOneBy')->with(
+        $tagRepo->expects($this->exactly($expectedLookedOutTags))->method('findOneBy')->with(
             $this->isType('array'),
         )->willReturnCallback(function (array $criteria): ?Tag {
             ['name' => $name] = $criteria;
@@ -90,7 +92,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
 
         $result = $this->resolver->resolveTags($tags);
 
-        self::assertCount($expectedPersistedTags, $result);
+        self::assertCount($expectedLookedOutTags, $result);
         self::assertEquals($expectedTags, $result->toArray());
     }
 
