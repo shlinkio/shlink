@@ -18,6 +18,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
   The CLI command includes a warning and requires the user to confirm before proceeding.
 
+* [#1753](https://github.com/shlinkio/shlink/issues/1753) Add a new `vendor/bin/shlink-installer init` command that can be used to automate Shlink installations.
+
+  This command can create the initial database, update it, create proxies, clean cache, download initial GeoLite db files, etc
+
+  The official docker image also uses it on its entry point script.
+
 * [#1656](https://github.com/shlinkio/shlink/issues/1656) Add support for openswoole 22
 * [#1784](https://github.com/shlinkio/shlink/issues/1784) Add new docker tag where the container runs as a non-root user.
 
