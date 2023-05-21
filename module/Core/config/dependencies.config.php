@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Core\ErrorHandler;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
+use Symfony\Component\Lock;
 
 return [
 
@@ -172,7 +173,11 @@ return [
         ],
         Action\RobotsAction::class => [Crawling\CrawlingHelper::class],
 
-        ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => ['em', Options\UrlShortenerOptions::class],
+        ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => [
+            'em',
+            Options\UrlShortenerOptions::class,
+            Lock\LockFactory::class,
+        ],
         ShortUrl\Helper\ShortUrlStringifier::class => ['config.url_shortener.domain', 'config.router.base_path'],
         ShortUrl\Helper\ShortUrlTitleResolutionHelper::class => [Util\UrlValidator::class],
         ShortUrl\Helper\ShortUrlRedirectionBuilder::class => [Options\TrackingOptions::class],
