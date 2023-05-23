@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [3.6.0] - 2023-05-24
 ### Added
 * [#1148](https://github.com/shlinkio/shlink/issues/1148) Add support to delete short URL visits.
 
@@ -47,6 +47,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Fixed
 * [#1760](https://github.com/shlinkio/shlink/issues/1760) Fix domain not being set to null when importing short URLs with default domain.
 * [#953](https://github.com/shlinkio/shlink/issues/953) Fix duplicated key errors and short URL creation failing when creating short URLs in parallel that depend on the same new tag or domain.
+* [#1741](https://github.com/shlinkio/shlink/issues/1741) Fix randomly using 100% CPU in task workers when trying to download GeoLite DB files.
 * Fix Shlink trying to connect to RabbitMQ even if configuration set to not connect.
 
 
