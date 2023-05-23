@@ -13,6 +13,7 @@ fi
 php vendor/bin/shlink-installer init ${flags}
 
 # Periodically run visit:locate every hour, if ENABLE_PERIODIC_VISIT_LOCATE=true was provided and running as root
+# ENABLE_PERIODIC_VISIT_LOCATE is deprecated. Remove cron support in Shlink 4.0.0
 if [ "${ENABLE_PERIODIC_VISIT_LOCATE}" = "true" ] && [ "${SHLINK_USER_ID}" = "root" ]; then
   echo "Configuring periodic visit location..."
   echo "0 * * * * php /etc/shlink/bin/cli visit:locate -q" > /etc/crontabs/root
