@@ -1,4 +1,4 @@
-version: '2.7'
+version: '3.0'
 
 rpc:
   listen: tcp://127.0.0.1:6001
@@ -14,10 +14,12 @@ http:
     forbid: ['.php', '.htaccess']
   pool:
     num_workers: 1
+    debug: true
 
 jobs:
   pool:
     num_workers: 1
+    debug: true
   timeout: 300
   consume: ['shlink']
   pipelines:
@@ -31,19 +33,8 @@ logs:
   mode: development
   channels:
     http:
-      level: debug
+      mode: 'off' # Disable logging as Shlink handles it internally
     server:
       level: debug
     metrics:
       level: debug
-
-reload:
-  interval: 1s
-  patterns: ['.php']
-  services:
-    http:
-      dirs: ['../../bin', '../../config', '../../data/migrations', '../../module', '../../vendor']
-      recursive: true
-    jobs:
-      dirs: ['../../bin', '../../config', '../../data/migrations', '../../module', '../../vendor']
-      recursive: true

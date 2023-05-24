@@ -38,6 +38,7 @@ return (static function (): array {
                 Action\Visit\DomainVisitsAction::getRouteDef(),
                 Action\Visit\GlobalVisitsAction::getRouteDef(),
                 Action\Visit\OrphanVisitsAction::getRouteDef(),
+                Action\Visit\DeleteOrphanVisitsAction::getRouteDef(),
                 Action\Visit\NonOrphanVisitsAction::getRouteDef(),
 
                 // Short URLs
@@ -53,6 +54,7 @@ return (static function (): array {
                 ]),
                 Action\ShortUrl\EditShortUrlAction::getRouteDef([$dropDomainMiddleware]),
                 Action\ShortUrl\DeleteShortUrlAction::getRouteDef([$dropDomainMiddleware]),
+                Action\ShortUrl\DeleteShortUrlVisitsAction::getRouteDef([$dropDomainMiddleware]),
                 Action\ShortUrl\ResolveShortUrlAction::getRouteDef([$dropDomainMiddleware]),
                 Action\ShortUrl\ListShortUrlsAction::getRouteDef(),
 

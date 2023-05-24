@@ -42,10 +42,12 @@ return [
             Command\ShortUrl\ListShortUrlsCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\GetShortUrlVisitsCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\DeleteShortUrlCommand::class => ConfigAbstractFactory::class,
+            Command\ShortUrl\DeleteShortUrlVisitsCommand::class => ConfigAbstractFactory::class,
 
             Command\Visit\DownloadGeoLiteDbCommand::class => ConfigAbstractFactory::class,
             Command\Visit\LocateVisitsCommand::class => ConfigAbstractFactory::class,
             Command\Visit\GetOrphanVisitsCommand::class => ConfigAbstractFactory::class,
+            Command\Visit\DeleteOrphanVisitsCommand::class => ConfigAbstractFactory::class,
             Command\Visit\GetNonOrphanVisitsCommand::class => ConfigAbstractFactory::class,
 
             Command\Api\GenerateKeyCommand::class => ConfigAbstractFactory::class,
@@ -88,6 +90,7 @@ return [
         ],
         Command\ShortUrl\GetShortUrlVisitsCommand::class => [Visit\VisitsStatsHelper::class],
         Command\ShortUrl\DeleteShortUrlCommand::class => [ShortUrl\DeleteShortUrlService::class],
+        Command\ShortUrl\DeleteShortUrlVisitsCommand::class => [ShortUrl\ShortUrlVisitsDeleter::class],
 
         Command\Visit\DownloadGeoLiteDbCommand::class => [GeoLite\GeolocationDbUpdater::class],
         Command\Visit\LocateVisitsCommand::class => [
@@ -96,6 +99,7 @@ return [
             LockFactory::class,
         ],
         Command\Visit\GetOrphanVisitsCommand::class => [Visit\VisitsStatsHelper::class],
+        Command\Visit\DeleteOrphanVisitsCommand::class => [Visit\VisitsDeleter::class],
         Command\Visit\GetNonOrphanVisitsCommand::class => [Visit\VisitsStatsHelper::class, ShortUrlStringifier::class],
 
         Command\Api\GenerateKeyCommand::class => [ApiKeyService::class, ApiKey\RoleResolver::class],

@@ -17,7 +17,7 @@ jobs:
       - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          php-extensions: openswoole-4.12.1
+          php-extensions: openswoole-22.0.0
           extensions-cache-key: publish-swagger-spec-extensions-${{ matrix.php-version }}
           install-deps: 'no'
       - if: ${{ matrix.swoole == 'yes' }}
@@ -49,11 +49,7 @@ jobs:
   delete-artifacts:
     needs: ['publish']
     runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        php-version: ['8.1', '8.2']
-        swoole: ['yes', 'no']
     steps:
-      - uses: geekyeggo/delete-artifact@v1
+      - uses: geekyeggo/delete-artifact@v2
         with:
-          name: dist-files-${{ matrix.php-version }}-${{ matrix.swoole }}
+          name: dist-files-*

@@ -25,7 +25,7 @@ class ShortUrlListService implements ShortUrlListServiceInterface
      */
     public function listShortUrls(ShortUrlsParams $params, ?ApiKey $apiKey = null): Paginator
     {
-        $defaultDomain = $this->urlShortenerOptions->domain['hostname'] ?? '';
+        $defaultDomain = $this->urlShortenerOptions->defaultDomain();
         $paginator = new Paginator(new ShortUrlRepositoryAdapter($this->repo, $params, $apiKey, $defaultDomain));
         $paginator->setMaxPerPage($params->itemsPerPage)
                   ->setCurrentPage($params->page);

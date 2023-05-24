@@ -6,7 +6,7 @@ namespace ShlinkioCliTest\Shlink\CLI\Command;
 
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\CLI\Command\Api\GenerateKeyCommand;
-use Shlinkio\Shlink\CLI\Util\ExitCodes;
+use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\TestUtils\CliTest\CliTestCase;
 
 class GenerateApiKeyTest extends CliTestCase
@@ -17,6 +17,6 @@ class GenerateApiKeyTest extends CliTestCase
         [$output, $exitCode] = $this->exec([GenerateKeyCommand::NAME]);
 
         self::assertStringContainsString('[OK] Generated API key', $output);
-        self::assertEquals(ExitCodes::EXIT_SUCCESS, $exitCode);
+        self::assertEquals(ExitCode::EXIT_SUCCESS, $exitCode);
     }
 }

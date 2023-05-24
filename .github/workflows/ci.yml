@@ -36,7 +36,7 @@ jobs:
       - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          php-extensions: openswoole-4.12.1
+          php-extensions: openswoole-22.0.0
           extensions-cache-key: tests-extensions-${{ matrix.php-version }}-${{ matrix.command }}
       - run: composer ${{ matrix.command }}
 
@@ -69,8 +69,8 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-      - run: composer install --no-interaction --prefer-dist
-      - run: ./vendor/bin/rr get --no-interaction --location bin/ && chmod +x bin/rr
+      - run: composer install --no-interaction --prefer-dist --ignore-platform-req=ext-openswoole
+      - run: ./vendor/bin/rr get --no-interaction --no-config --location bin/ && chmod +x bin/rr
       - run: composer test:api:rr
 
   sqlite-db-tests:
@@ -168,10 +168,7 @@ jobs:
       - upload-coverage
     runs-on: ubuntu-22.04
     steps:
-      - uses: geekyeggo/delete-artifact@v1
+      - uses: geekyeggo/delete-artifact@v2
         with:
           name: |
-            coverage-unit
-            coverage-db
-            coverage-api
-            coverage-cli
+            coverage-*

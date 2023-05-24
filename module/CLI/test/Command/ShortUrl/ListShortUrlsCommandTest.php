@@ -144,13 +144,19 @@ class ListShortUrlsCommandTest extends TestCase
         yield 'tags only' => [
             ['--show-tags' => true],
             ['| Tags    ', '| foo, bar, baz'],
-            ['| API Key    ', '| API Key Name |', $key, '| my api key'],
+            ['| API Key    ', '| API Key Name |', $key, '| my api key', '| Domain', '| DEFAULT'],
+            $apiKey,
+        ];
+        yield 'domain only' => [
+            ['--show-domain' => true],
+            ['| Domain', '| DEFAULT'],
+            ['| Tags    ', '| foo, bar, baz', '| API Key    ', '| API Key Name |', $key, '| my api key'],
             $apiKey,
         ];
         yield 'api key only' => [
             ['--show-api-key' => true],
             ['| API Key    ', $key],
-            ['| Tags    ', '| foo, bar, baz', '| API Key Name |', '| my api key'],
+            ['| Tags    ', '| foo, bar, baz', '| API Key Name |', '| my api key', '| Domain', '| DEFAULT'],
             $apiKey,
         ];
         yield 'api key name only' => [
@@ -165,9 +171,24 @@ class ListShortUrlsCommandTest extends TestCase
             ['| API Key Name |', '| my api key'],
             $apiKey,
         ];
+        yield 'tags and domain' => [
+            ['--show-tags' => true, '--show-domain' => true],
+            ['| Tags    ', '| foo, bar, baz', '| Domain', '| DEFAULT'],
+            ['| API Key Name |', '| my api key'],
+            $apiKey,
+        ];
         yield 'all' => [
-            ['--show-tags' => true, '--show-api-key' => true, '--show-api-key-name' => true],
-            ['| API Key    ', '| Tags    ', '| API Key Name |', '| foo, bar, baz', $key, '| my api key'],
+            ['--show-tags' => true, '--show-domain' => true, '--show-api-key' => true, '--show-api-key-name' => true],
+            [
+                '| API Key    ',
+                '| Tags    ',
+                '| API Key Name |',
+                '| foo, bar, baz',
+                $key,
+                '| my api key',
+                '| Domain',
+                '| DEFAULT',
+            ],
             [],
             $apiKey,
         ];

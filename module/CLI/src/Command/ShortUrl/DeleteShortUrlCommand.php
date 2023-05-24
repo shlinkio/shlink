@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
-use Shlinkio\Shlink\CLI\Util\ExitCodes;
+use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Exception;
 use Shlinkio\Shlink\Core\ShortUrl\DeleteShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
@@ -55,10 +55,10 @@ class DeleteShortUrlCommand extends Command
 
         try {
             $this->runDelete($io, $identifier, $ignoreThreshold);
-            return ExitCodes::EXIT_SUCCESS;
+            return ExitCode::EXIT_SUCCESS;
         } catch (Exception\ShortUrlNotFoundException $e) {
             $io->error($e->getMessage());
-            return ExitCodes::EXIT_FAILURE;
+            return ExitCode::EXIT_FAILURE;
         } catch (Exception\DeleteShortUrlException $e) {
             return $this->retry($io, $identifier, $e->getMessage());
         }
@@ -75,7 +75,7 @@ class DeleteShortUrlCommand extends Command
             $io->warning('Short URL was not deleted.');
         }
 
-        return $forceDelete ? ExitCodes::EXIT_SUCCESS : ExitCodes::EXIT_WARNING;
+        return $forceDelete ? ExitCode::EXIT_SUCCESS : ExitCode::EXIT_WARNING;
     }
 
     private function runDelete(SymfonyStyle $io, ShortUrlIdentifier $identifier, bool $ignoreThreshold): void

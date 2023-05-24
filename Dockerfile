@@ -2,13 +2,16 @@ FROM php:8.2-alpine3.17 as base
 
 ARG SHLINK_VERSION=latest
 ENV SHLINK_VERSION ${SHLINK_VERSION}
-ARG SHLINK_RUNTIME=openswoole
+ARG SHLINK_RUNTIME=rr
 ENV SHLINK_RUNTIME ${SHLINK_RUNTIME}
-ENV OPENSWOOLE_VERSION 4.12.1
+ARG SHLINK_USER_ID='root'
+ENV SHLINK_USER_ID ${SHLINK_USER_ID}
+
+ENV OPENSWOOLE_VERSION 22.0.0
 ENV PDO_SQLSRV_VERSION 5.10.1
 ENV MS_ODBC_DOWNLOAD 'b/9/f/b9f3cce4-3925-46d4-9f46-da08869c6486'
 ENV MS_ODBC_SQL_VERSION 18_18.1.1.1
-ENV LC_ALL "C"
+ENV LC_ALL 'C'
 
 WORKDIR /etc/shlink
 
@@ -43,11 +46,12 @@ FROM base as builder
 COPY . .
 COPY --from=composer:2 /usr/bin/composer ./composer.phar
 RUN apk add --no-cache git && \
-    php composer.phar install --no-dev --prefer-dist --optimize-autoloader --no-progress --no-interaction && \
+    # FIXME Ignoring ext-openswoole platform req, as it makes install fail with roadrunner, even though it's a dev dependency and we are passing --no-dev
+    php composer.phar install --no-dev --prefer-dist --optimize-autoloader --no-progress --no-interaction --ignore-platform-req=ext-openswoole && \
     if [ "$SHLINK_RUNTIME" == 'openswoole' ]; then \
-        php composer.phar remove spiral/roadrunner spiral/roadrunner-jobs --with-all-dependencies --update-no-dev --optimize-autoloader --no-progress --no-interactionc ; \
-    elif [ $SHLINK_RUNTIME == 'rr' ]; then \
-        php composer.phar remove mezzio/mezzio-swoole --with-all-dependencies --update-no-dev --optimize-autoloader --no-progress --no-interaction ; \
+        php composer.phar remove spiral/roadrunner spiral/roadrunner-jobs spiral/roadrunner-cli spiral/roadrunner-http --with-all-dependencies --update-no-dev --optimize-autoloader --no-progress --no-interaction ; \
+    elif [ "$SHLINK_RUNTIME" == 'rr' ]; then \
+        php composer.phar remove mezzio/mezzio-swoole --with-all-dependencies --update-no-dev --optimize-autoloader --no-progress --no-interaction --ignore-platform-req=ext-openswoole ; \
     fi; \
     php composer.phar clear-cache && \
     rm -r docker composer.* && \
@@ -58,10 +62,10 @@ RUN apk add --no-cache git && \
 FROM base
 LABEL maintainer="Alejandro Celaya <alejandro@alejandrocelaya.com>"
 
-COPY --from=builder /etc/shlink .
+COPY --from=builder --chown=${SHLINK_USER_ID} /etc/shlink .
 RUN ln -s /etc/shlink/bin/cli /usr/local/bin/shlink && \
     if [ "$SHLINK_RUNTIME" == 'rr' ]; then \
-      php ./vendor/bin/rr get --no-interaction --location bin/ && chmod +x bin/rr ; \
+      php ./vendor/bin/rr get --no-interaction --no-config --location bin/ && chmod +x bin/rr ; \
     fi;
 
 # Expose default port
@@ -72,14 +76,6 @@ COPY docker/docker-entrypoint.sh docker-entrypoint.sh
 COPY docker/config/shlink_in_docker.local.php config/autoload/shlink_in_docker.local.php
 COPY docker/config/php.ini ${PHP_INI_DIR}/conf.d/
 
-# Change the ownership of /etc/shlink/data to be writable, then change the user to non-root
-# FIXME Disabled for now, as it conflicts with ENABLE_PERIODIC_VISIT_LOCATE, which is used to configure a cron as root.
-#       Ref: https://github.com/shlinkio/shlink/issues/1132
-#RUN chown 1001 /etc/shlink/data
-#RUN chown 1001 /etc/shlink/data/locks
-#RUN chown 1001 /etc/shlink/data/proxies
-#RUN chown 1001 /etc/shlink/data/cache
-#RUN chown 1001 /etc/shlink/data/log
-#USER 1001
+USER ${SHLINK_USER_ID}
 
 ENTRYPOINT ["/bin/sh", "./docker-entrypoint.sh"]

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
-use Shlinkio\Shlink\CLI\Util\ExitCodes;
+use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
@@ -31,7 +31,6 @@ class CreateShortUrlCommand extends Command
     public const NAME = 'short-url:create';
 
     private ?SymfonyStyle $io;
-    private string $defaultDomain;
 
     public function __construct(
         private readonly UrlShortenerInterface $urlShortener,
@@ -39,7 +38,6 @@ class CreateShortUrlCommand extends Command
         private readonly UrlShortenerOptions $options,
     ) {
         parent::__construct();
-        $this->defaultDomain = $this->options->domain['hostname'] ?? '';
     }
 
     protected function configure(): void
@@ -121,7 +119,6 @@ class CreateShortUrlCommand extends Command
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
         $this->verifyLongUrlArgument($input, $output);
-        $this->verifyDomainArgument($input);
     }
 
     private function verifyLongUrlArgument(InputInterface $input, OutputInterface $output): void
@@ -138,19 +135,13 @@ class CreateShortUrlCommand extends Command
         }
     }
 
-    private function verifyDomainArgument(InputInterface $input): void
-    {
-        $domain = $input->getOption('domain');
-        $input->setOption('domain', $domain === $this->defaultDomain ? null : $domain);
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $io = $this->getIO($input, $output);
         $longUrl = $input->getArgument('longUrl');
         if (empty($longUrl)) {
             $io->error('A URL was not provided!');
-            return ExitCodes::EXIT_FAILURE;
+            return ExitCode::EXIT_FAILURE;
         }
 
         $explodeWithComma = curry(explode(...))(',');
@@ -185,10 +176,10 @@ class CreateShortUrlCommand extends Command
                 sprintf('Processed long URL: <info>%s</info>', $longUrl),
                 sprintf('Generated short URL: <info>%s</info>', $this->stringifier->stringify($result->shortUrl)),
             ]);
-            return ExitCodes::EXIT_SUCCESS;
+            return ExitCode::EXIT_SUCCESS;
         } catch (InvalidUrlException | NonUniqueSlugException $e) {
             $io->error($e->getMessage());
-            return ExitCodes::EXIT_FAILURE;
+            return ExitCode::EXIT_FAILURE;
         }
     }
 

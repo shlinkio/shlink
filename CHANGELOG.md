@@ -4,6 +4,53 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [3.6.0] - 2023-05-24
+### Added
+* [#1148](https://github.com/shlinkio/shlink/issues/1148) Add support to delete short URL visits.
+
+  This can be done via `DELETE /short-urls/{shortCode}/visits` REST endpoint or via `short-url:visits-delete` console command.
+
+  The CLI command includes a warning and requires the user to confirm before proceeding.
+
+* [#1681](https://github.com/shlinkio/shlink/issues/1681) Add support to delete orphan visits.
+
+  This can be done via `DELETE /visits/orphan` REST endpoint or via `visit:orphan-delete` console command.
+
+  The CLI command includes a warning and requires the user to confirm before proceeding.
+
+* [#1753](https://github.com/shlinkio/shlink/issues/1753) Add a new `vendor/bin/shlink-installer init` command that can be used to automate Shlink installations.
+
+  This command can create the initial database, update it, create proxies, clean cache, download initial GeoLite db files, etc
+
+  The official docker image also uses it on its entry point script.
+
+* [#1656](https://github.com/shlinkio/shlink/issues/1656) Add support for openswoole 22
+* [#1784](https://github.com/shlinkio/shlink/issues/1784) Add new docker tag where the container runs as a non-root user.
+* [#953](https://github.com/shlinkio/shlink/issues/953) Add locks that prevent errors on duplicated keys when creating short URLs in parallel that depend on the same new tag or domain.
+
+### Changed
+* [#1755](https://github.com/shlinkio/shlink/issues/1755) Update to roadrunner 2023
+* [#1745](https://github.com/shlinkio/shlink/issues/1745) Roadrunner is now the default docker runtime.
+
+  There are now three different docker images published:
+
+  * Versions without suffix (like `3.6.0`) will contain the default runtime, whichever it is.
+  * Versions with `-roadrunner` suffix (like `3.6.0-roadrunner`) will always use roadrunner as the runtime, even if default one changes in the future.
+  * Versions with `-openswoole` suffix (like `3.6.0-openswoole`) will always use openswoole as the runtime, even if default one changes in the future.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1760](https://github.com/shlinkio/shlink/issues/1760) Fix domain not being set to null when importing short URLs with default domain.
+* [#953](https://github.com/shlinkio/shlink/issues/953) Fix duplicated key errors and short URL creation failing when creating short URLs in parallel that depend on the same new tag or domain.
+* [#1741](https://github.com/shlinkio/shlink/issues/1741) Fix randomly using 100% CPU in task workers when trying to download GeoLite DB files.
+* Fix Shlink trying to connect to RabbitMQ even if configuration set to not connect.
+
+
 ## [3.5.4] - 2023-04-12
 ### Added
 * *Nothing*

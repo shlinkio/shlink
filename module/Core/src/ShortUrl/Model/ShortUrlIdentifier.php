@@ -8,6 +8,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Symfony\Component\Console\Input\InputInterface;
 
+use function sprintf;
+
 final class ShortUrlIdentifier
 {
     private function __construct(public readonly string $shortCode, public readonly ?string $domain = null)
@@ -53,5 +55,14 @@ final class ShortUrlIdentifier
     public static function fromShortCodeAndDomain(string $shortCode, ?string $domain = null): self
     {
         return new self($shortCode, $domain);
+    }
+
+    public function __toString(): string
+    {
+        if ($this->domain === null) {
+            return $this->shortCode;
+        }
+
+        return sprintf('%s/%s', $this->domain, $this->shortCode);
     }
 }

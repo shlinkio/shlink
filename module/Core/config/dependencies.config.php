@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Core\ErrorHandler;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
+use Symfony\Component\Lock;
 
 return [
 
@@ -38,6 +39,7 @@ return [
             ShortUrl\ShortUrlListService::class => ConfigAbstractFactory::class,
             ShortUrl\DeleteShortUrlService::class => ConfigAbstractFactory::class,
             ShortUrl\ShortUrlResolver::class => ConfigAbstractFactory::class,
+            ShortUrl\ShortUrlVisitsDeleter::class => ConfigAbstractFactory::class,
             ShortUrl\Helper\ShortCodeUniquenessHelper::class => ConfigAbstractFactory::class,
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => ConfigAbstractFactory::class,
             ShortUrl\Helper\ShortUrlStringifier::class => ConfigAbstractFactory::class,
@@ -61,11 +63,16 @@ return [
 
             Visit\VisitsTracker::class => ConfigAbstractFactory::class,
             Visit\RequestTracker::class => ConfigAbstractFactory::class,
+            Visit\VisitsDeleter::class => ConfigAbstractFactory::class,
             Visit\Geolocation\VisitLocator::class => ConfigAbstractFactory::class,
             Visit\Geolocation\VisitToLocationHelper::class => ConfigAbstractFactory::class,
             Visit\VisitsStatsHelper::class => ConfigAbstractFactory::class,
             Visit\Transformer\OrphanVisitDataTransformer::class => InvokableFactory::class,
             Visit\Repository\VisitLocationRepository::class => [
+                EntityRepositoryFactory::class,
+                Visit\Entity\Visit::class,
+            ],
+            Visit\Repository\VisitDeleterRepository::class => [
                 EntityRepositoryFactory::class,
                 Visit\Entity\Visit::class,
             ],
@@ -117,6 +124,7 @@ return [
             Options\TrackingOptions::class,
         ],
         Visit\RequestTracker::class => [Visit\VisitsTracker::class, Options\TrackingOptions::class],
+        Visit\VisitsDeleter::class => [Visit\Repository\VisitDeleterRepository::class],
         ShortUrl\ShortUrlService::class => [
             'em',
             ShortUrl\ShortUrlResolver::class,
@@ -137,6 +145,10 @@ return [
             ShortUrl\ShortUrlResolver::class,
         ],
         ShortUrl\ShortUrlResolver::class => ['em', Options\UrlShortenerOptions::class],
+        ShortUrl\ShortUrlVisitsDeleter::class => [
+            Visit\Repository\VisitDeleterRepository::class,
+            ShortUrl\ShortUrlResolver::class,
+        ],
         ShortUrl\Helper\ShortCodeUniquenessHelper::class => ['em', Options\UrlShortenerOptions::class],
         Domain\DomainService::class => ['em', 'config.url_shortener.domain.hostname'],
 
@@ -161,7 +173,11 @@ return [
         ],
         Action\RobotsAction::class => [Crawling\CrawlingHelper::class],
 
-        ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => ['em'],
+        ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => [
+            'em',
+            Options\UrlShortenerOptions::class,
+            Lock\LockFactory::class,
+        ],
         ShortUrl\Helper\ShortUrlStringifier::class => ['config.url_shortener.domain', 'config.router.base_path'],
         ShortUrl\Helper\ShortUrlTitleResolutionHelper::class => [Util\UrlValidator::class],
         ShortUrl\Helper\ShortUrlRedirectionBuilder::class => [Options\TrackingOptions::class],

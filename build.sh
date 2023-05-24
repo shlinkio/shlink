@@ -39,7 +39,7 @@ if [[ $noSwoole ]]; then
   ${composerBin} remove mezzio/mezzio-swoole --with-all-dependencies --update-no-dev $composerFlags
 else
   # If generating a dist for openswoole, uninstall RoadRunner
-  ${composerBin} remove spiral/roadrunner spiral/roadrunner-jobs --with-all-dependencies --update-no-dev $composerFlags
+  ${composerBin} remove spiral/roadrunner spiral/roadrunner-jobs spiral/roadrunner-cli spiral/roadrunner-http --with-all-dependencies --update-no-dev $composerFlags
 fi
 
 # Delete development files

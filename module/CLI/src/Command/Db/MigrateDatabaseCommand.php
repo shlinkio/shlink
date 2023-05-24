@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Db;
 
-use Shlinkio\Shlink\CLI\Util\ExitCodes;
+use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -31,6 +31,6 @@ class MigrateDatabaseCommand extends AbstractDatabaseCommand
         $this->runPhpCommand($output, [self::DOCTRINE_MIGRATIONS_SCRIPT, self::DOCTRINE_MIGRATE_COMMAND]);
         $io->success('Database properly migrated!');
 
-        return ExitCodes::EXIT_SUCCESS;
+        return ExitCode::EXIT_SUCCESS;
     }
 }

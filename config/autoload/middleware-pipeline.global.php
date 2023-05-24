@@ -9,6 +9,7 @@ use Mezzio\ProblemDetails;
 use Mezzio\Router;
 use PhpMiddleware\RequestId\RequestIdMiddleware;
 use RKA\Middleware\IpAddress;
+use Shlinkio\Shlink\Common\Middleware\AccessLogMiddleware;
 use Shlinkio\Shlink\Common\Middleware\ContentLengthMiddleware;
 
 return [
@@ -16,6 +17,7 @@ return [
     'middleware_pipeline' => [
         'error-handler' => [
             'middleware' => [
+                AccessLogMiddleware::class,
                 ContentLengthMiddleware::class,
                 RequestIdMiddleware::class,
                 ErrorHandler::class,

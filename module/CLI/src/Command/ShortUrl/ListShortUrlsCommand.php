@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
-use Shlinkio\Shlink\CLI\Option\EndDateOption;
-use Shlinkio\Shlink\CLI\Option\StartDateOption;
-use Shlinkio\Shlink\CLI\Util\ExitCodes;
+use Shlinkio\Shlink\CLI\Input\EndDateOption;
+use Shlinkio\Shlink\CLI\Input\StartDateOption;
+use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtilsTrait;
@@ -103,6 +103,12 @@ class ListShortUrlsCommand extends Command
                 'Whether to display the tags or not.',
             )
             ->addOption(
+                'show-domain',
+                null,
+                InputOption::VALUE_NONE,
+                'Whether to display the domain or not. Those belonging to default domain will have value "DEFAULT".',
+            )
+            ->addOption(
                 'show-api-key',
                 'k',
                 InputOption::VALUE_NONE,
@@ -167,7 +173,7 @@ class ListShortUrlsCommand extends Command
         $io->newLine();
         $io->success('Short URLs properly listed');
 
-        return ExitCodes::EXIT_SUCCESS;
+        return ExitCode::EXIT_SUCCESS;
     }
 
     private function renderPage(
@@ -216,6 +222,10 @@ class ListShortUrlsCommand extends Command
         ];
         if ($input->getOption('show-tags')) {
             $columnsMap['Tags'] = static fn (array $shortUrl): string => implode(', ', $shortUrl['tags']);
+        }
+        if ($input->getOption('show-domain')) {
+            $columnsMap['Domain'] = static fn (array $_, ShortUrl $shortUrl): string =>
+                $shortUrl->getDomain()?->authority ?? 'DEFAULT';
         }
         if ($input->getOption('show-api-key')) {
             $columnsMap['API Key'] = static fn (array $_, ShortUrl $shortUrl): string =>

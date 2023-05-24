@@ -20,13 +20,13 @@ jobs:
       - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          php-extensions: openswoole-4.12.1
+          php-extensions: openswoole-22.0.0
           extensions-cache-key: publish-swagger-spec-extensions-${{ matrix.php-version }}
       - run: composer swagger:inline
       - run: mkdir ${{ steps.determine_version.outputs.version }}
       - run: mv docs/swagger/swagger-inlined.json ${{ steps.determine_version.outputs.version }}/open-api-spec.json
       - name: Publish spec
-        uses: JamesIves/github-pages-deploy-action@4.1.7
+        uses: JamesIves/github-pages-deploy-action@4
         with:
           token: ${{ secrets.OAS_PUBLISH_TOKEN }}
           repository-name: 'shlinkio/shlink-open-api-specs'

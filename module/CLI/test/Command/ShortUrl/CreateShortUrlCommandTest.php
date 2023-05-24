@@ -11,7 +11,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\CreateShortUrlCommand;
-use Shlinkio\Shlink\CLI\Util\ExitCodes;
+use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
@@ -28,8 +28,6 @@ class CreateShortUrlCommandTest extends TestCase
 {
     use CliTestUtilsTrait;
 
-    private const DEFAULT_DOMAIN = 'default.com';
-
     private CommandTester $commandTester;
     private MockObject & UrlShortenerInterface $urlShortener;
     private MockObject & ShortUrlStringifierInterface $stringifier;
@@ -43,7 +41,7 @@ class CreateShortUrlCommandTest extends TestCase
             $this->urlShortener,
             $this->stringifier,
             new UrlShortenerOptions(
-                domain: ['hostname' => self::DEFAULT_DOMAIN, 'schema' => ''],
+                domain: ['hostname' => 'example.com', 'schema' => ''],
                 defaultShortCodesLength: 5,
             ),
         );
@@ -67,7 +65,7 @@ class CreateShortUrlCommandTest extends TestCase
         ], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
         $output = $this->commandTester->getDisplay();
 
-        self::assertEquals(ExitCodes::EXIT_SUCCESS, $this->commandTester->getStatusCode());
+        self::assertEquals(ExitCode::EXIT_SUCCESS, $this->commandTester->getStatusCode());
         self::assertStringContainsString('stringified_short_url', $output);
         self::assertStringNotContainsString('but the real-time updates cannot', $output);
     }
@@ -84,7 +82,7 @@ class CreateShortUrlCommandTest extends TestCase
         $this->commandTester->execute(['longUrl' => $url]);
         $output = $this->commandTester->getDisplay();
 
-        self::assertEquals(ExitCodes::EXIT_FAILURE, $this->commandTester->getStatusCode());
+        self::assertEquals(ExitCode::EXIT_FAILURE, $this->commandTester->getStatusCode());
         self::assertStringContainsString('Provided URL http://domain.com/invalid is invalid.', $output);
     }
 
@@ -99,7 +97,7 @@ class CreateShortUrlCommandTest extends TestCase
         $this->commandTester->execute(['longUrl' => 'http://domain.com/invalid', '--custom-slug' => 'my-slug']);
         $output = $this->commandTester->getDisplay();
 
-        self::assertEquals(ExitCodes::EXIT_FAILURE, $this->commandTester->getStatusCode());
+        self::assertEquals(ExitCode::EXIT_FAILURE, $this->commandTester->getStatusCode());
         self::assertStringContainsString('Provided slug "my-slug" is already in use', $output);
     }
 
@@ -123,7 +121,7 @@ class CreateShortUrlCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        self::assertEquals(ExitCodes::EXIT_SUCCESS, $this->commandTester->getStatusCode());
+        self::assertEquals(ExitCode::EXIT_SUCCESS, $this->commandTester->getStatusCode());
         self::assertStringContainsString('stringified_short_url', $output);
     }
 
@@ -141,15 +139,14 @@ class CreateShortUrlCommandTest extends TestCase
         $input['longUrl'] = 'http://domain.com/foo/bar';
         $this->commandTester->execute($input);
 
-        self::assertEquals(ExitCodes::EXIT_SUCCESS, $this->commandTester->getStatusCode());
+        self::assertEquals(ExitCode::EXIT_SUCCESS, $this->commandTester->getStatusCode());
     }
 
     public static function provideDomains(): iterable
     {
         yield 'no domain' => [[], null];
-        yield 'non-default domain foo' => [['--domain' => 'foo.com'], 'foo.com'];
-        yield 'non-default domain bar' => [['-d' => 'bar.com'], 'bar.com'];
-        yield 'default domain' => [['--domain' => self::DEFAULT_DOMAIN], null];
+        yield 'domain foo' => [['--domain' => 'foo.com'], 'foo.com'];
+        yield 'domain bar' => [['-d' => 'bar.com'], 'bar.com'];
     }
 
     #[Test, DataProvider('provideFlags')]
