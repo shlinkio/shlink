@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        php-version: ['8.1']
+        php-version: ['8.2']
     steps:
       - uses: actions/checkout@v3
       - name: Determine version

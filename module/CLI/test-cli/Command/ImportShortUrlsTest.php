@@ -19,11 +19,7 @@ use function unlink;
 
 class ImportShortUrlsTest extends CliTestCase
 {
-    /**
-     * @var false|string|null
-     * @todo Use native type once PHP 8.1 support is dropped
-     */
-    private mixed $tempCsvFile = null;
+    private false|string|null $tempCsvFile = null;
 
     protected function setUp(): void
     {
