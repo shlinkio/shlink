@@ -39,7 +39,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
   * Versions with `-openswoole` suffix (like `3.6.0-openswoole`) will always use openswoole as the runtime, even if default one changes in the future.
 
 ### Deprecated
-* *Nothing*
+* Deprecated `ENABLE_PERIODIC_VISIT_LOCATE` env var. Use an external mechanism to automate visit locations.
 
 ### Removed
 * *Nothing*
