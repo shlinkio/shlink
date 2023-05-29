@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* [#1790](https://github.com/shlinkio/shlink/issues/1790) Drop support for PHP 8.1.
+
+### Fixed
+* *Nothing*
+
+
 ## [3.6.0] - 2023-05-24
 ### Added
 * [#1148](https://github.com/shlinkio/shlink/issues/1148) Add support to delete short URL visits.

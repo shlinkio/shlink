@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        php-version: ['8.1', '8.2']
+        php-version: ['8.2']
     steps:
       - uses: actions/checkout@v3
       - name: Start postgres database server
@@ -29,7 +29,7 @@ jobs:
           extensions-cache-key: tests-extensions-${{ matrix.php-version }}-${{ inputs.test-group }}
       - run: composer test:${{ inputs.test-group }}:ci
       - uses: actions/upload-artifact@v3
-        if: ${{ matrix.php-version == '8.1' }}
+        if: ${{ matrix.php-version == '8.2' }}
         with:
           name: coverage-${{ inputs.test-group }}
           path: |
