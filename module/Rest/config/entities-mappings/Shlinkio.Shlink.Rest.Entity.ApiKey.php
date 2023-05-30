@@ -44,7 +44,7 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
 
     $builder->createOneToMany('roles', ApiKeyRole::class)
             ->mappedBy('apiKey')
-            ->setIndexBy('roleName')
+            ->setIndexBy('role')
             ->cascadePersist()
             ->orphanRemoval()
             ->build();

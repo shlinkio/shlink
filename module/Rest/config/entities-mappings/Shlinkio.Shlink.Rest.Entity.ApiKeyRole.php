@@ -25,7 +25,7 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->build();
 
     (new FieldBuilder($builder, [
-        'fieldName' => 'roleName',
+        'fieldName' => 'role',
         'type' => Types::STRING,
         'enumType' => Role::class,
     ]))->columnName('role_name')
