@@ -50,13 +50,14 @@ class VisitsStatsHelperTest extends TestCase
     }
 
     #[Test, DataProvider('provideCounts')]
-    public function returnsExpectedVisitsStats(int $expectedCount): void
+    public function returnsExpectedVisitsStats(int $expectedCount, ?ApiKey $apiKey): void
     {
         $repo = $this->createMock(VisitRepository::class);
         $callCount = 0;
         $repo->expects($this->exactly(2))->method('countNonOrphanVisits')->willReturnCallback(
-            function (VisitsCountFiltering $options) use ($expectedCount, &$callCount) {
+            function (VisitsCountFiltering $options) use ($expectedCount, $apiKey, &$callCount) {
                 Assert::assertEquals($callCount !== 0, $options->excludeBots);
+                Assert::assertEquals($apiKey, $options->apiKey);
                 $callCount++;
 
                 return $expectedCount * 3;
@@ -67,14 +68,17 @@ class VisitsStatsHelperTest extends TestCase
         )->willReturn($expectedCount);
         $this->em->expects($this->once())->method('getRepository')->with(Visit::class)->willReturn($repo);
 
-        $stats = $this->helper->getVisitsStats();
+        $stats = $this->helper->getVisitsStats($apiKey);
 
         self::assertEquals(new VisitsStats($expectedCount * 3, $expectedCount), $stats);
     }
 
     public static function provideCounts(): iterable
     {
-        return map(range(0, 50, 5), fn (int $value) => [$value]);
+        return [
+            ...map(range(0, 50, 5), fn (int $value) => [$value, null]),
+            ...map(range(0, 18, 3), fn (int $value) => [$value, ApiKey::create()]),
+        ];
     }
 
     #[Test, DataProvider('provideAdminApiKeys')]

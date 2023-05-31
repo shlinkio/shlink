@@ -262,6 +262,9 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
+        $noOrphanVisitsApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forOrphanVisitsExcluded()));
+        $this->getEntityManager()->persist($noOrphanVisitsApiKey);
+
         $apiKey1 = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
         $this->getEntityManager()->persist($apiKey1);
         $shortUrl = ShortUrl::create(
@@ -305,6 +308,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertEquals(4, $this->repo->countNonOrphanVisits(VisitsCountFiltering::withApiKey($apiKey1)));
         self::assertEquals(5 + 7, $this->repo->countNonOrphanVisits(VisitsCountFiltering::withApiKey($apiKey2)));
         self::assertEquals(4 + 7, $this->repo->countNonOrphanVisits(VisitsCountFiltering::withApiKey($domainApiKey)));
+        self::assertEquals(0, $this->repo->countOrphanVisits(VisitsCountFiltering::withApiKey($noOrphanVisitsApiKey)));
         self::assertEquals(4, $this->repo->countNonOrphanVisits(new VisitsCountFiltering(DateRange::since(
             Chronos::parse('2016-01-05')->startOfDay(),
         ))));
@@ -326,6 +330,9 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($shortUrl);
         $this->createVisitsForShortUrl($shortUrl, 7);
 
+        $noOrphanVisitsApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forOrphanVisitsExcluded()));
+        $this->getEntityManager()->persist($noOrphanVisitsApiKey);
+
         $botsCount = 3;
         for ($i = 0; $i < 6; $i++) {
             $this->getEntityManager()->persist($this->setDateOnVisit(
@@ -346,6 +353,7 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
+        self::assertCount(0, $this->repo->findOrphanVisits(new VisitsListFiltering(apiKey: $noOrphanVisitsApiKey)));
         self::assertCount(18, $this->repo->findOrphanVisits(new VisitsListFiltering()));
         self::assertCount(15, $this->repo->findOrphanVisits(new VisitsListFiltering(null, true)));
         self::assertCount(5, $this->repo->findOrphanVisits(new VisitsListFiltering(null, false, null, 5)));

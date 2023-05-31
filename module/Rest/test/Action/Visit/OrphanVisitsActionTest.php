@@ -17,6 +17,7 @@ use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\Rest\Action\Visit\OrphanVisitsAction;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function count;
 
@@ -48,7 +49,9 @@ class OrphanVisitsActionTest extends TestCase
         )->willReturn([]);
 
         /** @var JsonResponse $response */
-        $response = $this->action->handle(ServerRequestFactory::fromGlobals());
+        $response = $this->action->handle(
+            ServerRequestFactory::fromGlobals()->withAttribute(ApiKey::class, ApiKey::create()),
+        );
         $payload = $response->getPayload();
 
         self::assertCount($visitsAmount, $payload['visits']['data']);

@@ -10,6 +10,9 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitDeleterRepositoryInterface;
 use Shlinkio\Shlink\Core\Visit\VisitsDeleter;
+use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
+use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class VisitsDeleterTest extends TestCase
 {
@@ -37,5 +40,17 @@ class VisitsDeleterTest extends TestCase
         yield '45' => [45];
         yield '5000' => [5000];
         yield '0' => [0];
+    }
+
+    #[Test]
+    public function returnsNoDeletedVisitsForApiKeyWithNoPermission(): void
+    {
+        $this->repo->expects($this->never())->method('deleteOrphanVisits');
+
+        $result = $this->visitsDeleter->deleteOrphanVisits(
+            ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forOrphanVisitsExcluded())),
+        );
+
+        self::assertEquals(0, $result->affectedItems);
     }
 }
