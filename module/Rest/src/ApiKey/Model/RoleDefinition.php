@@ -26,7 +26,7 @@ final class RoleDefinition
         );
     }
 
-    public static function forOrphanVisitsExcluded(): self
+    public static function forNoOrphanVisits(): self
     {
         return new self(Role::NO_ORPHAN_VISITS, []);
     }

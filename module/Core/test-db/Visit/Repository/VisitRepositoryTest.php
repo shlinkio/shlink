@@ -262,7 +262,7 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        $noOrphanVisitsApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forOrphanVisitsExcluded()));
+        $noOrphanVisitsApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forNoOrphanVisits()));
         $this->getEntityManager()->persist($noOrphanVisitsApiKey);
 
         $apiKey1 = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
@@ -330,7 +330,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($shortUrl);
         $this->createVisitsForShortUrl($shortUrl, 7);
 
-        $noOrphanVisitsApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forOrphanVisitsExcluded()));
+        $noOrphanVisitsApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forNoOrphanVisits()));
         $this->getEntityManager()->persist($noOrphanVisitsApiKey);
 
         $botsCount = 3;

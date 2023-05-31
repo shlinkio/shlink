@@ -32,7 +32,7 @@ class RoleResolver implements RoleResolverInterface
             $roleDefinitions[] = $this->resolveRoleForAuthority($domainAuthority);
         }
         if ($noOrphanVisits) {
-            $roleDefinitions[] = RoleDefinition::forOrphanVisitsExcluded();
+            $roleDefinitions[] = RoleDefinition::forNoOrphanVisits();
         }
 
         return $roleDefinitions;

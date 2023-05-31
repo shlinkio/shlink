@@ -48,7 +48,7 @@ class VisitsDeleterTest extends TestCase
         $this->repo->expects($this->never())->method('deleteOrphanVisits');
 
         $result = $this->visitsDeleter->deleteOrphanVisits(
-            ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forOrphanVisitsExcluded())),
+            ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forNoOrphanVisits())),
         );
 
         self::assertEquals(0, $result->affectedItems);
