@@ -56,10 +56,11 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
                 Role::AUTHORED_SHORT_URLS => $qb->andWhere(
                     $qb->expr()->eq('s.author_api_key_id', $conn->quote($apiKey->getId())),
                 ),
+                default => $qb,
             });
 
-        // For admins and when no API key is present, we'll return tags which are not linked to any short URL
-        $joiningMethod = ApiKey::isAdmin($apiKey) ? 'leftJoin' : 'join';
+        // For non-restricted API keys, we'll return tags which are not linked to any short URL
+        $joiningMethod = ! ApiKey::isShortUrlRestricted($apiKey) ? 'leftJoin' : 'join';
         $tagsSubQb = $conn->createQueryBuilder();
         $tagsSubQb
             ->select('t.id AS tag_id', 't.name AS tag', 'COUNT(DISTINCT s.id) AS short_urls_count')

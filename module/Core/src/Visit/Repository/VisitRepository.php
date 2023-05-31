@@ -17,6 +17,7 @@ use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Spec\CountOfNonOrphanVisits;
 use Shlinkio\Shlink\Core\Visit\Spec\CountOfOrphanVisits;
+use Shlinkio\Shlink\Rest\ApiKey\Role;
 
 use const PHP_INT_MAX;
 
@@ -139,6 +140,10 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
 
     public function findOrphanVisits(VisitsListFiltering $filtering): array
     {
+        if ($filtering->apiKey?->hasRole(Role::NO_ORPHAN_VISITS)) {
+            return [];
+        }
+
         $qb = $this->createAllVisitsQueryBuilder($filtering);
         $qb->andWhere($qb->expr()->isNull('v.shortUrl'));
         return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit, $filtering->offset);
@@ -146,6 +151,10 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
 
     public function countOrphanVisits(VisitsCountFiltering $filtering): int
     {
+        if ($filtering->apiKey?->hasRole(Role::NO_ORPHAN_VISITS)) {
+            return 0;
+        }
+
         return (int) $this->matchSingleScalarResult(new CountOfOrphanVisits($filtering));
     }
 

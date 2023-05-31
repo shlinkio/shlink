@@ -69,4 +69,16 @@ class OrphanVisitsTest extends ApiTestCase
             [self::REGULAR_NOT_FOUND],
         ];
     }
+
+    #[Test]
+    public function noVisitsAreReturnedForRestrictedApiKey(): void
+    {
+        $resp = $this->callApiWithKey(self::METHOD_GET, '/visits/orphan', apiKey: 'no_orphans_api_key');
+        $payload = $this->getJsonResponsePayload($resp);
+        $visits = $payload['visits']['data'] ?? null;
+
+        self::assertIsArray($visits);
+        self::assertEmpty($visits);
+        self::assertEquals(0, $payload['visits']['pagination']['totalItems'] ?? Paginator::ALL_ITEMS);
+    }
 }

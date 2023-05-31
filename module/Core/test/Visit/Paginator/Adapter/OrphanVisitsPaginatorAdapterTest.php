@@ -15,18 +15,22 @@ use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\OrphanVisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepositoryInterface;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class OrphanVisitsPaginatorAdapterTest extends TestCase
 {
     private OrphanVisitsPaginatorAdapter $adapter;
     private MockObject & VisitRepositoryInterface $repo;
     private VisitsParams $params;
+    private ApiKey $apiKey;
 
     protected function setUp(): void
     {
         $this->repo = $this->createMock(VisitRepositoryInterface::class);
         $this->params = VisitsParams::fromRawData([]);
-        $this->adapter = new OrphanVisitsPaginatorAdapter($this->repo, $this->params);
+        $this->apiKey = ApiKey::create();
+
+        $this->adapter = new OrphanVisitsPaginatorAdapter($this->repo, $this->params, $this->apiKey);
     }
 
     #[Test]
@@ -34,7 +38,7 @@ class OrphanVisitsPaginatorAdapterTest extends TestCase
     {
         $expectedCount = 5;
         $this->repo->expects($this->once())->method('countOrphanVisits')->with(
-            new VisitsCountFiltering($this->params->dateRange),
+            new VisitsCountFiltering($this->params->dateRange, apiKey: $this->apiKey),
         )->willReturn($expectedCount);
 
         $result = $this->adapter->getNbResults();
@@ -51,9 +55,13 @@ class OrphanVisitsPaginatorAdapterTest extends TestCase
     {
         $visitor = Visitor::emptyInstance();
         $list = [Visit::forRegularNotFound($visitor), Visit::forInvalidShortUrl($visitor)];
-        $this->repo->expects($this->once())->method('findOrphanVisits')->with(
-            new VisitsListFiltering($this->params->dateRange, $this->params->excludeBots, null, $limit, $offset),
-        )->willReturn($list);
+        $this->repo->expects($this->once())->method('findOrphanVisits')->with(new VisitsListFiltering(
+            $this->params->dateRange,
+            $this->params->excludeBots,
+            $this->apiKey,
+            $limit,
+            $offset,
+        ))->willReturn($list);
 
         $result = $this->adapter->getSlice($offset, $limit);
 

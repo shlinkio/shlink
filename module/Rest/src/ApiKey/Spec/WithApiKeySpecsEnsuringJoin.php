@@ -18,7 +18,7 @@ class WithApiKeySpecsEnsuringJoin extends BaseSpecification
 
     protected function getSpec(): Specification
     {
-        return $this->apiKey === null || ApiKey::isAdmin($this->apiKey) ? Spec::andX() : Spec::andX(
+        return $this->apiKey === null || ! ApiKey::isShortUrlRestricted($this->apiKey) ? Spec::andX() : Spec::andX(
             Spec::join($this->fieldToJoin, 's'),
             $this->apiKey->spec($this->fieldToJoin),
         );

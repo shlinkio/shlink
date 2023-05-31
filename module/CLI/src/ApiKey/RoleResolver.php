@@ -22,6 +22,7 @@ class RoleResolver implements RoleResolverInterface
     {
         $domainAuthority = $input->getOption(Role::DOMAIN_SPECIFIC->paramName());
         $author = $input->getOption(Role::AUTHORED_SHORT_URLS->paramName());
+        $noOrphanVisits = $input->getOption(Role::NO_ORPHAN_VISITS->paramName());
 
         $roleDefinitions = [];
         if ($author) {
@@ -29,6 +30,9 @@ class RoleResolver implements RoleResolverInterface
         }
         if (is_string($domainAuthority)) {
             $roleDefinitions[] = $this->resolveRoleForAuthority($domainAuthority);
+        }
+        if ($noOrphanVisits) {
+            $roleDefinitions[] = RoleDefinition::forNoOrphanVisits();
         }
 
         return $roleDefinitions;

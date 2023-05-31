@@ -122,6 +122,21 @@ class ApiKey extends AbstractEntity
         return $apiKey === null || $apiKey->roles->isEmpty();
     }
 
+    /**
+     * Tells if provided API key has any of the roles restricting at the short URL level
+     */
+    public static function isShortUrlRestricted(?ApiKey $apiKey): bool
+    {
+        if ($apiKey === null) {
+            return false;
+        }
+
+        return (
+            $apiKey->roles->containsKey(Role::AUTHORED_SHORT_URLS->value)
+            || $apiKey->roles->containsKey(Role::DOMAIN_SPECIFIC->value)
+        );
+    }
+
     public function hasRole(Role $role): bool
     {
         return $this->roles->containsKey($role->value);
