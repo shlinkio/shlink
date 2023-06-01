@@ -15,6 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Process\PhpExecutableFinder;
+use Throwable;
 
 use function Functional\contains;
 use function Functional\map;
@@ -53,9 +54,7 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
     {
         $io = new SymfonyStyle($input, $output);
 
-        $this->checkDbExists();
-
-        if ($this->schemaExists()) {
+        if ($this->databaseTablesExist()) {
             $io->success('Database already exists. Run "db:migrate" command to make sure it is up to date.');
             return ExitCode::EXIT_SUCCESS;
         }
@@ -68,35 +67,35 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
         return ExitCode::EXIT_SUCCESS;
     }
 
-    private function checkDbExists(): void
+    private function databaseTablesExist(): bool
     {
-        if ($this->regularConn->getDriver()->getDatabasePlatform() instanceof SqlitePlatform) {
-            return;
-        }
-
-        // In order to create the new database, we have to use a connection where the dbname was not set.
-        // Otherwise, it will fail to connect and will not be able to create the new database
-        $schemaManager = $this->noDbNameConn->createSchemaManager();
-        $databases = $schemaManager->listDatabases();
-        // We cannot use getDatabase() to get the database name here, because then the driver will try to connect, and
-        // it does not exist yet. We need to read from the raw params instead.
-        $shlinkDatabase = $this->regularConn->getParams()['dbname'] ?? null;
-
-        if ($shlinkDatabase !== null && ! contains($databases, $shlinkDatabase)) {
-            $schemaManager->createDatabase($shlinkDatabase);
-        }
-    }
-
-    private function schemaExists(): bool
-    {
-        $schemaManager = $this->regularConn->createSchemaManager();
-        $existingTables = $schemaManager->listTableNames();
-
+        $existingTables = $this->ensureDatabaseExistsAndGetTables();
         $allMetadata = $this->em->getMetadataFactory()->getAllMetadata();
         $shlinkTables = map($allMetadata, static fn (ClassMetadata $metadata) => $metadata->getTableName());
 
         // If at least one of the shlink tables exist, we will consider the database exists somehow.
         // Any other inconsistency will be taken care of by the migrations.
         return some($shlinkTables, static fn (string $shlinkTable) => contains($existingTables, $shlinkTable));
+    }
+
+    private function ensureDatabaseExistsAndGetTables(): array
+    {
+        if ($this->regularConn->getDriver()->getDatabasePlatform() instanceof SqlitePlatform) {
+            return [];
+        }
+
+        try {
+            // Trying to list tables requires opening a connection to configured database.
+            // If it fails, it means it does not exist yet.
+            return $this->regularConn->createSchemaManager()->listTableNames();
+        } catch (Throwable) {
+            // We cannot use getDatabase() to get the database name here, because then the driver will try to connect.
+            // Instead, we read from the raw params.
+            $shlinkDatabase = $this->regularConn->getParams()['dbname'] ?? '';
+            // Create the database using a connection where the dbname was not set.
+            $this->noDbNameConn->createSchemaManager()->createDatabase($shlinkDatabase);
+
+            return [];
+        }
     }
 }

@@ -12,6 +12,7 @@ use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\Mapping\ClassMetadataFactory;
+use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -69,17 +70,14 @@ class CreateDatabaseCommandTest extends TestCase
     #[Test]
     public function successMessageIsPrintedIfDatabaseAlreadyExists(): void
     {
-        $shlinkDatabase = 'shlink_database';
-        $this->regularConn->expects($this->once())->method('getParams')->willReturn(['dbname' => $shlinkDatabase]);
+        $this->regularConn->expects($this->never())->method('getParams');
+        $this->driver->method('getDatabasePlatform')->willReturn($this->createMock(AbstractPlatform::class));
+
         $metadataMock = $this->createMock(ClassMetadata::class);
         $metadataMock->expects($this->once())->method('getTableName')->willReturn('foo_table');
         $this->metadataFactory->method('getAllMetadata')->willReturn([$metadataMock]);
-        $this->schemaManager->expects($this->once())->method('listDatabases')->willReturn(
-            ['foo', $shlinkDatabase, 'bar'],
-        );
         $this->schemaManager->expects($this->never())->method('createDatabase');
         $this->schemaManager->expects($this->once())->method('listTableNames')->willReturn(['foo_table', 'bar_table']);
-        $this->driver->method('getDatabasePlatform')->willReturn($this->createMock(AbstractPlatform::class));
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
@@ -90,15 +88,13 @@ class CreateDatabaseCommandTest extends TestCase
     #[Test]
     public function databaseIsCreatedIfItDoesNotExist(): void
     {
+        $this->driver->method('getDatabasePlatform')->willReturn($this->createMock(AbstractPlatform::class));
+
         $shlinkDatabase = 'shlink_database';
         $this->regularConn->expects($this->once())->method('getParams')->willReturn(['dbname' => $shlinkDatabase]);
         $this->metadataFactory->method('getAllMetadata')->willReturn([]);
-        $this->schemaManager->expects($this->once())->method('listDatabases')->willReturn(['foo', 'bar']);
         $this->schemaManager->expects($this->once())->method('createDatabase')->with($shlinkDatabase);
-        $this->schemaManager->expects($this->once())->method('listTableNames')->willReturn(
-            ['foo_table', 'bar_table'],
-        );
-        $this->driver->method('getDatabasePlatform')->willReturn($this->createMock(AbstractPlatform::class));
+        $this->schemaManager->expects($this->once())->method('listTableNames')->willThrowException(new Exception(''));
 
         $this->commandTester->execute([]);
     }
@@ -106,14 +102,12 @@ class CreateDatabaseCommandTest extends TestCase
     #[Test, DataProvider('provideEmptyDatabase')]
     public function tablesAreCreatedIfDatabaseIsEmpty(array $tables): void
     {
-        $shlinkDatabase = 'shlink_database';
-        $this->regularConn->expects($this->once())->method('getParams')->willReturn(['dbname' => $shlinkDatabase]);
+        $this->regularConn->expects($this->never())->method('getParams');
+        $this->driver->method('getDatabasePlatform')->willReturn($this->createMock(AbstractPlatform::class));
+
         $metadata = $this->createMock(ClassMetadata::class);
         $metadata->method('getTableName')->willReturn('shlink_table');
         $this->metadataFactory->method('getAllMetadata')->willReturn([$metadata]);
-        $this->schemaManager->expects($this->once())->method('listDatabases')->willReturn(
-            ['foo', $shlinkDatabase, 'bar'],
-        );
         $this->schemaManager->expects($this->never())->method('createDatabase');
         $this->schemaManager->expects($this->once())->method('listTableNames')->willReturn($tables);
         $this->processHelper->expects($this->once())->method('run')->with($this->isInstanceOf(OutputInterface::class), [
@@ -122,7 +116,6 @@ class CreateDatabaseCommandTest extends TestCase
             CreateDatabaseCommand::DOCTRINE_CREATE_SCHEMA_COMMAND,
             '--no-interaction',
         ]);
-        $this->driver->method('getDatabasePlatform')->willReturn($this->createMock(AbstractPlatform::class));
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
@@ -141,12 +134,12 @@ class CreateDatabaseCommandTest extends TestCase
     public function databaseCheckIsSkippedForSqlite(): void
     {
         $this->driver->method('getDatabasePlatform')->willReturn($this->createMock(SqlitePlatform::class));
-
         $this->regularConn->expects($this->never())->method('getParams');
-        $this->metadataFactory->expects($this->once())->method('getAllMetadata')->willReturn([]);
         $this->schemaManager->expects($this->never())->method('listDatabases');
         $this->schemaManager->expects($this->never())->method('createDatabase');
-        $this->schemaManager->expects($this->once())->method('listTableNames')->willReturn(['foo_table', 'bar_table']);
+        $this->schemaManager->expects($this->never())->method('listTableNames');
+
+        $this->metadataFactory->expects($this->once())->method('getAllMetadata')->willReturn([]);
 
         $this->commandTester->execute([]);
     }
