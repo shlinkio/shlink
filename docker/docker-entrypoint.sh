@@ -29,6 +29,7 @@ if [ "$SHLINK_RUNTIME" == 'rr' ]; then
 fi
 
 if [ "$SHLINK_RUNTIME" == 'openswoole' ]; then
+  # Openswoole is deprecated. Remove in Shlink 4.0.0
   # When restarting the container, openswoole might think it is already in execution
   # This forces the app to be started every second until the exit code is 0
   until php vendor/bin/laminas mezzio:swoole:start; do sleep 1 ; done

@@ -52,6 +52,7 @@ return (static function (): array {
             ],
         ],
 
+        // Deprecated. Remove in Shlink 4.0.0
         'mezzio-swoole' => [
             'swoole-http-server' => [
                 'logger' => [
