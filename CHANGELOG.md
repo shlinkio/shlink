@@ -16,7 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Deprecated
-* *Nothing*
+* [#1783](https://github.com/shlinkio/shlink/issues/1783) Deprecated support for openswoole. RoadRunner is the best replacement, with the same capabilities, but much easier and convenient to install and manage.
 
 ### Removed
 * [#1790](https://github.com/shlinkio/shlink/issues/1790) Drop support for PHP 8.1.
