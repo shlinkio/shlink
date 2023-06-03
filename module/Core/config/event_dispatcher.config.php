@@ -12,7 +12,9 @@ use Shlinkio\Shlink\Common\Mercure\MercureHubPublishingHelper;
 use Shlinkio\Shlink\Common\RabbitMq\RabbitMqPublishingHelper;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitLocator;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitToLocationHelper;
+use Shlinkio\Shlink\EventDispatcher\Listener\EnabledListenerCheckerInterface;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
+use Shlinkio\Shlink\IpGeolocation\GeoLite2\GeoLite2Options;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 
 return [
@@ -54,6 +56,12 @@ return [
             EventDispatcher\RedisPubSub\NotifyVisitToRedis::class => ConfigAbstractFactory::class,
             EventDispatcher\RedisPubSub\NotifyNewShortUrlToRedis::class => ConfigAbstractFactory::class,
             EventDispatcher\UpdateGeoLiteDb::class => ConfigAbstractFactory::class,
+
+            EventDispatcher\Helper\EnabledListenerChecker::class => ConfigAbstractFactory::class,
+        ],
+
+        'aliases' => [
+            EnabledListenerCheckerInterface::class => EventDispatcher\Helper\EnabledListenerChecker::class,
         ],
 
         'delegators' => [
@@ -146,6 +154,14 @@ return [
             GeolocationDbUpdater::class,
             'Logger_Shlink',
             EventDispatcherInterface::class,
+        ],
+
+        EventDispatcher\Helper\EnabledListenerChecker::class => [
+            Options\RabbitMqOptions::class,
+            'config.redis.pub_sub_enabled',
+            'config.mercure.public_hub_url',
+            Options\WebhookOptions::class,
+            GeoLite2Options::class,
         ],
     ],
 

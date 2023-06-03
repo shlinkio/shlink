@@ -13,7 +13,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
   When trying to delete orphan visits the result will also be `0` and no visits will actually get deleted.
 
 ### Changed
-* *Nothing*
+* [#1799](https://github.com/shlinkio/shlink/issues/1799) RoadRunner/openswoole jobs are not run anymore for tasks that are actually disabled.
+
+  For example, if you did not enable RabbitMQ real-time updates, instead of triggering a job that ends immediately, the job will not even be enqueued.
 
 ### Deprecated
 * [#1783](https://github.com/shlinkio/shlink/issues/1783) Deprecated support for openswoole. RoadRunner is the best replacement, with the same capabilities, but much easier and convenient to install and manage.
