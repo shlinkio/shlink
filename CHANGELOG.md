@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#1413](https://github.com/shlinkio/shlink/issues/1413) Fix error when creating initial DB in Postgres in a cluster where a default `postgres` db does not exist or the credentials do not grant permissions to connect.
+* [#1803](https://github.com/shlinkio/shlink/issues/1803) Fix default RoadRunner port when not using docker image.
 
 
 ## [3.6.0] - 2023-05-24
