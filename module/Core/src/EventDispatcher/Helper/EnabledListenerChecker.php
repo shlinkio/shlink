@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\EventDispatcher\Helper;
 
+use Shlinkio\Shlink\Common\Mercure\MercureOptions;
 use Shlinkio\Shlink\Core\EventDispatcher;
 use Shlinkio\Shlink\Core\Options\RabbitMqOptions;
 use Shlinkio\Shlink\Core\Options\WebhookOptions;
@@ -15,7 +16,7 @@ class EnabledListenerChecker implements EnabledListenerCheckerInterface
     public function __construct(
         private readonly RabbitMqOptions $rabbitMqOptions,
         private readonly bool $redisPubSubEnabled,
-        private readonly ?string $publicMercureHubUrl,
+        private readonly MercureOptions $mercureOptions,
         private readonly WebhookOptions $webhookOptions,
         private readonly GeoLite2Options $geoLiteOptions,
     ) {
@@ -33,7 +34,7 @@ class EnabledListenerChecker implements EnabledListenerCheckerInterface
             EventDispatcher\RedisPubSub\NotifyVisitToRedis::class,
             EventDispatcher\RedisPubSub\NotifyNewShortUrlToRedis::class => $this->redisPubSubEnabled,
             EventDispatcher\Mercure\NotifyVisitToMercure::class,
-            EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class => $this->publicMercureHubUrl !== null,
+            EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class => $this->mercureOptions->isEnabled(),
             EventDispatcher\NotifyVisitToWebHooks::class => $this->webhookOptions->hasWebhooks(),
             EventDispatcher\UpdateGeoLiteDb::class => $this->geoLiteOptions->hasLicenseKey(),
             default => false, // Any unknown async listener should not be enabled by default
