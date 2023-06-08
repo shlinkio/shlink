@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Core\EventDispatcher\Helper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Shlinkio\Shlink\Common\Mercure\MercureOptions;
 use Shlinkio\Shlink\Core\EventDispatcher\Helper\EnabledListenerChecker;
 use Shlinkio\Shlink\Core\EventDispatcher\Mercure\NotifyNewShortUrlToMercure;
 use Shlinkio\Shlink\Core\EventDispatcher\Mercure\NotifyVisitToMercure;
@@ -152,7 +153,7 @@ class EnabledListenerCheckerTest extends TestCase
         return new EnabledListenerChecker(
             new RabbitMqOptions(enabled: $rabbitMqEnabled),
             $redisPubSubEnabled,
-            $mercureEnabled ? 'the-url' : null,
+            new MercureOptions(publicHubUrl: $mercureEnabled ? 'the-url' : null),
             new WebhookOptions(['webhooks' => $webhooksEnabled ? ['foo', 'bar'] : []]),
             new GeoLite2Options(licenseKey: $geoLiteEnabled ? 'the-key' : null),
         );

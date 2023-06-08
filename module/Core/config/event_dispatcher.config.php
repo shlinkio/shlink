@@ -9,6 +9,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdater;
 use Shlinkio\Shlink\Common\Cache\RedisPublishingHelper;
 use Shlinkio\Shlink\Common\Mercure\MercureHubPublishingHelper;
+use Shlinkio\Shlink\Common\Mercure\MercureOptions;
 use Shlinkio\Shlink\Common\RabbitMq\RabbitMqPublishingHelper;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitLocator;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitToLocationHelper;
@@ -159,7 +160,7 @@ return [
         EventDispatcher\Helper\EnabledListenerChecker::class => [
             Options\RabbitMqOptions::class,
             'config.redis.pub_sub_enabled',
-            'config.mercure.public_hub_url',
+            MercureOptions::class,
             Options\WebhookOptions::class,
             GeoLite2Options::class,
         ],
