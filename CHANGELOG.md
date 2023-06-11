@@ -27,7 +27,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 
-## [3.6.1] - 2023-05-04
+## [3.6.2] - 2023-06-08
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1808](https://github.com/shlinkio/shlink/issues/1808) Fix `rr` binary downloading during Shlink update.
+
+
+## [3.6.1] - 2023-06-04
 ### Added
 * *Nothing*
 
