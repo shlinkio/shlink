@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\Db;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Shlinkio\Shlink\CLI\Util\ExitCode;
@@ -80,10 +79,6 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
 
     private function ensureDatabaseExistsAndGetTables(): array
     {
-        if ($this->regularConn->getDriver()->getDatabasePlatform() instanceof SqlitePlatform) {
-            return [];
-        }
-
         try {
             // Trying to list tables requires opening a connection to configured database.
             // If it fails, it means it does not exist yet.
