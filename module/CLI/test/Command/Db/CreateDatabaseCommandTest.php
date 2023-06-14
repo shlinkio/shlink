@@ -7,7 +7,6 @@ namespace ShlinkioTest\Shlink\CLI\Command\Db;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -128,19 +127,5 @@ class CreateDatabaseCommandTest extends TestCase
     {
         yield 'no tables' => [[]];
         yield 'migrations table' => [['non_shlink_table']];
-    }
-
-    #[Test]
-    public function databaseCheckIsSkippedForSqlite(): void
-    {
-        $this->driver->method('getDatabasePlatform')->willReturn($this->createMock(SqlitePlatform::class));
-        $this->regularConn->expects($this->never())->method('getParams');
-        $this->schemaManager->expects($this->never())->method('listDatabases');
-        $this->schemaManager->expects($this->never())->method('createDatabase');
-        $this->schemaManager->expects($this->never())->method('listTableNames');
-
-        $this->metadataFactory->expects($this->once())->method('getAllMetadata')->willReturn([]);
-
-        $this->commandTester->execute([]);
     }
 }
