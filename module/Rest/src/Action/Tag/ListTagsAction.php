@@ -40,7 +40,7 @@ class ListTagsAction extends AbstractRestAction
 
         // This part is deprecated. To get tags with stats, the /tags/stats endpoint should be used instead
         $tagsInfo = $this->tagService->tagsInfo($params, $apiKey);
-        $rawTags = $this->serializePaginator($tagsInfo, null, 'stats');
+        $rawTags = $this->serializePaginator($tagsInfo, dataProp: 'stats');
         $rawTags['data'] = map($tagsInfo, static fn (TagInfo $info) => $info->tag);
 
         return new JsonResponse(['tags' => $rawTags]);
