@@ -24,7 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#1790](https://github.com/shlinkio/shlink/issues/1790) Drop support for PHP 8.1.
 
 ### Fixed
-* *Nothing*
+* [#1819](https://github.com/shlinkio/shlink/issues/1819) Fix incorrect timeout when running DB commands during Shlink start-up.
 
 
 ## [3.6.3] - 2023-06-14
