@@ -72,10 +72,10 @@
         "phpstan/phpstan-phpunit": "^1.3",
         "phpstan/phpstan-symfony": "^1.2",
         "phpunit/php-code-coverage": "^10.0",
-        "phpunit/phpunit": "~10.1.0",
+        "phpunit/phpunit": "^10.2.0",
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~2.3.0",
-        "shlinkio/shlink-test-utils": "^3.7",
+        "shlinkio/shlink-test-utils": "^3.7.1",
         "symfony/var-dumper": "^6.2",
         "veewee/composer-run-parallel": "^1.2"
     },
@@ -137,8 +137,8 @@
         "infect:ci:base": "infection --threads=max --only-covered --skip-initial-tests",
         "infect:ci:unit": "@infect:ci:base --coverage=build/coverage-unit --min-msi=80",
         "infect:ci:db": "@infect:ci:base --coverage=build/coverage-db --min-msi=95 --configuration=infection-db.json5",
-        "infect:ci:api": "@infect:ci:base --coverage=build/coverage-api --min-msi=70 --configuration=infection-api.json5",
-        "infect:ci:cli": "@infect:ci:base --coverage=build/coverage-cli --min-msi=85 --configuration=infection-cli.json5",
+        "infect:ci:api": "@infect:ci:base --coverage=build/coverage-api --min-msi=95 --configuration=infection-api.json5",
+        "infect:ci:cli": "@infect:ci:base --coverage=build/coverage-cli --min-msi=90 --configuration=infection-cli.json5",
         "infect:ci": "@parallel infect:ci:unit infect:ci:db infect:ci:api infect:ci:cli",
         "infect:test": [
             "@parallel test:unit:ci test:db:sqlite:ci test:api:ci",
