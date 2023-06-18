@@ -12,7 +12,7 @@ use Shlinkio\Shlink\CLI\Command\ShortUrl\DeleteShortUrlCommand;
 use Shlinkio\Shlink\Core\Exception;
 use Shlinkio\Shlink\Core\ShortUrl\DeleteShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
-use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
+use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Tester\CommandTester;
 
 use function sprintf;
@@ -21,15 +21,13 @@ use const PHP_EOL;
 
 class DeleteShortUrlCommandTest extends TestCase
 {
-    use CliTestUtilsTrait;
-
     private CommandTester $commandTester;
     private MockObject & DeleteShortUrlServiceInterface $service;
 
     protected function setUp(): void
     {
         $this->service = $this->createMock(DeleteShortUrlServiceInterface::class);
-        $this->commandTester = $this->testerForCommand(new DeleteShortUrlCommand($this->service));
+        $this->commandTester = CliTestUtils::testerForCommand(new DeleteShortUrlCommand($this->service));
     }
 
     #[Test]

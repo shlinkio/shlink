@@ -15,20 +15,18 @@ use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
-use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
+use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class GetOrphanVisitsCommandTest extends TestCase
 {
-    use CliTestUtilsTrait;
-
     private CommandTester $commandTester;
     private MockObject & VisitsStatsHelperInterface $visitsHelper;
 
     protected function setUp(): void
     {
         $this->visitsHelper = $this->createMock(VisitsStatsHelperInterface::class);
-        $this->commandTester = $this->testerForCommand(new GetOrphanVisitsCommand($this->visitsHelper));
+        $this->commandTester = CliTestUtils::testerForCommand(new GetOrphanVisitsCommand($this->visitsHelper));
     }
 
     #[Test]

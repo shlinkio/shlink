@@ -21,15 +21,12 @@ use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlService;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
-use ShlinkioTest\Shlink\Core\Util\ApiKeyHelpersTrait;
 
 use function array_fill_keys;
 use function Shlinkio\Shlink\Core\enumValues;
 
 class ShortUrlServiceTest extends TestCase
 {
-    use ApiKeyHelpersTrait;
-
     private ShortUrlService $service;
     private MockObject & ShortUrlResolverInterface $urlResolver;
     private MockObject & ShortUrlTitleResolutionHelperInterface $titleResolutionHelper;

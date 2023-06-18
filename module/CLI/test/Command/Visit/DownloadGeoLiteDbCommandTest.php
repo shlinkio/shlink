@@ -13,22 +13,20 @@ use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdaterInterface;
 use Shlinkio\Shlink\CLI\GeoLite\GeolocationResult;
 use Shlinkio\Shlink\CLI\Util\ExitCode;
-use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
+use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Tester\CommandTester;
 
 use function sprintf;
 
 class DownloadGeoLiteDbCommandTest extends TestCase
 {
-    use CliTestUtilsTrait;
-
     private CommandTester $commandTester;
     private MockObject & GeolocationDbUpdaterInterface $dbUpdater;
 
     protected function setUp(): void
     {
         $this->dbUpdater = $this->createMock(GeolocationDbUpdaterInterface::class);
-        $this->commandTester = $this->testerForCommand(new DownloadGeoLiteDbCommand($this->dbUpdater));
+        $this->commandTester = CliTestUtils::testerForCommand(new DownloadGeoLiteDbCommand($this->dbUpdater));
     }
 
     #[Test, DataProvider('provideFailureParams')]

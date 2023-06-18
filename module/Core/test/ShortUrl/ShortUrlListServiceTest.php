@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\ShortUrl;
 
-use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -14,14 +14,12 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlListRepositoryInterface;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlListService;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
-use ShlinkioTest\Shlink\Core\Util\ApiKeyHelpersTrait;
+use ShlinkioTest\Shlink\Core\Util\ApiKeyDataProviders;
 
 use function count;
 
 class ShortUrlListServiceTest extends TestCase
 {
-    use ApiKeyHelpersTrait;
-
     private ShortUrlListService $service;
     private MockObject & ShortUrlListRepositoryInterface $repo;
 
@@ -31,7 +29,7 @@ class ShortUrlListServiceTest extends TestCase
         $this->service = new ShortUrlListService($this->repo, new UrlShortenerOptions());
     }
 
-    #[Test, DataProvider('provideAdminApiKeys')]
+    #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
     public function listedUrlsAreReturnedFromEntityManager(?ApiKey $apiKey): void
     {
         $list = [

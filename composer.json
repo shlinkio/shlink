@@ -148,6 +148,10 @@
             "@test:unit:ci",
             "@infect:ci:unit"
         ],
+        "infect:test:db": [
+            "@test:db:sqlite:ci",
+            "@infect:ci:db"
+        ],
         "infect:test:api": [
             "@test:api:ci",
             "@infect:ci:api"
