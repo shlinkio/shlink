@@ -7,18 +7,18 @@ namespace ShlinkioApiTest\Shlink\Rest\Action;
 use GuzzleHttp\Psr7\Query;
 use Laminas\Diactoros\Uri;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
-use ShlinkioApiTest\Shlink\Rest\Utils\NotFoundUrlHelpersTrait;
+use ShlinkioApiTest\Shlink\Rest\Utils\ApiTestDataProviders;
+use ShlinkioApiTest\Shlink\Rest\Utils\UrlBuilder;
 
 use function sprintf;
 
 class ShortUrlVisitsTest extends ApiTestCase
 {
-    use NotFoundUrlHelpersTrait;
-
-    #[Test, DataProvider('provideInvalidUrls')]
+    #[Test, DataProviderExternal(ApiTestDataProviders::class, 'invalidUrlsProvider')]
     public function tryingToGetVisitsForInvalidUrlReturnsNotFoundError(
         string $shortCode,
         ?string $domain,
@@ -27,9 +27,8 @@ class ShortUrlVisitsTest extends ApiTestCase
     ): void {
         $resp = $this->callApiWithKey(
             self::METHOD_GET,
-            $this->buildShortUrlPath($shortCode, $domain, '/visits'),
-            [],
-            $apiKey,
+            UrlBuilder::buildShortUrlPath($shortCode, $domain, '/visits'),
+            apiKey: $apiKey,
         );
         $payload = $this->getJsonResponsePayload($resp);
 
