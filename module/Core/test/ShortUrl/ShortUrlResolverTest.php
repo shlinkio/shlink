@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -22,15 +23,13 @@ use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolver;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
-use ShlinkioTest\Shlink\Core\Util\ApiKeyHelpersTrait;
+use ShlinkioTest\Shlink\Core\Util\ApiKeyDataProviders;
 
 use function Functional\map;
 use function range;
 
 class ShortUrlResolverTest extends TestCase
 {
-    use ApiKeyHelpersTrait;
-
     private ShortUrlResolver $urlResolver;
     private MockObject & EntityManagerInterface $em;
     private MockObject & ShortUrlRepositoryInterface $repo;
@@ -42,7 +41,7 @@ class ShortUrlResolverTest extends TestCase
         $this->urlResolver = new ShortUrlResolver($this->em, new UrlShortenerOptions());
     }
 
-    #[Test, DataProvider('provideAdminApiKeys')]
+    #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
     public function shortCodeIsProperlyParsed(?ApiKey $apiKey): void
     {
         $shortUrl = ShortUrl::withLongUrl('https://expected_url');
@@ -59,7 +58,7 @@ class ShortUrlResolverTest extends TestCase
         self::assertSame($shortUrl, $result);
     }
 
-    #[Test, DataProvider('provideAdminApiKeys')]
+    #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
     public function exceptionIsThrownIfShortcodeIsNotFound(?ApiKey $apiKey): void
     {
         $shortCode = 'abc123';
