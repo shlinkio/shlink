@@ -13,20 +13,18 @@ use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\BulkDeleteResult;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlVisitsDeleterInterface;
-use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
+use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class DeleteShortUrlVisitsCommandTest extends TestCase
 {
-    use CliTestUtilsTrait;
-
     private CommandTester $commandTester;
     private MockObject & ShortUrlVisitsDeleterInterface $deleter;
 
     protected function setUp(): void
     {
         $this->deleter = $this->createMock(ShortUrlVisitsDeleterInterface::class);
-        $this->commandTester = $this->testerForCommand(new DeleteShortUrlVisitsCommand($this->deleter));
+        $this->commandTester = CliTestUtils::testerForCommand(new DeleteShortUrlVisitsCommand($this->deleter));
     }
 
     #[Test, DataProvider('provideCancellingInputs')]

@@ -17,13 +17,11 @@ use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
-use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
+use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class GetNonOrphanVisitsCommandTest extends TestCase
 {
-    use CliTestUtilsTrait;
-
     private CommandTester $commandTester;
     private MockObject & VisitsStatsHelperInterface $visitsHelper;
     private MockObject & ShortUrlStringifierInterface $stringifier;
@@ -33,7 +31,7 @@ class GetNonOrphanVisitsCommandTest extends TestCase
         $this->visitsHelper = $this->createMock(VisitsStatsHelperInterface::class);
         $this->stringifier = $this->createMock(ShortUrlStringifierInterface::class);
 
-        $this->commandTester = $this->testerForCommand(
+        $this->commandTester = CliTestUtils::testerForCommand(
             new GetNonOrphanVisitsCommand($this->visitsHelper, $this->stringifier),
         );
     }

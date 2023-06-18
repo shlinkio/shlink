@@ -11,20 +11,18 @@ use Shlinkio\Shlink\CLI\Command\Visit\DeleteOrphanVisitsCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Model\BulkDeleteResult;
 use Shlinkio\Shlink\Core\Visit\VisitsDeleterInterface;
-use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
+use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class DeleteOrphanVisitsCommandTest extends TestCase
 {
-    use CliTestUtilsTrait;
-
     private CommandTester $commandTester;
     private MockObject & VisitsDeleterInterface $deleter;
 
     protected function setUp(): void
     {
         $this->deleter = $this->createMock(VisitsDeleterInterface::class);
-        $this->commandTester = $this->testerForCommand(new DeleteOrphanVisitsCommand($this->deleter));
+        $this->commandTester = CliTestUtils::testerForCommand(new DeleteOrphanVisitsCommand($this->deleter));
     }
 
     #[Test]

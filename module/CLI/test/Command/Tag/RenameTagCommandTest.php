@@ -12,20 +12,18 @@ use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
-use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
+use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class RenameTagCommandTest extends TestCase
 {
-    use CliTestUtilsTrait;
-
     private CommandTester $commandTester;
     private MockObject & TagServiceInterface $tagService;
 
     protected function setUp(): void
     {
         $this->tagService = $this->createMock(TagServiceInterface::class);
-        $this->commandTester = $this->testerForCommand(new RenameTagCommand($this->tagService));
+        $this->commandTester = CliTestUtils::testerForCommand(new RenameTagCommand($this->tagService));
     }
 
     #[Test]

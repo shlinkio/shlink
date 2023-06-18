@@ -9,12 +9,10 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Factory\ApplicationFactory;
 use Shlinkio\Shlink\Core\Options\AppOptions;
-use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
+use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 
 class ApplicationFactoryTest extends TestCase
 {
-    use CliTestUtilsTrait;
-
     private ApplicationFactory $factory;
 
     protected function setUp(): void
@@ -32,8 +30,8 @@ class ApplicationFactoryTest extends TestCase
                 'baz' => 'baz',
             ],
         ]);
-        $sm->setService('foo', $this->createCommandMock('foo'));
-        $sm->setService('bar', $this->createCommandMock('bar'));
+        $sm->setService('foo', CliTestUtils::createCommandMock('foo'));
+        $sm->setService('bar', CliTestUtils::createCommandMock('bar'));
 
         $instance = ($this->factory)($sm);
 

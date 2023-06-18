@@ -14,22 +14,20 @@ use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
-use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
+use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Tester\CommandTester;
 
 use function substr_count;
 
 class DomainRedirectsCommandTest extends TestCase
 {
-    use CliTestUtilsTrait;
-
     private CommandTester $commandTester;
     private MockObject & DomainServiceInterface $domainService;
 
     protected function setUp(): void
     {
         $this->domainService = $this->createMock(DomainServiceInterface::class);
-        $this->commandTester = $this->testerForCommand(new DomainRedirectsCommand($this->domainService));
+        $this->commandTester = CliTestUtils::testerForCommand(new DomainRedirectsCommand($this->domainService));
     }
 
     #[Test, DataProvider('provideDomains')]
