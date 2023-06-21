@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Do you find shlink is missing some important feature that would make it more useful?
+about: Do you find Shlink is missing some important feature that would make it more useful?
 labels: feature
 ---
 

@@ -48,7 +48,7 @@ fi
 echo 'Deleting dev files...'
 rm composer.*
 
-# Update shlink version in config
+# Update Shlink version in config
 sed -i "s/%SHLINK_VERSION%/${version}/g" config/autoload/app_options.global.php
 
 # Compressing file

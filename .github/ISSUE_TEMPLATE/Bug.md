@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Something on shlink is broken or not working as documented?
+about: Something on Shlink is broken or not working as documented?
 labels: bug
 ---
 
