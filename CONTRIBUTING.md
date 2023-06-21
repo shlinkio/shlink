@@ -73,7 +73,7 @@ shlink
 
 The purposes of every folder are:
 
-* `bin`: It contains the CLI tools. The `cli` one is the main entry point to run shlink from the command line.
+* `bin`: It contains the CLI tools. The `cli` one is the main entry point to run Shlink from the command line.
 * `config`: Contains application-wide configurations, which are later merged with the ones provided by every module.
 * `data`: Common runtime-generated git-ignored assets, like logs, caches, etc.
 * `docs`: Any project documentation is stored here, like API spec definitions or architectural decision records.
