@@ -55,13 +55,11 @@
             "$ref": "./ShortUrlMeta.json"
         },
         "domain": {
-            "type": "string",
-            "nullable": true,
+            "type": ["string", "null"],
             "description": "The domain in which the short URL was created. Null if it belongs to default domain."
         },
         "title": {
-            "type": "string",
-            "nullable": true,
+            "type": ["string", "null"],
             "description": "A descriptive title of the short URL."
         },
         "crawlable": {
