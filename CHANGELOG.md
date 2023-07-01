@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
   For example, if you did not enable RabbitMQ real-time updates, instead of triggering a job that ends immediately, the job will not even be enqueued.
 
 * [#1835](https://github.com/shlinkio/shlink/issues/1835) Docker image is now built only when a release is tagged, and new tags are included, for minor and major versions.
+* [#1055](https://github.com/shlinkio/shlink/issues/1055) Update OAS definition to v3.1.
 
 ### Deprecated
 * [#1783](https://github.com/shlinkio/shlink/issues/1783) Deprecated support for openswoole. RoadRunner is the best replacement, with the same capabilities, but much easier and convenient to install and manage.
