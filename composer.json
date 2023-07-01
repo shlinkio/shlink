@@ -63,7 +63,7 @@
         "symfony/string": "^6.2"
     },
     "require-dev": {
-        "cebe/php-openapi": "^1.7",
+        "devizzent/cebe-php-openapi": "dev-I-5_server_definition_fix as 1.1",
         "devster/ubench": "^2.1",
         "infection/infection": "^0.27",
         "openswoole/ide-helper": "~22.0.0",

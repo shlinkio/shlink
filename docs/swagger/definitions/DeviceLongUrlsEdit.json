@@ -5,13 +5,13 @@
     }],
     "properties": {
         "android": {
-            "nullable": true
+            "type": ["null"]
         },
         "ios": {
-            "nullable": true
+            "type": ["null"]
         },
         "desktop": {
-            "nullable": true
+            "type": ["null"]
         }
     }
 }
