@@ -7,7 +7,7 @@ use Doctrine\Migrations\Configuration\Migration\ConfigurationArray;
 use Doctrine\Migrations\DependencyFactory;
 use Doctrine\ORM\EntityManager;
 
-// This file is currently used by docrtrine migrations only
+// This file is currently used by doctrine migrations only
 
 return (static function () {
     /** @var EntityManager $em */
