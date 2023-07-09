@@ -2,16 +2,6 @@ name: Build and publish docker image
 
 on:
   push:
-    paths-ignore:
-      - 'LICENSE'
-      - '.*'
-      - '*.md'
-      - '*.xml'
-      - '*.yml*'
-      - '*.json5'
-      - '*.neon'
-    branches:
-      - develop
     tags:
       - 'v*'
 
