@@ -6,8 +6,7 @@
     }],
     "properties": {
         "visitedUrl": {
-            "type": "string",
-            "nullable": true,
+            "type": ["string", "null"],
             "description": "The originally visited URL that triggered the tracking of this visit"
         },
         "type": {
