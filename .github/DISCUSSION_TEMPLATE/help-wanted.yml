@@ -42,7 +42,7 @@ body:
     attributes:
       label: Database version
       placeholder: x.y.z
-  - type: markdown
+  - type: textarea
     validations:
       required: true
     attributes:
