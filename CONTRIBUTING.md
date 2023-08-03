@@ -6,9 +6,9 @@ You will also see how to ensure the code fulfills the expected code checks, and 
 
 ## System dependencies
 
-The project provides all its dependencies as docker containers through a docker-compose configuration.
+The project provides all its dependencies as docker containers through a `docker compose` configuration.
 
-Because of this, the only actual dependencies are [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/).
+Because of this, the only actual dependencies are [docker](https://docs.docker.com/get-docker/) and [docker compose](https://docs.docker.com/compose/install/).
 
 ## Setting up the project
 
@@ -21,7 +21,7 @@ Then you will have to follow these steps:
     For example the `common.local.php.dist` file should be copied as `common.local.php`.
 
 * Copy the file `docker-compose.override.yml.dist` by also removing the `dist` extension.
-* Start-up the project by running `docker-compose up`.
+* Start-up the project by running `docker compose up`.
 
     The first time this command is run, it will create several containers that are used during development, so it may take some time.
 
