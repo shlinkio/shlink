@@ -115,7 +115,7 @@ class CreateShortUrlTest extends ApiTestCase
     public function createsShortUrlWithValidSince(): void
     {
         [$statusCode, ['shortCode' => $shortCode]] = $this->createShortUrl([
-            'validSince' => Chronos::now()->addDay()->toAtomString(),
+            'validSince' => Chronos::now()->addDays(1)->toAtomString(),
         ]);
 
         self::assertEquals(self::STATUS_OK, $statusCode);
@@ -129,7 +129,7 @@ class CreateShortUrlTest extends ApiTestCase
     public function createsShortUrlWithValidUntil(): void
     {
         [$statusCode, ['shortCode' => $shortCode]] = $this->createShortUrl([
-            'validUntil' => Chronos::now()->subDay()->toAtomString(),
+            'validUntil' => Chronos::now()->subDays(1)->toAtomString(),
         ]);
 
         self::assertEquals(self::STATUS_OK, $statusCode);

@@ -28,7 +28,7 @@ class ApiKeyFixture extends AbstractFixture implements DependentFixtureInterface
         $manager->persist($this->buildApiKey(
             'expired_api_key',
             enabled: true,
-            expiresAt: Chronos::now()->subDay()->startOfDay(),
+            expiresAt: Chronos::now()->subDays(1)->startOfDay(),
         ));
 
         $authorApiKey = $this->buildApiKey('author_api_key', enabled: true);
