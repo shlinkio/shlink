@@ -65,7 +65,7 @@ class ApiKey extends AbstractEntity
 
     public function isExpired(): bool
     {
-        return $this->expirationDate !== null && $this->expirationDate->lt(Chronos::now());
+        return $this->expirationDate !== null && $this->expirationDate->lessThan(Chronos::now());
     }
 
     public function name(): ?string

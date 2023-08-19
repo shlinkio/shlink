@@ -139,7 +139,7 @@ class ImportedLinksProcessor implements ImportedLinksProcessorInterface
         $importedVisits = 0;
         foreach ($iterable as $importedOrphanVisit) {
             // Skip visits which are older than the most recent already imported visit's date
-            if ($mostRecentOrphanVisit?->getDate()->gte(normalizeDate($importedOrphanVisit->date))) {
+            if ($mostRecentOrphanVisit?->getDate()->greaterThanOrEquals(normalizeDate($importedOrphanVisit->date))) {
                 continue;
             }
 

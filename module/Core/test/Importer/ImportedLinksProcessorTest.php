@@ -307,9 +307,9 @@ class ImportedLinksProcessorTest extends TestCase
         yield 'existing orphan visit' => [true, [
             new ImportedShlinkOrphanVisit('', '', Chronos::now()->subDays(3), '', '', null),
             new ImportedShlinkOrphanVisit('', '', Chronos::now()->subDays(2), '', '', null),
-            new ImportedShlinkOrphanVisit('', '', Chronos::now()->addDay(), '', '', null),
-            new ImportedShlinkOrphanVisit('', '', Chronos::now()->addDay(), '', '', null),
-            new ImportedShlinkOrphanVisit('', '', Chronos::now()->addDay(), '', '', null),
+            new ImportedShlinkOrphanVisit('', '', Chronos::now()->addDays(1), '', '', null),
+            new ImportedShlinkOrphanVisit('', '', Chronos::now()->addDays(1), '', '', null),
+            new ImportedShlinkOrphanVisit('', '', Chronos::now()->addDays(1), '', '', null),
         ], Visit::forBasePath(Visitor::botInstance()), 3];
     }
 

@@ -70,7 +70,7 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         $buildTimestamp = $this->resolveBuildTimestamp($meta);
         $buildDate = Chronos::createFromTimestamp($buildTimestamp);
 
-        return Chronos::now()->gt($buildDate->addDays(35));
+        return Chronos::now()->greaterThan($buildDate->addDays(35));
     }
 
     private function resolveBuildTimestamp(Metadata $meta): int

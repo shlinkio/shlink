@@ -24,7 +24,7 @@ class ListApiKeysTest extends CliTestCase
 
     public static function provideFlags(): iterable
     {
-        $expiredApiKeyDate = Chronos::now()->subDay()->startOfDay()->toAtomString();
+        $expiredApiKeyDate = Chronos::now()->subDays(1)->startOfDay()->toAtomString();
         $enabledOnlyOutput = <<<OUT
         +--------------------+------+---------------------------+--------------------------+
         | Key                | Name | Expiration date           | Roles                    |

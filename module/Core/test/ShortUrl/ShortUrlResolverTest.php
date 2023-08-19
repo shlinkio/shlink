@@ -121,15 +121,15 @@ class ShortUrlResolverTest extends TestCase
             return $shortUrl;
         })()];
         yield 'future validSince' => [ShortUrl::create(ShortUrlCreation::fromRawData(
-            ['validSince' => $now->addMonth()->toAtomString(), 'longUrl' => 'https://longUrl'],
+            ['validSince' => $now->addMonths(1)->toAtomString(), 'longUrl' => 'https://longUrl'],
         ))];
         yield 'past validUntil' => [ShortUrl::create(ShortUrlCreation::fromRawData(
-            ['validUntil' => $now->subMonth()->toAtomString(), 'longUrl' => 'https://longUrl'],
+            ['validUntil' => $now->subMonths(1)->toAtomString(), 'longUrl' => 'https://longUrl'],
         ))];
         yield 'mixed' => [(function () use ($now) {
             $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
                 'maxVisits' => 3,
-                'validUntil' => $now->subMonth()->toAtomString(),
+                'validUntil' => $now->subMonths(1)->toAtomString(),
                 'longUrl' => 'https://longUrl',
             ]));
             $shortUrl->setVisits(new ArrayCollection(map(

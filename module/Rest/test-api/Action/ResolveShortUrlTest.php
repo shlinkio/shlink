@@ -37,8 +37,8 @@ class ResolveShortUrlTest extends ApiTestCase
     {
         $now = Chronos::now();
 
-        yield 'future validSince' => [['validSince' => $now->addMonth()->toAtomString()]];
-        yield 'past validUntil' => [['validUntil' => $now->subMonth()->toAtomString()]];
+        yield 'future validSince' => [['validSince' => $now->addMonths(1)->toAtomString()]];
+        yield 'past validUntil' => [['validUntil' => $now->subMonths(1)->toAtomString()]];
         yield 'maxVisits reached' => [['maxVisits' => 1]];
     }
 

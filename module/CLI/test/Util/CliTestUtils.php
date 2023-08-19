@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Util;
 
 use PHPUnit\Framework\Assert;
-use PHPUnit\Framework\MockObject\Generator;
+use PHPUnit\Framework\MockObject\Generator\Generator;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;

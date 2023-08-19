@@ -319,12 +319,12 @@ class ShortUrl extends AbstractEntity
         }
 
         $now = Chronos::now();
-        $beforeValidSince = $this->validSince !== null && $this->validSince->gt($now);
+        $beforeValidSince = $this->validSince !== null && $this->validSince->greaterThan($now);
         if ($beforeValidSince) {
             return false;
         }
 
-        $afterValidUntil = $this->validUntil !== null && $this->validUntil->lt($now);
+        $afterValidUntil = $this->validUntil !== null && $this->validUntil->lessThan($now);
         if ($afterValidUntil) {
             return false;
         }
