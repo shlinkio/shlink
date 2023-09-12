@@ -42,10 +42,9 @@ return (new ConfigAggregator\ConfigAggregator([
     Core\ConfigProvider::class,
     CLI\ConfigProvider::class,
     Rest\ConfigProvider::class,
-    new ConfigAggregator\PhpFileProvider('config/autoload/{{,*.}global,{,*.}local}.php'),
-    $isTestEnv
-        ? new ConfigAggregator\PhpFileProvider('config/test/*.global.php')
-        : new ConfigAggregator\ArrayProvider([]),
+    new ConfigAggregator\PhpFileProvider('config/autoload/{,*.}global.php'),
+    // Local config should not be loaded during tests, whereas test config should be loaded ONLY during tests
+    new ConfigAggregator\PhpFileProvider($isTestEnv ? 'config/test/*.global.php' : 'config/autoload/{,*.}local.php'),
     // Routes have to be loaded last
     new ConfigAggregator\PhpFileProvider('config/autoload/routes.config.php'),
 ], 'data/cache/app_config.php', [
