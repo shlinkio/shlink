@@ -125,6 +125,12 @@ Depending on the kind of contribution, maybe not all kinds of tests are needed, 
 * Run `./indocker composer infect:test` to run both unit and database tests (over sqlite) and then apply mutations to them with [infection](https://infection.github.io/).
 * Run `./indocker composer ci` to run all previous commands together, parallelizing non-conflicting tasks as much as possible.
 
+## Testing endpoints
+
+The project provides a Swagger UI container for dev envs, which can be accessed in http://localhost:8005.
+
+It will automatically load the contents of `docs/swagger`, so you can make any updates and they will get reflected.
+
 ## Pull request process
 
 **Important!**: Before starting to work on a pull request, make sure you always [open an issue](https://github.com/shlinkio/shlink/issues/new/choose) first.

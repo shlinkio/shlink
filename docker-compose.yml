@@ -3,7 +3,7 @@ version: '3'
 services:
     shlink_nginx:
         container_name: shlink_nginx
-        image: nginx:1.19.6-alpine
+        image: nginx:1.25-alpine
         ports:
             - "8000:80"
         volumes:
@@ -40,7 +40,7 @@ services:
 
     shlink_swoole_proxy:
         container_name: shlink_swoole_proxy
-        image: nginx:1.19.6-alpine
+        image: nginx:1.25-alpine
         ports:
             - "8002:80"
         volumes:
@@ -164,7 +164,7 @@ services:
 
     shlink_mercure_proxy:
         container_name: shlink_mercure_proxy
-        image: nginx:1.19.6-alpine
+        image: nginx:1.25-alpine
         ports:
             - "8001:80"
         volumes:
@@ -175,7 +175,7 @@ services:
 
     shlink_mercure:
         container_name: shlink_mercure
-        image: dunglas/mercure:v0.14
+        image: dunglas/mercure:v0.15
         ports:
             - "3080:80"
         environment:
@@ -186,10 +186,18 @@ services:
 
     shlink_rabbitmq:
         container_name: shlink_rabbitmq
-        image: rabbitmq:3.9-management-alpine
+        image: rabbitmq:3.11-management-alpine
         ports:
             - "15672:15672"
             - "5672:5672"
         environment:
             RABBITMQ_DEFAULT_USER: "rabbit"
             RABBITMQ_DEFAULT_PASS: "rabbit"
+
+    shlink_swagger_ui:
+        container_name: shlink_swagger_ui
+        image: swaggerapi/swagger-ui:v5.7.1
+        ports:
+            - "8005:8080"
+        volumes:
+            - ./docs/swagger:/app
