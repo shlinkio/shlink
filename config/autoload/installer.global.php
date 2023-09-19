@@ -84,7 +84,7 @@ return [
                 'command' => 'bin/cli ' . Command\Visit\DownloadGeoLiteDbCommand::NAME,
             ],
             InstallationCommand::API_KEY_GENERATE->value => [
-                'command' => 'bin/cli ' . Command\Api\GenerateKeyCommand::NAME,
+                'command' => 'bin/cli ' . Command\Api\CreateKeyCommand::NAME,
             ],
         ],
     ],

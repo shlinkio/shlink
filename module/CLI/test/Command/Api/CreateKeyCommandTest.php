@@ -9,7 +9,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\ApiKey\RoleResolverInterface;
-use Shlinkio\Shlink\CLI\Command\Api\GenerateKeyCommand;
+use Shlinkio\Shlink\CLI\Command\Api\CreateKeyCommand;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
@@ -17,9 +17,7 @@ use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 
-use function is_string;
-
-class GenerateKeyCommandTest extends TestCase
+class CreateKeyCommandTest extends TestCase
 {
     use CliTestUtilsTrait;
 
@@ -32,7 +30,7 @@ class GenerateKeyCommandTest extends TestCase
         $roleResolver = $this->createMock(RoleResolverInterface::class);
         $roleResolver->method('determineRoles')->with($this->isInstanceOf(InputInterface::class))->willReturn([]);
 
-        $command = new GenerateKeyCommand($this->apiKeyService, $roleResolver);
+        $command = new CreateKeyCommand($this->apiKeyService, $roleResolver);
         $this->commandTester = $this->testerForCommand($command);
     }
 
@@ -65,11 +63,21 @@ class GenerateKeyCommandTest extends TestCase
     public function nameIsDefinedIfProvided(): void
     {
         $this->apiKeyService->expects($this->once())->method('create')->with(
-            $this->callback(fn (ApiKeyMeta $meta) => is_string($meta->name)),
+            $this->callback(fn (ApiKeyMeta $meta) => $meta->name === 'Alice'),
         )->willReturn(ApiKey::create());
 
         $this->commandTester->execute([
             '--name' => 'Alice',
         ]);
+    }
+
+    #[Test]
+    public function createsCustomApiKeyWhenProvided(): void
+    {
+        $this->apiKeyService->expects($this->once())->method('create')->with(
+            $this->callback(fn (ApiKeyMeta $meta) => $meta->key === 'my_custom_key'),
+        )->willReturn(ApiKey::create());
+
+        $this->commandTester->execute(['key' => 'my_custom_key']);
     }
 }

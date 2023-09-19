@@ -21,8 +21,8 @@ return [
             Command\Visit\DeleteOrphanVisitsCommand::NAME => Command\Visit\DeleteOrphanVisitsCommand::class,
             Command\Visit\GetNonOrphanVisitsCommand::NAME => Command\Visit\GetNonOrphanVisitsCommand::class,
 
-            Command\Api\GenerateKeyCommand::NAME => Command\Api\GenerateKeyCommand::class,
-            Command\Api\GenerateKeyCommand::ALIAS => Command\Api\GenerateKeyCommand::class,
+            Command\Api\CreateKeyCommand::NAME => Command\Api\CreateKeyCommand::class,
+            Command\Api\CreateKeyCommand::ALIAS => Command\Api\CreateKeyCommand::class,
             Command\Api\DisableKeyCommand::NAME => Command\Api\DisableKeyCommand::class,
             Command\Api\ListKeysCommand::NAME => Command\Api\ListKeysCommand::class,
 

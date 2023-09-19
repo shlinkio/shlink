@@ -22,10 +22,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use function Shlinkio\Shlink\Core\arrayToString;
 use function sprintf;
 
-class GenerateKeyCommand extends Command
+class CreateKeyCommand extends Command
 {
     public const NAME = 'api-key:create';
-    /** @deprecated */
     public const ALIAS = 'api-key:generate';
 
     public function __construct(
