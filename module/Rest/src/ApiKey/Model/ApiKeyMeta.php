@@ -5,36 +5,45 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\ApiKey\Model;
 
 use Cake\Chronos\Chronos;
+use Ramsey\Uuid\Uuid;
 
 final class ApiKeyMeta
 {
     /**
-     * @param RoleDefinition[] $roleDefinitions
+     * @param iterable<RoleDefinition> $roleDefinitions
      */
     private function __construct(
+        public readonly string $key,
         public readonly ?string $name,
         public readonly ?Chronos $expirationDate,
-        public readonly array $roleDefinitions,
+        public readonly iterable $roleDefinitions,
     ) {
     }
 
-    public static function withName(string $name): self
+    public static function empty(): self
     {
-        return new self($name, null, []);
+        return self::fromParams();
     }
 
-    public static function withExpirationDate(Chronos $expirationDate): self
-    {
-        return new self(null, $expirationDate, []);
-    }
-
-    public static function withNameAndExpirationDate(string $name, Chronos $expirationDate): self
-    {
-        return new self($name, $expirationDate, []);
+    /**
+     * @param iterable<RoleDefinition> $roleDefinitions
+     */
+    public static function fromParams(
+        ?string $key = null,
+        ?string $name = null,
+        ?Chronos $expirationDate = null,
+        iterable $roleDefinitions = [],
+    ): self {
+        return new self(
+            key: $key ?? Uuid::uuid4()->toString(),
+            name: $name,
+            expirationDate: $expirationDate,
+            roleDefinitions: $roleDefinitions,
+        );
     }
 
     public static function withRoles(RoleDefinition ...$roleDefinitions): self
     {
-        return new self(null, null, $roleDefinitions);
+        return self::fromParams(roleDefinitions: $roleDefinitions);
     }
 }

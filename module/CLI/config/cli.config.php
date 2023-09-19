@@ -22,6 +22,7 @@ return [
             Command\Visit\GetNonOrphanVisitsCommand::NAME => Command\Visit\GetNonOrphanVisitsCommand::class,
 
             Command\Api\GenerateKeyCommand::NAME => Command\Api\GenerateKeyCommand::class,
+            Command\Api\GenerateKeyCommand::ALIAS => Command\Api\GenerateKeyCommand::class,
             Command\Api\DisableKeyCommand::NAME => Command\Api\DisableKeyCommand::class,
             Command\Api\ListKeysCommand::NAME => Command\Api\ListKeysCommand::class,
 

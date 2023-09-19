@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Rest\ApiKey\Repository;
 
 use Doctrine\DBAL\LockMode;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
+use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRepositoryInterface
@@ -24,7 +25,7 @@ class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRe
                                                     ->getOneOrNullResult();
 
             if ($firstResult === null) {
-                $em->persist(ApiKey::fromKey($apiKey));
+                $em->persist(ApiKey::fromMeta(ApiKeyMeta::fromParams(key: $apiKey)));
                 $em->flush();
             }
         });

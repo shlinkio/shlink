@@ -40,7 +40,9 @@ class ApiKeyServiceTest extends TestCase
         $this->em->expects($this->once())->method('flush');
         $this->em->expects($this->once())->method('persist')->with($this->isInstanceOf(ApiKey::class));
 
-        $key = $this->service->create($date, $name, ...$roles);
+        $key = $this->service->create(
+            ApiKeyMeta::fromParams(name: $name, expirationDate: $date, roleDefinitions: $roles),
+        );
 
         self::assertEquals($date, $key->getExpirationDate());
         self::assertEquals($name, $key->name());
@@ -81,7 +83,7 @@ class ApiKeyServiceTest extends TestCase
     {
         yield 'non-existent api key' => [null];
         yield 'disabled api key' => [ApiKey::create()->disable()];
-        yield 'expired api key' => [ApiKey::fromMeta(ApiKeyMeta::withExpirationDate(Chronos::now()->subDay()))];
+        yield 'expired api key' => [ApiKey::fromMeta(ApiKeyMeta::fromParams(expirationDate: Chronos::now()->subDay()))];
     }
 
     #[Test]
@@ -144,7 +146,7 @@ class ApiKeyServiceTest extends TestCase
         $this->repo->expects($this->once())->method('findBy')->with(['enabled' => true])->willReturn($expectedApiKeys);
         $this->em->method('getRepository')->with(ApiKey::class)->willReturn($this->repo);
 
-        $result = $this->service->listKeys(true);
+        $result = $this->service->listKeys(enabledOnly: true);
 
         self::assertEquals($expectedApiKeys, $result);
     }

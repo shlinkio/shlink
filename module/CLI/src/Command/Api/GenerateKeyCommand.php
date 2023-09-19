@@ -8,10 +8,12 @@ use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\CLI\ApiKey\RoleResolverInterface;
 use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
+use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,11 +24,13 @@ use function sprintf;
 
 class GenerateKeyCommand extends Command
 {
-    public const NAME = 'api-key:generate';
+    public const NAME = 'api-key:create';
+    /** @deprecated */
+    public const ALIAS = 'api-key:generate';
 
     public function __construct(
-        private ApiKeyServiceInterface $apiKeyService,
-        private RoleResolverInterface $roleResolver,
+        private readonly ApiKeyServiceInterface $apiKeyService,
+        private readonly RoleResolverInterface $roleResolver,
     ) {
         parent::__construct();
     }
@@ -57,7 +61,13 @@ class GenerateKeyCommand extends Command
 
         $this
             ->setName(self::NAME)
-            ->setDescription('Generates a new valid API key.')
+            ->setDescription('Creates a new valid API key.')
+            ->setAliases([self::ALIAS])
+            ->addArgument(
+                'key',
+                InputArgument::OPTIONAL,
+                'The API key to create. A random one will be generated if not provided',
+            )
             ->addOption(
                 'name',
                 'm',
@@ -91,11 +101,13 @@ class GenerateKeyCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $expirationDate = $input->getOption('expiration-date');
-        $apiKey = $this->apiKeyService->create(
-            isset($expirationDate) ? Chronos::parse($expirationDate) : null,
-            $input->getOption('name'),
-            ...$this->roleResolver->determineRoles($input),
-        );
+
+        $apiKey = $this->apiKeyService->create(ApiKeyMeta::fromParams(
+            key: $input->getArgument('key'),
+            name: $input->getOption('name'),
+            expirationDate: isset($expirationDate) ? Chronos::parse($expirationDate) : null,
+            roleDefinitions: $this->roleResolver->determineRoles($input),
+        ));
 
         $io = new SymfonyStyle($input, $output);
         $io->success(sprintf('Generated API key: "%s"', $apiKey->toString()));

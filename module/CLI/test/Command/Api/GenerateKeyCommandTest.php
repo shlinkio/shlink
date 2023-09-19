@@ -10,11 +10,14 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\ApiKey\RoleResolverInterface;
 use Shlinkio\Shlink\CLI\Command\Api\GenerateKeyCommand;
+use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
+
+use function is_string;
 
 class GenerateKeyCommandTest extends TestCase
 {
@@ -37,8 +40,7 @@ class GenerateKeyCommandTest extends TestCase
     public function noExpirationDateIsDefinedIfNotProvided(): void
     {
         $this->apiKeyService->expects($this->once())->method('create')->with(
-            $this->isNull(),
-            $this->isNull(),
+            $this->callback(fn (ApiKeyMeta $meta) => $meta->name === null && $meta->expirationDate === null),
         )->willReturn(ApiKey::create());
 
         $this->commandTester->execute([]);
@@ -51,8 +53,7 @@ class GenerateKeyCommandTest extends TestCase
     public function expirationDateIsDefinedIfProvided(): void
     {
         $this->apiKeyService->expects($this->once())->method('create')->with(
-            $this->isInstanceOf(Chronos::class),
-            $this->isNull(),
+            $this->callback(fn (ApiKeyMeta $meta) => $meta->expirationDate instanceof Chronos),
         )->willReturn(ApiKey::create());
 
         $this->commandTester->execute([
@@ -64,8 +65,7 @@ class GenerateKeyCommandTest extends TestCase
     public function nameIsDefinedIfProvided(): void
     {
         $this->apiKeyService->expects($this->once())->method('create')->with(
-            $this->isNull(),
-            $this->isType('string'),
+            $this->callback(fn (ApiKeyMeta $meta) => is_string($meta->name)),
         )->willReturn(ApiKey::create());
 
         $this->commandTester->execute([
