@@ -13,7 +13,6 @@ use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,10 +21,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use function Shlinkio\Shlink\Core\arrayToString;
 use function sprintf;
 
-class CreateKeyCommand extends Command
+class GenerateKeyCommand extends Command
 {
-    public const NAME = 'api-key:create';
-    public const ALIAS = 'api-key:generate';
+    public const NAME = 'api-key:generate';
 
     public function __construct(
         private readonly ApiKeyServiceInterface $apiKeyService,
@@ -60,13 +58,7 @@ class CreateKeyCommand extends Command
 
         $this
             ->setName(self::NAME)
-            ->setDescription('Creates a new valid API key.')
-            ->setAliases([self::ALIAS])
-            ->addArgument(
-                'key',
-                InputArgument::OPTIONAL,
-                'The API key to create. A random one will be generated if not provided',
-            )
+            ->setDescription('Generate a new valid API key.')
             ->addOption(
                 'name',
                 'm',
@@ -102,7 +94,6 @@ class CreateKeyCommand extends Command
         $expirationDate = $input->getOption('expiration-date');
 
         $apiKey = $this->apiKeyService->create(ApiKeyMeta::fromParams(
-            key: $input->getArgument('key'),
             name: $input->getOption('name'),
             expirationDate: isset($expirationDate) ? Chronos::parse($expirationDate) : null,
             roleDefinitions: $this->roleResolver->determineRoles($input),

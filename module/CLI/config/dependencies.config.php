@@ -50,7 +50,7 @@ return [
             Command\Visit\DeleteOrphanVisitsCommand::class => ConfigAbstractFactory::class,
             Command\Visit\GetNonOrphanVisitsCommand::class => ConfigAbstractFactory::class,
 
-            Command\Api\CreateKeyCommand::class => ConfigAbstractFactory::class,
+            Command\Api\GenerateKeyCommand::class => ConfigAbstractFactory::class,
             Command\Api\DisableKeyCommand::class => ConfigAbstractFactory::class,
             Command\Api\ListKeysCommand::class => ConfigAbstractFactory::class,
 
@@ -102,7 +102,7 @@ return [
         Command\Visit\DeleteOrphanVisitsCommand::class => [Visit\VisitsDeleter::class],
         Command\Visit\GetNonOrphanVisitsCommand::class => [Visit\VisitsStatsHelper::class, ShortUrlStringifier::class],
 
-        Command\Api\CreateKeyCommand::class => [ApiKeyService::class, ApiKey\RoleResolver::class],
+        Command\Api\GenerateKeyCommand::class => [ApiKeyService::class, ApiKey\RoleResolver::class],
         Command\Api\DisableKeyCommand::class => [ApiKeyService::class],
         Command\Api\ListKeysCommand::class => [ApiKeyService::class],
 
