@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Rest\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
+use Shlinkio\Shlink\Rest\ApiKey\Repository\ApiKeyRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function sprintf;
@@ -25,6 +26,13 @@ class ApiKeyService implements ApiKeyServiceInterface
         $this->em->flush();
 
         return $apiKey;
+    }
+
+    public function createInitial(string $key): ?ApiKey
+    {
+        /** @var ApiKeyRepositoryInterface $repo */
+        $repo = $this->em->getRepository(ApiKey::class);
+        return $repo->createInitialApiKey($key);
     }
 
     public function check(string $key): ApiKeyCheckResult

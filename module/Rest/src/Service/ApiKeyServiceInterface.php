@@ -12,6 +12,8 @@ interface ApiKeyServiceInterface
 {
     public function create(ApiKeyMeta $apiKeyMeta): ApiKey;
 
+    public function createInitial(string $key): ?ApiKey;
+
     public function check(string $key): ApiKeyCheckResult;
 
     /**
