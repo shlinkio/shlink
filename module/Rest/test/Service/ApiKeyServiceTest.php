@@ -15,6 +15,7 @@ use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
+use Shlinkio\Shlink\Rest\ApiKey\Repository\ApiKeyRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 
@@ -22,12 +23,12 @@ class ApiKeyServiceTest extends TestCase
 {
     private ApiKeyService $service;
     private MockObject & EntityManager $em;
-    private MockObject & EntityRepository $repo;
+    private MockObject & ApiKeyRepositoryInterface $repo;
 
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManager::class);
-        $this->repo = $this->createMock(EntityRepository::class);
+        $this->repo = $this->createMock(ApiKeyRepositoryInterface::class);
         $this->service = new ApiKeyService($this->em);
     }
 
@@ -149,5 +150,22 @@ class ApiKeyServiceTest extends TestCase
         $result = $this->service->listKeys(enabledOnly: true);
 
         self::assertEquals($expectedApiKeys, $result);
+    }
+
+    #[Test, DataProvider('provideInitialApiKeys')]
+    public function createInitialDelegatesToRepository(?ApiKey $apiKey): void
+    {
+        $this->repo->expects($this->once())->method('createInitialApiKey')->with('the_key')->willReturn($apiKey);
+        $this->em->method('getRepository')->with(ApiKey::class)->willReturn($this->repo);
+
+        $result = $this->service->createInitial('the_key');
+
+        self::assertSame($result, $apiKey);
+    }
+
+    public static function provideInitialApiKeys(): iterable
+    {
+        yield 'first api key' => [ApiKey::create()];
+        yield 'existing api keys' => [null];
     }
 }
