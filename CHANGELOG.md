@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [3.6.4] - 2023-09-23
+### Added
+* *Nothing*
+
+### Changed
+* [#1866](https://github.com/shlinkio/shlink/issues/1866) The `INITIAL_API_KEY` env var is now only relevant for the official docker image.
+
+  Going forward, new non-docker Shlink installations provisioned with env vars that also wish to provide an initial API key, should do it by using the `vendor/bin/shlink-installer init --initial-api-key=%SOME_KEY%` command, instead of using `INITIAL_API_KEY`.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1819](https://github.com/shlinkio/shlink/issues/1819) Fix incorrect timeout when running DB commands during Shlink start-up.
+* [#1870](https://github.com/shlinkio/shlink/issues/1870) Make sure shared locks include the cache prefix when using Redis.
+* [#1866](https://github.com/shlinkio/shlink/issues/1866) Fix error when starting docker image with `INITIAL_API_KEY` env var.
+
+
 ## [3.6.3] - 2023-06-14
 ### Added
 * *Nothing*

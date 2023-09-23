@@ -40,7 +40,7 @@ class RoleResolverTest extends TestCase
             'example.com',
         )->willReturn(self::domainWithId(Domain::withAuthority('example.com')));
 
-        $result = $this->resolver->determineRoles($input);
+        $result = [...$this->resolver->determineRoles($input)];
 
         self::assertEquals($expectedRoles, $result);
     }
@@ -111,7 +111,7 @@ class RoleResolverTest extends TestCase
 
         $this->expectException(InvalidRoleConfigException::class);
 
-        $this->resolver->determineRoles($input);
+        [...$this->resolver->determineRoles($input)];
     }
 
     private static function domainWithId(Domain $domain): Domain

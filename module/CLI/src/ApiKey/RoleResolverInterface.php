@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\InputInterface;
 interface RoleResolverInterface
 {
     /**
-     * @return RoleDefinition[]
+     * @return iterable<RoleDefinition>
      */
-    public function determineRoles(InputInterface $input): array;
+    public function determineRoles(InputInterface $input): iterable;
 }

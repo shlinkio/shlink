@@ -22,10 +22,10 @@ class ApiKeyRepositoryTest extends DatabaseTestCase
     public function initialApiKeyIsCreatedOnlyOfNoApiKeysExistYet(): void
     {
         self::assertCount(0, $this->repo->findAll());
-        $this->repo->createInitialApiKey('initial_value');
+        self::assertNotNull($this->repo->createInitialApiKey('initial_value'));
         self::assertCount(1, $this->repo->findAll());
         self::assertCount(1, $this->repo->findBy(['key' => 'initial_value']));
-        $this->repo->createInitialApiKey('another_one');
+        self::assertNull($this->repo->createInitialApiKey('another_one'));
         self::assertCount(1, $this->repo->findAll());
         self::assertCount(0, $this->repo->findBy(['key' => 'another_one']));
     }
