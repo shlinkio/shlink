@@ -51,7 +51,7 @@ class ApiKeyFixture extends AbstractFixture implements DependentFixtureInterface
 
     private function buildApiKey(string $key, bool $enabled, ?Chronos $expiresAt = null): ApiKey
     {
-        $apiKey = $expiresAt !== null ? ApiKey::fromMeta(ApiKeyMeta::withExpirationDate($expiresAt)) : ApiKey::create();
+        $apiKey = ApiKey::fromMeta(ApiKeyMeta::fromParams(expirationDate: $expiresAt));
         $ref = new ReflectionObject($apiKey);
         $keyProp = $ref->getProperty('key');
         $keyProp->setAccessible(true);

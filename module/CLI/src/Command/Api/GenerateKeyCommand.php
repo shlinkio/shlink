@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\CLI\ApiKey\RoleResolverInterface;
 use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
+use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
@@ -60,7 +61,7 @@ class GenerateKeyCommand extends Command
 
         $this
             ->setName(self::NAME)
-            ->setDescription('Generates a new valid API key.')
+            ->setDescription('Generate a new valid API key.')
             ->addOption(
                 'name',
                 'm',
@@ -100,11 +101,12 @@ class GenerateKeyCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $expirationDate = $input->getOption('expiration-date');
-        $apiKey = $this->apiKeyService->create(
-            isset($expirationDate) ? Chronos::parse($expirationDate) : null,
-            $input->getOption('name'),
-            ...$this->roleResolver->determineRoles($input),
-        );
+
+        $apiKey = $this->apiKeyService->create(ApiKeyMeta::fromParams(
+            name: $input->getOption('name'),
+            expirationDate: isset($expirationDate) ? Chronos::parse($expirationDate) : null,
+            roleDefinitions: $this->roleResolver->determineRoles($input),
+        ));
 
         $io = new SymfonyStyle($input, $output);
         $io->success(sprintf('Generated API key: "%s"', $apiKey->toString()));

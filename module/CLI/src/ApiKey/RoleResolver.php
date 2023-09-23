@@ -14,28 +14,27 @@ use function is_string;
 
 class RoleResolver implements RoleResolverInterface
 {
-    public function __construct(private DomainServiceInterface $domainService, private string $defaultDomain)
-    {
+    public function __construct(
+        private readonly DomainServiceInterface $domainService,
+        private readonly string $defaultDomain,
+    ) {
     }
 
-    public function determineRoles(InputInterface $input): array
+    public function determineRoles(InputInterface $input): iterable
     {
         $domainAuthority = $input->getOption(Role::DOMAIN_SPECIFIC->paramName());
         $author = $input->getOption(Role::AUTHORED_SHORT_URLS->paramName());
         $noOrphanVisits = $input->getOption(Role::NO_ORPHAN_VISITS->paramName());
 
-        $roleDefinitions = [];
         if ($author) {
-            $roleDefinitions[] = RoleDefinition::forAuthoredShortUrls();
+            yield RoleDefinition::forAuthoredShortUrls();
         }
         if (is_string($domainAuthority)) {
-            $roleDefinitions[] = $this->resolveRoleForAuthority($domainAuthority);
+            yield $this->resolveRoleForAuthority($domainAuthority);
         }
         if ($noOrphanVisits) {
-            $roleDefinitions[] = RoleDefinition::forNoOrphanVisits();
+            yield RoleDefinition::forNoOrphanVisits();
         }
-
-        return $roleDefinitions;
     }
 
     private function resolveRoleForAuthority(string $domainAuthority): RoleDefinition

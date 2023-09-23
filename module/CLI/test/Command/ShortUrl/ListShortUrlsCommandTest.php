@@ -136,7 +136,7 @@ class ListShortUrlsCommandTest extends TestCase
 
     public static function provideOptionalFlags(): iterable
     {
-        $apiKey = ApiKey::fromMeta(ApiKeyMeta::withName('my api key'));
+        $apiKey = ApiKey::fromMeta(ApiKeyMeta::fromParams(name: 'my api key'));
         $key = $apiKey->toString();
 
         yield 'tags only' => [
