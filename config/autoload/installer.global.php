@@ -86,6 +86,9 @@ return [
             InstallationCommand::API_KEY_GENERATE->value => [
                 'command' => 'bin/cli ' . Command\Api\GenerateKeyCommand::NAME,
             ],
+            InstallationCommand::API_KEY_CREATE->value => [
+                'command' => 'bin/cli ' . Command\Api\InitialApiKeyCommand::NAME,
+            ],
         ],
     ],
 

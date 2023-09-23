@@ -4,47 +4,35 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Service;
 
-use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
-use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
+use Shlinkio\Shlink\Rest\ApiKey\Repository\ApiKeyRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function sprintf;
 
 class ApiKeyService implements ApiKeyServiceInterface
 {
-    public function __construct(private EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
     }
 
-    public function create(
-        ?Chronos $expirationDate = null,
-        ?string $name = null,
-        RoleDefinition ...$roleDefinitions,
-    ): ApiKey {
-        $key = $this->buildApiKeyWithParams($expirationDate, $name);
-        foreach ($roleDefinitions as $definition) {
-            $key->registerRole($definition);
-        }
+    public function create(ApiKeyMeta $apiKeyMeta): ApiKey
+    {
+        $apiKey = ApiKey::fromMeta($apiKeyMeta);
 
-        $this->em->persist($key);
+        $this->em->persist($apiKey);
         $this->em->flush();
 
-        return $key;
+        return $apiKey;
     }
 
-    private function buildApiKeyWithParams(?Chronos $expirationDate, ?string $name): ApiKey
+    public function createInitial(string $key): ?ApiKey
     {
-        return match (true) {
-            $expirationDate !== null && $name !== null => ApiKey::fromMeta(
-                ApiKeyMeta::withNameAndExpirationDate($name, $expirationDate),
-            ),
-            $expirationDate !== null => ApiKey::fromMeta(ApiKeyMeta::withExpirationDate($expirationDate)),
-            $name !== null => ApiKey::fromMeta(ApiKeyMeta::withName($name)),
-            default => ApiKey::create(),
-        };
+        /** @var ApiKeyRepositoryInterface $repo */
+        $repo = $this->em->getRepository(ApiKey::class);
+        return $repo->createInitialApiKey($key);
     }
 
     public function check(string $key): ApiKeyCheckResult

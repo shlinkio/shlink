@@ -10,7 +10,6 @@ use Doctrine\Common\Collections\Collection;
 use Exception;
 use Happyr\DoctrineSpecification\Spec;
 use Happyr\DoctrineSpecification\Specification\Specification;
-use Ramsey\Uuid\Uuid;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
@@ -28,21 +27,27 @@ class ApiKey extends AbstractEntity
     /**
      * @throws Exception
      */
-    private function __construct(?string $key = null)
+    private function __construct(string $key)
     {
-        $this->key = $key ?? Uuid::uuid4()->toString();
+        $this->key = $key;
         $this->enabled = true;
         $this->roles = new ArrayCollection();
     }
 
+    /**
+     * @throws Exception
+     */
     public static function create(): ApiKey
     {
-        return new self();
+        return self::fromMeta(ApiKeyMeta::empty());
     }
 
+    /**
+     * @throws Exception
+     */
     public static function fromMeta(ApiKeyMeta $meta): self
     {
-        $apiKey = self::create();
+        $apiKey = new self($meta->key);
         $apiKey->name = $meta->name;
         $apiKey->expirationDate = $meta->expirationDate;
 
@@ -51,11 +56,6 @@ class ApiKey extends AbstractEntity
         }
 
         return $apiKey;
-    }
-
-    public static function fromKey(string $key): self
-    {
-        return new self($key);
     }
 
     public function getExpirationDate(): ?Chronos

@@ -49,7 +49,7 @@ class ListKeysCommandTest extends TestCase
         yield 'all keys' => [
             [
                 $apiKey1 = ApiKey::create()->disable(),
-                $apiKey2 = ApiKey::fromMeta(ApiKeyMeta::withExpirationDate($dateInThePast)),
+                $apiKey2 = ApiKey::fromMeta(ApiKeyMeta::fromParams(expirationDate: $dateInThePast)),
                 $apiKey3 = ApiKey::create(),
             ],
             false,
@@ -117,9 +117,9 @@ class ListKeysCommandTest extends TestCase
         ];
         yield 'with names' => [
             [
-                $apiKey1 = ApiKey::fromMeta(ApiKeyMeta::withName('Alice')),
-                $apiKey2 = ApiKey::fromMeta(ApiKeyMeta::withName('Alice and Bob')),
-                $apiKey3 = ApiKey::fromMeta(ApiKeyMeta::withName('')),
+                $apiKey1 = ApiKey::fromMeta(ApiKeyMeta::fromParams(name: 'Alice')),
+                $apiKey2 = ApiKey::fromMeta(ApiKeyMeta::fromParams(name: 'Alice and Bob')),
+                $apiKey3 = ApiKey::fromMeta(ApiKeyMeta::fromParams(name: '')),
                 $apiKey4 = ApiKey::create(),
             ],
             true,

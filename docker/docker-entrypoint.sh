@@ -10,10 +10,15 @@ if [ -z "${GEOLITE_LICENSE_KEY}" ] || [ "${SKIP_INITIAL_GEOLITE_DOWNLOAD}" == "t
   flags="${flags} --skip-download-geolite"
 fi
 
+# If INITIAL_API_KEY was provided, create an initial API key
+if [ -n "${INITIAL_API_KEY}" ]; then
+  flags="${flags} --initial-api-key=${INITIAL_API_KEY}"
+fi
+
 php vendor/bin/shlink-installer init ${flags}
 
 # Periodically run visit:locate every hour, if ENABLE_PERIODIC_VISIT_LOCATE=true was provided and running as root
-# ENABLE_PERIODIC_VISIT_LOCATE is deprecated. Remove cron support in Shlink 4.0.0
+# FIXME: ENABLE_PERIODIC_VISIT_LOCATE is deprecated. Remove cron support in Shlink 4.0.0
 if [ "${ENABLE_PERIODIC_VISIT_LOCATE}" = "true" ] && [ "${SHLINK_USER_ID}" = "root" ]; then
   echo "Configuring periodic visit location..."
   echo "0 * * * * php /etc/shlink/bin/cli visit:locate -q" > /etc/crontabs/root
