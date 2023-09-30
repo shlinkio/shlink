@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#1835](https://github.com/shlinkio/shlink/issues/1835) Docker image is now built only when a release is tagged, and new tags are included, for minor and major versions.
 * [#1055](https://github.com/shlinkio/shlink/issues/1055) Update OAS definition to v3.1.
+* [#1885](https://github.com/shlinkio/shlink/issues/1885) Update to chronos 3.0.
 
 ### Deprecated
 * [#1783](https://github.com/shlinkio/shlink/issues/1783) Deprecated support for openswoole. RoadRunner is the best replacement, with the same capabilities, but much easier and convenient to install and manage.
