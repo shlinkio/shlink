@@ -16,7 +16,7 @@ return (static function (): array {
 
     return [
         'cache' => [
-            'namespace' => 'Shlink',
+            'namespace' => EnvVars::CACHE_NAMESPACE->loadFromEnv('Shlink'),
             ...$cacheRedisBlock,
         ],
         'redis' => $redis,
