@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
   When trying to delete orphan visits the result will also be `0` and no visits will actually get deleted.
 
+* [#1879](https://github.com/shlinkio/shlink/issues/1879) Cache namespace can now be customized via config option or `CACHE_NAMESPACE` env var.
+
+  This is important if you are running multiple Shlink instance on the same server, or they share the same Redis instance (even more so if they are on different versions).
+
 ### Changed
 * [#1799](https://github.com/shlinkio/shlink/issues/1799) RoadRunner/openswoole jobs are not run anymore for tasks that are actually disabled.
 
