@@ -17,7 +17,7 @@ class HealthAction extends AbstractRestAction
     private const STATUS_PASS = 'pass';
     private const STATUS_FAIL = 'fail';
 
-    protected const ROUTE_PATH = '/health';
+    public const ROUTE_PATH = '/health';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
     public function __construct(private EntityManagerInterface $em, private AppOptions $options)
