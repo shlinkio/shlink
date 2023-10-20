@@ -9,7 +9,6 @@ use Laminas\ServiceManager\Factory\InvokableFactory;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Common\Doctrine\EntityRepositoryFactory;
 use Shlinkio\Shlink\Config\Factory\ValinorConfigFactory;
-use Shlinkio\Shlink\Core\ErrorHandler;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
