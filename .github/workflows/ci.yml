@@ -32,7 +32,7 @@ jobs:
         php-version: ['8.2']
         command: ['cs', 'stan', 'swagger:validate']
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
@@ -59,17 +59,18 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        php-version: ['8.2']
+        php-version: ['8.2', '8.3']
+    continue-on-error: ${{ matrix.php-version == '8.3' }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # rr get-binary picks this env automatically
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_postgres
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-      - run: composer install --no-interaction --prefer-dist --ignore-platform-req=ext-openswoole
+      - run: composer install --no-interaction --prefer-dist --ignore-platform-req=ext-openswoole ${{ matrix.php-version == '8.3' && '--ignore-platform-reqs' || '' }}
       - run: ./vendor/bin/rr get --no-interaction --no-config --location bin/ && chmod +x bin/rr
       - run: composer test:api:rr
 
@@ -138,7 +139,7 @@ jobs:
         php-version: ['8.2']
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Use PHP
         uses: shivammathur/setup-php@v2
         with:

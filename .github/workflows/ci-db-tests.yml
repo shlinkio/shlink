@@ -13,11 +13,12 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        php-version: ['8.2']
+        php-version: ['8.2', '8.3']
+    continue-on-error: ${{ matrix.php-version == '8.3' }}
     env:
       LC_ALL: C
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install MSSQL ODBC
         if: ${{ inputs.platform == 'ms' }}
         run: sudo ./data/infra/ci/install-ms-odbc.sh
