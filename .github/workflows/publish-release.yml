@@ -10,8 +10,13 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        php-version: ['8.2']
+        php-version: ['8.2', '8.3']
         swoole: ['yes', 'no']
+        exclude:
+          # Openswoole does not support PHP 8.3, so lets not build for that combination
+          # Next Shlink version (4.0.0) is completely dropping support for openswoole and we will be able to remove this
+          - php-version: '8.3'
+            swoole: 'yes'
     steps:
       - uses: actions/checkout@v4
       - uses: './.github/actions/ci-setup'
