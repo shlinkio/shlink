@@ -10,5 +10,5 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - run: docker build -t shlink-docker-image:temp .

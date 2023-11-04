@@ -16,6 +16,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
   This is important if you are running multiple Shlink instance on the same server, or they share the same Redis instance (even more so if they are on different versions).
 
+* [#1905](https://github.com/shlinkio/shlink/issues/1905) Add support for PHP 8.3.
+
 ### Changed
 * [#1799](https://github.com/shlinkio/shlink/issues/1799) RoadRunner/openswoole jobs are not run anymore for tasks that are actually disabled.
 
