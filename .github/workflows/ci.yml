@@ -70,7 +70,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-      - run: composer install --no-interaction --prefer-dist --ignore-platform-req=ext-openswoole ${{ matrix.php-version == '8.3' && '--ignore-platform-req=php' || '' }}
+      - run: composer install --no-interaction --prefer-dist --ignore-platform-req=ext-openswoole ${{ matrix.php-version == '8.3' && '--ignore-platform-reqs' || '' }}
       - run: ./vendor/bin/rr get --no-interaction --no-config --location bin/ && chmod +x bin/rr
       - run: composer test:api:rr
 
