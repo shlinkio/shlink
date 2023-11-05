@@ -10,8 +10,10 @@ use const Shlinkio\Shlink\DEFAULT_SHORT_CODES_LENGTH;
 
 final class UrlShortenerOptions
 {
+    /**
+     * @param array{schema: ?string, hostname: ?string} $domain
+     */
     public function __construct(
-        /** @var array{schema: ?string, hostname: ?string} */
         public readonly array $domain = ['schema' => null, 'hostname' => null],
         public readonly int $defaultShortCodesLength = DEFAULT_SHORT_CODES_LENGTH,
         public readonly bool $autoResolveTitles = false,
