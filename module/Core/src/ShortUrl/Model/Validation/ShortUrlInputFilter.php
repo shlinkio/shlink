@@ -81,13 +81,15 @@ class ShortUrlInputFilter extends InputFilter
         $this->add($validUntil);
 
         // The only way to enforce the NotEmpty validator to be evaluated when the key is present with an empty value
-        // is by using the deprecated setContinueIfEmpty
+        // is with setContinueIfEmpty
         $customSlug = $this->createInput(self::CUSTOM_SLUG, false)->setContinueIfEmpty(true);
         $customSlug->getFilterChain()->attach(new CustomSlugFilter($options));
-        $customSlug->getValidatorChain()->attach(new Validator\NotEmpty([
-            Validator\NotEmpty::STRING,
-            Validator\NotEmpty::SPACE,
-        ]));
+        $customSlug->getValidatorChain()
+            ->attach(new Validator\NotEmpty([
+                Validator\NotEmpty::STRING,
+                Validator\NotEmpty::SPACE,
+            ]))
+            ->attach(CustomSlugValidator::forUrlShortenerOptions($options));
         $this->add($customSlug);
 
         $this->add($this->createNumericInput(self::MAX_VISITS, false));
