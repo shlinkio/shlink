@@ -26,7 +26,7 @@ jobs:
       - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          php-extensions: openswoole-22.0.0
+          php-extensions: openswoole-22.1.0
           extensions-cache-key: tests-extensions-${{ matrix.php-version }}-${{ inputs.test-group }}
       - run: composer test:${{ inputs.test-group }}:ci
       - uses: actions/upload-artifact@v3

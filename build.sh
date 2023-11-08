@@ -31,7 +31,8 @@ cd "${builtContent}"
 
 # Install dependencies
 echo "Installing dependencies with $composerBin..."
-composerFlags="--optimize-autoloader --no-progress --no-interaction"
+# Deprecated. Do not ignore PHP platform req for Shlink v4.0.0
+composerFlags="--optimize-autoloader --no-progress --no-interaction --ignore-platform-req=php+"
 ${composerBin} self-update
 ${composerBin} install --no-dev --prefer-dist $composerFlags
 

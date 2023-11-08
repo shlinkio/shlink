@@ -37,7 +37,7 @@
         "lstrojny/functional-php": "^1.17",
         "mezzio/mezzio": "^3.17",
         "mezzio/mezzio-fastroute": "^3.10",
-        "mezzio/mezzio-problem-details": "^1.12",
+        "mezzio/mezzio-problem-details": "^1.13",
         "mezzio/mezzio-swoole": "^4.7",
         "mlocati/ip-lib": "^1.18",
         "mobiledetect/mobiledetectlib": "^3.74",
