@@ -37,6 +37,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Fixed
 * [#1819](https://github.com/shlinkio/shlink/issues/1819) Fix incorrect timeout when running DB commands during Shlink start-up.
 * [#1901](https://github.com/shlinkio/shlink/issues/1901) Do not allow short URLs with custom slugs containing URL-reserved characters, as they will not work at all afterward.
+* [#1900](https://github.com/shlinkio/shlink/issues/1900) Fix short URL visits deletion when multi-segment slugs are enabled.
 
 
 ## [3.6.4] - 2023-09-23
