@@ -28,7 +28,7 @@ jobs:
       - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          php-extensions: openswoole-22.0.0, pdo_sqlsrv-5.10.1
+          php-extensions: openswoole-22.1.0, pdo_sqlsrv-5.11.1
           extensions-cache-key: db-tests-extensions-${{ matrix.php-version }}-${{ inputs.platform }}
       - name: Create test database
         if: ${{ inputs.platform == 'ms' }}
