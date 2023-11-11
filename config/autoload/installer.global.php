@@ -66,6 +66,10 @@ return [
             Option\RabbitMq\RabbitMqUserConfigOption::class,
             Option\RabbitMq\RabbitMqPasswordConfigOption::class,
             Option\RabbitMq\RabbitMqVhostConfigOption::class,
+            Option\Matomo\MatomoEnabledConfigOption::class,
+            Option\Matomo\MatomoBaseUrlConfigOption::class,
+            Option\Matomo\MatomoSiteIdConfigOption::class,
+            Option\Matomo\MatomoApiTokenConfigOption::class,
         ],
 
         'installation_commands' => [
