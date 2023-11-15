@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Shlinkio\Shlink\Core\Matomo;
+
+class MatomoOptions
+{
+    public function __construct(
+        public readonly bool $enabled,
+        public readonly ?string $baseUrl,
+        /** @var numeric-string|int|null */
+        private readonly string|int|null $siteId,
+        public readonly ?string $apiToken,
+    ) {
+    }
+
+    public function siteId(): ?int
+    {
+        if ($this->siteId === null) {
+            return null;
+        }
+
+        // We enforce site ID to be hydrated as a numeric string or int, so it's safe to cast to int here
+        return (int) $this->siteId;
+    }
+}

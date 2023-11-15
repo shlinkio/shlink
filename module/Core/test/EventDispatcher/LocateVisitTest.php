@@ -159,7 +159,7 @@ class LocateVisitTest extends TestCase
     {
         $ipAddr = $originalIpAddress ?? $visit->getRemoteAddr();
         $location = new Location('', '', '', '', 0.0, 0.0, '');
-        $event = UrlVisited::withOriginalIpAddress('123', $originalIpAddress);
+        $event = new UrlVisited('123', $originalIpAddress);
 
         $this->em->expects($this->once())->method('find')->with(Visit::class, '123')->willReturn($visit);
         $this->em->expects($this->once())->method('flush');

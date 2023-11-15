@@ -188,6 +188,11 @@ class Visit extends AbstractEntity implements JsonSerializable
         return $this->date;
     }
 
+    public function userAgent(): string
+    {
+        return $this->userAgent;
+    }
+
     public function jsonSerialize(): array
     {
         return [

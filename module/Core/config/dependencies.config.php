@@ -92,6 +92,9 @@ return [
             Importer\ImportedLinksProcessor::class => ConfigAbstractFactory::class,
 
             Crawling\CrawlingHelper::class => ConfigAbstractFactory::class,
+
+            Matomo\MatomoOptions::class => [ValinorConfigFactory::class, 'config.matomo'],
+            Matomo\MatomoTrackerBuilder::class => ConfigAbstractFactory::class,
         ],
 
         'aliases' => [
@@ -100,6 +103,8 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
+        Matomo\MatomoTrackerBuilder::class => [Matomo\MatomoOptions::class],
+
         ErrorHandler\NotFoundTypeResolverMiddleware::class => ['config.router.base_path'],
         ErrorHandler\NotFoundTrackerMiddleware::class => [Visit\RequestTracker::class],
         ErrorHandler\NotFoundRedirectHandler::class => [
