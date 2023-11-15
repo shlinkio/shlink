@@ -7,11 +7,11 @@ namespace Shlinkio\Shlink\Core\Matomo;
 class MatomoOptions
 {
     public function __construct(
-        public readonly bool $enabled,
-        public readonly ?string $baseUrl,
+        public readonly bool $enabled = false,
+        public readonly ?string $baseUrl = null,
         /** @var numeric-string|int|null */
-        private readonly string|int|null $siteId,
-        public readonly ?string $apiToken,
+        private readonly string|int|null $siteId = null,
+        public readonly ?string $apiToken = null,
     ) {
     }
 

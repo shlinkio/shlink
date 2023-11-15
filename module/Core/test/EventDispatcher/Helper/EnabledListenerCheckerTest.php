@@ -17,6 +17,7 @@ use Shlinkio\Shlink\Core\EventDispatcher\RabbitMq\NotifyVisitToRabbitMq;
 use Shlinkio\Shlink\Core\EventDispatcher\RedisPubSub\NotifyNewShortUrlToRedis;
 use Shlinkio\Shlink\Core\EventDispatcher\RedisPubSub\NotifyVisitToRedis;
 use Shlinkio\Shlink\Core\EventDispatcher\UpdateGeoLiteDb;
+use Shlinkio\Shlink\Core\Matomo\MatomoOptions;
 use Shlinkio\Shlink\Core\Options\RabbitMqOptions;
 use Shlinkio\Shlink\Core\Options\WebhookOptions;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\GeoLite2Options;
@@ -149,6 +150,7 @@ class EnabledListenerCheckerTest extends TestCase
         bool $mercureEnabled = false,
         bool $webhooksEnabled = false,
         bool $geoLiteEnabled = false,
+        bool $matomoEnabled = false,
     ): EnabledListenerChecker {
         return new EnabledListenerChecker(
             new RabbitMqOptions(enabled: $rabbitMqEnabled),
@@ -156,6 +158,7 @@ class EnabledListenerCheckerTest extends TestCase
             new MercureOptions(publicHubUrl: $mercureEnabled ? 'the-url' : null),
             new WebhookOptions(['webhooks' => $webhooksEnabled ? ['foo', 'bar'] : []]),
             new GeoLite2Options(licenseKey: $geoLiteEnabled ? 'the-key' : null),
+            new MatomoOptions(enabled: $matomoEnabled),
         );
     }
 }
