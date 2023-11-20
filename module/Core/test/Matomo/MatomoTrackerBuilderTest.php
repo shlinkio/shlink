@@ -37,8 +37,8 @@ class MatomoTrackerBuilderTest extends TestCase
     {
         $tracker = $this->builder()->buildMatomoTracker();
 
-        self::assertEquals('api_token', $tracker->token_auth);
-        self::assertEquals(5, $tracker->idSite);
+        self::assertEquals('api_token', $tracker->token_auth); // @phpstan-ignore-line
+        self::assertEquals(5, $tracker->idSite); // @phpstan-ignore-line
     }
 
     private function builder(?MatomoOptions $options = null): MatomoTrackerBuilder
