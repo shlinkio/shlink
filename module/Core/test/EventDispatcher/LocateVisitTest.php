@@ -168,7 +168,9 @@ class LocateVisitTest extends TestCase
             $location,
         );
 
-        $this->eventDispatcher->expects($this->once())->method('dispatch')->with(new VisitLocated('123'));
+        $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
+            new VisitLocated('123', $originalIpAddress),
+        );
         $this->logger->expects($this->never())->method('warning');
 
         ($this->locateVisit)($event);

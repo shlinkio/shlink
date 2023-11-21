@@ -160,13 +160,10 @@ class SendVisitToMatomoTest extends TestCase
         $visitId = '123';
         $e = new Exception('Error!');
 
-        $tracker = $this->createMock(MatomoTracker::class);
-        $tracker->expects($this->once())->method('setUrl')->willThrowException($e);
-
         $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn(
             $this->createMock(Visit::class),
         );
-        $this->trackerBuilder->expects($this->once())->method('buildMatomoTracker')->willReturn($tracker);
+        $this->trackerBuilder->expects($this->once())->method('buildMatomoTracker')->willThrowException($e);
         $this->logger->expects($this->never())->method('warning');
         $this->logger->expects($this->once())->method('error')->with(
             'An error occurred while trying to send visit to Matomo. {e}',
