@@ -71,6 +71,7 @@ class SendVisitToMatomoTest extends TestCase
         $tracker = $this->createMock(MatomoTracker::class);
         $tracker->expects($this->once())->method('setUrl')->willReturn($tracker);
         $tracker->expects($this->once())->method('setUserAgent')->willReturn($tracker);
+        $tracker->expects($this->once())->method('setUrlReferrer')->willReturn($tracker);
         $tracker->expects($this->once())->method('doTrackPageView')->with('');
 
         if ($visit->isOrphan()) {
@@ -125,6 +126,7 @@ class SendVisitToMatomoTest extends TestCase
         $tracker = $this->createMock(MatomoTracker::class);
         $tracker->expects($this->once())->method('setUrl')->with($expectedTrackedUrl)->willReturn($tracker);
         $tracker->expects($this->once())->method('setUserAgent')->willReturn($tracker);
+        $tracker->expects($this->once())->method('setUrlReferrer')->willReturn($tracker);
         $tracker->expects($this->any())->method('setCustomTrackingParameter')->willReturn($tracker);
         $tracker->expects($this->once())->method('doTrackPageView');
 

@@ -47,7 +47,8 @@ class SendVisitToMatomo
             $tracker
                 ->setUrl($this->resolveUrlToTrack($visit))
                 ->setCustomTrackingParameter('type', $visit->type()->value)
-                ->setUserAgent($visit->userAgent());
+                ->setUserAgent($visit->userAgent())
+                ->setUrlReferrer($visit->referer());
 
             $location = $visit->getVisitLocation();
             if ($location !== null) {

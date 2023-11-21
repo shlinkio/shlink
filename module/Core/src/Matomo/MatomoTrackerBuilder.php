@@ -36,9 +36,12 @@ class MatomoTrackerBuilder implements MatomoTrackerBuilderInterface
             ->setRequestMethodNonBulk('POST')
             // Set a reasonable timeout
             ->setRequestTimeout(self::MATOMO_DEFAULT_TIMEOUT)
-            ->setRequestConnectTimeout(self::MATOMO_DEFAULT_TIMEOUT)
-            // We don't want to bulk send, as every request to Shlink will create a new tracker
-            ->disableBulkTracking();
+            ->setRequestConnectTimeout(self::MATOMO_DEFAULT_TIMEOUT);
+
+        // We don't want to bulk send, as every request to Shlink will create a new tracker
+        $tracker->disableBulkTracking();
+        // Disable cookies, as they are ignored anyway
+        $tracker->disableCookieSupport();
 
         return $tracker;
     }
