@@ -33,6 +33,7 @@ services:
             - shlink_mercure
             - shlink_mercure_proxy
             - shlink_rabbitmq
+            - shlink_matomo
         environment:
             LC_ALL: C
         extra_hosts:
@@ -70,6 +71,7 @@ services:
             - shlink_mercure
             - shlink_mercure_proxy
             - shlink_rabbitmq
+            - shlink_matomo
         environment:
             LC_ALL: C
         extra_hosts:
@@ -95,6 +97,7 @@ services:
             - shlink_mercure
             - shlink_mercure_proxy
             - shlink_rabbitmq
+            - shlink_matomo
         environment:
             LC_ALL: C
         extra_hosts:
@@ -201,3 +204,21 @@ services:
             - "8005:8080"
         volumes:
             - ./docs/swagger:/app
+
+    shlink_matomo:
+        container_name: shlink_matomo
+        image: matomo:4.15-apache
+        ports:
+            - "8003:80"
+        volumes:
+            # Matomo does not persist port in trusted hosts. This volume is needed to edit config afterward
+            # https://github.com/matomo-org/matomo/issues/9549
+            - ./data/infra/matomo:/var/www/html
+        links:
+            - shlink_db_mysql
+        environment:
+            MATOMO_DATABASE_HOST: "shlink_db_mysql"
+            MATOMO_DATABASE_ADAPTER: "mysql"
+            MATOMO_DATABASE_DBNAME: "matomo"
+            MATOMO_DATABASE_USERNAME: "root"
+            MATOMO_DATABASE_PASSWORD: "root"

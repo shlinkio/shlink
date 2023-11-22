@@ -9,17 +9,19 @@ use Shlinkio\Shlink\EventDispatcher\Util\JsonUnserializable;
 
 abstract class AbstractVisitEvent implements JsonSerializable, JsonUnserializable
 {
-    final public function __construct(public readonly string $visitId)
-    {
+    final public function __construct(
+        public readonly string $visitId,
+        public readonly ?string $originalIpAddress = null,
+    ) {
     }
 
     public function jsonSerialize(): array
     {
-        return ['visitId' => $this->visitId];
+        return ['visitId' => $this->visitId, 'originalIpAddress' => $this->originalIpAddress];
     }
 
     public static function fromPayload(array $payload): self
     {
-        return new static($payload['visitId'] ?? '');
+        return new static($payload['visitId'] ?? '', $payload['originalIpAddress'] ?? null);
     }
 }
