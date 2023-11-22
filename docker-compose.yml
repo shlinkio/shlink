@@ -211,7 +211,7 @@ services:
         ports:
             - "8003:80"
         volumes:
-            # Matomo does not persist port in trusted hosts. This is needed to edit config afterward
+            # Matomo does not persist port in trusted hosts. This volume is needed to edit config afterward
             # https://github.com/matomo-org/matomo/issues/9549
             - ./data/infra/matomo:/var/www/html
         links:
