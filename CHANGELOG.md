@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
+* [#1798](https://github.com/shlinkio/shlink/issues/1798) Experimental support to send visits to an external Matomo instance.
+
 * [#1780](https://github.com/shlinkio/shlink/issues/1780) Add new `NO_ORPHAN_VISITS` API key role.
 
   Keys with this role will always get `0` when fetching orphan visits.
