@@ -16,6 +16,7 @@ use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdater;
 use Shlinkio\Shlink\CLI\GeoLite\GeolocationResult;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
 use Shlinkio\Shlink\IpGeolocation\Exception\DbUpdateException;
+use Shlinkio\Shlink\IpGeolocation\Exception\MissingLicenseException;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Symfony\Component\Lock;
 use Throwable;
@@ -35,6 +36,21 @@ class GeolocationDbUpdaterTest extends TestCase
         $this->geoLiteDbReader = $this->createMock(Reader::class);
         $this->lock = $this->createMock(Lock\LockInterface::class);
         $this->lock->method('acquire')->with($this->isTrue())->willReturn(true);
+    }
+
+    #[Test]
+    public function properResultIsReturnedWhenLicenseIsMissing(): void
+    {
+        $mustBeUpdated = fn () => self::assertTrue(true);
+
+        $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(false);
+        $this->dbUpdater->expects($this->once())->method('downloadFreshCopy')->willThrowException(
+            new MissingLicenseException(''),
+        );
+        $this->geoLiteDbReader->expects($this->never())->method('metadata');
+
+        $result = $this->geolocationDbUpdater()->checkDbUpdate($mustBeUpdated);
+        self::assertEquals(GeolocationResult::LICENSE_MISSING, $result);
     }
 
     #[Test]

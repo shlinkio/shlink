@@ -29,6 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#1055](https://github.com/shlinkio/shlink/issues/1055) Update OAS definition to v3.1.
 * [#1885](https://github.com/shlinkio/shlink/issues/1885) Update to chronos 3.0.
 * [#1896](https://github.com/shlinkio/shlink/issues/1896) Requests to health endpoint are no longer logged.
+* [#1877](https://github.com/shlinkio/shlink/issues/1877) Print a warning when manually running `visit:download-db` command and a GeoLite2 license was not provided.
 
 ### Deprecated
 * [#1783](https://github.com/shlinkio/shlink/issues/1783) Deprecated support for openswoole. RoadRunner is the best replacement, with the same capabilities, but much easier and convenient to install and manage.
