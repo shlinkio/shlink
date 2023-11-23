@@ -72,6 +72,21 @@ class DownloadGeoLiteDbCommandTest extends TestCase
         ];
     }
 
+    #[Test]
+    public function warningIsPrintedWhenLicenseIsMissing(): void
+    {
+        $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willReturn(
+            GeolocationResult::LICENSE_MISSING,
+        );
+
+        $this->commandTester->execute([]);
+        $output = $this->commandTester->getDisplay();
+        $exitCode = $this->commandTester->getStatusCode();
+
+        self::assertStringContainsString('[WARNING] It was not possible to download GeoLite2 db', $output);
+        self::assertSame(ExitCode::EXIT_WARNING, $exitCode);
+    }
+
     #[Test, DataProvider('provideSuccessParams')]
     public function printsExpectedMessageWhenNoErrorOccurs(callable $checkUpdateBehavior, string $expectedMessage): void
     {
