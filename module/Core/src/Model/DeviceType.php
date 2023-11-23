@@ -12,7 +12,8 @@ enum DeviceType: string
 
     public static function matchFromUserAgent(string $userAgent): ?self
     {
-        $detect = new MobileDetect(userAgent: $userAgent);
+        $detect = new MobileDetect();
+        $detect->setUserAgent($userAgent);
 
         return match (true) {
 //            $detect->is('iOS') && $detect->isTablet() => self::IOS, // TODO To detect iPad only
