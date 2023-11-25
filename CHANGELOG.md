@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [3.7.0] - 2023-11-25
 ### Added
 * [#1798](https://github.com/shlinkio/shlink/issues/1798) Experimental support to send visits to an external Matomo instance.
 * [#1780](https://github.com/shlinkio/shlink/issues/1780) Add new `NO_ORPHAN_VISITS` API key role.
@@ -23,11 +23,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
   Encryption should work out of the box if servers schema is set tp `tls` or `rediss`, including support for self-signed certificates.
 
+  This has been tested with AWS ElasticCache using in-transit encryption, and with Digital Ocean Redis database.
+
 * [#1906](https://github.com/shlinkio/shlink/issues/1906) Add support for RabbitMQ encrypted connections using SSL/TLS.
 
   In order to enable SLL, you need to pass `RABBITMQ_USE_SSL=true` or the corresponding config option.
 
   Connections using self-signed certificates should work out of the box.
+
+  This has been tested with AWS RabbitMQ using in-transit encryption, and with CloudAMQP.
 
 ### Changed
 * [#1799](https://github.com/shlinkio/shlink/issues/1799) RoadRunner/openswoole jobs are not run anymore for tasks that are actually disabled.
