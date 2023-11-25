@@ -64,6 +64,7 @@ return [
             Option\QrCode\DefaultRoundBlockSizeConfigOption::class,
             Option\RabbitMq\RabbitMqEnabledConfigOption::class,
             Option\RabbitMq\RabbitMqHostConfigOption::class,
+            Option\RabbitMq\RabbitMqUseSslConfigOption::class,
             Option\RabbitMq\RabbitMqPortConfigOption::class,
             Option\RabbitMq\RabbitMqUserConfigOption::class,
             Option\RabbitMq\RabbitMqPasswordConfigOption::class,

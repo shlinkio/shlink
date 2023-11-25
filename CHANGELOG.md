@@ -7,7 +7,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ## [Unreleased]
 ### Added
 * [#1798](https://github.com/shlinkio/shlink/issues/1798) Experimental support to send visits to an external Matomo instance.
-
 * [#1780](https://github.com/shlinkio/shlink/issues/1780) Add new `NO_ORPHAN_VISITS` API key role.
 
   Keys with this role will always get `0` when fetching orphan visits.
@@ -20,6 +19,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#1905](https://github.com/shlinkio/shlink/issues/1905) Add support for PHP 8.3.
 * [#1927](https://github.com/shlinkio/shlink/issues/1927) Allow redis credentials be URL-decoded before passing them to connection.
+* [#1834](https://github.com/shlinkio/shlink/issues/1834) Add support for redis encrypted connections using SSL/TLS.
+
+  Encryption should work out of the box if servers schema is set tp `tls` or `rediss`, including support for self-signed certificates.
+
+* [#1906](https://github.com/shlinkio/shlink/issues/1906) Add support for RabbitMQ encrypted connections using SSL/TLS.
+
+  In order to enable SLL, you need to pass `RABBITMQ_USE_SSL=true` or the corresponding config option.
+
+  Connections using self-signed certificates should work out of the box.
 
 ### Changed
 * [#1799](https://github.com/shlinkio/shlink/issues/1799) RoadRunner/openswoole jobs are not run anymore for tasks that are actually disabled.
