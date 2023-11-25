@@ -4,6 +4,58 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [3.7.0] - 2023-11-25
+### Added
+* [#1798](https://github.com/shlinkio/shlink/issues/1798) Experimental support to send visits to an external Matomo instance.
+* [#1780](https://github.com/shlinkio/shlink/issues/1780) Add new `NO_ORPHAN_VISITS` API key role.
+
+  Keys with this role will always get `0` when fetching orphan visits.
+
+  When trying to delete orphan visits the result will also be `0` and no visits will actually get deleted.
+
+* [#1879](https://github.com/shlinkio/shlink/issues/1879) Cache namespace can now be customized via config option or `CACHE_NAMESPACE` env var.
+
+  This is important if you are running multiple Shlink instance on the same server, or they share the same Redis instance (even more so if they are on different versions).
+
+* [#1905](https://github.com/shlinkio/shlink/issues/1905) Add support for PHP 8.3.
+* [#1927](https://github.com/shlinkio/shlink/issues/1927) Allow redis credentials be URL-decoded before passing them to connection.
+* [#1834](https://github.com/shlinkio/shlink/issues/1834) Add support for redis encrypted connections using SSL/TLS.
+
+  Encryption should work out of the box if servers schema is set tp `tls` or `rediss`, including support for self-signed certificates.
+
+  This has been tested with AWS ElasticCache using in-transit encryption, and with Digital Ocean Redis database.
+
+* [#1906](https://github.com/shlinkio/shlink/issues/1906) Add support for RabbitMQ encrypted connections using SSL/TLS.
+
+  In order to enable SLL, you need to pass `RABBITMQ_USE_SSL=true` or the corresponding config option.
+
+  Connections using self-signed certificates should work out of the box.
+
+  This has been tested with AWS RabbitMQ using in-transit encryption, and with CloudAMQP.
+
+### Changed
+* [#1799](https://github.com/shlinkio/shlink/issues/1799) RoadRunner/openswoole jobs are not run anymore for tasks that are actually disabled.
+
+  For example, if you did not enable RabbitMQ real-time updates, instead of triggering a job that ends immediately, the job will not even be enqueued.
+
+* [#1835](https://github.com/shlinkio/shlink/issues/1835) Docker image is now built only when a release is tagged, and new tags are included, for minor and major versions.
+* [#1055](https://github.com/shlinkio/shlink/issues/1055) Update OAS definition to v3.1.
+* [#1885](https://github.com/shlinkio/shlink/issues/1885) Update to chronos 3.0.
+* [#1896](https://github.com/shlinkio/shlink/issues/1896) Requests to health endpoint are no longer logged.
+* [#1877](https://github.com/shlinkio/shlink/issues/1877) Print a warning when manually running `visit:download-db` command and a GeoLite2 license was not provided.
+
+### Deprecated
+* [#1783](https://github.com/shlinkio/shlink/issues/1783) Deprecated support for openswoole. RoadRunner is the best replacement, with the same capabilities, but much easier and convenient to install and manage.
+
+### Removed
+* [#1790](https://github.com/shlinkio/shlink/issues/1790) Drop support for PHP 8.1.
+
+### Fixed
+* [#1819](https://github.com/shlinkio/shlink/issues/1819) Fix incorrect timeout when running DB commands during Shlink start-up.
+* [#1901](https://github.com/shlinkio/shlink/issues/1901) Do not allow short URLs with custom slugs containing URL-reserved characters, as they will not work at all afterward.
+* [#1900](https://github.com/shlinkio/shlink/issues/1900) Fix short URL visits deletion when multi-segment slugs are enabled.
+
+
 ## [3.6.4] - 2023-09-23
 ### Added
 * *Nothing*
@@ -112,7 +164,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
   * Versions with `-openswoole` suffix (like `3.6.0-openswoole`) will always use openswoole as the runtime, even if default one changes in the future.
 
 ### Deprecated
-* *Nothing*
+* Deprecated `ENABLE_PERIODIC_VISIT_LOCATE` env var. Use an external mechanism to automate visit locations.
 
 ### Removed
 * *Nothing*

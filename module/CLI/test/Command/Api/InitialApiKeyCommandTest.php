@@ -11,21 +11,19 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Api\InitialApiKeyCommand;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
-use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
+use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class InitialApiKeyCommandTest extends TestCase
 {
-    use CliTestUtilsTrait;
-
     private CommandTester $commandTester;
     private MockObject & ApiKeyServiceInterface $apiKeyService;
 
     public function setUp(): void
     {
         $this->apiKeyService = $this->createMock(ApiKeyServiceInterface::class);
-        $this->commandTester = $this->testerForCommand(new InitialApiKeyCommand($this->apiKeyService));
+        $this->commandTester = CliTestUtils::testerForCommand(new InitialApiKeyCommand($this->apiKeyService));
     }
 
     #[Test, DataProvider('provideParams')]

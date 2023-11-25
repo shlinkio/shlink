@@ -1,0 +1,64 @@
+name: Bug report
+description: Something on Shlink is broken or not working as documented?
+labels: ['bug']
+body:
+  - type: input
+    validations:
+      required: true
+    attributes:
+      label: Shlink version
+      placeholder: x.y.z
+  - type: input
+    validations:
+      required: true
+    attributes:
+      label: PHP version
+      placeholder: x.y.z
+  - type: dropdown
+    validations:
+      required: true
+    attributes:
+      label: How do you serve Shlink
+      options:
+        - Self-hosted Apache
+        - Self-hosted nginx
+        - Self-hosted openswoole
+        - Self-hosted RoadRunner
+        - Openswoole Docker image
+        - RoadRunner Docker image
+        - Other (explain in summary)
+  - type: dropdown
+    validations:
+      required: true
+    attributes:
+      label: Database engine
+      options:
+        - MySQL
+        - MariaDB
+        - PostgreSQL
+        - MicrosoftSQL
+        - SQLite
+  - type: input
+    validations:
+      required: true
+    attributes:
+      label: Database version
+      placeholder: x.y.z
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Current behavior
+      value: '<!-- How is it actually behaving (and it should not)? -->'
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Expected behavior
+      value: '<!-- How did you expect it to behave? -->'
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: How to reproduce
+      value: '<!-- Provide steps to reproduce the bug. -->'

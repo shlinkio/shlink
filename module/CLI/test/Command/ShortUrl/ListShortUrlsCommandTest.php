@@ -21,7 +21,7 @@ use Shlinkio\Shlink\Core\ShortUrl\ShortUrlListServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
-use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
+use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Tester\CommandTester;
 
 use function count;
@@ -29,8 +29,6 @@ use function explode;
 
 class ListShortUrlsCommandTest extends TestCase
 {
-    use CliTestUtilsTrait;
-
     private CommandTester $commandTester;
     private MockObject & ShortUrlListServiceInterface $shortUrlService;
 
@@ -40,7 +38,7 @@ class ListShortUrlsCommandTest extends TestCase
         $command = new ListShortUrlsCommand($this->shortUrlService, new ShortUrlDataTransformer(
             new ShortUrlStringifier([]),
         ));
-        $this->commandTester = $this->testerForCommand($command);
+        $this->commandTester = CliTestUtils::testerForCommand($command);
     }
 
     #[Test]

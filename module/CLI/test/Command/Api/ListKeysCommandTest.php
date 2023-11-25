@@ -15,20 +15,18 @@ use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
-use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
+use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class ListKeysCommandTest extends TestCase
 {
-    use CliTestUtilsTrait;
-
     private CommandTester $commandTester;
     private MockObject & ApiKeyServiceInterface $apiKeyService;
 
     protected function setUp(): void
     {
         $this->apiKeyService = $this->createMock(ApiKeyServiceInterface::class);
-        $this->commandTester = $this->testerForCommand(new ListKeysCommand($this->apiKeyService));
+        $this->commandTester = CliTestUtils::testerForCommand(new ListKeysCommand($this->apiKeyService));
     }
 
     #[Test, DataProvider('provideKeysAndOutputs')]

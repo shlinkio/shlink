@@ -41,8 +41,8 @@ class LocateVisit
             return;
         }
 
-        $this->locateVisit($visitId, $shortUrlVisited->originalIpAddress(), $visit);
-        $this->eventDispatcher->dispatch(new VisitLocated($visitId));
+        $this->locateVisit($visitId, $shortUrlVisited->originalIpAddress, $visit);
+        $this->eventDispatcher->dispatch(new VisitLocated($visitId, $shortUrlVisited->originalIpAddress));
     }
 
     private function locateVisit(string $visitId, ?string $originalIpAddress, Visit $visit): void

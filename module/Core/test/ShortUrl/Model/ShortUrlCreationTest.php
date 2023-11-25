@@ -64,6 +64,10 @@ class ShortUrlCreationTest extends TestCase
         ]];
         yield [[
             ShortUrlInputFilter::LONG_URL => 'https://foo',
+            ShortUrlInputFilter::CUSTOM_SLUG => 'foo?some=param',
+        ]];
+        yield [[
+            ShortUrlInputFilter::LONG_URL => 'https://foo',
             ShortUrlInputFilter::CUSTOM_SLUG => '   ',
         ]];
         yield [[

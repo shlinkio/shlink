@@ -20,7 +20,7 @@ use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
-use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
+use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Tester\CommandTester;
 
 use function Shlinkio\Shlink\Common\buildDateRange;
@@ -28,8 +28,6 @@ use function sprintf;
 
 class GetShortUrlVisitsCommandTest extends TestCase
 {
-    use CliTestUtilsTrait;
-
     private CommandTester $commandTester;
     private MockObject & VisitsStatsHelperInterface $visitsHelper;
 
@@ -37,7 +35,7 @@ class GetShortUrlVisitsCommandTest extends TestCase
     {
         $this->visitsHelper = $this->createMock(VisitsStatsHelperInterface::class);
         $command = new GetShortUrlVisitsCommand($this->visitsHelper);
-        $this->commandTester = $this->testerForCommand($command);
+        $this->commandTester = CliTestUtils::testerForCommand($command);
     }
 
     #[Test]

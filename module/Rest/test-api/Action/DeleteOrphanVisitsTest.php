@@ -10,7 +10,7 @@ use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 class DeleteOrphanVisitsTest extends ApiTestCase
 {
     #[Test]
-    public function deletesVisitsForShortUrlWithoutAffectingTheRest(): void
+    public function deletesOrphanVisitsWithoutAffectingTheRest(): void
     {
         self::assertEquals(7, $this->getTotalVisits());
         self::assertEquals(3, $this->getOrphanVisits());
@@ -22,6 +22,21 @@ class DeleteOrphanVisitsTest extends ApiTestCase
         self::assertEquals(3, $payload['deletedVisits']);
         self::assertEquals(7, $this->getTotalVisits()); // This verifies that regular visits have not been affected
         self::assertEquals(0, $this->getOrphanVisits());
+    }
+
+    #[Test]
+    public function doesNotDeleteOrphanVisitsForRestrictedApiKey(): void
+    {
+        self::assertEquals(7, $this->getTotalVisits());
+        self::assertEquals(3, $this->getOrphanVisits());
+
+        $resp = $this->callApiWithKey(self::METHOD_DELETE, '/visits/orphan', apiKey: 'no_orphans_api_key');
+        $payload = $this->getJsonResponsePayload($resp);
+
+        self::assertEquals(200, $resp->getStatusCode());
+        self::assertEquals(0, $payload['deletedVisits']);
+        self::assertEquals(7, $this->getTotalVisits()); // This verifies that regular visits have not been affected
+        self::assertEquals(3, $this->getOrphanVisits()); // This verifies that all orphan visits still exist
     }
 
     private function getTotalVisits(): int

@@ -36,6 +36,8 @@ class GenerateKeyCommand extends Command
     {
         $authorOnly = Role::AUTHORED_SHORT_URLS->paramName();
         $domainOnly = Role::DOMAIN_SPECIFIC->paramName();
+        $noOrphanVisits = Role::NO_ORPHAN_VISITS->paramName();
+
         $help = <<<HELP
         The <info>%command.name%</info> generates a new valid API key.
 
@@ -53,7 +55,8 @@ class GenerateKeyCommand extends Command
 
             * Can interact with short URLs created with this API key: <info>%command.full_name% --{$authorOnly}</info>
             * Can interact with short URLs for one domain: <info>%command.full_name% --{$domainOnly}=example.com</info>
-            * Both: <info>%command.full_name% --{$authorOnly} --{$domainOnly}=example.com</info>
+            * Cannot see orphan visits: <info>%command.full_name% --{$noOrphanVisits}</info>
+            * All: <info>%command.full_name% --{$authorOnly} --{$domainOnly}=example.com --{$noOrphanVisits}</info>
         HELP;
 
         $this
@@ -85,6 +88,12 @@ class GenerateKeyCommand extends Command
                     'Adds the "%s" role to the new API key, with the domain provided.',
                     Role::DOMAIN_SPECIFIC->value,
                 ),
+            )
+            ->addOption(
+                $noOrphanVisits,
+                'o',
+                InputOption::VALUE_NONE,
+                sprintf('Adds the "%s" role to the new API key.', Role::NO_ORPHAN_VISITS->value),
             )
             ->setHelp($help);
     }

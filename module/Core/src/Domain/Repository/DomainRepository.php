@@ -79,6 +79,7 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
         yield from $apiKey?->mapRoles(fn (Role $role, array $meta) => match ($role) {
             Role::DOMAIN_SPECIFIC => ['d', new IsDomain(Role::domainIdFromMeta($meta))],
             Role::AUTHORED_SHORT_URLS => ['s', new BelongsToApiKey($apiKey)],
+            default => null,
         }) ?? [];
     }
 }

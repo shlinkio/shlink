@@ -12,20 +12,18 @@ use Shlinkio\Shlink\CLI\Command\Tag\ListTagsCommand;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
-use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
+use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class ListTagsCommandTest extends TestCase
 {
-    use CliTestUtilsTrait;
-
     private CommandTester $commandTester;
     private MockObject & TagServiceInterface $tagService;
 
     protected function setUp(): void
     {
         $this->tagService = $this->createMock(TagServiceInterface::class);
-        $this->commandTester = $this->testerForCommand(new ListTagsCommand($this->tagService));
+        $this->commandTester = CliTestUtils::testerForCommand(new ListTagsCommand($this->tagService));
     }
 
     #[Test]

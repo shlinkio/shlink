@@ -6,9 +6,9 @@ You will also see how to ensure the code fulfills the expected code checks, and 
 
 ## System dependencies
 
-The project provides all its dependencies as docker containers through a docker-compose configuration.
+The project provides all its dependencies as docker containers through a `docker compose` configuration.
 
-Because of this, the only actual dependencies are [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/).
+Because of this, the only actual dependencies are [docker](https://docs.docker.com/get-docker/) and [docker compose](https://docs.docker.com/compose/install/).
 
 ## Setting up the project
 
@@ -21,7 +21,7 @@ Then you will have to follow these steps:
     For example the `common.local.php.dist` file should be copied as `common.local.php`.
 
 * Copy the file `docker-compose.override.yml.dist` by also removing the `dist` extension.
-* Start-up the project by running `docker-compose up`.
+* Start-up the project by running `docker compose up`.
 
     The first time this command is run, it will create several containers that are used during development, so it may take some time.
 
@@ -31,7 +31,7 @@ Then you will have to follow these steps:
 * Run `./indocker bin/cli db:migrate` to get database migrations up to date.
 * Run `./indocker bin/cli api-key:generate` to get your first API key generated.
 
-Once you finish this, you will have the project exposed in ports `8000` through nginx+php-fpm and `8080` through openswoole.
+Once you finish this, you will have the project exposed in ports `8800` through RoadRunner, `8080` through openswoole and `8000` through nginx+php-fpm.
 
 > Note: The `indocker` shell script is a helper tool used to run commands inside the main docker container.
 
@@ -73,12 +73,12 @@ shlink
 
 The purposes of every folder are:
 
-* `bin`: It contains the CLI tools. The `cli` one is the main entry point to run shlink from the command line.
+* `bin`: It contains the CLI tools. The `cli` one is the main entry point to run Shlink from the command line.
 * `config`: Contains application-wide configurations, which are later merged with the ones provided by every module.
 * `data`: Common runtime-generated git-ignored assets, like logs, caches, etc.
 * `docs`: Any project documentation is stored here, like API spec definitions or architectural decision records.
 * `module`: Contains a sub-folder for every module in the project. Modules contain the source code, tests and configurations for every context in the project.
-* `public`: Few assets (like `favicon.ico` or `robots.txt`) and the web entry point are stored here. This web entry point is not used when serving the app with openswoole.
+* `public`: Few assets (like `favicon.ico` or `robots.txt`) and the web entry point are stored here. This web entry point is not used when serving the app with RoadRunner or openswoole.
 
 ## Project tests
 
@@ -94,7 +94,7 @@ In order to ensure stability and no regressions are introduced while developing 
 
     The project provides some tooling to run them against any of the supported database engines.
 
-* **API tests**: These are E2E tests that spin up an instance of the app with openswoole, and test it from the outside by interacting with the REST API.
+* **API tests**: These are E2E tests that spin up an instance of the app with RoadRunner or openswoole, and test it from the outside by interacting with the REST API.
 
     These are the best tests to catch regressions, and to verify everything behaves as expected.
 
@@ -124,6 +124,12 @@ Depending on the kind of contribution, maybe not all kinds of tests are needed, 
 * Run `./indocker composer test:cli` to run CLI E2E tests. For these, the Maria DB database engine is used.
 * Run `./indocker composer infect:test` to run both unit and database tests (over sqlite) and then apply mutations to them with [infection](https://infection.github.io/).
 * Run `./indocker composer ci` to run all previous commands together, parallelizing non-conflicting tasks as much as possible.
+
+## Testing endpoints
+
+The project provides a Swagger UI container for dev envs, which can be accessed in http://localhost:8005.
+
+It will automatically load the contents of `docs/swagger`, so you can make any updates and they will get reflected.
 
 ## Pull request process
 

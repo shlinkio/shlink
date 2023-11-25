@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        php-version: ['8.1']
+        php-version: ['8.2']
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Determine version
         id: determine_version
         run: echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
@@ -20,13 +20,13 @@ jobs:
       - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          php-extensions: openswoole-22.0.0
+          php-extensions: openswoole-22.1.0
           extensions-cache-key: publish-swagger-spec-extensions-${{ matrix.php-version }}
       - run: composer swagger:inline
       - run: mkdir ${{ steps.determine_version.outputs.version }}
       - run: mv docs/swagger/swagger-inlined.json ${{ steps.determine_version.outputs.version }}/open-api-spec.json
       - name: Publish spec
-        uses: JamesIves/github-pages-deploy-action@4.4.1
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           token: ${{ secrets.OAS_PUBLISH_TOKEN }}
           repository-name: 'shlinkio/shlink-open-api-specs'

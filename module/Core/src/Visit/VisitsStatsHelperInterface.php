@@ -43,7 +43,7 @@ interface VisitsStatsHelperInterface
     /**
      * @return Visit[]|Paginator
      */
-    public function orphanVisits(VisitsParams $params): Paginator;
+    public function orphanVisits(VisitsParams $params, ?ApiKey $apiKey = null): Paginator;
 
     /**
      * @return Visit[]|Paginator

@@ -86,14 +86,15 @@ class RoleTest extends TestCase
     }
 
     #[Test, DataProvider('provideRoleNames')]
-    public function getsExpectedRoleFriendlyName(Role $role, string $expectedFriendlyName): void
+    public function getsExpectedRoleFriendlyName(Role $role, array $meta, string $expectedFriendlyName): void
     {
-        self::assertEquals($expectedFriendlyName, $role->toFriendlyName());
+        self::assertEquals($expectedFriendlyName, $role->toFriendlyName($meta));
     }
 
     public static function provideRoleNames(): iterable
     {
-        yield Role::AUTHORED_SHORT_URLS->value => [Role::AUTHORED_SHORT_URLS, 'Author only'];
-        yield Role::DOMAIN_SPECIFIC->value => [Role::DOMAIN_SPECIFIC, 'Domain only'];
+        yield Role::AUTHORED_SHORT_URLS->value => [Role::AUTHORED_SHORT_URLS, [], 'Author only'];
+        yield Role::DOMAIN_SPECIFIC->value => [Role::DOMAIN_SPECIFIC, ['authority' => 's.test'], 'Domain only: s.test'];
+        yield Role::NO_ORPHAN_VISITS->value => [Role::NO_ORPHAN_VISITS, [], 'No orphan visits'];
     }
 }

@@ -27,7 +27,7 @@ class ListKeysCommand extends Command
 
     public const NAME = 'api-key:list';
 
-    public function __construct(private ApiKeyServiceInterface $apiKeyService)
+    public function __construct(private readonly ApiKeyServiceInterface $apiKeyService)
     {
         parent::__construct();
     }
@@ -60,10 +60,7 @@ class ListKeysCommand extends Command
             }
             $rowData[] = $expiration?->toAtomString() ?? '-';
             $rowData[] = ApiKey::isAdmin($apiKey) ? 'Admin' : implode("\n", $apiKey->mapRoles(
-                fn (Role $role, array $meta) =>
-                    empty($meta)
-                        ? $role->toFriendlyName()
-                        : sprintf('%s: %s', $role->toFriendlyName(), Role::domainAuthorityFromMeta($meta)),
+                fn (Role $role, array $meta) => $role->toFriendlyName($meta),
             ));
 
             return $rowData;

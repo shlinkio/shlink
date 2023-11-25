@@ -12,7 +12,7 @@ use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolverInterface;
-use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
+use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Tester\CommandTester;
 
 use function sprintf;
@@ -21,15 +21,13 @@ use const PHP_EOL;
 
 class ResolveUrlCommandTest extends TestCase
 {
-    use CliTestUtilsTrait;
-
     private CommandTester $commandTester;
     private MockObject & ShortUrlResolverInterface $urlResolver;
 
     protected function setUp(): void
     {
         $this->urlResolver = $this->createMock(ShortUrlResolverInterface::class);
-        $this->commandTester = $this->testerForCommand(new ResolveUrlCommand($this->urlResolver));
+        $this->commandTester = CliTestUtils::testerForCommand(new ResolveUrlCommand($this->urlResolver));
     }
 
     #[Test]

@@ -5,24 +5,28 @@ declare(strict_types=1);
 namespace ShlinkioApiTest\Shlink\Rest\Action;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
-use ShlinkioApiTest\Shlink\Rest\Utils\NotFoundUrlHelpersTrait;
+use ShlinkioApiTest\Shlink\Rest\Utils\ApiTestDataProviders;
+use ShlinkioApiTest\Shlink\Rest\Utils\UrlBuilder;
 
 use function sprintf;
 
 class DeleteShortUrlTest extends ApiTestCase
 {
-    use NotFoundUrlHelpersTrait;
-
-    #[Test, DataProvider('provideInvalidUrls')]
+    #[Test, DataProviderExternal(ApiTestDataProviders::class, 'invalidUrlsProvider')]
     public function notFoundErrorIsReturnWhenDeletingInvalidUrl(
         string $shortCode,
         ?string $domain,
         string $expectedDetail,
         string $apiKey,
     ): void {
-        $resp = $this->callApiWithKey(self::METHOD_DELETE, $this->buildShortUrlPath($shortCode, $domain), [], $apiKey);
+        $resp = $this->callApiWithKey(
+            self::METHOD_DELETE,
+            UrlBuilder::buildShortUrlPath($shortCode, $domain),
+            apiKey: $apiKey,
+        );
         $payload = $this->getJsonResponsePayload($resp);
 
         self::assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());

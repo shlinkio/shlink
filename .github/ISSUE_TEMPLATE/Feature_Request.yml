@@ -1,0 +1,16 @@
+name: Feature request
+description: Do you find Shlink is missing some important feature that would make it more useful?
+labels: ['feature']
+body:
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Summary
+      value: '<!-- Describe the new feature you would like to request. -->'
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Use case
+      value: '<!-- Explain why do you think this feature would be useful, and what problems would it help to solve. -->'

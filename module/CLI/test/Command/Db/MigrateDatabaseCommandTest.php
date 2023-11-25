@@ -9,7 +9,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Db\MigrateDatabaseCommand;
 use Shlinkio\Shlink\CLI\Util\ProcessRunnerInterface;
-use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
+use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Lock\LockFactory;
@@ -18,8 +18,6 @@ use Symfony\Component\Process\PhpExecutableFinder;
 
 class MigrateDatabaseCommandTest extends TestCase
 {
-    use CliTestUtilsTrait;
-
     private CommandTester $commandTester;
     private MockObject & ProcessRunnerInterface $processHelper;
 
@@ -36,7 +34,7 @@ class MigrateDatabaseCommandTest extends TestCase
         $this->processHelper = $this->createMock(ProcessRunnerInterface::class);
 
         $command = new MigrateDatabaseCommand($locker, $this->processHelper, $phpExecutableFinder);
-        $this->commandTester = $this->testerForCommand($command);
+        $this->commandTester = CliTestUtils::testerForCommand($command);
     }
 
     #[Test]

@@ -24,12 +24,16 @@ class RoleResolver implements RoleResolverInterface
     {
         $domainAuthority = $input->getOption(Role::DOMAIN_SPECIFIC->paramName());
         $author = $input->getOption(Role::AUTHORED_SHORT_URLS->paramName());
+        $noOrphanVisits = $input->getOption(Role::NO_ORPHAN_VISITS->paramName());
 
         if ($author) {
             yield RoleDefinition::forAuthoredShortUrls();
         }
         if (is_string($domainAuthority)) {
             yield $this->resolveRoleForAuthority($domainAuthority);
+        }
+        if ($noOrphanVisits) {
+            yield RoleDefinition::forNoOrphanVisits();
         }
     }
 

@@ -5,7 +5,7 @@
 
 This image provides an easy way to set up [shlink](https://shlink.io) on a container-based runtime.
 
-It exposes a shlink instance served with [openswoole](https://openswoole.com/), which can be linked to external databases to persist data.
+It exposes a shlink instance served with [RoadRunner](https://roadrunner.dev) or [openswoole](https://openswoole.com/), which can be linked to external databases to persist data.
 
 ## Usage
 

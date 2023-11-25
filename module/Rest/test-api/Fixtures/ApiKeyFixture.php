@@ -23,20 +23,28 @@ class ApiKeyFixture extends AbstractFixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
-        $manager->persist($this->buildApiKey('valid_api_key', true));
-        $manager->persist($this->buildApiKey('disabled_api_key', false));
-        $manager->persist($this->buildApiKey('expired_api_key', true, Chronos::now()->subDay()->startOfDay()));
+        $manager->persist($this->buildApiKey('valid_api_key', enabled: true));
+        $manager->persist($this->buildApiKey('disabled_api_key', enabled: false));
+        $manager->persist($this->buildApiKey(
+            'expired_api_key',
+            enabled: true,
+            expiresAt: Chronos::now()->subDays(1)->startOfDay(),
+        ));
 
-        $authorApiKey = $this->buildApiKey('author_api_key', true);
+        $authorApiKey = $this->buildApiKey('author_api_key', enabled: true);
         $authorApiKey->registerRole(RoleDefinition::forAuthoredShortUrls());
         $manager->persist($authorApiKey);
         $this->addReference('author_api_key', $authorApiKey);
 
         /** @var Domain $exampleDomain */
         $exampleDomain = $this->getReference('example_domain');
-        $domainApiKey = $this->buildApiKey('domain_api_key', true);
+        $domainApiKey = $this->buildApiKey('domain_api_key', enabled: true);
         $domainApiKey->registerRole(RoleDefinition::forDomain($exampleDomain));
         $manager->persist($domainApiKey);
+
+        $authorApiKey = $this->buildApiKey('no_orphans_api_key', enabled: true);
+        $authorApiKey->registerRole(RoleDefinition::forNoOrphanVisits());
+        $manager->persist($authorApiKey);
 
         $manager->flush();
     }

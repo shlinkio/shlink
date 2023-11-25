@@ -25,4 +25,9 @@ final class RoleDefinition
             ['domain_id' => $domain->getId(), 'authority' => $domain->authority],
         );
     }
+
+    public static function forNoOrphanVisits(): self
+    {
+        return new self(Role::NO_ORPHAN_VISITS, []);
+    }
 }

@@ -11,6 +11,9 @@ use function sprintf;
 
 class ShortUrlStringifier implements ShortUrlStringifierInterface
 {
+    /**
+     * @param array{schema?: string, hostname?: string} $domainConfig
+     */
     public function __construct(private readonly array $domainConfig, private readonly string $basePath = '')
     {
     }

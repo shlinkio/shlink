@@ -18,7 +18,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Db\CreateDatabaseCommand;
 use Shlinkio\Shlink\CLI\Util\ProcessRunnerInterface;
-use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
+use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Lock\LockFactory;
@@ -27,8 +27,6 @@ use Symfony\Component\Process\PhpExecutableFinder;
 
 class CreateDatabaseCommandTest extends TestCase
 {
-    use CliTestUtilsTrait;
-
     private CommandTester $commandTester;
     private MockObject & ProcessRunnerInterface $processHelper;
     private MockObject & Connection $regularConn;
@@ -63,7 +61,7 @@ class CreateDatabaseCommandTest extends TestCase
         $noDbNameConn->method('createSchemaManager')->withAnyParameters()->willReturn($this->schemaManager);
 
         $command = new CreateDatabaseCommand($locker, $this->processHelper, $phpExecutableFinder, $em, $noDbNameConn);
-        $this->commandTester = $this->testerForCommand($command);
+        $this->commandTester = CliTestUtils::testerForCommand($command);
     }
 
     #[Test]

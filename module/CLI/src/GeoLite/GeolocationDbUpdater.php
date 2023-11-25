@@ -70,7 +70,7 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         $buildTimestamp = $this->resolveBuildTimestamp($meta);
         $buildDate = Chronos::createFromTimestamp($buildTimestamp);
 
-        return Chronos::now()->gt($buildDate->addDays(35));
+        return Chronos::now()->greaterThan($buildDate->addDays(35));
     }
 
     private function resolveBuildTimestamp(Metadata $meta): int
@@ -108,8 +108,7 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
             $this->dbUpdater->downloadFreshCopy($this->wrapHandleProgressCallback($handleProgress, $olderDbExists));
             return $olderDbExists ? GeolocationResult::DB_UPDATED : GeolocationResult::DB_CREATED;
         } catch (MissingLicenseException) {
-            // If there's no license key, just ignore the error
-            return GeolocationResult::CHECK_SKIPPED;
+            return GeolocationResult::LICENSE_MISSING;
         } catch (DbUpdateException | WrongIpException $e) {
             throw $olderDbExists
                 ? GeolocationDbUpdateFailedException::withOlderDb($e)

@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Laminas\Stdlib\ArrayUtils;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -30,7 +31,7 @@ use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelper;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
-use ShlinkioTest\Shlink\Core\Util\ApiKeyHelpersTrait;
+use ShlinkioTest\Shlink\Core\Util\ApiKeyDataProviders;
 
 use function count;
 use function Functional\map;
@@ -38,8 +39,6 @@ use function range;
 
 class VisitsStatsHelperTest extends TestCase
 {
-    use ApiKeyHelpersTrait;
-
     private VisitsStatsHelper $helper;
     private MockObject & EntityManagerInterface $em;
 
@@ -50,13 +49,14 @@ class VisitsStatsHelperTest extends TestCase
     }
 
     #[Test, DataProvider('provideCounts')]
-    public function returnsExpectedVisitsStats(int $expectedCount): void
+    public function returnsExpectedVisitsStats(int $expectedCount, ?ApiKey $apiKey): void
     {
         $repo = $this->createMock(VisitRepository::class);
         $callCount = 0;
         $repo->expects($this->exactly(2))->method('countNonOrphanVisits')->willReturnCallback(
-            function (VisitsCountFiltering $options) use ($expectedCount, &$callCount) {
+            function (VisitsCountFiltering $options) use ($expectedCount, $apiKey, &$callCount) {
                 Assert::assertEquals($callCount !== 0, $options->excludeBots);
+                Assert::assertEquals($apiKey, $options->apiKey);
                 $callCount++;
 
                 return $expectedCount * 3;
@@ -67,17 +67,20 @@ class VisitsStatsHelperTest extends TestCase
         )->willReturn($expectedCount);
         $this->em->expects($this->once())->method('getRepository')->with(Visit::class)->willReturn($repo);
 
-        $stats = $this->helper->getVisitsStats();
+        $stats = $this->helper->getVisitsStats($apiKey);
 
         self::assertEquals(new VisitsStats($expectedCount * 3, $expectedCount), $stats);
     }
 
     public static function provideCounts(): iterable
     {
-        return map(range(0, 50, 5), fn (int $value) => [$value]);
+        return [
+            ...map(range(0, 50, 5), fn (int $value) => [$value, null]),
+            ...map(range(0, 18, 3), fn (int $value) => [$value, ApiKey::create()]),
+        ];
     }
 
-    #[Test, DataProvider('provideAdminApiKeys')]
+    #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
     public function infoReturnsVisitsForCertainShortCode(?ApiKey $apiKey): void
     {
         $shortCode = '123ABC';
@@ -137,7 +140,7 @@ class VisitsStatsHelperTest extends TestCase
         $this->helper->visitsForTag($tag, new VisitsParams(), $apiKey);
     }
 
-    #[Test, DataProvider('provideAdminApiKeys')]
+    #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
     public function visitsForTagAreReturnedAsExpected(?ApiKey $apiKey): void
     {
         $tag = 'foo';
@@ -175,7 +178,7 @@ class VisitsStatsHelperTest extends TestCase
         $this->helper->visitsForDomain($domain, new VisitsParams(), $apiKey);
     }
 
-    #[Test, DataProvider('provideAdminApiKeys')]
+    #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
     public function visitsForNonDefaultDomainAreReturnedAsExpected(?ApiKey $apiKey): void
     {
         $domain = 'foo.com';
@@ -203,7 +206,7 @@ class VisitsStatsHelperTest extends TestCase
         self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentPageResults()));
     }
 
-    #[Test, DataProvider('provideAdminApiKeys')]
+    #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
     public function visitsForDefaultDomainAreReturnedAsExpected(?ApiKey $apiKey): void
     {
         $repo = $this->createMock(DomainRepository::class);

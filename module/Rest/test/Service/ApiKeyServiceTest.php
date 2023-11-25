@@ -83,7 +83,9 @@ class ApiKeyServiceTest extends TestCase
     {
         yield 'non-existent api key' => [null];
         yield 'disabled api key' => [ApiKey::create()->disable()];
-        yield 'expired api key' => [ApiKey::fromMeta(ApiKeyMeta::fromParams(expirationDate: Chronos::now()->subDay()))];
+        yield 'expired api key' => [
+            ApiKey::fromMeta(ApiKeyMeta::fromParams(expirationDate: Chronos::now()->subDays(1))),
+        ];
     }
 
     #[Test]

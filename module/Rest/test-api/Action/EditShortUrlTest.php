@@ -9,16 +9,16 @@ use GuzzleHttp\Psr7\Query;
 use GuzzleHttp\RequestOptions;
 use Laminas\Diactoros\Uri;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
-use ShlinkioApiTest\Shlink\Rest\Utils\NotFoundUrlHelpersTrait;
+use ShlinkioApiTest\Shlink\Rest\Utils\ApiTestDataProviders;
+use ShlinkioApiTest\Shlink\Rest\Utils\UrlBuilder;
 
 use function sprintf;
 
 class EditShortUrlTest extends ApiTestCase
 {
-    use NotFoundUrlHelpersTrait;
-
     #[Test, DataProvider('provideMeta')]
     public function metadataCanBeReset(array $meta): void
     {
@@ -55,13 +55,13 @@ class EditShortUrlTest extends ApiTestCase
     {
         $now = Chronos::now();
 
-        yield [['validSince' => $now->addMonth()->toAtomString()]];
-        yield [['validUntil' => $now->subMonth()->toAtomString()]];
+        yield [['validSince' => $now->addMonths(1)->toAtomString()]];
+        yield [['validUntil' => $now->subMonths(1)->toAtomString()]];
         yield [['maxVisits' => 20]];
-        yield [['validUntil' => $now->addYear()->toAtomString(), 'maxVisits' => 100]];
+        yield [['validUntil' => $now->addYears(1)->toAtomString(), 'maxVisits' => 100]];
         yield [[
-            'validSince' => $now->subYear()->toAtomString(),
-            'validUntil' => $now->addYear()->toAtomString(),
+            'validSince' => $now->subYears(1)->toAtomString(),
+            'validUntil' => $now->addYears(1)->toAtomString(),
             'maxVisits' => 100,
         ]];
     }
@@ -99,14 +99,14 @@ class EditShortUrlTest extends ApiTestCase
         yield 'invalid URL' => ['http://foo', self::STATUS_BAD_REQUEST, 'INVALID_URL'];
     }
 
-    #[Test, DataProvider('provideInvalidUrls')]
+    #[Test, DataProviderExternal(ApiTestDataProviders::class, 'invalidUrlsProvider')]
     public function tryingToEditInvalidUrlReturnsNotFoundError(
         string $shortCode,
         ?string $domain,
         string $expectedDetail,
         string $apiKey,
     ): void {
-        $url = $this->buildShortUrlPath($shortCode, $domain);
+        $url = UrlBuilder::buildShortUrlPath($shortCode, $domain);
         $resp = $this->callApiWithKey(self::METHOD_PATCH, $url, [RequestOptions::JSON => []], $apiKey);
         $payload = $this->getJsonResponsePayload($resp);
 

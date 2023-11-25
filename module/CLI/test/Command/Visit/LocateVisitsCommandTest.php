@@ -21,7 +21,7 @@ use Shlinkio\Shlink\Core\Visit\Geolocation\VisitToLocationHelperInterface;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
-use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
+use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -34,8 +34,6 @@ use const PHP_EOL;
 
 class LocateVisitsCommandTest extends TestCase
 {
-    use CliTestUtilsTrait;
-
     private CommandTester $commandTester;
     private MockObject & VisitLocatorInterface $visitService;
     private MockObject & VisitToLocationHelperInterface $visitToLocation;
@@ -53,8 +51,8 @@ class LocateVisitsCommandTest extends TestCase
 
         $command = new LocateVisitsCommand($this->visitService, $this->visitToLocation, $locker);
 
-        $this->downloadDbCommand = $this->createCommandMock(DownloadGeoLiteDbCommand::NAME);
-        $this->commandTester = $this->testerForCommand($command, $this->downloadDbCommand);
+        $this->downloadDbCommand = CliTestUtils::createCommandMock(DownloadGeoLiteDbCommand::NAME);
+        $this->commandTester = CliTestUtils::testerForCommand($command, $this->downloadDbCommand);
     }
 
     #[Test, DataProvider('provideArgs')]

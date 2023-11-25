@@ -10,20 +10,18 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Api\DisableKeyCommand;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
-use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
+use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class DisableKeyCommandTest extends TestCase
 {
-    use CliTestUtilsTrait;
-
     private CommandTester $commandTester;
     private MockObject & ApiKeyServiceInterface $apiKeyService;
 
     protected function setUp(): void
     {
         $this->apiKeyService = $this->createMock(ApiKeyServiceInterface::class);
-        $this->commandTester = $this->testerForCommand(new DisableKeyCommand($this->apiKeyService));
+        $this->commandTester = CliTestUtils::testerForCommand(new DisableKeyCommand($this->apiKeyService));
     }
 
     #[Test]

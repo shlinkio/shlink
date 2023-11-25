@@ -7,8 +7,8 @@ ENV SHLINK_RUNTIME ${SHLINK_RUNTIME}
 ARG SHLINK_USER_ID='root'
 ENV SHLINK_USER_ID ${SHLINK_USER_ID}
 
-ENV OPENSWOOLE_VERSION 22.0.0
-ENV PDO_SQLSRV_VERSION 5.10.1
+ENV OPENSWOOLE_VERSION 22.1.0
+ENV PDO_SQLSRV_VERSION 5.11.1
 ENV MS_ODBC_DOWNLOAD 'b/9/f/b9f3cce4-3925-46d4-9f46-da08869c6486'
 ENV MS_ODBC_SQL_VERSION 18_18.1.1.1
 ENV LC_ALL 'C'
@@ -29,6 +29,7 @@ RUN \
 # Install openswoole and sqlsrv driver for x86_64 builds
 RUN apk add --no-cache --virtual .phpize-deps ${PHPIZE_DEPS} unixodbc-dev && \
     if [ "$SHLINK_RUNTIME" == 'openswoole' ]; then \
+        # Openswoole is deprecated. Remove in v4.0.0
         pecl install openswoole-${OPENSWOOLE_VERSION} && \
         docker-php-ext-enable openswoole ; \
     fi; \
@@ -49,6 +50,7 @@ RUN apk add --no-cache git && \
     # FIXME Ignoring ext-openswoole platform req, as it makes install fail with roadrunner, even though it's a dev dependency and we are passing --no-dev
     php composer.phar install --no-dev --prefer-dist --optimize-autoloader --no-progress --no-interaction --ignore-platform-req=ext-openswoole && \
     if [ "$SHLINK_RUNTIME" == 'openswoole' ]; then \
+        # Openswoole is deprecated. Remove in v4.0.0
         php composer.phar remove spiral/roadrunner spiral/roadrunner-jobs spiral/roadrunner-cli spiral/roadrunner-http --with-all-dependencies --update-no-dev --optimize-autoloader --no-progress --no-interaction ; \
     elif [ "$SHLINK_RUNTIME" == 'rr' ]; then \
         php composer.phar remove mezzio/mezzio-swoole --with-all-dependencies --update-no-dev --optimize-autoloader --no-progress --no-interaction --ignore-platform-req=ext-openswoole ; \

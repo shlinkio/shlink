@@ -20,14 +20,12 @@ use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\UrlShorteningResult;
 use Shlinkio\Shlink\Core\ShortUrl\UrlShortenerInterface;
-use ShlinkioTest\Shlink\CLI\CliTestUtilsTrait;
+use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class CreateShortUrlCommandTest extends TestCase
 {
-    use CliTestUtilsTrait;
-
     private CommandTester $commandTester;
     private MockObject & UrlShortenerInterface $urlShortener;
     private MockObject & ShortUrlStringifierInterface $stringifier;
@@ -45,7 +43,7 @@ class CreateShortUrlCommandTest extends TestCase
                 defaultShortCodesLength: 5,
             ),
         );
-        $this->commandTester = $this->testerForCommand($command);
+        $this->commandTester = CliTestUtils::testerForCommand($command);
     }
 
     #[Test]

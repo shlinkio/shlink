@@ -11,6 +11,7 @@ return [
 
     'installer' => [
         'enabled_options' => [
+            Option\Server\RuntimeConfigOption::class,
             Option\Database\DatabaseDriverConfigOption::class,
             Option\Database\DatabaseNameConfigOption::class,
             Option\Database\DatabaseHostConfigOption::class,
@@ -28,9 +29,11 @@ return [
             Option\Visit\VisitsThresholdConfigOption::class,
             Option\BasePathConfigOption::class,
             Option\TimezoneConfigOption::class,
+            Option\Cache\CacheNamespaceConfigOption::class,
             Option\Worker\TaskWorkerNumConfigOption::class,
             Option\Worker\WebWorkerNumConfigOption::class,
             Option\Redis\RedisServersConfigOption::class,
+            Option\Redis\RedisDecodeCredentialsConfigOption::class,
             Option\Redis\RedisSentinelServiceConfigOption::class,
             Option\Redis\RedisPubSubConfigOption::class,
             Option\UrlShortener\ShortCodeLengthOption::class,
@@ -61,10 +64,15 @@ return [
             Option\QrCode\DefaultRoundBlockSizeConfigOption::class,
             Option\RabbitMq\RabbitMqEnabledConfigOption::class,
             Option\RabbitMq\RabbitMqHostConfigOption::class,
+            Option\RabbitMq\RabbitMqUseSslConfigOption::class,
             Option\RabbitMq\RabbitMqPortConfigOption::class,
             Option\RabbitMq\RabbitMqUserConfigOption::class,
             Option\RabbitMq\RabbitMqPasswordConfigOption::class,
             Option\RabbitMq\RabbitMqVhostConfigOption::class,
+            Option\Matomo\MatomoEnabledConfigOption::class,
+            Option\Matomo\MatomoBaseUrlConfigOption::class,
+            Option\Matomo\MatomoSiteIdConfigOption::class,
+            Option\Matomo\MatomoApiTokenConfigOption::class,
         ],
 
         'installation_commands' => [

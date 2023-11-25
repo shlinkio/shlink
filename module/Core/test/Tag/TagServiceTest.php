@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\Tag;
 
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -22,12 +23,10 @@ use Shlinkio\Shlink\Core\Tag\TagService;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
-use ShlinkioTest\Shlink\Core\Util\ApiKeyHelpersTrait;
+use ShlinkioTest\Shlink\Core\Util\ApiKeyDataProviders;
 
 class TagServiceTest extends TestCase
 {
-    use ApiKeyHelpersTrait;
-
     private TagService $service;
     private MockObject & EntityManagerInterface $em;
     private MockObject & TagRepository $repo;
@@ -101,7 +100,7 @@ class TagServiceTest extends TestCase
         ];
     }
 
-    #[Test, DataProvider('provideAdminApiKeys')]
+    #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
     public function deleteTagsDelegatesOnRepository(?ApiKey $apiKey): void
     {
         $this->repo->expects($this->once())->method('deleteByName')->with(['foo', 'bar'])->willReturn(4);
@@ -122,7 +121,7 @@ class TagServiceTest extends TestCase
         );
     }
 
-    #[Test, DataProvider('provideAdminApiKeys')]
+    #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
     public function renameInvalidTagThrowsException(?ApiKey $apiKey): void
     {
         $this->repo->expects($this->once())->method('findOneBy')->willReturn(null);
@@ -152,7 +151,7 @@ class TagServiceTest extends TestCase
         yield 'different names names' => ['foo', 'bar', 0];
     }
 
-    #[Test, DataProvider('provideAdminApiKeys')]
+    #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
     public function renameTagToAnExistingNameThrowsException(?ApiKey $apiKey): void
     {
         $this->repo->expects($this->once())->method('findOneBy')->willReturn(new Tag('foo'));

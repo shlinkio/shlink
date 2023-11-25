@@ -3,7 +3,7 @@ version: '3'
 services:
     shlink_nginx:
         container_name: shlink_nginx
-        image: nginx:1.19.6-alpine
+        image: nginx:1.25-alpine
         ports:
             - "8000:80"
         volumes:
@@ -33,6 +33,7 @@ services:
             - shlink_mercure
             - shlink_mercure_proxy
             - shlink_rabbitmq
+            - shlink_matomo
         environment:
             LC_ALL: C
         extra_hosts:
@@ -40,7 +41,7 @@ services:
 
     shlink_swoole_proxy:
         container_name: shlink_swoole_proxy
-        image: nginx:1.19.6-alpine
+        image: nginx:1.25-alpine
         ports:
             - "8002:80"
         volumes:
@@ -70,6 +71,7 @@ services:
             - shlink_mercure
             - shlink_mercure_proxy
             - shlink_rabbitmq
+            - shlink_matomo
         environment:
             LC_ALL: C
         extra_hosts:
@@ -95,6 +97,7 @@ services:
             - shlink_mercure
             - shlink_mercure_proxy
             - shlink_rabbitmq
+            - shlink_matomo
         environment:
             LC_ALL: C
         extra_hosts:
@@ -164,7 +167,7 @@ services:
 
     shlink_mercure_proxy:
         container_name: shlink_mercure_proxy
-        image: nginx:1.19.6-alpine
+        image: nginx:1.25-alpine
         ports:
             - "8001:80"
         volumes:
@@ -175,7 +178,7 @@ services:
 
     shlink_mercure:
         container_name: shlink_mercure
-        image: dunglas/mercure:v0.14
+        image: dunglas/mercure:v0.15
         ports:
             - "3080:80"
         environment:
@@ -186,10 +189,36 @@ services:
 
     shlink_rabbitmq:
         container_name: shlink_rabbitmq
-        image: rabbitmq:3.9-management-alpine
+        image: rabbitmq:3.11-management-alpine
         ports:
             - "15672:15672"
             - "5672:5672"
         environment:
             RABBITMQ_DEFAULT_USER: "rabbit"
             RABBITMQ_DEFAULT_PASS: "rabbit"
+
+    shlink_swagger_ui:
+        container_name: shlink_swagger_ui
+        image: swaggerapi/swagger-ui:v5.9.1
+        ports:
+            - "8005:8080"
+        volumes:
+            - ./docs/swagger:/app
+
+    shlink_matomo:
+        container_name: shlink_matomo
+        image: matomo:4.15-apache
+        ports:
+            - "8003:80"
+        volumes:
+            # Matomo does not persist port in trusted hosts. This volume is needed to edit config afterward
+            # https://github.com/matomo-org/matomo/issues/9549
+            - ./data/infra/matomo:/var/www/html
+        links:
+            - shlink_db_mysql
+        environment:
+            MATOMO_DATABASE_HOST: "shlink_db_mysql"
+            MATOMO_DATABASE_ADAPTER: "mysql"
+            MATOMO_DATABASE_DBNAME: "matomo"
+            MATOMO_DATABASE_USERNAME: "root"
+            MATOMO_DATABASE_PASSWORD: "root"

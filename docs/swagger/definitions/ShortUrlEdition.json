@@ -10,18 +10,15 @@
         },
         "validSince": {
             "description": "The date (in ISO-8601 format) from which this short code will be valid",
-            "type": "string",
-            "nullable": true
+            "type": ["string", "null"]
         },
         "validUntil": {
             "description": "The date (in ISO-8601 format) until which this short code will be valid",
-            "type": "string",
-            "nullable": true
+            "type": ["string", "null"]
         },
         "maxVisits": {
             "description": "The maximum number of allowed visits for this short code",
-            "type": "number",
-            "nullable": true
+            "type": ["number", "null"]
         },
         "validateUrl": {
             "deprecated": true,
@@ -36,9 +33,8 @@
             "description": "The list of tags to set to the short URL."
         },
         "title": {
-            "type": "string",
-            "description": "A descriptive title of the short URL.",
-            "nullable": true
+            "type": ["string", "null"],
+            "description": "A descriptive title of the short URL."
         },
         "crawlable": {
             "type": "boolean",

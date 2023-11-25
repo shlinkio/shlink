@@ -43,11 +43,13 @@ class VisitsStatsHelper implements VisitsStatsHelperInterface
 
         return new VisitsStats(
             nonOrphanVisitsTotal: $visitsRepo->countNonOrphanVisits(VisitsCountFiltering::withApiKey($apiKey)),
-            orphanVisitsTotal: $visitsRepo->countOrphanVisits(new VisitsCountFiltering()),
+            orphanVisitsTotal: $visitsRepo->countOrphanVisits(VisitsCountFiltering::withApiKey($apiKey)),
             nonOrphanVisitsNonBots: $visitsRepo->countNonOrphanVisits(
                 new VisitsCountFiltering(excludeBots: true, apiKey: $apiKey),
             ),
-            orphanVisitsNonBots: $visitsRepo->countOrphanVisits(new VisitsCountFiltering(excludeBots: true)),
+            orphanVisitsNonBots: $visitsRepo->countOrphanVisits(
+                new VisitsCountFiltering(excludeBots: true, apiKey: $apiKey),
+            ),
         );
     }
 
@@ -114,12 +116,12 @@ class VisitsStatsHelper implements VisitsStatsHelperInterface
     /**
      * @return Visit[]|Paginator
      */
-    public function orphanVisits(VisitsParams $params): Paginator
+    public function orphanVisits(VisitsParams $params, ?ApiKey $apiKey = null): Paginator
     {
         /** @var VisitRepositoryInterface $repo */
         $repo = $this->em->getRepository(Visit::class);
 
-        return $this->createPaginator(new OrphanVisitsPaginatorAdapter($repo, $params), $params);
+        return $this->createPaginator(new OrphanVisitsPaginatorAdapter($repo, $params, $apiKey), $params);
     }
 
     public function nonOrphanVisits(VisitsParams $params, ?ApiKey $apiKey = null): Paginator

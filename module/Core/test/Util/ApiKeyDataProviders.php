@@ -6,9 +6,9 @@ namespace ShlinkioTest\Shlink\Core\Util;
 
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-trait ApiKeyHelpersTrait
+class ApiKeyDataProviders
 {
-    public static function provideAdminApiKeys(): iterable
+    public static function adminApiKeysProvider(): iterable
     {
         yield 'no API key' => [null];
         yield 'admin API key' => [ApiKey::create()];

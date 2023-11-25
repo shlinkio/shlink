@@ -75,6 +75,6 @@ class VisitsTracker implements VisitsTrackerInterface
         $this->em->persist($visit);
         $this->em->flush();
 
-        $this->eventDispatcher->dispatch(UrlVisited::withOriginalIpAddress($visit->getId(), $visitor->remoteAddress));
+        $this->eventDispatcher->dispatch(new UrlVisited($visit->getId(), $visitor->remoteAddress));
     }
 }

@@ -9,7 +9,6 @@ use Laminas\ServiceManager\Factory\InvokableFactory;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Common\Doctrine\EntityRepositoryFactory;
 use Shlinkio\Shlink\Config\Factory\ValinorConfigFactory;
-use Shlinkio\Shlink\Core\ErrorHandler;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
@@ -93,6 +92,9 @@ return [
             Importer\ImportedLinksProcessor::class => ConfigAbstractFactory::class,
 
             Crawling\CrawlingHelper::class => ConfigAbstractFactory::class,
+
+            Matomo\MatomoOptions::class => [ValinorConfigFactory::class, 'config.matomo'],
+            Matomo\MatomoTrackerBuilder::class => ConfigAbstractFactory::class,
         ],
 
         'aliases' => [
@@ -101,6 +103,8 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
+        Matomo\MatomoTrackerBuilder::class => [Matomo\MatomoOptions::class],
+
         ErrorHandler\NotFoundTypeResolverMiddleware::class => ['config.router.base_path'],
         ErrorHandler\NotFoundTrackerMiddleware::class => [Visit\RequestTracker::class],
         ErrorHandler\NotFoundRedirectHandler::class => [

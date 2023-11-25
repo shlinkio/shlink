@@ -43,5 +43,5 @@ runs:
         ini-values: pcov.directory=module
     - name: Install dependencies
       if: ${{ inputs.install-deps == 'yes' }}
-      run: composer install --no-interaction --prefer-dist
+      run: composer install --no-interaction --prefer-dist ${{ inputs.php-version == '8.3' && '--ignore-platform-reqs' || '' }}
       shell: bash

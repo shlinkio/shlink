@@ -32,8 +32,11 @@ return (static function (): array {
             ...ConfigProvider::applyRoutesPrefix([
                 Action\HealthAction::getRouteDef(),
 
-                // Visits
+                // Visits.
+                // These routes must go first, as they have a more specific path, otherwise, when multi-segment slugs
+                // are enabled, routes with a less-specific path might match first
                 Action\Visit\ShortUrlVisitsAction::getRouteDef([$dropDomainMiddleware]),
+                Action\ShortUrl\DeleteShortUrlVisitsAction::getRouteDef([$dropDomainMiddleware]),
                 Action\Visit\TagVisitsAction::getRouteDef(),
                 Action\Visit\DomainVisitsAction::getRouteDef(),
                 Action\Visit\GlobalVisitsAction::getRouteDef(),
@@ -54,7 +57,6 @@ return (static function (): array {
                 ]),
                 Action\ShortUrl\EditShortUrlAction::getRouteDef([$dropDomainMiddleware]),
                 Action\ShortUrl\DeleteShortUrlAction::getRouteDef([$dropDomainMiddleware]),
-                Action\ShortUrl\DeleteShortUrlVisitsAction::getRouteDef([$dropDomainMiddleware]),
                 Action\ShortUrl\ResolveShortUrlAction::getRouteDef([$dropDomainMiddleware]),
                 Action\ShortUrl\ListShortUrlsAction::getRouteDef(),
 

@@ -38,7 +38,7 @@ final class ShortUrlImporting
         $importedVisits = 0;
         foreach ($visits as $importedVisit) {
             // Skip visits which are older than the most recent already imported visit's date
-            if ($mostRecentImportedDate?->gte(normalizeDate($importedVisit->date))) {
+            if ($mostRecentImportedDate?->greaterThanOrEquals(normalizeDate($importedVisit->date))) {
                 continue;
             }
 

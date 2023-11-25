@@ -3,10 +3,10 @@ set -e
 
 cd /etc/shlink
 
-flags="--clear-db-cache"
+flags="--no-interaction --clear-db-cache"
 
 # Skip downloading GeoLite2 db file if the license key env var was not defined or skipping was explicitly set
-if [ -z "${GEOLITE_LICENSE_KEY}" ] || [ "${SKIP_INITIAL_GEOLITE_DOWNLOAD}" == "true" ]; then
+if [ -z "${GEOLITE_LICENSE_KEY}" ] || [ "${SKIP_INITIAL_GEOLITE_DOWNLOAD}" = "true" ]; then
   flags="${flags} --skip-download-geolite"
 fi
 
@@ -25,10 +25,11 @@ if [ "${ENABLE_PERIODIC_VISIT_LOCATE}" = "true" ] && [ "${SHLINK_USER_ID}" = "ro
   /usr/sbin/crond &
 fi
 
-if [ "$SHLINK_RUNTIME" == 'openswoole' ]; then
+if [ "$SHLINK_RUNTIME" = 'openswoole' ]; then
+  # Openswoole is deprecated. Remove in Shlink 4.0.0
   # When restarting the container, openswoole might think it is already in execution
   # This forces the app to be started every second until the exit code is 0
   until php vendor/bin/laminas mezzio:swoole:start; do sleep 1 ; done
-elif [ "$SHLINK_RUNTIME" == 'rr' ]; then
+elif [ "$SHLINK_RUNTIME" = 'rr' ]; then
   ./bin/rr serve -c config/roadrunner/.rr.yml
 fi
