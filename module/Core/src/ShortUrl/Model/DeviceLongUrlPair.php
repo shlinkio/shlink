@@ -6,9 +6,7 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Model;
 
 use Shlinkio\Shlink\Core\Model\DeviceType;
 
-use function array_values;
 use function Functional\group;
-use function Functional\map;
 use function trim;
 
 final class DeviceLongUrlPair
@@ -32,15 +30,23 @@ final class DeviceLongUrlPair
      */
     public static function fromMapToChangeSet(array $map): array
     {
+        $toRemove = []; // TODO Use when group is removed
+        $toKeep = []; // TODO Use when group is removed
         $typesWithNullUrl = group($map, static fn (?string $longUrl) => $longUrl === null ? 'remove' : 'keep');
-        $deviceTypesToRemove = array_values(map(
-            $typesWithNullUrl['remove'] ?? [],
-            static fn ($_, string $deviceType) => DeviceType::from($deviceType),
-        ));
-        $pairsToKeep = map(
-            $typesWithNullUrl['keep'] ?? [],
-            fn (string $longUrl, string $deviceType) => self::fromRawTypeAndLongUrl($deviceType, $longUrl),
-        );
+
+        $deviceTypesToRemove = [];
+        foreach ($typesWithNullUrl['remove'] ?? [] as $deviceType => $_) {
+            $deviceTypesToRemove[] = DeviceType::from($deviceType);
+        }
+
+        $pairsToKeep = [];
+        /**
+         * @var string $deviceType
+         * @var string $longUrl
+         */
+        foreach ($typesWithNullUrl['keep'] ?? [] as $deviceType => $longUrl) {
+            $pairsToKeep[$deviceType] = self::fromRawTypeAndLongUrl($deviceType, $longUrl);
+        }
 
         return [$pairsToKeep, $deviceTypesToRemove];
     }

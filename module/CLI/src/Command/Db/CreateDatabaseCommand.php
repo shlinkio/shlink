@@ -16,8 +16,8 @@ use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Throwable;
 
+use function array_map;
 use function Functional\contains;
-use function Functional\map;
 use function Functional\some;
 
 class CreateDatabaseCommand extends AbstractDatabaseCommand
@@ -70,7 +70,7 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
     {
         $existingTables = $this->ensureDatabaseExistsAndGetTables();
         $allMetadata = $this->em->getMetadataFactory()->getAllMetadata();
-        $shlinkTables = map($allMetadata, static fn (ClassMetadata $metadata) => $metadata->getTableName());
+        $shlinkTables = array_map(static fn (ClassMetadata $metadata) => $metadata->getTableName(), $allMetadata);
 
         // If at least one of the shlink tables exist, we will consider the database exists somehow.
         // Any other inconsistency will be taken care of by the migrations.

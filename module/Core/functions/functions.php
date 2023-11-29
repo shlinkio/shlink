@@ -17,8 +17,8 @@ use PUGX\Shortid\Factory as ShortIdFactory;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 
+use function array_map;
 use function date_default_timezone_get;
-use function Functional\map;
 use function Functional\reduce_left;
 use function is_array;
 use function print_r;
@@ -177,6 +177,6 @@ function enumValues(string $enum): array
     }
 
     return $cache[$enum] ?? (
-        $cache[$enum] = map($enum::cases(), static fn (BackedEnum $type) => (string) $type->value)
+        $cache[$enum] = array_map(static fn (BackedEnum $type) => (string) $type->value, $enum::cases())
     );
 }

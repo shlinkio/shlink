@@ -15,9 +15,8 @@ use Symfony\Component\Lock\Lock;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\Store\InMemoryStore;
 
-use function Functional\invoke;
-use function Functional\map;
-use function Functional\unique;
+use function array_map;
+use function array_unique;
 
 class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInterface
 {
@@ -74,10 +73,10 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
             return new Collections\ArrayCollection();
         }
 
-        $tags = unique($tags);
+        $tags = array_unique($tags);
         $repo = $this->em->getRepository(Tag::class);
 
-        return new Collections\ArrayCollection(map($tags, function (string $tagName) use ($repo): Tag {
+        return new Collections\ArrayCollection(array_map(function (string $tagName) use ($repo): Tag {
             $this->lock($this->tagLocks, 'tag_' . $tagName);
 
             $existingTag = $repo->findOneBy(['name' => $tagName]);
@@ -91,7 +90,7 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
             $this->em->persist($tag);
 
             return $tag;
-        }));
+        }, $tags));
     }
 
     private function memoizeNewTag(string $tagName): Tag
@@ -111,6 +110,7 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
     }
 
     /**
+    /**
      * @param array<string, Lock> $locks
      */
     private function releaseLock(array &$locks, string $name): void
@@ -126,9 +126,15 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
         $this->memoizedNewTags = [];
 
         // Release all locks
-        invoke($this->tagLocks, 'release');
-        invoke($this->domainLocks, 'release');
-        $this->tagLocks = [];
-        $this->domainLocks = [];
+        $this->releaseLocks($this->tagLocks);
+        $this->releaseLocks($this->domainLocks);
+    }
+
+    private function releaseLocks(array &$locks): void
+    {
+        foreach ($locks as $tagLock) {
+            $tagLock->release();
+        }
+        $locks = [];
     }
 }

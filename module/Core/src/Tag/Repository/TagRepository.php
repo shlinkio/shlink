@@ -17,8 +17,8 @@ use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\ApiKey\Spec\WithApiKeySpecsEnsuringJoin;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
+use function array_map;
 use function Functional\each;
-use function Functional\map;
 use function Shlinkio\Shlink\Core\camelCaseToSnakeCase;
 
 use const PHP_INT_MAX;
@@ -126,9 +126,9 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         $rsm->addScalarResult('non_bot_visits', 'nonBotVisits');
         $rsm->addScalarResult('short_urls_count', 'shortUrlsCount');
 
-        return map(
-            $this->getEntityManager()->createNativeQuery($mainQb->getSQL(), $rsm)->getResult(),
+        return array_map(
             TagInfo::fromRawData(...),
+            $this->getEntityManager()->createNativeQuery($mainQb->getSQL(), $rsm)->getResult(),
         );
     }
 

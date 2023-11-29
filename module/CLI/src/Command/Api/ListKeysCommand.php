@@ -15,7 +15,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function array_filter;
-use function Functional\map;
+use function array_map;
 use function implode;
 use function sprintf;
 
@@ -49,7 +49,7 @@ class ListKeysCommand extends Command
     {
         $enabledOnly = $input->getOption('enabled-only');
 
-        $rows = map($this->apiKeyService->listKeys($enabledOnly), function (ApiKey $apiKey) use ($enabledOnly) {
+        $rows = array_map(function (ApiKey $apiKey) use ($enabledOnly) {
             $expiration = $apiKey->getExpirationDate();
             $messagePattern = $this->determineMessagePattern($apiKey);
 
@@ -64,7 +64,7 @@ class ListKeysCommand extends Command
             ));
 
             return $rowData;
-        });
+        }, $this->apiKeyService->listKeys($enabledOnly));
 
         ShlinkTable::withRowSeparators($output)->render(array_filter([
             'Key',

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Config\PostProcessor;
 
-use function Functional\map;
+use function array_map;
 use function str_replace;
 
 class MultiSegmentSlugProcessor
@@ -19,11 +19,11 @@ class MultiSegmentSlugProcessor
             return $config;
         }
 
-        $config['routes'] = map($config['routes'] ?? [], static function (array $route): array {
+        $config['routes'] = array_map(static function (array $route): array {
             ['path' => $path] = $route;
             $route['path'] = str_replace(self::SINGLE_SEGMENT_PATTERN, self::MULTI_SEGMENT_PATTERN, $path);
             return $route;
-        });
+        }, $config['routes'] ?? []);
 
         return $config;
     }

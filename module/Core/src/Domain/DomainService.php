@@ -14,9 +14,9 @@ use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
+use function array_map;
 use function Functional\first;
 use function Functional\group;
-use function Functional\map;
 
 class DomainService implements DomainServiceInterface
 {
@@ -30,7 +30,7 @@ class DomainService implements DomainServiceInterface
     public function listDomains(?ApiKey $apiKey = null): array
     {
         [$default, $domains] = $this->defaultDomainAndRest($apiKey);
-        $mappedDomains = map($domains, fn (Domain $domain) => DomainItem::forNonDefaultDomain($domain));
+        $mappedDomains = array_map(fn (Domain $domain) => DomainItem::forNonDefaultDomain($domain), $domains);
 
         if ($apiKey?->hasRole(Role::DOMAIN_SPECIFIC)) {
             return $mappedDomains;

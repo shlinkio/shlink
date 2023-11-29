@@ -19,18 +19,18 @@ use Shlinkio\Shlink\Core\Options\WebhookOptions;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Throwable;
 
-use function Functional\map;
+use function array_map;
 
 /** @deprecated */
 class NotifyVisitToWebHooks
 {
     public function __construct(
-        private ClientInterface $httpClient,
-        private EntityManagerInterface $em,
-        private LoggerInterface $logger,
-        private WebhookOptions $webhookOptions,
-        private DataTransformerInterface $transformer,
-        private AppOptions $appOptions,
+        private readonly ClientInterface $httpClient,
+        private readonly EntityManagerInterface $em,
+        private readonly LoggerInterface $logger,
+        private readonly WebhookOptions $webhookOptions,
+        private readonly DataTransformerInterface $transformer,
+        private readonly AppOptions $appOptions,
     ) {
     }
 
@@ -82,11 +82,11 @@ class NotifyVisitToWebHooks
      */
     private function performRequests(array $requestOptions, string $visitId): array
     {
-        return map(
-            $this->webhookOptions->webhooks(),
+        return array_map(
             fn (string $webhook): PromiseInterface => $this->httpClient
                 ->requestAsync(RequestMethodInterface::METHOD_POST, $webhook, $requestOptions)
                 ->otherwise(fn (Throwable $e) => $this->logWebhookFailure($webhook, $visitId, $e)),
+            $this->webhookOptions->webhooks(),
         );
     }
 

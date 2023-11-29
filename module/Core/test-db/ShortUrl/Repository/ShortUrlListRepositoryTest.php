@@ -22,8 +22,8 @@ use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
 
+use function array_map;
 use function count;
-use function Functional\map;
 use function range;
 
 class ShortUrlListRepositoryTest extends DatabaseTestCase
@@ -60,22 +60,22 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($foo);
 
         $bar = ShortUrl::withLongUrl('https://bar');
-        $visits = map(range(0, 5), function () use ($bar) {
+        $visits = array_map(function () use ($bar) {
             $visit = Visit::forValidShortUrl($bar, Visitor::botInstance());
             $this->getEntityManager()->persist($visit);
 
             return $visit;
-        });
+        }, range(0, 5));
         $bar->setVisits(new ArrayCollection($visits));
         $this->getEntityManager()->persist($bar);
 
         $foo2 = ShortUrl::withLongUrl('https://foo_2');
-        $visits2 = map(range(0, 3), function () use ($foo2) {
+        $visits2 = array_map(function () use ($foo2) {
             $visit = Visit::forValidShortUrl($foo2, Visitor::emptyInstance());
             $this->getEntityManager()->persist($visit);
 
             return $visit;
-        });
+        }, range(0, 3));
         $foo2->setVisits(new ArrayCollection($visits2));
         $ref = new ReflectionObject($foo2);
         $dateProp = $ref->getProperty('dateCreated');

@@ -13,13 +13,13 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function Functional\map;
+use function array_map;
 
 class ListTagsCommand extends Command
 {
     public const NAME = 'tag:list';
 
-    public function __construct(private TagServiceInterface $tagService)
+    public function __construct(private readonly TagServiceInterface $tagService)
     {
         parent::__construct();
     }
@@ -44,9 +44,9 @@ class ListTagsCommand extends Command
             return [['No tags found', '-', '-']];
         }
 
-        return map(
-            $tags,
+        return array_map(
             static fn (TagInfo $tagInfo) => [$tagInfo->tag, $tagInfo->shortUrlsCount, $tagInfo->visitsSummary->total],
+            [...$tags],
         );
     }
 }

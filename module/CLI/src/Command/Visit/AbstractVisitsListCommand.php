@@ -16,11 +16,14 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function array_filter;
 use function array_keys;
-use function Functional\map;
-use function Functional\select_keys;
+use function array_map;
+use function in_array;
 use function Shlinkio\Shlink\Common\buildDateRange;
 use function Shlinkio\Shlink\Core\camelCaseToHumanFriendly;
+
+use const ARRAY_FILTER_USE_KEY;
 
 abstract class AbstractVisitsListCommand extends Command
 {
@@ -49,7 +52,7 @@ abstract class AbstractVisitsListCommand extends Command
     private function resolveRowsAndHeaders(Paginator $paginator): array
     {
         $extraKeys = [];
-        $rows = map($paginator->getCurrentPageResults(), function (Visit $visit) use (&$extraKeys) {
+        $rows = array_map(function (Visit $visit) use (&$extraKeys) {
             $extraFields = $this->mapExtraFields($visit);
             $extraKeys = array_keys($extraFields);
 
@@ -60,9 +63,18 @@ abstract class AbstractVisitsListCommand extends Command
                 ...$extraFields,
             ];
 
-            return select_keys($rowData, ['referer', 'date', 'userAgent', 'country', 'city', ...$extraKeys]);
-        });
-        $extra = map($extraKeys, camelCaseToHumanFriendly(...));
+            // Filter out unknown keys
+            return array_filter(
+                $rowData,
+                static fn (string $key) => in_array(
+                    $key,
+                    ['referer', 'date', 'userAgent', 'country', 'city', ...$extraKeys],
+                    strict: true,
+                ),
+                ARRAY_FILTER_USE_KEY,
+            );
+        }, [...$paginator->getCurrentPageResults()]);
+        $extra = array_map(camelCaseToHumanFriendly(...), $extraKeys);
 
         return [
             $rows,

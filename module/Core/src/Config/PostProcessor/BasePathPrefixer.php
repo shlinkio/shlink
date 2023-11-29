@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Config\PostProcessor;
 
-use function Functional\map;
+use function array_map;
 
 class BasePathPrefixer
 {
@@ -23,13 +23,13 @@ class BasePathPrefixer
 
     private function prefixPathsWithBasePath(string $configKey, array $config, string $basePath): array
     {
-        return map($config[$configKey] ?? [], function (array $element) use ($basePath) {
+        return array_map(function (array $element) use ($basePath) {
             if (! isset($element['path'])) {
                 return $element;
             }
 
             $element['path'] = $basePath . $element['path'];
             return $element;
-        });
+        }, $config[$configKey] ?? []);
     }
 }

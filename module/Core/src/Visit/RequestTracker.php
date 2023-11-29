@@ -16,9 +16,9 @@ use Shlinkio\Shlink\Core\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 
+use function array_keys;
+use function array_map;
 use function explode;
-use function Functional\map;
-use function Functional\some;
 use function implode;
 use function str_contains;
 
@@ -85,22 +85,30 @@ class RequestTracker implements RequestTrackerInterface, RequestMethodInterface
         $remoteAddrParts = explode('.', $remoteAddr);
         $disableTrackingFrom = $this->trackingOptions->disableTrackingFrom;
 
-        return some($disableTrackingFrom, function (string $value) use ($ip, $remoteAddrParts): bool {
+        foreach ($disableTrackingFrom as $value) {
             $range = str_contains($value, '*')
                 ? $this->parseValueWithWildcards($value, $remoteAddrParts)
                 : Factory::parseRangeString($value);
 
-            return $range !== null && $ip->matches($range);
-        });
+            if ($range !== null && $ip->matches($range)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function parseValueWithWildcards(string $value, array $remoteAddrParts): ?RangeInterface
     {
+        $octets = explode('.', $value);
+        $keys = array_keys($octets);
+
         // Replace wildcard parts with the corresponding ones from the remote address
         return Factory::parseRangeString(
-            implode('.', map(
-                explode('.', $value),
+            implode('.', array_map(
                 fn (string $part, int $index) => $part === '*' ? $remoteAddrParts[$index] : $part,
+                $octets,
+                $keys,
             )),
         );
     }
