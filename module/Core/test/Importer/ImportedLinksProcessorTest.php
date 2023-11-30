@@ -32,8 +32,8 @@ use stdClass;
 use Symfony\Component\Console\Style\StyleInterface;
 
 use function count;
-use function Functional\some;
 use function Shlinkio\Shlink\Core\contains;
+use function Shlinkio\Shlink\Core\some;
 use function sprintf;
 use function str_contains;
 

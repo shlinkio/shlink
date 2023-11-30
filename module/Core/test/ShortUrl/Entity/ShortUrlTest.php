@@ -20,8 +20,8 @@ use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Sources\ImportSource;
 
 use function array_map;
-use function Functional\every;
 use function range;
+use function Shlinkio\Shlink\Core\every;
 use function strlen;
 use function strtolower;
 

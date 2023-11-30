@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest;
 
+use function array_filter;
 use function array_map;
-use function Functional\first;
+use function reset;
 use function Shlinkio\Shlink\Config\loadConfigFromGlob;
 use function sprintf;
 
@@ -34,8 +35,9 @@ class ConfigProvider
 
     private static function buildUnversionedHealthRouteFromExistingRoutes(array $routes): ?array
     {
-        $healthRoute = first($routes, fn (array $route) => $route['path'] === '/health');
-        if ($healthRoute === null) {
+        $healthRoutes = array_filter($routes, fn (array $route) => $route['path'] === '/health');
+        $healthRoute = reset($healthRoutes);
+        if ($healthRoute === false) {
             return null;
         }
 

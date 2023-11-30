@@ -10,10 +10,10 @@ use Shlinkio\Shlink\Core\Model\DeviceType;
 
 use function array_keys;
 use function array_values;
-use function Functional\every;
 use function is_array;
 use function Shlinkio\Shlink\Core\contains;
 use function Shlinkio\Shlink\Core\enumValues;
+use function Shlinkio\Shlink\Core\every;
 
 class DeviceLongUrlsValidator extends AbstractValidator
 {

@@ -16,10 +16,10 @@ use PUGX\Shortid\Factory as ShortIdFactory;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 
+use function array_keys;
 use function array_map;
 use function array_reduce;
 use function date_default_timezone_get;
-use function Functional\reduce_left;
 use function in_array;
 use function is_array;
 use function print_r;
@@ -95,10 +95,12 @@ function getNonEmptyOptionalValueFromInputFilter(InputFilter $inputFilter, strin
 function arrayToString(array $array, int $indentSize = 4): string
 {
     $indent = str_repeat(' ', $indentSize);
+    $names = array_keys($array);
     $index = 0;
 
-    return reduce_left($array, static function ($messages, string $name, $_, string $acc) use (&$index, $indent) {
+    return array_reduce($names, static function (string $acc, string $name) use (&$index, $indent, $array) {
         $index++;
+        $messages = $array[$name];
 
         return $acc . sprintf(
             "%s%s'%s' => %s",
@@ -198,4 +200,34 @@ function flatten(array $multiArray): array
         static fn (array $carry, array $value) => [...$carry, ...$value],
         initial: [],
     );
+}
+
+/**
+ * Checks if a callback returns true for at least one item in a collection.
+ * @param callable(mixed $value, string|number $key): bool $callback
+ */
+function some(iterable $collection, callable $callback): bool
+{
+    foreach ($collection as $key => $value) {
+        if ($callback($value, $key)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Checks if a callback returns true for all item in a collection.
+ * @param callable(mixed $value, string|number $key): bool $callback
+ */
+function every(iterable $collection, callable $callback): bool
+{
+    foreach ($collection as $key => $value) {
+        if (! $callback($value, $key)) {
+            return false;
+        }
+    }
+
+    return true;
 }
