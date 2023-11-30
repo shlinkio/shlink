@@ -28,9 +28,9 @@ use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 use function file_exists;
-use function Functional\contains;
 use function Laminas\Stratigility\middleware;
 use function Shlinkio\Shlink\Config\env;
+use function Shlinkio\Shlink\Core\contains;
 use function sprintf;
 use function sys_get_temp_dir;
 
@@ -41,7 +41,7 @@ $isApiTest = env('TEST_ENV') === 'api';
 $isCliTest = env('TEST_ENV') === 'cli';
 $isE2eTest = $isApiTest || $isCliTest;
 $coverageType = env('GENERATE_COVERAGE');
-$generateCoverage = contains(['yes', 'pretty'], $coverageType);
+$generateCoverage = contains($coverageType, ['yes', 'pretty']);
 
 $coverage = null;
 if ($isE2eTest && $generateCoverage) {

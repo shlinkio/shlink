@@ -5,11 +5,11 @@ declare(strict_types=1);
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Shlinkio\Shlink\Core\Config\EnvVars;
 
-use function Functional\contains;
+use function Shlinkio\Shlink\Core\contains;
 
 return (static function (): array {
     $driver = EnvVars::DB_DRIVER->loadFromEnv();
-    $isMysqlCompatible = contains(['maria', 'mysql'], $driver);
+    $isMysqlCompatible = contains($driver, ['maria', 'mysql']);
 
     $resolveDriver = static fn () => match ($driver) {
         'postgres' => 'pdo_pgsql',

@@ -17,16 +17,16 @@ use Shlinkio\Shlink\Rest\Exception\MissingAuthenticationException;
 use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 
-use function Functional\contains;
+use function Shlinkio\Shlink\Core\contains;
 
 class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterface, RequestMethodInterface
 {
     public const API_KEY_HEADER = 'X-Api-Key';
 
     public function __construct(
-        private ApiKeyServiceInterface $apiKeyService,
-        private array $routesWithoutApiKey,
-        private array $routesWithQueryApiKey,
+        private readonly ApiKeyServiceInterface $apiKeyService,
+        private readonly array $routesWithoutApiKey,
+        private readonly array $routesWithQueryApiKey,
     ) {
     }
 
@@ -38,7 +38,7 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
             $routeResult === null
             || $routeResult->isFailure()
             || $request->getMethod() === self::METHOD_OPTIONS
-            || contains($this->routesWithoutApiKey, $routeResult->getMatchedRouteName())
+            || contains($routeResult->getMatchedRouteName(), $this->routesWithoutApiKey)
         ) {
             return $handler->handle($request);
         }
@@ -61,7 +61,7 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
     {
         $routeName = $routeResult->getMatchedRouteName();
         $query = $request->getQueryParams();
-        $isRouteWithApiKeyInQuery = contains($this->routesWithQueryApiKey, $routeName);
+        $isRouteWithApiKeyInQuery = contains($routeName, $this->routesWithQueryApiKey);
         $apiKey = $isRouteWithApiKeyInQuery ? ($query['apiKey'] ?? '') : $request->getHeaderLine(self::API_KEY_HEADER);
 
         if (empty($apiKey)) {

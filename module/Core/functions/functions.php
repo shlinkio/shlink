@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink\Core;
 
 use BackedEnum;
 use Cake\Chronos\Chronos;
-use Cake\Chronos\ChronosInterface;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping\Builder\FieldBuilder;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
@@ -18,8 +17,10 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 
 use function array_map;
+use function array_reduce;
 use function date_default_timezone_get;
 use function Functional\reduce_left;
+use function in_array;
 use function is_array;
 use function print_r;
 use function Shlinkio\Shlink\Common\buildDateRange;
@@ -57,7 +58,7 @@ function parseDateRangeFromQuery(array $query, string $startDateName, string $en
 /**
  * @return ($date is null ? null : Chronos)
  */
-function normalizeOptionalDate(string|DateTimeInterface|ChronosInterface|null $date): ?Chronos
+function normalizeOptionalDate(string|DateTimeInterface|Chronos|null $date): ?Chronos
 {
     $parsedDate = match (true) {
         $date === null || $date instanceof Chronos => $date,
@@ -68,7 +69,7 @@ function normalizeOptionalDate(string|DateTimeInterface|ChronosInterface|null $d
     return $parsedDate?->setTimezone(date_default_timezone_get());
 }
 
-function normalizeDate(string|DateTimeInterface|ChronosInterface $date): Chronos
+function normalizeDate(string|DateTimeInterface|Chronos $date): Chronos
 {
     return normalizeOptionalDate($date);
 }
@@ -178,5 +179,23 @@ function enumValues(string $enum): array
 
     return $cache[$enum] ?? (
         $cache[$enum] = array_map(static fn (BackedEnum $type) => (string) $type->value, $enum::cases())
+    );
+}
+
+function contains(mixed $value, array $array): bool
+{
+    return in_array($value, $array, strict: true);
+}
+
+/**
+ * @param array[] $multiArray
+ * @return array
+ */
+function flatten(array $multiArray): array
+{
+    return array_reduce(
+        $multiArray,
+        static fn (array $carry, array $value) => [...$carry, ...$value],
+        initial: [],
     );
 }

@@ -20,10 +20,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function array_map;
+use function array_unique;
 use function explode;
-use function Functional\curry;
-use function Functional\flatten;
-use function Functional\unique;
+use function Shlinkio\SHlink\Core\flatten;
 use function sprintf;
 
 class CreateShortUrlCommand extends Command
@@ -144,8 +143,8 @@ class CreateShortUrlCommand extends Command
             return ExitCode::EXIT_FAILURE;
         }
 
-        $explodeWithComma = curry(explode(...))(',');
-        $tags = unique(flatten(array_map($explodeWithComma, $input->getOption('tags'))));
+        $explodeWithComma = static fn (string $tag) => explode(',', $tag);
+        $tags = array_unique(flatten(array_map($explodeWithComma, $input->getOption('tags'))));
         $customSlug = $input->getOption('custom-slug');
         $maxVisits = $input->getOption('max-visits');
         $shortCodeLength = $input->getOption('short-code-length') ?? $this->options->defaultShortCodesLength;

@@ -19,9 +19,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use function array_filter;
 use function array_keys;
 use function array_map;
-use function in_array;
 use function Shlinkio\Shlink\Common\buildDateRange;
 use function Shlinkio\Shlink\Core\camelCaseToHumanFriendly;
+use function Shlinkio\Shlink\Core\contains;
 
 use const ARRAY_FILTER_USE_KEY;
 
@@ -66,10 +66,9 @@ abstract class AbstractVisitsListCommand extends Command
             // Filter out unknown keys
             return array_filter(
                 $rowData,
-                static fn (string $key) => in_array(
+                static fn (string $key) => contains(
                     $key,
                     ['referer', 'date', 'userAgent', 'country', 'city', ...$extraKeys],
-                    strict: true,
                 ),
                 ARRAY_FILTER_USE_KEY,
             );

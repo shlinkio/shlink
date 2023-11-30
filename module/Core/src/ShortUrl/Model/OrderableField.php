@@ -2,7 +2,7 @@
 
 namespace Shlinkio\Shlink\Core\ShortUrl\Model;
 
-use function Functional\contains;
+use function Shlinkio\Shlink\Core\contains;
 
 enum OrderableField: string
 {
@@ -16,8 +16,8 @@ enum OrderableField: string
     public static function isBasicField(string $value): bool
     {
         return contains(
-            [self::LONG_URL->value, self::SHORT_CODE->value, self::DATE_CREATED->value, self::TITLE->value],
             $value,
+            [self::LONG_URL->value, self::SHORT_CODE->value, self::DATE_CREATED->value, self::TITLE->value],
         );
     }
 

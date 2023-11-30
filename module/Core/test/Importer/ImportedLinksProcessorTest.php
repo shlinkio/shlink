@@ -32,8 +32,8 @@ use stdClass;
 use Symfony\Component\Console\Style\StyleInterface;
 
 use function count;
-use function Functional\contains;
 use function Functional\some;
+use function Shlinkio\Shlink\Core\contains;
 use function sprintf;
 use function str_contains;
 
@@ -128,8 +128,8 @@ class ImportedLinksProcessorTest extends TestCase
         $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
         $this->repo->expects($this->exactly(count($urls)))->method('findOneByImportedUrl')->willReturnCallback(
             fn (ImportedShlinkUrl $url): ?ShortUrl => contains(
-                ['https://foo', 'https://baz2', 'https://baz3'],
                 $url->longUrl,
+                ['https://foo', 'https://baz2', 'https://baz3'],
             ) ? ShortUrl::fromImport($url, true) : null,
         );
         $this->shortCodeHelper->expects($this->exactly(2))->method('ensureShortCodeUniqueness')->willReturn(true);
