@@ -16,14 +16,11 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function array_filter;
 use function array_keys;
 use function array_map;
 use function Shlinkio\Shlink\Common\buildDateRange;
+use function Shlinkio\Shlink\Core\ArrayUtils\select_keys;
 use function Shlinkio\Shlink\Core\camelCaseToHumanFriendly;
-use function Shlinkio\Shlink\Core\contains;
-
-use const ARRAY_FILTER_USE_KEY;
 
 abstract class AbstractVisitsListCommand extends Command
 {
@@ -64,14 +61,7 @@ abstract class AbstractVisitsListCommand extends Command
             ];
 
             // Filter out unknown keys
-            return array_filter(
-                $rowData,
-                static fn (string $key) => contains(
-                    $key,
-                    ['referer', 'date', 'userAgent', 'country', 'city', ...$extraKeys],
-                ),
-                ARRAY_FILTER_USE_KEY,
-            );
+            return select_keys($rowData, ['referer', 'date', 'userAgent', 'country', 'city', ...$extraKeys]);
         }, [...$paginator->getCurrentPageResults()]);
         $extra = array_map(camelCaseToHumanFriendly(...), $extraKeys);
 

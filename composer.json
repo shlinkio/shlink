@@ -34,7 +34,6 @@
         "laminas/laminas-servicemanager": "^3.21",
         "laminas/laminas-stdlib": "^3.17",
         "league/uri": "^6.8",
-        "lstrojny/functional-php": "^1.17",
         "matomo/matomo-php-tracker": "^3.2",
         "mezzio/mezzio": "^3.17",
         "mezzio/mezzio-fastroute": "^3.10",
@@ -91,6 +90,7 @@
         },
         "files": [
             "config/constants.php",
+            "module/Core/functions/array-utils.php",
             "module/Core/functions/functions.php"
         ]
     },

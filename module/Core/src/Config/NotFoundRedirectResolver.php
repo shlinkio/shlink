@@ -12,7 +12,6 @@ use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\ErrorHandler\Model\NotFoundType;
 use Shlinkio\Shlink\Core\Util\RedirectResponseHelperInterface;
 
-use function Functional\compose;
 use function str_replace;
 use function urlencode;
 
@@ -51,9 +50,6 @@ class NotFoundRedirectResolver implements NotFoundRedirectResolverInterface
 
     private function resolvePlaceholders(UriInterface $currentUri, string $redirectUrl): string
     {
-        $domain = $currentUri->getAuthority();
-        $path = $currentUri->getPath();
-
         try {
             $redirectUri = Uri::createFromString($redirectUrl);
         } catch (SyntaxError $e) {
@@ -64,18 +60,32 @@ class NotFoundRedirectResolver implements NotFoundRedirectResolverInterface
             return $redirectUrl;
         }
 
-        $replacePlaceholderForPattern = static fn (string $pattern, string $replace, callable $modifier) =>
-            static fn (?string $value) =>
-                $value === null ? null : str_replace($modifier($pattern), $modifier($replace), $value);
-        $replacePlaceholders = static fn (callable $modifier) => compose(
-            $replacePlaceholderForPattern(self::DOMAIN_PLACEHOLDER, $domain, $modifier),
-            $replacePlaceholderForPattern(self::ORIGINAL_PATH_PLACEHOLDER, $path, $modifier),
+        $path = $currentUri->getPath();
+        $domain = $currentUri->getAuthority();
+
+        $replacePlaceholderForPattern = static fn (string $pattern, string $replace, ?string $value): string|null =>
+            $value === null ? null : str_replace($pattern, $replace, $value);
+
+        $replacePlaceholders = static function (
+            callable $modifier,
+            ?string $value,
+        ) use (
+            $replacePlaceholderForPattern,
+            $path,
+            $domain,
+        ): string|null {
+            $value = $replacePlaceholderForPattern($modifier(self::DOMAIN_PLACEHOLDER), $modifier($domain), $value);
+            return $replacePlaceholderForPattern($modifier(self::ORIGINAL_PATH_PLACEHOLDER), $modifier($path), $value);
+        };
+
+        $replacePlaceholdersInPath = static function (string $path) use ($replacePlaceholders): string {
+            $result = $replacePlaceholders(static fn (mixed $v) => $v, $path);
+            return str_replace('//', '/', $result ?? '');
+        };
+        $replacePlaceholdersInQuery = static fn (?string $query): string|null => $replacePlaceholders(
+            urlencode(...),
+            $query,
         );
-        $replacePlaceholdersInPath = compose(
-            $replacePlaceholders(static fn (mixed $v) => $v),
-            static fn (?string $path) => $path === null ? null : str_replace('//', '/', $path),
-        );
-        $replacePlaceholdersInQuery = $replacePlaceholders(urlencode(...));
 
         return $redirectUri
             ->withPath($replacePlaceholdersInPath($redirectUri->getPath()))

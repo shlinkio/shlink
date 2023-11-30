@@ -28,7 +28,7 @@ use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 
 use function count;
-use function Shlinkio\Shlink\Core\contains;
+use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 
 class NotifyVisitToWebHooksTest extends TestCase
 {

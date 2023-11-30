@@ -2,7 +2,7 @@
 
 namespace Shlinkio\Shlink\Core\Util;
 
-use function Shlinkio\Shlink\Core\contains;
+use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 
 enum RedirectStatus: int
 {

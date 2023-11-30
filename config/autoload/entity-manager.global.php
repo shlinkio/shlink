@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Shlinkio\Shlink\Core\Config\EnvVars;
 
-use function Shlinkio\Shlink\Core\contains;
+use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 
 return (static function (): array {
     $driver = EnvVars::DB_DRIVER->loadFromEnv();

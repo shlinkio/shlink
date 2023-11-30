@@ -18,7 +18,7 @@ use Endroid\QrCode\Writer\WriterInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Options\QrCodeOptions;
 
-use function Shlinkio\Shlink\Core\contains;
+use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 use function strtolower;
 use function trim;
 

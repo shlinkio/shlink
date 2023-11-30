@@ -2,7 +2,7 @@
 
 namespace Shlinkio\Shlink\Core\ShortUrl\Model;
 
-use function Shlinkio\Shlink\Core\contains;
+use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 
 enum OrderableField: string
 {

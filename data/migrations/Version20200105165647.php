@@ -11,7 +11,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
 
-use function Shlinkio\Shlink\Core\some;
+use function Shlinkio\Shlink\Core\ArrayUtils\some;
 
 final class Version20200105165647 extends AbstractMigration
 {
@@ -23,11 +23,10 @@ final class Version20200105165647 extends AbstractMigration
     public function preUp(Schema $schema): void
     {
         $visitLocations = $schema->getTable('visit_locations');
-            $this->skipIf(some(
-                self::COLUMNS,
-                fn (string $v, string $newColName) => $visitLocations->hasColumn($newColName),
+        $this->skipIf(some(
+            self::COLUMNS,
+            fn (string $v, string|int $newColName) => $visitLocations->hasColumn((string) $newColName),
         ), 'New columns already exist');
-
 
         foreach (self::COLUMNS as $columnName) {
             $qb = $this->connection->createQueryBuilder();

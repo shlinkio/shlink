@@ -17,7 +17,7 @@ use Shlinkio\Shlink\Rest\Exception\MissingAuthenticationException;
 use Shlinkio\Shlink\Rest\Exception\VerifyAuthenticationException;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 
-use function Shlinkio\Shlink\Core\contains;
+use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 
 class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterface, RequestMethodInterface
 {

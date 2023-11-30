@@ -21,7 +21,7 @@ use Shlinkio\Shlink\Importer\Sources\ImportSource;
 
 use function array_map;
 use function range;
-use function Shlinkio\Shlink\Core\every;
+use function Shlinkio\Shlink\Core\ArrayUtils\every;
 use function strlen;
 use function strtolower;
 

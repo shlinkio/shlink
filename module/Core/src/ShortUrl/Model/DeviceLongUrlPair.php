@@ -24,7 +24,7 @@ final class DeviceLongUrlPair
      *  * The first one is a list of mapped instances for those entries in the map with non-null value
      *  * The second is a list of DeviceTypes which have been provided with value null
      *
-     * @param array<string, string | null> $map
+     * @param array<string, string|null> $map
      * @return array{array<string, self>, DeviceType[]}
      */
     public static function fromMapToChangeSet(array $map): array

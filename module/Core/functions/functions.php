@@ -20,7 +20,6 @@ use function array_keys;
 use function array_map;
 use function array_reduce;
 use function date_default_timezone_get;
-use function in_array;
 use function is_array;
 use function print_r;
 use function Shlinkio\Shlink\Common\buildDateRange;
@@ -182,52 +181,4 @@ function enumValues(string $enum): array
     return $cache[$enum] ?? (
         $cache[$enum] = array_map(static fn (BackedEnum $type) => (string) $type->value, $enum::cases())
     );
-}
-
-function contains(mixed $value, array $array): bool
-{
-    return in_array($value, $array, strict: true);
-}
-
-/**
- * @param array[] $multiArray
- * @return array
- */
-function flatten(array $multiArray): array
-{
-    return array_reduce(
-        $multiArray,
-        static fn (array $carry, array $value) => [...$carry, ...$value],
-        initial: [],
-    );
-}
-
-/**
- * Checks if a callback returns true for at least one item in a collection.
- * @param callable(mixed $value, string|number $key): bool $callback
- */
-function some(iterable $collection, callable $callback): bool
-{
-    foreach ($collection as $key => $value) {
-        if ($callback($value, $key)) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-/**
- * Checks if a callback returns true for all item in a collection.
- * @param callable(mixed $value, string|number $key): bool $callback
- */
-function every(iterable $collection, callable $callback): bool
-{
-    foreach ($collection as $key => $value) {
-        if (! $callback($value, $key)) {
-            return false;
-        }
-    }
-
-    return true;
 }

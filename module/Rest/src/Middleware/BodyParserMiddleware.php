@@ -12,7 +12,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Exception\MalformedBodyException;
 
-use function Shlinkio\Shlink\Core\contains;
+use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 use function Shlinkio\Shlink\Json\json_decode;
 
 class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterface

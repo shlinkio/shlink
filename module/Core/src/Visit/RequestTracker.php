@@ -20,6 +20,7 @@ use function array_keys;
 use function array_map;
 use function explode;
 use function implode;
+use function Shlinkio\Shlink\Core\ArrayUtils\some;
 use function str_contains;
 
 class RequestTracker implements RequestTrackerInterface, RequestMethodInterface
@@ -85,17 +86,13 @@ class RequestTracker implements RequestTrackerInterface, RequestMethodInterface
         $remoteAddrParts = explode('.', $remoteAddr);
         $disableTrackingFrom = $this->trackingOptions->disableTrackingFrom;
 
-        foreach ($disableTrackingFrom as $value) {
+        return some($disableTrackingFrom, function (string $value) use ($ip, $remoteAddrParts): bool {
             $range = str_contains($value, '*')
                 ? $this->parseValueWithWildcards($value, $remoteAddrParts)
                 : Factory::parseRangeString($value);
 
-            if ($range !== null && $ip->matches($range)) {
-                return true;
-            }
-        }
-
-        return false;
+            return $range !== null && $ip->matches($range);
+        });
     }
 
     private function parseValueWithWildcards(string $value, array $remoteAddrParts): ?RangeInterface

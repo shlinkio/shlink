@@ -30,7 +30,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use function file_exists;
 use function Laminas\Stratigility\middleware;
 use function Shlinkio\Shlink\Config\env;
-use function Shlinkio\Shlink\Core\contains;
+use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 use function sprintf;
 use function sys_get_temp_dir;
 

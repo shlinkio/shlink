@@ -17,7 +17,8 @@ use Symfony\Component\Process\PhpExecutableFinder;
 use Throwable;
 
 use function array_map;
-use function Shlinkio\Shlink\Core\contains;
+use function Shlinkio\Shlink\Core\ArrayUtils\contains;
+use function Shlinkio\Shlink\Core\ArrayUtils\some;
 
 class CreateDatabaseCommand extends AbstractDatabaseCommand
 {
@@ -71,15 +72,9 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
         $allMetadata = $this->em->getMetadataFactory()->getAllMetadata();
         $shlinkTables = array_map(static fn (ClassMetadata $metadata) => $metadata->getTableName(), $allMetadata);
 
-        foreach ($shlinkTables as $shlinkTable) {
-            // If at least one of the shlink tables exist, we will consider the database exists somehow.
-            // Any other inconsistency will be taken care of by the migrations.
-            if (contains($shlinkTable, $existingTables)) {
-                return true;
-            }
-        }
-
-        return false;
+        // If at least one of the shlink tables exist, we will consider the database exists somehow.
+        // Any other inconsistency will be taken care of by the migrations.
+        return some($shlinkTables, static fn (string $shlinkTable) => contains($shlinkTable, $existingTables));
     }
 
     private function ensureDatabaseExistsAndGetTables(): array

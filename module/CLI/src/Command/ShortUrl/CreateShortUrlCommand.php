@@ -22,7 +22,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use function array_map;
 use function array_unique;
 use function explode;
-use function Shlinkio\SHlink\Core\flatten;
+use function Shlinkio\Shlink\Core\ArrayUtils\flatten;
 use function sprintf;
 
 class CreateShortUrlCommand extends Command
