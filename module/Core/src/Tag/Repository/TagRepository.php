@@ -17,8 +17,8 @@ use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\ApiKey\Spec\WithApiKeySpecsEnsuringJoin;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-use function Functional\each;
-use function Functional\map;
+use function array_map;
+use function array_walk;
 use function Shlinkio\Shlink\Core\camelCaseToSnakeCase;
 
 use const PHP_INT_MAX;
@@ -95,7 +95,8 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         $nonBotVisitsSubQb = $buildVisitsSubQb(true, 'non_bot_visits');
 
         // Apply API key specification to all sub-queries
-        each([$tagsSubQb, $allVisitsSubQb, $nonBotVisitsSubQb], $applyApiKeyToNativeQb);
+        $queryBuilders = [$tagsSubQb, $allVisitsSubQb, $nonBotVisitsSubQb];
+        array_walk($queryBuilders, $applyApiKeyToNativeQb);
 
         // A native query builder needs to be used here, because DQL and ORM query builders do not support
         // sub-queries at "from" and "join" level.
@@ -126,9 +127,9 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         $rsm->addScalarResult('non_bot_visits', 'nonBotVisits');
         $rsm->addScalarResult('short_urls_count', 'shortUrlsCount');
 
-        return map(
-            $this->getEntityManager()->createNativeQuery($mainQb->getSQL(), $rsm)->getResult(),
+        return array_map(
             TagInfo::fromRawData(...),
+            $this->getEntityManager()->createNativeQuery($mainQb->getSQL(), $rsm)->getResult(),
         );
     }
 

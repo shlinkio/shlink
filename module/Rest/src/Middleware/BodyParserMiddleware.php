@@ -12,7 +12,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Exception\MalformedBodyException;
 
-use function Functional\contains;
+use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 use function Shlinkio\Shlink\Json\json_decode;
 
 class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterface
@@ -25,11 +25,11 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
         // In requests that do not allow body or if the body has already been parsed, continue to next middleware
         if (
             ! empty($currentParams)
-            || contains([
+            || contains($method, [
                 self::METHOD_GET,
                 self::METHOD_HEAD,
                 self::METHOD_OPTIONS,
-            ], $method)
+            ])
         ) {
             return $handler->handle($request);
         }

@@ -20,9 +20,9 @@ use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitLocationRepositoryInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
+use function array_map;
 use function count;
 use function floor;
-use function Functional\map;
 use function range;
 use function sprintf;
 
@@ -45,12 +45,12 @@ class VisitLocatorTest extends TestCase
         string $serviceMethodName,
         string $expectedRepoMethodName,
     ): void {
-        $unlocatedVisits = map(
-            range(1, 200),
+        $unlocatedVisits = array_map(
             fn (int $i) => Visit::forValidShortUrl(
                 ShortUrl::withLongUrl(sprintf('https://short_code_%s', $i)),
                 Visitor::emptyInstance(),
             ),
+            range(1, 200),
         );
 
         $this->repo->expects($this->once())->method($expectedRepoMethodName)->willReturn($unlocatedVisits);

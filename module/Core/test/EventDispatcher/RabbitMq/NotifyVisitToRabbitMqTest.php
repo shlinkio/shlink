@@ -27,9 +27,8 @@ use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Transformer\OrphanVisitDataTransformer;
 use Throwable;
 
+use function array_walk;
 use function count;
-use function Functional\each;
-use function Functional\noop;
 
 class NotifyVisitToRabbitMqTest extends TestCase
 {
@@ -77,7 +76,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
     {
         $visitId = '123';
         $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn($visit);
-        each($expectedChannels, function (string $method): void {
+        array_walk($expectedChannels, function (string $method): void {
             $this->updatesGenerator->expects($this->once())->method($method)->with(
                 $this->isInstanceOf(Visit::class),
             )->willReturn(Update::forTopicAndPayload('', []));
@@ -153,7 +152,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         yield 'legacy non-orphan visit' => [
             true,
             $visit = Visit::forValidShortUrl(ShortUrl::withLongUrl('https://longUrl'), Visitor::emptyInstance()),
-            noop(...),
+            static fn () => null,
             function (MockObject & PublishingHelperInterface $helper) use ($visit): void {
                 $helper->method('publishUpdate')->with(self::callback(function (Update $update) use ($visit): bool {
                     $payload = $update->payload;
@@ -170,7 +169,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         yield 'legacy orphan visit' => [
             true,
             Visit::forBasePath(Visitor::emptyInstance()),
-            noop(...),
+            static fn () => null,
             function (MockObject & PublishingHelperInterface $helper): void {
                 $helper->method('publishUpdate')->with(self::callback(function (Update $update): bool {
                     $payload = $update->payload;

@@ -9,9 +9,6 @@ use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-use function Functional\each;
-use function Functional\partial_left;
-
 final class Version20200110182849 extends AbstractMigration
 {
     private const DEFAULT_EMPTY_VALUE = '';
@@ -31,11 +28,11 @@ final class Version20200110182849 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        each(
-            self::COLUMN_DEFAULTS_MAP,
-            fn (array $columns, string $tableName) =>
-                each($columns, partial_left([$this, 'setDefaultValueForColumnInTable'], $tableName)),
-        );
+        foreach (self::COLUMN_DEFAULTS_MAP as $tableName => $columns) {
+            foreach ($columns as $columnName) {
+                $this->setDefaultValueForColumnInTable($tableName, $columnName);
+            }
+        }
     }
 
     /**

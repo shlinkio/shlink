@@ -16,10 +16,11 @@ use Shlinkio\Shlink\Core\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 
+use function array_keys;
+use function array_map;
 use function explode;
-use function Functional\map;
-use function Functional\some;
 use function implode;
+use function Shlinkio\Shlink\Core\ArrayUtils\some;
 use function str_contains;
 
 class RequestTracker implements RequestTrackerInterface, RequestMethodInterface
@@ -96,11 +97,15 @@ class RequestTracker implements RequestTrackerInterface, RequestMethodInterface
 
     private function parseValueWithWildcards(string $value, array $remoteAddrParts): ?RangeInterface
     {
+        $octets = explode('.', $value);
+        $keys = array_keys($octets);
+
         // Replace wildcard parts with the corresponding ones from the remote address
         return Factory::parseRangeString(
-            implode('.', map(
-                explode('.', $value),
+            implode('.', array_map(
                 fn (string $part, int $index) => $part === '*' ? $remoteAddrParts[$index] : $part,
+                $octets,
+                $keys,
             )),
         );
     }

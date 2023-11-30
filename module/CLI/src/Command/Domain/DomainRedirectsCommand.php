@@ -14,8 +14,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-use function Functional\filter;
-use function Functional\invoke;
+use function array_filter;
+use function array_map;
 use function sprintf;
 use function str_contains;
 
@@ -23,7 +23,7 @@ class DomainRedirectsCommand extends Command
 {
     public const NAME = 'domain:redirects';
 
-    public function __construct(private DomainServiceInterface $domainService)
+    public function __construct(private readonly DomainServiceInterface $domainService)
     {
         parent::__construct();
     }
@@ -52,9 +52,9 @@ class DomainRedirectsCommand extends Command
         $askNewDomain = static fn () => $io->ask('Domain authority for which you want to set specific redirects');
 
         /** @var string[] $availableDomains */
-        $availableDomains = invoke(
-            filter($this->domainService->listDomains(), static fn (DomainItem $item) => ! $item->isDefault),
-            'toString',
+        $availableDomains = array_map(
+            static fn (DomainItem $item) => $item->toString(),
+            array_filter($this->domainService->listDomains(), static fn (DomainItem $item) => ! $item->isDefault),
         );
         if (empty($availableDomains)) {
             $input->setArgument('domain', $askNewDomain());

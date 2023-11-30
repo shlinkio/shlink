@@ -13,7 +13,7 @@ use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Throwable;
 
-use function Functional\each;
+use function array_walk;
 
 abstract class AbstractNotifyVisitListener extends AbstractAsyncListener
 {
@@ -46,7 +46,7 @@ abstract class AbstractNotifyVisitListener extends AbstractAsyncListener
         $updates = $this->determineUpdatesForVisit($visit);
 
         try {
-            each($updates, fn (Update $update) => $this->publishingHelper->publishUpdate($update));
+            array_walk($updates, fn (Update $update) => $this->publishingHelper->publishUpdate($update));
         } catch (Throwable $e) {
             $this->logger->debug(
                 'Error while trying to notify {name} with new visit. {e}',

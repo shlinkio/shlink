@@ -28,7 +28,7 @@ use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 
 use function count;
-use function Functional\contains;
+use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 
 class NotifyVisitToWebHooksTest extends TestCase
 {
@@ -102,7 +102,7 @@ class NotifyVisitToWebHooksTest extends TestCase
                 return true;
             }),
         )->willReturnCallback(function ($_, $webhook) use ($invalidWebhooks) {
-            $shouldReject = contains($invalidWebhooks, $webhook);
+            $shouldReject = contains($webhook, $invalidWebhooks);
             return $shouldReject ? new RejectedPromise(new Exception('')) : new FulfilledPromise('');
         });
         $this->logger->expects($this->exactly(count($invalidWebhooks)))->method('warning')->with(

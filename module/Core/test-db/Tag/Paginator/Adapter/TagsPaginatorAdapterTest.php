@@ -12,7 +12,7 @@ use Shlinkio\Shlink\Core\Tag\Paginator\Adapter\TagsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Tag\Repository\TagRepository;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
 
-use function Functional\map;
+use function array_map;
 
 class TagsPaginatorAdapterTest extends DatabaseTestCase
 {
@@ -47,7 +47,7 @@ class TagsPaginatorAdapterTest extends DatabaseTestCase
             'orderBy' => $orderBy,
         ]), null);
 
-        $tagNames = map($adapter->getSlice($offset, $length), static fn (Tag $tag) => $tag->__toString());
+        $tagNames = array_map(static fn (Tag $tag) => $tag->__toString(), [...$adapter->getSlice($offset, $length)]);
 
         self::assertEquals($expectedTags, $tagNames);
         self::assertEquals($expectedTotalCount, $adapter->getNbResults());

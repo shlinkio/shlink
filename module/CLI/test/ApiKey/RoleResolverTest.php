@@ -16,8 +16,6 @@ use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Symfony\Component\Console\Input\InputInterface;
 
-use function Functional\map;
-
 class RoleResolverTest extends TestCase
 {
     private RoleResolver $resolver;
@@ -49,10 +47,13 @@ class RoleResolverTest extends TestCase
     {
         $domain = self::domainWithId(Domain::withAuthority('example.com'));
         $buildInput = static fn (array $definition) => function (TestCase $test) use ($definition): InputInterface {
+            $returnMap = [];
+            foreach ($definition as $param => $returnValue) {
+                $returnMap[] = [$param, $returnValue];
+            }
+
             $input = $test->createStub(InputInterface::class);
-            $input->method('getOption')->willReturnMap(
-                map($definition, static fn (mixed $returnValue, string $param) => [$param, $returnValue]),
-            );
+            $input->method('getOption')->willReturnMap($returnMap);
 
             return $input;
         };

@@ -19,9 +19,9 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Sources\ImportSource;
 
-use function Functional\every;
-use function Functional\map;
+use function array_map;
 use function range;
+use function Shlinkio\Shlink\Core\ArrayUtils\every;
 use function strlen;
 use function strtolower;
 
@@ -88,7 +88,7 @@ class ShortUrlTest extends TestCase
     public static function provideLengths(): iterable
     {
         yield [null, DEFAULT_SHORT_CODES_LENGTH];
-        yield from map(range(4, 10), fn (int $value) => [$value, $value]);
+        yield from array_map(fn (int $value) => [$value, $value], range(4, 10));
     }
 
     #[Test]

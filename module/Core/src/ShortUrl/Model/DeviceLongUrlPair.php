@@ -6,9 +6,6 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Model;
 
 use Shlinkio\Shlink\Core\Model\DeviceType;
 
-use function array_values;
-use function Functional\group;
-use function Functional\map;
 use function trim;
 
 final class DeviceLongUrlPair
@@ -27,20 +24,21 @@ final class DeviceLongUrlPair
      *  * The first one is a list of mapped instances for those entries in the map with non-null value
      *  * The second is a list of DeviceTypes which have been provided with value null
      *
-     * @param array<string, string> $map
+     * @param array<string, string|null> $map
      * @return array{array<string, self>, DeviceType[]}
      */
     public static function fromMapToChangeSet(array $map): array
     {
-        $typesWithNullUrl = group($map, static fn (?string $longUrl) => $longUrl === null ? 'remove' : 'keep');
-        $deviceTypesToRemove = array_values(map(
-            $typesWithNullUrl['remove'] ?? [],
-            static fn ($_, string $deviceType) => DeviceType::from($deviceType),
-        ));
-        $pairsToKeep = map(
-            $typesWithNullUrl['keep'] ?? [],
-            fn (string $longUrl, string $deviceType) => self::fromRawTypeAndLongUrl($deviceType, $longUrl),
-        );
+        $pairsToKeep = [];
+        $deviceTypesToRemove = [];
+
+        foreach ($map as $deviceType => $longUrl) {
+            if ($longUrl === null) {
+                $deviceTypesToRemove[] = DeviceType::from($deviceType);
+            } else {
+                $pairsToKeep[$deviceType] = self::fromRawTypeAndLongUrl($deviceType, $longUrl);
+            }
+        }
 
         return [$pairsToKeep, $deviceTypesToRemove];
     }

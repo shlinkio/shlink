@@ -16,7 +16,7 @@ use Shlinkio\Shlink\CLI\GeoLite\GeolocationResult;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\GeoLiteDbCreated;
 use Shlinkio\Shlink\Core\EventDispatcher\UpdateGeoLiteDb;
 
-use function Functional\map;
+use function array_map;
 
 class UpdateGeoLiteDbTest extends TestCase
 {
@@ -124,9 +124,9 @@ class UpdateGeoLiteDbTest extends TestCase
 
     public static function provideGeolocationResults(): iterable
     {
-        return map(GeolocationResult::cases(), static fn (GeolocationResult $value) => [
+        return array_map(static fn (GeolocationResult $value) => [
             $value,
             $value === GeolocationResult::DB_CREATED ? 1 : 0,
-        ]);
+        ], GeolocationResult::cases());
     }
 }
