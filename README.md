@@ -45,6 +45,12 @@ First, make sure the host where you are going to run shlink fulfills these requi
     * You will also need the corresponding pdo variation for the database you are planning to use: `pdo_mysql`, `pdo_pgsql`, `pdo_sqlsrv` or `pdo_sqlite`.
 * The [openswoole](https://openswoole.com/) PHP extension (if you plan to serve Shlink with openswoole) or the web server of your choice with PHP integration (like Apache or Nginx).
 
+### Dome 
+
+Deploy a self-hosted version in one-click with [Dome](https://app.trydome.io/signup?package=shlinkio):
+
+[![Deploy to Dome](https://trydome.io/button.svg)](https://app.trydome.io/signup?package=shlinkio)
+
 ### Download
 
 In order to run Shlink, you will need a built version of the project. There are two ways to get it.
