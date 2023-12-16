@@ -12,9 +12,9 @@ use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
 use function Shlinkio\Shlink\Core\normalizeDate;
 use function sprintf;
 
-final class ShortUrlImporting
+final readonly class ShortUrlImporting
 {
-    private function __construct(private readonly ShortUrl $shortUrl, private readonly bool $isNew)
+    private function __construct(private ShortUrl $shortUrl, private bool $isNew)
     {
     }
 
@@ -57,11 +57,18 @@ final class ShortUrlImporting
 
     private function resolveShortUrl(EntityManagerInterface $em): ShortUrl
     {
+        // If wrapped ShortUrl has no ID, avoid trying to query the EM, as it would fail in Postgres.
+        // See https://github.com/shlinkio/shlink/issues/1947
+        $id = $this->shortUrl->getId();
+        if (!$id) {
+            return $this->shortUrl;
+        }
+
         // Instead of directly accessing wrapped ShortUrl entity, try to get it from the EM.
         // With this, we will get the same entity from memory if it is known by the EM, but if it was cleared, the EM
         // will fetch it again from the database, preventing errors at runtime.
         // However, if the EM was not flushed yet, the entity will not be found by ID, but it is known by the EM.
         // In that case, we fall back to wrapped ShortUrl entity directly.
-        return $em->find(ShortUrl::class, $this->shortUrl->getId()) ?? $this->shortUrl;
+        return $em->find(ShortUrl::class, $id) ?? $this->shortUrl;
     }
 }
