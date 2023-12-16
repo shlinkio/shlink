@@ -232,15 +232,20 @@ class ImportedLinksProcessorTest extends TestCase
     }
 
     #[Test, DataProvider('provideFoundShortUrls')]
-    public function visitsArePersistedWithProperShortUrl(?ShortUrl $foundShortUrl): void
+    public function visitsArePersistedWithProperShortUrl(ShortUrl $originalShortUrl, ?ShortUrl $foundShortUrl): void
     {
-        $originalShortUrl = ShortUrl::withLongUrl('https://foo');
-
         $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
         $this->repo->expects($this->once())->method('findOneByImportedUrl')->willReturn($originalShortUrl);
-        $this->em->expects($this->exactly(2))->method('find')->willReturn($foundShortUrl);
+        if (!$originalShortUrl->getId()) {
+            $this->em->expects($this->never())->method('find');
+        } else {
+            $this->em->expects($this->exactly(2))->method('find')->willReturn($foundShortUrl);
+        }
         $this->em->expects($this->once())->method('persist')->willReturnCallback(
-            static fn (Visit $visit)  => Assert::assertSame($foundShortUrl ?? $originalShortUrl, $visit->getShortUrl()),
+            static fn (Visit $visit)  => Assert::assertSame(
+                $foundShortUrl ?? $originalShortUrl,
+                $visit->getShortUrl(),
+            ),
         );
 
         $now = Chronos::now();
@@ -253,8 +258,12 @@ class ImportedLinksProcessorTest extends TestCase
 
     public static function provideFoundShortUrls(): iterable
     {
-        yield [null];
-        yield [ShortUrl::withLongUrl('https://bar')];
+        yield 'not found new URL' => [ShortUrl::withLongUrl('https://foo')->setId('123'), null];
+        yield 'found new URL' => [
+            ShortUrl::withLongUrl('https://foo')->setId('123'),
+            ShortUrl::withLongUrl('https://bar'),
+        ];
+        yield 'old URL without ID' => [$originalShortUrl = ShortUrl::withLongUrl('https://foo'), $originalShortUrl];
     }
 
     /**

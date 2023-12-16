@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* *Nothing*
+* [#1947](https://github.com/shlinkio/shlink/issues/1947) Fix error when importing short URLs while using Postgres.
 
 
 ## [3.7.0] - 2023-11-25
