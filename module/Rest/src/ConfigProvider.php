@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest;
 
-use function Functional\first;
-use function Functional\map;
+use function array_filter;
+use function array_map;
+use function reset;
 use function Shlinkio\Shlink\Config\loadConfigFromGlob;
 use function sprintf;
 
@@ -23,19 +24,20 @@ class ConfigProvider
     public static function applyRoutesPrefix(array $routes): array
     {
         $healthRoute = self::buildUnversionedHealthRouteFromExistingRoutes($routes);
-        $prefixedRoutes = map($routes, static function (array $route) {
+        $prefixedRoutes = array_map(static function (array $route) {
             ['path' => $path] = $route;
             $route['path'] = sprintf('%s%s', self::ROUTES_PREFIX, $path);
             return $route;
-        });
+        }, $routes);
 
         return $healthRoute !== null ? [...$prefixedRoutes, $healthRoute] : $prefixedRoutes;
     }
 
     private static function buildUnversionedHealthRouteFromExistingRoutes(array $routes): ?array
     {
-        $healthRoute = first($routes, fn (array $route) => $route['path'] === '/health');
-        if ($healthRoute === null) {
+        $healthRoutes = array_filter($routes, fn (array $route) => $route['path'] === '/health');
+        $healthRoute = reset($healthRoutes);
+        if ($healthRoute === false) {
             return null;
         }
 

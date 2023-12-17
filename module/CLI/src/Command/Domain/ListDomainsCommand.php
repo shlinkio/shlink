@@ -14,13 +14,13 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function Functional\map;
+use function array_map;
 
 class ListDomainsCommand extends Command
 {
     public const NAME = 'domain:list';
 
-    public function __construct(private DomainServiceInterface $domainService)
+    public function __construct(private readonly DomainServiceInterface $domainService)
     {
         parent::__construct();
     }
@@ -47,7 +47,7 @@ class ListDomainsCommand extends Command
 
         $table->render(
             $showRedirects ? [...$commonFields, '"Not found" redirects'] : $commonFields,
-            map($domains, function (DomainItem $domain) use ($showRedirects) {
+            array_map(function (DomainItem $domain) use ($showRedirects) {
                 $commonValues = [$domain->toString(), $domain->isDefault ? 'Yes' : 'No'];
 
                 return $showRedirects
@@ -56,7 +56,7 @@ class ListDomainsCommand extends Command
                         $this->notFoundRedirectsToString($domain->notFoundRedirectConfig),
                       ]
                     : $commonValues;
-            }),
+            }, $domains),
         );
 
         return ExitCode::EXIT_SUCCESS;

@@ -23,9 +23,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function array_keys;
+use function array_map;
 use function array_pad;
 use function explode;
-use function Functional\map;
 use function implode;
 use function sprintf;
 
@@ -184,10 +184,10 @@ class ListShortUrlsCommand extends Command
     ): Paginator {
         $shortUrls = $this->shortUrlService->listShortUrls($params);
 
-        $rows = map($shortUrls, function (ShortUrl $shortUrl) use ($columnsMap) {
+        $rows = array_map(function (ShortUrl $shortUrl) use ($columnsMap) {
             $rawShortUrl = $this->transformer->transform($shortUrl);
-            return map($columnsMap, fn (callable $call) => $call($rawShortUrl, $shortUrl));
-        });
+            return array_map(fn (callable $call) => $call($rawShortUrl, $shortUrl), $columnsMap);
+        }, [...$shortUrls]);
 
         ShlinkTable::default($output)->render(
             array_keys($columnsMap),

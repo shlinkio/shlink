@@ -10,7 +10,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
-use function Functional\map;
+use function array_map;
 use function range;
 use function sprintf;
 
@@ -108,7 +108,7 @@ class CreateShortUrlTest extends ApiTestCase
 
     public static function provideMaxVisits(): array
     {
-        return map(range(10, 15), fn(int $i) => [$i]);
+        return array_map(static fn (int $i) => [$i], range(10, 15));
     }
 
     #[Test]

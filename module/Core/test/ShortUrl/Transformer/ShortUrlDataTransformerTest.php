@@ -84,4 +84,14 @@ class ShortUrlDataTransformerTest extends TestCase
             ],
         ];
     }
+
+    #[Test]
+    public function properTagsAreReturned(): void
+    {
+        ['tags' => $tags] = $this->transformer->transform(ShortUrl::create(ShortUrlCreation::fromRawData([
+            'longUrl' => 'https://longUrl',
+            'tags' => ['foo', 'bar', 'baz'],
+        ])));
+        self::assertEquals(['foo', 'bar', 'baz'], $tags);
+    }
 }

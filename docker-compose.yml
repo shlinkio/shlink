@@ -199,7 +199,7 @@ services:
 
     shlink_swagger_ui:
         container_name: shlink_swagger_ui
-        image: swaggerapi/swagger-ui:v5.9.1
+        image: swaggerapi/swagger-ui:v5.10.3
         ports:
             - "8005:8080"
         volumes:

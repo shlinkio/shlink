@@ -14,7 +14,7 @@ use Shlinkio\Shlink\Core\Visit\Repository\VisitLocationRepository;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
 
-use function Functional\map;
+use function array_map;
 use function range;
 
 class VisitLocationRepositoryTest extends DatabaseTestCase
@@ -57,6 +57,6 @@ class VisitLocationRepositoryTest extends DatabaseTestCase
 
     public static function provideBlockSize(): iterable
     {
-        return map(range(1, 10), fn (int $value) => [$value]);
+        return array_map(static fn (int $value) => [$value], range(1, 10));
     }
 }

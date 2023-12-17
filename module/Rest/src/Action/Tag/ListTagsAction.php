@@ -14,7 +14,7 @@ use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
-use function Functional\map;
+use function array_map;
 
 class ListTagsAction extends AbstractRestAction
 {
@@ -41,7 +41,7 @@ class ListTagsAction extends AbstractRestAction
         // This part is deprecated. To get tags with stats, the /tags/stats endpoint should be used instead
         $tagsInfo = $this->tagService->tagsInfo($params, $apiKey);
         $rawTags = $this->serializePaginator($tagsInfo, dataProp: 'stats');
-        $rawTags['data'] = map($tagsInfo, static fn (TagInfo $info) => $info->tag);
+        $rawTags['data'] = array_map(static fn (TagInfo $info) => $info->tag, [...$tagsInfo]);
 
         return new JsonResponse(['tags' => $rawTags]);
     }

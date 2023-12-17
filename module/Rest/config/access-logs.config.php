@@ -11,7 +11,7 @@ use Shlinkio\Shlink\Common\Middleware\AccessLogMiddleware;
 return [
 
     'access_logs' => [
-        'ignored_paths' => [
+        'ignored_path_prefixes' => [
             Action\HealthAction::ROUTE_PATH,
         ],
     ],
@@ -20,7 +20,7 @@ return [
     ConfigAbstractFactory::class => [
         // Use MergeReplaceKey to overwrite what was defined in shlink-common, instead of merging it
         AccessLogMiddleware::class => new MergeReplaceKey(
-            [AccessLogMiddleware::LOGGER_SERVICE_NAME, 'config.access_logs.ignored_paths'],
+            [AccessLogMiddleware::LOGGER_SERVICE_NAME, 'config.access_logs.ignored_path_prefixes'],
         ),
     ],
 

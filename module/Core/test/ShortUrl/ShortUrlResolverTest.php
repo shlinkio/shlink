@@ -25,7 +25,7 @@ use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use ShlinkioTest\Shlink\Core\Util\ApiKeyDataProviders;
 
-use function Functional\map;
+use function array_map;
 use function range;
 
 class ShortUrlResolverTest extends TestCase
@@ -113,9 +113,9 @@ class ShortUrlResolverTest extends TestCase
             $shortUrl = ShortUrl::create(
                 ShortUrlCreation::fromRawData(['maxVisits' => 3, 'longUrl' => 'https://longUrl']),
             );
-            $shortUrl->setVisits(new ArrayCollection(map(
-                range(0, 4),
+            $shortUrl->setVisits(new ArrayCollection(array_map(
                 fn () => Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()),
+                range(0, 4),
             )));
 
             return $shortUrl;
@@ -132,9 +132,9 @@ class ShortUrlResolverTest extends TestCase
                 'validUntil' => $now->subMonths(1)->toAtomString(),
                 'longUrl' => 'https://longUrl',
             ]));
-            $shortUrl->setVisits(new ArrayCollection(map(
-                range(0, 4),
+            $shortUrl->setVisits(new ArrayCollection(array_map(
                 fn () => Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()),
+                range(0, 4),
             )));
 
             return $shortUrl;

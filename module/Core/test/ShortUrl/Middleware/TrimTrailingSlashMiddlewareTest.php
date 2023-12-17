@@ -16,9 +16,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Middleware\TrimTrailingSlashMiddleware;
 
-use function Functional\compose;
-use function Functional\const_function;
-
 class TrimTrailingSlashMiddlewareTest extends TestCase
 {
     private MockObject & RequestHandlerInterface $requestHandler;
@@ -34,7 +31,10 @@ class TrimTrailingSlashMiddlewareTest extends TestCase
         ServerRequestInterface $inputRequest,
         callable $assertions,
     ): void {
-        $arg = compose($assertions, const_function(true));
+        $arg = static function (...$args) use ($assertions): bool {
+            $assertions(...$args);
+            return true;
+        };
         $this->requestHandler->expects($this->once())->method('handle')->with($this->callback($arg))->willReturn(
             new Response(),
         );

@@ -27,8 +27,8 @@ use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function array_fill_keys;
+use function array_map;
 use function count;
-use function Functional\map;
 use function Shlinkio\Shlink\Core\enumValues;
 use function Shlinkio\Shlink\Core\generateRandomShortCode;
 use function Shlinkio\Shlink\Core\normalizeDate;
@@ -90,9 +90,9 @@ class ShortUrl extends AbstractEntity
         $instance->longUrl = $creation->getLongUrl();
         $instance->dateCreated = Chronos::now();
         $instance->visits = new ArrayCollection();
-        $instance->deviceLongUrls = new ArrayCollection(map(
-            $creation->deviceLongUrls,
+        $instance->deviceLongUrls = new ArrayCollection(array_map(
             fn (DeviceLongUrlPair $pair) => DeviceLongUrl::fromShortUrlAndPair($instance, $pair),
+            $creation->deviceLongUrls,
         ));
         $instance->tags = $relationResolver->resolveTags($creation->tags);
         $instance->validSince = $creation->validSince;

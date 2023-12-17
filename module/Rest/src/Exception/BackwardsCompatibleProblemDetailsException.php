@@ -15,8 +15,8 @@ use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 
+use function end;
 use function explode;
-use function Functional\last;
 
 /** @deprecated */
 class BackwardsCompatibleProblemDetailsException extends RuntimeException implements ProblemDetailsExceptionInterface
@@ -77,7 +77,9 @@ class BackwardsCompatibleProblemDetailsException extends RuntimeException implem
 
     private function remapType(string $wrappedType): string
     {
-        $lastSegment = last(explode('/', $wrappedType));
+        $segments = explode('/', $wrappedType);
+        $lastSegment = end($segments);
+
         return match ($lastSegment) {
             ValidationException::ERROR_CODE => 'INVALID_ARGUMENT',
             DeleteShortUrlException::ERROR_CODE => 'INVALID_SHORT_URL_DELETION',

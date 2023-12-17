@@ -21,7 +21,7 @@ use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Symfony\Component\Lock;
 use Throwable;
 
-use function Functional\map;
+use function array_map;
 use function range;
 
 class GeolocationDbUpdaterTest extends TestCase
@@ -128,7 +128,7 @@ class GeolocationDbUpdaterTest extends TestCase
             return [$days % 2 === 0 ? $timestamp : (string) $timestamp];
         };
 
-        return map(range(0, 34), $generateParamsWithTimestamp);
+        return array_map($generateParamsWithTimestamp, range(0, 34));
     }
 
     #[Test]

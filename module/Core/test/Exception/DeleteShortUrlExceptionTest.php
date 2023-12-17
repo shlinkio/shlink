@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\DeleteShortUrlException;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 
-use function Functional\map;
+use function array_map;
 use function range;
 use function Shlinkio\Shlink\Core\generateRandomShortCode;
 use function sprintf;
@@ -42,13 +42,13 @@ class DeleteShortUrlExceptionTest extends TestCase
 
     public static function provideThresholds(): array
     {
-        return map(range(5, 50, 5), function (int $number) {
+        return array_map(function (int $number) {
             return [$number, $shortCode = generateRandomShortCode(6), sprintf(
                 'Impossible to delete short URL with short code "%s", since it has more than "%s" visits.',
                 $shortCode,
                 $number,
             )];
-        });
+        }, range(5, 50, 5));
     }
 
     #[Test]

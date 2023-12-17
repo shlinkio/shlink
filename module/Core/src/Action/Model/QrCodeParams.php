@@ -18,7 +18,7 @@ use Endroid\QrCode\Writer\WriterInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Options\QrCodeOptions;
 
-use function Functional\contains;
+use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 use function strtolower;
 use function trim;
 
@@ -74,7 +74,7 @@ final class QrCodeParams
     private static function resolveWriter(array $query, QrCodeOptions $defaults): WriterInterface
     {
         $qFormat = self::normalizeParam($query['format'] ?? '');
-        $format = contains(self::SUPPORTED_FORMATS, $qFormat) ? $qFormat : self::normalizeParam($defaults->format);
+        $format = contains($qFormat, self::SUPPORTED_FORMATS) ? $qFormat : self::normalizeParam($defaults->format);
 
         return match ($format) {
             'svg' => new SvgWriter(),

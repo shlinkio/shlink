@@ -18,7 +18,7 @@ use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 
-use function Functional\map;
+use function array_map;
 use function range;
 use function sprintf;
 
@@ -31,7 +31,7 @@ class DeleteShortUrlServiceTest extends TestCase
     protected function setUp(): void
     {
         $shortUrl = ShortUrl::createFake()->setVisits(new ArrayCollection(
-            map(range(0, 10), fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance())),
+            array_map(fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance()), range(0, 10)),
         ));
         $this->shortCode = $shortUrl->getShortCode();
 

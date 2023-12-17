@@ -8,30 +8,30 @@ use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function Functional\intersperse;
+use function array_pop;
 
 final class ShlinkTable
 {
     private const DEFAULT_STYLE_NAME = 'default';
     private const TABLE_TITLE_STYLE = '<options=bold> %s </>';
 
-    private function __construct(private readonly Table $baseTable, private readonly bool $withRowSeparators)
+    private function __construct(private readonly Table $baseTable, private readonly bool $withRowSeparators = false)
     {
     }
 
     public static function default(OutputInterface $output): self
     {
-        return new self(new Table($output), false);
+        return new self(new Table($output));
     }
 
     public static function withRowSeparators(OutputInterface $output): self
     {
-        return new self(new Table($output), true);
+        return new self(new Table($output), withRowSeparators: true);
     }
 
     public static function fromBaseTable(Table $baseTable): self
     {
-        return new self($baseTable, false);
+        return new self($baseTable);
     }
 
     public function render(array $headers, array $rows, ?string $footerTitle = null, ?string $headerTitle = null): void
@@ -39,7 +39,7 @@ final class ShlinkTable
         $style = Table::getStyleDefinition(self::DEFAULT_STYLE_NAME);
         $style->setFooterTitleFormat(self::TABLE_TITLE_STYLE)
               ->setHeaderTitleFormat(self::TABLE_TITLE_STYLE);
-        $tableRows = $this->withRowSeparators ? intersperse($rows, new TableSeparator()) : $rows;
+        $tableRows = $this->withRowSeparators ? $this->addRowSeparators($rows) : $rows;
 
         $table = clone $this->baseTable;
         $table->setStyle($style)
@@ -48,5 +48,21 @@ final class ShlinkTable
               ->setFooterTitle($footerTitle)
               ->setHeaderTitle($headerTitle)
               ->render();
+    }
+
+    private function addRowSeparators(array $rows): array
+    {
+        $aggregation = [];
+        $separator = new TableSeparator();
+
+        foreach ($rows as $row) {
+            $aggregation[] = $row;
+            $aggregation[] = $separator;
+        }
+
+        // Remove last separator
+        array_pop($aggregation);
+
+        return $aggregation;
     }
 }

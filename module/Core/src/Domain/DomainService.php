@@ -14,9 +14,7 @@ use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-use function Functional\first;
-use function Functional\group;
-use function Functional\map;
+use function array_map;
 
 class DomainService implements DomainServiceInterface
 {
@@ -30,7 +28,7 @@ class DomainService implements DomainServiceInterface
     public function listDomains(?ApiKey $apiKey = null): array
     {
         [$default, $domains] = $this->defaultDomainAndRest($apiKey);
-        $mappedDomains = map($domains, fn (Domain $domain) => DomainItem::forNonDefaultDomain($domain));
+        $mappedDomains = array_map(fn (Domain $domain) => DomainItem::forNonDefaultDomain($domain), $domains);
 
         if ($apiKey?->hasRole(Role::DOMAIN_SPECIFIC)) {
             return $mappedDomains;
@@ -49,12 +47,19 @@ class DomainService implements DomainServiceInterface
     {
         /** @var DomainRepositoryInterface $repo */
         $repo = $this->em->getRepository(Domain::class);
-        $groups = group(
-            $repo->findDomains($apiKey),
-            fn (Domain $domain) => $domain->authority === $this->defaultDomain ? 'default' : 'domains',
-        );
+        $allDomains = $repo->findDomains($apiKey);
+        $defaultDomain = null;
+        $restOfDomains = [];
 
-        return [first($groups['default'] ?? []), $groups['domains'] ?? []];
+        foreach ($allDomains as $domain) {
+            if ($domain->authority === $this->defaultDomain) {
+                $defaultDomain = $domain;
+            } else {
+                $restOfDomains[] = $domain;
+            }
+        }
+
+        return [$defaultDomain, $restOfDomains];
     }
 
     /**

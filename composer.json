@@ -23,18 +23,17 @@
         "doctrine/orm": "^2.16",
         "endroid/qr-code": "^4.8",
         "friendsofphp/proxy-manager-lts": "^1.0",
-        "geoip2/geoip2": "^2.13",
+        "geoip2/geoip2": "^3.0",
         "guzzlehttp/guzzle": "^7.5",
         "happyr/doctrine-specification": "^2.0",
         "jaybizzle/crawler-detect": "^1.2.116",
         "laminas/laminas-config": "^3.8",
         "laminas/laminas-config-aggregator": "^1.13",
-        "laminas/laminas-diactoros": "^2.25",
+        "laminas/laminas-diactoros": "^3.3",
         "laminas/laminas-inputfilter": "^2.27",
         "laminas/laminas-servicemanager": "^3.21",
         "laminas/laminas-stdlib": "^3.17",
         "league/uri": "^6.8",
-        "lstrojny/functional-php": "^1.17",
         "matomo/matomo-php-tracker": "^3.2",
         "mezzio/mezzio": "^3.17",
         "mezzio/mezzio-fastroute": "^3.10",
@@ -46,12 +45,12 @@
         "php-middleware/request-id": "^4.1",
         "pugx/shortid-php": "^1.1",
         "ramsey/uuid": "^4.7",
-        "shlinkio/shlink-common": "^5.7",
+        "shlinkio/shlink-common": "^5.7.1",
         "shlinkio/shlink-config": "^2.5",
         "shlinkio/shlink-event-dispatcher": "^3.1",
-        "shlinkio/shlink-importer": "^5.2",
-        "shlinkio/shlink-installer": "^8.6",
-        "shlinkio/shlink-ip-geolocation": "^3.3",
+        "shlinkio/shlink-importer": "^5.2.1",
+        "shlinkio/shlink-installer": "^8.6.1",
+        "shlinkio/shlink-ip-geolocation": "^3.4",
         "shlinkio/shlink-json": "^1.1",
         "spiral/roadrunner": "^2023.2",
         "spiral/roadrunner-cli": "^2.5",
@@ -80,6 +79,9 @@
         "symfony/var-dumper": "^6.3",
         "veewee/composer-run-parallel": "^1.3"
     },
+    "conflict": {
+        "symfony/var-exporter": ">=6.3.9,<=6.4.0"
+    },
     "autoload": {
         "psr-4": {
             "Shlinkio\\Shlink\\CLI\\": "module/CLI/src",
@@ -88,6 +90,7 @@
         },
         "files": [
             "config/constants.php",
+            "module/Core/functions/array-utils.php",
             "module/Core/functions/functions.php"
         ]
     },
