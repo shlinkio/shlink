@@ -1,4 +1,4 @@
-version: '3.0'
+version: '3'
 
 rpc:
   listen: tcp://127.0.0.1:6001
@@ -37,4 +37,6 @@ logs:
     server:
       level: debug
     metrics:
+      level: debug
+    jobs:
       level: debug

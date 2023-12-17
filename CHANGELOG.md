@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [3.7.1] - 2023-12-17
 ### Added
 * *Nothing*
 
@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#1947](https://github.com/shlinkio/shlink/issues/1947) Fix error when importing short URLs while using Postgres.
+* [#1939](https://github.com/shlinkio/shlink/issues/1939) Fine-tune RoadRunner logs to avoid too many useless info.
 
 
 ## [3.7.0] - 2023-11-25

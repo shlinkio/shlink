@@ -1,4 +1,4 @@
-version: '3.0'
+version: '3'
 
 rpc:
   listen: tcp://127.0.0.1:6001
@@ -33,4 +33,6 @@ logs:
     http:
       mode: 'off' # Disable logging as Shlink handles it internally
     server:
-      level: debug # Everything written to worker stderr is logged
+      level: info
+    jobs:
+      level: debug
