@@ -36,7 +36,7 @@ jobs:
       - name: Run tests
         run: composer test:db:${{ inputs.platform }}
       - name: Upload code coverage
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ matrix.php-version == '8.2' && inputs.platform == 'sqlite:ci' }}
         with:
           name: coverage-db
