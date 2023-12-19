@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Changed
 * Remove dependency on functional-php library
+* [#1939](https://github.com/shlinkio/shlink/issues/1939) Fine-tune RoadRunner logs to avoid too many useless info.
 
 ### Deprecated
 * *Nothing*
@@ -19,7 +20,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#1947](https://github.com/shlinkio/shlink/issues/1947) Fix error when importing short URLs while using Postgres.
-* [#1939](https://github.com/shlinkio/shlink/issues/1939) Fine-tune RoadRunner logs to avoid too many useless info.
 
 
 ## [3.7.0] - 2023-11-25
