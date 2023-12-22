@@ -10,9 +10,9 @@ use Symfony\Component\Console\Input\InputInterface;
 
 use function sprintf;
 
-final class ShortUrlIdentifier
+final readonly class ShortUrlIdentifier
 {
-    private function __construct(public readonly string $shortCode, public readonly ?string $domain = null)
+    private function __construct(public string $shortCode, public ?string $domain = null)
     {
     }
 

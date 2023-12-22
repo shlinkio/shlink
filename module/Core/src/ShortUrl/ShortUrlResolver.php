@@ -12,11 +12,11 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-class ShortUrlResolver implements ShortUrlResolverInterface
+readonly class ShortUrlResolver implements ShortUrlResolverInterface
 {
     public function __construct(
-        private readonly EntityManagerInterface $em,
-        private readonly UrlShortenerOptions $urlShortenerOptions,
+        private EntityManagerInterface $em,
+        private UrlShortenerOptions $urlShortenerOptions,
     ) {
     }
 
@@ -40,10 +40,20 @@ class ShortUrlResolver implements ShortUrlResolverInterface
      */
     public function resolveEnabledShortUrl(ShortUrlIdentifier $identifier): ShortUrl
     {
+        $shortUrl = $this->resolvePublicShortUrl($identifier);
+        if (! $shortUrl->isEnabled()) {
+            throw ShortUrlNotFoundException::fromNotFound($identifier);
+        }
+
+        return $shortUrl;
+    }
+
+    public function resolvePublicShortUrl(ShortUrlIdentifier $identifier): ShortUrl
+    {
         /** @var ShortUrlRepository $shortUrlRepo */
         $shortUrlRepo = $this->em->getRepository(ShortUrl::class);
         $shortUrl = $shortUrlRepo->findOneWithDomainFallback($identifier, $this->urlShortenerOptions->mode);
-        if (! $shortUrl?->isEnabled()) {
+        if ($shortUrl === null) {
             throw ShortUrlNotFoundException::fromNotFound($identifier);
         }
 

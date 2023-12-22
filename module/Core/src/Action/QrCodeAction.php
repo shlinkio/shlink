@@ -18,13 +18,13 @@ use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolverInterface;
 
-class QrCodeAction implements MiddlewareInterface
+readonly class QrCodeAction implements MiddlewareInterface
 {
     public function __construct(
         private ShortUrlResolverInterface $urlResolver,
         private ShortUrlStringifierInterface $stringifier,
         private LoggerInterface $logger,
-        private QrCodeOptions $defaultOptions,
+        private QrCodeOptions $options,
     ) {
     }
 
@@ -33,13 +33,15 @@ class QrCodeAction implements MiddlewareInterface
         $identifier = ShortUrlIdentifier::fromRedirectRequest($request);
 
         try {
-            $shortUrl = $this->urlResolver->resolveEnabledShortUrl($identifier);
+            $shortUrl = $this->options->enabledForDisabledShortUrls
+                ? $this->urlResolver->resolvePublicShortUrl($identifier)
+                : $this->urlResolver->resolveEnabledShortUrl($identifier);
         } catch (ShortUrlNotFoundException $e) {
             $this->logger->warning('An error occurred while creating QR code. {e}', ['e' => $e]);
             return $handler->handle($request);
         }
 
-        $params = QrCodeParams::fromRequest($request, $this->defaultOptions);
+        $params = QrCodeParams::fromRequest($request, $this->options);
         $qrCodeBuilder = Builder::create()
             ->data($this->stringifier->stringify($shortUrl))
             ->size($params->size)

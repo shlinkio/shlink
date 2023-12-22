@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Shlinkio\Shlink\Core\Config\EnvVars;
 
+use const Shlinkio\Shlink\DEFAULT_QR_CODE_ENABLED_FOR_DISABLED_SHORT_URLS;
 use const Shlinkio\Shlink\DEFAULT_QR_CODE_ERROR_CORRECTION;
 use const Shlinkio\Shlink\DEFAULT_QR_CODE_FORMAT;
 use const Shlinkio\Shlink\DEFAULT_QR_CODE_MARGIN;
@@ -21,6 +22,9 @@ return [
         ),
         'round_block_size' => (bool) EnvVars::DEFAULT_QR_CODE_ROUND_BLOCK_SIZE->loadFromEnv(
             DEFAULT_QR_CODE_ROUND_BLOCK_SIZE,
+        ),
+        'enabled_for_disabled_short_urls' => (bool) EnvVars::QR_CODE_FOR_DISABLED_SHORT_URLS->loadFromEnv(
+            DEFAULT_QR_CODE_ENABLED_FOR_DISABLED_SHORT_URLS,
         ),
     ],
 
