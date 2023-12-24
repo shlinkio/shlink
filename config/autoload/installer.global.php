@@ -62,6 +62,7 @@ return [
             Option\QrCode\DefaultFormatConfigOption::class,
             Option\QrCode\DefaultErrorCorrectionConfigOption::class,
             Option\QrCode\DefaultRoundBlockSizeConfigOption::class,
+            Option\QrCode\EnabledForDisabledShortUrlsConfigOption::class,
             Option\RabbitMq\RabbitMqEnabledConfigOption::class,
             Option\RabbitMq\RabbitMqHostConfigOption::class,
             Option\RabbitMq\RabbitMqUseSslConfigOption::class,

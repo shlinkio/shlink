@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1960](https://github.com/shlinkio/shlink/issues/1960) Allow QR codes to be optionally resolved even when corresponding short URL is not enabled.
+
+
 ## [3.7.1] - 2023-12-17
 ### Added
 * *Nothing*

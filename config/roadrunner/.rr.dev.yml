@@ -35,7 +35,7 @@ logs:
     http:
       mode: 'off' # Disable logging as Shlink handles it internally
     server:
-      level: debug
+      level: info
     metrics:
       level: debug
     jobs:
