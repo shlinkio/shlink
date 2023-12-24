@@ -59,7 +59,7 @@ class ShortUrlResolverTest extends TestCase
     }
 
     #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
-    public function exceptionIsThrownIfShortcodeIsNotFound(?ApiKey $apiKey): void
+    public function exceptionIsThrownIfShortCodeIsNotFound(?ApiKey $apiKey): void
     {
         $shortCode = 'abc123';
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
@@ -73,7 +73,7 @@ class ShortUrlResolverTest extends TestCase
     }
 
     #[Test]
-    public function shortCodeToEnabledShortUrlProperlyParsesShortCode(): void
+    public function resolveEnabledShortUrlProperlyParsesShortCode(): void
     {
         $shortUrl = ShortUrl::withLongUrl('https://expected_url');
         $shortCode = $shortUrl->getShortCode();
@@ -89,8 +89,30 @@ class ShortUrlResolverTest extends TestCase
         self::assertSame($shortUrl, $result);
     }
 
+    #[Test, DataProvider('provideResolutionMethods')]
+    public function resolutionThrowsExceptionIfUrlIsNotEnabled(string $method): void
+    {
+        $shortCode = 'abc123';
+
+        $this->repo->expects($this->once())->method('findOneWithDomainFallback')->with(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            ShortUrlMode::STRICT,
+        )->willReturn(null);
+        $this->em->expects($this->once())->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
+
+        $this->expectException(ShortUrlNotFoundException::class);
+
+        $this->urlResolver->{$method}(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode));
+    }
+
+    public static function provideResolutionMethods(): iterable
+    {
+        yield 'resolveEnabledShortUrl' => ['resolveEnabledShortUrl'];
+        yield 'resolvePublicShortUrl' => ['resolvePublicShortUrl'];
+    }
+
     #[Test, DataProvider('provideDisabledShortUrls')]
-    public function shortCodeToEnabledShortUrlThrowsExceptionIfUrlIsNotEnabled(ShortUrl $shortUrl): void
+    public function resolveEnabledShortUrlThrowsExceptionIfUrlIsNotEnabled(ShortUrl $shortUrl): void
     {
         $shortCode = $shortUrl->getShortCode();
 
