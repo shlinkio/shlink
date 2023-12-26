@@ -29,7 +29,7 @@ jobs:
           php-extensions: openswoole-22.1.0
           extensions-cache-key: tests-extensions-${{ matrix.php-version }}-${{ inputs.test-group }}
       - run: composer test:${{ inputs.test-group }}:ci
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ matrix.php-version == '8.2' }}
         with:
           name: coverage-${{ inputs.test-group }}

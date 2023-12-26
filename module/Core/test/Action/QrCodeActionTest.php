@@ -230,6 +230,35 @@ class QrCodeActionTest extends TestCase
         ];
     }
 
+    #[Test, DataProvider('provideEnabled')]
+    public function qrCodeIsResolvedBasedOnOptions(bool $enabledForDisabledShortUrls): void
+    {
+
+        if ($enabledForDisabledShortUrls) {
+            $this->urlResolver->expects($this->once())->method('resolvePublicShortUrl')->willThrowException(
+                ShortUrlNotFoundException::fromNotFound(ShortUrlIdentifier::fromShortCodeAndDomain('')),
+            );
+            $this->urlResolver->expects($this->never())->method('resolveEnabledShortUrl');
+        } else {
+            $this->urlResolver->expects($this->once())->method('resolveEnabledShortUrl')->willThrowException(
+                ShortUrlNotFoundException::fromNotFound(ShortUrlIdentifier::fromShortCodeAndDomain('')),
+            );
+            $this->urlResolver->expects($this->never())->method('resolvePublicShortUrl');
+        }
+
+        $options = new QrCodeOptions(enabledForDisabledShortUrls: $enabledForDisabledShortUrls);
+        $this->action($options)->process(
+            ServerRequestFactory::fromGlobals(),
+            $this->createMock(RequestHandlerInterface::class),
+        );
+    }
+
+    public static function provideEnabled(): iterable
+    {
+        yield 'always enabled' => [true];
+        yield 'only enabled short URLs' => [false];
+    }
+
     public function action(?QrCodeOptions $options = null): QrCodeAction
     {
         return new QrCodeAction(

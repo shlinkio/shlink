@@ -19,4 +19,6 @@ const DEFAULT_QR_CODE_MARGIN = 0;
 const DEFAULT_QR_CODE_FORMAT = 'png';
 const DEFAULT_QR_CODE_ERROR_CORRECTION = 'l';
 const DEFAULT_QR_CODE_ROUND_BLOCK_SIZE = true;
+// Deprecated. Shlink 4.0.0 should change default value to `true`
+const DEFAULT_QR_CODE_ENABLED_FOR_DISABLED_SHORT_URLS = false;
 const MIN_TASK_WORKERS = 4;
