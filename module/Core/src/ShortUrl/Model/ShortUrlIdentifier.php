@@ -61,11 +61,11 @@ final class ShortUrlIdentifier
 
     public static function overrideDomain(?string $domain = null): ?string
     {
-        if ('qa-shortener.smsg.app' === $domain) {
-            $domain = 'smsg.app';
+        if ('qa-shortener.salesmsgdev.com' === $domain) {
+            $domain = 'salesmsgdev.com';
         }
-        if ('shortener.salesmsg.io' === $domain) {
-            $domain = 'salesmsg.io';
+        if ('shortener.smsg.app' === $domain) {
+            $domain = 'smsg.app';
         }
 
         return $domain;
