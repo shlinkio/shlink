@@ -67,7 +67,9 @@ final class ShortUrlIdentifier
         if ('shortener.smsg.app' === $domain) {
             $domain = 'smsg.app';
         }
-
+        if ('shortener.salesmsg.io' === $domain) {
+            $domain = 'salesmsg.io';
+        }
         return $domain;
     }
 }
