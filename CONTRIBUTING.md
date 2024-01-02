@@ -53,11 +53,6 @@ shlink
 │   ├── config.php
 │   └── container.php
 ├── data
-│   ├── cache
-│   ├── locks
-│   ├── log
-│   ├── migrations
-│   └── proxies
 ├── docs
 │   ├── adr
 │   ├── async-api
