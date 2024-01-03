@@ -55,7 +55,10 @@ shlink
 │   ├── container.php
 │   └── [...]
 ├── data
-│   └── [...]
+│   ├── cache
+│   ├── locks
+│   ├── log
+│   └── proxies
 ├── docs
 │   ├── adr
 │   ├── async-api
