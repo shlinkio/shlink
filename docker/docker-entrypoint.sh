@@ -3,6 +3,9 @@ set -e
 
 cd /etc/shlink
 
+# Create data directories if they do not exist. This allows data dir to be mounted as an empty dir if needed
+mkdir -p data/cache data/locks data/log data/proxies
+
 flags="--no-interaction --clear-db-cache"
 
 # Skip downloading GeoLite2 db file if the license key env var was not defined or skipping was explicitly set
