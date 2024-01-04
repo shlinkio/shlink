@@ -29,10 +29,10 @@ register_shutdown_function(function () use ($httpClient): void {
 });
 
 $testHelper->createTestDb(
-    ['bin/cli', 'db:create'],
-    ['bin/cli', 'db:migrate'],
-    ['bin/doctrine', 'orm:schema-tool:drop'],
-    ['bin/doctrine', 'dbal:run-sql'],
+    createDbCommand: ['bin/cli', 'db:create'],
+    migrateDbCommand: ['bin/cli', 'db:migrate'],
+    dropSchemaCommand: ['bin/doctrine', 'orm:schema-tool:drop'],
+    runSqlCommand: ['bin/doctrine', 'dbal:run-sql'],
 );
 ApiTest\ApiTestCase::setApiClient($httpClient);
 ApiTest\ApiTestCase::setSeedFixturesCallback(fn () => $testHelper->seedFixtures($em, $config['data_fixtures'] ?? []));

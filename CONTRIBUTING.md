@@ -46,17 +46,18 @@ This is a simplified version of the project structure:
 ```
 shlink
 ├── bin
-│   └── cli
+│   ├── cli
+│   └── [...]
 ├── config
 │   ├── autoload
 │   ├── params
 │   ├── config.php
-│   └── container.php
+│   ├── container.php
+│   └── [...]
 ├── data
 │   ├── cache
 │   ├── locks
 │   ├── log
-│   ├── migrations
 │   └── proxies
 ├── docs
 │   ├── adr
@@ -67,6 +68,7 @@ shlink
 │   ├── Core
 │   └── Rest
 ├── public
+│   └── [...]
 ├── composer.json
 └── README.md
 ```
@@ -75,7 +77,7 @@ The purposes of every folder are:
 
 * `bin`: It contains the CLI tools. The `cli` one is the main entry point to run Shlink from the command line.
 * `config`: Contains application-wide configurations, which are later merged with the ones provided by every module.
-* `data`: Common runtime-generated git-ignored assets, like logs, caches, etc.
+* `data`: Common git-ignored assets, like logs, caches, lock files, GeoLite DB files, etc. It's the only location where Shlink may need to write at runtime.
 * `docs`: Any project documentation is stored here, like API spec definitions or architectural decision records.
 * `module`: Contains a sub-folder for every module in the project. Modules contain the source code, tests and configurations for every context in the project.
 * `public`: Few assets (like `favicon.ico` or `robots.txt`) and the web entry point are stored here. This web entry point is not used when serving the app with RoadRunner or openswoole.

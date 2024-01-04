@@ -11,7 +11,7 @@ use Doctrine\Migrations\DependencyFactory;
 return (static function () {
     $migrationsConfig = [
         'migrations_paths' => [
-            'ShlinkMigrations' => 'data/migrations',
+            'ShlinkMigrations' => 'module/Core/migrations',
         ],
         'table_storage' => [
             'table_name' => 'migrations',
