@@ -75,7 +75,7 @@
         "phpunit/phpunit": "^10.4",
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~2.3.0",
-        "shlinkio/shlink-test-utils": "^3.8",
+        "shlinkio/shlink-test-utils": "^3.8.1",
         "symfony/var-dumper": "^6.3",
         "veewee/composer-run-parallel": "^1.3"
     },
@@ -116,7 +116,7 @@
         ],
         "cs": "phpcs -s",
         "cs:fix": "phpcbf",
-        "stan": "APP_ENV=test php vendor/bin/phpstan analyse module/*/src module/*/test* module/*/config config docker/config data/migrations --level=8",
+        "stan": "APP_ENV=test php vendor/bin/phpstan analyse module/*/src module/*/test* module/*/config module/*/migrations config docker/config --level=8",
         "test": [
             "@parallel test:unit test:db",
             "@parallel test:api test:cli"

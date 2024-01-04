@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [3.7.3] - 2024-01-04
+### Added
+* *Nothing*
+
+### Changed
+* [#1968](https://github.com/shlinkio/shlink/issues/1968) Move migrations from `data` to `module/Core`.
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#1967](https://github.com/shlinkio/shlink/issues/1967) Allow an empty dir to be mounted in `data` when using the docker image.
+
+
 ## [3.7.2] - 2023-12-26
 ### Added
 * *Nothing*
