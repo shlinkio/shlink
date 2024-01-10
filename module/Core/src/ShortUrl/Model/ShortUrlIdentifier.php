@@ -27,7 +27,8 @@ final class ShortUrlIdentifier
     {
         $shortCode = $request->getAttribute('shortCode', '');
         $domain = $request->getUri()->getAuthority();
-        $domain = self::overrideDomain($domain);
+        $originalDomain = $request->getQueryParams()['smg_domain'] ?? null;
+        $domain = self::overrideDomain($domain, $originalDomain);
 
         return new self($shortCode, $domain);
     }
@@ -59,15 +60,8 @@ final class ShortUrlIdentifier
         return new self($shortCode, $domain);
     }
 
-    public static function overrideDomain(?string $domain = null): ?string
+    public static function overrideDomain(?string $domain = null, ?string $originalDomain = null): ?string
     {
-        if ('qa-shortener.salesmsgdev.com' === $domain) {
-            $domain = 'salesmsgdev.com';
-        }
-        if ('shortener.smsg.app' === $domain) {
-            $domain = 'smsg.app';
-        }
-
-        return $domain;
+        return $originalDomain ?? $domain;
     }
 }
