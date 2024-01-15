@@ -198,6 +198,12 @@ class ShortUrl extends AbstractEntity
         return $this;
     }
 
+    public function setTags(Collection $tags): self
+    {
+        $this->tags = $tags;
+        return $this;
+    }
+
     public function getMaxVisits(): ?int
     {
         return $this->maxVisits;

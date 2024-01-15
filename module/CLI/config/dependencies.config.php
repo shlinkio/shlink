@@ -64,6 +64,8 @@ return [
             Command\Domain\ListDomainsCommand::class => ConfigAbstractFactory::class,
             Command\Domain\DomainRedirectsCommand::class => ConfigAbstractFactory::class,
             Command\Domain\GetDomainVisitsCommand::class => ConfigAbstractFactory::class,
+
+            Command\Import\DataImportCommand::class => ConfigAbstractFactory::class,
         ],
     ],
 
@@ -124,6 +126,8 @@ return [
             Util\ProcessRunner::class,
             PhpExecutableFinder::class,
         ],
+
+        Command\Import\DataImportCommand::class => ['em'],
     ],
 
 ];
