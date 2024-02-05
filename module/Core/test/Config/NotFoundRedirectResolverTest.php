@@ -57,8 +57,14 @@ class NotFoundRedirectResolverTest extends TestCase
         yield 'base URL with trailing slash' => [
             $uri = new Uri('/'),
             self::notFoundType(ServerRequestFactory::fromGlobals()->withUri($uri)),
-            new NotFoundRedirectOptions(baseUrl: 'baseUrl'),
-            'baseUrl',
+            new NotFoundRedirectOptions(baseUrl: 'https://example.com/baseUrl'),
+            'https://example.com/baseUrl',
+        ];
+        yield 'base URL without trailing slash' => [
+            $uri = new Uri(''),
+            self::notFoundType(ServerRequestFactory::fromGlobals()->withUri($uri)),
+            new NotFoundRedirectOptions(baseUrl: 'https://example.com/baseUrl'),
+            'https://example.com/baseUrl',
         ];
         yield 'base URL with domain placeholder' => [
             $uri = new Uri('https://s.test'),
@@ -72,17 +78,11 @@ class NotFoundRedirectResolverTest extends TestCase
             new NotFoundRedirectOptions(baseUrl: 'https://redirect-here.com/?domain={DOMAIN}'),
             'https://redirect-here.com/?domain=s.test',
         ];
-        yield 'base URL without trailing slash' => [
-            $uri = new Uri(''),
-            self::notFoundType(ServerRequestFactory::fromGlobals()->withUri($uri)),
-            new NotFoundRedirectOptions(baseUrl: 'baseUrl'),
-            'baseUrl',
-        ];
         yield 'regular 404' => [
             $uri = new Uri('/foo/bar'),
             self::notFoundType(ServerRequestFactory::fromGlobals()->withUri($uri)),
-            new NotFoundRedirectOptions(regular404: 'regular404'),
-            'regular404',
+            new NotFoundRedirectOptions(regular404: 'https://example.com/regular404'),
+            'https://example.com/regular404',
         ];
         yield 'regular 404 with path placeholder in query' => [
             $uri = new Uri('/foo/bar'),
@@ -101,8 +101,8 @@ class NotFoundRedirectResolverTest extends TestCase
         yield 'invalid short URL' => [
             new Uri('/foo'),
             self::notFoundType(self::requestForRoute(RedirectAction::class)),
-            new NotFoundRedirectOptions(invalidShortUrl: 'invalidShortUrl'),
-            'invalidShortUrl',
+            new NotFoundRedirectOptions(invalidShortUrl: 'https://example.com/invalidShortUrl'),
+            'https://example.com/invalidShortUrl',
         ];
         yield 'invalid short URL with path placeholder' => [
             new Uri('/foo'),
