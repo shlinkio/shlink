@@ -18,6 +18,8 @@ class RedirectTest extends ApiTestCase
     public function properRedirectHappensBasedOnUserAgent(?string $userAgent, string $expectedRedirect): void
     {
         $response = $this->callShortUrl('def456', $userAgent);
+
+        self::assertEquals(302, $response->getStatusCode());
         self::assertEquals($expectedRedirect, $response->getHeaderLine('Location'));
     }
 

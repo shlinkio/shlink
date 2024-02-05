@@ -36,9 +36,9 @@ class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderInterface
             ->__toString();
     }
 
-    private function resolveQuery(Uri $uri, array $currentQuery): ?string
+    private function resolveQuery(Uri $uri, array $currentQuery): string
     {
-        $hardcodedQuery = Query::parse($uri->getQuery() ?? '');
+        $hardcodedQuery = Query::parse($uri->getQuery());
 
         $disableTrackParam = $this->trackingOptions->disableTrackParam;
         if ($disableTrackParam !== null) {
@@ -48,7 +48,7 @@ class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderInterface
         // We want to merge preserving numeric keys, as some params might be numbers
         $mergedQuery = ArrayUtils::merge($hardcodedQuery, $currentQuery, true);
 
-        return empty($mergedQuery) ? null : Query::build($mergedQuery);
+        return Query::build($mergedQuery);
     }
 
     private function resolvePath(Uri $uri, ?string $extraPath): string
