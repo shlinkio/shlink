@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\ShortUrl\Helper;
 
 use GuzzleHttp\Psr7\Query;
+use Laminas\Diactoros\Uri;
 use Laminas\Stdlib\ArrayUtils;
-use League\Uri\Uri;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
@@ -27,7 +27,7 @@ class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderInterface
     ): string {
         $currentQuery = $request->getQueryParams();
         $device = DeviceType::matchFromUserAgent($request->getHeaderLine('User-Agent'));
-        $uri = Uri::createFromString($shortUrl->longUrlForDevice($device));
+        $uri = new Uri($shortUrl->longUrlForDevice($device));
         $shouldForwardQuery = $shortUrl->forwardQuery();
 
         return $uri
