@@ -8,6 +8,7 @@ use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
+use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitType;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 class OrphanVisitsTest extends ApiTestCase
@@ -68,6 +69,23 @@ class OrphanVisitsTest extends ApiTestCase
             1,
             [self::REGULAR_NOT_FOUND],
         ];
+        yield 'base_url only' => [['type' => OrphanVisitType::BASE_URL->value], 1, 1, [self::BASE_URL]];
+        yield 'regular_404 only' => [['type' => OrphanVisitType::REGULAR_404->value], 1, 1, [self::REGULAR_NOT_FOUND]];
+        yield 'invalid_short_url only' => [
+            ['type' => OrphanVisitType::INVALID_SHORT_URL->value],
+            1,
+            1,
+            [self::INVALID_SHORT_URL],
+        ];
+    }
+
+    #[Test]
+    public function errorIsReturnedForInvalidType(): void
+    {
+        $resp = $this->callApiWithKey(self::METHOD_GET, '/visits/orphan', [
+            RequestOptions::QUERY => ['type' => 'invalid'],
+        ]);
+        self::assertEquals(400, $resp->getStatusCode());
     }
 
     #[Test]

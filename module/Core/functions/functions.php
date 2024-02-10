@@ -20,6 +20,7 @@ use function array_keys;
 use function array_map;
 use function array_reduce;
 use function date_default_timezone_get;
+use function implode;
 use function is_array;
 use function print_r;
 use function Shlinkio\Shlink\Common\buildDateRange;
@@ -181,4 +182,12 @@ function enumValues(string $enum): array
     return $cache[$enum] ?? (
         $cache[$enum] = array_map(static fn (BackedEnum $type) => (string) $type->value, $enum::cases())
     );
+}
+
+/**
+ * @param class-string<BackedEnum> $enum
+ */
+function enumToString(string $enum): string
+{
+    return sprintf('["%s"]', implode('", "', enumValues($enum)));
 }

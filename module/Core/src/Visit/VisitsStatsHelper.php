@@ -18,6 +18,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
+use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsStats;
 use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\DomainVisitsPaginatorAdapter;
@@ -25,6 +26,7 @@ use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\NonOrphanVisitsPaginatorAdapter
 use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\OrphanVisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\ShortUrlVisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\TagVisitsPaginatorAdapter;
+use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepositoryInterface;
@@ -42,13 +44,13 @@ class VisitsStatsHelper implements VisitsStatsHelperInterface
         $visitsRepo = $this->em->getRepository(Visit::class);
 
         return new VisitsStats(
-            nonOrphanVisitsTotal: $visitsRepo->countNonOrphanVisits(VisitsCountFiltering::withApiKey($apiKey)),
-            orphanVisitsTotal: $visitsRepo->countOrphanVisits(VisitsCountFiltering::withApiKey($apiKey)),
+            nonOrphanVisitsTotal: $visitsRepo->countNonOrphanVisits(new VisitsCountFiltering(apiKey: $apiKey)),
+            orphanVisitsTotal: $visitsRepo->countOrphanVisits(new OrphanVisitsCountFiltering(apiKey: $apiKey)),
             nonOrphanVisitsNonBots: $visitsRepo->countNonOrphanVisits(
                 new VisitsCountFiltering(excludeBots: true, apiKey: $apiKey),
             ),
             orphanVisitsNonBots: $visitsRepo->countOrphanVisits(
-                new VisitsCountFiltering(excludeBots: true, apiKey: $apiKey),
+                new OrphanVisitsCountFiltering(excludeBots: true, apiKey: $apiKey),
             ),
         );
     }
@@ -116,7 +118,7 @@ class VisitsStatsHelper implements VisitsStatsHelperInterface
     /**
      * @return Visit[]|Paginator
      */
-    public function orphanVisits(VisitsParams $params, ?ApiKey $apiKey = null): Paginator
+    public function orphanVisits(OrphanVisitsParams $params, ?ApiKey $apiKey = null): Paginator
     {
         /** @var VisitRepositoryInterface $repo */
         $repo = $this->em->getRepository(Visit::class);
