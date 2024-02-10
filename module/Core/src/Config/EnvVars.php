@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Config;
 
+use function file_get_contents;
+use function is_file;
 use function Shlinkio\Shlink\Config\env;
+use function Shlinkio\Shlink\Config\parseEnvVar;
+use function sprintf;
 
 enum EnvVars: string
 {
@@ -77,7 +81,24 @@ enum EnvVars: string
 
     public function loadFromEnv(mixed $default = null): mixed
     {
-        return env($this->value, $default);
+        return env($this->value) ?? $this->loadFromFileEnv() ?? $default;
+    }
+
+    /**
+     * Checks if an equivalent environment variable exists with the `_FILE` suffix. If so, it loads its value as a file,
+     * reads it, and returns its contents.
+     * This is useful when loading Shlink with docker compose and using secrets.
+     * See https://docs.docker.com/compose/use-secrets/
+     */
+    private function loadFromFileEnv(): string|int|bool|null
+    {
+        $file = env(sprintf('%s_FILE', $this->value));
+        if ($file === null || ! is_file($file)) {
+            return null;
+        }
+
+        $content = file_get_contents($file);
+        return $content ? parseEnvVar($content) : null;
     }
 
     public function existsInEnv(): bool
