@@ -25,6 +25,7 @@ use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\NonOrphanVisitsPaginatorAdapter
 use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\OrphanVisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\ShortUrlVisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\TagVisitsPaginatorAdapter;
+use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepositoryInterface;
@@ -42,13 +43,13 @@ class VisitsStatsHelper implements VisitsStatsHelperInterface
         $visitsRepo = $this->em->getRepository(Visit::class);
 
         return new VisitsStats(
-            nonOrphanVisitsTotal: $visitsRepo->countNonOrphanVisits(VisitsCountFiltering::withApiKey($apiKey)),
-            orphanVisitsTotal: $visitsRepo->countOrphanVisits(VisitsCountFiltering::withApiKey($apiKey)),
+            nonOrphanVisitsTotal: $visitsRepo->countNonOrphanVisits(new VisitsCountFiltering(apiKey: $apiKey)),
+            orphanVisitsTotal: $visitsRepo->countOrphanVisits(new OrphanVisitsCountFiltering(apiKey: $apiKey)),
             nonOrphanVisitsNonBots: $visitsRepo->countNonOrphanVisits(
                 new VisitsCountFiltering(excludeBots: true, apiKey: $apiKey),
             ),
             orphanVisitsNonBots: $visitsRepo->countOrphanVisits(
-                new VisitsCountFiltering(excludeBots: true, apiKey: $apiKey),
+                new OrphanVisitsCountFiltering(excludeBots: true, apiKey: $apiKey),
             ),
         );
     }

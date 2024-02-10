@@ -12,8 +12,8 @@ use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\OrphanVisitsPaginatorAdapter;
-use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
-use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsCountFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -38,7 +38,7 @@ class OrphanVisitsPaginatorAdapterTest extends TestCase
     {
         $expectedCount = 5;
         $this->repo->expects($this->once())->method('countOrphanVisits')->with(
-            new VisitsCountFiltering($this->params->dateRange, apiKey: $this->apiKey),
+            new OrphanVisitsCountFiltering($this->params->dateRange, apiKey: $this->apiKey),
         )->willReturn($expectedCount);
 
         $result = $this->adapter->getNbResults();
@@ -55,12 +55,12 @@ class OrphanVisitsPaginatorAdapterTest extends TestCase
     {
         $visitor = Visitor::emptyInstance();
         $list = [Visit::forRegularNotFound($visitor), Visit::forInvalidShortUrl($visitor)];
-        $this->repo->expects($this->once())->method('findOrphanVisits')->with(new VisitsListFiltering(
-            $this->params->dateRange,
-            $this->params->excludeBots,
-            $this->apiKey,
-            $limit,
-            $offset,
+        $this->repo->expects($this->once())->method('findOrphanVisits')->with(new OrphanVisitsListFiltering(
+            dateRange: $this->params->dateRange,
+            excludeBots: $this->params->excludeBots,
+            apiKey: $this->apiKey,
+            limit: $limit,
+            offset: $offset,
         ))->willReturn($list);
 
         $result = $this->adapter->getSlice($offset, $limit);

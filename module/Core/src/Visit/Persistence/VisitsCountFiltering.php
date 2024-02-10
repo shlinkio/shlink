@@ -15,9 +15,4 @@ class VisitsCountFiltering
         public readonly ?ApiKey $apiKey = null,
     ) {
     }
-
-    public static function withApiKey(?ApiKey $apiKey): self
-    {
-        return new self(apiKey: $apiKey);
-    }
 }

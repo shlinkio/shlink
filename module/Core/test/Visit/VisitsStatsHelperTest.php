@@ -26,6 +26,8 @@ use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsStats;
+use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsCountFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepository;
@@ -251,10 +253,10 @@ class VisitsStatsHelperTest extends TestCase
         $list = array_map(static fn () => Visit::forBasePath(Visitor::emptyInstance()), range(0, 3));
         $repo = $this->createMock(VisitRepository::class);
         $repo->expects($this->once())->method('countOrphanVisits')->with(
-            $this->isInstanceOf(VisitsCountFiltering::class),
+            $this->isInstanceOf(OrphanVisitsCountFiltering::class),
         )->willReturn(count($list));
         $repo->expects($this->once())->method('findOrphanVisits')->with(
-            $this->isInstanceOf(VisitsListFiltering::class),
+            $this->isInstanceOf(OrphanVisitsListFiltering::class),
         )->willReturn($list);
         $this->em->expects($this->once())->method('getRepository')->with(Visit::class)->willReturn($repo);
 
