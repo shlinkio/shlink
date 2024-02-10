@@ -6,8 +6,7 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use ValueError;
 
-use function implode;
-use function Shlinkio\Shlink\Core\enumValues;
+use function Shlinkio\Shlink\Core\enumToString;
 use function sprintf;
 
 final class OrphanVisitsParams extends VisitsParams
@@ -43,9 +42,9 @@ final class OrphanVisitsParams extends VisitsParams
         } catch (ValueError) {
             throw ValidationException::fromArray([
                 'type' => sprintf(
-                    '%s is not a valid orphan visit type. Expected one of ["%s"]',
+                    '%s is not a valid orphan visit type. Expected one of %s',
                     $type,
-                    implode('", "', enumValues(OrphanVisitType::class)),
+                    enumToString(OrphanVisitType::class),
                 ),
             ]);
         }
