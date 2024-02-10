@@ -17,12 +17,16 @@ class EnvVarsTest extends TestCase
     {
         putenv(EnvVars::BASE_PATH->value . '=the_base_path');
         putenv(EnvVars::DB_NAME->value . '=shlink');
+
+        $envFilePath = __DIR__ . '/../DB_PASSWORD.env';
+        putenv(EnvVars::DB_PASSWORD->value . '_FILE=' . $envFilePath);
     }
 
     protected function tearDown(): void
     {
         putenv(EnvVars::BASE_PATH->value . '=');
         putenv(EnvVars::DB_NAME->value . '=');
+        putenv(EnvVars::DB_PASSWORD->value . '_FILE=');
     }
 
     #[Test, DataProvider('provideExistingEnvVars')]
@@ -53,5 +57,11 @@ class EnvVarsTest extends TestCase
         yield 'BASE_PATH with default' => [EnvVars::BASE_PATH, 'the_base_path', 'foobar'];
         yield 'DB_DRIVER without default' => [EnvVars::DB_DRIVER, null, null];
         yield 'DB_DRIVER with default' => [EnvVars::DB_DRIVER, 'foobar', 'foobar'];
+    }
+
+    #[Test]
+    public function fallsBackToReadEnvVarsFromFile(): void
+    {
+        self::assertEquals('this_is_the_password', EnvVars::DB_PASSWORD->loadFromEnv());
     }
 }

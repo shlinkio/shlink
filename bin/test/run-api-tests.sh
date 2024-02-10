@@ -20,6 +20,8 @@ echo 'Starting server...'
 [ "$TEST_RUNTIME" = 'openswoole' ] && vendor/bin/laminas mezzio:swoole:start -d
 [ "$TEST_RUNTIME" = 'rr' ] && bin/rr serve -p -c=config/roadrunner/.rr.dev.yml \
   -o=http.address=0.0.0.0:9999 \
+  -o=http.pool.debug=false \
+  -o=jobs.pool.debug=false \
   -o=logs.encoding=json \
   -o=logs.channels.http.encoding=json \
   -o=logs.channels.server.encoding=json \
@@ -29,10 +31,10 @@ echo 'Starting server...'
 sleep 2 # Let's give the server a couple of seconds to start
 
 vendor/bin/phpunit --order-by=random -c phpunit-api.xml --testdox --colors=always --log-junit=build/coverage-api/junit.xml $*
-testsExitCode=$?
+TESTS_EXIT_CODE=$?
 
 [ "$TEST_RUNTIME" = 'openswoole' ] && vendor/bin/laminas mezzio:swoole:stop
 [ "$TEST_RUNTIME" = 'rr' ] && bin/rr stop -c config/roadrunner/.rr.dev.yml -o=http.address=0.0.0.0:9999
 
 # Exit this script with the same code as the tests. If tests failed, this script has to fail
-exit $testsExitCode
+exit $TESTS_EXIT_CODE
