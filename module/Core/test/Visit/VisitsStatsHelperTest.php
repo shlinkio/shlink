@@ -23,6 +23,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
+use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsStats;
@@ -260,7 +261,7 @@ class VisitsStatsHelperTest extends TestCase
         )->willReturn($list);
         $this->em->expects($this->once())->method('getRepository')->with(Visit::class)->willReturn($repo);
 
-        $paginator = $this->helper->orphanVisits(new VisitsParams());
+        $paginator = $this->helper->orphanVisits(new OrphanVisitsParams());
 
         self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentPageResults()));
     }

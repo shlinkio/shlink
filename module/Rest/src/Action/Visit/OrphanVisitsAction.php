@@ -9,7 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtilsTrait;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
-use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
+use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
@@ -29,7 +29,7 @@ class OrphanVisitsAction extends AbstractRestAction
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $params = VisitsParams::fromRawData($request->getQueryParams());
+        $params = OrphanVisitsParams::fromRawData($request->getQueryParams());
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
         $visits = $this->visitsHelper->orphanVisits($params, $apiKey);
 

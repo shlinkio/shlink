@@ -9,7 +9,7 @@ use Shlinkio\Shlink\Core\Model\AbstractInfinitePaginableListParams;
 
 use function Shlinkio\Shlink\Core\parseDateRangeFromQuery;
 
-final class VisitsParams extends AbstractInfinitePaginableListParams
+class VisitsParams extends AbstractInfinitePaginableListParams
 {
     public readonly DateRange $dateRange;
 

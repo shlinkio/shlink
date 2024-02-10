@@ -9,8 +9,8 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
+use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
-use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\OrphanVisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsListFiltering;
@@ -21,13 +21,13 @@ class OrphanVisitsPaginatorAdapterTest extends TestCase
 {
     private OrphanVisitsPaginatorAdapter $adapter;
     private MockObject & VisitRepositoryInterface $repo;
-    private VisitsParams $params;
+    private OrphanVisitsParams $params;
     private ApiKey $apiKey;
 
     protected function setUp(): void
     {
         $this->repo = $this->createMock(VisitRepositoryInterface::class);
-        $this->params = VisitsParams::fromRawData([]);
+        $this->params = OrphanVisitsParams::fromRawData([]);
         $this->apiKey = ApiKey::create();
 
         $this->adapter = new OrphanVisitsPaginatorAdapter($this->repo, $this->params, $this->apiKey);

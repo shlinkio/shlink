@@ -7,7 +7,7 @@ namespace Shlinkio\Shlink\CLI\Command\Visit;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
-use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
+use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams;
 use Symfony\Component\Console\Input\InputInterface;
 
 class GetOrphanVisitsCommand extends AbstractVisitsListCommand
@@ -23,7 +23,7 @@ class GetOrphanVisitsCommand extends AbstractVisitsListCommand
 
     protected function getVisitsPaginator(InputInterface $input, DateRange $dateRange): Paginator
     {
-        return $this->visitsHelper->orphanVisits(new VisitsParams($dateRange));
+        return $this->visitsHelper->orphanVisits(new OrphanVisitsParams($dateRange));
     }
 
     /**

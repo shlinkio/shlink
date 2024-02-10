@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Visit\Paginator\Adapter;
 
 use Shlinkio\Shlink\Core\Paginator\Adapter\AbstractCacheableCountPaginatorAdapter;
-use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
+use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams;
 use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepositoryInterface;
@@ -15,7 +15,7 @@ class OrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
 {
     public function __construct(
         private readonly VisitRepositoryInterface $repo,
-        private readonly VisitsParams $params,
+        private readonly OrphanVisitsParams $params,
         private readonly ?ApiKey $apiKey,
     ) {
     }
@@ -26,6 +26,7 @@ class OrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
             dateRange: $this->params->dateRange,
             excludeBots: $this->params->excludeBots,
             apiKey: $this->apiKey,
+            type: $this->params->type,
         ));
     }
 
@@ -35,6 +36,7 @@ class OrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
             dateRange: $this->params->dateRange,
             excludeBots: $this->params->excludeBots,
             apiKey: $this->apiKey,
+            type: $this->params->type,
             limit: $length,
             offset: $offset,
         ));
