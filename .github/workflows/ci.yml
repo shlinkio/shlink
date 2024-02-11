@@ -36,7 +36,7 @@ jobs:
       - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          php-extensions: openswoole-22.1.0
+          php-extensions: openswoole-22.1.2
           extensions-cache-key: tests-extensions-${{ matrix.php-version }}-${{ matrix.command }}
       - run: composer ${{ matrix.command }}
 
@@ -60,7 +60,6 @@ jobs:
     strategy:
       matrix:
         php-version: ['8.2', '8.3']
-    continue-on-error: ${{ matrix.php-version == '8.3' }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # rr get-binary picks this env automatically
     steps:
@@ -70,7 +69,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer
-      - run: composer install --no-interaction --prefer-dist --ignore-platform-req=ext-openswoole ${{ matrix.php-version == '8.3' && '--ignore-platform-reqs' || '' }}
+      - run: composer install --no-interaction --prefer-dist --ignore-platform-req=ext-openswoole
       - run: ./vendor/bin/rr get --no-interaction --no-config --location bin/ && chmod +x bin/rr
       - run: composer test:api:rr
 

@@ -14,7 +14,6 @@ jobs:
     strategy:
       matrix:
         php-version: ['8.2', '8.3']
-    continue-on-error: ${{ matrix.php-version == '8.3' }}
     env:
       LC_ALL: C
     steps:
@@ -28,7 +27,7 @@ jobs:
       - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          php-extensions: openswoole-22.1.0, pdo_sqlsrv-5.11.1
+          php-extensions: openswoole-22.1.2, pdo_sqlsrv-5.12.0
           extensions-cache-key: db-tests-extensions-${{ matrix.php-version }}-${{ inputs.platform }}
       - name: Create test database
         if: ${{ inputs.platform == 'ms' }}
