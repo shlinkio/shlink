@@ -14,7 +14,6 @@ jobs:
     strategy:
       matrix:
         php-version: ['8.2', '8.3']
-    continue-on-error: ${{ matrix.php-version == '8.3' }}
     steps:
       - uses: actions/checkout@v4
       - name: Start postgres database server
@@ -26,7 +25,7 @@ jobs:
       - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          php-extensions: openswoole-22.1.0
+          php-extensions: openswoole-22.1.2
           extensions-cache-key: tests-extensions-${{ matrix.php-version }}-${{ inputs.test-group }}
       - run: composer test:${{ inputs.test-group }}:ci
       - uses: actions/upload-artifact@v4
