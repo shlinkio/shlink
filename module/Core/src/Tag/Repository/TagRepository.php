@@ -43,7 +43,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
      */
     public function findTagsWithInfo(?TagsListFiltering $filtering = null): array
     {
-        $orderField = OrderableField::toSnakeCaseValidField($filtering?->orderBy?->field);
+        $orderField = OrderableField::toValidField($filtering?->orderBy?->field);
         $orderDir = $filtering?->orderBy?->direction ?? 'ASC';
         $apiKey = $filtering?->apiKey;
         $conn = $this->getEntityManager()->getConnection();

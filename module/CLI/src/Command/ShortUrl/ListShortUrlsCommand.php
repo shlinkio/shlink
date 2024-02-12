@@ -218,7 +218,7 @@ class ListShortUrlsCommand extends Command
             'Short URL' => $pickProp('shortUrl'),
             'Long URL' => $pickProp('longUrl'),
             'Date created' => $pickProp('dateCreated'),
-            'Visits count' => $pickProp('visitsCount'),
+            'Visits count' => static fn (array $shortUrl) => $shortUrl['visitsSummary']->total,
         ];
         if ($input->getOption('show-tags')) {
             $columnsMap['Tags'] = static fn (array $shortUrl): string => implode(', ', $shortUrl['tags']);

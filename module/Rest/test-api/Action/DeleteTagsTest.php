@@ -30,8 +30,8 @@ class DeleteTagsTest extends ApiTestCase
 
     public static function provideNonAdminApiKeys(): iterable
     {
-        yield 'author' => ['author_api_key', '2', 'FORBIDDEN_OPERATION'];
-        yield 'domain' => ['domain_api_key', '2', 'FORBIDDEN_OPERATION'];
+        yield 'author' => ['author_api_key', '2', 'https://shlink.io/api/error/forbidden-tag-operation'];
+        yield 'domain' => ['domain_api_key', '2', 'https://shlink.io/api/error/forbidden-tag-operation'];
         yield 'version 3' => ['domain_api_key', '3', 'https://shlink.io/api/error/forbidden-tag-operation'];
     }
 }

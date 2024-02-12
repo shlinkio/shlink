@@ -49,7 +49,7 @@ class DomainVisitsTest extends ApiTestCase
 
         self::assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
         self::assertEquals(self::STATUS_NOT_FOUND, $payload['status']);
-        self::assertEquals('DOMAIN_NOT_FOUND', $payload['type']);
+        self::assertEquals('https://shlink.io/api/error/domain-not-found', $payload['type']);
         self::assertEquals(sprintf('Domain with authority "%s" could not be found', $domain), $payload['detail']);
         self::assertEquals('Domain not found', $payload['title']);
         self::assertEquals($domain, $payload['authority']);
@@ -73,8 +73,8 @@ class DomainVisitsTest extends ApiTestCase
 
     public static function provideApiVersions(): iterable
     {
-        yield ['1', 'DOMAIN_NOT_FOUND'];
-        yield ['2', 'DOMAIN_NOT_FOUND'];
+        yield ['1', 'https://shlink.io/api/error/domain-not-found'];
+        yield ['2', 'https://shlink.io/api/error/domain-not-found'];
         yield ['3', 'https://shlink.io/api/error/domain-not-found'];
     }
 }

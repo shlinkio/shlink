@@ -1,6 +1,6 @@
 {
     "type": "object",
-    "required": ["tag", "shortUrlsCount", "visitsSummary", "visitsCount"],
+    "required": ["tag", "shortUrlsCount", "visitsSummary"],
     "properties": {
         "tag": {
             "type": "string",
@@ -12,11 +12,6 @@
         },
         "visitsSummary": {
             "$ref": "./VisitsSummary.json"
-        },
-        "visitsCount": {
-            "deprecated": true,
-            "type": "number",
-            "description": "**[DEPRECATED]** Use visitsSummary.total instead"
         }
     }
 }

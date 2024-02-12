@@ -36,8 +36,6 @@ enum EnvVars: string
     case RABBITMQ_PASSWORD = 'RABBITMQ_PASSWORD';
     case RABBITMQ_VHOST = 'RABBITMQ_VHOST';
     case RABBITMQ_USE_SSL = 'RABBITMQ_USE_SSL';
-    /** @deprecated */
-    case RABBITMQ_LEGACY_VISITS_PUBLISHING = 'RABBITMQ_LEGACY_VISITS_PUBLISHING';
     case MATOMO_ENABLED = 'MATOMO_ENABLED';
     case MATOMO_BASE_URL = 'MATOMO_BASE_URL';
     case MATOMO_SITE_ID = 'MATOMO_SITE_ID';
@@ -74,10 +72,6 @@ enum EnvVars: string
     case REDIRECT_APPEND_EXTRA_PATH = 'REDIRECT_APPEND_EXTRA_PATH';
     case TIMEZONE = 'TIMEZONE';
     case MULTI_SEGMENT_SLUGS_ENABLED = 'MULTI_SEGMENT_SLUGS_ENABLED';
-    /** @deprecated */
-    case VISITS_WEBHOOKS = 'VISITS_WEBHOOKS';
-    /** @deprecated */
-    case NOTIFY_ORPHAN_VISITS_TO_WEBHOOKS = 'NOTIFY_ORPHAN_VISITS_TO_WEBHOOKS';
 
     public function loadFromEnv(mixed $default = null): mixed
     {

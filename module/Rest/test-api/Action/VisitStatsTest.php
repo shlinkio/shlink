@@ -32,8 +32,6 @@ class VisitStatsTest extends ApiTestCase
                 'nonBots' => 2,
                 'bots' => 1,
             ],
-            'visitsCount' => 7,
-            'orphanVisitsCount' => 3,
         ]];
         yield 'domain-only API key' => ['domain_api_key', [
             'nonOrphanVisits' => [
@@ -46,8 +44,6 @@ class VisitStatsTest extends ApiTestCase
                 'nonBots' => 2,
                 'bots' => 1,
             ],
-            'visitsCount' => 0,
-            'orphanVisitsCount' => 3,
         ]];
         yield 'author API key' => ['author_api_key', [
             'nonOrphanVisits' => [
@@ -60,8 +56,6 @@ class VisitStatsTest extends ApiTestCase
                 'nonBots' => 2,
                 'bots' => 1,
             ],
-            'visitsCount' => 5,
-            'orphanVisitsCount' => 3,
         ]];
     }
 }

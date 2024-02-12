@@ -96,7 +96,7 @@ class EditShortUrlTest extends ApiTestCase
     public static function provideLongUrls(): iterable
     {
         yield 'valid URL' => ['https://shlink.io', self::STATUS_OK, null];
-        yield 'invalid URL' => ['http://foo', self::STATUS_BAD_REQUEST, 'INVALID_URL'];
+        yield 'invalid URL' => ['http://foo', self::STATUS_BAD_REQUEST, 'https://shlink.io/api/error/invalid-url'];
     }
 
     #[Test, DataProviderExternal(ApiTestDataProviders::class, 'invalidUrlsProvider')]
@@ -112,7 +112,7 @@ class EditShortUrlTest extends ApiTestCase
 
         self::assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
         self::assertEquals(self::STATUS_NOT_FOUND, $payload['status']);
-        self::assertEquals('INVALID_SHORTCODE', $payload['type']);
+        self::assertEquals('https://shlink.io/api/error/short-url-not-found', $payload['type']);
         self::assertEquals($expectedDetail, $payload['detail']);
         self::assertEquals('Short URL not found', $payload['title']);
         self::assertEquals($shortCode, $payload['shortCode']);
@@ -131,7 +131,7 @@ class EditShortUrlTest extends ApiTestCase
 
         self::assertEquals(self::STATUS_BAD_REQUEST, $resp->getStatusCode());
         self::assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
-        self::assertEquals('INVALID_ARGUMENT', $payload['type']);
+        self::assertEquals('https://shlink.io/api/error/invalid-data', $payload['type']);
         self::assertEquals($expectedDetail, $payload['detail']);
         self::assertEquals('Invalid data', $payload['title']);
     }

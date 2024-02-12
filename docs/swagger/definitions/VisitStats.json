@@ -1,22 +1,12 @@
 {
     "type": "object",
-    "required": ["nonOrphanVisits", "orphanVisits", "visitsCount", "orphanVisitsCount"],
+    "required": ["nonOrphanVisits", "orphanVisits"],
     "properties": {
         "nonOrphanVisits": {
             "$ref": "./VisitsSummary.json"
         },
         "orphanVisits": {
             "$ref": "./VisitsSummary.json"
-        },
-        "visitsCount": {
-            "deprecated": true,
-            "type": "number",
-            "description": "**[DEPRECATED]** Use nonOrphanVisits.total instead"
-        },
-        "orphanVisitsCount": {
-            "deprecated": true,
-            "type": "number",
-            "description": "**[DEPRECATED]** Use orphanVisits.total instead"
         }
     }
 }

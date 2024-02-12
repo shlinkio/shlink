@@ -265,7 +265,7 @@ class QrCodeActionTest extends TestCase
             $this->urlResolver,
             new ShortUrlStringifier(['domain' => 's.test']),
             new NullLogger(),
-            $options ?? new QrCodeOptions(),
+            $options ?? new QrCodeOptions(enabledForDisabledShortUrls: false),
         );
     }
 }

@@ -122,11 +122,6 @@
                     "visitsSummary": {
                         "$ref": "#/components/schemas/VisitsSummary"
                     },
-                    "visitsCount": {
-                        "deprecated": true,
-                        "type": "integer",
-                        "description": "The number of visits that this short URL has received."
-                    },
                     "tags": {
                         "type": "array",
                         "items": {

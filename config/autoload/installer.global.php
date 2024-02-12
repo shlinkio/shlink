@@ -21,8 +21,6 @@ return [
             Option\Database\DatabaseUnixSocketConfigOption::class,
             Option\UrlShortener\ShortDomainHostConfigOption::class,
             Option\UrlShortener\ShortDomainSchemaConfigOption::class,
-            Option\Visit\VisitsWebhooksConfigOption::class,
-            Option\Visit\OrphanVisitsWebhooksConfigOption::class,
             Option\Redirect\BaseUrlRedirectConfigOption::class,
             Option\Redirect\InvalidShortUrlRedirectConfigOption::class,
             Option\Redirect\Regular404RedirectConfigOption::class,

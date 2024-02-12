@@ -40,8 +40,8 @@ enum Role: string
 
     public static function toSpec(ApiKeyRole $role, ?string $context = null): Specification
     {
-        return match ($role->role()) {
-            self::AUTHORED_SHORT_URLS => new BelongsToApiKey($role->apiKey(), $context),
+        return match ($role->role) {
+            self::AUTHORED_SHORT_URLS => new BelongsToApiKey($role->apiKey, $context),
             self::DOMAIN_SPECIFIC => new BelongsToDomain(self::domainIdFromMeta($role->meta()), $context),
             default => Spec::andX(),
         };
@@ -49,8 +49,8 @@ enum Role: string
 
     public static function toInlinedSpec(ApiKeyRole $role): Specification
     {
-        return match ($role->role()) {
-            self::AUTHORED_SHORT_URLS => Spec::andX(new BelongsToApiKeyInlined($role->apiKey())),
+        return match ($role->role) {
+            self::AUTHORED_SHORT_URLS => Spec::andX(new BelongsToApiKeyInlined($role->apiKey)),
             self::DOMAIN_SPECIFIC => Spec::andX(new BelongsToDomainInlined(self::domainIdFromMeta($role->meta()))),
             default => Spec::andX(),
         };

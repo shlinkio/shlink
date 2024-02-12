@@ -20,7 +20,6 @@ class ListShortUrlsTest extends ApiTestCase
         'shortUrl' => 'http://s.test/abc123',
         'longUrl' => 'https://shlink.io',
         'dateCreated' => '2018-05-01T00:00:00+00:00',
-        'visitsCount' => 3,
         'visitsSummary' => [
             'total' => 3,
             'nonBots' => 3,
@@ -42,7 +41,6 @@ class ListShortUrlsTest extends ApiTestCase
         'shortUrl' => 'http://s.test/ghi789',
         'longUrl' => 'https://shlink.io/documentation/',
         'dateCreated' => '2018-05-01T00:00:00+00:00',
-        'visitsCount' => 2,
         'visitsSummary' => [
             'total' => 2,
             'nonBots' => 2,
@@ -64,7 +62,6 @@ class ListShortUrlsTest extends ApiTestCase
         'shortUrl' => 'http://some-domain.com/custom-with-domain',
         'longUrl' => 'https://google.com',
         'dateCreated' => '2018-10-20T00:00:00+00:00',
-        'visitsCount' => 0,
         'visitsSummary' => [
             'total' => 0,
             'nonBots' => 0,
@@ -88,7 +85,6 @@ class ListShortUrlsTest extends ApiTestCase
             'https://blog.alejandrocelaya.com/2017/12/09'
             . '/acmailer-7-0-the-most-important-release-in-a-long-time/',
         'dateCreated' => '2019-01-01T00:00:10+00:00',
-        'visitsCount' => 2,
         'visitsSummary' => [
             'total' => 2,
             'nonBots' => 1,
@@ -110,7 +106,6 @@ class ListShortUrlsTest extends ApiTestCase
         'shortUrl' => 'http://s.test/custom',
         'longUrl' => 'https://shlink.io',
         'dateCreated' => '2019-01-01T00:00:20+00:00',
-        'visitsCount' => 0,
         'visitsSummary' => [
             'total' => 0,
             'nonBots' => 0,
@@ -134,7 +129,6 @@ class ListShortUrlsTest extends ApiTestCase
             'https://blog.alejandrocelaya.com/2019/04/27'
             . '/considerations-to-properly-use-open-source-software-projects/',
         'dateCreated' => '2019-01-01T00:00:30+00:00',
-        'visitsCount' => 0,
         'visitsSummary' => [
             'total' => 0,
             'nonBots' => 0,
@@ -310,7 +304,7 @@ class ListShortUrlsTest extends ApiTestCase
         self::assertEquals([
             'invalidElements' => $expectedInvalidElements,
             'title' => 'Invalid data',
-            'type' => 'INVALID_ARGUMENT',
+            'type' => 'https://shlink.io/api/error/invalid-data',
             'status' => 400,
             'detail' => 'Provided data is not valid',
         ], $respPayload);

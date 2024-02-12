@@ -10,7 +10,7 @@ use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 class QrCodeTest extends ApiTestCase
 {
     #[Test]
-    public function returnsNotFoundWhenShortUrlIsNotEnabled(): void
+    public function returnsQrCodeEvenIfShortUrlIsNotEnabled(): void
     {
         // The QR code successfully resolves at first
         $response = $this->callShortUrl('custom/qr-code');
@@ -20,8 +20,8 @@ class QrCodeTest extends ApiTestCase
         $this->callShortUrl('custom');
         $this->callShortUrl('custom');
 
-        // After 2 visits, the QR code should return a 404
-        $response = $this->callShortUrl('custom/qr-code');
-        self::assertEquals(404, $response->getStatusCode());
+        // After 2 visits, the short URL returns a 404, but the QR code should still work
+        self::assertEquals(404, $this->callShortUrl('custom')->getStatusCode());
+        self::assertEquals(200, $this->callShortUrl('custom/qr-code')->getStatusCode());
     }
 }
