@@ -15,13 +15,6 @@ jobs:
           - runtime: 'rr'
             tag-suffix: 'roadrunner'
             platforms: 'linux/arm64/v8,linux/amd64'
-          - runtime: 'openswoole'
-            tag-suffix: 'openswoole'
-            platforms: 'linux/arm/v7,linux/arm64/v8,linux/amd64'
-          - runtime: 'rr'
-            tag-suffix: 'non-root'
-            platforms: 'linux/arm64/v8,linux/amd64'
-            user-id: '1001'
     uses: shlinkio/github-actions/.github/workflows/docker-build-and-publish.yml@main
     secrets: inherit
     with:
@@ -31,4 +24,3 @@ jobs:
       tags-suffix: ${{ matrix.tag-suffix }}
       extra-build-args: |
         SHLINK_RUNTIME=${{ matrix.runtime }}
-        SHLINK_USER_ID=${{ matrix.user-id && matrix.user-id || 'root' }}

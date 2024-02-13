@@ -4,9 +4,8 @@ ARG SHLINK_VERSION=latest
 ENV SHLINK_VERSION ${SHLINK_VERSION}
 ARG SHLINK_RUNTIME=rr
 ENV SHLINK_RUNTIME ${SHLINK_RUNTIME}
-ARG SHLINK_USER_ID='root'
-ENV SHLINK_USER_ID ${SHLINK_USER_ID}
 
+ENV USER_ID '1001'
 ENV PDO_SQLSRV_VERSION 5.12.0
 ENV MS_ODBC_DOWNLOAD 'b/9/f/b9f3cce4-3925-46d4-9f46-da08869c6486'
 ENV MS_ODBC_SQL_VERSION 18_18.1.1.1
@@ -41,7 +40,7 @@ FROM base as builder
 COPY . .
 COPY --from=composer:2 /usr/bin/composer ./composer.phar
 RUN apk add --no-cache git && \
-    php composer.phar install --no-dev --prefer-dist --optimize-autoloader --no-progress --no-interaction && \
+    php composer.phar install --no-dev --prefer-dist --optimize-autoloader --no-progress --no-interaction --ignore-platform-req=ext-openswoole && \
     php composer.phar clear-cache && \
     rm -r docker composer.* && \
     sed -i "s/%SHLINK_VERSION%/${SHLINK_VERSION}/g" config/autoload/app_options.global.php
@@ -51,7 +50,7 @@ RUN apk add --no-cache git && \
 FROM base
 LABEL maintainer="Alejandro Celaya <alejandro@alejandrocelaya.com>"
 
-COPY --from=builder --chown=${SHLINK_USER_ID} /etc/shlink .
+COPY --from=builder --chown=${USER_ID} /etc/shlink .
 RUN ln -s /etc/shlink/bin/cli /usr/local/bin/shlink && \
     if [ "$SHLINK_RUNTIME" == 'rr' ]; then \
       php ./vendor/bin/rr get --no-interaction --no-config --location bin/ && chmod +x bin/rr ; \
@@ -65,6 +64,6 @@ COPY docker/docker-entrypoint.sh docker-entrypoint.sh
 COPY docker/config/shlink_in_docker.local.php config/autoload/shlink_in_docker.local.php
 COPY docker/config/php.ini ${PHP_INI_DIR}/conf.d/
 
-USER ${SHLINK_USER_ID}
+USER ${USER_ID}
 
 ENTRYPOINT ["/bin/sh", "./docker-entrypoint.sh"]
