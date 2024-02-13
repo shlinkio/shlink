@@ -1,5 +1,45 @@
 # Upgrading
 
+## From v3.x to v4.x
+
+### General
+
+* Swoole and Openswoole are no longer officially supported runtimes. The recommended alternative is RoadRunner.
+* Dist files for swoole/openswoole are no longer published.
+* Webhooks are no longer supported. Migrate to one of the other [real-time updates](https://shlink.io/documentation/advanced/real-time-updates/) mechanisms.
+
+### Changes in URL shortener
+
+* The short URLs `loosely` mode is no longer supported, as it was a typo. Use `loose` mode instead.
+* QR codes URLs now work by default, even for short URLs that cannot be visited due to max visits or date range limitations.
+  If you want to keep previous behavior, pass `QR_CODE_FOR_DISABLED_SHORT_URLS=false` or the equivalent configuration option.
+
+### Changes in REST API
+
+* REST API v1/v2 now behave like v3. This only affects error codes, which are now proper URIs.
+  * `INVALID_ARGUMENT` -> `https://shlink.io/api/error/invalid-data`
+  * `INVALID_SHORT_URL_DELETION` -> `https://shlink.io/api/error/invalid-short-url-deletion`
+  * `DOMAIN_NOT_FOUND` -> `https://shlink.io/api/error/domain-not-found`
+  * `FORBIDDEN_OPERATION` -> `https://shlink.io/api/error/forbidden-tag-operation`
+  * `INVALID_URL` -> `https://shlink.io/api/error/invalid-url`
+  * `INVALID_SLUG` -> `https://shlink.io/api/error/non-unique-slug`
+  * `INVALID_SHORTCODE` -> `https://shlink.io/api/error/short-url-not-found`
+  * `TAG_CONFLICT` -> `https://shlink.io/api/error/tag-conflict`
+  * `TAG_NOT_FOUND` -> `https://shlink.io/api/error/tag-not-found`
+  * `MERCURE_NOT_CONFIGURED` -> `https://shlink.io/api/error/mercure-not-configured`
+  * `INVALID_AUTHORIZATION` -> `https://shlink.io/api/error/missing-authentication`
+  * `INVALID_API_KEY` -> `https://shlink.io/api/error/invalid-api-key`
+* Endpoints previously returning props like `"visitsCount": {number}` no longer do it. There should be an alternative `"visitsSummary": {}` object with the amount nested on it.
+* It is no longer possible to order the short URLs list with `orderBy=visitsCount-ASC`/`orderBy=visitsCount-DESC`. Use `orderBy=visits-ASC`/`orderBy=visits-DESC` instead.
+* It is no longer possible to get tags with stats using `GET /tags?withStats=true`. Use `GET /tags/stats` endpoint instead.
+
+### Changes in Docker image
+
+* Since openswoole is no longer supported, there are no longer image tags suffixed with `openswoole`. You should migrate to the default or `roadrunner` ones.
+* The `non-root` docker tag is no longer published, as all docker images are now running without super-user permissions.
+* Due to previous point, it is no longer possible to pass `ENABLE_PERIODIC_VISIT_LOCATE=true` in order to configure a cron job that locates visits periodically.
+  This was not really needed in the docker image, as visits are located on the fly.
+
 ## From v2.x to v3.x
 
 ### Changes in REST API
