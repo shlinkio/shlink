@@ -55,7 +55,6 @@ return [
             Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class => ConfigAbstractFactory::class,
             Middleware\ShortUrl\OverrideDomainMiddleware::class => ConfigAbstractFactory::class,
             Middleware\Mercure\NotConfiguredMercureErrorHandler::class => ConfigAbstractFactory::class,
-            Middleware\ErrorHandler\BackwardsCompatibleProblemDetailsHandler::class => InvokableFactory::class,
         ],
     ],
 

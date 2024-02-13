@@ -38,7 +38,7 @@ class SingleStepCreateShortUrlTest extends ApiTestCase
 
         self::assertEquals(self::STATUS_UNAUTHORIZED, $resp->getStatusCode());
         self::assertEquals(self::STATUS_UNAUTHORIZED, $payload['status']);
-        self::assertEquals('INVALID_AUTHORIZATION', $payload['type']);
+        self::assertEquals('https://shlink.io/api/error/missing-authentication', $payload['type']);
         self::assertEquals($expectedDetail, $payload['detail']);
         self::assertEquals('Invalid authorization', $payload['title']);
     }

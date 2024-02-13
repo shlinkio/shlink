@@ -6,7 +6,6 @@
         "longUrl",
         "deviceLongUrls",
         "dateCreated",
-        "visitsCount",
         "visitsSummary",
         "tags",
         "meta",
@@ -35,11 +34,6 @@
             "type": "string",
             "format": "date-time",
             "description": "The date in which the short URL was created in ISO format."
-        },
-        "visitsCount": {
-            "deprecated": true,
-            "type": "integer",
-            "description": "**[DEPRECATED]** Use `visitsSummary.total` instead."
         },
         "visitsSummary": {
             "$ref": "./VisitsSummary.json"

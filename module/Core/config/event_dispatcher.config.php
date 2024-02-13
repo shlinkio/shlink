@@ -37,7 +37,6 @@ return (static function (): array {
             EventDispatcher\Mercure\NotifyVisitToMercure::class,
             EventDispatcher\RabbitMq\NotifyVisitToRabbitMq::class,
             EventDispatcher\RedisPubSub\NotifyVisitToRedis::class,
-            EventDispatcher\NotifyVisitToWebHooks::class,
             EventDispatcher\UpdateGeoLiteDb::class,
         ],
         EventDispatcher\Event\ShortUrlCreated::class => [
@@ -66,7 +65,6 @@ return (static function (): array {
                 EventDispatcher\LocateVisit::class => ConfigAbstractFactory::class,
                 EventDispatcher\Matomo\SendVisitToMatomo::class => ConfigAbstractFactory::class,
                 EventDispatcher\LocateUnlocatedVisits::class => ConfigAbstractFactory::class,
-                EventDispatcher\NotifyVisitToWebHooks::class => ConfigAbstractFactory::class,
                 EventDispatcher\Mercure\NotifyVisitToMercure::class => ConfigAbstractFactory::class,
                 EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class => ConfigAbstractFactory::class,
                 EventDispatcher\RabbitMq\NotifyVisitToRabbitMq::class => ConfigAbstractFactory::class,
@@ -104,9 +102,6 @@ return (static function (): array {
                 EventDispatcher\LocateUnlocatedVisits::class => [
                     EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
                 ],
-                EventDispatcher\NotifyVisitToWebHooks::class => [
-                    EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
-                ],
             ],
         ],
 
@@ -119,14 +114,6 @@ return (static function (): array {
                 EventDispatcherInterface::class,
             ],
             EventDispatcher\LocateUnlocatedVisits::class => [VisitLocator::class, VisitToLocationHelper::class],
-            EventDispatcher\NotifyVisitToWebHooks::class => [
-                'httpClient',
-                'em',
-                'Logger_Shlink',
-                Options\WebhookOptions::class,
-                ShortUrl\Transformer\ShortUrlDataTransformer::class,
-                Options\AppOptions::class,
-            ],
             EventDispatcher\Mercure\NotifyVisitToMercure::class => [
                 MercureHubPublishingHelper::class,
                 EventDispatcher\PublishingUpdatesGenerator::class,
@@ -144,7 +131,6 @@ return (static function (): array {
                 EventDispatcher\PublishingUpdatesGenerator::class,
                 'em',
                 'Logger_Shlink',
-                Visit\Transformer\OrphanVisitDataTransformer::class,
                 Options\RabbitMqOptions::class,
             ],
             EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq::class => [
@@ -187,7 +173,6 @@ return (static function (): array {
                 Options\RabbitMqOptions::class,
                 'config.redis.pub_sub_enabled',
                 MercureOptions::class,
-                Options\WebhookOptions::class,
                 GeoLite2Options::class,
                 MatomoOptions::class,
             ],

@@ -10,15 +10,13 @@ enum OrderableField: string
     case SHORT_URLS_COUNT = 'shortUrlsCount';
     case VISITS = 'visits';
     case NON_BOT_VISITS = 'nonBotVisits';
-    /** @deprecated Use VISITS instead */
-    case VISITS_COUNT = 'visitsCount';
 
-    public static function toSnakeCaseValidField(?string $field): self
+    public static function toValidField(?string $field): self
     {
-        $parsed = $field !== null ? self::tryFrom($field) : self::TAG;
-        return match ($parsed) {
-            self::VISITS_COUNT, null => self::VISITS,
-            default => $parsed,
-        };
+        if ($field === null) {
+            return self::TAG;
+        }
+
+        return self::tryFrom($field) ?? self::TAG;
     }
 }

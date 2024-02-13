@@ -53,7 +53,6 @@ class PublishingUpdatesGeneratorTest extends TestCase
                 'longUrl' => 'https://longUrl',
                 'deviceLongUrls' => $shortUrl->deviceLongUrls(),
                 'dateCreated' => $shortUrl->getDateCreated()->toAtomString(),
-                'visitsCount' => 0,
                 'tags' => [],
                 'meta' => [
                     'validSince' => null,
@@ -128,7 +127,6 @@ class PublishingUpdatesGeneratorTest extends TestCase
             'longUrl' => 'https://longUrl',
             'deviceLongUrls' => $shortUrl->deviceLongUrls(),
             'dateCreated' => $shortUrl->getDateCreated()->toAtomString(),
-            'visitsCount' => 0,
             'tags' => [],
             'meta' => [
                 'validSince' => null,

@@ -31,7 +31,6 @@ return [
             Options\TrackingOptions::class => [ValinorConfigFactory::class, 'config.tracking'],
             Options\QrCodeOptions::class => [ValinorConfigFactory::class, 'config.qr_codes'],
             Options\RabbitMqOptions::class => [ValinorConfigFactory::class, 'config.rabbitmq'],
-            Options\WebhookOptions::class => ConfigAbstractFactory::class,
 
             ShortUrl\UrlShortener::class => ConfigAbstractFactory::class,
             ShortUrl\ShortUrlService::class => ConfigAbstractFactory::class,
@@ -112,8 +111,6 @@ return [
             Config\NotFoundRedirectResolver::class,
             Domain\DomainService::class,
         ],
-
-        Options\WebhookOptions::class => ['config.visits_webhooks'],
 
         ShortUrl\UrlShortener::class => [
             ShortUrl\Helper\ShortUrlTitleResolutionHelper::class,

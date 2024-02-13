@@ -19,7 +19,7 @@ class CreateShortUrlTest extends ApiTestCase
     #[Test]
     public function createsNewShortUrlWhenOnlyLongUrlIsProvided(): void
     {
-        $expectedKeys = ['shortCode', 'shortUrl', 'longUrl', 'dateCreated', 'visitsCount', 'tags'];
+        $expectedKeys = ['shortCode', 'shortUrl', 'longUrl', 'dateCreated', 'tags'];
         [$statusCode, $payload] = $this->createShortUrl();
 
         self::assertEquals(self::STATUS_OK, $statusCode);
@@ -48,7 +48,7 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertEquals(self::STATUS_BAD_REQUEST, $statusCode);
         self::assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
         self::assertEquals($detail, $payload['detail']);
-        self::assertEquals('INVALID_SLUG', $payload['type']);
+        self::assertEquals('https://shlink.io/api/error/non-unique-slug', $payload['type']);
         self::assertEquals('Invalid custom slug', $payload['title']);
         self::assertEquals($slug, $payload['customSlug']);
 
@@ -70,8 +70,8 @@ class CreateShortUrlTest extends ApiTestCase
 
     public static function provideDuplicatedSlugApiVersions(): iterable
     {
-        yield ['1', 'INVALID_SLUG'];
-        yield ['2', 'INVALID_SLUG'];
+        yield ['1', 'https://shlink.io/api/error/non-unique-slug'];
+        yield ['2', 'https://shlink.io/api/error/non-unique-slug'];
         yield ['3', 'https://shlink.io/api/error/non-unique-slug'];
     }
 
@@ -241,7 +241,7 @@ class CreateShortUrlTest extends ApiTestCase
 
     public static function provideInvalidUrls(): iterable
     {
-        yield 'API version 2' => ['https://this-has-to-be-invalid.com', '2', 'INVALID_URL'];
+        yield 'API version 2' => ['https://this-has-to-be-invalid.com', '2', 'https://shlink.io/api/error/invalid-url'];
         yield 'API version 3' => ['https://this-has-to-be-invalid.com', '3', 'https://shlink.io/api/error/invalid-url'];
     }
 
@@ -264,18 +264,18 @@ class CreateShortUrlTest extends ApiTestCase
 
     public static function provideInvalidArgumentApiVersions(): iterable
     {
-        yield 'missing long url v2' => [[], '2', 'INVALID_ARGUMENT'];
+        yield 'missing long url v2' => [[], '2', 'https://shlink.io/api/error/invalid-data'];
         yield 'missing long url v3' => [[], '3', 'https://shlink.io/api/error/invalid-data'];
-        yield 'empty long url v2' => [['longUrl' => null], '2', 'INVALID_ARGUMENT'];
+        yield 'empty long url v2' => [['longUrl' => null], '2', 'https://shlink.io/api/error/invalid-data'];
         yield 'empty long url v3' => [['longUrl' => '  '], '3', 'https://shlink.io/api/error/invalid-data'];
-        yield 'missing url schema v2' => [['longUrl' => 'foo.com'], '2', 'INVALID_ARGUMENT'];
+        yield 'missing url schema v2' => [['longUrl' => 'foo.com'], '2', 'https://shlink.io/api/error/invalid-data'];
         yield 'missing url schema v3' => [['longUrl' => 'foo.com'], '3', 'https://shlink.io/api/error/invalid-data'];
         yield 'empty device long url v2' => [[
             'longUrl' => 'foo',
             'deviceLongUrls' => [
                 'android' => null,
             ],
-        ], '2', 'INVALID_ARGUMENT'];
+        ], '2', 'https://shlink.io/api/error/invalid-data'];
         yield 'empty device long url v3' => [[
             'longUrl' => 'foo',
             'deviceLongUrls' => [

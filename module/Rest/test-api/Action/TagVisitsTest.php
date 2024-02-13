@@ -53,7 +53,7 @@ class TagVisitsTest extends ApiTestCase
 
         self::assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
         self::assertEquals(self::STATUS_NOT_FOUND, $payload['status']);
-        self::assertEquals('TAG_NOT_FOUND', $payload['type']);
+        self::assertEquals('https://shlink.io/api/error/tag-not-found', $payload['type']);
         self::assertEquals(sprintf('Tag with name "%s" could not be found', $tag), $payload['detail']);
         self::assertEquals('Tag not found', $payload['title']);
     }

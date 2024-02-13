@@ -197,13 +197,6 @@ class TagRepositoryTest extends DatabaseTestCase
                 ['another', 0, 0, 0],
             ],
         ];
-        yield 'visits count DESC ordering and limit' => [
-            new TagsListFiltering(2, null, null, Ordering::fromTuple([OrderableField::VISITS_COUNT->value, 'DESC'])),
-            [
-                ['foo', 2, 4, 3],
-                ['bar', 3, 3, 2],
-            ],
-        ];
         yield 'api key' => [new TagsListFiltering(null, null, null, null, ApiKey::fromMeta(
             ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()),
         )), [

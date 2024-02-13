@@ -39,9 +39,6 @@ class ShortUrlDataTransformer implements DataTransformerInterface
                 $shortUrl->getVisitsCount(),
                 $shortUrl->nonBotVisitsCount(),
             ),
-
-            // Deprecated
-            'visitsCount' => $shortUrl->getVisitsCount(),
         ];
     }
 

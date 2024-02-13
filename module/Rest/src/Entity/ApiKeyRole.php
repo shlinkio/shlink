@@ -13,22 +13,6 @@ class ApiKeyRole extends AbstractEntity
     {
     }
 
-    /**
-     * @deprecated Use property access directly
-     */
-    public function role(): Role
-    {
-        return $this->role;
-    }
-
-    /**
-     * @deprecated Use property access directly
-     */
-    public function apiKey(): ApiKey
-    {
-        return $this->apiKey;
-    }
-
     public function meta(): array
     {
         return $this->meta;
