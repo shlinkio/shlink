@@ -11,7 +11,6 @@ return (static function (): array {
         'redis' => [
             'servers' => $redisServers,
             'sentinel_service' => EnvVars::REDIS_SENTINEL_SERVICE->loadFromEnv(),
-            'decode_credentials' => (bool) EnvVars::REDIS_DECODE_CREDENTIALS->loadFromEnv(false),
         ],
     ];
 

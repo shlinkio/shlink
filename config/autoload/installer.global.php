@@ -31,7 +31,6 @@ return [
             Option\Worker\TaskWorkerNumConfigOption::class,
             Option\Worker\WebWorkerNumConfigOption::class,
             Option\Redis\RedisServersConfigOption::class,
-            Option\Redis\RedisDecodeCredentialsConfigOption::class,
             Option\Redis\RedisSentinelServiceConfigOption::class,
             Option\Redis\RedisPubSubConfigOption::class,
             Option\UrlShortener\ShortCodeLengthOption::class,

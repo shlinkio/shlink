@@ -40,6 +40,11 @@
 * Due to previous point, it is no longer possible to pass `ENABLE_PERIODIC_VISIT_LOCATE=true` in order to configure a cron job that locates visits periodically.
   This was not really needed in the docker image, as visits are located on the fly.
 
+### Changes in integrations
+
+* Credentials in redis URLs should now be URL-encoded, as they are unconditionally url-decoded before being used. Previously, it was possible to customize this behavior via `REDIS_DECODE_CREDENTIALS=true|false`.
+* Providing redis URIs in the form of `tcp://password@6.6.6.6:6379` is no longer supported. If you want to provide password with no username, do `tcp://:password@6.6.6.6:6379` instead.
+
 ## From v2.x to v3.x
 
 ### Changes in REST API
