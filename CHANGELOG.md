@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#1935](https://github.com/shlinkio/shlink/issues/1935) Replace dependency on abandoned `php-middleware/request-id` with userland simple middleware.
 * [#1988](https://github.com/shlinkio/shlink/issues/1988) Remove dependency on `league\uri` package.
 * [#1909](https://github.com/shlinkio/shlink/issues/1909) Update docker image to PHP 8.3.
+* [#1786](https://github.com/shlinkio/shlink/issues/1786) Run API tests with RoadRunner by default.
 
 ### Deprecated
 * *Nothing*
