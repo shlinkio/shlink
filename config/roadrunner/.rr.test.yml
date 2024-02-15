@@ -1,9 +1,9 @@
 version: '3'
 
-###############################################################################################
-# It's important to keep this file in the project root, otherwise code coverage does not work #
-# See https://github.com/orgs/roadrunner-server/discussions/1440#discussioncomment-8486186    #
-###############################################################################################
+############################################################################################
+# Routes here need to be relative to the project root, as API tests are run with `-w .`    #
+# See https://github.com/orgs/roadrunner-server/discussions/1440#discussioncomment-8486186 #
+############################################################################################
 
 rpc:
     listen: tcp://127.0.0.1:6001

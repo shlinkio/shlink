@@ -18,7 +18,7 @@ touch $OUTPUT_LOGS
 
 echo 'Starting server...'
 [ "$TEST_RUNTIME" = 'openswoole' ] && vendor/bin/laminas mezzio:swoole:start -d
-[ "$TEST_RUNTIME" = 'rr' ] && bin/rr serve -p -c=.rr.test.yml \
+[ "$TEST_RUNTIME" = 'rr' ] && bin/rr serve -p -c=config/roadrunner/.rr.test.yml -w . \
   -o=logs.output="${PWD}/${OUTPUT_LOGS}" \
   -o=logs.channels.http.output="${PWD}/${OUTPUT_LOGS}" \
   -o=logs.channels.server.output="${PWD}/${OUTPUT_LOGS}" &
