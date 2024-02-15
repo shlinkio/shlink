@@ -1,6 +1,6 @@
 .idea
 bin/rr
-config/roadrunner/.pid
+.pid
 build
 !docker/build
 composer.lock
