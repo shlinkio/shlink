@@ -133,8 +133,8 @@ jobs:
       - run: mv build/coverage-db/coverage-db.cov build/coverage-db.cov
       - run: mv build/coverage-api/coverage-api.cov build/coverage-api.cov
       - run: mv build/coverage-cli/coverage-cli.cov build/coverage-cli.cov
-      - run: wget https://phar.phpunit.de/phpcov-9.0.0.phar
-      - run: php phpcov-9.0.0.phar merge build --clover build/clover.xml
+      - run: wget https://phar.phpunit.de/phpcov-10.0.0.phar
+      - run: php phpcov-10.0.0.phar merge build --clover build/clover.xml
       - name: Publish coverage
         uses: codecov/codecov-action@v1
         with:

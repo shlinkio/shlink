@@ -6,15 +6,9 @@ namespace Shlinkio\Shlink;
 
 use GuzzleHttp\Client;
 use Laminas\ConfigAggregator\ConfigAggregator;
-use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\ServiceManager\Factory\InvokableFactory;
-use League\Event\EventDispatcher;
 use Monolog\Level;
 use PHPUnit\Runner\Version;
-use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
 use SebastianBergmann\CodeCoverage\Driver\Selector;
 use SebastianBergmann\CodeCoverage\Filter;
@@ -22,13 +16,12 @@ use SebastianBergmann\CodeCoverage\Report\Html\Facade as Html;
 use SebastianBergmann\CodeCoverage\Report\PHP;
 use SebastianBergmann\CodeCoverage\Report\Xml\Facade as Xml;
 use Shlinkio\Shlink\Common\Logger\LoggerType;
+use Shlinkio\Shlink\TestUtils\ApiTest\CoverageMiddleware;
+use Shlinkio\Shlink\TestUtils\CliTest\CliCoverageDelegator;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Event\ConsoleCommandEvent;
-use Symfony\Component\Console\Event\ConsoleTerminateEvent;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 use function file_exists;
-use function Laminas\Stratigility\middleware;
+use function register_shutdown_function;
 use function Shlinkio\Shlink\Config\env;
 use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 use function sprintf;
@@ -36,7 +29,7 @@ use function sprintf;
 use const ShlinkioTest\Shlink\API_TESTS_HOST;
 use const ShlinkioTest\Shlink\API_TESTS_PORT;
 
-$isApiTest = env('TEST_ENV') === 'api';
+$isApiTest = env('TEST_ENV') === 'api' && env('RR_MODE') === 'http';
 $isCliTest = env('TEST_ENV') === 'cli';
 $isE2eTest = $isApiTest || $isCliTest;
 $coverageType = env('GENERATE_COVERAGE');
@@ -74,6 +67,13 @@ $exportCoverage = static function (string $type = 'api') use (&$coverage, $cover
         (new Xml(Version::getVersionString()))->process($coverage, $basePath . '/coverage-xml');
     }
 };
+
+// Dump code coverage when process shuts down, only if running in HTTP mode
+register_shutdown_function(function () use ($exportCoverage, $isApiTest): void {
+    if ($isApiTest) {
+        $exportCoverage();
+    }
+});
 
 $buildDbConnection = static function (): array {
     $driver = env('DB_DRIVER', 'sqlite');
@@ -135,34 +135,9 @@ return [
         ],
     ],
 
-    'routes' => !$isApiTest ? [] : [
-        [
-            'name' => 'dump_coverage',
-            'path' => '/api-tests/stop-coverage',
-            'middleware' => middleware(static function () use ($exportCoverage) {
-                // TODO I have tried moving this block to a listener so that it's invoked automatically,
-                //      but then the coverage is generated empty ¯\_(ツ)_/¯
-                $exportCoverage();
-                return new EmptyResponse();
-            }),
-            'allowed_methods' => ['GET'],
-        ],
-    ],
-
     'middleware_pipeline' => !$isApiTest ? [] : [
         'capture_code_coverage' => [
-            'middleware' => middleware(static function (
-                ServerRequestInterface $req,
-                RequestHandlerInterface $handler,
-            ) use (&$coverage): ResponseInterface {
-                $coverage?->start($req->getHeaderLine('x-coverage-id'));
-
-                try {
-                    return $handler->handle($req);
-                } finally {
-                    $coverage?->stop();
-                }
-            }),
+            'middleware' => new CoverageMiddleware($coverage),
             'priority' => 9999,
         ],
     ],
@@ -185,58 +160,7 @@ return [
         ],
         'delegators' => $isCliTest ? [
             Application::class => [
-                static function (
-                    ContainerInterface $c,
-                    string $serviceName,
-                    callable $callback,
-                ) use (
-                    &$coverage,
-                    $exportCoverage,
-                ) {
-                    /** @var Application $app */
-                    $app = $callback();
-                    $wrappedEventDispatcher = new EventDispatcher();
-
-                    // When the command starts, start collecting coverage
-                    $wrappedEventDispatcher->subscribeTo(
-                        ConsoleCommandEvent::class,
-                        static function () use (&$coverage): void {
-                            $id = env('COVERAGE_ID');
-                            if ($id === null) {
-                                return;
-                            }
-
-                            $coverage?->start($id);
-                        },
-                    );
-                    // When the command ends, stop collecting coverage
-                    $wrappedEventDispatcher->subscribeTo(
-                        ConsoleTerminateEvent::class,
-                        static function () use (&$coverage, $exportCoverage): void {
-                            $id = env('COVERAGE_ID');
-                            if ($id === null) {
-                                return;
-                            }
-
-                            $coverage?->stop();
-                            $exportCoverage('cli');
-                        },
-                    );
-
-                    $app->setDispatcher(new class ($wrappedEventDispatcher) implements EventDispatcherInterface {
-                        public function __construct(private EventDispatcher $wrappedDispatcher)
-                        {
-                        }
-
-                        public function dispatch(object $event, ?string $eventName = null): object
-                        {
-                            $this->wrappedDispatcher->dispatch($event);
-                            return $event;
-                        }
-                    });
-
-                    return $app;
-                },
+                new CliCoverageDelegator($exportCoverage(...), $coverage),
             ],
         ] : [],
     ],
