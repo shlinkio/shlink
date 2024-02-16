@@ -2,7 +2,7 @@
 
 export APP_ENV=test
 export TEST_ENV=api
-export TEST_RUNTIME="${TEST_RUNTIME:-"openswoole"}" # Openswoole is deprecated. Remove in v4.0.0
+export TEST_RUNTIME="${TEST_RUNTIME:-"rr"}" # Openswoole is deprecated. Remove in v4.0.0
 export DB_DRIVER="${DB_DRIVER:-"postgres"}"
 export GENERATE_COVERAGE="${GENERATE_COVERAGE:-"no"}"
 
@@ -18,13 +18,7 @@ touch $OUTPUT_LOGS
 
 echo 'Starting server...'
 [ "$TEST_RUNTIME" = 'openswoole' ] && vendor/bin/laminas mezzio:swoole:start -d
-[ "$TEST_RUNTIME" = 'rr' ] && bin/rr serve -p -c=config/roadrunner/.rr.dev.yml \
-  -o=http.address=0.0.0.0:9999 \
-  -o=http.pool.debug=false \
-  -o=jobs.pool.debug=false \
-  -o=logs.encoding=json \
-  -o=logs.channels.http.encoding=json \
-  -o=logs.channels.server.encoding=json \
+[ "$TEST_RUNTIME" = 'rr' ] && bin/rr serve -p -c=config/roadrunner/.rr.test.yml -w . \
   -o=logs.output="${PWD}/${OUTPUT_LOGS}" \
   -o=logs.channels.http.output="${PWD}/${OUTPUT_LOGS}" \
   -o=logs.channels.server.output="${PWD}/${OUTPUT_LOGS}" &
