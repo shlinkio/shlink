@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink;
 
 use GuzzleHttp\Client;
 use Laminas\ConfigAggregator\ConfigAggregator;
+use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Monolog\Level;
 use PHPUnit\Runner\Version;
@@ -21,7 +22,7 @@ use Shlinkio\Shlink\TestUtils\CliTest\CliCoverageDelegator;
 use Symfony\Component\Console\Application;
 
 use function file_exists;
-use function register_shutdown_function;
+use function Laminas\Stratigility\middleware;
 use function Shlinkio\Shlink\Config\env;
 use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 use function sprintf;
@@ -29,7 +30,7 @@ use function sprintf;
 use const ShlinkioTest\Shlink\API_TESTS_HOST;
 use const ShlinkioTest\Shlink\API_TESTS_PORT;
 
-$isApiTest = env('TEST_ENV') === 'api' && env('RR_MODE') === 'http';
+$isApiTest = env('TEST_ENV') === 'api';
 $isCliTest = env('TEST_ENV') === 'cli';
 $isE2eTest = $isApiTest || $isCliTest;
 $coverageType = env('GENERATE_COVERAGE');
@@ -67,13 +68,6 @@ $exportCoverage = static function (string $type = 'api') use (&$coverage, $cover
         (new Xml(Version::getVersionString()))->process($coverage, $basePath . '/coverage-xml');
     }
 };
-
-// Dump code coverage when process shuts down, only if running in HTTP mode
-register_shutdown_function(function () use ($exportCoverage, $isApiTest): void {
-    if ($isApiTest) {
-        $exportCoverage();
-    }
-});
 
 $buildDbConnection = static function (): array {
     $driver = env('DB_DRIVER', 'sqlite');
@@ -132,6 +126,20 @@ return [
         'domain' => [
             'schema' => 'http',
             'hostname' => 's.test',
+        ],
+    ],
+
+    'routes' => !$isApiTest ? [] : [
+        [
+            'name' => 'dump_coverage',
+            'path' => '/api-tests/stop-coverage',
+            'middleware' => middleware(static function () use ($exportCoverage) {
+                // TODO I have tried moving this block to a register_shutdown_function here, which internally checks if
+                //      RR_MODE === 'http', but this seems to be false in CI, causing the coverage to not be generated
+                $exportCoverage();
+                return new EmptyResponse();
+            }),
+            'allowed_methods' => ['GET'],
         ],
     ],
 
