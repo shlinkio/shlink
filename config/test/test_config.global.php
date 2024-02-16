@@ -32,7 +32,6 @@ use function Laminas\Stratigility\middleware;
 use function Shlinkio\Shlink\Config\env;
 use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 use function sprintf;
-use function sys_get_temp_dir;
 
 use const ShlinkioTest\Shlink\API_TESTS_HOST;
 use const ShlinkioTest\Shlink\API_TESTS_PORT;
@@ -133,20 +132,6 @@ return [
         'domain' => [
             'schema' => 'http',
             'hostname' => 's.test',
-        ],
-    ],
-
-    'mezzio-swoole' => [
-        'enable_coroutine' => false,
-        'swoole-http-server' => [
-            'host' => API_TESTS_HOST,
-            'port' => API_TESTS_PORT,
-            'process-name' => 'shlink_test',
-            'options' => [
-                'pid_file' => sys_get_temp_dir() . '/shlink-test-swoole.pid',
-                'log_file' => __DIR__ . '/../../data/log/api-tests/output.log',
-                'enable_coroutine' => false,
-            ],
         ],
     ],
 

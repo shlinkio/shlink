@@ -57,7 +57,7 @@ class UrlShortener implements UrlShortenerInterface
             $this->eventDispatcher->dispatch(new ShortUrlCreated($newShortUrl->getId()));
         } catch (ContainerExceptionInterface $e) {
             // Ignore container errors when dispatching the event.
-            // When using openswoole, this event will try to enqueue a task, which cannot be done outside an HTTP
+            // When using RoadRunner, this event will try to enqueue a task, which cannot be done outside an HTTP
             // request.
             // If the short URL is created from CLI, the event dispatching will fail.
             return UrlShorteningResult::withErrorOnEventDispatching($newShortUrl, $e);

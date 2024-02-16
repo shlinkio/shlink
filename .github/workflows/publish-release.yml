@@ -11,22 +11,17 @@ jobs:
     strategy:
       matrix:
         php-version: ['8.2', '8.3']
-        swoole: ['yes', 'no']
     steps:
       - uses: actions/checkout@v4
       - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          php-extensions: openswoole-22.1.2
           extensions-cache-key: publish-swagger-spec-extensions-${{ matrix.php-version }}
           install-deps: 'no'
-      - if: ${{ matrix.swoole == 'yes' }}
-        run: ./build.sh ${GITHUB_REF#refs/tags/v}
-      - if: ${{ matrix.swoole == 'no' }}
-        run: ./build.sh ${GITHUB_REF#refs/tags/v} --no-swoole
+      - run: ./build.sh ${GITHUB_REF#refs/tags/v}
       - uses: actions/upload-artifact@v4
         with:
-          name: dist-files-${{ matrix.php-version }}-${{ matrix.swoole }}
+          name: dist-files-${{ matrix.php-version }}
           path: build
 
   publish:

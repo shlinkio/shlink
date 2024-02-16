@@ -39,44 +39,6 @@ services:
         extra_hosts:
             - 'host.docker.internal:host-gateway'
 
-    shlink_swoole_proxy:
-        container_name: shlink_swoole_proxy
-        image: nginx:1.25-alpine
-        ports:
-            - "8002:80"
-        volumes:
-            - ./:/home/shlink/www
-            - ./data/infra/swoole_proxy_vhost.conf:/etc/nginx/conf.d/default.conf
-        links:
-            - shlink_swoole
-
-    shlink_swoole:
-        container_name: shlink_swoole
-        build:
-            context: .
-            dockerfile: ./data/infra/swoole.Dockerfile
-        ports:
-            - "8080:8080"
-            - "9001:9001"
-        volumes:
-            - ./:/home/shlink
-            - ./data/infra/php.ini:/usr/local/etc/php/php.ini
-        links:
-            - shlink_db_mysql
-            - shlink_db_postgres
-            - shlink_db_maria
-            - shlink_db_ms
-            - shlink_redis
-            - shlink_redis_acl
-            - shlink_mercure
-            - shlink_mercure_proxy
-            - shlink_rabbitmq
-            - shlink_matomo
-        environment:
-            LC_ALL: C
-        extra_hosts:
-            - 'host.docker.internal:host-gateway'
-
     shlink_roadrunner:
         container_name: shlink_roadrunner
         build:
