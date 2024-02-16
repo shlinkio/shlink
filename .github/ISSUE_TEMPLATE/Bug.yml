@@ -22,10 +22,8 @@ body:
       options:
         - Self-hosted Apache
         - Self-hosted nginx
-        - Self-hosted openswoole
         - Self-hosted RoadRunner
-        - Openswoole Docker image
-        - RoadRunner Docker image
+        - Docker image
         - Other (explain in summary)
   - type: dropdown
     validations:

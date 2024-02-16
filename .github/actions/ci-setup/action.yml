@@ -12,7 +12,6 @@ inputs:
   php-extensions:
     description: 'The PHP extensions to install'
     required: false
-    default: ''
   extensions-cache-key:
     description: 'The key used to cache PHP extensions. If empty value is provided, extension caching is disabled'
     required: true
@@ -21,6 +20,7 @@ runs:
   using: composite
   steps:
     - name: Setup cache environment
+      if: ${{ inputs.php-extensions }}
       id: extcache
       uses: shivammathur/cache-extensions@v1
       with:
@@ -28,7 +28,8 @@ runs:
         extensions: ${{ inputs.php-extensions }}
         key: ${{ inputs.extensions-cache-key }}
     - name: Cache extensions
-      uses: actions/cache@v3
+      if: ${{ inputs.php-extensions }}
+      uses: actions/cache@v4
       with:
         path: ${{ steps.extcache.outputs.dir }}
         key: ${{ steps.extcache.outputs.key }}

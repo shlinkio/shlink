@@ -21,7 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Removed
-* *Nothing*
+* [#1908](https://github.com/shlinkio/shlink/issues/1908) Remove support for openswoole (and swoole).
 
 ### Fixed
 * *Nothing*

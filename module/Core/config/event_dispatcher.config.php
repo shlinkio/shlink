@@ -20,7 +20,6 @@ use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\GeoLite2Options;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 
-use function Shlinkio\Shlink\Config\runningInOpenswoole;
 use function Shlinkio\Shlink\Config\runningInRoadRunner;
 
 return (static function (): array {
@@ -47,7 +46,7 @@ return (static function (): array {
     ];
 
     // Send visits to matomo asynchronously if the runtime allows it
-    if (runningInRoadRunner() || runningInOpenswoole()) {
+    if (runningInRoadRunner()) {
         $asyncEvents[EventDispatcher\Event\VisitLocated::class][] = EventDispatcher\Matomo\SendVisitToMatomo::class;
     } else {
         $regularEvents[EventDispatcher\Event\VisitLocated::class] = [EventDispatcher\Matomo\SendVisitToMatomo::class];

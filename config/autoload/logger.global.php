@@ -53,16 +53,5 @@ return (static function (): array {
             ],
         ],
 
-        // Deprecated. Remove in Shlink 4.0.0
-        'mezzio-swoole' => [
-            'swoole-http-server' => [
-                'logger' => [
-                    // Let's disable mezio-swoole access logging, so that we can provide our own implementation,
-                    // consistent for roadrunner and openswoole
-                    'logger-name' => NullLogger::class,
-                ],
-            ],
-        ],
-
     ];
 })();
