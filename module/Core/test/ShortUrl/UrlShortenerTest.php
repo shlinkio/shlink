@@ -57,7 +57,7 @@ class UrlShortenerTest extends TestCase
     {
         $longUrl = 'http://foobar.com/12345/hello?foo=bar';
         $meta = ShortUrlCreation::fromRawData(['longUrl' => $longUrl]);
-        $this->titleResolutionHelper->expects($this->once())->method('processTitleAndValidateUrl')->with(
+        $this->titleResolutionHelper->expects($this->once())->method('processTitle')->with(
             $meta,
         )->willReturnArgument(0);
         $this->shortCodeHelper->method('ensureShortCodeUniqueness')->willReturn(true);
@@ -90,7 +90,7 @@ class UrlShortenerTest extends TestCase
         );
 
         $this->shortCodeHelper->expects($this->once())->method('ensureShortCodeUniqueness')->willReturn(false);
-        $this->titleResolutionHelper->expects($this->once())->method('processTitleAndValidateUrl')->with(
+        $this->titleResolutionHelper->expects($this->once())->method('processTitle')->with(
             $meta,
         )->willReturnArgument(0);
 
@@ -105,7 +105,7 @@ class UrlShortenerTest extends TestCase
         $repo = $this->createMock(ShortUrlRepository::class);
         $repo->expects($this->once())->method('findOneMatching')->willReturn($expected);
         $this->em->expects($this->once())->method('getRepository')->with(ShortUrl::class)->willReturn($repo);
-        $this->titleResolutionHelper->expects($this->never())->method('processTitleAndValidateUrl');
+        $this->titleResolutionHelper->expects($this->never())->method('processTitle');
         $this->shortCodeHelper->method('ensureShortCodeUniqueness')->willReturn(true);
 
         $result = $this->urlShortener->shorten($meta);

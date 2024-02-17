@@ -388,10 +388,6 @@
                                                 ]
                                             }
                                         },
-                                        "url": {
-                                            "type": "string",
-                                            "description": "A URL that could not be verified, if the error type is https://shlink.io/api/error/invalid-url"
-                                        },
                                         "customSlug": {
                                             "type": "string",
                                             "description": "Provided custom slug when the error type is https://shlink.io/api/error/non-unique-slug"
@@ -408,15 +404,6 @@
                             "Invalid arguments with API v3 and newer": {
                                 "$ref": "../examples/short-url-invalid-args-v3.json"
                             },
-                            "Invalid long URL with API v3 and newer": {
-                                "value": {
-                                    "title": "Invalid URL",
-                                    "type": "https://shlink.io/api/error/invalid-url",
-                                    "detail": "Provided URL foo is invalid. Try with a different one.",
-                                    "status": 400,
-                                    "url": "https://invalid-url.com"
-                                }
-                            },
                             "Non-unique slug with API v3 and newer": {
                                 "value": {
                                     "title": "Invalid custom slug",
@@ -428,15 +415,6 @@
                             },
                             "Invalid arguments previous to API v3": {
                                 "$ref": "../examples/short-url-invalid-args-v2.json"
-                            },
-                            "Invalid long URL previous to API v3": {
-                                "value": {
-                                    "title": "Invalid URL",
-                                    "type": "INVALID_URL",
-                                    "detail": "Provided URL foo is invalid. Try with a different one.",
-                                    "status": 400,
-                                    "url": "https://invalid-url.com"
-                                }
                             },
                             "Non-unique slug previous to API v3": {
                                 "value": {
