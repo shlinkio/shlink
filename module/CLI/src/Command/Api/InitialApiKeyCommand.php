@@ -29,7 +29,7 @@ class InitialApiKeyCommand extends Command
             ->addArgument('apiKey', InputArgument::REQUIRED, 'The initial API to create');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $key = $input->getArgument('apiKey');
         $result = $this->apiKeyService->createInitial($key);

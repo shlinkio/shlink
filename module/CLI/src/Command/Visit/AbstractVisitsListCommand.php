@@ -34,7 +34,7 @@ abstract class AbstractVisitsListCommand extends Command
         $this->endDateOption = new EndDateOption($this, 'visits');
     }
 
-    final protected function execute(InputInterface $input, OutputInterface $output): ?int
+    final protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $startDate = $this->startDateOption->get($input, $output);
         $endDate = $this->endDateOption->get($input, $output);

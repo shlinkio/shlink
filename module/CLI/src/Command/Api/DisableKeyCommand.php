@@ -31,7 +31,7 @@ class DisableKeyCommand extends Command
              ->addArgument('apiKey', InputArgument::REQUIRED, 'The API key to disable');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $apiKey = $input->getArgument('apiKey');
         $io = new SymfonyStyle($input, $output);

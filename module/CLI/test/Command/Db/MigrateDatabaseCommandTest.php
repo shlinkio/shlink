@@ -13,7 +13,7 @@ use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Lock\LockFactory;
-use Symfony\Component\Lock\LockInterface;
+use Symfony\Component\Lock\SharedLockInterface;
 use Symfony\Component\Process\PhpExecutableFinder;
 
 class MigrateDatabaseCommandTest extends TestCase
@@ -24,7 +24,7 @@ class MigrateDatabaseCommandTest extends TestCase
     protected function setUp(): void
     {
         $locker = $this->createMock(LockFactory::class);
-        $lock = $this->createMock(LockInterface::class);
+        $lock = $this->createMock(SharedLockInterface::class);
         $lock->method('acquire')->withAnyParameters()->willReturn(true);
         $locker->method('createLock')->withAnyParameters()->willReturn($lock);
 

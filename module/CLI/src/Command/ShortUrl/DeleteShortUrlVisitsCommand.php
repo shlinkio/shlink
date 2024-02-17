@@ -43,7 +43,7 @@ class DeleteShortUrlVisitsCommand extends AbstractDeleteVisitsCommand
             );
     }
 
-    protected function doExecute(InputInterface $input, SymfonyStyle $io): ?int
+    protected function doExecute(InputInterface $input, SymfonyStyle $io): int
     {
         $identifier = ShortUrlIdentifier::fromCli($input);
         try {

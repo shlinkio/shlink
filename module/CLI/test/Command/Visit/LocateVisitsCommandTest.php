@@ -46,7 +46,7 @@ class LocateVisitsCommandTest extends TestCase
         $this->visitToLocation = $this->createMock(VisitToLocationHelperInterface::class);
 
         $locker = $this->createMock(Lock\LockFactory::class);
-        $this->lock = $this->createMock(Lock\LockInterface::class);
+        $this->lock = $this->createMock(Lock\SharedLockInterface::class);
         $locker->method('createLock')->with($this->isType('string'), 600.0, false)->willReturn($this->lock);
 
         $command = new LocateVisitsCommand($this->visitService, $this->visitToLocation, $locker);

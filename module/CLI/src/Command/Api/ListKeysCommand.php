@@ -45,7 +45,7 @@ class ListKeysCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $enabledOnly = $input->getOption('enabled-only');
 
