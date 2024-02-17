@@ -32,7 +32,7 @@ final class Version20200105165647 extends AbstractMigration
             $qb = $this->connection->createQueryBuilder();
             $qb->update('visit_locations')
                ->set($columnName, ':zeroValue')
-               ->where($qb->expr()->orX(
+               ->where($qb->expr()->or(
                    $qb->expr()->eq($columnName, ':emptyString'),
                    $qb->expr()->isNull($columnName),
                ))

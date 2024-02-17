@@ -8,7 +8,6 @@ use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use PDO;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 
@@ -33,11 +32,11 @@ final class Version20180913205455 extends AbstractMigration
         $st = $this->connection->executeQuery($qb->getSQL());
 
         $qb = $this->connection->createQueryBuilder();
-        $qb->update('visits', 'v')
-           ->set('v.remote_addr', ':obfuscatedAddr')
-           ->where('v.id=:id');
+        $qb->update('visits')
+           ->set('remote_addr', ':obfuscatedAddr')
+           ->where('id=:id');
 
-        while ($row = $st->fetch(PDO::FETCH_ASSOC)) {
+        while ($row = $st->fetchAssociative()) {
             $addr = $row['remote_addr'] ?? null;
             if ($addr === null) {
                 continue;
@@ -46,7 +45,7 @@ final class Version20180913205455 extends AbstractMigration
             $qb->setParameters([
                 'id' => $row['id'],
                 'obfuscatedAddr' => $this->determineAddress((string) $addr),
-            ])->execute();
+            ])->executeQuery();
         }
     }
 

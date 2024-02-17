@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace ShlinkMigrations;
 
 use Cake\Chronos\Chronos;
-use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\Platforms\MySQLPlatform;
+use Doctrine\DBAL\Result;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
@@ -33,7 +33,7 @@ final class Version20201102113208 extends AbstractMigration
 
     public function postUp(Schema $schema): void
     {
-        // If there's only one API key and it's active, link all existing URLs with it
+        // If there's only one API key, and it's active, link all existing URLs with it
         $qb = $this->connection->createQueryBuilder();
         $qb->select('id')
            ->from('api_keys')
@@ -47,8 +47,7 @@ final class Version20201102113208 extends AbstractMigration
                'expiration' => Chronos::now()->toDateTimeString(),
            ]);
 
-        /** @var Result $result */
-        $result = $qb->execute();
+        $result = $qb->executeQuery();
         $id = $this->resolveOneApiKeyId($result);
         if ($id === null) {
             return;
@@ -58,7 +57,7 @@ final class Version20201102113208 extends AbstractMigration
         $qb->update('short_urls')
            ->set(self::API_KEY_COLUMN, ':apiKeyId')
            ->setParameter('apiKeyId', $id)
-           ->execute();
+           ->executeQuery();
     }
 
     private function resolveOneApiKeyId(Result $result): string|int|null

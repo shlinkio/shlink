@@ -14,7 +14,7 @@ use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 use Shlinkio\Shlink\Core\Domain\DomainService;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
-use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
+use Shlinkio\Shlink\Core\Domain\Repository\DomainRepository;
 use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
@@ -34,7 +34,7 @@ class DomainServiceTest extends TestCase
     #[Test, DataProvider('provideExcludedDomains')]
     public function listDomainsDelegatesIntoRepository(array $domains, array $expectedResult, ?ApiKey $apiKey): void
     {
-        $repo = $this->createMock(DomainRepositoryInterface::class);
+        $repo = $this->createMock(DomainRepository::class);
         $repo->expects($this->once())->method('findDomains')->with($apiKey)->willReturn($domains);
         $this->em->expects($this->once())->method('getRepository')->with(Domain::class)->willReturn($repo);
 
@@ -126,7 +126,7 @@ class DomainServiceTest extends TestCase
     public function getOrCreateAlwaysPersistsDomain(?Domain $foundDomain, ?ApiKey $apiKey): void
     {
         $authority = 'example.com';
-        $repo = $this->createMock(DomainRepositoryInterface::class);
+        $repo = $this->createMock(DomainRepository::class);
         $repo->method('findOneByAuthority')->with($authority, $apiKey)->willReturn(
             $foundDomain,
         );
@@ -148,7 +148,7 @@ class DomainServiceTest extends TestCase
         $domain = Domain::withAuthority($authority);
         $domain->setId('1');
         $apiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forDomain($domain)));
-        $repo = $this->createMock(DomainRepositoryInterface::class);
+        $repo = $this->createMock(DomainRepository::class);
         $repo->method('findOneByAuthority')->with($authority, $apiKey)->willReturn(null);
         $this->em->expects($this->once())->method('getRepository')->with(Domain::class)->willReturn($repo);
         $this->em->expects($this->never())->method('persist');
@@ -163,7 +163,7 @@ class DomainServiceTest extends TestCase
     public function configureNotFoundRedirectsConfiguresFetchedDomain(?Domain $foundDomain, ?ApiKey $apiKey): void
     {
         $authority = 'example.com';
-        $repo = $this->createMock(DomainRepositoryInterface::class);
+        $repo = $this->createMock(DomainRepository::class);
         $repo->method('findOneByAuthority')->with($authority, $apiKey)->willReturn($foundDomain);
         $this->em->expects($this->once())->method('getRepository')->with(Domain::class)->willReturn($repo);
         $this->em->expects($this->once())->method('persist')->with($foundDomain ?? $this->isInstanceOf(Domain::class));

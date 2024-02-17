@@ -14,7 +14,7 @@ use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
-use Shlinkio\Shlink\Rest\ApiKey\Repository\ApiKeyRepositoryInterface;
+use Shlinkio\Shlink\Rest\ApiKey\Repository\ApiKeyRepository;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 
@@ -22,12 +22,12 @@ class ApiKeyServiceTest extends TestCase
 {
     private ApiKeyService $service;
     private MockObject & EntityManager $em;
-    private MockObject & ApiKeyRepositoryInterface $repo;
+    private MockObject & ApiKeyRepository $repo;
 
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManager::class);
-        $this->repo = $this->createMock(ApiKeyRepositoryInterface::class);
+        $this->repo = $this->createMock(ApiKeyRepository::class);
         $this->service = new ApiKeyService($this->em);
     }
 
