@@ -16,12 +16,12 @@ use RuntimeException;
 use Shlinkio\Shlink\Core\Importer\ImportedLinksProcessor;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortCodeUniquenessHelperInterface;
-use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Util\DoctrineBatchHelperInterface;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
-use Shlinkio\Shlink\Core\Visit\Repository\VisitRepositoryInterface;
+use Shlinkio\Shlink\Core\Visit\Repository\VisitRepository;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkOrphanVisit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
@@ -42,13 +42,13 @@ class ImportedLinksProcessorTest extends TestCase
     private ImportedLinksProcessor $processor;
     private MockObject & EntityManagerInterface $em;
     private MockObject & ShortCodeUniquenessHelperInterface $shortCodeHelper;
-    private MockObject & ShortUrlRepositoryInterface $repo;
+    private MockObject & ShortUrlRepository $repo;
     private MockObject & StyleInterface $io;
 
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManagerInterface::class);
-        $this->repo = $this->createMock(ShortUrlRepositoryInterface::class);
+        $this->repo = $this->createMock(ShortUrlRepository::class);
 
         $this->shortCodeHelper = $this->createMock(ShortCodeUniquenessHelperInterface::class);
         $batchHelper = $this->createMock(DoctrineBatchHelperInterface::class);
@@ -281,7 +281,7 @@ class ImportedLinksProcessorTest extends TestCase
             sprintf('<info>Imported %s</info> orphan visits.', $expectedImportedVisits),
         );
 
-        $visitRepo = $this->createMock(VisitRepositoryInterface::class);
+        $visitRepo = $this->createMock(VisitRepository::class);
         $visitRepo->expects($importOrphanVisits ? $this->once() : $this->never())->method(
             'findMostRecentOrphanVisit',
         )->willReturn($lastOrphanVisit);

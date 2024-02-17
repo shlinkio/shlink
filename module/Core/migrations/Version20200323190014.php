@@ -29,10 +29,11 @@ final class Version20200323190014 extends AbstractMigration
            ->andWhere($qb->expr()->eq('region_name', ':emptyString'))
            ->andWhere($qb->expr()->eq('city_name', ':emptyString'))
            ->andWhere($qb->expr()->eq('timezone', ':emptyString'))
-           ->andWhere($qb->expr()->eq('lat', 0))
-           ->andWhere($qb->expr()->eq('lon', 0))
+           ->andWhere($qb->expr()->eq('lat', ':latLong'))
+           ->andWhere($qb->expr()->eq('lon', ':latLong'))
            ->setParameter('isEmpty', true)
            ->setParameter('emptyString', '')
+           ->setParameter('latLong', 0)
            ->executeStatement();
     }
 

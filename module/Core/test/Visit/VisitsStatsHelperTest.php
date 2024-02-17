@@ -19,7 +19,7 @@ use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
-use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
@@ -90,7 +90,7 @@ class VisitsStatsHelperTest extends TestCase
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
         $spec = $apiKey?->spec();
 
-        $repo = $this->createMock(ShortUrlRepositoryInterface::class);
+        $repo = $this->createMock(ShortUrlRepository::class);
         $repo->expects($this->once())->method('shortCodeIsInUse')->with($identifier, $spec)->willReturn(true);
 
         $list = array_map(
@@ -123,7 +123,7 @@ class VisitsStatsHelperTest extends TestCase
         $shortCode = '123ABC';
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
 
-        $repo = $this->createMock(ShortUrlRepositoryInterface::class);
+        $repo = $this->createMock(ShortUrlRepository::class);
         $repo->expects($this->once())->method('shortCodeIsInUse')->with($identifier, null)->willReturn(false);
         $this->em->expects($this->once())->method('getRepository')->with(ShortUrl::class)->willReturn($repo);
 

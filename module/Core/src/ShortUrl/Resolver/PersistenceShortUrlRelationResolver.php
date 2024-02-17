@@ -79,6 +79,7 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
         return new Collections\ArrayCollection(array_map(function (string $tagName) use ($repo): Tag {
             $this->lock($this->tagLocks, 'tag_' . $tagName);
 
+            /** @var Tag|null $existingTag */
             $existingTag = $repo->findOneBy(['name' => $tagName]);
             if ($existingTag) {
                 $this->releaseLock($this->tagLocks, 'tag_' . $tagName);

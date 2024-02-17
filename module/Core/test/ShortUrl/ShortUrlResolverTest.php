@@ -18,7 +18,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
-use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolver;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
@@ -32,12 +32,12 @@ class ShortUrlResolverTest extends TestCase
 {
     private ShortUrlResolver $urlResolver;
     private MockObject & EntityManagerInterface $em;
-    private MockObject & ShortUrlRepositoryInterface $repo;
+    private MockObject & ShortUrlRepository $repo;
 
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManagerInterface::class);
-        $this->repo = $this->createMock(ShortUrlRepositoryInterface::class);
+        $this->repo = $this->createMock(ShortUrlRepository::class);
         $this->urlResolver = new ShortUrlResolver($this->em, new UrlShortenerOptions());
     }
 
