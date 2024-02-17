@@ -19,7 +19,7 @@ abstract class AbstractLockedCommand extends Command
         parent::__construct();
     }
 
-    final protected function execute(InputInterface $input, OutputInterface $output): ?int
+    final protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $lockConfig = $this->getLockConfig();
         $lock = $this->locker->createLock($lockConfig->lockName, $lockConfig->ttl, $lockConfig->isBlocking);

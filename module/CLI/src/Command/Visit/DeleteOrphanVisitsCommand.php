@@ -27,7 +27,7 @@ class DeleteOrphanVisitsCommand extends AbstractDeleteVisitsCommand
             ->setDescription('Deletes all orphan visits');
     }
 
-    protected function doExecute(InputInterface $input, SymfonyStyle $io): ?int
+    protected function doExecute(InputInterface $input, SymfonyStyle $io): int
     {
         $result = $this->deleter->deleteOrphanVisits();
         $io->success(sprintf('Successfully deleted %s visits', $result->affectedItems));

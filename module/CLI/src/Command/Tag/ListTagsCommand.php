@@ -31,7 +31,7 @@ class ListTagsCommand extends Command
             ->setDescription('Lists existing tags.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         ShlinkTable::default($output)->render(['Name', 'URLs amount', 'Visits amount'], $this->getTagsRows());
         return ExitCode::EXIT_SUCCESS;

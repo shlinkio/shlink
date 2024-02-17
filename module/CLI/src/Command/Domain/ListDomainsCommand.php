@@ -38,7 +38,7 @@ class ListDomainsCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $domains = $this->domainService->listDomains();
         $showRedirects = $input->getOption('show-redirects');
