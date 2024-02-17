@@ -9,19 +9,12 @@ use Laminas\ConfigAggregator\ConfigAggregator;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Monolog\Level;
-use PHPUnit\Runner\Version;
-use SebastianBergmann\CodeCoverage\CodeCoverage;
-use SebastianBergmann\CodeCoverage\Driver\Selector;
-use SebastianBergmann\CodeCoverage\Filter;
-use SebastianBergmann\CodeCoverage\Report\Html\Facade as Html;
-use SebastianBergmann\CodeCoverage\Report\PHP;
-use SebastianBergmann\CodeCoverage\Report\Xml\Facade as Xml;
 use Shlinkio\Shlink\Common\Logger\LoggerType;
 use Shlinkio\Shlink\TestUtils\ApiTest\CoverageMiddleware;
 use Shlinkio\Shlink\TestUtils\CliTest\CliCoverageDelegator;
+use Shlinkio\Shlink\TestUtils\Helper\CoverageHelper;
 use Symfony\Component\Console\Application;
 
-use function file_exists;
 use function Laminas\Stratigility\middleware;
 use function Shlinkio\Shlink\Config\env;
 use function Shlinkio\Shlink\Core\ArrayUtils\contains;
@@ -33,41 +26,13 @@ use const ShlinkioTest\Shlink\API_TESTS_PORT;
 $isApiTest = env('TEST_ENV') === 'api';
 $isCliTest = env('TEST_ENV') === 'cli';
 $isE2eTest = $isApiTest || $isCliTest;
+
 $coverageType = env('GENERATE_COVERAGE');
 $generateCoverage = contains($coverageType, ['yes', 'pretty']);
-
-$coverage = null;
-if ($isE2eTest && $generateCoverage) {
-    $filter = new Filter();
-    $filter->includeDirectory(__DIR__ . '/../../module/Core/src');
-    $filter->includeDirectory(__DIR__ . '/../../module/' . ($isApiTest ? 'Rest' : 'CLI') . '/src');
-    $coverage = new CodeCoverage((new Selector())->forLineCoverage($filter), $filter);
-}
-
-/**
- * @param 'api'|'cli' $type
- */
-$exportCoverage = static function (string $type = 'api') use (&$coverage, $coverageType): void {
-    if ($coverage === null) {
-        return;
-    }
-
-    $basePath = __DIR__ . '/../../build/coverage-' . $type;
-    $covPath = $basePath . '.cov';
-
-    // Every CLI test runs on its own process and dumps the coverage afterwards.
-    // Try to load it and merge it, so that we end up with the whole coverage at the end.
-    if ($type === 'cli' && file_exists($covPath)) {
-        $coverage->merge(require $covPath);
-    }
-
-    if ($coverageType === 'pretty') {
-        (new Html())->process($coverage, $basePath . '/coverage-html');
-    } else {
-        (new PHP())->process($coverage, $covPath);
-        (new Xml(Version::getVersionString()))->process($coverage, $basePath . '/coverage-xml');
-    }
-};
+$coverage = $isE2eTest && $generateCoverage ? CoverageHelper::createCoverageForDirectories([
+    __DIR__ . '/../../module/Core/src',
+    __DIR__ . '/../../module/' . ($isApiTest ? 'Rest' : 'CLI') . '/src',
+]) : null;
 
 $buildDbConnection = static function (): array {
     $driver = env('DB_DRIVER', 'sqlite');
@@ -133,10 +98,14 @@ return [
         [
             'name' => 'dump_coverage',
             'path' => '/api-tests/stop-coverage',
-            'middleware' => middleware(static function () use ($exportCoverage) {
+            'middleware' => middleware(static function () use ($coverage, $coverageType) {
                 // TODO I have tried moving this block to a register_shutdown_function here, which internally checks if
                 //      RR_MODE === 'http', but this seems to be false in CI, causing the coverage to not be generated
-                $exportCoverage();
+                CoverageHelper::exportCoverage(
+                    $coverage,
+                    __DIR__ . '/../../build/coverage-api',
+                    pretty: $coverageType === 'pretty',
+                );
                 return new EmptyResponse();
             }),
             'allowed_methods' => ['GET'],
@@ -168,7 +137,12 @@ return [
         ],
         'delegators' => $isCliTest ? [
             Application::class => [
-                new CliCoverageDelegator($exportCoverage(...), $coverage),
+                new CliCoverageDelegator(fn () => CoverageHelper::exportCoverage(
+                    $coverage,
+                    __DIR__ . '/../../build/coverage-cli',
+                    pretty: $coverageType === 'pretty',
+                    mergeWithExisting: true,
+                ), $coverage),
             ],
         ] : [],
     ],
