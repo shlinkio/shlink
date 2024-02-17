@@ -75,7 +75,6 @@ return [
                 Visit\Entity\Visit::class,
             ],
 
-            Util\UrlValidator::class => ConfigAbstractFactory::class,
             Util\DoctrineBatchHelper::class => ConfigAbstractFactory::class,
             Util\RedirectResponseHelper::class => ConfigAbstractFactory::class,
 
@@ -153,7 +152,6 @@ return [
         ShortUrl\Helper\ShortCodeUniquenessHelper::class => ['em', Options\UrlShortenerOptions::class],
         Domain\DomainService::class => ['em', 'config.url_shortener.domain.hostname'],
 
-        Util\UrlValidator::class => ['httpClient', Options\UrlShortenerOptions::class],
         Util\DoctrineBatchHelper::class => ['em'],
         Util\RedirectResponseHelper::class => [Options\RedirectOptions::class],
 
@@ -180,7 +178,7 @@ return [
             Lock\LockFactory::class,
         ],
         ShortUrl\Helper\ShortUrlStringifier::class => ['config.url_shortener.domain', 'config.router.base_path'],
-        ShortUrl\Helper\ShortUrlTitleResolutionHelper::class => [Util\UrlValidator::class],
+        ShortUrl\Helper\ShortUrlTitleResolutionHelper::class => ['httpClient', Options\UrlShortenerOptions::class],
         ShortUrl\Helper\ShortUrlRedirectionBuilder::class => [Options\TrackingOptions::class],
         ShortUrl\Transformer\ShortUrlDataTransformer::class => [ShortUrl\Helper\ShortUrlStringifier::class],
         ShortUrl\Middleware\ExtraPathRedirectMiddleware::class => [

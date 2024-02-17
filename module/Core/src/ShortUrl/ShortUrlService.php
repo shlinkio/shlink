@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\ShortUrl;
 
 use Doctrine\ORM;
-use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelperInterface;
@@ -26,7 +25,6 @@ class ShortUrlService implements ShortUrlServiceInterface
 
     /**
      * @throws ShortUrlNotFoundException
-     * @throws InvalidUrlException
      */
     public function updateShortUrl(
         ShortUrlIdentifier $identifier,
@@ -34,7 +32,7 @@ class ShortUrlService implements ShortUrlServiceInterface
         ?ApiKey $apiKey = null,
     ): ShortUrl {
         if ($shortUrlEdit->longUrlWasProvided()) {
-            $shortUrlEdit = $this->titleResolutionHelper->processTitleAndValidateUrl($shortUrlEdit);
+            $shortUrlEdit = $this->titleResolutionHelper->processTitle($shortUrlEdit);
         }
 
         $shortUrl = $this->urlResolver->resolveShortUrl($identifier, $apiKey);

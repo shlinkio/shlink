@@ -36,8 +36,6 @@ class ShortUrlInputFilter extends InputFilter
     public const SHORT_CODE_LENGTH = 'shortCodeLength';
     public const LONG_URL = 'longUrl';
     public const DEVICE_LONG_URLS = 'deviceLongUrls';
-    /** @deprecated */
-    public const VALIDATE_URL = 'validateUrl';
     public const API_KEY = 'apiKey';
     public const TAGS = 'tags';
     public const TITLE = 'title';
@@ -97,9 +95,8 @@ class ShortUrlInputFilter extends InputFilter
 
         $this->add($this->createBooleanInput(self::FIND_IF_EXISTS, false));
 
-        // These cannot be defined as a boolean inputs, because they can actually have 3 values: true, false and null.
+        // This cannot be defined as a boolean inputs, because they can actually have 3 values: true, false and null.
         // Defining them as boolean will make null fall back to false, which is not the desired behavior.
-        $this->add($this->createInput(self::VALIDATE_URL, false));
         $this->add($this->createInput(self::FORWARD_QUERY, false));
 
         $domain = $this->createInput(self::DOMAIN, false);

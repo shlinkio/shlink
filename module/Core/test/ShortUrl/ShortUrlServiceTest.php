@@ -63,7 +63,7 @@ class ShortUrlServiceTest extends TestCase
         )->willReturn($shortUrl);
 
         $this->titleResolutionHelper->expects($expectedValidateCalls)
-                                    ->method('processTitleAndValidateUrl')
+                                    ->method('processTitle')
                                     ->with($shortUrlEdit)
                                     ->willReturn($shortUrlEdit);
 
@@ -102,10 +102,6 @@ class ShortUrlServiceTest extends TestCase
             'maxVisits' => 10,
             'longUrl' => 'https://modifiedLongUrl',
         ]), ApiKey::create()];
-        yield 'long URL with validation' => [new InvokedCount(1), ShortUrlEdition::fromRawData([
-            'longUrl' => 'https://modifiedLongUrl',
-            'validateUrl' => true,
-        ]), null];
         yield 'device redirects' => [new InvokedCount(0), ShortUrlEdition::fromRawData([
             'deviceLongUrls' => [
                 DeviceType::IOS->value => 'https://iosLongUrl',

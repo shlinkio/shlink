@@ -35,8 +35,6 @@ final class ShortUrlCreation implements TitleResolutionModelInterface
         public readonly bool $findIfExists = false,
         public readonly ?string $domain = null,
         public readonly int $shortCodeLength = 5,
-        /** @deprecated  */
-        public readonly bool $validateUrl = false,
         public readonly ?ApiKey $apiKey = null,
         public readonly array $tags = [],
         public readonly ?string $title = null,
@@ -75,7 +73,6 @@ final class ShortUrlCreation implements TitleResolutionModelInterface
                 $inputFilter,
                 ShortUrlInputFilter::SHORT_CODE_LENGTH,
             ) ?? DEFAULT_SHORT_CODES_LENGTH,
-            validateUrl: getOptionalBoolFromInputFilter($inputFilter, ShortUrlInputFilter::VALIDATE_URL) ?? false,
             apiKey: $inputFilter->getValue(ShortUrlInputFilter::API_KEY),
             tags: $inputFilter->getValue(ShortUrlInputFilter::TAGS),
             title: $inputFilter->getValue(ShortUrlInputFilter::TITLE),
@@ -97,7 +94,6 @@ final class ShortUrlCreation implements TitleResolutionModelInterface
             findIfExists: $this->findIfExists,
             domain: $this->domain,
             shortCodeLength: $this->shortCodeLength,
-            validateUrl: $this->validateUrl,
             apiKey: $this->apiKey,
             tags: $this->tags,
             title: $title,
@@ -135,12 +131,6 @@ final class ShortUrlCreation implements TitleResolutionModelInterface
     public function hasDomain(): bool
     {
         return $this->domain !== null;
-    }
-
-    /** @deprecated  */
-    public function doValidateUrl(): bool
-    {
-        return $this->validateUrl;
     }
 
     public function hasTitle(): bool

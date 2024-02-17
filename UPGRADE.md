@@ -13,6 +13,7 @@
 * The short URLs `loosely` mode is no longer supported, as it was a typo. Use `loose` mode instead.
 * QR codes URLs now work by default, even for short URLs that cannot be visited due to max visits or date range limitations.
   If you want to keep previous behavior, pass `QR_CODE_FOR_DISABLED_SHORT_URLS=false` or the equivalent configuration option.
+* Shlink no longer allows to opt-in for long URL verification. Long URLs are unconditionally considered correct during short URL creation/edition.
 
 ### Changes in REST API
 
@@ -21,7 +22,6 @@
   * `INVALID_SHORT_URL_DELETION` -> `https://shlink.io/api/error/invalid-short-url-deletion`
   * `DOMAIN_NOT_FOUND` -> `https://shlink.io/api/error/domain-not-found`
   * `FORBIDDEN_OPERATION` -> `https://shlink.io/api/error/forbidden-tag-operation`
-  * `INVALID_URL` -> `https://shlink.io/api/error/invalid-url`
   * `INVALID_SLUG` -> `https://shlink.io/api/error/non-unique-slug`
   * `INVALID_SHORTCODE` -> `https://shlink.io/api/error/short-url-not-found`
   * `TAG_CONFLICT` -> `https://shlink.io/api/error/tag-conflict`

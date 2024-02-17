@@ -20,11 +20,6 @@
             "description": "The maximum number of allowed visits for this short code",
             "type": ["number", "null"]
         },
-        "validateUrl": {
-            "deprecated": true,
-            "description": "**[DEPRECATED]** Tells if the long URL should or should not be validated as a reachable URL. Defaults to `false`",
-            "type": "boolean"
-        },
         "tags": {
             "type": "array",
             "items": {

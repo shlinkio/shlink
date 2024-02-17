@@ -224,27 +224,6 @@ class CreateShortUrlTest extends ApiTestCase
         yield ['http://téstb.shlink.io']; // Redirects to http://tést.shlink.io
     }
 
-    #[Test, DataProvider('provideInvalidUrls')]
-    public function failsToCreateShortUrlWithInvalidLongUrl(string $url, string $version, string $expectedType): void
-    {
-        $expectedDetail = sprintf('Provided URL %s is invalid. Try with a different one.', $url);
-
-        [$statusCode, $payload] = $this->createShortUrl(['longUrl' => $url, 'validateUrl' => true], version: $version);
-
-        self::assertEquals(self::STATUS_BAD_REQUEST, $statusCode);
-        self::assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
-        self::assertEquals($expectedType, $payload['type']);
-        self::assertEquals($expectedDetail, $payload['detail']);
-        self::assertEquals('Invalid URL', $payload['title']);
-        self::assertEquals($url, $payload['url']);
-    }
-
-    public static function provideInvalidUrls(): iterable
-    {
-        yield 'API version 2' => ['https://this-has-to-be-invalid.com', '2', 'https://shlink.io/api/error/invalid-url'];
-        yield 'API version 3' => ['https://this-has-to-be-invalid.com', '3', 'https://shlink.io/api/error/invalid-url'];
-    }
-
     #[Test, DataProvider('provideInvalidArgumentApiVersions')]
     public function failsToCreateShortUrlWithoutLongUrl(array $payload, string $version, string $expectedType): void
     {
