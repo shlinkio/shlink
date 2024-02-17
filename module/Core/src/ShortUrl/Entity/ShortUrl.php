@@ -120,7 +120,6 @@ class ShortUrl extends AbstractEntity
         ?ShortUrlRelationResolverInterface $relationResolver = null,
     ): self {
         $meta = [
-            ShortUrlInputFilter::VALIDATE_URL => false,
             ShortUrlInputFilter::LONG_URL => $url->longUrl,
             ShortUrlInputFilter::DOMAIN => $url->domain,
             ShortUrlInputFilter::TAGS => $url->tags,

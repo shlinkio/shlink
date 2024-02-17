@@ -12,7 +12,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\CreateShortUrlCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCode;
-use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -66,22 +65,6 @@ class CreateShortUrlCommandTest extends TestCase
         self::assertEquals(ExitCode::EXIT_SUCCESS, $this->commandTester->getStatusCode());
         self::assertStringContainsString('stringified_short_url', $output);
         self::assertStringNotContainsString('but the real-time updates cannot', $output);
-    }
-
-    #[Test]
-    public function exceptionWhileParsingLongUrlOutputsError(): void
-    {
-        $url = 'http://domain.com/invalid';
-        $this->urlShortener->expects($this->once())->method('shorten')->withAnyParameters()->willThrowException(
-            InvalidUrlException::fromUrl($url),
-        );
-        $this->stringifier->method('stringify')->with($this->isInstanceOf(ShortUrl::class))->willReturn('');
-
-        $this->commandTester->execute(['longUrl' => $url]);
-        $output = $this->commandTester->getDisplay();
-
-        self::assertEquals(ExitCode::EXIT_FAILURE, $this->commandTester->getStatusCode());
-        self::assertStringContainsString('Provided URL http://domain.com/invalid is invalid.', $output);
     }
 
     #[Test]
@@ -148,12 +131,12 @@ class CreateShortUrlCommandTest extends TestCase
     }
 
     #[Test, DataProvider('provideFlags')]
-    public function urlValidationHasExpectedValueBasedOnProvidedFlags(array $options, ?bool $expectedValidateUrl): void
+    public function urlValidationHasExpectedValueBasedOnProvidedFlags(array $options, ?bool $expectedCrawlable): void
     {
         $shortUrl = ShortUrl::createFake();
         $this->urlShortener->expects($this->once())->method('shorten')->with(
-            $this->callback(function (ShortUrlCreation $meta) use ($expectedValidateUrl) {
-                Assert::assertEquals($expectedValidateUrl, $meta->doValidateUrl());
+            $this->callback(function (ShortUrlCreation $meta) use ($expectedCrawlable) {
+                Assert::assertEquals($expectedCrawlable, $meta->crawlable);
                 return true;
             }),
         )->willReturn(UrlShorteningResult::withoutErrorOnEventDispatching($shortUrl));
@@ -166,7 +149,7 @@ class CreateShortUrlCommandTest extends TestCase
     public static function provideFlags(): iterable
     {
         yield 'no flags' => [[], null];
-        yield 'validate-url' => [['--validate-url' => true], true];
+        yield 'crawlable' => [['--crawlable' => true], true];
     }
 
     /**

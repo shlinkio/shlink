@@ -75,28 +75,16 @@ class EditShortUrlTest extends ApiTestCase
         return $matchingShortUrl['meta'] ?? [];
     }
 
-    #[Test, DataProvider('provideLongUrls')]
-    public function longUrlCanBeEditedIfItIsValid(string $longUrl, int $expectedStatus, ?string $expectedError): void
+    public function longUrlCanBeEdited(): void
     {
         $shortCode = 'abc123';
         $url = sprintf('/short-urls/%s', $shortCode);
 
         $resp = $this->callApiWithKey(self::METHOD_PATCH, $url, [RequestOptions::JSON => [
-            'longUrl' => $longUrl,
-            'validateUrl' => true,
+            'longUrl' => 'https://shlink.io',
         ]]);
 
-        self::assertEquals($expectedStatus, $resp->getStatusCode());
-        if ($expectedError !== null) {
-            $payload = $this->getJsonResponsePayload($resp);
-            self::assertEquals($expectedError, $payload['type']);
-        }
-    }
-
-    public static function provideLongUrls(): iterable
-    {
-        yield 'valid URL' => ['https://shlink.io', self::STATUS_OK, null];
-        yield 'invalid URL' => ['http://foo', self::STATUS_BAD_REQUEST, 'https://shlink.io/api/error/invalid-url'];
+        self::assertEquals(self::STATUS_OK, $resp->getStatusCode());
     }
 
     #[Test, DataProviderExternal(ApiTestDataProviders::class, 'invalidUrlsProvider')]

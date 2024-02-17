@@ -38,8 +38,6 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
         private readonly bool $titlePropWasProvided = false,
         public readonly ?string $title = null,
         public readonly bool $titleWasAutoResolved = false,
-        /** @deprecated */
-        public readonly bool $validateUrl = false,
         private readonly bool $crawlablePropWasProvided = false,
         public readonly bool $crawlable = false,
         private readonly bool $forwardQueryPropWasProvided = false,
@@ -76,7 +74,6 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
             tags: $inputFilter->getValue(ShortUrlInputFilter::TAGS),
             titlePropWasProvided: array_key_exists(ShortUrlInputFilter::TITLE, $data),
             title: $inputFilter->getValue(ShortUrlInputFilter::TITLE),
-            validateUrl: getOptionalBoolFromInputFilter($inputFilter, ShortUrlInputFilter::VALIDATE_URL) ?? false,
             crawlablePropWasProvided: array_key_exists(ShortUrlInputFilter::CRAWLABLE, $data),
             crawlable: $inputFilter->getValue(ShortUrlInputFilter::CRAWLABLE),
             forwardQueryPropWasProvided: array_key_exists(ShortUrlInputFilter::FORWARD_QUERY, $data),
@@ -102,7 +99,6 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
             titlePropWasProvided: $this->titlePropWasProvided,
             title: $title,
             titleWasAutoResolved: true,
-            validateUrl: $this->validateUrl,
             crawlablePropWasProvided: $this->crawlablePropWasProvided,
             crawlable: $this->crawlable,
             forwardQueryPropWasProvided: $this->forwardQueryPropWasProvided,
@@ -153,12 +149,6 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
     public function titleWasAutoResolved(): bool
     {
         return $this->titleWasAutoResolved;
-    }
-
-    /** @deprecated */
-    public function doValidateUrl(): bool
-    {
-        return $this->validateUrl;
     }
 
     public function crawlableWasProvided(): bool
