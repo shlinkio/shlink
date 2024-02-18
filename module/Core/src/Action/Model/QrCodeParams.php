@@ -6,31 +6,25 @@ namespace Shlinkio\Shlink\Core\Action\Model;
 
 use Endroid\QrCode\Color\Color;
 use Endroid\QrCode\Color\ColorInterface;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelInterface;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelLow;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelMedium;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelQuartile;
-use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeInterface;
-use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
-use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeNone;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Writer\SvgWriter;
 use Endroid\QrCode\Writer\WriterInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Options\QrCodeOptions;
-
 use Throwable;
+
 use function hexdec;
 use function ltrim;
 use function max;
 use function min;
-use function self;
 use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 use function strlen;
 use function strtolower;
 use function substr;
 use function trim;
+
 use const Shlinkio\Shlink\DEFAULT_QR_CODE_BG_COLOR;
 use const Shlinkio\Shlink\DEFAULT_QR_CODE_COLOR;
 
@@ -44,8 +38,8 @@ final class QrCodeParams
         public readonly int $size,
         public readonly int $margin,
         public readonly WriterInterface $writer,
-        public readonly ErrorCorrectionLevelInterface $errorCorrectionLevel,
-        public readonly RoundBlockSizeModeInterface $roundBlockSizeMode,
+        public readonly ErrorCorrectionLevel $errorCorrectionLevel,
+        public readonly RoundBlockSizeMode $roundBlockSizeMode,
         public readonly ColorInterface $color,
         public readonly ColorInterface $bgColor,
     ) {
@@ -98,23 +92,23 @@ final class QrCodeParams
         };
     }
 
-    private static function resolveErrorCorrection(array $query, QrCodeOptions $defaults): ErrorCorrectionLevelInterface
+    private static function resolveErrorCorrection(array $query, QrCodeOptions $defaults): ErrorCorrectionLevel
     {
         $errorCorrectionLevel = self::normalizeParam($query['errorCorrection'] ?? $defaults->errorCorrection);
         return match ($errorCorrectionLevel) {
-            'h' => new ErrorCorrectionLevelHigh(),
-            'q' => new ErrorCorrectionLevelQuartile(),
-            'm' => new ErrorCorrectionLevelMedium(),
-            default => new ErrorCorrectionLevelLow(), // 'l'
+            'h' => ErrorCorrectionLevel::High,
+            'q' => ErrorCorrectionLevel::Quartile,
+            'm' => ErrorCorrectionLevel::Medium,
+            default => ErrorCorrectionLevel::Low, // 'l'
         };
     }
 
-    private static function resolveRoundBlockSize(array $query, QrCodeOptions $defaults): RoundBlockSizeModeInterface
+    private static function resolveRoundBlockSize(array $query, QrCodeOptions $defaults): RoundBlockSizeMode
     {
         $doNotRoundBlockSize = isset($query['roundBlockSize'])
             ? $query['roundBlockSize'] === 'false'
             : ! $defaults->roundBlockSize;
-        return $doNotRoundBlockSize ? new RoundBlockSizeModeNone() : new RoundBlockSizeModeMargin();
+        return $doNotRoundBlockSize ? RoundBlockSizeMode::None : RoundBlockSizeMode::Margin;
     }
 
     private static function resolveColor(array $query, QrCodeOptions $defaults): ColorInterface
@@ -136,16 +130,16 @@ final class QrCodeParams
         try {
             if (strlen($hexColor) === 3) {
                 return new Color(
-                    hexdec(substr($hexColor, 0, 1) . substr($hexColor, 0, 1)),
-                    hexdec(substr($hexColor, 1, 1) . substr($hexColor, 1, 1)),
-                    hexdec(substr($hexColor, 2, 1) . substr($hexColor, 2, 1)),
+                    (int) hexdec(substr($hexColor, 0, 1) . substr($hexColor, 0, 1)),
+                    (int) hexdec(substr($hexColor, 1, 1) . substr($hexColor, 1, 1)),
+                    (int) hexdec(substr($hexColor, 2, 1) . substr($hexColor, 2, 1)),
                 );
             }
 
             return new Color(
-                hexdec(substr($hexColor, 0, 2)),
-                hexdec(substr($hexColor, 2, 2)),
-                hexdec(substr($hexColor, 4, 2)),
+                (int) hexdec(substr($hexColor, 0, 2)),
+                (int) hexdec(substr($hexColor, 2, 2)),
+                (int) hexdec(substr($hexColor, 4, 2)),
             );
         } catch (Throwable $e) {
             // If a non-hex value was provided and an error occurs, fall back to the default color.
