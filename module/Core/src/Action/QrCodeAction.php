@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Action;
 
 use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Color\Color;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
@@ -48,7 +49,15 @@ readonly class QrCodeAction implements MiddlewareInterface
             ->margin($params->margin)
             ->writer($params->writer)
             ->errorCorrectionLevel($params->errorCorrectionLevel)
-            ->roundBlockSizeMode($params->roundBlockSizeMode);
+            ->roundBlockSizeMode($params->roundBlockSizeMode)
+            ->foregroundColor($params->color)
+            ->backgroundColor($params->bgColor);
+
+        $logoUrl = $this->options->logoUrl;
+        if ($logoUrl !== null) {
+            $qrCodeBuilder->logoPath($logoUrl)
+                          ->logoResizeToHeight((int) ($params->size / 4));
+        }
 
         return new QrCodeResponse($qrCodeBuilder->build());
     }

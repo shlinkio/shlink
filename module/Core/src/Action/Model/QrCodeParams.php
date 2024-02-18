@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Action\Model;
 
+use Endroid\QrCode\Color\Color;
+use Endroid\QrCode\Color\ColorInterface;
 use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
 use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelInterface;
 use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelLow;
@@ -18,9 +20,19 @@ use Endroid\QrCode\Writer\WriterInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Options\QrCodeOptions;
 
+use Throwable;
+use function hexdec;
+use function ltrim;
+use function max;
+use function min;
+use function self;
 use function Shlinkio\Shlink\Core\ArrayUtils\contains;
+use function strlen;
 use function strtolower;
+use function substr;
 use function trim;
+use const Shlinkio\Shlink\DEFAULT_QR_CODE_BG_COLOR;
+use const Shlinkio\Shlink\DEFAULT_QR_CODE_COLOR;
 
 final class QrCodeParams
 {
@@ -34,6 +46,8 @@ final class QrCodeParams
         public readonly WriterInterface $writer,
         public readonly ErrorCorrectionLevelInterface $errorCorrectionLevel,
         public readonly RoundBlockSizeModeInterface $roundBlockSizeMode,
+        public readonly ColorInterface $color,
+        public readonly ColorInterface $bgColor,
     ) {
     }
 
@@ -42,11 +56,13 @@ final class QrCodeParams
         $query = $request->getQueryParams();
 
         return new self(
-            self::resolveSize($query, $defaults),
-            self::resolveMargin($query, $defaults),
-            self::resolveWriter($query, $defaults),
-            self::resolveErrorCorrection($query, $defaults),
-            self::resolveRoundBlockSize($query, $defaults),
+            size: self::resolveSize($query, $defaults),
+            margin: self::resolveMargin($query, $defaults),
+            writer: self::resolveWriter($query, $defaults),
+            errorCorrectionLevel: self::resolveErrorCorrection($query, $defaults),
+            roundBlockSizeMode: self::resolveRoundBlockSize($query, $defaults),
+            color: self::resolveColor($query, $defaults),
+            bgColor: self::resolveBackgroundColor($query, $defaults),
         );
     }
 
@@ -57,7 +73,7 @@ final class QrCodeParams
             return self::MIN_SIZE;
         }
 
-        return $size > self::MAX_SIZE ? self::MAX_SIZE : $size;
+        return min($size, self::MAX_SIZE);
     }
 
     private static function resolveMargin(array $query, QrCodeOptions $defaults): int
@@ -68,7 +84,7 @@ final class QrCodeParams
             return 0;
         }
 
-        return $intMargin < 0 ? 0 : $intMargin;
+        return max($intMargin, 0);
     }
 
     private static function resolveWriter(array $query, QrCodeOptions $defaults): WriterInterface
@@ -99,6 +115,47 @@ final class QrCodeParams
             ? $query['roundBlockSize'] === 'false'
             : ! $defaults->roundBlockSize;
         return $doNotRoundBlockSize ? new RoundBlockSizeModeNone() : new RoundBlockSizeModeMargin();
+    }
+
+    private static function resolveColor(array $query, QrCodeOptions $defaults): ColorInterface
+    {
+        $color = self::normalizeParam($query['color'] ?? $defaults->color);
+        return self::parseHexColor($color, DEFAULT_QR_CODE_COLOR);
+    }
+
+    private static function resolveBackgroundColor(array $query, QrCodeOptions $defaults): ColorInterface
+    {
+        $bgColor = self::normalizeParam($query['bgColor'] ?? $defaults->bgColor);
+        return self::parseHexColor($bgColor, DEFAULT_QR_CODE_BG_COLOR);
+    }
+
+    private static function parseHexColor(string $hexColor, ?string $fallback): Color
+    {
+        $hexColor = ltrim($hexColor, '#');
+
+        try {
+            if (strlen($hexColor) === 3) {
+                return new Color(
+                    hexdec(substr($hexColor, 0, 1) . substr($hexColor, 0, 1)),
+                    hexdec(substr($hexColor, 1, 1) . substr($hexColor, 1, 1)),
+                    hexdec(substr($hexColor, 2, 1) . substr($hexColor, 2, 1)),
+                );
+            }
+
+            return new Color(
+                hexdec(substr($hexColor, 0, 2)),
+                hexdec(substr($hexColor, 2, 2)),
+                hexdec(substr($hexColor, 4, 2)),
+            );
+        } catch (Throwable $e) {
+            // If a non-hex value was provided and an error occurs, fall back to the default color.
+            // Do not provide the fallback again this time, to avoid an infinite loop
+            if ($fallback !== null) {
+                return self::parseHexColor($fallback, null);
+            }
+
+            throw $e;
+        }
     }
 
     private static function normalizeParam(string $param): string
