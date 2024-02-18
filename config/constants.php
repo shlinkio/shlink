@@ -20,5 +20,5 @@ const DEFAULT_QR_CODE_FORMAT = 'png';
 const DEFAULT_QR_CODE_ERROR_CORRECTION = 'l';
 const DEFAULT_QR_CODE_ROUND_BLOCK_SIZE = true;
 const DEFAULT_QR_CODE_ENABLED_FOR_DISABLED_SHORT_URLS = true;
-const DEFAULT_QR_CODE_COLOR = '#000'; // Black
-const DEFAULT_QR_CODE_BG_COLOR = '#fff'; // White
+const DEFAULT_QR_CODE_COLOR = '#000000'; // Black
+const DEFAULT_QR_CODE_BG_COLOR = '#ffffff'; // White

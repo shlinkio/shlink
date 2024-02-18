@@ -13,8 +13,8 @@ use Endroid\QrCode\Writer\SvgWriter;
 use Endroid\QrCode\Writer\WriterInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Options\QrCodeOptions;
-use Throwable;
 
+use function ctype_xdigit;
 use function hexdec;
 use function ltrim;
 use function max;
@@ -126,30 +126,23 @@ final class QrCodeParams
     private static function parseHexColor(string $hexColor, ?string $fallback): Color
     {
         $hexColor = ltrim($hexColor, '#');
-
-        try {
-            if (strlen($hexColor) === 3) {
-                return new Color(
-                    (int) hexdec(substr($hexColor, 0, 1) . substr($hexColor, 0, 1)),
-                    (int) hexdec(substr($hexColor, 1, 1) . substr($hexColor, 1, 1)),
-                    (int) hexdec(substr($hexColor, 2, 1) . substr($hexColor, 2, 1)),
-                );
-            }
-
-            return new Color(
-                (int) hexdec(substr($hexColor, 0, 2)),
-                (int) hexdec(substr($hexColor, 2, 2)),
-                (int) hexdec(substr($hexColor, 4, 2)),
-            );
-        } catch (Throwable $e) {
-            // If a non-hex value was provided and an error occurs, fall back to the default color.
-            // Do not provide the fallback again this time, to avoid an infinite loop
-            if ($fallback !== null) {
-                return self::parseHexColor($fallback, null);
-            }
-
-            throw $e;
+        if (! ctype_xdigit($hexColor) && $fallback !== null) {
+            return self::parseHexColor($fallback, null);
         }
+
+        if (strlen($hexColor) === 3) {
+            return new Color(
+                (int) hexdec(substr($hexColor, 0, 1) . substr($hexColor, 0, 1)),
+                (int) hexdec(substr($hexColor, 1, 1) . substr($hexColor, 1, 1)),
+                (int) hexdec(substr($hexColor, 2, 1) . substr($hexColor, 2, 1)),
+            );
+        }
+
+        return new Color(
+            (int) hexdec(substr($hexColor, 0, 2)),
+            (int) hexdec(substr($hexColor, 2, 2)),
+            (int) hexdec(substr($hexColor, 4, 2)),
+        );
     }
 
     private static function normalizeParam(string $param): string
