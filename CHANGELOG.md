@@ -26,7 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#1908](https://github.com/shlinkio/shlink/issues/1908) Remove support for openswoole (and swoole).
 
 ### Fixed
-* *Nothing*
+* [#2000](https://github.com/shlinkio/shlink/issues/2000) Fix short URL creation/edition getting stuck when trying to resolve the title of a long URL which never returns a response.
 
 
 ## [3.7.3] - 2024-01-04

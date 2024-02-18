@@ -328,6 +328,17 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertEquals('https://github.com/shlinkio/shlink/android', $payload['deviceLongUrls']['android'] ?? null);
     }
 
+    #[Test]
+    public function titleIsIgnoredIfLongUrlTimesOut(): void
+    {
+        [$statusCode, $payload] = $this->createShortUrl([
+            'longUrl' => 'http://127.0.0.1:9999/api-tests/long-url-with-timeout',
+        ]);
+
+        self::assertEquals(self::STATUS_OK, $statusCode);
+        self::assertNull($payload['title']);
+    }
+
     /**
      * @return array{int, array}
      */

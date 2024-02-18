@@ -22,8 +22,8 @@ use const Shlinkio\Shlink\TITLE_TAG_VALUE;
 
 readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionHelperInterface
 {
-    private const MAX_REDIRECTS = 15;
-    private const CHROME_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) '
+    public const MAX_REDIRECTS = 15;
+    public const CHROME_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) '
         . 'Chrome/121.0.0.0 Safari/537.36';
 
     public function __construct(
@@ -61,7 +61,9 @@ readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionH
     {
         try {
             return $this->httpClient->request(RequestMethodInterface::METHOD_GET, $url, [
-                // TODO Add a sensible timeout that prevents hanging here forever
+                // Add a sensible 3-second timeout that prevents hanging here forever
+                RequestOptions::TIMEOUT => 3,
+                RequestOptions::CONNECT_TIMEOUT => 3,
                 // Prevent potential infinite redirection loops
                 RequestOptions::ALLOW_REDIRECTS => ['max' => self::MAX_REDIRECTS],
                 RequestOptions::IDN_CONVERSION => true,

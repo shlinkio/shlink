@@ -7,7 +7,9 @@ namespace Shlinkio\Shlink;
 use GuzzleHttp\Client;
 use Laminas\ConfigAggregator\ConfigAggregator;
 use Laminas\Diactoros\Response\EmptyResponse;
+use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\ServiceManager\Factory\InvokableFactory;
+use Mezzio\Router\FastRouteRouter;
 use Monolog\Level;
 use Shlinkio\Shlink\Common\Logger\LoggerType;
 use Shlinkio\Shlink\TestUtils\ApiTest\CoverageMiddleware;
@@ -18,6 +20,7 @@ use Symfony\Component\Console\Application;
 use function Laminas\Stratigility\middleware;
 use function Shlinkio\Shlink\Config\env;
 use function Shlinkio\Shlink\Core\ArrayUtils\contains;
+use function sleep;
 use function sprintf;
 
 use const ShlinkioTest\Shlink\API_TESTS_HOST;
@@ -86,6 +89,7 @@ return [
 
     'debug' => true,
     ConfigAggregator::ENABLE_CACHE => false,
+    FastRouteRouter::CONFIG_CACHE_ENABLED => false,
 
     'url_shortener' => [
         'domain' => [
@@ -94,10 +98,12 @@ return [
         ],
     ],
 
-    'routes' => !$isApiTest ? [] : [
+    'routes' => [
+        // This route is invoked at the end of API tests, in order to dump coverage collected so far
         [
             'name' => 'dump_coverage',
             'path' => '/api-tests/stop-coverage',
+            'allowed_methods' => ['GET'],
             'middleware' => middleware(static function () use ($coverage, $coverageType) {
                 // TODO I have tried moving this block to a register_shutdown_function here, which internally checks if
                 //      RR_MODE === 'http', but this seems to be false in CI, causing the coverage to not be generated
@@ -108,7 +114,17 @@ return [
                 );
                 return new EmptyResponse();
             }),
+        ],
+
+        // This route is used to test that title resolution is skipped if the long URL times out
+        [
+            'name' => 'long_url_with_timeout',
+            'path' => '/api-tests/long-url-with-timeout',
             'allowed_methods' => ['GET'],
+            'middleware' => middleware(static function () {
+                sleep(5); // Title resolution times out at 3 seconds
+                return new HtmlResponse('<title>The title</title>');
+            }),
         ],
     ],
 
@@ -119,6 +135,7 @@ return [
         ],
     ],
 
+    // Disable mercure integration during E2E tests
     'mercure' => [
         'public_hub_url' => null,
         'internal_hub_url' => null,
@@ -153,7 +170,7 @@ return [
 
     'data_fixtures' => [
         'paths' => [
-            // TODO These are used for CLI tests too, so maybe should be somewhere else
+            // TODO These are used for other module's tests, so maybe should be somewhere else
             __DIR__ . '/../../module/Rest/test-api/Fixtures',
         ],
     ],
