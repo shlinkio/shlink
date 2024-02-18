@@ -13,6 +13,7 @@
 * The short URLs `loosely` mode is no longer supported, as it was a typo. Use `loose` mode instead.
 * QR codes URLs now work by default, even for short URLs that cannot be visited due to max visits or date range limitations.
   If you want to keep previous behavior, pass `QR_CODE_FOR_DISABLED_SHORT_URLS=false` or the equivalent configuration option.
+* Long URL title resolution is now enabled by default. You can still disable it by passing `AUTO_RESOLVE_TITLES=false` or the equivalent configuration option.
 * Shlink no longer allows to opt-in for long URL verification. Long URLs are unconditionally considered correct during short URL creation/edition.
 
 ### Changes in REST API
