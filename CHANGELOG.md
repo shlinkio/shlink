@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
   This is supported both by the `GET /visits/orphan` API endpoint via `type=...` query param, and by the `visit:orphan` CLI command, via `--type` flag.
 
+* [#1904](https://github.com/shlinkio/shlink/issues/1904) Allow to customize QR codes foreground color, background color and logo.
+
 ### Changed
 * [#1935](https://github.com/shlinkio/shlink/issues/1935) Replace dependency on abandoned `php-middleware/request-id` with userland simple middleware.
 * [#1988](https://github.com/shlinkio/shlink/issues/1988) Remove dependency on `league\uri` package.
