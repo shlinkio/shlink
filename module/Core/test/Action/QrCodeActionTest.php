@@ -293,6 +293,27 @@ class QrCodeActionTest extends TestCase
         );
     }
 
+    #[Test]
+    public function logoIsAddedToQrCodeIfOptionIsDefined(): void
+    {
+        $logoUrl = 'https://avatars.githubusercontent.com/u/20341790?v=4'; // Shlink logo
+        $code = 'abc123';
+        $req = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $code);
+
+        $this->urlResolver->method('resolveEnabledShortUrl')->with(
+            ShortUrlIdentifier::fromShortCodeAndDomain($code),
+        )->willReturn(ShortUrl::withLongUrl('https://shlink.io'));
+        $handler = $this->createMock(RequestHandlerInterface::class);
+
+        $resp = $this->action(new QrCodeOptions(size: 250, logoUrl: $logoUrl))->process($req, $handler);
+        $image = imagecreatefromstring($resp->getBody()->__toString());
+        self::assertNotFalse($image);
+
+        // At around 100x100 px we can already find the logo, which has Shlink's brand color
+        $resultingColor = imagecolorat($image, 100, 100);
+        self::assertEquals(hexdec('4696E5'), $resultingColor);
+    }
+
     public static function provideEnabled(): iterable
     {
         yield 'always enabled' => [true];
