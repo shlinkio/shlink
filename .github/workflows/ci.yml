@@ -52,37 +52,20 @@ jobs:
     with:
       test-group: api
 
-  sqlite-db-tests:
+  db-tests:
+    strategy:
+      matrix:
+        platform: ['sqlite:ci', 'mysql', 'maria', 'postgres', 'ms']
     uses: './.github/workflows/ci-db-tests.yml'
     with:
-      platform: 'sqlite:ci'
-
-  mysql-db-tests:
-    uses: './.github/workflows/ci-db-tests.yml'
-    with:
-      platform: 'mysql'
-
-  maria-db-tests:
-    uses: './.github/workflows/ci-db-tests.yml'
-    with:
-      platform: 'maria'
-
-  postgres-db-tests:
-    uses: './.github/workflows/ci-db-tests.yml'
-    with:
-      platform: 'postgres'
-
-  ms-db-tests:
-    uses: './.github/workflows/ci-db-tests.yml'
-    with:
-      platform: 'ms'
+      platform: ${{ matrix.platform }}
 
   upload-coverage:
     needs:
       - unit-tests
       - api-tests
       - cli-tests
-      - sqlite-db-tests
+      - db-tests
     runs-on: ubuntu-22.04
     strategy:
       matrix:
