@@ -30,9 +30,8 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
        ->length(255)
        ->build();
 
-    fieldWithUtf8Charset($builder->createField('longUrl', Types::STRING), $emConfig)
+    fieldWithUtf8Charset($builder->createField('longUrl', Types::TEXT), $emConfig)
         ->columnName('long_url')
-        ->length(2048)
         ->build();
 
     $builder->createManyToOne('shortUrl', ShortUrl\Entity\ShortUrl::class)
