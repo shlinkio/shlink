@@ -22,7 +22,7 @@ echo 'Starting server...'
   -o=logs.channels.server.output="${PWD}/${OUTPUT_LOGS}" &
 sleep 2 # Let's give the server a couple of seconds to start
 
-vendor/bin/phpunit --order-by=random -c phpunit-api.xml --testdox --colors=always --log-junit=build/coverage-api/junit.xml $*
+vendor/bin/phpunit --order-by=random -c phpunit-api.xml --testdox --colors=always $*
 TESTS_EXIT_CODE=$?
 
 [ "$TEST_RUNTIME" = 'rr' ] && bin/rr stop -c=config/roadrunner/.rr.dev.yml -w . -o=http.address=0.0.0.0:9999
