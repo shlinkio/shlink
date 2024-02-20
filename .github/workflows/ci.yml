@@ -8,7 +8,6 @@ on:
       - '*.md'
       - '*.xml'
       - '*.yml*'
-      - '*.json5'
       - '*.neon'
   push:
     branches:
@@ -21,7 +20,6 @@ on:
       - '*.md'
       - '*.xml'
       - '*.yml*'
-      - '*.json5'
       - '*.neon'
 
 jobs:
@@ -79,34 +77,6 @@ jobs:
     with:
       platform: 'ms'
 
-  unit-mutation-tests:
-    needs:
-      - unit-tests
-    uses: './.github/workflows/ci-mutation-tests.yml'
-    with:
-      test-group: unit
-
-  db-mutation-tests:
-    needs:
-      - sqlite-db-tests
-    uses: './.github/workflows/ci-mutation-tests.yml'
-    with:
-      test-group: db
-
-  api-mutation-tests:
-    needs:
-      - api-tests
-    uses: './.github/workflows/ci-mutation-tests.yml'
-    with:
-      test-group: api
-
-  cli-mutation-tests:
-    needs:
-      - cli-tests
-    uses: './.github/workflows/ci-mutation-tests.yml'
-    with:
-      test-group: cli
-
   upload-coverage:
     needs:
       - unit-tests
@@ -140,10 +110,6 @@ jobs:
 
   delete-artifacts:
     needs:
-      - unit-mutation-tests
-      - db-mutation-tests
-      - api-mutation-tests
-      - cli-mutation-tests
       - upload-coverage
     runs-on: ubuntu-22.04
     steps:

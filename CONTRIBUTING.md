@@ -124,7 +124,6 @@ Depending on the kind of contribution, maybe not all kinds of tests are needed, 
 
 * Run `./indocker composer test:api` to run API E2E tests. For these, the Postgres database engine is used.
 * Run `./indocker composer test:cli` to run CLI E2E tests. For these, the Maria DB database engine is used.
-* Run `./indocker composer infect:test` to run both unit and database tests (over sqlite) and then apply mutations to them with [infection](https://infection.github.io/).
 * Run `./indocker composer ci` to run all previous commands together, parallelizing non-conflicting tasks as much as possible.
 
 ## Testing endpoints
