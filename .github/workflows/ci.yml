@@ -121,11 +121,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Use PHP
-        uses: shivammathur/setup-php@v2
+        uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          coverage: pcov
-          ini-values: pcov.directory=module
+          extensions-cache-key: tests-extensions-${{ matrix.php-version }}
       - uses: actions/download-artifact@v4
         with:
           path: build
