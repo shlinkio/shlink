@@ -25,7 +25,7 @@ sleep 2 # Let's give the server a couple of seconds to start
 vendor/bin/phpunit --order-by=random -c phpunit-api.xml --testdox --colors=always --log-junit=build/coverage-api/junit.xml $*
 TESTS_EXIT_CODE=$?
 
-[ "$TEST_RUNTIME" = 'rr' ] && bin/rr stop -c config/roadrunner/.rr.dev.yml -o=http.address=0.0.0.0:9999
+[ "$TEST_RUNTIME" = 'rr' ] && bin/rr stop -c=config/roadrunner/.rr.dev.yml -w . -o=http.address=0.0.0.0:9999
 
 # Exit this script with the same code as the tests. If tests failed, this script has to fail
 exit $TESTS_EXIT_CODE
