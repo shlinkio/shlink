@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink;
 
 use GuzzleHttp\Client;
 use Laminas\ConfigAggregator\ConfigAggregator;
-use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Mezzio\Router\FastRouteRouter;
@@ -19,23 +18,26 @@ use Symfony\Component\Console\Application;
 
 use function Laminas\Stratigility\middleware;
 use function Shlinkio\Shlink\Config\env;
-use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 use function sleep;
 use function sprintf;
 
 use const ShlinkioTest\Shlink\API_TESTS_HOST;
 use const ShlinkioTest\Shlink\API_TESTS_PORT;
 
-$isApiTest = env('TEST_ENV') === 'api';
-$isCliTest = env('TEST_ENV') === 'cli';
+$testEnv = env('TEST_ENV');
+$isApiTest = $testEnv === 'api';
+$isCliTest = $testEnv === 'cli';
 $isE2eTest = $isApiTest || $isCliTest;
 
 $coverageType = env('GENERATE_COVERAGE');
-$generateCoverage = contains($coverageType, ['yes', 'pretty']);
-$coverage = $isE2eTest && $generateCoverage ? CoverageHelper::createCoverageForDirectories([
-    __DIR__ . '/../../module/Core/src',
-    __DIR__ . '/../../module/' . ($isApiTest ? 'Rest' : 'CLI') . '/src',
-]) : null;
+$generateCoverage = $coverageType === 'yes';
+$coverage = $isE2eTest && $generateCoverage ? CoverageHelper::createCoverageForDirectories(
+    [
+        __DIR__ . '/../../module/Core/src',
+        __DIR__ . '/../../module/' . ($isApiTest ? 'Rest' : 'CLI') . '/src',
+    ],
+    __DIR__ . '/../../build/coverage-' . $testEnv,
+) : null;
 
 $buildDbConnection = static function (): array {
     $driver = env('DB_DRIVER', 'sqlite');
@@ -99,23 +101,6 @@ return [
     ],
 
     'routes' => [
-        // This route is invoked at the end of API tests, in order to dump coverage collected so far
-        [
-            'name' => 'dump_coverage',
-            'path' => '/api-tests/stop-coverage',
-            'allowed_methods' => ['GET'],
-            'middleware' => middleware(static function () use ($coverage, $coverageType) {
-                // TODO I have tried moving this block to a register_shutdown_function here, which internally checks if
-                //      RR_MODE === 'http', but this seems to be false in CI, causing the coverage to not be generated
-                CoverageHelper::exportCoverage(
-                    $coverage,
-                    __DIR__ . '/../../build/coverage-api',
-                    pretty: $coverageType === 'pretty',
-                );
-                return new EmptyResponse();
-            }),
-        ],
-
         // This route is used to test that title resolution is skipped if the long URL times out
         [
             'name' => 'long_url_with_timeout',
@@ -154,12 +139,7 @@ return [
         ],
         'delegators' => $isCliTest ? [
             Application::class => [
-                new CliCoverageDelegator(fn () => CoverageHelper::exportCoverage(
-                    $coverage,
-                    __DIR__ . '/../../build/coverage-cli',
-                    pretty: $coverageType === 'pretty',
-                    mergeWithExisting: true,
-                ), $coverage),
+                new CliCoverageDelegator($coverage),
             ],
         ] : [],
     ],
