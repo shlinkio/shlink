@@ -33,6 +33,7 @@ use function Shlinkio\Shlink\Core\enumValues;
 use function Shlinkio\Shlink\Core\generateRandomShortCode;
 use function Shlinkio\Shlink\Core\normalizeDate;
 use function Shlinkio\Shlink\Core\normalizeOptionalDate;
+use function sprintf;
 
 class ShortUrl extends AbstractEntity
 {
@@ -100,9 +101,10 @@ class ShortUrl extends AbstractEntity
         $instance->maxVisits = $creation->maxVisits;
         $instance->customSlugWasProvided = $creation->hasCustomSlug();
         $instance->shortCodeLength = $creation->shortCodeLength;
-        $instance->shortCode = $creation->customSlug ?? generateRandomShortCode(
-            $instance->shortCodeLength,
-            $creation->shortUrlMode,
+        $instance->shortCode = sprintf(
+            '%s%s',
+            $creation->pathPrefix ?? '',
+            $creation->customSlug ?? generateRandomShortCode($instance->shortCodeLength, $creation->shortUrlMode),
         );
         $instance->domain = $relationResolver->resolveDomain($creation->domain);
         $instance->authorApiKey = $creation->apiKey;
