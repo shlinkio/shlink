@@ -15,7 +15,7 @@ use function Shlinkio\Shlink\Core\getOptionalBoolFromInputFilter;
 use function Shlinkio\Shlink\Core\getOptionalIntFromInputFilter;
 use function Shlinkio\Shlink\Core\normalizeOptionalDate;
 
-final class ShortUrlEdition implements TitleResolutionModelInterface
+final readonly class ShortUrlEdition implements TitleResolutionModelInterface
 {
     /**
      * @param string[] $tags
@@ -23,25 +23,25 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
      * @param DeviceType[] $devicesToRemove
      */
     private function __construct(
-        private readonly bool $longUrlPropWasProvided = false,
-        public readonly ?string $longUrl = null,
-        public readonly array $deviceLongUrls = [],
-        public readonly array $devicesToRemove = [],
-        private readonly bool $validSincePropWasProvided = false,
-        public readonly ?Chronos $validSince = null,
-        private readonly bool $validUntilPropWasProvided = false,
-        public readonly ?Chronos $validUntil = null,
-        private readonly bool $maxVisitsPropWasProvided = false,
-        public readonly ?int $maxVisits = null,
-        private readonly bool $tagsPropWasProvided = false,
-        public readonly array $tags = [],
-        private readonly bool $titlePropWasProvided = false,
-        public readonly ?string $title = null,
-        public readonly bool $titleWasAutoResolved = false,
-        private readonly bool $crawlablePropWasProvided = false,
-        public readonly bool $crawlable = false,
-        private readonly bool $forwardQueryPropWasProvided = false,
-        public readonly bool $forwardQuery = true,
+        private bool $longUrlPropWasProvided = false,
+        public ?string $longUrl = null,
+        public array $deviceLongUrls = [],
+        public array $devicesToRemove = [],
+        private bool $validSincePropWasProvided = false,
+        public ?Chronos $validSince = null,
+        private bool $validUntilPropWasProvided = false,
+        public ?Chronos $validUntil = null,
+        private bool $maxVisitsPropWasProvided = false,
+        public ?int $maxVisits = null,
+        private bool $tagsPropWasProvided = false,
+        public array $tags = [],
+        private bool $titlePropWasProvided = false,
+        public ?string $title = null,
+        public bool $titleWasAutoResolved = false,
+        private bool $crawlablePropWasProvided = false,
+        public bool $crawlable = false,
+        private bool $forwardQueryPropWasProvided = false,
+        public bool $forwardQuery = true,
     ) {
     }
 
@@ -50,7 +50,7 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
      */
     public static function fromRawData(array $data): self
     {
-        $inputFilter = ShortUrlInputFilter::withNonRequiredLongUrl($data);
+        $inputFilter = ShortUrlInputFilter::forEdition($data);
         if (! $inputFilter->isValid()) {
             throw ValidationException::fromInputFilter($inputFilter);
         }

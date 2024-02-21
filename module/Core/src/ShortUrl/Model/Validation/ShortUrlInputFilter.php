@@ -19,68 +19,52 @@ use function substr;
 use const Shlinkio\Shlink\LOOSE_URI_MATCHER;
 use const Shlinkio\Shlink\MIN_SHORT_CODES_LENGTH;
 
-/**
- * @todo Pass forCreation/forEdition, instead of withRequiredLongUrl/withNonRequiredLongUrl.
- *       Make it also dynamically add the relevant fields
- */
 class ShortUrlInputFilter extends InputFilter
 {
     use Validation\InputFactoryTrait;
 
-    public const VALID_SINCE = 'validSince';
-    public const VALID_UNTIL = 'validUntil';
+    // Fields for creation only
+    public const SHORT_CODE_LENGTH = 'shortCodeLength';
     public const CUSTOM_SLUG = 'customSlug';
-    public const MAX_VISITS = 'maxVisits';
+    public const PATH_PREFIX = 'pathPrefix';
     public const FIND_IF_EXISTS = 'findIfExists';
     public const DOMAIN = 'domain';
-    public const SHORT_CODE_LENGTH = 'shortCodeLength';
+
+    // Fields for creation and edition
     public const LONG_URL = 'longUrl';
     public const DEVICE_LONG_URLS = 'deviceLongUrls';
-    public const API_KEY = 'apiKey';
-    public const TAGS = 'tags';
+    public const VALID_SINCE = 'validSince';
+    public const VALID_UNTIL = 'validUntil';
+    public const MAX_VISITS = 'maxVisits';
     public const TITLE = 'title';
+    public const TAGS = 'tags';
     public const CRAWLABLE = 'crawlable';
     public const FORWARD_QUERY = 'forwardQuery';
+    public const API_KEY = 'apiKey';
 
-    private function __construct(array $data, bool $requireLongUrl, UrlShortenerOptions $options)
+    public static function forCreation(array $data, UrlShortenerOptions $options): self
     {
-        $this->initialize($requireLongUrl, $options);
-        $this->setData($data);
+        $instance = new self();
+        $instance->initializeForCreation($options);
+        $instance->setData($data);
+
+        return $instance;
     }
 
-    public static function withRequiredLongUrl(array $data, UrlShortenerOptions $options): self
+    public static function forEdition(array $data): self
     {
-        return new self($data, true, $options);
+        $instance = new self();
+        $instance->initializeForEdition();
+        $instance->setData($data);
+
+        return $instance;
     }
 
-    public static function withNonRequiredLongUrl(array $data): self
+    private function initializeForCreation(UrlShortenerOptions $options): void
     {
-        return new self($data, false, new UrlShortenerOptions());
-    }
-
-    private function initialize(bool $requireLongUrl, UrlShortenerOptions $options): void
-    {
-        $longUrlInput = $this->createInput(self::LONG_URL, $requireLongUrl);
-        $longUrlInput->getValidatorChain()->merge($this->longUrlValidators());
-        $this->add($longUrlInput);
-
-        $deviceLongUrlsInput = $this->createInput(self::DEVICE_LONG_URLS, false);
-        $deviceLongUrlsInput->getValidatorChain()->attach(
-            new DeviceLongUrlsValidator($this->longUrlValidators(allowNull: ! $requireLongUrl)),
-        );
-        $this->add($deviceLongUrlsInput);
-
-        $validSince = $this->createInput(self::VALID_SINCE, false);
-        $validSince->getValidatorChain()->attach(new Validator\Date(['format' => DateTimeInterface::ATOM]));
-        $this->add($validSince);
-
-        $validUntil = $this->createInput(self::VALID_UNTIL, false);
-        $validUntil->getValidatorChain()->attach(new Validator\Date(['format' => DateTimeInterface::ATOM]));
-        $this->add($validUntil);
-
         // The only way to enforce the NotEmpty validator to be evaluated when the key is present with an empty value
-        // is with setContinueIfEmpty
-        $customSlug = $this->createInput(self::CUSTOM_SLUG, false)->setContinueIfEmpty(true);
+        // is with setContinueIfEmpty(true)
+        $customSlug = $this->createInput(self::CUSTOM_SLUG, required: false)->setContinueIfEmpty(true);
         $customSlug->getFilterChain()->attach(new CustomSlugFilter($options));
         $customSlug->getValidatorChain()
             ->attach(new Validator\NotEmpty([
@@ -90,32 +74,62 @@ class ShortUrlInputFilter extends InputFilter
             ->attach(CustomSlugValidator::forUrlShortenerOptions($options));
         $this->add($customSlug);
 
-        $this->add($this->createNumericInput(self::MAX_VISITS, false));
-        $this->add($this->createNumericInput(self::SHORT_CODE_LENGTH, false, MIN_SHORT_CODES_LENGTH));
+        // The path prefix is subject to the same filtering and validation logic as the custom slug, which takes into
+        // consideration if multi-segment slugs are enabled or not.
+        // The only difference is that empty values are allowed here.
+        $pathPrefix = $this->createInput(self::PATH_PREFIX, required: false);
+        $pathPrefix->getFilterChain()->attach(new CustomSlugFilter($options));
+        $pathPrefix->getValidatorChain()->attach(CustomSlugValidator::forUrlShortenerOptions($options));
+        $this->add($pathPrefix);
 
-        $this->add($this->createBooleanInput(self::FIND_IF_EXISTS, false));
+        $this->add($this->createNumericInput(self::SHORT_CODE_LENGTH, required: false, min: MIN_SHORT_CODES_LENGTH));
+        $this->add($this->createBooleanInput(self::FIND_IF_EXISTS, required: false));
 
-        // This cannot be defined as a boolean inputs, because they can actually have 3 values: true, false and null.
-        // Defining them as boolean will make null fall back to false, which is not the desired behavior.
-        $this->add($this->createInput(self::FORWARD_QUERY, false));
-
-        $domain = $this->createInput(self::DOMAIN, false);
+        $domain = $this->createInput(self::DOMAIN, required: false);
         $domain->getValidatorChain()->attach(new Validation\HostAndPortValidator());
         $this->add($domain);
 
-        $apiKeyInput = $this->createInput(self::API_KEY, false);
-        $apiKeyInput->getValidatorChain()->attach(new Validator\IsInstanceOf(['className' => ApiKey::class]));
-        $this->add($apiKeyInput);
+        $this->initializeForEdition(requireLongUrl: true);
+    }
 
-        $this->add($this->createTagsInput(self::TAGS, false));
+    private function initializeForEdition(bool $requireLongUrl = false): void
+    {
+        $longUrlInput = $this->createInput(self::LONG_URL, $requireLongUrl);
+        $longUrlInput->getValidatorChain()->merge($this->longUrlValidators());
+        $this->add($longUrlInput);
 
-        $title = $this->createInput(self::TITLE, false);
+        $deviceLongUrlsInput = $this->createInput(self::DEVICE_LONG_URLS, required: false);
+        $deviceLongUrlsInput->getValidatorChain()->attach(
+            new DeviceLongUrlsValidator($this->longUrlValidators(allowNull: ! $requireLongUrl)),
+        );
+        $this->add($deviceLongUrlsInput);
+
+        $validSince = $this->createInput(self::VALID_SINCE, required: false);
+        $validSince->getValidatorChain()->attach(new Validator\Date(['format' => DateTimeInterface::ATOM]));
+        $this->add($validSince);
+
+        $validUntil = $this->createInput(self::VALID_UNTIL, required: false);
+        $validUntil->getValidatorChain()->attach(new Validator\Date(['format' => DateTimeInterface::ATOM]));
+        $this->add($validUntil);
+
+        $this->add($this->createNumericInput(self::MAX_VISITS, required: false));
+
+        $title = $this->createInput(self::TITLE, required: false);
         $title->getFilterChain()->attach(new Filter\Callback(
             static fn (?string $value) => $value === null ? $value : substr($value, 0, 512),
         ));
         $this->add($title);
 
-        $this->add($this->createBooleanInput(self::CRAWLABLE, false));
+        $this->add($this->createTagsInput(self::TAGS, required: false));
+        $this->add($this->createBooleanInput(self::CRAWLABLE, required: false));
+
+        // This cannot be defined as a boolean inputs, because it can actually have 3 values: true, false and null.
+        // Defining them as boolean will make null fall back to false, which is not the desired behavior.
+        $this->add($this->createInput(self::FORWARD_QUERY, required: false));
+
+        $apiKeyInput = $this->createInput(self::API_KEY, required: false);
+        $apiKeyInput->getValidatorChain()->attach(new Validator\IsInstanceOf(['className' => ApiKey::class]));
+        $this->add($apiKeyInput);
     }
 
     private function longUrlValidators(bool $allowNull = false): Validator\ValidatorChain

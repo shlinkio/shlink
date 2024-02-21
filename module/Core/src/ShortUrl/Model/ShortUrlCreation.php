@@ -18,39 +18,39 @@ use function Shlinkio\Shlink\Core\normalizeOptionalDate;
 
 use const Shlinkio\Shlink\DEFAULT_SHORT_CODES_LENGTH;
 
-final class ShortUrlCreation implements TitleResolutionModelInterface
+final readonly class ShortUrlCreation implements TitleResolutionModelInterface
 {
     /**
      * @param string[] $tags
      * @param DeviceLongUrlPair[] $deviceLongUrls
      */
     private function __construct(
-        public readonly string $longUrl,
-        public readonly ShortUrlMode $shortUrlMode,
-        public readonly array $deviceLongUrls = [],
-        public readonly ?Chronos $validSince = null,
-        public readonly ?Chronos $validUntil = null,
-        public readonly ?string $customSlug = null,
-        public readonly ?int $maxVisits = null,
-        public readonly bool $findIfExists = false,
-        public readonly ?string $domain = null,
-        public readonly int $shortCodeLength = 5,
-        public readonly ?ApiKey $apiKey = null,
-        public readonly array $tags = [],
-        public readonly ?string $title = null,
-        public readonly bool $titleWasAutoResolved = false,
-        public readonly bool $crawlable = false,
-        public readonly bool $forwardQuery = true,
+        public string $longUrl,
+        public ShortUrlMode $shortUrlMode,
+        public array $deviceLongUrls = [],
+        public ?Chronos $validSince = null,
+        public ?Chronos $validUntil = null,
+        public ?string $customSlug = null,
+        public ?string $pathPrefix = null,
+        public ?int $maxVisits = null,
+        public bool $findIfExists = false,
+        public ?string $domain = null,
+        public int $shortCodeLength = 5,
+        public ?ApiKey $apiKey = null,
+        public array $tags = [],
+        public ?string $title = null,
+        public bool $titleWasAutoResolved = false,
+        public bool $crawlable = false,
+        public bool $forwardQuery = true,
     ) {
     }
 
     /**
      * @throws ValidationException
      */
-    public static function fromRawData(array $data, ?UrlShortenerOptions $options = null): self
+    public static function fromRawData(array $data, UrlShortenerOptions $options = new UrlShortenerOptions()): self
     {
-        $options = $options ?? new UrlShortenerOptions();
-        $inputFilter = ShortUrlInputFilter::withRequiredLongUrl($data, $options);
+        $inputFilter = ShortUrlInputFilter::forCreation($data, $options);
         if (! $inputFilter->isValid()) {
             throw ValidationException::fromInputFilter($inputFilter);
         }
