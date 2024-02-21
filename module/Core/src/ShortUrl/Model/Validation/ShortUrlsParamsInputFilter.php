@@ -7,7 +7,7 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Model\Validation;
 use Laminas\InputFilter\InputFilter;
 use Laminas\Validator\InArray;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
-use Shlinkio\Shlink\Common\Validation;
+use Shlinkio\Shlink\Common\Validation\InputFactory;
 use Shlinkio\Shlink\Core\ShortUrl\Model\OrderableField;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 
@@ -15,8 +15,6 @@ use function Shlinkio\Shlink\Core\enumValues;
 
 class ShortUrlsParamsInputFilter extends InputFilter
 {
-    use Validation\InputFactoryTrait;
-
     public const PAGE = 'page';
     public const SEARCH_TERM = 'searchTerm';
     public const TAGS = 'tags';
@@ -36,26 +34,26 @@ class ShortUrlsParamsInputFilter extends InputFilter
 
     private function initialize(): void
     {
-        $this->add($this->createDateInput(self::START_DATE, false));
-        $this->add($this->createDateInput(self::END_DATE, false));
+        $this->add(InputFactory::date(self::START_DATE));
+        $this->add(InputFactory::date(self::END_DATE));
 
-        $this->add($this->createInput(self::SEARCH_TERM, false));
+        $this->add(InputFactory::basic(self::SEARCH_TERM));
 
-        $this->add($this->createNumericInput(self::PAGE, false));
-        $this->add($this->createNumericInput(self::ITEMS_PER_PAGE, false, Paginator::ALL_ITEMS));
+        $this->add(InputFactory::numeric(self::PAGE));
+        $this->add(InputFactory::numeric(self::ITEMS_PER_PAGE, Paginator::ALL_ITEMS));
 
-        $this->add($this->createTagsInput(self::TAGS, false));
+        $this->add(InputFactory::tags(self::TAGS));
 
-        $tagsMode = $this->createInput(self::TAGS_MODE, false);
+        $tagsMode = InputFactory::basic(self::TAGS_MODE);
         $tagsMode->getValidatorChain()->attach(new InArray([
             'haystack' => enumValues(TagsMode::class),
             'strict' => InArray::COMPARE_STRICT,
         ]));
         $this->add($tagsMode);
 
-        $this->add($this->createOrderByInput(self::ORDER_BY, enumValues(OrderableField::class)));
+        $this->add(InputFactory::orderBy(self::ORDER_BY, enumValues(OrderableField::class)));
 
-        $this->add($this->createBooleanInput(self::EXCLUDE_MAX_VISITS_REACHED, false));
-        $this->add($this->createBooleanInput(self::EXCLUDE_PAST_VALID_UNTIL, false));
+        $this->add(InputFactory::boolean(self::EXCLUDE_MAX_VISITS_REACHED));
+        $this->add(InputFactory::boolean(self::EXCLUDE_PAST_VALID_UNTIL));
     }
 }

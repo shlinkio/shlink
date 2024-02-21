@@ -8,7 +8,8 @@ use DateTimeInterface;
 use Laminas\Filter;
 use Laminas\InputFilter\InputFilter;
 use Laminas\Validator;
-use Shlinkio\Shlink\Common\Validation;
+use Shlinkio\Shlink\Common\Validation\HostAndPortValidator;
+use Shlinkio\Shlink\Common\Validation\InputFactory;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -21,8 +22,6 @@ use const Shlinkio\Shlink\MIN_SHORT_CODES_LENGTH;
 
 class ShortUrlInputFilter extends InputFilter
 {
-    use Validation\InputFactoryTrait;
-
     // Fields for creation only
     public const SHORT_CODE_LENGTH = 'shortCodeLength';
     public const CUSTOM_SLUG = 'customSlug';
@@ -64,7 +63,7 @@ class ShortUrlInputFilter extends InputFilter
     {
         // The only way to enforce the NotEmpty validator to be evaluated when the key is present with an empty value
         // is with setContinueIfEmpty(true)
-        $customSlug = $this->createInput(self::CUSTOM_SLUG, required: false)->setContinueIfEmpty(true);
+        $customSlug = InputFactory::basic(self::CUSTOM_SLUG)->setContinueIfEmpty(true);
         $customSlug->getFilterChain()->attach(new CustomSlugFilter($options));
         $customSlug->getValidatorChain()
             ->attach(new Validator\NotEmpty([
@@ -77,16 +76,16 @@ class ShortUrlInputFilter extends InputFilter
         // The path prefix is subject to the same filtering and validation logic as the custom slug, which takes into
         // consideration if multi-segment slugs are enabled or not.
         // The only difference is that empty values are allowed here.
-        $pathPrefix = $this->createInput(self::PATH_PREFIX, required: false);
+        $pathPrefix = InputFactory::basic(self::PATH_PREFIX);
         $pathPrefix->getFilterChain()->attach(new CustomSlugFilter($options));
         $pathPrefix->getValidatorChain()->attach(CustomSlugValidator::forUrlShortenerOptions($options));
         $this->add($pathPrefix);
 
-        $this->add($this->createNumericInput(self::SHORT_CODE_LENGTH, required: false, min: MIN_SHORT_CODES_LENGTH));
-        $this->add($this->createBooleanInput(self::FIND_IF_EXISTS, required: false));
+        $this->add(InputFactory::numeric(self::SHORT_CODE_LENGTH, min: MIN_SHORT_CODES_LENGTH));
+        $this->add(InputFactory::boolean(self::FIND_IF_EXISTS));
 
-        $domain = $this->createInput(self::DOMAIN, required: false);
-        $domain->getValidatorChain()->attach(new Validation\HostAndPortValidator());
+        $domain = InputFactory::basic(self::DOMAIN);
+        $domain->getValidatorChain()->attach(new HostAndPortValidator());
         $this->add($domain);
 
         $this->initializeForEdition(requireLongUrl: true);
@@ -94,40 +93,40 @@ class ShortUrlInputFilter extends InputFilter
 
     private function initializeForEdition(bool $requireLongUrl = false): void
     {
-        $longUrlInput = $this->createInput(self::LONG_URL, $requireLongUrl);
+        $longUrlInput = InputFactory::basic(self::LONG_URL, required: $requireLongUrl);
         $longUrlInput->getValidatorChain()->merge($this->longUrlValidators());
         $this->add($longUrlInput);
 
-        $deviceLongUrlsInput = $this->createInput(self::DEVICE_LONG_URLS, required: false);
+        $deviceLongUrlsInput = InputFactory::basic(self::DEVICE_LONG_URLS);
         $deviceLongUrlsInput->getValidatorChain()->attach(
             new DeviceLongUrlsValidator($this->longUrlValidators(allowNull: ! $requireLongUrl)),
         );
         $this->add($deviceLongUrlsInput);
 
-        $validSince = $this->createInput(self::VALID_SINCE, required: false);
+        $validSince = InputFactory::basic(self::VALID_SINCE);
         $validSince->getValidatorChain()->attach(new Validator\Date(['format' => DateTimeInterface::ATOM]));
         $this->add($validSince);
 
-        $validUntil = $this->createInput(self::VALID_UNTIL, required: false);
+        $validUntil = InputFactory::basic(self::VALID_UNTIL);
         $validUntil->getValidatorChain()->attach(new Validator\Date(['format' => DateTimeInterface::ATOM]));
         $this->add($validUntil);
 
-        $this->add($this->createNumericInput(self::MAX_VISITS, required: false));
+        $this->add(InputFactory::numeric(self::MAX_VISITS));
 
-        $title = $this->createInput(self::TITLE, required: false);
+        $title = InputFactory::basic(self::TITLE);
         $title->getFilterChain()->attach(new Filter\Callback(
             static fn (?string $value) => $value === null ? $value : substr($value, 0, 512),
         ));
         $this->add($title);
 
-        $this->add($this->createTagsInput(self::TAGS, required: false));
-        $this->add($this->createBooleanInput(self::CRAWLABLE, required: false));
+        $this->add(InputFactory::tags(self::TAGS));
+        $this->add(InputFactory::boolean(self::CRAWLABLE));
 
         // This cannot be defined as a boolean inputs, because it can actually have 3 values: true, false and null.
         // Defining them as boolean will make null fall back to false, which is not the desired behavior.
-        $this->add($this->createInput(self::FORWARD_QUERY, required: false));
+        $this->add(InputFactory::basic(self::FORWARD_QUERY));
 
-        $apiKeyInput = $this->createInput(self::API_KEY, required: false);
+        $apiKeyInput = InputFactory::basic(self::API_KEY);
         $apiKeyInput->getValidatorChain()->attach(new Validator\IsInstanceOf(['className' => ApiKey::class]));
         $this->add($apiKeyInput);
     }
