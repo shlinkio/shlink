@@ -12,6 +12,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
   This is supported both by the `GET /visits/orphan` API endpoint via `type=...` query param, and by the `visit:orphan` CLI command, via `--type` flag.
 
 * [#1904](https://github.com/shlinkio/shlink/issues/1904) Allow to customize QR codes foreground color, background color and logo.
+* [#1884](https://github.com/shlinkio/shlink/issues/1884) Allow a path prefix to be provided during short URL creation.
+
+  This can be useful to let Shlink generate partially random URLs, but with a known prefix.
+
+  Path prefixes are validated and filtered taking multi-segment slugs into consideration, which means slashes are replaced with dashes as long as multi-segment slugs are disabled.
 
 ### Changed
 * [#1935](https://github.com/shlinkio/shlink/issues/1935) Replace dependency on abandoned `php-middleware/request-id` with userland simple middleware.

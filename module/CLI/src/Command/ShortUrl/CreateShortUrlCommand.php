@@ -71,6 +71,12 @@ class CreateShortUrlCommand extends Command
                 'If provided, this slug will be used instead of generating a short code',
             )
             ->addOption(
+                'path-prefix',
+                'p',
+                InputOption::VALUE_REQUIRED,
+                'Prefix to prepend before the generated short code or provided custom slug',
+            )
+            ->addOption(
                 'max-visits',
                 'm',
                 InputOption::VALUE_REQUIRED,
@@ -138,7 +144,6 @@ class CreateShortUrlCommand extends Command
 
         $explodeWithComma = static fn (string $tag) => explode(',', $tag);
         $tags = array_unique(flatten(array_map($explodeWithComma, $input->getOption('tags'))));
-        $customSlug = $input->getOption('custom-slug');
         $maxVisits = $input->getOption('max-visits');
         $shortCodeLength = $input->getOption('short-code-length') ?? $this->options->defaultShortCodesLength;
 
@@ -147,8 +152,9 @@ class CreateShortUrlCommand extends Command
                 ShortUrlInputFilter::LONG_URL => $longUrl,
                 ShortUrlInputFilter::VALID_SINCE => $input->getOption('valid-since'),
                 ShortUrlInputFilter::VALID_UNTIL => $input->getOption('valid-until'),
-                ShortUrlInputFilter::CUSTOM_SLUG => $customSlug,
                 ShortUrlInputFilter::MAX_VISITS => $maxVisits !== null ? (int) $maxVisits : null,
+                ShortUrlInputFilter::CUSTOM_SLUG => $input->getOption('custom-slug'),
+                ShortUrlInputFilter::PATH_PREFIX => $input->getOption('path-prefix'),
                 ShortUrlInputFilter::FIND_IF_EXISTS => $input->getOption('find-if-exists'),
                 ShortUrlInputFilter::DOMAIN => $input->getOption('domain'),
                 ShortUrlInputFilter::SHORT_CODE_LENGTH => $shortCodeLength,
