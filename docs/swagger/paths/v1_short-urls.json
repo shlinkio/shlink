@@ -303,6 +303,10 @@
                                         "description": "A unique custom slug to be used instead of the generated short code",
                                         "type": "string"
                                     },
+                                    "pathPrefix": {
+                                        "description": "A prefix that will be prepended to provided custom slug or auto-generated short code",
+                                        "type": "string"
+                                    },
                                     "findIfExists": {
                                         "description": "Will force existing matching URL to be returned if found, instead of creating a new one",
                                         "type": "boolean"
@@ -382,6 +386,7 @@
                                                     "validSince",
                                                     "validUntil",
                                                     "customSlug",
+                                                    "pathPrefix",
                                                     "maxVisits",
                                                     "findIfExists",
                                                     "domain"

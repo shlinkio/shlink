@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl\Entity;
 use Cake\Chronos\Chronos;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
 use Shlinkio\Shlink\Core\Model\DeviceType;
@@ -89,6 +90,27 @@ class ShortUrlTest extends TestCase
     {
         yield [null, DEFAULT_SHORT_CODES_LENGTH];
         yield from array_map(fn (int $value) => [$value, $value], range(4, 10));
+    }
+
+    #[Test]
+    #[TestWith([null, '', 5])]
+    #[TestWith(['foo bar/', 'foo-bar-', 13])]
+    public function shortCodesHaveExpectedPrefix(
+        ?string $pathPrefix,
+        string $expectedPrefix,
+        int $expectedShortCodeLength,
+    ): void {
+        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
+            'longUrl' => 'https://longUrl',
+            ShortUrlInputFilter::SHORT_CODE_LENGTH => 5,
+            ShortUrlInputFilter::PATH_PREFIX => $pathPrefix,
+        ]));
+        $shortCode = $shortUrl->getShortCode();
+
+        if (strlen($expectedPrefix) > 0) {
+            self::assertStringStartsWith($expectedPrefix, $shortCode);
+        }
+        self::assertEquals($expectedShortCodeLength, strlen($shortCode));
     }
 
     #[Test]

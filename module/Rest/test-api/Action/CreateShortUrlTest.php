@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use function array_map;
@@ -337,6 +338,21 @@ class CreateShortUrlTest extends ApiTestCase
 
         self::assertEquals(self::STATUS_OK, $statusCode);
         self::assertNull($payload['title']);
+    }
+
+    #[Test]
+    #[TestWith([null])]
+    #[TestWith(['my-custom-slug'])]
+    public function prefixCanBeSet(?string $customSlug): void
+    {
+        [$statusCode, $payload] = $this->createShortUrl([
+            'longUrl' => 'https://github.com/shlinkio/shlink/issues/1557',
+            'pathPrefix' => 'foo/b  ar-baz',
+            'customSlug' => $customSlug,
+        ]);
+
+        self::assertEquals(self::STATUS_OK, $statusCode);
+        self::assertStringStartsWith('foo-b--ar-baz', $payload['shortCode']);
     }
 
     /**
