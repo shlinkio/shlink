@@ -13,10 +13,10 @@ mkdir data/log/api-tests
 touch $OUTPUT_LOGS
 
 # Try to stop server just in case it hanged in last execution
-[ "$TEST_RUNTIME" = 'rr' ] && bin/rr stop -f
+[ "$TEST_RUNTIME" = 'rr' ] && bin/rr stop -f -w .
 
 echo 'Starting server...'
-[ "$TEST_RUNTIME" = 'rr' ] && bin/rr serve -p -c=config/roadrunner/.rr.test.yml -w . \
+[ "$TEST_RUNTIME" = 'rr' ] && bin/rr serve -p -w . -c=config/roadrunner/.rr.test.yml \
   -o=logs.output="${PWD}/${OUTPUT_LOGS}" \
   -o=logs.channels.http.output="${PWD}/${OUTPUT_LOGS}" \
   -o=logs.channels.server.output="${PWD}/${OUTPUT_LOGS}" &
@@ -25,7 +25,7 @@ sleep 2 # Let's give the server a couple of seconds to start
 vendor/bin/phpunit --order-by=random -c phpunit-api.xml --testdox --colors=always $*
 TESTS_EXIT_CODE=$?
 
-[ "$TEST_RUNTIME" = 'rr' ] && bin/rr stop -c=config/roadrunner/.rr.dev.yml -w . -o=http.address=0.0.0.0:9999
+[ "$TEST_RUNTIME" = 'rr' ] && bin/rr stop -w .
 
 # Exit this script with the same code as the tests. If tests failed, this script has to fail
 exit $TESTS_EXIT_CODE
