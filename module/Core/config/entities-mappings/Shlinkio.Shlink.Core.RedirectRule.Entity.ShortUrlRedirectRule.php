@@ -37,5 +37,6 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->setJoinTable(determineTableName('redirect_conditions_in_short_url_redirect_rules', $emConfig))
             ->addInverseJoinColumn('redirect_condition_id', 'id', onDelete: 'CASCADE')
             ->addJoinColumn('short_url_redirect_rule_id', 'id', onDelete: 'CASCADE')
+            ->fetchEager() // Always fetch the corresponding conditions when loading a rule
             ->build();
 };
