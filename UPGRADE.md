@@ -7,6 +7,7 @@
 * Swoole and Openswoole are no longer officially supported runtimes. The recommended alternative is RoadRunner.
 * Dist files for swoole/openswoole are no longer published.
 * Webhooks are no longer supported. Migrate to one of the other [real-time updates](https://shlink.io/documentation/advanced/real-time-updates/) mechanisms.
+* When using RoadRunner, the amount of web workers, task workers and the port number can no longer be provided via config options. Use `WEB_WORKER_NUM`, `TASK_WORKER_NUM` and `PORT` env vars instead.
 
 ### Changes in URL shortener
 
