@@ -28,15 +28,18 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
     fieldWithUtf8Charset($builder->createField('baseUrlRedirect', Types::TEXT), $emConfig)
             ->columnName('base_url_redirect')
             ->nullable()
+            ->length(2048)
             ->build();
 
     fieldWithUtf8Charset($builder->createField('regular404Redirect', Types::TEXT), $emConfig)
             ->columnName('regular_not_found_redirect')
             ->nullable()
+            ->length(2048)
             ->build();
 
     fieldWithUtf8Charset($builder->createField('invalidShortUrlRedirect', Types::TEXT), $emConfig)
             ->columnName('invalid_short_url_redirect')
             ->nullable()
+            ->length(2048)
             ->build();
 };

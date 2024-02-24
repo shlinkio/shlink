@@ -25,6 +25,7 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
 
     fieldWithUtf8Charset($builder->createField('longUrl', Types::TEXT), $emConfig)
             ->columnName('original_url') // Rename to long_url some day? ¯\_(ツ)_/¯
+            ->length(2048)
             ->build();
 
     fieldWithUtf8Charset($builder->createField('shortCode', Types::STRING), $emConfig, 'bin')
