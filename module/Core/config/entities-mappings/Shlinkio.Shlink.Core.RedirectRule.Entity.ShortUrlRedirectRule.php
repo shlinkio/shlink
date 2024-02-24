@@ -30,7 +30,7 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
         ->build();
 
     $builder->createManyToOne('shortUrl', ShortUrl\Entity\ShortUrl::class)
-            ->addJoinColumn('short_url_id', 'id', false, false, 'CASCADE')
+            ->addJoinColumn('short_url_id', 'id', nullable: false, onDelete: 'CASCADE')
             ->build();
 
     $builder->createManyToMany('conditions', RedirectRule\Entity\RedirectCondition::class)

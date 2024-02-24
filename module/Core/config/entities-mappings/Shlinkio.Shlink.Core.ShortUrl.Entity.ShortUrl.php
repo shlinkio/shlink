@@ -76,18 +76,18 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
 
     $builder->createManyToMany('tags', Tag\Entity\Tag::class)
             ->setJoinTable(determineTableName('short_urls_in_tags', $emConfig))
-            ->addInverseJoinColumn('tag_id', 'id', true, false, 'CASCADE')
-            ->addJoinColumn('short_url_id', 'id', true, false, 'CASCADE')
+            ->addInverseJoinColumn('tag_id', 'id', onDelete: 'CASCADE')
+            ->addJoinColumn('short_url_id', 'id', onDelete: 'CASCADE')
             ->setOrderBy(['name' => 'ASC'])
             ->build();
 
     $builder->createManyToOne('domain', Domain\Entity\Domain::class)
-            ->addJoinColumn('domain_id', 'id', true, false, 'RESTRICT')
+            ->addJoinColumn('domain_id', 'id', onDelete: 'RESTRICT')
             ->cascadePersist()
             ->build();
 
     $builder->createManyToOne('authorApiKey', ApiKey::class)
-            ->addJoinColumn('author_api_key_id', 'id', true, false, 'SET NULL')
+            ->addJoinColumn('author_api_key_id', 'id', onDelete: 'SET NULL')
             ->build();
 
     $builder->addUniqueConstraint(['short_code', 'domain_id'], 'unique_short_code_plus_domain');
