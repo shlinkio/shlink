@@ -28,8 +28,6 @@ return [
             Option\BasePathConfigOption::class,
             Option\TimezoneConfigOption::class,
             Option\Cache\CacheNamespaceConfigOption::class,
-            Option\Worker\TaskWorkerNumConfigOption::class,
-            Option\Worker\WebWorkerNumConfigOption::class,
             Option\Redis\RedisServersConfigOption::class,
             Option\Redis\RedisSentinelServiceConfigOption::class,
             Option\Redis\RedisPubSubConfigOption::class,
