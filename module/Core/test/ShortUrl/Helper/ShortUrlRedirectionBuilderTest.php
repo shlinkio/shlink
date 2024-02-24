@@ -7,26 +7,26 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl\Helper;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
+use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectionResolverInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlRedirectionBuilder;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 
-use const ShlinkioTest\Shlink\ANDROID_USER_AGENT;
-use const ShlinkioTest\Shlink\DESKTOP_USER_AGENT;
-use const ShlinkioTest\Shlink\IOS_USER_AGENT;
-
 class ShortUrlRedirectionBuilderTest extends TestCase
 {
     private ShortUrlRedirectionBuilder $redirectionBuilder;
+    private ShortUrlRedirectionResolverInterface & MockObject $redirectionResolver;
 
     protected function setUp(): void
     {
         $trackingOptions = new TrackingOptions(disableTrackParam: 'foobar');
-        $this->redirectionBuilder = new ShortUrlRedirectionBuilder($trackingOptions);
+        $this->redirectionResolver = $this->createMock(ShortUrlRedirectionResolverInterface::class);
+
+        $this->redirectionBuilder = new ShortUrlRedirectionBuilder($trackingOptions, $this->redirectionResolver);
     }
 
     #[Test, DataProvider('provideData')]
@@ -39,11 +39,12 @@ class ShortUrlRedirectionBuilderTest extends TestCase
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
             'longUrl' => 'https://domain.com/foo/bar?some=thing',
             'forwardQuery' => $forwardQuery,
-            'deviceLongUrls' => [
-                DeviceType::ANDROID->value => 'https://domain.com/android',
-                DeviceType::IOS->value => 'https://domain.com/ios',
-            ],
         ]));
+        $this->redirectionResolver->expects($this->once())->method('resolveLongUrl')->with(
+            $shortUrl,
+            $request,
+        )->willReturn($shortUrl->getLongUrl());
+
         $result = $this->redirectionBuilder->buildShortUrlRedirect($shortUrl, $request, $extraPath);
 
         self::assertEquals($expectedUrl, $result);
@@ -72,7 +73,7 @@ class ShortUrlRedirectionBuilderTest extends TestCase
         ];
         yield [
             'https://domain.com/foo/bar?some=overwritten',
-            $request(['foobar' => 'notrack', 'some' => 'overwritten'])->withHeader('User-Agent', 'Unknown'),
+            $request(['foobar' => 'notrack', 'some' => 'overwritten']),
             null,
             true,
         ];
@@ -91,7 +92,7 @@ class ShortUrlRedirectionBuilderTest extends TestCase
         yield ['https://domain.com/foo/bar/something/else-baz?some=thing', $request(), '/something/else-baz', true];
         yield [
             'https://domain.com/foo/bar/something/else-baz?some=thing&hello=world',
-            $request(['hello' => 'world'])->withHeader('User-Agent', DESKTOP_USER_AGENT),
+            $request(['hello' => 'world']),
             '/something/else-baz',
             true,
         ];
@@ -106,18 +107,6 @@ class ShortUrlRedirectionBuilderTest extends TestCase
             $request(['hello' => 'world']),
             '/something/else-baz',
             false,
-        ];
-        yield [
-            'https://domain.com/android/something',
-            $request(['foo' => 'bar'])->withHeader('User-Agent', ANDROID_USER_AGENT),
-            '/something',
-            false,
-        ];
-        yield [
-            'https://domain.com/ios?foo=bar',
-            $request(['foo' => 'bar'])->withHeader('User-Agent', IOS_USER_AGENT),
-            null,
-            null,
         ];
     }
 }
