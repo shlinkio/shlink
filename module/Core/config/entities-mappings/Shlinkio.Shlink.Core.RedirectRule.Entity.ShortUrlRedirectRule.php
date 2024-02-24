@@ -6,14 +6,12 @@ namespace Shlinkio\Shlink\Core;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
-use Doctrine\ORM\Mapping\Builder\FieldBuilder;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Shlinkio\Shlink\Core\Model\DeviceType;
 
 return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder = new ClassMetadataBuilder($metadata);
 
-    $builder->setTable(determineTableName('device_long_urls', $emConfig));
+    $builder->setTable(determineTableName('short_url_redirect_rules', $emConfig));
 
     $builder->createField('id', Types::BIGINT)
             ->columnName('id')
@@ -22,13 +20,9 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->option('unsigned', true)
             ->build();
 
-    (new FieldBuilder($builder, [
-        'fieldName' => 'deviceType',
-        'type' => Types::STRING,
-        'enumType' => DeviceType::class,
-    ]))->columnName('device_type')
-       ->length(255)
-       ->build();
+    $builder->createField('priority', Types::INTEGER)
+            ->columnName('priority')
+            ->build();
 
     fieldWithUtf8Charset($builder->createField('longUrl', Types::TEXT), $emConfig)
         ->columnName('long_url')
@@ -37,5 +31,12 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
 
     $builder->createManyToOne('shortUrl', ShortUrl\Entity\ShortUrl::class)
             ->addJoinColumn('short_url_id', 'id', nullable: false, onDelete: 'CASCADE')
+            ->build();
+
+    $builder->createManyToMany('conditions', RedirectRule\Entity\RedirectCondition::class)
+            ->setJoinTable(determineTableName('redirect_conditions_in_short_url_redirect_rules', $emConfig))
+            ->addInverseJoinColumn('redirect_condition_id', 'id', onDelete: 'CASCADE')
+            ->addJoinColumn('short_url_redirect_rule_id', 'id', onDelete: 'CASCADE')
+            ->fetchEager() // Always fetch the corresponding conditions when loading a rule
             ->build();
 };
