@@ -26,7 +26,9 @@ use function print_r;
 use function Shlinkio\Shlink\Common\buildDateRange;
 use function sprintf;
 use function str_repeat;
+use function str_replace;
 use function strtolower;
+use function trim;
 use function ucfirst;
 
 function generateRandomShortCode(int $length, ShortUrlMode $mode = ShortUrlMode::STRICT): string
@@ -72,6 +74,11 @@ function normalizeOptionalDate(string|DateTimeInterface|Chronos|null $date): ?Ch
 function normalizeDate(string|DateTimeInterface|Chronos $date): Chronos
 {
     return normalizeOptionalDate($date);
+}
+
+function normalizeLocale(string $locale): string
+{
+    return trim(strtolower(str_replace('_', '-', $locale)));
 }
 
 function getOptionalIntFromInputFilter(InputFilter $inputFilter, string $fieldName): ?int
