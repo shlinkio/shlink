@@ -28,7 +28,7 @@ class ShortUrlRedirectRule extends AbstractEntity
      */
     public function matchesRequest(ServerRequestInterface $request): bool
     {
-        return every(
+        return $this->conditions->count() > 0 && every(
             $this->conditions,
             static fn (RedirectCondition $condition) => $condition->matchesRequest($request),
         );
