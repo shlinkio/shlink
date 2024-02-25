@@ -25,22 +25,38 @@ class RedirectCondition extends AbstractEntity
      */
     public function matchesRequest(ServerRequestInterface $request): bool
     {
-        if ($this->type === RedirectConditionType::QUERY_PARAM && $this->matchKey !== null) {
-            $query = $request->getQueryParams();
-            $queryValue = $query[$this->matchKey] ?? null;
-            return $queryValue === $this->matchValue;
+        return match ($this->type) {
+            RedirectConditionType::QUERY_PARAM => $this->matchesQueryParam($request),
+            RedirectConditionType::LANGUAGE => $this->matchesLanguage($request),
+            default => false,
+        };
+    }
+
+    public function matchesQueryParam(ServerRequestInterface $request): bool
+    {
+        if ($this->matchKey !== null) {
+            return false;
         }
 
-        if ($this->type === RedirectConditionType::LANGUAGE && $request->hasHeader('Accept-Language')) {
-            $acceptedLanguages = explode(',', $request->getHeaderLine('Accept-Language'));
-            $normalizedLanguage = normalizeLocale($this->matchValue);
+        $query = $request->getQueryParams();
+        $queryValue = $query[$this->matchKey] ?? null;
 
-            return some(
-                $acceptedLanguages,
-                static fn (string $lang) => normalizeLocale($lang) === $normalizedLanguage,
-            );
+        return $queryValue === $this->matchValue;
+    }
+
+    public function matchesLanguage(ServerRequestInterface $request): bool
+    {
+        $acceptLanguage = $request->getHeaderLine('Accept-Language');
+        if ($acceptLanguage === '' || $acceptLanguage === '*') {
+            return false;
         }
 
-        return false;
+        $acceptedLanguages = explode(',', $acceptLanguage);
+        $normalizedLanguage = normalizeLocale($this->matchValue);
+
+        return some(
+            $acceptedLanguages,
+            static fn (string $lang) => normalizeLocale($lang) === $normalizedLanguage,
+        );
     }
 }
