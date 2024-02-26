@@ -66,8 +66,7 @@ class RedirectCondition extends AbstractEntity
         }
 
         $acceptedLanguages = acceptLanguageToLocales($acceptLanguage);
-        $normalizedLocale = normalizeLocale($this->matchValue);
-        [$matchLanguage, $matchCountryCode] = splitLocale($normalizedLocale);
+        [$matchLanguage, $matchCountryCode] = splitLocale(normalizeLocale($this->matchValue));
 
         return some(
             $acceptedLanguages,
