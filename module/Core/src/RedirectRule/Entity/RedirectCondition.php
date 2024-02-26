@@ -16,8 +16,8 @@ class RedirectCondition extends AbstractEntity
     private function __construct(
         public readonly string $name,
         private readonly RedirectConditionType $type,
-        public readonly string $matchValue,
-        public readonly ?string $matchKey = null,
+        private readonly string $matchValue,
+        private readonly ?string $matchKey = null,
     ) {
     }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioApiTest\Shlink\Core\Action;
 
+use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
@@ -15,9 +16,9 @@ use const ShlinkioTest\Shlink\IOS_USER_AGENT;
 class RedirectTest extends ApiTestCase
 {
     #[Test, DataProvider('provideUserAgents')]
-    public function properRedirectHappensBasedOnUserAgent(?string $userAgent, string $expectedRedirect): void
+    public function properRedirectHappensBasedOnUserAgent(array $options, string $expectedRedirect): void
     {
-        $response = $this->callShortUrl('def456', $userAgent);
+        $response = $this->callShortUrl('def456', $options);
 
         self::assertEquals(302, $response->getStatusCode());
         self::assertEquals($expectedRedirect, $response->getHeaderLine('Location'));
@@ -25,15 +26,48 @@ class RedirectTest extends ApiTestCase
 
     public static function provideUserAgents(): iterable
     {
-        yield 'android' => [ANDROID_USER_AGENT, 'https://blog.alejandrocelaya.com/android'];
-        yield 'ios' => [IOS_USER_AGENT, 'https://blog.alejandrocelaya.com/ios'];
+        yield 'android' => [
+            [
+                RequestOptions::HEADERS => ['User-Agent' => ANDROID_USER_AGENT],
+            ],
+            'https://blog.alejandrocelaya.com/android',
+        ];
+        yield 'ios' => [
+            [
+                RequestOptions::HEADERS => ['User-Agent' => IOS_USER_AGENT],
+            ],
+            'https://blog.alejandrocelaya.com/ios',
+        ];
         yield 'desktop' => [
-            DESKTOP_USER_AGENT,
+            [
+                RequestOptions::HEADERS => ['User-Agent' => DESKTOP_USER_AGENT],
+            ],
             'https://blog.alejandrocelaya.com/2017/12/09/acmailer-7-0-the-most-important-release-in-a-long-time/',
         ];
         yield 'unknown' => [
-            null,
+            [],
             'https://blog.alejandrocelaya.com/2017/12/09/acmailer-7-0-the-most-important-release-in-a-long-time/',
+        ];
+        yield 'rule: english and foo' => [
+            [
+                RequestOptions::HEADERS => [
+                    'Accept-Language' => 'en-UK',
+                ],
+                RequestOptions::QUERY => ['foo' => 'bar'],
+            ],
+            'https://example.com/english-and-foo-query?foo=bar',
+        ];
+        yield 'rule: multiple query params' => [
+            [
+                RequestOptions::QUERY => ['foo' => 'bar', 'hello' => 'world'],
+            ],
+            'https://example.com/multiple-query-params?foo=bar&hello=world',
+        ];
+        yield 'rule: english' => [
+            [
+                RequestOptions::HEADERS => ['Accept-Language' => 'en-UK'],
+            ],
+            'https://example.com/only-english',
         ];
     }
 }

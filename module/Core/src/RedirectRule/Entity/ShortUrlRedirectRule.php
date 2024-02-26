@@ -19,7 +19,7 @@ class ShortUrlRedirectRule extends AbstractEntity
         private readonly ShortUrl $shortUrl, // No need to read this field. It's used by doctrine
         private readonly int $priority,
         public readonly string $longUrl,
-        public readonly Collection $conditions = new ArrayCollection(),
+        private Collection $conditions = new ArrayCollection(),
     ) {
     }
 
