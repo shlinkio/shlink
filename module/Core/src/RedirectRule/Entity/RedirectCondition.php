@@ -6,10 +6,12 @@ use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
 
-use function explode;
+use function Shlinkio\Shlink\Core\acceptLanguageToLocales;
 use function Shlinkio\Shlink\Core\ArrayUtils\some;
 use function Shlinkio\Shlink\Core\normalizeLocale;
+use function Shlinkio\Shlink\Core\splitLocale;
 use function sprintf;
+use function trim;
 
 class RedirectCondition extends AbstractEntity
 {
@@ -58,17 +60,26 @@ class RedirectCondition extends AbstractEntity
 
     private function matchesLanguage(ServerRequestInterface $request): bool
     {
-        $acceptLanguage = $request->getHeaderLine('Accept-Language');
+        $acceptLanguage = trim($request->getHeaderLine('Accept-Language'));
         if ($acceptLanguage === '' || $acceptLanguage === '*') {
             return false;
         }
 
-        $acceptedLanguages = explode(',', $acceptLanguage);
-        $normalizedLanguage = normalizeLocale($this->matchValue);
+        $acceptedLanguages = acceptLanguageToLocales($acceptLanguage);
+        $normalizedLocale = normalizeLocale($this->matchValue);
+        [$matchLanguage, $matchCountryCode] = splitLocale($normalizedLocale);
 
         return some(
             $acceptedLanguages,
-            static fn (string $lang) => normalizeLocale($lang) === $normalizedLanguage,
+            static function (string $lang) use ($matchLanguage, $matchCountryCode): bool {
+                [$language, $countryCode] = splitLocale($lang);
+
+                if ($matchLanguage !== $language) {
+                    return false;
+                }
+
+                return $matchCountryCode === null || $matchCountryCode === $countryCode;
+            },
         );
     }
 }

@@ -24,7 +24,7 @@ class ShortUrlRedirectRulesFixture extends AbstractFixture implements DependentF
         /** @var ShortUrl $defShortUrl */
         $defShortUrl = $this->getReference('def456_short_url');
 
-        $englishCondition = RedirectCondition::forLanguage('en-UK');
+        $englishCondition = RedirectCondition::forLanguage('en');
         $manager->persist($englishCondition);
 
         $fooQueryCondition = RedirectCondition::forQueryParam('foo', 'bar');

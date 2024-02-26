@@ -50,9 +50,7 @@ class RedirectTest extends ApiTestCase
         ];
         yield 'rule: english and foo' => [
             [
-                RequestOptions::HEADERS => [
-                    'Accept-Language' => 'en-UK',
-                ],
+                RequestOptions::HEADERS => ['Accept-Language' => 'en-UK'],
                 RequestOptions::QUERY => ['foo' => 'bar'],
             ],
             'https://example.com/english-and-foo-query?foo=bar',
@@ -63,9 +61,21 @@ class RedirectTest extends ApiTestCase
             ],
             'https://example.com/multiple-query-params?foo=bar&hello=world',
         ];
-        yield 'rule: english' => [
+        yield 'rule: british english' => [
             [
                 RequestOptions::HEADERS => ['Accept-Language' => 'en-UK'],
+            ],
+            'https://example.com/only-english',
+        ];
+        yield 'rule: english' => [
+            [
+                RequestOptions::HEADERS => ['Accept-Language' => 'en'],
+            ],
+            'https://example.com/only-english',
+        ];
+        yield 'rule: complex matching accept language' => [
+            [
+                RequestOptions::HEADERS => ['Accept-Language' => 'fr-FR, es;q=08, en;q=0.5, *;q=0.2'],
             ],
             'https://example.com/only-english',
         ];
