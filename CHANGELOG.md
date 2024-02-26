@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
   This is implemented on top of the new [rule-based redirects](https://github.com/shlinkio/shlink/discussions/1912).
 
+* [#1915](https://github.com/shlinkio/shlink/issues/1915) Add dynamic redirects based on accept language.
+
+  This is implemented on top of the new [rule-based redirects](https://github.com/shlinkio/shlink/discussions/1912).
+
 * [#1868](https://github.com/shlinkio/shlink/issues/1868) Add support for [docker compose secrets](https://docs.docker.com/compose/use-secrets/) to the docker image.
 * [#1979](https://github.com/shlinkio/shlink/issues/1979) Allow orphan visits lists to be filtered by type.
 
