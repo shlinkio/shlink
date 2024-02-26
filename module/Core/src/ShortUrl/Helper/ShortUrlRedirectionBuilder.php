@@ -8,16 +8,18 @@ use GuzzleHttp\Psr7\Query;
 use Laminas\Diactoros\Uri;
 use Laminas\Stdlib\ArrayUtils;
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
+use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectionResolverInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 
 use function sprintf;
 
-class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderInterface
+readonly class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderInterface
 {
-    public function __construct(private readonly TrackingOptions $trackingOptions)
-    {
+    public function __construct(
+        private TrackingOptions $trackingOptions,
+        private ShortUrlRedirectionResolverInterface $redirectionResolver,
+    ) {
     }
 
     public function buildShortUrlRedirect(
@@ -25,9 +27,8 @@ class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderInterface
         ServerRequestInterface $request,
         ?string $extraPath = null,
     ): string {
+        $uri = new Uri($this->redirectionResolver->resolveLongUrl($shortUrl, $request));
         $currentQuery = $request->getQueryParams();
-        $device = DeviceType::matchFromUserAgent($request->getHeaderLine('User-Agent'));
-        $uri = new Uri($shortUrl->longUrlForDevice($device));
         $shouldForwardQuery = $shortUrl->forwardQuery();
 
         return $uri

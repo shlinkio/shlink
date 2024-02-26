@@ -32,6 +32,8 @@ return [
             Options\QrCodeOptions::class => [ValinorConfigFactory::class, 'config.qr_codes'],
             Options\RabbitMqOptions::class => [ValinorConfigFactory::class, 'config.rabbitmq'],
 
+            RedirectRule\ShortUrlRedirectionResolver::class => ConfigAbstractFactory::class,
+
             ShortUrl\UrlShortener::class => ConfigAbstractFactory::class,
             ShortUrl\ShortUrlService::class => ConfigAbstractFactory::class,
             ShortUrl\ShortUrlListService::class => ConfigAbstractFactory::class,
@@ -156,6 +158,7 @@ return [
         Util\RedirectResponseHelper::class => [Options\RedirectOptions::class],
 
         Config\NotFoundRedirectResolver::class => [Util\RedirectResponseHelper::class, 'Logger_Shlink'],
+        RedirectRule\ShortUrlRedirectionResolver::class => ['em'],
 
         Action\RedirectAction::class => [
             ShortUrl\ShortUrlResolver::class,
@@ -179,7 +182,10 @@ return [
         ],
         ShortUrl\Helper\ShortUrlStringifier::class => ['config.url_shortener.domain', 'config.router.base_path'],
         ShortUrl\Helper\ShortUrlTitleResolutionHelper::class => ['httpClient', Options\UrlShortenerOptions::class],
-        ShortUrl\Helper\ShortUrlRedirectionBuilder::class => [Options\TrackingOptions::class],
+        ShortUrl\Helper\ShortUrlRedirectionBuilder::class => [
+            Options\TrackingOptions::class,
+            RedirectRule\ShortUrlRedirectionResolver::class,
+        ],
         ShortUrl\Transformer\ShortUrlDataTransformer::class => [ShortUrl\Helper\ShortUrlStringifier::class],
         ShortUrl\Middleware\ExtraPathRedirectMiddleware::class => [
             ShortUrl\ShortUrlResolver::class,
