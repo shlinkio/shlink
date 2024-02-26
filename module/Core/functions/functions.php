@@ -16,10 +16,13 @@ use PUGX\Shortid\Factory as ShortIdFactory;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 
+use function array_filter;
 use function array_keys;
 use function array_map;
+use function array_pad;
 use function array_reduce;
 use function date_default_timezone_get;
+use function explode;
 use function implode;
 use function is_array;
 use function print_r;
@@ -79,6 +82,33 @@ function normalizeDate(string|DateTimeInterface|Chronos $date): Chronos
 function normalizeLocale(string $locale): string
 {
     return trim(strtolower(str_replace('_', '-', $locale)));
+}
+
+/**
+ * @param non-empty-string $acceptLanguage
+ * @return string[];
+ */
+function acceptLanguageToLocales(string $acceptLanguage): array
+{
+    $acceptLanguagesList = array_map(function (string $lang): string {
+        [$lang] = explode(';', $lang); // Discard everything after the semicolon (en-US;q=0.7)
+        return normalizeLocale($lang);
+    }, explode(',', $acceptLanguage));
+    return array_filter($acceptLanguagesList, static fn (string $lang) => $lang !== '*');
+}
+
+/**
+ * Splits a locale into its corresponding language and country codes.
+ * The country code will be null if not present
+ *   'es-AR' -> ['es', 'AR']
+ *   'fr-FR' -> ['fr', 'FR']
+ *   'en' -> ['en', null]
+ *
+ * @return array{string, string|null}
+ */
+function splitLocale(string $locale): array
+{
+    return array_pad(explode('-', $locale), 2, null);
 }
 
 function getOptionalIntFromInputFilter(InputFilter $inputFilter, string $fieldName): ?int

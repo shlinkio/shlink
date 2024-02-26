@@ -29,8 +29,12 @@ class RedirectConditionTest extends TestCase
     #[TestWith(['*', '', false])] // wildcard accept language
     #[TestWith(['en', 'en', true])] // single language match
     #[TestWith(['es, en,fr', 'en', true])] // multiple languages match
+    #[TestWith(['es, en-US,fr', 'EN', true])] // multiple locales match
     #[TestWith(['es_ES', 'es-ES', true])] // single locale match
     #[TestWith(['en-UK', 'en-uk', true])] // different casing match
+    #[TestWith(['en-UK', 'en', true])] // only lang
+    #[TestWith(['es-AR', 'en', false])] // different only lang
+    #[TestWith(['fr', 'fr-FR', false])] // less restrictive matching locale
     public function matchesLanguage(?string $acceptLanguage, string $value, bool $expected): void
     {
         $request = ServerRequestFactory::fromGlobals();
