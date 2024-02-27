@@ -10,6 +10,9 @@ use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
 
+/**
+ * Create new tables needed for the dynamic rule-based redirections
+ */
 final class Version20240224115725 extends AbstractMigration
 {
     public function up(Schema $schema): void

@@ -12,6 +12,9 @@ use Doctrine\Migrations\AbstractMigration;
 
 use function in_array;
 
+/**
+ * Convert all columns containing long URLs to TEXT type
+ */
 final class Version20240220214031 extends AbstractMigration
 {
     private const DOMAINS_COLUMNS = ['base_url_redirect', 'regular_not_found_redirect', 'invalid_short_url_redirect'];
