@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Model;
 
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
-use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\TitleResolutionModelInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 
@@ -19,14 +18,10 @@ final readonly class ShortUrlEdition implements TitleResolutionModelInterface
 {
     /**
      * @param string[] $tags
-     * @param DeviceLongUrlPair[] $deviceLongUrls
-     * @param DeviceType[] $devicesToRemove
      */
     private function __construct(
         private bool $longUrlPropWasProvided = false,
         public ?string $longUrl = null,
-        public array $deviceLongUrls = [],
-        public array $devicesToRemove = [],
         private bool $validSincePropWasProvided = false,
         public ?Chronos $validSince = null,
         private bool $validUntilPropWasProvided = false,
@@ -55,15 +50,9 @@ final readonly class ShortUrlEdition implements TitleResolutionModelInterface
             throw ValidationException::fromInputFilter($inputFilter);
         }
 
-        [$deviceLongUrls, $devicesToRemove] = DeviceLongUrlPair::fromMapToChangeSet(
-            $inputFilter->getValue(ShortUrlInputFilter::DEVICE_LONG_URLS) ?? [],
-        );
-
         return new self(
             longUrlPropWasProvided: array_key_exists(ShortUrlInputFilter::LONG_URL, $data),
             longUrl: $inputFilter->getValue(ShortUrlInputFilter::LONG_URL),
-            deviceLongUrls: $deviceLongUrls,
-            devicesToRemove: $devicesToRemove,
             validSincePropWasProvided: array_key_exists(ShortUrlInputFilter::VALID_SINCE, $data),
             validSince: normalizeOptionalDate($inputFilter->getValue(ShortUrlInputFilter::VALID_SINCE)),
             validUntilPropWasProvided: array_key_exists(ShortUrlInputFilter::VALID_UNTIL, $data),
@@ -86,8 +75,6 @@ final readonly class ShortUrlEdition implements TitleResolutionModelInterface
         return new self(
             longUrlPropWasProvided: $this->longUrlPropWasProvided,
             longUrl: $this->longUrl,
-            deviceLongUrls: $this->deviceLongUrls,
-            devicesToRemove: $this->devicesToRemove,
             validSincePropWasProvided: $this->validSincePropWasProvided,
             validSince: $this->validSince,
             validUntilPropWasProvided: $this->validUntilPropWasProvided,

@@ -1,6 +1,6 @@
 <?php
 
-namespace RedirectRule\Entity;
+namespace ShlinkioTest\Shlink\Core\RedirectRule\Entity;
 
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\Attributes\DataProvider;

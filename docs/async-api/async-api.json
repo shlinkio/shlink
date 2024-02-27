@@ -111,9 +111,6 @@
                         "type": "string",
                         "description": "The original long URL."
                     },
-                    "deviceLongUrls": {
-                        "$ref": "#/components/schemas/DeviceLongUrls"
-                    },
                     "dateCreated": {
                         "type": "string",
                         "format": "date-time",
@@ -150,11 +147,6 @@
                     "shortCode": "12C18",
                     "shortUrl": "https://s.test/12C18",
                     "longUrl": "https://store.steampowered.com",
-                    "deviceLongUrls": {
-                        "android": "https://store.steampowered.com/android",
-                        "ios": "https://store.steampowered.com/ios",
-                        "desktop": null
-                    },
                     "dateCreated": "2016-08-21T20:34:16+02:00",
                     "visitsSummary": {
                         "total": 328,
@@ -215,24 +207,6 @@
                     "bots": {
                         "description": "The amount of visits that were identified as potential bots",
                         "type": "number"
-                    }
-                }
-            },
-            "DeviceLongUrls": {
-                "type": "object",
-                "required": ["android", "ios", "desktop"],
-                "properties": {
-                    "android": {
-                        "description": "The long URL to redirect to when the short URL is visited from a device running Android",
-                        "type": "string"
-                    },
-                    "ios": {
-                        "description": "The long URL to redirect to when the short URL is visited from a device running iOS",
-                        "type": "string"
-                    },
-                    "desktop": {
-                        "description": "The long URL to redirect to when the short URL is visited from a desktop browser",
-                        "type": "string"
                     }
                 }
             },

@@ -4,7 +4,6 @@ namespace Shlinkio\Shlink\Core\RedirectRule;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 
@@ -27,7 +26,6 @@ readonly class ShortUrlRedirectionResolver implements ShortUrlRedirectionResolve
             }
         }
 
-        $device = DeviceType::matchFromUserAgent($request->getHeaderLine('User-Agent'));
-        return $shortUrl->longUrlForDevice($device);
+        return $shortUrl->getLongUrl();
     }
 }

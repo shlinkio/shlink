@@ -1,6 +1,6 @@
 <?php
 
-namespace RedirectRule;
+namespace ShlinkioTest\Shlink\Core\RedirectRule;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -41,10 +41,6 @@ class ShortUrlRedirectionResolverTest extends TestCase
     ): void {
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
             'longUrl' => 'https://example.com/foo/bar',
-            'deviceLongUrls' => [
-                DeviceType::ANDROID->value => 'https://example.com/android',
-                DeviceType::IOS->value => 'https://example.com/ios',
-            ],
         ]));
 
         $repo = $this->createMock(EntityRepository::class);
@@ -75,12 +71,16 @@ class ShortUrlRedirectionResolverTest extends TestCase
             'https://example.com/foo/bar',
         ];
         yield 'desktop user agent' => [$request(DESKTOP_USER_AGENT), null, 'https://example.com/foo/bar'];
-        yield 'android user agent' => [
+        yield 'matching android device' => [
             $request(ANDROID_USER_AGENT),
-            RedirectCondition::forQueryParam('foo', 'bar'), // This condition won't match
-            'https://example.com/android',
+            RedirectCondition::forDevice(DeviceType::ANDROID),
+            'https://example.com/from-rule',
         ];
-        yield 'ios user agent' => [$request(IOS_USER_AGENT), null, 'https://example.com/ios'];
+        yield 'matching ios device' => [
+            $request(IOS_USER_AGENT),
+            RedirectCondition::forDevice(DeviceType::IOS),
+            'https://example.com/from-rule',
+        ];
         yield 'matching language' => [
             $request()->withHeader('Accept-Language', 'es-ES'),
             RedirectCondition::forLanguage('es-ES'),

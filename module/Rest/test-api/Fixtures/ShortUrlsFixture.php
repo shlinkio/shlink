@@ -9,7 +9,6 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use ReflectionObject;
-use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
@@ -49,10 +48,6 @@ class ShortUrlsFixture extends AbstractFixture implements DependentFixtureInterf
             'apiKey' => $authorApiKey,
             'longUrl' =>
                 'https://blog.alejandrocelaya.com/2017/12/09/acmailer-7-0-the-most-important-release-in-a-long-time/',
-            'deviceLongUrls' => [
-                DeviceType::ANDROID->value => 'https://blog.alejandrocelaya.com/android',
-                DeviceType::IOS->value => 'https://blog.alejandrocelaya.com/ios',
-            ],
             'tags' => ['foo', 'bar'],
         ]), $relationResolver), '2019-01-01 00:00:10');
         $manager->persist($defShortUrl);

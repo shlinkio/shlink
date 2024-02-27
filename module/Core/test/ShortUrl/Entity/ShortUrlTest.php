@@ -10,11 +10,9 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
-use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
-use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlEdition;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
@@ -111,48 +109,6 @@ class ShortUrlTest extends TestCase
             self::assertStringStartsWith($expectedPrefix, $shortCode);
         }
         self::assertEquals($expectedShortCodeLength, strlen($shortCode));
-    }
-
-    #[Test]
-    public function deviceLongUrlsAreUpdated(): void
-    {
-        $shortUrl = ShortUrl::withLongUrl('https://foo');
-
-        $shortUrl->update(ShortUrlEdition::fromRawData([
-            ShortUrlInputFilter::DEVICE_LONG_URLS => [
-                DeviceType::ANDROID->value => 'https://android',
-                DeviceType::IOS->value => 'https://ios',
-            ],
-        ]));
-        self::assertEquals([
-            DeviceType::ANDROID->value => 'https://android',
-            DeviceType::IOS->value => 'https://ios',
-            DeviceType::DESKTOP->value => null,
-        ], $shortUrl->deviceLongUrls());
-
-        $shortUrl->update(ShortUrlEdition::fromRawData([
-            ShortUrlInputFilter::DEVICE_LONG_URLS => [
-                DeviceType::ANDROID->value => null,
-                DeviceType::DESKTOP->value => 'https://desktop',
-            ],
-        ]));
-        self::assertEquals([
-            DeviceType::ANDROID->value => null,
-            DeviceType::IOS->value => 'https://ios',
-            DeviceType::DESKTOP->value => 'https://desktop',
-        ], $shortUrl->deviceLongUrls());
-
-        $shortUrl->update(ShortUrlEdition::fromRawData([
-            ShortUrlInputFilter::DEVICE_LONG_URLS => [
-                DeviceType::ANDROID->value => null,
-                DeviceType::IOS->value => null,
-            ],
-        ]));
-        self::assertEquals([
-            DeviceType::ANDROID->value => null,
-            DeviceType::IOS->value => null,
-            DeviceType::DESKTOP->value => 'https://desktop',
-        ], $shortUrl->deviceLongUrls());
     }
 
     #[Test]

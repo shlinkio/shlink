@@ -250,18 +250,6 @@ class CreateShortUrlTest extends ApiTestCase
         yield 'empty long url v3' => [['longUrl' => '  '], '3', 'https://shlink.io/api/error/invalid-data'];
         yield 'missing url schema v2' => [['longUrl' => 'foo.com'], '2', 'https://shlink.io/api/error/invalid-data'];
         yield 'missing url schema v3' => [['longUrl' => 'foo.com'], '3', 'https://shlink.io/api/error/invalid-data'];
-        yield 'empty device long url v2' => [[
-            'longUrl' => 'foo',
-            'deviceLongUrls' => [
-                'android' => null,
-            ],
-        ], '2', 'https://shlink.io/api/error/invalid-data'];
-        yield 'empty device long url v3' => [[
-            'longUrl' => 'foo',
-            'deviceLongUrls' => [
-                'ios' => '  ',
-            ],
-        ], '3', 'https://shlink.io/api/error/invalid-data'];
     }
 
     #[Test]
@@ -311,22 +299,6 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertEquals('🔥🔥🔥', $payload['title']);
         self::assertEquals('🦣🦣🦣', $payload['shortCode']);
         self::assertEquals('http://s.test/🦣🦣🦣', $payload['shortUrl']);
-    }
-
-    #[Test]
-    public function canCreateShortUrlsWithDeviceLongUrls(): void
-    {
-        [$statusCode, $payload] = $this->createShortUrl([
-            'longUrl' => 'https://github.com/shlinkio/shlink/issues/1557',
-            'deviceLongUrls' => [
-                'ios' => 'https://github.com/shlinkio/shlink/ios',
-                'android' => 'https://github.com/shlinkio/shlink/android',
-            ],
-        ]);
-
-        self::assertEquals(self::STATUS_OK, $statusCode);
-        self::assertEquals('https://github.com/shlinkio/shlink/ios', $payload['deviceLongUrls']['ios'] ?? null);
-        self::assertEquals('https://github.com/shlinkio/shlink/android', $payload['deviceLongUrls']['android'] ?? null);
     }
 
     #[Test]
