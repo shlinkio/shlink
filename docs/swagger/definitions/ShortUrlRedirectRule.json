@@ -1,0 +1,39 @@
+{
+  "type": "object",
+  "required": ["priority", "longUrl", "conditions"],
+  "properties": {
+    "longUrl": {
+      "description": "Long URL to redirect to when this condition matches",
+      "type": "string"
+    },
+    "priority": {
+      "description": "Order in which attempting to match the rule. Lower goes first",
+      "type": "number"
+    },
+    "conditions": {
+      "description": "List of conditions that need to match in order to consider this rule matches",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "matchKey", "matchValue"],
+        "properties": {
+          "name":  {
+            "type": "string",
+            "description": "Unique condition name"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["device", "language", "query"],
+            "description": "The type of the condition, which will condition the logic used to match it"
+          },
+          "matchKey":  {
+            "type": ["string", "null"]
+          },
+          "matchValue":  {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

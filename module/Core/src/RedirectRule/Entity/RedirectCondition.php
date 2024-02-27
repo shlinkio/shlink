@@ -2,6 +2,7 @@
 
 namespace Shlinkio\Shlink\Core\RedirectRule\Entity;
 
+use JsonSerializable;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Model\DeviceType;
@@ -15,7 +16,7 @@ use function sprintf;
 use function strtolower;
 use function trim;
 
-class RedirectCondition extends AbstractEntity
+class RedirectCondition extends AbstractEntity implements JsonSerializable
 {
     private function __construct(
         public readonly string $name,
@@ -97,5 +98,15 @@ class RedirectCondition extends AbstractEntity
     {
         $device = DeviceType::matchFromUserAgent($request->getHeaderLine('User-Agent'));
         return $device !== null && $device->value === strtolower($this->matchValue);
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'name' => $this->name,
+            'type' => $this->type->value,
+            'matchKey' => $this->matchKey,
+            'matchValue' => $this->matchValue,
+        ];
     }
 }

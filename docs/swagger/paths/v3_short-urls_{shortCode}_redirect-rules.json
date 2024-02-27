@@ -1,0 +1,144 @@
+{
+  "get": {
+    "operationId": "listShortUrlRedirectRules",
+    "tags": [
+      "Redirect rules"
+    ],
+    "summary": "List short URL redirect rules",
+    "description": "Returns the list of redirect rules for a short URL.",
+    "parameters": [
+      {
+        "$ref": "../parameters/version.json"
+      },
+      {
+        "$ref": "../parameters/shortCode.json"
+      },
+      {
+        "$ref": "../parameters/domain.json"
+      }
+    ],
+    "security": [
+      {
+        "ApiKey": []
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "The list of rules",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "redirectRules": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "../definitions/ShortUrlRedirectRule.json"
+                  }
+                }
+              }
+            },
+            "example": {
+              "redirectRules": [
+                {
+                  "longUrl": "https://example.com/android-en-us",
+                  "priority": 1,
+                  "conditions": [
+                    {
+                      "name": "device-android",
+                      "type": "device",
+                      "matchValue": "android",
+                      "matchKey": null
+                    },
+                    {
+                      "name": "language-en-US",
+                      "type": "language",
+                      "matchValue": "en-US",
+                      "matchKey": null
+                    }
+                  ]
+                },
+                {
+                  "longUrl": "https://example.com/fr",
+                  "priority": 2,
+                  "conditions": [
+                    {
+                      "name": "language-fr",
+                      "type": "language",
+                      "matchValue": "fr",
+                      "matchKey": null
+                    }
+                  ]
+                },
+                {
+                  "longUrl": "https://example.com/query-foo-bar-hello-world",
+                  "priority": 3,
+                  "conditions": [
+                    {
+                      "name": "query-foo-bar",
+                      "type": "query",
+                      "matchKey": "foo",
+                      "matchValue": "bar"
+                    },
+                    {
+                      "name": "query-hello-world",
+                      "type": "query",
+                      "matchKey": "hello",
+                      "matchValue": "world"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "No URL was found for provided short code.",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "../definitions/Error.json"
+                },
+                {
+                  "type": "object",
+                  "required": ["shortCode"],
+                  "properties": {
+                    "shortCode": {
+                      "type": "string",
+                      "description": "The short code with which we tried to find the short URL"
+                    },
+                    "domain": {
+                      "type": "string",
+                      "description": "The domain with which we tried to find the short URL"
+                    }
+                  }
+                }
+              ]
+            },
+            "examples": {
+              "API v3 and newer": {
+                "$ref": "../examples/short-url-not-found-v3.json"
+              },
+              "Previous to API v3": {
+                "$ref": "../examples/short-url-not-found-v2.json"
+              }
+            }
+          }
+        }
+      },
+      "default": {
+        "description": "Unexpected error.",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "../definitions/Error.json"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -13,13 +13,13 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-class ShortUrlService implements ShortUrlServiceInterface
+readonly class ShortUrlService implements ShortUrlServiceInterface
 {
     public function __construct(
-        private readonly ORM\EntityManagerInterface $em,
-        private readonly ShortUrlResolverInterface $urlResolver,
-        private readonly ShortUrlTitleResolutionHelperInterface $titleResolutionHelper,
-        private readonly ShortUrlRelationResolverInterface $relationResolver,
+        private ORM\EntityManagerInterface $em,
+        private ShortUrlResolverInterface $urlResolver,
+        private ShortUrlTitleResolutionHelperInterface $titleResolutionHelper,
+        private ShortUrlRelationResolverInterface $relationResolver,
     ) {
     }
 
