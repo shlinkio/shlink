@@ -7,7 +7,12 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
+use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition;
+
+use const ShlinkioTest\Shlink\ANDROID_USER_AGENT;
+use const ShlinkioTest\Shlink\DESKTOP_USER_AGENT;
+use const ShlinkioTest\Shlink\IOS_USER_AGENT;
 
 class RedirectConditionTest extends TestCase
 {
@@ -47,6 +52,26 @@ class RedirectConditionTest extends TestCase
         self::assertEquals($expected, $result);
     }
 
+    #[Test]
+    #[TestWith([null, DeviceType::ANDROID, false])]
+    #[TestWith(['unknown', DeviceType::ANDROID, false])]
+    #[TestWith([ANDROID_USER_AGENT, DeviceType::ANDROID, true])]
+    #[TestWith([DESKTOP_USER_AGENT, DeviceType::DESKTOP, true])]
+    #[TestWith([IOS_USER_AGENT, DeviceType::IOS, true])]
+    #[TestWith([IOS_USER_AGENT, DeviceType::ANDROID, false])]
+    #[TestWith([DESKTOP_USER_AGENT, DeviceType::IOS, false])]
+    public function matchesDevice(?string $userAgent, DeviceType $value, bool $expected): void
+    {
+        $request = ServerRequestFactory::fromGlobals();
+        if ($userAgent !== null) {
+            $request = $request->withHeader('User-Agent', $userAgent);
+        }
+
+        $result = RedirectCondition::forDevice($value)->matchesRequest($request);
+
+        self::assertEquals($expected, $result);
+    }
+
     #[Test, DataProvider('provideNames')]
     public function generatesExpectedName(RedirectCondition $condition, string $expectedName): void
     {
@@ -59,5 +84,8 @@ class RedirectConditionTest extends TestCase
         yield [RedirectCondition::forLanguage('en_UK'), 'language-en_UK'];
         yield [RedirectCondition::forQueryParam('foo', 'bar'), 'query-foo-bar'];
         yield [RedirectCondition::forQueryParam('baz', 'foo'), 'query-baz-foo'];
+        yield [RedirectCondition::forDevice(DeviceType::ANDROID), 'device-android'];
+        yield [RedirectCondition::forDevice(DeviceType::IOS), 'device-ios'];
+        yield [RedirectCondition::forDevice(DeviceType::DESKTOP), 'device-desktop'];
     }
 }
