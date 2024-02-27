@@ -4,6 +4,7 @@ namespace Shlinkio\Shlink\Core\RedirectRule\Entity;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
+use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
 
 use function Shlinkio\Shlink\Core\acceptLanguageToLocales;
@@ -11,6 +12,7 @@ use function Shlinkio\Shlink\Core\ArrayUtils\some;
 use function Shlinkio\Shlink\Core\normalizeLocale;
 use function Shlinkio\Shlink\Core\splitLocale;
 use function sprintf;
+use function strtolower;
 use function trim;
 
 class RedirectCondition extends AbstractEntity
@@ -39,6 +41,14 @@ class RedirectCondition extends AbstractEntity
         return new self($name, $type, $language);
     }
 
+    public static function forDevice(DeviceType $device): self
+    {
+        $type = RedirectConditionType::DEVICE;
+        $name = sprintf('%s-%s', $type->value, $device->value);
+
+        return new self($name, $type, $device->value);
+    }
+
     /**
      * Tells if this condition matches provided request
      */
@@ -47,6 +57,7 @@ class RedirectCondition extends AbstractEntity
         return match ($this->type) {
             RedirectConditionType::QUERY_PARAM => $this->matchesQueryParam($request),
             RedirectConditionType::LANGUAGE => $this->matchesLanguage($request),
+            RedirectConditionType::DEVICE => $this->matchesDevice($request),
         };
     }
 
@@ -80,5 +91,11 @@ class RedirectCondition extends AbstractEntity
                 return $matchCountryCode === null || $matchCountryCode === $countryCode;
             },
         );
+    }
+
+    private function matchesDevice(ServerRequestInterface $request): bool
+    {
+        $device = DeviceType::matchFromUserAgent($request->getHeaderLine('User-Agent'));
+        return $device !== null && $device->value === strtolower($this->matchValue);
     }
 }

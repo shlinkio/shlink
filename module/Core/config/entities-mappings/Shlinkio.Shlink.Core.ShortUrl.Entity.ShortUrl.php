@@ -67,13 +67,6 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->fetchExtraLazy()
             ->build();
 
-    $builder->createOneToMany('deviceLongUrls', ShortUrl\Entity\DeviceLongUrl::class)
-            ->mappedBy('shortUrl')
-            ->cascadePersist()
-            ->orphanRemoval()
-            ->setIndexBy('deviceType')
-            ->build();
-
     $builder->createManyToMany('tags', Tag\Entity\Tag::class)
             ->setJoinTable(determineTableName('short_urls_in_tags', $emConfig))
             ->addInverseJoinColumn('tag_id', 'id', onDelete: 'CASCADE')

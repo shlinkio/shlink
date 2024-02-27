@@ -31,7 +31,6 @@ class ShortUrlInputFilter extends InputFilter
 
     // Fields for creation and edition
     public const LONG_URL = 'longUrl';
-    public const DEVICE_LONG_URLS = 'deviceLongUrls';
     public const VALID_SINCE = 'validSince';
     public const VALID_UNTIL = 'validUntil';
     public const MAX_VISITS = 'maxVisits';
@@ -96,12 +95,6 @@ class ShortUrlInputFilter extends InputFilter
         $longUrlInput = InputFactory::basic(self::LONG_URL, required: $requireLongUrl);
         $longUrlInput->getValidatorChain()->merge($this->longUrlValidators());
         $this->add($longUrlInput);
-
-        $deviceLongUrlsInput = InputFactory::basic(self::DEVICE_LONG_URLS);
-        $deviceLongUrlsInput->getValidatorChain()->attach(
-            new DeviceLongUrlsValidator($this->longUrlValidators(allowNull: ! $requireLongUrl)),
-        );
-        $this->add($deviceLongUrlsInput);
 
         $validSince = InputFactory::basic(self::VALID_SINCE);
         $validSince->getValidatorChain()->attach(new Validator\Date(['format' => DateTimeInterface::ATOM]));

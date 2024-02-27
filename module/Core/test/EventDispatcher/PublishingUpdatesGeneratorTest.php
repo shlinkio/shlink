@@ -51,7 +51,6 @@ class PublishingUpdatesGeneratorTest extends TestCase
                 'shortCode' => $shortUrl->getShortCode(),
                 'shortUrl' => 'http:/' . $shortUrl->getShortCode(),
                 'longUrl' => 'https://longUrl',
-                'deviceLongUrls' => $shortUrl->deviceLongUrls(),
                 'dateCreated' => $shortUrl->getDateCreated()->toAtomString(),
                 'tags' => [],
                 'meta' => [
@@ -125,7 +124,6 @@ class PublishingUpdatesGeneratorTest extends TestCase
             'shortCode' => $shortUrl->getShortCode(),
             'shortUrl' => 'http:/' . $shortUrl->getShortCode(),
             'longUrl' => 'https://longUrl',
-            'deviceLongUrls' => $shortUrl->deviceLongUrls(),
             'dateCreated' => $shortUrl->getDateCreated()->toAtomString(),
             'tags' => [],
             'meta' => [

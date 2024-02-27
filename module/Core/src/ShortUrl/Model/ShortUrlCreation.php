@@ -22,12 +22,10 @@ final readonly class ShortUrlCreation implements TitleResolutionModelInterface
 {
     /**
      * @param string[] $tags
-     * @param DeviceLongUrlPair[] $deviceLongUrls
      */
     private function __construct(
         public string $longUrl,
         public ShortUrlMode $shortUrlMode,
-        public array $deviceLongUrls = [],
         public ?Chronos $validSince = null,
         public ?Chronos $validUntil = null,
         public ?string $customSlug = null,
@@ -55,14 +53,9 @@ final readonly class ShortUrlCreation implements TitleResolutionModelInterface
             throw ValidationException::fromInputFilter($inputFilter);
         }
 
-        [$deviceLongUrls] = DeviceLongUrlPair::fromMapToChangeSet(
-            $inputFilter->getValue(ShortUrlInputFilter::DEVICE_LONG_URLS) ?? [],
-        );
-
         return new self(
             longUrl: $inputFilter->getValue(ShortUrlInputFilter::LONG_URL),
             shortUrlMode: $options->mode,
-            deviceLongUrls: $deviceLongUrls,
             validSince: normalizeOptionalDate($inputFilter->getValue(ShortUrlInputFilter::VALID_SINCE)),
             validUntil: normalizeOptionalDate($inputFilter->getValue(ShortUrlInputFilter::VALID_UNTIL)),
             customSlug: $inputFilter->getValue(ShortUrlInputFilter::CUSTOM_SLUG),
@@ -87,7 +80,6 @@ final readonly class ShortUrlCreation implements TitleResolutionModelInterface
         return new self(
             longUrl: $this->longUrl,
             shortUrlMode: $this->shortUrlMode,
-            deviceLongUrls: $this->deviceLongUrls,
             validSince: $this->validSince,
             validUntil: $this->validUntil,
             customSlug: $this->customSlug,

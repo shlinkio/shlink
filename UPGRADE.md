@@ -16,6 +16,9 @@
   If you want to keep previous behavior, pass `QR_CODE_FOR_DISABLED_SHORT_URLS=false` or the equivalent configuration option.
 * Long URL title resolution is now enabled by default. You can still disable it by passing `AUTO_RESOLVE_TITLES=false` or the equivalent configuration option.
 * Shlink no longer allows to opt-in for long URL verification. Long URLs are unconditionally considered correct during short URL creation/edition.
+* Device long URLs have been migrated to the new Dynamic rule-based redirects system.
+  All existing short URLs which were using device long URLs will be automatically migrated and continue working as expected, but the API surface has changed.
+  If you use shlink-web-client and rely on this feature when creating/updating short URLs, **DO NOT UPDATE YET**. Support for dynamic rule-based redirects will be added to shlink-web-client soon, in v4.1.0
 
 ### Changes in REST API
 
@@ -34,6 +37,7 @@
 * Endpoints previously returning props like `"visitsCount": {number}` no longer do it. There should be an alternative `"visitsSummary": {}` object with the amount nested on it.
 * It is no longer possible to order the short URLs list with `orderBy=visitsCount-ASC`/`orderBy=visitsCount-DESC`. Use `orderBy=visits-ASC`/`orderBy=visits-DESC` instead.
 * It is no longer possible to get tags with stats using `GET /tags?withStats=true`. Use `GET /tags/stats` endpoint instead.
+* The `deviceLongUrls` are ignored when calling `POST /short-urls` or `PATCH /short-urls/{shortCode}`. These should now be configured as dynamic rule-based redirects via `POST /short-urls/{shortCode}/redirect-rules`.
 
 ### Changes in Docker image
 

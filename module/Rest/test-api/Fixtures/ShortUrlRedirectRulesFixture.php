@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -33,6 +34,12 @@ class ShortUrlRedirectRulesFixture extends AbstractFixture implements DependentF
         $helloQueryCondition = RedirectCondition::forQueryParam('hello', 'world');
         $manager->persist($helloQueryCondition);
 
+        $androidCondition = RedirectCondition::forDevice(DeviceType::ANDROID);
+        $manager->persist($androidCondition);
+
+        $iosCondition = RedirectCondition::forDevice(DeviceType::IOS);
+        $manager->persist($iosCondition);
+
         $englishAndFooQueryRule = new ShortUrlRedirectRule(
             $defShortUrl,
             1,
@@ -56,6 +63,22 @@ class ShortUrlRedirectRulesFixture extends AbstractFixture implements DependentF
             new ArrayCollection([$englishCondition]),
         );
         $manager->persist($onlyEnglishRule);
+
+        $androidRule = new ShortUrlRedirectRule(
+            $defShortUrl,
+            4,
+            'https://blog.alejandrocelaya.com/android',
+            new ArrayCollection([$androidCondition]),
+        );
+        $manager->persist($androidRule);
+
+        $iosRule = new ShortUrlRedirectRule(
+            $defShortUrl,
+            5,
+            'https://blog.alejandrocelaya.com/ios',
+            new ArrayCollection([$iosCondition]),
+        );
+        $manager->persist($iosRule);
 
         $manager->flush();
     }
