@@ -48,6 +48,7 @@ return [
             Action\Domain\ListDomainsAction::class => ConfigAbstractFactory::class,
             Action\Domain\DomainRedirectsAction::class => ConfigAbstractFactory::class,
             Action\RedirectRule\ListRedirectRulesAction::class => ConfigAbstractFactory::class,
+            Action\RedirectRule\SetRedirectRulesAction::class => ConfigAbstractFactory::class,
 
             ImplicitOptionsMiddleware::class => Middleware\EmptyResponseImplicitOptionsMiddlewareFactory::class,
             Middleware\BodyParserMiddleware::class => InvokableFactory::class,
@@ -106,6 +107,10 @@ return [
         Action\Domain\ListDomainsAction::class => [DomainService::class, Options\NotFoundRedirectOptions::class],
         Action\Domain\DomainRedirectsAction::class => [DomainService::class],
         Action\RedirectRule\ListRedirectRulesAction::class => [
+            ShortUrl\ShortUrlResolver::class,
+            RedirectRule\ShortUrlRedirectRuleService::class,
+        ],
+        Action\RedirectRule\SetRedirectRulesAction::class => [
             ShortUrl\ShortUrlResolver::class,
             RedirectRule\ShortUrlRedirectRuleService::class,
         ],

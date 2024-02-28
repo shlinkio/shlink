@@ -137,5 +137,164 @@
         }
       }
     }
+  },
+
+  "post": {
+    "operationId": "setShortUrlRedirectRules",
+    "tags": [
+      "Redirect rules"
+    ],
+    "summary": "Set short URL redirect rules",
+    "description": "Overwrites redirect rules for a short URL with the ones provided here.",
+    "parameters": [
+      {
+        "$ref": "../parameters/version.json"
+      },
+      {
+        "$ref": "../parameters/shortCode.json"
+      },
+      {
+        "$ref": "../parameters/domain.json"
+      }
+    ],
+    "security": [
+      {
+        "ApiKey": []
+      }
+    ],
+    "requestBody": {
+      "description": "Request body.",
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "redirectRules": {
+                "type": "array",
+                "items": {
+                  "$ref": "../definitions/ShortUrlRedirectRule.json"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "The list of rules",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["defaultLongUrl", "redirectRules"],
+              "properties": {
+                "defaultLongUrl": {
+                  "type": "string"
+                },
+                "redirectRules": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "../definitions/ShortUrlRedirectRule.json"
+                  }
+                }
+              }
+            },
+            "example": {
+              "defaultLongUrl": "https://example.com",
+              "redirectRules": [
+                {
+                  "longUrl": "https://example.com/android-en-us",
+                  "priority": 1,
+                  "conditions": [
+                    {
+                      "type": "device",
+                      "matchValue": "android",
+                      "matchKey": null
+                    },
+                    {
+                      "type": "language",
+                      "matchValue": "en-US",
+                      "matchKey": null
+                    }
+                  ]
+                },
+                {
+                  "longUrl": "https://example.com/fr",
+                  "priority": 2,
+                  "conditions": [
+                    {
+                      "type": "language",
+                      "matchValue": "fr",
+                      "matchKey": null
+                    }
+                  ]
+                },
+                {
+                  "longUrl": "https://example.com/query-foo-bar-hello-world",
+                  "priority": 3,
+                  "conditions": [
+                    {
+                      "type": "query",
+                      "matchKey": "foo",
+                      "matchValue": "bar"
+                    },
+                    {
+                      "type": "query",
+                      "matchKey": "hello",
+                      "matchValue": "world"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "No URL was found for provided short code.",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "../definitions/Error.json"
+                },
+                {
+                  "type": "object",
+                  "required": ["shortCode"],
+                  "properties": {
+                    "shortCode": {
+                      "type": "string",
+                      "description": "The short code with which we tried to find the short URL"
+                    },
+                    "domain": {
+                      "type": "string",
+                      "description": "The domain with which we tried to find the short URL"
+                    }
+                  }
+                }
+              ]
+            },
+            "examples": {
+              "Short URL not found": {
+                "$ref": "../examples/short-url-not-found-v3.json"
+              }
+            }
+          }
+        }
+      },
+      "default": {
+        "description": "Unexpected error.",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "../definitions/Error.json"
+            }
+          }
+        }
+      }
+    }
   }
 }

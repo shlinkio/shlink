@@ -46,6 +46,7 @@ return (static function (): array {
 
                 //Redirect rules
                 Action\RedirectRule\ListRedirectRulesAction::getRouteDef([$dropDomainMiddleware]),
+                Action\RedirectRule\SetRedirectRulesAction::getRouteDef([$dropDomainMiddleware]),
 
                 // Short URLs
                 Action\ShortUrl\CreateShortUrlAction::getRouteDef([

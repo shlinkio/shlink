@@ -131,7 +131,7 @@ services:
         container_name: shlink_mercure_proxy
         image: nginx:1.25-alpine
         ports:
-            - "8001:80"
+            - "8002:80"
         volumes:
             - ./:/home/shlink/www
             - ./data/infra/mercure_proxy_vhost.conf:/etc/nginx/conf.d/default.conf
