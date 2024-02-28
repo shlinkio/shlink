@@ -383,25 +383,13 @@
                             ]
                         },
                         "examples": {
-                            "Invalid arguments with API v3 and newer": {
+                            "Invalid arguments": {
                                 "$ref": "../examples/short-url-invalid-args-v3.json"
                             },
-                            "Non-unique slug with API v3 and newer": {
+                            "Non-unique slug": {
                                 "value": {
                                     "title": "Invalid custom slug",
                                     "type": "https://shlink.io/api/error/non-unique-slug",
-                                    "detail": "Provided slug \"my-slug\" is already in use.",
-                                    "status": 400,
-                                    "customSlug": "my-slug"
-                                }
-                            },
-                            "Invalid arguments previous to API v3": {
-                                "$ref": "../examples/short-url-invalid-args-v2.json"
-                            },
-                            "Non-unique slug previous to API v3": {
-                                "value": {
-                                    "title": "Invalid custom slug",
-                                    "type": "INVALID_SLUG",
                                     "detail": "Provided slug \"my-slug\" is already in use.",
                                     "status": 400,
                                     "customSlug": "my-slug"

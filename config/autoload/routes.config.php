@@ -17,7 +17,6 @@ use Shlinkio\Shlink\Rest\Middleware\Mercure\NotConfiguredMercureErrorHandler;
 use function sprintf;
 
 return (static function (): array {
-    $contentNegotiationMiddleware = Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class;
     $dropDomainMiddleware = Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class;
     $overrideDomainMiddleware = Middleware\ShortUrl\OverrideDomainMiddleware::class;
 
@@ -32,9 +31,10 @@ return (static function (): array {
             ...ConfigProvider::applyRoutesPrefix([
                 Action\HealthAction::getRouteDef(),
 
+                // Visits and rules routes must go first, as they have a more specific path, otherwise, when
+                // multi-segment slugs are enabled, routes with a less-specific path might match first
+
                 // Visits.
-                // These routes must go first, as they have a more specific path, otherwise, when multi-segment slugs
-                // are enabled, routes with a less-specific path might match first
                 Action\Visit\ShortUrlVisitsAction::getRouteDef([$dropDomainMiddleware]),
                 Action\ShortUrl\DeleteShortUrlVisitsAction::getRouteDef([$dropDomainMiddleware]),
                 Action\Visit\TagVisitsAction::getRouteDef(),
@@ -44,15 +44,17 @@ return (static function (): array {
                 Action\Visit\DeleteOrphanVisitsAction::getRouteDef(),
                 Action\Visit\NonOrphanVisitsAction::getRouteDef(),
 
+                //Redirect rules
+                Action\RedirectRule\ListRedirectRulesAction::getRouteDef([$dropDomainMiddleware]),
+
                 // Short URLs
                 Action\ShortUrl\CreateShortUrlAction::getRouteDef([
-                    $contentNegotiationMiddleware,
                     $dropDomainMiddleware,
                     $overrideDomainMiddleware,
                     Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class,
                 ]),
                 Action\ShortUrl\SingleStepCreateShortUrlAction::getRouteDef([
-                    $contentNegotiationMiddleware,
+                    Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class,
                     $overrideDomainMiddleware,
                 ]),
                 Action\ShortUrl\EditShortUrlAction::getRouteDef([$dropDomainMiddleware]),

@@ -40,43 +40,44 @@ class ShortUrlRedirectRulesFixture extends AbstractFixture implements DependentF
         $iosCondition = RedirectCondition::forDevice(DeviceType::IOS);
         $manager->persist($iosCondition);
 
-        $englishAndFooQueryRule = new ShortUrlRedirectRule(
-            $defShortUrl,
-            1,
-            'https://example.com/english-and-foo-query',
-            new ArrayCollection([$englishCondition, $fooQueryCondition]),
-        );
-        $manager->persist($englishAndFooQueryRule);
-
+        // Create rules disordered to make sure the order by priority works
         $multipleQueryParamsRule = new ShortUrlRedirectRule(
-            $defShortUrl,
-            2,
-            'https://example.com/multiple-query-params',
-            new ArrayCollection([$helloQueryCondition, $fooQueryCondition]),
+            shortUrl: $defShortUrl,
+            priority: 2,
+            longUrl: 'https://example.com/multiple-query-params',
+            conditions: new ArrayCollection([$helloQueryCondition, $fooQueryCondition]),
         );
         $manager->persist($multipleQueryParamsRule);
 
-        $onlyEnglishRule = new ShortUrlRedirectRule(
-            $defShortUrl,
-            3,
-            'https://example.com/only-english',
-            new ArrayCollection([$englishCondition]),
+        $englishAndFooQueryRule = new ShortUrlRedirectRule(
+            shortUrl: $defShortUrl,
+            priority: 1,
+            longUrl: 'https://example.com/english-and-foo-query',
+            conditions: new ArrayCollection([$englishCondition, $fooQueryCondition]),
         );
-        $manager->persist($onlyEnglishRule);
+        $manager->persist($englishAndFooQueryRule);
 
         $androidRule = new ShortUrlRedirectRule(
-            $defShortUrl,
-            4,
-            'https://blog.alejandrocelaya.com/android',
-            new ArrayCollection([$androidCondition]),
+            shortUrl: $defShortUrl,
+            priority: 4,
+            longUrl: 'https://blog.alejandrocelaya.com/android',
+            conditions: new ArrayCollection([$androidCondition]),
         );
         $manager->persist($androidRule);
 
+        $onlyEnglishRule = new ShortUrlRedirectRule(
+            shortUrl: $defShortUrl,
+            priority: 3,
+            longUrl: 'https://example.com/only-english',
+            conditions: new ArrayCollection([$englishCondition]),
+        );
+        $manager->persist($onlyEnglishRule);
+
         $iosRule = new ShortUrlRedirectRule(
-            $defShortUrl,
-            5,
-            'https://blog.alejandrocelaya.com/ios',
-            new ArrayCollection([$iosCondition]),
+            shortUrl: $defShortUrl,
+            priority: 5,
+            longUrl: 'https://blog.alejandrocelaya.com/ios',
+            conditions: new ArrayCollection([$iosCondition]),
         );
         $manager->persist($iosRule);
 

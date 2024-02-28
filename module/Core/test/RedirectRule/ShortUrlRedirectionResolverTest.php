@@ -3,8 +3,6 @@
 namespace ShlinkioTest\Shlink\Core\RedirectRule;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -15,6 +13,7 @@ use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule;
 use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectionResolver;
+use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectRuleServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 
@@ -25,12 +24,12 @@ use const ShlinkioTest\Shlink\IOS_USER_AGENT;
 class ShortUrlRedirectionResolverTest extends TestCase
 {
     private ShortUrlRedirectionResolver $resolver;
-    private EntityManagerInterface & MockObject $em;
+    private ShortUrlRedirectRuleServiceInterface & MockObject $ruleService;
 
     protected function setUp(): void
     {
-        $this->em = $this->createMock(EntityManagerInterface::class);
-        $this->resolver = new ShortUrlRedirectionResolver($this->em);
+        $this->ruleService = $this->createMock(ShortUrlRedirectRuleServiceInterface::class);
+        $this->resolver = new ShortUrlRedirectionResolver($this->ruleService);
     }
 
     #[Test, DataProvider('provideData')]
@@ -43,14 +42,12 @@ class ShortUrlRedirectionResolverTest extends TestCase
             'longUrl' => 'https://example.com/foo/bar',
         ]));
 
-        $repo = $this->createMock(EntityRepository::class);
-        $repo->expects($this->once())->method('findBy')->willReturn($condition !== null ? [
-            new ShortUrlRedirectRule($shortUrl, 1, 'https://example.com/from-rule', new ArrayCollection([
-                $condition,
-            ])),
-        ] : []);
-        $this->em->expects($this->once())->method('getRepository')->with(ShortUrlRedirectRule::class)->willReturn(
-            $repo,
+        $this->ruleService->expects($this->once())->method('rulesForShortUrl')->with($shortUrl)->willReturn(
+            $condition !== null ? [
+                new ShortUrlRedirectRule($shortUrl, 1, 'https://example.com/from-rule', new ArrayCollection([
+                    $condition,
+                ])),
+            ] : [],
         );
 
         $result = $this->resolver->resolveLongUrl($shortUrl, $request);

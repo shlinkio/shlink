@@ -32,6 +32,7 @@ return [
             Options\QrCodeOptions::class => [ValinorConfigFactory::class, 'config.qr_codes'],
             Options\RabbitMqOptions::class => [ValinorConfigFactory::class, 'config.rabbitmq'],
 
+            RedirectRule\ShortUrlRedirectRuleService::class => ConfigAbstractFactory::class,
             RedirectRule\ShortUrlRedirectionResolver::class => ConfigAbstractFactory::class,
 
             ShortUrl\UrlShortener::class => ConfigAbstractFactory::class,
@@ -158,7 +159,9 @@ return [
         Util\RedirectResponseHelper::class => [Options\RedirectOptions::class],
 
         Config\NotFoundRedirectResolver::class => [Util\RedirectResponseHelper::class, 'Logger_Shlink'],
-        RedirectRule\ShortUrlRedirectionResolver::class => ['em'],
+
+        RedirectRule\ShortUrlRedirectRuleService::class => ['em'],
+        RedirectRule\ShortUrlRedirectionResolver::class => [RedirectRule\ShortUrlRedirectRuleService::class],
 
         Action\RedirectAction::class => [
             ShortUrl\ShortUrlResolver::class,

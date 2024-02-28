@@ -48,6 +48,9 @@ readonly class ShortUrlResolver implements ShortUrlResolverInterface
         return $shortUrl;
     }
 
+    /**
+     * @throws ShortUrlNotFoundException
+     */
     public function resolvePublicShortUrl(ShortUrlIdentifier $identifier): ShortUrl
     {
         /** @var ShortUrlRepository $shortUrlRepo */
