@@ -5,7 +5,7 @@ namespace Shlinkio\Shlink\Rest\Action\RedirectRule;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectRuleService;
+use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectRuleServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
@@ -18,7 +18,7 @@ class ListRedirectRulesAction extends AbstractRestAction
 
     public function __construct(
         private readonly ShortUrlResolverInterface $urlResolver,
-        private readonly ShortUrlRedirectRuleService $ruleService,
+        private readonly ShortUrlRedirectRuleServiceInterface $ruleService,
     ) {
     }
 
