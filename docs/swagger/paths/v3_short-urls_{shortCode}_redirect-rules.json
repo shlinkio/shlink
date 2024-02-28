@@ -29,7 +29,11 @@
           "application/json": {
             "schema": {
               "type": "object",
+              "required": ["defaultLongUrl", "redirectRules"],
               "properties": {
+                "defaultLongUrl": {
+                  "type": "string"
+                },
                 "redirectRules": {
                   "type": "array",
                   "items": {
@@ -39,6 +43,7 @@
               }
             },
             "example": {
+              "defaultLongUrl": "https://example.com",
               "redirectRules": [
                 {
                   "longUrl": "https://example.com/android-en-us",
@@ -119,11 +124,8 @@
               ]
             },
             "examples": {
-              "API v3 and newer": {
+              "Short URL not found": {
                 "$ref": "../examples/short-url-not-found-v3.json"
-              },
-              "Previous to API v3": {
-                "$ref": "../examples/short-url-not-found-v2.json"
               }
             }
           }
