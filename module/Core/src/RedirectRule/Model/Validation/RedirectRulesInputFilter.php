@@ -20,7 +20,6 @@ class RedirectRulesInputFilter extends InputFilter
 {
     public const REDIRECT_RULES = 'redirectRules';
 
-    public const RULE_PRIORITY = 'priority';
     public const RULE_LONG_URL = 'longUrl';
     public const RULE_CONDITIONS = 'conditions';
 
@@ -47,8 +46,6 @@ class RedirectRulesInputFilter extends InputFilter
     private static function createRedirectRuleInputFilter(): InputFilter
     {
         $redirectRuleInputFilter = new InputFilter();
-
-        $redirectRuleInputFilter->add(InputFactory::numeric(self::RULE_PRIORITY, required: true));
 
         $longUrl = InputFactory::basic(self::RULE_LONG_URL, required: true);
         $longUrl->setValidatorChain(ShortUrlInputFilter::longUrlValidators());

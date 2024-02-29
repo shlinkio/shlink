@@ -8,6 +8,8 @@ use Laminas\InputFilter\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\RedirectRule\Model\Validation\RedirectRulesInputFilter;
 
+use function array_values;
+
 readonly class RedirectRulesData
 {
     private function __construct(public array $rules)
@@ -22,7 +24,7 @@ readonly class RedirectRulesData
                 throw ValidationException::fromInputFilter($inputFilter);
             }
 
-            return new self($inputFilter->getValue(RedirectRulesInputFilter::REDIRECT_RULES));
+            return new self(array_values($inputFilter->getValue(RedirectRulesInputFilter::REDIRECT_RULES)));
         } catch (InvalidArgumentException) {
             throw ValidationException::fromArray(
                 [RedirectRulesInputFilter::REDIRECT_RULES => RedirectRulesInputFilter::REDIRECT_RULES],

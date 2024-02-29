@@ -15,17 +15,12 @@ class RedirectRulesDataTest extends TestCase
     #[Test]
     #[TestWith([['redirectRules' => ['foo']]])]
     #[TestWith([['redirectRules' => [
-        ['priority' => 'foo'],
-    ]]])]
-    #[TestWith([['redirectRules' => [
         [
-            'priority' => 4,
             'longUrl' => 34,
         ],
     ]]])]
     #[TestWith([['redirectRules' => [
         [
-            'priority' => 4,
             'longUrl' => 'https://example.com',
             'conditions' => [
                 [
@@ -36,7 +31,6 @@ class RedirectRulesDataTest extends TestCase
     ]]])]
     #[TestWith([['redirectRules' => [
         [
-            'priority' => 4,
             'longUrl' => 'https://example.com',
             'conditions' => [
                 [
@@ -49,7 +43,6 @@ class RedirectRulesDataTest extends TestCase
     ]]])]
     #[TestWith([['redirectRules' => [
         [
-            'priority' => 4,
             'longUrl' => 'https://example.com',
             'conditions' => [
                 [

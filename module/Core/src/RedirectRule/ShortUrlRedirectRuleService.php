@@ -52,10 +52,10 @@ readonly class ShortUrlRedirectRuleService implements ShortUrlRedirectRuleServic
 
         // Then insert new rules
         $rules = [];
-        foreach ($data->rules as $rule) {
+        foreach ($data->rules as $index => $rule) {
             $rule = new ShortUrlRedirectRule(
                 shortUrl: $shortUrl,
-                priority: $rule[RedirectRulesInputFilter::RULE_PRIORITY],
+                priority: $index + 1,
                 longUrl: $rule[RedirectRulesInputFilter::RULE_LONG_URL],
                 conditions: new ArrayCollection(array_map(
                     RedirectCondition::fromRawData(...),
