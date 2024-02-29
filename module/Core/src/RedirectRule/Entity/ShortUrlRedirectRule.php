@@ -36,6 +36,11 @@ class ShortUrlRedirectRule extends AbstractEntity implements JsonSerializable
         );
     }
 
+    public function clearConditions(): void
+    {
+        $this->conditions->clear();
+    }
+
     public function jsonSerialize(): array
     {
         return [

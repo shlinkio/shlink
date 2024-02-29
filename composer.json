@@ -19,6 +19,7 @@
         "ext-pdo": "*",
         "akrabat/ip-address-middleware": "^2.1",
         "cakephp/chronos": "^3.0.2",
+        "doctrine/dbal": "^4.0",
         "doctrine/migrations": "^3.6",
         "doctrine/orm": "^3.0",
         "endroid/qr-code": "^5.0",

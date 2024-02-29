@@ -93,7 +93,7 @@ class ShortUrlInputFilter extends InputFilter
     private function initializeForEdition(bool $requireLongUrl = false): void
     {
         $longUrlInput = InputFactory::basic(self::LONG_URL, required: $requireLongUrl);
-        $longUrlInput->getValidatorChain()->merge($this->longUrlValidators());
+        $longUrlInput->getValidatorChain()->merge(self::longUrlValidators(allowNull: ! $requireLongUrl));
         $this->add($longUrlInput);
 
         $validSince = InputFactory::basic(self::VALID_SINCE);
@@ -124,7 +124,7 @@ class ShortUrlInputFilter extends InputFilter
         $this->add($apiKeyInput);
     }
 
-    private function longUrlValidators(bool $allowNull = false): Validator\ValidatorChain
+    public static function longUrlValidators(bool $allowNull = false): Validator\ValidatorChain
     {
         $emptyModifiers = [
             Validator\NotEmpty::OBJECT,

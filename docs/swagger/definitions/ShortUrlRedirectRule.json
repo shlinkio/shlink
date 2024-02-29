@@ -15,12 +15,8 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["name", "type", "matchKey", "matchValue"],
+        "required": ["type", "matchKey", "matchValue"],
         "properties": {
-          "name":  {
-            "type": "string",
-            "description": "Unique condition name"
-          },
           "type": {
             "type": "string",
             "enum": ["device", "language", "query"],
