@@ -7,6 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
+use Shlinkio\Shlink\Core\RedirectRule\Model\Validation\RedirectRulesInputFilter;
 
 use function Shlinkio\Shlink\Core\acceptLanguageToLocales;
 use function Shlinkio\Shlink\Core\ArrayUtils\some;
@@ -37,6 +38,15 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
     public static function forDevice(DeviceType $device): self
     {
         return new self(RedirectConditionType::DEVICE, $device->value);
+    }
+
+    public static function fromRawData(array $rawData): self
+    {
+        $type = RedirectConditionType::from($rawData[RedirectRulesInputFilter::CONDITION_TYPE]);
+        $value = $rawData[RedirectRulesInputFilter::CONDITION_MATCH_VALUE];
+        $key = $rawData[RedirectRulesInputFilter::CONDITION_MATCH_KEY] ?? null;
+
+        return new self($type, $value, $key);
     }
 
     /**

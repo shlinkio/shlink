@@ -20,7 +20,7 @@ class ShortUrlRedirectRuleTest extends TestCase
             ->withHeader('Accept-Language', 'en-UK')
             ->withQueryParams(['foo' => 'bar']);
 
-        $result = $this->createRule($conditions)->matchesRequest($request);
+        $result = $this->createRule(new ArrayCollection($conditions))->matchesRequest($request);
 
         self::assertEquals($expectedResult, $result);
     }
@@ -38,12 +38,25 @@ class ShortUrlRedirectRuleTest extends TestCase
         ];
     }
 
+    #[Test]
+    public function conditionsCanBeCleared(): void
+    {
+        $conditions = new ArrayCollection(
+            [RedirectCondition::forLanguage('en-UK'), RedirectCondition::forQueryParam('foo', 'bar')],
+        );
+        $rule = $this->createRule($conditions);
+
+        self::assertNotEmpty($conditions);
+        $rule->clearConditions();
+        self::assertEmpty($conditions);
+    }
+
     /**
-     * @param RedirectCondition[] $conditions
+     * @param ArrayCollection<RedirectCondition> $conditions
      */
-    private function createRule(array $conditions): ShortUrlRedirectRule
+    private function createRule(ArrayCollection $conditions): ShortUrlRedirectRule
     {
         $shortUrl = ShortUrl::withLongUrl('https://s.test');
-        return new ShortUrlRedirectRule($shortUrl, 1, '', new ArrayCollection($conditions));
+        return new ShortUrlRedirectRule($shortUrl, 1, '', $conditions);
     }
 }
