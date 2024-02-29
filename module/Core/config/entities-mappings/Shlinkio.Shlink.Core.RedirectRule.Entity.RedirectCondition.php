@@ -22,13 +22,6 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->option('unsigned', true)
             ->build();
 
-    fieldWithUtf8Charset($builder->createField('name', Types::STRING), $emConfig)
-        ->columnName('name')
-        ->length(512)
-        ->build();
-
-    $builder->addUniqueConstraint(['name'], 'UQ_name');
-
     (new FieldBuilder($builder, [
         'fieldName' => 'type',
         'type' => Types::STRING,

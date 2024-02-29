@@ -50,13 +50,11 @@
                   "priority": 1,
                   "conditions": [
                     {
-                      "name": "device-android",
                       "type": "device",
                       "matchValue": "android",
                       "matchKey": null
                     },
                     {
-                      "name": "language-en-US",
                       "type": "language",
                       "matchValue": "en-US",
                       "matchKey": null
@@ -68,7 +66,6 @@
                   "priority": 2,
                   "conditions": [
                     {
-                      "name": "language-fr",
                       "type": "language",
                       "matchValue": "fr",
                       "matchKey": null
@@ -80,13 +77,11 @@
                   "priority": 3,
                   "conditions": [
                     {
-                      "name": "query-foo-bar",
                       "type": "query",
                       "matchKey": "foo",
                       "matchValue": "bar"
                     },
                     {
-                      "name": "query-hello-world",
                       "type": "query",
                       "matchKey": "hello",
                       "matchValue": "world"

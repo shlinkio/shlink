@@ -34,8 +34,6 @@ final class Version20240224115725 extends AbstractMigration
         ]);
 
         $redirectConditions = $this->createTableWithId($schema, 'redirect_conditions');
-        $redirectConditions->addColumn('name', Types::STRING, ['length' => 512]);
-        $redirectConditions->addUniqueIndex(['name'], 'UQ_name');
 
         $redirectConditions->addColumn('type', Types::STRING, ['length' => 255]);
         $redirectConditions->addColumn('match_key', Types::STRING, [

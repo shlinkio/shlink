@@ -25,27 +25,14 @@ class ShortUrlRedirectRulesFixture extends AbstractFixture implements DependentF
         /** @var ShortUrl $defShortUrl */
         $defShortUrl = $this->getReference('def456_short_url');
 
-        $englishCondition = RedirectCondition::forLanguage('en');
-        $manager->persist($englishCondition);
-
-        $fooQueryCondition = RedirectCondition::forQueryParam('foo', 'bar');
-        $manager->persist($fooQueryCondition);
-
-        $helloQueryCondition = RedirectCondition::forQueryParam('hello', 'world');
-        $manager->persist($helloQueryCondition);
-
-        $androidCondition = RedirectCondition::forDevice(DeviceType::ANDROID);
-        $manager->persist($androidCondition);
-
-        $iosCondition = RedirectCondition::forDevice(DeviceType::IOS);
-        $manager->persist($iosCondition);
-
         // Create rules disordered to make sure the order by priority works
         $multipleQueryParamsRule = new ShortUrlRedirectRule(
             shortUrl: $defShortUrl,
             priority: 2,
             longUrl: 'https://example.com/multiple-query-params',
-            conditions: new ArrayCollection([$helloQueryCondition, $fooQueryCondition]),
+            conditions: new ArrayCollection(
+                [RedirectCondition::forQueryParam('hello', 'world'), RedirectCondition::forQueryParam('foo', 'bar')],
+            ),
         );
         $manager->persist($multipleQueryParamsRule);
 
@@ -53,7 +40,9 @@ class ShortUrlRedirectRulesFixture extends AbstractFixture implements DependentF
             shortUrl: $defShortUrl,
             priority: 1,
             longUrl: 'https://example.com/english-and-foo-query',
-            conditions: new ArrayCollection([$englishCondition, $fooQueryCondition]),
+            conditions: new ArrayCollection(
+                [RedirectCondition::forLanguage('en'), RedirectCondition::forQueryParam('foo', 'bar')],
+            ),
         );
         $manager->persist($englishAndFooQueryRule);
 
@@ -61,7 +50,7 @@ class ShortUrlRedirectRulesFixture extends AbstractFixture implements DependentF
             shortUrl: $defShortUrl,
             priority: 4,
             longUrl: 'https://blog.alejandrocelaya.com/android',
-            conditions: new ArrayCollection([$androidCondition]),
+            conditions: new ArrayCollection([RedirectCondition::forDevice(DeviceType::ANDROID)]),
         );
         $manager->persist($androidRule);
 
@@ -69,7 +58,7 @@ class ShortUrlRedirectRulesFixture extends AbstractFixture implements DependentF
             shortUrl: $defShortUrl,
             priority: 3,
             longUrl: 'https://example.com/only-english',
-            conditions: new ArrayCollection([$englishCondition]),
+            conditions: new ArrayCollection([RedirectCondition::forLanguage('en')]),
         );
         $manager->persist($onlyEnglishRule);
 
@@ -77,7 +66,7 @@ class ShortUrlRedirectRulesFixture extends AbstractFixture implements DependentF
             shortUrl: $defShortUrl,
             priority: 5,
             longUrl: 'https://blog.alejandrocelaya.com/ios',
-            conditions: new ArrayCollection([$iosCondition]),
+            conditions: new ArrayCollection([RedirectCondition::forDevice(DeviceType::IOS)]),
         );
         $manager->persist($iosRule);
 
