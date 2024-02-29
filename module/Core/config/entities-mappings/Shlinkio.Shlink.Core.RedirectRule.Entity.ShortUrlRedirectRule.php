@@ -33,10 +33,15 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->addJoinColumn('short_url_id', 'id', nullable: false, onDelete: 'CASCADE')
             ->build();
 
+    // We treat this ManyToMany relation as a unidirectional OneToMany, where conditions are persisted and deleted
+    // together with the rule
     $builder->createManyToMany('conditions', RedirectRule\Entity\RedirectCondition::class)
             ->setJoinTable(determineTableName('redirect_conditions_in_short_url_redirect_rules', $emConfig))
             ->addInverseJoinColumn('redirect_condition_id', 'id', onDelete: 'CASCADE')
             ->addJoinColumn('short_url_redirect_rule_id', 'id', onDelete: 'CASCADE')
             ->fetchEager() // Always fetch the corresponding conditions when loading a rule
+            ->setOrderBy(['id' => 'ASC']) // Ensure a reliable order in the list of conditions
+            ->cascadePersist() // Create automatically with the rule
+            ->orphanRemoval() // Remove conditions when they are not linked to any rule
             ->build();
 };

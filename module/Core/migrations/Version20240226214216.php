@@ -16,36 +16,7 @@ final class Version20240226214216 extends AbstractMigration
     {
         $this->skipIf(! $schema->hasTable('device_long_urls'));
 
-        // First create redirect conditions for all device types
-        $qb = $this->connection->createQueryBuilder();
-        $devices = $qb->select('device_type')
-                      ->distinct()
-                      ->from('device_long_urls')
-                      ->executeQuery();
-
-        $conditionIds = [];
-        while ($deviceRow = $devices->fetchAssociative()) {
-            $deviceType = $deviceRow['device_type'];
-            $conditionQb = $this->connection->createQueryBuilder();
-            $conditionQb->insert('redirect_conditions')
-                ->values([
-                    'name' => ':name',
-                    'type' => ':type',
-                    'match_value' => ':match_value',
-                    'match_key' => ':match_key',
-                ])
-                ->setParameters([
-                    'name' => 'device-' . $deviceType,
-                    'type' => 'device',
-                    'match_value' => $deviceType,
-                    'match_key' => null,
-                ])
-                ->executeStatement();
-            $id = $this->connection->lastInsertId();
-            $conditionIds[$deviceType] = $id;
-        }
-
-        // Then insert a rule per every device_long_url, and link it to the corresponding condition
+        // Insert a rule per every device_long_url, and link it to the corresponding condition
         $qb = $this->connection->createQueryBuilder();
         $rules = $qb->select('short_url_id', 'device_type', 'long_url')
                     ->from('device_long_urls')
@@ -71,6 +42,22 @@ final class Version20240226214216 extends AbstractMigration
                 ->executeStatement();
             $ruleId = $this->connection->lastInsertId();
 
+            $deviceType = $ruleRow['device_type'];
+            $conditionQb = $this->connection->createQueryBuilder();
+            $conditionQb->insert('redirect_conditions')
+                ->values([
+                    'type' => ':type',
+                    'match_value' => ':match_value',
+                    'match_key' => ':match_key',
+                ])
+                ->setParameters([
+                    'type' => 'device',
+                    'match_value' => $deviceType,
+                    'match_key' => null,
+                ])
+                ->executeStatement();
+            $conditionId = $this->connection->lastInsertId();
+
             $relationQb = $this->connection->createQueryBuilder();
             $relationQb->insert('redirect_conditions_in_short_url_redirect_rules')
                 ->values([
@@ -78,7 +65,7 @@ final class Version20240226214216 extends AbstractMigration
                     'short_url_redirect_rule_id' => ':short_url_redirect_rule_id',
                 ])
                 ->setParameters([
-                    'redirect_condition_id' => $conditionIds[$ruleRow['device_type']],
+                    'redirect_condition_id' => $conditionId,
                     'short_url_redirect_rule_id' => $ruleId,
                 ])
                 ->executeStatement();

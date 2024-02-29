@@ -3,7 +3,6 @@
 namespace ShlinkioTest\Shlink\Core\RedirectRule\Entity;
 
 use Laminas\Diactoros\ServerRequestFactory;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
@@ -70,22 +69,5 @@ class RedirectConditionTest extends TestCase
         $result = RedirectCondition::forDevice($value)->matchesRequest($request);
 
         self::assertEquals($expected, $result);
-    }
-
-    #[Test, DataProvider('provideNames')]
-    public function generatesExpectedName(RedirectCondition $condition, string $expectedName): void
-    {
-        self::assertEquals($expectedName, $condition->name);
-    }
-
-    public static function provideNames(): iterable
-    {
-        yield [RedirectCondition::forLanguage('es-ES'), 'language-es-ES'];
-        yield [RedirectCondition::forLanguage('en_UK'), 'language-en_UK'];
-        yield [RedirectCondition::forQueryParam('foo', 'bar'), 'query-foo-bar'];
-        yield [RedirectCondition::forQueryParam('baz', 'foo'), 'query-baz-foo'];
-        yield [RedirectCondition::forDevice(DeviceType::ANDROID), 'device-android'];
-        yield [RedirectCondition::forDevice(DeviceType::IOS), 'device-ios'];
-        yield [RedirectCondition::forDevice(DeviceType::DESKTOP), 'device-desktop'];
     }
 }

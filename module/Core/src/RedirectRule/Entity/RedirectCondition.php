@@ -12,14 +12,12 @@ use function Shlinkio\Shlink\Core\acceptLanguageToLocales;
 use function Shlinkio\Shlink\Core\ArrayUtils\some;
 use function Shlinkio\Shlink\Core\normalizeLocale;
 use function Shlinkio\Shlink\Core\splitLocale;
-use function sprintf;
 use function strtolower;
 use function trim;
 
 class RedirectCondition extends AbstractEntity implements JsonSerializable
 {
     private function __construct(
-        public readonly string $name,
         private readonly RedirectConditionType $type,
         private readonly string $matchValue,
         private readonly ?string $matchKey = null,
@@ -28,26 +26,17 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
 
     public static function forQueryParam(string $param, string $value): self
     {
-        $type = RedirectConditionType::QUERY_PARAM;
-        $name = sprintf('%s-%s-%s', $type->value, $param, $value);
-
-        return new self($name, $type, $value, $param);
+        return new self(RedirectConditionType::QUERY_PARAM, $value, $param);
     }
 
     public static function forLanguage(string $language): self
     {
-        $type = RedirectConditionType::LANGUAGE;
-        $name = sprintf('%s-%s', $type->value, $language);
-
-        return new self($name, $type, $language);
+        return new self(RedirectConditionType::LANGUAGE, $language);
     }
 
     public static function forDevice(DeviceType $device): self
     {
-        $type = RedirectConditionType::DEVICE;
-        $name = sprintf('%s-%s', $type->value, $device->value);
-
-        return new self($name, $type, $device->value);
+        return new self(RedirectConditionType::DEVICE, $device->value);
     }
 
     /**
@@ -103,7 +92,6 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'name' => $this->name,
             'type' => $this->type->value,
             'matchKey' => $this->matchKey,
             'matchValue' => $this->matchValue,

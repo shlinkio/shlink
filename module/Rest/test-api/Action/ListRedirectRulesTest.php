@@ -13,13 +13,11 @@ use function sprintf;
 class ListRedirectRulesTest extends ApiTestCase
 {
     private const LANGUAGE_EN_CONDITION = [
-        'name' => 'language-en',
         'type' => 'language',
         'matchKey' => null,
         'matchValue' => 'en',
     ];
     private const QUERY_FOO_BAR_CONDITION = [
-        'name' => 'query-foo-bar',
         'type' => 'query',
         'matchKey' => 'foo',
         'matchValue' => 'bar',
@@ -54,13 +52,12 @@ class ListRedirectRulesTest extends ApiTestCase
             'longUrl' => 'https://example.com/multiple-query-params',
             'priority' => 2,
             'conditions' => [
-                self::QUERY_FOO_BAR_CONDITION,
                 [
-                    'name' => 'query-hello-world',
                     'type' => 'query',
                     'matchKey' => 'hello',
                     'matchValue' => 'world',
                 ],
+                self::QUERY_FOO_BAR_CONDITION,
             ],
         ],
         [
@@ -73,7 +70,6 @@ class ListRedirectRulesTest extends ApiTestCase
             'priority' => 4,
             'conditions' => [
                 [
-                    'name' => 'device-android',
                     'type' => 'device',
                     'matchKey' => null,
                     'matchValue' => 'android',
@@ -85,7 +81,6 @@ class ListRedirectRulesTest extends ApiTestCase
             'priority' => 5,
             'conditions' => [
                 [
-                    'name' => 'device-ios',
                     'type' => 'device',
                     'matchKey' => null,
                     'matchValue' => 'ios',
