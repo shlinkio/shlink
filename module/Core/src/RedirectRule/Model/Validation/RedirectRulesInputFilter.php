@@ -48,7 +48,7 @@ class RedirectRulesInputFilter extends InputFilter
         $redirectRuleInputFilter = new InputFilter();
 
         $longUrl = InputFactory::basic(self::RULE_LONG_URL, required: true);
-        $longUrl->setValidatorChain(ShortUrlInputFilter::longUrlValidators());
+        $longUrl->getValidatorChain()->merge(ShortUrlInputFilter::longUrlValidators());
         $redirectRuleInputFilter->add($longUrl);
 
         $conditionsInputFilter = new CollectionInputFilter();
