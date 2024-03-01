@@ -145,7 +145,7 @@
       "Redirect rules"
     ],
     "summary": "Set short URL redirect rules",
-    "description": "Overwrites redirect rules for a short URL with the ones provided here.",
+    "description": "Sets redirect rules for a short URL, with priorities matching the order in which they are provided.",
     "parameters": [
       {
         "$ref": "../parameters/version.json"
@@ -173,10 +173,54 @@
               "redirectRules": {
                 "type": "array",
                 "items": {
-                  "$ref": "../definitions/ShortUrlRedirectRule.json"
+                  "$ref": "../definitions/SetShortUrlRedirectRule.json"
                 }
               }
             }
+          },
+          "example": {
+            "redirectRules": [
+              {
+                "longUrl": "https://example.com/android-en-us",
+                "conditions": [
+                  {
+                    "type": "device",
+                    "matchValue": "android",
+                    "matchKey": null
+                  },
+                  {
+                    "type": "language",
+                    "matchValue": "en-US",
+                    "matchKey": null
+                  }
+                ]
+              },
+              {
+                "longUrl": "https://example.com/fr",
+                "conditions": [
+                  {
+                    "type": "language",
+                    "matchValue": "fr",
+                    "matchKey": null
+                  }
+                ]
+              },
+              {
+                "longUrl": "https://example.com/query-foo-bar-hello-world",
+                "conditions": [
+                  {
+                    "type": "query",
+                    "matchKey": "foo",
+                    "matchValue": "bar"
+                  },
+                  {
+                    "type": "query",
+                    "matchKey": "hello",
+                    "matchValue": "world"
+                  }
+                ]
+              }
+            ]
           }
         }
       }
