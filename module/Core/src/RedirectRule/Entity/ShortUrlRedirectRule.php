@@ -15,7 +15,7 @@ use function Shlinkio\Shlink\Core\ArrayUtils\every;
 class ShortUrlRedirectRule extends AbstractEntity implements JsonSerializable
 {
     /**
-     * @param Collection<RedirectCondition> $conditions
+     * @param Collection<int, RedirectCondition> $conditions
      */
     public function __construct(
         private readonly ShortUrl $shortUrl, // No need to read this field. It's used by doctrine
@@ -39,6 +39,16 @@ class ShortUrlRedirectRule extends AbstractEntity implements JsonSerializable
     public function clearConditions(): void
     {
         $this->conditions->clear();
+    }
+
+    /**
+     * @template R
+     * @param callable(RedirectCondition $condition): R $callback
+     * @return R[]
+     */
+    public function mapConditions(callable $callback): array
+    {
+        return $this->conditions->map($callback(...))->toArray();
     }
 
     public function jsonSerialize(): array

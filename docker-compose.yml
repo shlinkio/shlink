@@ -81,7 +81,7 @@ services:
         container_name: shlink_db_postgres
         image: postgres:12.2-alpine
         ports:
-            - "5433:5432"
+            - "5434:5432"
         volumes:
             - ./:/home/shlink/www
             - ./data/infra/database_pg:/var/lib/postgresql/data
@@ -153,8 +153,8 @@ services:
         container_name: shlink_rabbitmq
         image: rabbitmq:3.11-management-alpine
         ports:
-            - "15672:15672"
-            - "5672:5672"
+            - "15673:15672"
+            - "5673:5672"
         environment:
             RABBITMQ_DEFAULT_USER: "rabbit"
             RABBITMQ_DEFAULT_PASS: "rabbit"
