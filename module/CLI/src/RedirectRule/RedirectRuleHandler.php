@@ -60,24 +60,26 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
             $io->table(['Priority', 'Conditions', 'Redirect to'], $listing);
         }
 
-        $action = $io->choice(
+        $action = RedirectRuleHandlerAction::from($io->choice(
             'What do you want to do next?',
-            [
-                'Add new rule',
-                'Remove existing rule',
-                'Re-arrange rule',
-                'Discard changes',
-                'Save and exit',
-            ],
-            'Save and exit',
-        );
+            enumValues(RedirectRuleHandlerAction::class),
+            RedirectRuleHandlerAction::SAVE->value,
+        ));
 
         return match ($action) {
-            'Add new rule' => $this->manageRules($io, $shortUrl, $this->addRule($shortUrl, $io, $rules)),
-            'Remove existing rule' => $this->manageRules($io, $shortUrl, $this->removeRule($io, $rules)),
-            'Re-arrange rule' => $this->manageRules($io, $shortUrl, $this->reArrangeRule($io, $rules)),
-            'Save and exit' => $rules,
-            default => null,
+            RedirectRuleHandlerAction::ADD => $this->manageRules(
+                $io,
+                $shortUrl,
+                $this->addRule($shortUrl, $io, $rules),
+            ),
+            RedirectRuleHandlerAction::REMOVE => $this->manageRules($io, $shortUrl, $this->removeRule($io, $rules)),
+            RedirectRuleHandlerAction::RE_ARRANGE => $this->manageRules(
+                $io,
+                $shortUrl,
+                $this->reArrangeRule($io, $rules),
+            ),
+            RedirectRuleHandlerAction::SAVE => $rules,
+            RedirectRuleHandlerAction::DISCARD => null,
         };
     }
 
