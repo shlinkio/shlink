@@ -76,6 +76,7 @@ class ManageRedirectRulesCommand extends Command
         $rulesToSave = $this->processRules($shortUrl, $io, $this->ruleService->rulesForShortUrl($shortUrl));
         if ($rulesToSave !== null) {
             $this->ruleService->saveRulesForShortUrl($shortUrl, $rulesToSave);
+            $io->success('Rules properly saved');
         }
 
         return ExitCode::EXIT_SUCCESS;

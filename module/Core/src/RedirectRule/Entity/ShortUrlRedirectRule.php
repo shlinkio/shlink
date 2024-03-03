@@ -25,6 +25,16 @@ class ShortUrlRedirectRule extends AbstractEntity implements JsonSerializable
     ) {
     }
 
+    public function withPriority(int $newPriority): self
+    {
+        return new self(
+            $this->shortUrl,
+            $newPriority,
+            $this->longUrl,
+            $this->conditions,
+        );
+    }
+
     /**
      * Tells if this condition matches provided request
      */
