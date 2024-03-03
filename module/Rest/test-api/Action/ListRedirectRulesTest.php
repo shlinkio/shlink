@@ -18,7 +18,7 @@ class ListRedirectRulesTest extends ApiTestCase
         'matchValue' => 'en',
     ];
     private const QUERY_FOO_BAR_CONDITION = [
-        'type' => 'query',
+        'type' => 'query-param',
         'matchKey' => 'foo',
         'matchValue' => 'bar',
     ];
@@ -53,7 +53,7 @@ class ListRedirectRulesTest extends ApiTestCase
             'priority' => 2,
             'conditions' => [
                 [
-                    'type' => 'query',
+                    'type' => 'query-param',
                     'matchKey' => 'hello',
                     'matchValue' => 'world',
                 ],

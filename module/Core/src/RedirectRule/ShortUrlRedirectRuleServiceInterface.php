@@ -17,4 +17,9 @@ interface ShortUrlRedirectRuleServiceInterface
      * @return ShortUrlRedirectRule[]
      */
     public function setRulesForShortUrl(ShortUrl $shortUrl, RedirectRulesData $data): array;
+
+    /**
+     * @param ShortUrlRedirectRule[] $rules
+     */
+    public function saveRulesForShortUrl(ShortUrl $shortUrl, array $rules): void;
 }

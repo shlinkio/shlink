@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Model;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
-use Symfony\Component\Console\Input\InputInterface;
 
 use function sprintf;
 
@@ -28,18 +27,6 @@ final readonly class ShortUrlIdentifier
     {
         $shortCode = $request->getAttribute('shortCode', '');
         $domain = $request->getUri()->getAuthority();
-
-        return new self($shortCode, $domain);
-    }
-
-    public static function fromCli(InputInterface $input): self
-    {
-        // Using getArguments and getOptions instead of getArgument(...) and getOption(...) because
-        // the later throw an exception if requested options are not defined
-        /** @var string $shortCode */
-        $shortCode = $input->getArguments()['shortCode'] ?? '';
-        /** @var string|null $domain */
-        $domain = $input->getOptions()['domain'] ?? null;
 
         return new self($shortCode, $domain);
     }

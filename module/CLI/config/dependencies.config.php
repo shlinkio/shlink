@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Common\Doctrine\NoDbNameConnectionFactory;
 use Shlinkio\Shlink\Core\Domain\DomainService;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
+use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectRuleService;
 use Shlinkio\Shlink\Core\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\Tag\TagService;
@@ -33,6 +34,7 @@ return [
             PhpExecutableFinder::class => InvokableFactory::class,
 
             GeoLite\GeolocationDbUpdater::class => ConfigAbstractFactory::class,
+            RedirectRule\RedirectRuleHandler::class => InvokableFactory::class,
             Util\ProcessRunner::class => ConfigAbstractFactory::class,
 
             ApiKey\RoleResolver::class => ConfigAbstractFactory::class,
@@ -66,6 +68,8 @@ return [
             Command\Domain\ListDomainsCommand::class => ConfigAbstractFactory::class,
             Command\Domain\DomainRedirectsCommand::class => ConfigAbstractFactory::class,
             Command\Domain\GetDomainVisitsCommand::class => ConfigAbstractFactory::class,
+
+            Command\RedirectRule\ManageRedirectRulesCommand::class => ConfigAbstractFactory::class,
         ],
     ],
 
@@ -116,6 +120,12 @@ return [
         Command\Domain\ListDomainsCommand::class => [DomainService::class],
         Command\Domain\DomainRedirectsCommand::class => [DomainService::class],
         Command\Domain\GetDomainVisitsCommand::class => [Visit\VisitsStatsHelper::class, ShortUrlStringifier::class],
+
+        Command\RedirectRule\ManageRedirectRulesCommand::class => [
+            ShortUrl\ShortUrlResolver::class,
+            ShortUrlRedirectRuleService::class,
+            RedirectRule\RedirectRuleHandler::class,
+        ],
 
         Command\Db\CreateDatabaseCommand::class => [
             LockFactory::class,

@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule;
+use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 
 class ShortUrlRedirectRuleTest extends TestCase
@@ -49,6 +50,39 @@ class ShortUrlRedirectRuleTest extends TestCase
         self::assertNotEmpty($conditions);
         $rule->clearConditions();
         self::assertEmpty($conditions);
+    }
+
+    #[Test, DataProvider('provideConditionMappingCallbacks')]
+    public function conditionsCanBeMapped(callable $callback, array $expectedResult): void
+    {
+        $conditions = new ArrayCollection(
+            [RedirectCondition::forLanguage('en-UK'), RedirectCondition::forQueryParam('foo', 'bar')],
+        );
+        $rule = $this->createRule($conditions);
+
+        $result = $rule->mapConditions($callback);
+
+        self::assertEquals($expectedResult, $result);
+    }
+
+    public static function provideConditionMappingCallbacks(): iterable
+    {
+        yield 'json-serialized conditions' => [fn (RedirectCondition $cond) => $cond->jsonSerialize(), [
+            [
+                'type' => RedirectConditionType::LANGUAGE->value,
+                'matchKey' => null,
+                'matchValue' => 'en-UK',
+            ],
+            [
+                'type' => RedirectConditionType::QUERY_PARAM->value,
+                'matchKey' => 'foo',
+                'matchValue' => 'bar',
+            ],
+        ]];
+        yield 'human-friendly conditions' => [fn (RedirectCondition $cond) => $cond->toHumanFriendly(), [
+            'en-UK language is accepted',
+            'query string contains foo=bar',
+        ]];
     }
 
     /**

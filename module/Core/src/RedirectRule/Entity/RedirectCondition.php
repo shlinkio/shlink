@@ -13,6 +13,7 @@ use function Shlinkio\Shlink\Core\acceptLanguageToLocales;
 use function Shlinkio\Shlink\Core\ArrayUtils\some;
 use function Shlinkio\Shlink\Core\normalizeLocale;
 use function Shlinkio\Shlink\Core\splitLocale;
+use function sprintf;
 use function strtolower;
 use function trim;
 
@@ -106,5 +107,18 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
             'matchKey' => $this->matchKey,
             'matchValue' => $this->matchValue,
         ];
+    }
+
+    public function toHumanFriendly(): string
+    {
+        return match ($this->type) {
+            RedirectConditionType::DEVICE => sprintf('device is %s', $this->matchValue),
+            RedirectConditionType::LANGUAGE => sprintf('%s language is accepted', $this->matchValue),
+            RedirectConditionType::QUERY_PARAM => sprintf(
+                'query string contains %s=%s',
+                $this->matchKey,
+                $this->matchValue,
+            ),
+        };
     }
 }

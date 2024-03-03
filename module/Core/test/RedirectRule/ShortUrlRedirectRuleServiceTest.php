@@ -132,4 +132,40 @@ class ShortUrlRedirectRuleServiceTest extends TestCase
 
         self::assertCount(0, $result);
     }
+
+    #[Test]
+    public function saveRulesForShortUrlDetachesAllEntitiesAndArrangesPriorities(): void
+    {
+        $shortUrl = ShortUrl::withLongUrl('https://example.com');
+        $rules = [
+            new ShortUrlRedirectRule($shortUrl, 8, 'https://example.com', new ArrayCollection([
+                RedirectCondition::forLanguage('es-ES'),
+                RedirectCondition::forDevice(DeviceType::ANDROID),
+            ])),
+            new ShortUrlRedirectRule($shortUrl, 3, 'https://example.com', new ArrayCollection([
+                RedirectCondition::forQueryParam('foo', 'bar'),
+                RedirectCondition::forQueryParam('bar', 'foo'),
+            ])),
+            new ShortUrlRedirectRule($shortUrl, 15, 'https://example.com', new ArrayCollection([
+                RedirectCondition::forDevice(DeviceType::IOS),
+            ])),
+        ];
+
+        // Detach will be called 8 times: 3 rules + 5 conditions
+        $this->em->expects($this->exactly(8))->method('detach');
+        $this->em->expects($this->once())->method('wrapInTransaction')->willReturnCallback(
+            fn (callable $callback) => $callback(),
+        );
+
+        // Persist will be called for each of the three rules. Their priorities should be consecutive starting at 1
+        $cont = 0;
+        $this->em->expects($this->exactly(3))->method('persist')->with($this->callback(
+            function (ShortUrlRedirectRule $rule) use (&$cont): bool {
+                $cont++;
+                return $rule->jsonSerialize()['priority'] === $cont;
+            },
+        ));
+
+        $this->ruleService->saveRulesForShortUrl($shortUrl, $rules);
+    }
 }

@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Core\RedirectRule\Model\Validation\RedirectRulesInputFilter;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 
 use function array_map;
+use function Shlinkio\Shlink\Core\ArrayUtils\map;
 
 readonly class ShortUrlRedirectRuleService implements ShortUrlRedirectRuleServiceInterface
 {
@@ -34,23 +35,6 @@ readonly class ShortUrlRedirectRuleService implements ShortUrlRedirectRuleServic
      */
     public function setRulesForShortUrl(ShortUrl $shortUrl, RedirectRulesData $data): array
     {
-        return $this->em->wrapInTransaction(fn () => $this->doSetRulesForShortUrl($shortUrl, $data));
-    }
-
-    /**
-     * @return ShortUrlRedirectRule[]
-     */
-    private function doSetRulesForShortUrl(ShortUrl $shortUrl, RedirectRulesData $data): array
-    {
-        // First, delete existing rules for the short URL
-        $oldRules = $this->rulesForShortUrl($shortUrl);
-        foreach ($oldRules as $oldRule) {
-            $oldRule->clearConditions(); // This will trigger the orphan removal of old conditions
-            $this->em->remove($oldRule);
-        }
-        $this->em->flush();
-
-        // Then insert new rules
         $rules = [];
         foreach ($data->rules as $index => $rule) {
             $rule = new ShortUrlRedirectRule(
@@ -64,9 +48,47 @@ readonly class ShortUrlRedirectRuleService implements ShortUrlRedirectRuleServic
             );
 
             $rules[] = $rule;
-            $this->em->persist($rule);
         }
 
+        $this->doSetRulesForShortUrl($shortUrl, $rules);
         return $rules;
+    }
+
+    /**
+     * @param ShortUrlRedirectRule[] $rules
+     */
+    public function saveRulesForShortUrl(ShortUrl $shortUrl, array $rules): void
+    {
+        $normalizedAndDetachedRules = map($rules, function (ShortUrlRedirectRule $rule, int|string|float $priority) {
+            // Make sure all rules and conditions are detached so that the EM considers them new.
+            $rule->mapConditions(fn (RedirectCondition $cond) => $this->em->detach($cond));
+            $this->em->detach($rule);
+
+            // Normalize priorities so that they are sequential
+            return $rule->withPriority(((int) $priority) + 1);
+        });
+
+        $this->doSetRulesForShortUrl($shortUrl, $normalizedAndDetachedRules);
+    }
+
+    /**
+     * @param ShortUrlRedirectRule[] $rules
+     */
+    public function doSetRulesForShortUrl(ShortUrl $shortUrl, array $rules): void
+    {
+        $this->em->wrapInTransaction(function () use ($shortUrl, $rules): void {
+            // First, delete existing rules for the short URL
+            $oldRules = $this->rulesForShortUrl($shortUrl);
+            foreach ($oldRules as $oldRule) {
+                $oldRule->clearConditions(); // This will trigger the orphan removal of old conditions
+                $this->em->remove($oldRule);
+            }
+            $this->em->flush();
+
+            // Then insert new rules
+            foreach ($rules as $rule) {
+                $this->em->persist($rule);
+            }
+        });
     }
 }
