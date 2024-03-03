@@ -12,7 +12,6 @@ use Shlinkio\Shlink\Core\EventDispatcher\Helper\EnabledListenerChecker;
 use Shlinkio\Shlink\Core\EventDispatcher\Matomo\SendVisitToMatomo;
 use Shlinkio\Shlink\Core\EventDispatcher\Mercure\NotifyNewShortUrlToMercure;
 use Shlinkio\Shlink\Core\EventDispatcher\Mercure\NotifyVisitToMercure;
-use Shlinkio\Shlink\Core\EventDispatcher\NotifyVisitToWebHooks;
 use Shlinkio\Shlink\Core\EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq;
 use Shlinkio\Shlink\Core\EventDispatcher\RabbitMq\NotifyVisitToRabbitMq;
 use Shlinkio\Shlink\Core\EventDispatcher\RedisPubSub\NotifyNewShortUrlToRedis;
@@ -20,7 +19,6 @@ use Shlinkio\Shlink\Core\EventDispatcher\RedisPubSub\NotifyVisitToRedis;
 use Shlinkio\Shlink\Core\EventDispatcher\UpdateGeoLiteDb;
 use Shlinkio\Shlink\Core\Matomo\MatomoOptions;
 use Shlinkio\Shlink\Core\Options\RabbitMqOptions;
-use Shlinkio\Shlink\Core\Options\WebhookOptions;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\GeoLite2Options;
 
 class EnabledListenerCheckerTest extends TestCase
@@ -41,7 +39,6 @@ class EnabledListenerCheckerTest extends TestCase
             [NotifyVisitToMercure::class],
             [NotifyNewShortUrlToMercure::class],
             [SendVisitToMatomo::class],
-            [NotifyVisitToWebHooks::class],
             [UpdateGeoLiteDb::class],
         ];
     }
@@ -68,7 +65,6 @@ class EnabledListenerCheckerTest extends TestCase
             NotifyNewShortUrlToRedis::class => false,
             NotifyVisitToMercure::class => false,
             NotifyNewShortUrlToMercure::class => false,
-            NotifyVisitToWebHooks::class => false,
             UpdateGeoLiteDb::class => false,
             'unknown' => false,
         ]];
@@ -79,7 +75,6 @@ class EnabledListenerCheckerTest extends TestCase
             NotifyNewShortUrlToRedis::class => true,
             NotifyVisitToMercure::class => false,
             NotifyNewShortUrlToMercure::class => false,
-            NotifyVisitToWebHooks::class => false,
             UpdateGeoLiteDb::class => false,
             'unknown' => false,
         ]];
@@ -90,18 +85,6 @@ class EnabledListenerCheckerTest extends TestCase
             NotifyNewShortUrlToRedis::class => false,
             NotifyVisitToMercure::class => true,
             NotifyNewShortUrlToMercure::class => true,
-            NotifyVisitToWebHooks::class => false,
-            UpdateGeoLiteDb::class => false,
-            'unknown' => false,
-        ]];
-        yield 'Webhooks' => [self::checker(webhooksEnabled: true), [
-            NotifyVisitToRabbitMq::class => false,
-            NotifyNewShortUrlToRabbitMq::class => false,
-            NotifyVisitToRedis::class => false,
-            NotifyNewShortUrlToRedis::class => false,
-            NotifyVisitToMercure::class => false,
-            NotifyNewShortUrlToMercure::class => false,
-            NotifyVisitToWebHooks::class => true,
             UpdateGeoLiteDb::class => false,
             'unknown' => false,
         ]];
@@ -112,7 +95,6 @@ class EnabledListenerCheckerTest extends TestCase
             NotifyNewShortUrlToRedis::class => false,
             NotifyVisitToMercure::class => false,
             NotifyNewShortUrlToMercure::class => false,
-            NotifyVisitToWebHooks::class => false,
             UpdateGeoLiteDb::class => true,
             'unknown' => false,
         ]];
@@ -124,7 +106,6 @@ class EnabledListenerCheckerTest extends TestCase
             NotifyVisitToMercure::class => false,
             NotifyNewShortUrlToMercure::class => false,
             SendVisitToMatomo::class => true,
-            NotifyVisitToWebHooks::class => false,
             UpdateGeoLiteDb::class => false,
             'unknown' => false,
         ]];
@@ -135,7 +116,6 @@ class EnabledListenerCheckerTest extends TestCase
             NotifyNewShortUrlToRedis::class => false,
             NotifyVisitToMercure::class => false,
             NotifyNewShortUrlToMercure::class => false,
-            NotifyVisitToWebHooks::class => false,
             UpdateGeoLiteDb::class => false,
             'unknown' => false,
         ]];
@@ -143,7 +123,6 @@ class EnabledListenerCheckerTest extends TestCase
             rabbitMqEnabled: true,
             redisPubSubEnabled: true,
             mercureEnabled: true,
-            webhooksEnabled: true,
             geoLiteEnabled: true,
             matomoEnabled: true,
         ), [
@@ -154,7 +133,6 @@ class EnabledListenerCheckerTest extends TestCase
             NotifyVisitToMercure::class => true,
             NotifyNewShortUrlToMercure::class => true,
             SendVisitToMatomo::class => true,
-            NotifyVisitToWebHooks::class => true,
             UpdateGeoLiteDb::class => true,
             'unknown' => false,
         ]];
@@ -164,7 +142,6 @@ class EnabledListenerCheckerTest extends TestCase
         bool $rabbitMqEnabled = false,
         bool $redisPubSubEnabled = false,
         bool $mercureEnabled = false,
-        bool $webhooksEnabled = false,
         bool $geoLiteEnabled = false,
         bool $matomoEnabled = false,
     ): EnabledListenerChecker {
@@ -172,7 +149,6 @@ class EnabledListenerCheckerTest extends TestCase
             new RabbitMqOptions(enabled: $rabbitMqEnabled),
             $redisPubSubEnabled,
             new MercureOptions(publicHubUrl: $mercureEnabled ? 'the-url' : null),
-            new WebhookOptions(['webhooks' => $webhooksEnabled ? ['foo', 'bar'] : []]),
             new GeoLite2Options(licenseKey: $geoLiteEnabled ? 'the-key' : null),
             new MatomoOptions(enabled: $matomoEnabled),
         );

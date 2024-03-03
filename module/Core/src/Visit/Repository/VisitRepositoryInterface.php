@@ -8,6 +8,8 @@ use Doctrine\Persistence\ObjectRepository;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
+use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsCountFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 
@@ -37,9 +39,9 @@ interface VisitRepositoryInterface extends ObjectRepository, EntitySpecification
     /**
      * @return Visit[]
      */
-    public function findOrphanVisits(VisitsListFiltering $filtering): array;
+    public function findOrphanVisits(OrphanVisitsListFiltering $filtering): array;
 
-    public function countOrphanVisits(VisitsCountFiltering $filtering): int;
+    public function countOrphanVisits(OrphanVisitsCountFiltering $filtering): int;
 
     /**
      * @return Visit[]

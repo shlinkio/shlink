@@ -12,7 +12,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 abstract class AbstractDeleteVisitsCommand extends Command
 {
-    final protected function execute(InputInterface $input, OutputInterface $output): ?int
+    final protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         if (! $this->confirm($io)) {
@@ -29,7 +29,7 @@ abstract class AbstractDeleteVisitsCommand extends Command
         return $io->confirm('<comment>Continue deleting visits?</comment>', false);
     }
 
-    abstract protected function doExecute(InputInterface $input, SymfonyStyle $io): ?int;
+    abstract protected function doExecute(InputInterface $input, SymfonyStyle $io): int;
 
     abstract protected function getWarningMessage(): string;
 }

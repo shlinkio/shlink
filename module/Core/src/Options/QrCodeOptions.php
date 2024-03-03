@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Options;
 
+use const Shlinkio\Shlink\DEFAULT_QR_CODE_BG_COLOR;
+use const Shlinkio\Shlink\DEFAULT_QR_CODE_COLOR;
 use const Shlinkio\Shlink\DEFAULT_QR_CODE_ENABLED_FOR_DISABLED_SHORT_URLS;
 use const Shlinkio\Shlink\DEFAULT_QR_CODE_ERROR_CORRECTION;
 use const Shlinkio\Shlink\DEFAULT_QR_CODE_FORMAT;
@@ -20,6 +22,9 @@ readonly final class QrCodeOptions
         public string $errorCorrection = DEFAULT_QR_CODE_ERROR_CORRECTION,
         public bool $roundBlockSize = DEFAULT_QR_CODE_ROUND_BLOCK_SIZE,
         public bool $enabledForDisabledShortUrls = DEFAULT_QR_CODE_ENABLED_FOR_DISABLED_SHORT_URLS,
+        public string $color = DEFAULT_QR_CODE_COLOR,
+        public string $bgColor = DEFAULT_QR_CODE_BG_COLOR,
+        public ?string $logoUrl = null,
     ) {
     }
 }

@@ -25,29 +25,12 @@ class TagsStatsTest extends ApiTestCase
         self::assertEquals($expectedPagination, $tags['pagination']);
     }
 
-    #[Test, DataProvider('provideQueries')]
-    public function expectedListOfTagsIsReturnedForDeprecatedApproach(
-        string $apiKey,
-        array $query,
-        array $expectedStats,
-        array $expectedPagination,
-    ): void {
-        $query['withStats'] = 'true';
-        $resp = $this->callApiWithKey(self::METHOD_GET, '/tags', [RequestOptions::QUERY => $query], $apiKey);
-        ['tags' => $tags] = $this->getJsonResponsePayload($resp);
-
-        self::assertEquals($expectedStats, $tags['stats']);
-        self::assertEquals($expectedPagination, $tags['pagination']);
-        self::assertArrayHasKey('data', $tags);
-    }
-
     public static function provideQueries(): iterable
     {
         yield 'admin API key' => ['valid_api_key', [], [
             [
                 'tag' => 'bar',
                 'shortUrlsCount' => 1,
-                'visitsCount' => 2,
                 'visitsSummary' => [
                     'total' => 2,
                     'nonBots' => 1,
@@ -57,7 +40,6 @@ class TagsStatsTest extends ApiTestCase
             [
                 'tag' => 'baz',
                 'shortUrlsCount' => 0,
-                'visitsCount' => 0,
                 'visitsSummary' => [
                     'total' => 0,
                     'nonBots' => 0,
@@ -67,7 +49,6 @@ class TagsStatsTest extends ApiTestCase
             [
                 'tag' => 'foo',
                 'shortUrlsCount' => 3,
-                'visitsCount' => 5,
                 'visitsSummary' => [
                     'total' => 5,
                     'nonBots' => 4,
@@ -85,7 +66,6 @@ class TagsStatsTest extends ApiTestCase
             [
                 'tag' => 'bar',
                 'shortUrlsCount' => 1,
-                'visitsCount' => 2,
                 'visitsSummary' => [
                     'total' => 2,
                     'nonBots' => 1,
@@ -95,7 +75,6 @@ class TagsStatsTest extends ApiTestCase
             [
                 'tag' => 'baz',
                 'shortUrlsCount' => 0,
-                'visitsCount' => 0,
                 'visitsSummary' => [
                     'total' => 0,
                     'nonBots' => 0,
@@ -113,7 +92,6 @@ class TagsStatsTest extends ApiTestCase
             [
                 'tag' => 'bar',
                 'shortUrlsCount' => 1,
-                'visitsCount' => 2,
                 'visitsSummary' => [
                     'total' => 2,
                     'nonBots' => 1,
@@ -123,7 +101,6 @@ class TagsStatsTest extends ApiTestCase
             [
                 'tag' => 'foo',
                 'shortUrlsCount' => 2,
-                'visitsCount' => 5,
                 'visitsSummary' => [
                     'total' => 5,
                     'nonBots' => 4,
@@ -141,7 +118,6 @@ class TagsStatsTest extends ApiTestCase
             [
                 'tag' => 'foo',
                 'shortUrlsCount' => 2,
-                'visitsCount' => 5,
                 'visitsSummary' => [
                     'total' => 5,
                     'nonBots' => 4,
@@ -159,7 +135,6 @@ class TagsStatsTest extends ApiTestCase
             [
                 'tag' => 'foo',
                 'shortUrlsCount' => 1,
-                'visitsCount' => 0,
                 'visitsSummary' => [
                     'total' => 0,
                     'nonBots' => 0,

@@ -58,7 +58,7 @@ class ResolveShortUrlTest extends ApiTestCase
 
         self::assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
         self::assertEquals(self::STATUS_NOT_FOUND, $payload['status']);
-        self::assertEquals('INVALID_SHORTCODE', $payload['type']);
+        self::assertEquals('https://shlink.io/api/error/short-url-not-found', $payload['type']);
         self::assertEquals($expectedDetail, $payload['detail']);
         self::assertEquals('Short URL not found', $payload['title']);
         self::assertEquals($shortCode, $payload['shortCode']);

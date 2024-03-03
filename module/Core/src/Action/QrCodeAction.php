@@ -48,7 +48,15 @@ readonly class QrCodeAction implements MiddlewareInterface
             ->margin($params->margin)
             ->writer($params->writer)
             ->errorCorrectionLevel($params->errorCorrectionLevel)
-            ->roundBlockSizeMode($params->roundBlockSizeMode);
+            ->roundBlockSizeMode($params->roundBlockSizeMode)
+            ->foregroundColor($params->color)
+            ->backgroundColor($params->bgColor);
+
+        $logoUrl = $this->options->logoUrl;
+        if ($logoUrl !== null) {
+            $qrCodeBuilder->logoPath($logoUrl)
+                          ->logoResizeToHeight((int) ($params->size / 4));
+        }
 
         return new QrCodeResponse($qrCodeBuilder->build());
     }

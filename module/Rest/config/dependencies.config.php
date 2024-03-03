@@ -12,6 +12,7 @@ use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Mercure\LcobucciJwtProvider;
 use Shlinkio\Shlink\Core\Domain\DomainService;
 use Shlinkio\Shlink\Core\Options;
+use Shlinkio\Shlink\Core\RedirectRule;
 use Shlinkio\Shlink\Core\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Core\Tag\TagService;
@@ -46,6 +47,8 @@ return [
             Action\Tag\UpdateTagAction::class => ConfigAbstractFactory::class,
             Action\Domain\ListDomainsAction::class => ConfigAbstractFactory::class,
             Action\Domain\DomainRedirectsAction::class => ConfigAbstractFactory::class,
+            Action\RedirectRule\ListRedirectRulesAction::class => ConfigAbstractFactory::class,
+            Action\RedirectRule\SetRedirectRulesAction::class => ConfigAbstractFactory::class,
 
             ImplicitOptionsMiddleware::class => Middleware\EmptyResponseImplicitOptionsMiddlewareFactory::class,
             Middleware\BodyParserMiddleware::class => InvokableFactory::class,
@@ -55,7 +58,6 @@ return [
             Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class => ConfigAbstractFactory::class,
             Middleware\ShortUrl\OverrideDomainMiddleware::class => ConfigAbstractFactory::class,
             Middleware\Mercure\NotConfiguredMercureErrorHandler::class => ConfigAbstractFactory::class,
-            Middleware\ErrorHandler\BackwardsCompatibleProblemDetailsHandler::class => InvokableFactory::class,
         ],
     ],
 
@@ -104,6 +106,14 @@ return [
         Action\Tag\UpdateTagAction::class => [TagService::class],
         Action\Domain\ListDomainsAction::class => [DomainService::class, Options\NotFoundRedirectOptions::class],
         Action\Domain\DomainRedirectsAction::class => [DomainService::class],
+        Action\RedirectRule\ListRedirectRulesAction::class => [
+            ShortUrl\ShortUrlResolver::class,
+            RedirectRule\ShortUrlRedirectRuleService::class,
+        ],
+        Action\RedirectRule\SetRedirectRulesAction::class => [
+            ShortUrl\ShortUrlResolver::class,
+            RedirectRule\ShortUrlRedirectRuleService::class,
+        ],
 
         Middleware\CrossDomainMiddleware::class => ['config.cors'],
         Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class => ['config.url_shortener.domain.hostname'],

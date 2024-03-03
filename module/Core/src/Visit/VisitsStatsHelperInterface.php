@@ -10,6 +10,7 @@ use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
+use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsStats;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -43,7 +44,7 @@ interface VisitsStatsHelperInterface
     /**
      * @return Visit[]|Paginator
      */
-    public function orphanVisits(VisitsParams $params, ?ApiKey $apiKey = null): Paginator;
+    public function orphanVisits(OrphanVisitsParams $params, ?ApiKey $apiKey = null): Paginator;
 
     /**
      * @return Visit[]|Paginator

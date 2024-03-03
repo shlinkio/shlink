@@ -53,11 +53,6 @@
                         },
                         "example": {
                             "longUrl": "https://github.com/shlinkio/shlink",
-                            "deviceLongUrls": {
-                                "android": null,
-                                "ios": null,
-                                "desktop": null
-                            },
                             "shortUrl": "https://s.test/abc123",
                             "shortCode": "abc123",
                             "dateCreated": "2016-08-21T20:34:16+02:00",
@@ -85,49 +80,6 @@
                             "type": "string"
                         },
                         "example": "https://s.test/abc123"
-                    }
-                }
-            },
-            "400": {
-                "description": "The long URL was not provided or is invalid.",
-                "content": {
-                    "application/problem+json": {
-                        "schema": {
-                            "$ref": "../definitions/Error.json"
-                        },
-                        "examples": {
-                            "API v3 and newer": {
-                                "value": {
-                                    "title": "Invalid URL",
-                                    "type": "https://shlink.io/api/error/invalid-url",
-                                    "detail": "Provided URL foo is invalid. Try with a different one.",
-                                    "status": 400,
-                                    "url": "https://invalid-url.com"
-                                }
-                            },
-                            "Previous to API v3": {
-                                "value": {
-                                    "title": "Invalid URL",
-                                    "type": "INVALID_URL",
-                                    "detail": "Provided URL foo is invalid. Try with a different one.",
-                                    "status": 400,
-                                    "url": "https://invalid-url.com"
-                                }
-                            }
-                        }
-                    },
-                    "text/plain": {
-                        "schema": {
-                            "type": "string"
-                        },
-                        "examples": {
-                            "API v3 and newer": {
-                                "value": "https://shlink.io/api/error/invalid-url"
-                            },
-                            "Previous to API v3": {
-                                "value": "INVALID_URL"
-                            }
-                        }
                     }
                 }
             },

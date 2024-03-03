@@ -2,12 +2,13 @@
 
 [![Build Status](https://img.shields.io/github/actions/workflow/status/shlinkio/shlink/ci.yml?branch=develop&logo=github&style=flat-square)](https://github.com/shlinkio/shlink/actions/workflows/ci.yml?query=workflow%3A%22Continuous+integration%22)
 [![Code Coverage](https://img.shields.io/codecov/c/gh/shlinkio/shlink/develop?style=flat-square)](https://app.codecov.io/gh/shlinkio/shlink)
-[![Infection MSI](https://img.shields.io/endpoint?style=flat-square&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fshlinkio%2Fshlink%2Fdevelop)](https://dashboard.stryker-mutator.io/reports/github.com/shlinkio/shlink/develop)
 [![Latest Stable Version](https://img.shields.io/github/release/shlinkio/shlink.svg?style=flat-square)](https://packagist.org/packages/shlinkio/shlink)
 [![Docker pulls](https://img.shields.io/docker/pulls/shlinkio/shlink.svg?logo=docker&style=flat-square)](https://hub.docker.com/r/shlinkio/shlink/)
 [![License](https://img.shields.io/github/license/shlinkio/shlink.svg?style=flat-square)](https://github.com/shlinkio/shlink/blob/main/LICENSE)
-[![Twitter](https://img.shields.io/badge/follow-shlinkio-blue.svg?style=flat-square&logo=x&color=black)](https://twitter.com/shlinkio)
+
 [![Mastodon](https://img.shields.io/mastodon/follow/109329425426175098?color=%236364ff&domain=https%3A%2F%2Ffosstodon.org&label=follow&logo=mastodon&logoColor=white&style=flat-square)](https://fosstodon.org/@shlinkio)
+[![Bluesky](https://img.shields.io/badge/follow-shlinkio-0285FF.svg?style=flat-square&logo=bluesky&logoColor=white)](https://bsky.app/profile/shlinkio.bsky.social)
+[![Twitter](https://img.shields.io/badge/follow-shlinkio-blue.svg?style=flat-square&logo=x&color=black)](https://twitter.com/shlinkio)
 [![Paypal donate](https://img.shields.io/badge/Donate-paypal-blue.svg?style=flat-square&logo=paypal&colorA=aaaaaa)](https://slnk.to/donate)
 
 A PHP-based self-hosted URL shortener that can be used to serve shortened URLs under your own domain.
@@ -38,12 +39,11 @@ First, make sure the host where you are going to run shlink fulfills these requi
 
 * PHP 8.2 or 8.3
 * The next PHP extensions: json, curl, pdo, intl, gd and gmp/bcmath.
-    * apcu extension is recommended if you don't plan to use openswoole.
+    * apcu extension is recommended if you don't plan to use RoadRunner.
     * xml extension is required if you want to generate QR codes in svg format.
     * sockets and bcmath extensions are required if you want to integrate with a RabbitMQ instance.
 * MySQL, MariaDB, PostgreSQL, MicrosoftSQL or SQLite.
     * You will also need the corresponding pdo variation for the database you are planning to use: `pdo_mysql`, `pdo_pgsql`, `pdo_sqlsrv` or `pdo_sqlite`.
-* The [openswoole](https://openswoole.com/) PHP extension (if you plan to serve Shlink with openswoole) or the web server of your choice with PHP integration (like Apache or Nginx).
 
 ### Download
 
@@ -53,7 +53,7 @@ In order to run Shlink, you will need a built version of the project. There are 
 
     The easiest way to install shlink is by using one of the pre-bundled distributable packages.
 
-    Go to the [latest version](https://github.com/shlinkio/shlink/releases/latest) and download the `shlink*_dist.zip` file that suits your needs. You will find one for every supported PHP version and with/without openswoole integration.
+    Go to the [latest version](https://github.com/shlinkio/shlink/releases/latest) and download the `shlink*_dist.zip` file that suits your needs. You will find one for every supported PHP version.
 
     Finally, decompress the file in the location of your choice.
 

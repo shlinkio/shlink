@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use function Shlinkio\Shlink\Config\runningInOpenswoole;
 use function Shlinkio\Shlink\Config\runningInRoadRunner;
 
 return [
@@ -12,11 +11,9 @@ return [
             'schema' => 'http',
             'hostname' => sprintf('localhost:%s', match (true) {
                 runningInRoadRunner() => '8800',
-                runningInOpenswoole() => '8080',
                 default => '8000',
             }),
         ],
-        'auto_resolve_titles' => true,
 //        'multi_segment_slugs_enabled' => true,
 //        'trailing_slash_enabled' => true,
     ],

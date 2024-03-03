@@ -55,15 +55,15 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
         if (OrderableField::isBasicField($fieldName)) {
             $qb->orderBy('s.' . $fieldName, $order);
         } elseif (OrderableField::isVisitsField($fieldName)) {
+            $leftJoinConditions = [$qb->expr()->eq('v.shortUrl', 's')];
+            if ($fieldName === OrderableField::NON_BOT_VISITS->value) {
+                $leftJoinConditions[] = $qb->expr()->eq('v.potentialBot', 'false');
+            }
+
             // FIXME This query is inefficient.
             //       Diagnostic: It might need to use a sub-query, as done with the tags list query.
             $qb->addSelect('COUNT(DISTINCT v)')
-               ->leftJoin('s.visits', 'v', Join::WITH, $qb->expr()->andX(
-                   $qb->expr()->eq('v.shortUrl', 's'),
-                   $fieldName === OrderableField::NON_BOT_VISITS->value
-                       ? $qb->expr()->eq('v.potentialBot', 'false')
-                       : null,
-               ))
+               ->leftJoin('s.visits', 'v', Join::WITH, $qb->expr()->andX(...$leftJoinConditions))
                ->groupBy('s')
                ->orderBy('COUNT(DISTINCT v)', $order);
         }

@@ -11,11 +11,11 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
-use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
+use Shlinkio\Shlink\Core\Domain\Repository\DomainRepository;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
-use Shlinkio\Shlink\Core\Tag\Repository\TagRepositoryInterface;
+use Shlinkio\Shlink\Core\Tag\Repository\TagRepository;
 
 use function count;
 
@@ -50,7 +50,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
     #[Test, DataProvider('provideFoundDomains')]
     public function findsOrCreatesDomainWhenValueIsProvided(?Domain $foundDomain, string $authority): void
     {
-        $repo = $this->createMock(DomainRepositoryInterface::class);
+        $repo = $this->createMock(DomainRepository::class);
         $repo->expects($this->once())->method('findOneBy')->with(['authority' => $authority])->willReturn($foundDomain);
         $this->em->expects($this->once())->method('getRepository')->with(Domain::class)->willReturn($repo);
 
@@ -78,7 +78,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
         // One of the tags will already exist. The rest will be new
         $expectedPersistedTags = $expectedLookedOutTags - 1;
 
-        $tagRepo = $this->createMock(TagRepositoryInterface::class);
+        $tagRepo = $this->createMock(TagRepository::class);
         $tagRepo->expects($this->exactly($expectedLookedOutTags))->method('findOneBy')->with(
             $this->isType('array'),
         )->willReturnCallback(function (array $criteria): ?Tag {
@@ -116,7 +116,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
     #[Test]
     public function newDomainsAreMemoizedUntilStateIsCleared(): void
     {
-        $repo = $this->createMock(DomainRepositoryInterface::class);
+        $repo = $this->createMock(DomainRepository::class);
         $repo->expects($this->exactly(3))->method('findOneBy')->with($this->isType('array'))->willReturn(null);
         $this->em->method('getRepository')->with(Domain::class)->willReturn($repo);
 
@@ -135,7 +135,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
     #[Test]
     public function newTagsAreMemoizedUntilStateIsCleared(): void
     {
-        $tagRepo = $this->createMock(TagRepositoryInterface::class);
+        $tagRepo = $this->createMock(TagRepository::class);
         $tagRepo->expects($this->exactly(6))->method('findOneBy')->with($this->isType('array'))->willReturn(null);
         $this->em->method('getRepository')->with(Tag::class)->willReturn($tagRepo);
 

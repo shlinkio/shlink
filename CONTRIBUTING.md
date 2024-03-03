@@ -31,7 +31,7 @@ Then you will have to follow these steps:
 * Run `./indocker bin/cli db:migrate` to get database migrations up to date.
 * Run `./indocker bin/cli api-key:generate` to get your first API key generated.
 
-Once you finish this, you will have the project exposed in ports `8800` through RoadRunner, `8080` through openswoole and `8000` through nginx+php-fpm.
+Once you finish this, you will have the project exposed in ports `8800` through RoadRunner and `8000` through nginx+php-fpm.
 
 > Note: The `indocker` shell script is a helper tool used to run commands inside the main docker container.
 
@@ -80,7 +80,7 @@ The purposes of every folder are:
 * `data`: Common git-ignored assets, like logs, caches, lock files, GeoLite DB files, etc. It's the only location where Shlink may need to write at runtime.
 * `docs`: Any project documentation is stored here, like API spec definitions or architectural decision records.
 * `module`: Contains a sub-folder for every module in the project. Modules contain the source code, tests and configurations for every context in the project.
-* `public`: Few assets (like `favicon.ico` or `robots.txt`) and the web entry point are stored here. This web entry point is not used when serving the app with RoadRunner or openswoole.
+* `public`: Few assets (like `favicon.ico` or `robots.txt`) and the web entry point are stored here. This web entry point is not used when serving the app with RoadRunner.
 
 ## Project tests
 
@@ -96,7 +96,7 @@ In order to ensure stability and no regressions are introduced while developing 
 
     The project provides some tooling to run them against any of the supported database engines.
 
-* **API tests**: These are E2E tests that spin up an instance of the app with RoadRunner or openswoole, and test it from the outside by interacting with the REST API.
+* **API tests**: These are E2E tests that spin up an instance of the app with RoadRunner, and test it from the outside by interacting with the REST API.
 
     These are the best tests to catch regressions, and to verify everything behaves as expected.
 
@@ -124,7 +124,6 @@ Depending on the kind of contribution, maybe not all kinds of tests are needed, 
 
 * Run `./indocker composer test:api` to run API E2E tests. For these, the Postgres database engine is used.
 * Run `./indocker composer test:cli` to run CLI E2E tests. For these, the Maria DB database engine is used.
-* Run `./indocker composer infect:test` to run both unit and database tests (over sqlite) and then apply mutations to them with [infection](https://infection.github.io/).
 * Run `./indocker composer ci` to run all previous commands together, parallelizing non-conflicting tasks as much as possible.
 
 ## Testing endpoints

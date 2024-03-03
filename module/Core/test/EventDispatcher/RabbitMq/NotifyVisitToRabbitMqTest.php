@@ -7,7 +7,6 @@ namespace ShlinkioTest\Shlink\Core\EventDispatcher\RabbitMq;
 use Doctrine\ORM\EntityManagerInterface;
 use DomainException;
 use Exception;
-use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -24,7 +23,6 @@ use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
-use Shlinkio\Shlink\Core\Visit\Transformer\OrphanVisitDataTransformer;
 use Throwable;
 
 use function array_walk;
@@ -132,9 +130,8 @@ class NotifyVisitToRabbitMqTest extends TestCase
         yield [new DomainException('DomainException Error')];
     }
 
-    #[Test, DataProvider('provideLegacyPayloads')]
+    #[Test, DataProvider('providePayloads')]
     public function expectedPayloadIsPublishedDependingOnConfig(
-        bool $legacy,
         Visit $visit,
         callable $setup,
         callable $expect,
@@ -144,44 +141,12 @@ class NotifyVisitToRabbitMqTest extends TestCase
         $setup($this->updatesGenerator);
         $expect($this->helper, $this->updatesGenerator);
 
-        ($this->listener(new RabbitMqOptions(true, $legacy)))(new VisitLocated($visitId));
+        ($this->listener())(new VisitLocated($visitId));
     }
 
-    public static function provideLegacyPayloads(): iterable
+    public static function providePayloads(): iterable
     {
-        yield 'legacy non-orphan visit' => [
-            true,
-            $visit = Visit::forValidShortUrl(ShortUrl::withLongUrl('https://longUrl'), Visitor::emptyInstance()),
-            static fn () => null,
-            function (MockObject & PublishingHelperInterface $helper) use ($visit): void {
-                $helper->method('publishUpdate')->with(self::callback(function (Update $update) use ($visit): bool {
-                    $payload = $update->payload;
-                    Assert::assertEquals($payload, $visit->jsonSerialize());
-                    Assert::assertArrayNotHasKey('visitedUrl', $payload);
-                    Assert::assertArrayNotHasKey('type', $payload);
-                    Assert::assertArrayNotHasKey('visit', $payload);
-                    Assert::assertArrayNotHasKey('shortUrl', $payload);
-
-                    return true;
-                }));
-            },
-        ];
-        yield 'legacy orphan visit' => [
-            true,
-            Visit::forBasePath(Visitor::emptyInstance()),
-            static fn () => null,
-            function (MockObject & PublishingHelperInterface $helper): void {
-                $helper->method('publishUpdate')->with(self::callback(function (Update $update): bool {
-                    $payload = $update->payload;
-                    Assert::assertArrayHasKey('visitedUrl', $payload);
-                    Assert::assertArrayHasKey('type', $payload);
-
-                    return true;
-                }));
-            },
-        ];
-        yield 'non-legacy non-orphan visit' => [
-            false,
+        yield 'non-orphan visit' => [
             Visit::forValidShortUrl(ShortUrl::withLongUrl('https://longUrl'), Visitor::emptyInstance()),
             function (MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator): void {
                 $update = Update::forTopicAndPayload('', []);
@@ -195,8 +160,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
                 $helper->expects(self::exactly(2))->method('publishUpdate')->with(self::isInstanceOf(Update::class));
             },
         ];
-        yield 'non-legacy orphan visit' => [
-            false,
+        yield 'orphan visit' => [
             Visit::forBasePath(Visitor::emptyInstance()),
             function (MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator): void {
                 $update = Update::forTopicAndPayload('', []);
@@ -217,8 +181,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
             $this->updatesGenerator,
             $this->em,
             $this->logger,
-            new OrphanVisitDataTransformer(),
-            $options ?? new RabbitMqOptions(enabled: true, legacyVisitsPublishing:  false),
+            $options ?? new RabbitMqOptions(enabled: true),
         );
     }
 }

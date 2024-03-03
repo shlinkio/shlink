@@ -33,7 +33,7 @@ class RenameTagCommand extends Command
             ->addArgument('newName', InputArgument::REQUIRED, 'New name of the tag.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $oldName = $input->getArgument('oldName');

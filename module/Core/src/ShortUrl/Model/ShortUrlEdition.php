@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Model;
 
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
-use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\TitleResolutionModelInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 
@@ -15,35 +14,29 @@ use function Shlinkio\Shlink\Core\getOptionalBoolFromInputFilter;
 use function Shlinkio\Shlink\Core\getOptionalIntFromInputFilter;
 use function Shlinkio\Shlink\Core\normalizeOptionalDate;
 
-final class ShortUrlEdition implements TitleResolutionModelInterface
+final readonly class ShortUrlEdition implements TitleResolutionModelInterface
 {
     /**
      * @param string[] $tags
-     * @param DeviceLongUrlPair[] $deviceLongUrls
-     * @param DeviceType[] $devicesToRemove
      */
     private function __construct(
-        private readonly bool $longUrlPropWasProvided = false,
-        public readonly ?string $longUrl = null,
-        public readonly array $deviceLongUrls = [],
-        public readonly array $devicesToRemove = [],
-        private readonly bool $validSincePropWasProvided = false,
-        public readonly ?Chronos $validSince = null,
-        private readonly bool $validUntilPropWasProvided = false,
-        public readonly ?Chronos $validUntil = null,
-        private readonly bool $maxVisitsPropWasProvided = false,
-        public readonly ?int $maxVisits = null,
-        private readonly bool $tagsPropWasProvided = false,
-        public readonly array $tags = [],
-        private readonly bool $titlePropWasProvided = false,
-        public readonly ?string $title = null,
-        public readonly bool $titleWasAutoResolved = false,
-        /** @deprecated */
-        public readonly bool $validateUrl = false,
-        private readonly bool $crawlablePropWasProvided = false,
-        public readonly bool $crawlable = false,
-        private readonly bool $forwardQueryPropWasProvided = false,
-        public readonly bool $forwardQuery = true,
+        private bool $longUrlPropWasProvided = false,
+        public ?string $longUrl = null,
+        private bool $validSincePropWasProvided = false,
+        public ?Chronos $validSince = null,
+        private bool $validUntilPropWasProvided = false,
+        public ?Chronos $validUntil = null,
+        private bool $maxVisitsPropWasProvided = false,
+        public ?int $maxVisits = null,
+        private bool $tagsPropWasProvided = false,
+        public array $tags = [],
+        private bool $titlePropWasProvided = false,
+        public ?string $title = null,
+        public bool $titleWasAutoResolved = false,
+        private bool $crawlablePropWasProvided = false,
+        public bool $crawlable = false,
+        private bool $forwardQueryPropWasProvided = false,
+        public bool $forwardQuery = true,
     ) {
     }
 
@@ -52,20 +45,14 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
      */
     public static function fromRawData(array $data): self
     {
-        $inputFilter = ShortUrlInputFilter::withNonRequiredLongUrl($data);
+        $inputFilter = ShortUrlInputFilter::forEdition($data);
         if (! $inputFilter->isValid()) {
             throw ValidationException::fromInputFilter($inputFilter);
         }
 
-        [$deviceLongUrls, $devicesToRemove] = DeviceLongUrlPair::fromMapToChangeSet(
-            $inputFilter->getValue(ShortUrlInputFilter::DEVICE_LONG_URLS) ?? [],
-        );
-
         return new self(
             longUrlPropWasProvided: array_key_exists(ShortUrlInputFilter::LONG_URL, $data),
             longUrl: $inputFilter->getValue(ShortUrlInputFilter::LONG_URL),
-            deviceLongUrls: $deviceLongUrls,
-            devicesToRemove: $devicesToRemove,
             validSincePropWasProvided: array_key_exists(ShortUrlInputFilter::VALID_SINCE, $data),
             validSince: normalizeOptionalDate($inputFilter->getValue(ShortUrlInputFilter::VALID_SINCE)),
             validUntilPropWasProvided: array_key_exists(ShortUrlInputFilter::VALID_UNTIL, $data),
@@ -76,7 +63,6 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
             tags: $inputFilter->getValue(ShortUrlInputFilter::TAGS),
             titlePropWasProvided: array_key_exists(ShortUrlInputFilter::TITLE, $data),
             title: $inputFilter->getValue(ShortUrlInputFilter::TITLE),
-            validateUrl: getOptionalBoolFromInputFilter($inputFilter, ShortUrlInputFilter::VALIDATE_URL) ?? false,
             crawlablePropWasProvided: array_key_exists(ShortUrlInputFilter::CRAWLABLE, $data),
             crawlable: $inputFilter->getValue(ShortUrlInputFilter::CRAWLABLE),
             forwardQueryPropWasProvided: array_key_exists(ShortUrlInputFilter::FORWARD_QUERY, $data),
@@ -89,8 +75,6 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
         return new self(
             longUrlPropWasProvided: $this->longUrlPropWasProvided,
             longUrl: $this->longUrl,
-            deviceLongUrls: $this->deviceLongUrls,
-            devicesToRemove: $this->devicesToRemove,
             validSincePropWasProvided: $this->validSincePropWasProvided,
             validSince: $this->validSince,
             validUntilPropWasProvided: $this->validUntilPropWasProvided,
@@ -102,7 +86,6 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
             titlePropWasProvided: $this->titlePropWasProvided,
             title: $title,
             titleWasAutoResolved: true,
-            validateUrl: $this->validateUrl,
             crawlablePropWasProvided: $this->crawlablePropWasProvided,
             crawlable: $this->crawlable,
             forwardQueryPropWasProvided: $this->forwardQueryPropWasProvided,
@@ -153,12 +136,6 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
     public function titleWasAutoResolved(): bool
     {
         return $this->titleWasAutoResolved;
-    }
-
-    /** @deprecated */
-    public function doValidateUrl(): bool
-    {
-        return $this->validateUrl;
     }
 
     public function crawlableWasProvided(): bool

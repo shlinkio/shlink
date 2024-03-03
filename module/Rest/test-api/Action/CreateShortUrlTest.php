@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use function array_map;
@@ -19,7 +20,7 @@ class CreateShortUrlTest extends ApiTestCase
     #[Test]
     public function createsNewShortUrlWhenOnlyLongUrlIsProvided(): void
     {
-        $expectedKeys = ['shortCode', 'shortUrl', 'longUrl', 'dateCreated', 'visitsCount', 'tags'];
+        $expectedKeys = ['shortCode', 'shortUrl', 'longUrl', 'dateCreated', 'tags'];
         [$statusCode, $payload] = $this->createShortUrl();
 
         self::assertEquals(self::STATUS_OK, $statusCode);
@@ -48,7 +49,7 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertEquals(self::STATUS_BAD_REQUEST, $statusCode);
         self::assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
         self::assertEquals($detail, $payload['detail']);
-        self::assertEquals('INVALID_SLUG', $payload['type']);
+        self::assertEquals('https://shlink.io/api/error/non-unique-slug', $payload['type']);
         self::assertEquals('Invalid custom slug', $payload['title']);
         self::assertEquals($slug, $payload['customSlug']);
 
@@ -70,8 +71,8 @@ class CreateShortUrlTest extends ApiTestCase
 
     public static function provideDuplicatedSlugApiVersions(): iterable
     {
-        yield ['1', 'INVALID_SLUG'];
-        yield ['2', 'INVALID_SLUG'];
+        yield ['1', 'https://shlink.io/api/error/non-unique-slug'];
+        yield ['2', 'https://shlink.io/api/error/non-unique-slug'];
         yield ['3', 'https://shlink.io/api/error/non-unique-slug'];
     }
 
@@ -224,27 +225,6 @@ class CreateShortUrlTest extends ApiTestCase
         yield ['http://téstb.shlink.io']; // Redirects to http://tést.shlink.io
     }
 
-    #[Test, DataProvider('provideInvalidUrls')]
-    public function failsToCreateShortUrlWithInvalidLongUrl(string $url, string $version, string $expectedType): void
-    {
-        $expectedDetail = sprintf('Provided URL %s is invalid. Try with a different one.', $url);
-
-        [$statusCode, $payload] = $this->createShortUrl(['longUrl' => $url, 'validateUrl' => true], version: $version);
-
-        self::assertEquals(self::STATUS_BAD_REQUEST, $statusCode);
-        self::assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
-        self::assertEquals($expectedType, $payload['type']);
-        self::assertEquals($expectedDetail, $payload['detail']);
-        self::assertEquals('Invalid URL', $payload['title']);
-        self::assertEquals($url, $payload['url']);
-    }
-
-    public static function provideInvalidUrls(): iterable
-    {
-        yield 'API version 2' => ['https://this-has-to-be-invalid.com', '2', 'INVALID_URL'];
-        yield 'API version 3' => ['https://this-has-to-be-invalid.com', '3', 'https://shlink.io/api/error/invalid-url'];
-    }
-
     #[Test, DataProvider('provideInvalidArgumentApiVersions')]
     public function failsToCreateShortUrlWithoutLongUrl(array $payload, string $version, string $expectedType): void
     {
@@ -264,24 +244,12 @@ class CreateShortUrlTest extends ApiTestCase
 
     public static function provideInvalidArgumentApiVersions(): iterable
     {
-        yield 'missing long url v2' => [[], '2', 'INVALID_ARGUMENT'];
+        yield 'missing long url v2' => [[], '2', 'https://shlink.io/api/error/invalid-data'];
         yield 'missing long url v3' => [[], '3', 'https://shlink.io/api/error/invalid-data'];
-        yield 'empty long url v2' => [['longUrl' => null], '2', 'INVALID_ARGUMENT'];
+        yield 'empty long url v2' => [['longUrl' => null], '2', 'https://shlink.io/api/error/invalid-data'];
         yield 'empty long url v3' => [['longUrl' => '  '], '3', 'https://shlink.io/api/error/invalid-data'];
-        yield 'missing url schema v2' => [['longUrl' => 'foo.com'], '2', 'INVALID_ARGUMENT'];
+        yield 'missing url schema v2' => [['longUrl' => 'foo.com'], '2', 'https://shlink.io/api/error/invalid-data'];
         yield 'missing url schema v3' => [['longUrl' => 'foo.com'], '3', 'https://shlink.io/api/error/invalid-data'];
-        yield 'empty device long url v2' => [[
-            'longUrl' => 'foo',
-            'deviceLongUrls' => [
-                'android' => null,
-            ],
-        ], '2', 'INVALID_ARGUMENT'];
-        yield 'empty device long url v3' => [[
-            'longUrl' => 'foo',
-            'deviceLongUrls' => [
-                'ios' => '  ',
-            ],
-        ], '3', 'https://shlink.io/api/error/invalid-data'];
     }
 
     #[Test]
@@ -334,19 +302,29 @@ class CreateShortUrlTest extends ApiTestCase
     }
 
     #[Test]
-    public function canCreateShortUrlsWithDeviceLongUrls(): void
+    public function titleIsIgnoredIfLongUrlTimesOut(): void
     {
         [$statusCode, $payload] = $this->createShortUrl([
-            'longUrl' => 'https://github.com/shlinkio/shlink/issues/1557',
-            'deviceLongUrls' => [
-                'ios' => 'https://github.com/shlinkio/shlink/ios',
-                'android' => 'https://github.com/shlinkio/shlink/android',
-            ],
+            'longUrl' => 'http://127.0.0.1:9999/api-tests/long-url-with-timeout',
         ]);
 
         self::assertEquals(self::STATUS_OK, $statusCode);
-        self::assertEquals('https://github.com/shlinkio/shlink/ios', $payload['deviceLongUrls']['ios'] ?? null);
-        self::assertEquals('https://github.com/shlinkio/shlink/android', $payload['deviceLongUrls']['android'] ?? null);
+        self::assertNull($payload['title']);
+    }
+
+    #[Test]
+    #[TestWith([null])]
+    #[TestWith(['my-custom-slug'])]
+    public function prefixCanBeSet(?string $customSlug): void
+    {
+        [$statusCode, $payload] = $this->createShortUrl([
+            'longUrl' => 'https://github.com/shlinkio/shlink/issues/1557',
+            'pathPrefix' => 'foo/b  ar-baz',
+            'customSlug' => $customSlug,
+        ]);
+
+        self::assertEquals(self::STATUS_OK, $statusCode);
+        self::assertStringStartsWith('foo-b--ar-baz', $payload['shortCode']);
     }
 
     /**

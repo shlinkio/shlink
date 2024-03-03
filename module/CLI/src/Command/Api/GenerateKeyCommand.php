@@ -98,7 +98,7 @@ class GenerateKeyCommand extends Command
             ->setHelp($help);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $expirationDate = $input->getOption('expiration-date');
 

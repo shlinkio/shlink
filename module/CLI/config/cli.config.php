@@ -37,6 +37,9 @@ return [
 
             Command\Db\CreateDatabaseCommand::NAME => Command\Db\CreateDatabaseCommand::class,
             Command\Db\MigrateDatabaseCommand::NAME => Command\Db\MigrateDatabaseCommand::class,
+
+            Command\RedirectRule\ManageRedirectRulesCommand::NAME =>
+                Command\RedirectRule\ManageRedirectRulesCommand::class,
         ],
     ],
 

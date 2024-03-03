@@ -12,9 +12,10 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
+use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
+use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
-use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\Rest\Action\Visit\OrphanVisitsAction;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -41,7 +42,7 @@ class OrphanVisitsActionTest extends TestCase
         $visitor = Visitor::emptyInstance();
         $visits = [Visit::forInvalidShortUrl($visitor), Visit::forRegularNotFound($visitor)];
         $this->visitsHelper->expects($this->once())->method('orphanVisits')->with(
-            $this->isInstanceOf(VisitsParams::class),
+            $this->isInstanceOf(OrphanVisitsParams::class),
         )->willReturn(new Paginator(new ArrayAdapter($visits)));
         $visitsAmount = count($visits);
         $this->orphanVisitTransformer->expects($this->exactly($visitsAmount))->method('transform')->with(
@@ -56,5 +57,16 @@ class OrphanVisitsActionTest extends TestCase
 
         self::assertCount($visitsAmount, $payload['visits']['data']);
         self::assertEquals(200, $response->getStatusCode());
+    }
+
+    #[Test]
+    public function exceptionIsThrownIfInvalidDataIsProvided(): void
+    {
+        $this->expectException(ValidationException::class);
+        $this->action->handle(
+            ServerRequestFactory::fromGlobals()
+                ->withAttribute(ApiKey::class, ApiKey::create())
+                ->withQueryParams(['type' => 'invalidType']),
+        );
     }
 }

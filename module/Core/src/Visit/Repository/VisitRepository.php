@@ -13,6 +13,8 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
+use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsCountFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Spec\CountOfNonOrphanVisits;
@@ -138,7 +140,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         return $qb;
     }
 
-    public function findOrphanVisits(VisitsListFiltering $filtering): array
+    public function findOrphanVisits(OrphanVisitsListFiltering $filtering): array
     {
         if ($filtering->apiKey?->hasRole(Role::NO_ORPHAN_VISITS)) {
             return [];
@@ -146,10 +148,17 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
 
         $qb = $this->createAllVisitsQueryBuilder($filtering);
         $qb->andWhere($qb->expr()->isNull('v.shortUrl'));
+
+        // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later
+        if ($filtering->type) {
+            $conn = $this->getEntityManager()->getConnection();
+            $qb->andWhere($qb->expr()->eq('v.type', $conn->quote($filtering->type->value)));
+        }
+
         return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit, $filtering->offset);
     }
 
-    public function countOrphanVisits(VisitsCountFiltering $filtering): int
+    public function countOrphanVisits(OrphanVisitsCountFiltering $filtering): int
     {
         if ($filtering->apiKey?->hasRole(Role::NO_ORPHAN_VISITS)) {
             return 0;
@@ -176,7 +185,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         return (int) $this->matchSingleScalarResult(new CountOfNonOrphanVisits($filtering));
     }
 
-    private function createAllVisitsQueryBuilder(VisitsListFiltering $filtering): QueryBuilder
+    private function createAllVisitsQueryBuilder(VisitsListFiltering|OrphanVisitsListFiltering $filtering): QueryBuilder
     {
         // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later
         // Since they are not provided by the caller, it's reasonably safe

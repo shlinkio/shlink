@@ -7,10 +7,10 @@ namespace Shlinkio\Shlink;
 use Laminas\Stratigility\Middleware\ErrorHandler;
 use Mezzio\ProblemDetails;
 use Mezzio\Router;
-use PhpMiddleware\RequestId\RequestIdMiddleware;
 use RKA\Middleware\IpAddress;
 use Shlinkio\Shlink\Common\Middleware\AccessLogMiddleware;
 use Shlinkio\Shlink\Common\Middleware\ContentLengthMiddleware;
+use Shlinkio\Shlink\Common\Middleware\RequestIdMiddleware;
 
 return [
 
@@ -47,7 +47,6 @@ return [
         'rest' => [
             'path' => '/rest',
             'middleware' => [
-                Rest\Middleware\ErrorHandler\BackwardsCompatibleProblemDetailsHandler::class,
                 Router\Middleware\ImplicitOptionsMiddleware::class,
                 Rest\Middleware\BodyParserMiddleware::class,
                 Rest\Middleware\AuthenticationMiddleware::class,

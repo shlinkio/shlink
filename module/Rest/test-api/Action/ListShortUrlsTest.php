@@ -8,7 +8,6 @@ use Cake\Chronos\Chronos;
 use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use function count;
@@ -20,7 +19,6 @@ class ListShortUrlsTest extends ApiTestCase
         'shortUrl' => 'http://s.test/abc123',
         'longUrl' => 'https://shlink.io',
         'dateCreated' => '2018-05-01T00:00:00+00:00',
-        'visitsCount' => 3,
         'visitsSummary' => [
             'total' => 3,
             'nonBots' => 3,
@@ -42,7 +40,6 @@ class ListShortUrlsTest extends ApiTestCase
         'shortUrl' => 'http://s.test/ghi789',
         'longUrl' => 'https://shlink.io/documentation/',
         'dateCreated' => '2018-05-01T00:00:00+00:00',
-        'visitsCount' => 2,
         'visitsSummary' => [
             'total' => 2,
             'nonBots' => 2,
@@ -64,7 +61,6 @@ class ListShortUrlsTest extends ApiTestCase
         'shortUrl' => 'http://some-domain.com/custom-with-domain',
         'longUrl' => 'https://google.com',
         'dateCreated' => '2018-10-20T00:00:00+00:00',
-        'visitsCount' => 0,
         'visitsSummary' => [
             'total' => 0,
             'nonBots' => 0,
@@ -88,7 +84,6 @@ class ListShortUrlsTest extends ApiTestCase
             'https://blog.alejandrocelaya.com/2017/12/09'
             . '/acmailer-7-0-the-most-important-release-in-a-long-time/',
         'dateCreated' => '2019-01-01T00:00:10+00:00',
-        'visitsCount' => 2,
         'visitsSummary' => [
             'total' => 2,
             'nonBots' => 1,
@@ -110,7 +105,6 @@ class ListShortUrlsTest extends ApiTestCase
         'shortUrl' => 'http://s.test/custom',
         'longUrl' => 'https://shlink.io',
         'dateCreated' => '2019-01-01T00:00:20+00:00',
-        'visitsCount' => 0,
         'visitsSummary' => [
             'total' => 0,
             'nonBots' => 0,
@@ -134,7 +128,6 @@ class ListShortUrlsTest extends ApiTestCase
             'https://blog.alejandrocelaya.com/2019/04/27'
             . '/considerations-to-properly-use-open-source-software-projects/',
         'dateCreated' => '2019-01-01T00:00:30+00:00',
-        'visitsCount' => 0,
         'visitsSummary' => [
             'total' => 0,
             'nonBots' => 0,
@@ -169,123 +162,109 @@ class ListShortUrlsTest extends ApiTestCase
 
     public static function provideFilteredLists(): iterable
     {
-        $withDeviceLongUrls = static fn (array $shortUrl, ?array $longUrls = null) => [
-            ...$shortUrl,
-            'deviceLongUrls' => $longUrls ?? [
-                DeviceType::ANDROID->value => null,
-                DeviceType::IOS->value => null,
-                DeviceType::DESKTOP->value => null,
-            ],
-        ];
-        $shortUrlMeta = $withDeviceLongUrls(self::SHORT_URL_META, [
-            DeviceType::ANDROID->value => 'https://blog.alejandrocelaya.com/android',
-            DeviceType::IOS->value => 'https://blog.alejandrocelaya.com/ios',
-            DeviceType::DESKTOP->value => null,
-        ]);
-
         yield [[], [
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_DOMAIN),
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_SLUG),
-            $shortUrlMeta,
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN),
-            $withDeviceLongUrls(self::SHORT_URL_SHLINK_WITH_TITLE),
-            $withDeviceLongUrls(self::SHORT_URL_DOCS),
+            self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_META,
+            self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
+            self::SHORT_URL_SHLINK_WITH_TITLE,
+            self::SHORT_URL_DOCS,
         ], 'valid_api_key'];
         yield [['excludePastValidUntil' => 'true'], [
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_DOMAIN),
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_SLUG),
-            $shortUrlMeta,
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN),
-            $withDeviceLongUrls(self::SHORT_URL_SHLINK_WITH_TITLE),
+            self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_META,
+            self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
+            self::SHORT_URL_SHLINK_WITH_TITLE,
         ], 'valid_api_key'];
         yield [['excludeMaxVisitsReached' => 'true'], [
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_DOMAIN),
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_SLUG),
-            $shortUrlMeta,
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN),
-            $withDeviceLongUrls(self::SHORT_URL_DOCS),
+            self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_META,
+            self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
+            self::SHORT_URL_DOCS,
         ], 'valid_api_key'];
         yield [['orderBy' => 'shortCode'], [
-            $withDeviceLongUrls(self::SHORT_URL_SHLINK_WITH_TITLE),
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_SLUG),
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN),
-            $shortUrlMeta,
-            $withDeviceLongUrls(self::SHORT_URL_DOCS),
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_DOMAIN),
+            self::SHORT_URL_SHLINK_WITH_TITLE,
+            self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
+            self::SHORT_URL_META,
+            self::SHORT_URL_DOCS,
+            self::SHORT_URL_CUSTOM_DOMAIN,
         ], 'valid_api_key'];
         yield [['orderBy' => 'shortCode-DESC'], [
-            $withDeviceLongUrls(self::SHORT_URL_DOCS),
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_DOMAIN),
-            $shortUrlMeta,
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN),
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_SLUG),
-            $withDeviceLongUrls(self::SHORT_URL_SHLINK_WITH_TITLE),
+            self::SHORT_URL_DOCS,
+            self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_META,
+            self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
+            self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_SHLINK_WITH_TITLE,
         ], 'valid_api_key'];
         yield [['orderBy' => 'title-DESC'], [
-            $shortUrlMeta,
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_SLUG),
-            $withDeviceLongUrls(self::SHORT_URL_DOCS),
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_DOMAIN),
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN),
-            $withDeviceLongUrls(self::SHORT_URL_SHLINK_WITH_TITLE),
+            self::SHORT_URL_META,
+            self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_DOCS,
+            self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
+            self::SHORT_URL_SHLINK_WITH_TITLE,
         ], 'valid_api_key'];
         yield [['startDate' => Chronos::parse('2018-12-01')->toAtomString()], [
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_DOMAIN),
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_SLUG),
-            $shortUrlMeta,
+            self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_META,
         ], 'valid_api_key'];
         yield [['endDate' => Chronos::parse('2018-12-01')->toAtomString()], [
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN),
-            $withDeviceLongUrls(self::SHORT_URL_SHLINK_WITH_TITLE),
-            $withDeviceLongUrls(self::SHORT_URL_DOCS),
+            self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
+            self::SHORT_URL_SHLINK_WITH_TITLE,
+            self::SHORT_URL_DOCS,
         ], 'valid_api_key'];
         yield [['tags' => ['foo']], [
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_DOMAIN),
-            $shortUrlMeta,
-            $withDeviceLongUrls(self::SHORT_URL_SHLINK_WITH_TITLE),
+            self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_META,
+            self::SHORT_URL_SHLINK_WITH_TITLE,
         ], 'valid_api_key'];
         yield [['tags' => ['bar']], [
-            $shortUrlMeta,
+            self::SHORT_URL_META,
         ], 'valid_api_key'];
         yield [['tags' => ['foo', 'bar']], [
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_DOMAIN),
-            $shortUrlMeta,
-            $withDeviceLongUrls(self::SHORT_URL_SHLINK_WITH_TITLE),
+            self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_META,
+            self::SHORT_URL_SHLINK_WITH_TITLE,
         ], 'valid_api_key'];
         yield [['tags' => ['foo', 'bar'], 'tagsMode' => 'any'], [
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_DOMAIN),
-            $shortUrlMeta,
-            $withDeviceLongUrls(self::SHORT_URL_SHLINK_WITH_TITLE),
+            self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_META,
+            self::SHORT_URL_SHLINK_WITH_TITLE,
         ], 'valid_api_key'];
         yield [['tags' => ['foo', 'bar'], 'tagsMode' => 'all'], [
-            $shortUrlMeta,
+            self::SHORT_URL_META,
         ], 'valid_api_key'];
         yield [['tags' => ['foo', 'bar', 'baz']], [
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_DOMAIN),
-            $shortUrlMeta,
-            $withDeviceLongUrls(self::SHORT_URL_SHLINK_WITH_TITLE),
+            self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_META,
+            self::SHORT_URL_SHLINK_WITH_TITLE,
         ], 'valid_api_key'];
         yield [['tags' => ['foo', 'bar', 'baz'], 'tagsMode' => 'all'], [], 'valid_api_key'];
         yield [['tags' => ['foo'], 'endDate' => Chronos::parse('2018-12-01')->toAtomString()], [
-            $withDeviceLongUrls(self::SHORT_URL_SHLINK_WITH_TITLE),
+            self::SHORT_URL_SHLINK_WITH_TITLE,
         ], 'valid_api_key'];
         yield [['searchTerm' => 'alejandro'], [
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_DOMAIN),
-            $shortUrlMeta,
+            self::SHORT_URL_CUSTOM_DOMAIN,
+            self::SHORT_URL_META,
         ], 'valid_api_key'];
         yield [['searchTerm' => 'cool'], [
-            $withDeviceLongUrls(self::SHORT_URL_SHLINK_WITH_TITLE),
+            self::SHORT_URL_SHLINK_WITH_TITLE,
         ], 'valid_api_key'];
         yield [['searchTerm' => 'example.com'], [
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_DOMAIN),
+            self::SHORT_URL_CUSTOM_DOMAIN,
         ], 'valid_api_key'];
         yield [[], [
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_SLUG),
-            $shortUrlMeta,
-            $withDeviceLongUrls(self::SHORT_URL_SHLINK_WITH_TITLE),
+            self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_META,
+            self::SHORT_URL_SHLINK_WITH_TITLE,
         ], 'author_api_key'];
         yield [[], [
-            $withDeviceLongUrls(self::SHORT_URL_CUSTOM_DOMAIN),
+            self::SHORT_URL_CUSTOM_DOMAIN,
         ], 'domain_api_key'];
     }
 
@@ -310,7 +289,7 @@ class ListShortUrlsTest extends ApiTestCase
         self::assertEquals([
             'invalidElements' => $expectedInvalidElements,
             'title' => 'Invalid data',
-            'type' => 'INVALID_ARGUMENT',
+            'type' => 'https://shlink.io/api/error/invalid-data',
             'status' => 400,
             'detail' => 'Provided data is not valid',
         ], $respPayload);

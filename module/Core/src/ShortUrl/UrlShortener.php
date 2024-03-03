@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
-use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortCodeUniquenessHelperInterface;
@@ -31,7 +30,6 @@ class UrlShortener implements UrlShortenerInterface
 
     /**
      * @throws NonUniqueSlugException
-     * @throws InvalidUrlException
      */
     public function shorten(ShortUrlCreation $creation): UrlShorteningResult
     {
@@ -41,7 +39,7 @@ class UrlShortener implements UrlShortenerInterface
             return UrlShorteningResult::withoutErrorOnEventDispatching($existingShortUrl);
         }
 
-        $creation = $this->titleResolutionHelper->processTitleAndValidateUrl($creation);
+        $creation = $this->titleResolutionHelper->processTitle($creation);
 
         /** @var ShortUrl $newShortUrl */
         $newShortUrl = $this->em->wrapInTransaction(function () use ($creation): ShortUrl {
@@ -57,7 +55,7 @@ class UrlShortener implements UrlShortenerInterface
             $this->eventDispatcher->dispatch(new ShortUrlCreated($newShortUrl->getId()));
         } catch (ContainerExceptionInterface $e) {
             // Ignore container errors when dispatching the event.
-            // When using openswoole, this event will try to enqueue a task, which cannot be done outside an HTTP
+            // When using RoadRunner, this event will try to enqueue a task, which cannot be done outside an HTTP
             // request.
             // If the short URL is created from CLI, the event dispatching will fail.
             return UrlShorteningResult::withErrorOnEventDispatching($newShortUrl, $e);

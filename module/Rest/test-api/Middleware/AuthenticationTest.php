@@ -29,8 +29,8 @@ class AuthenticationTest extends ApiTestCase
 
     public static function provideApiVersions(): iterable
     {
-        yield 'version 1' => ['1', 'INVALID_AUTHORIZATION'];
-        yield 'version 2' => ['2', 'INVALID_AUTHORIZATION'];
+        yield 'version 1' => ['1', 'https://shlink.io/api/error/missing-authentication'];
+        yield 'version 2' => ['2', 'https://shlink.io/api/error/missing-authentication'];
         yield 'version 3' => ['3', 'https://shlink.io/api/error/missing-authentication'];
     }
 
@@ -58,9 +58,9 @@ class AuthenticationTest extends ApiTestCase
 
     public static function provideInvalidApiKeys(): iterable
     {
-        yield 'key which does not exist' => ['invalid', '2', 'INVALID_API_KEY'];
-        yield 'key which is expired' => ['expired_api_key', '2', 'INVALID_API_KEY'];
-        yield 'key which is disabled' => ['disabled_api_key', '2', 'INVALID_API_KEY'];
+        yield 'key which does not exist' => ['invalid', '2', 'https://shlink.io/api/error/invalid-api-key'];
+        yield 'key which is expired' => ['expired_api_key', '2', 'https://shlink.io/api/error/invalid-api-key'];
+        yield 'key which is disabled' => ['disabled_api_key', '2', 'https://shlink.io/api/error/invalid-api-key'];
         yield 'version 3' => ['disabled_api_key', '3', 'https://shlink.io/api/error/invalid-api-key'];
     }
 }

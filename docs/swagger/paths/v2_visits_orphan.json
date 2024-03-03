@@ -55,6 +55,16 @@
                     "type": "string",
                     "enum": ["true"]
                 }
+            },
+            {
+                "name": "type",
+                "in": "query",
+                "description": "The type of visits to return. All visits are returned when not provided.",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "enum": ["invalid_short_url", "base_url", "regular_404"]
+                }
             }
         ],
         "security": [
@@ -131,6 +141,54 @@
                                     "itemsPerPage": 10,
                                     "itemsInCurrentPage": 10,
                                     "totalItems": 115
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "Provided query arguments are invalid.",
+                "content": {
+                    "application/problem+json": {
+                        "schema": {
+                            "type": "object",
+                            "allOf": [
+                                {
+                                    "$ref": "../definitions/Error.json"
+                                },
+                                {
+                                    "type": "object",
+                                    "required": ["invalidElements"],
+                                    "properties": {
+                                        "invalidElements": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": ["type"]
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "examples": {
+                            "API v3 and newer": {
+                                "value": {
+                                    "title": "Invalid data",
+                                    "type": "https://shlink.io/api/error/invalid-data",
+                                    "detail": "Provided data is not valid",
+                                    "status": 400,
+                                    "invalidElements": ["type"]
+                                }
+                            },
+                            "Previous to API v3": {
+                                "value": {
+                                    "title": "Invalid data",
+                                    "type": "INVALID_ARGUMENT",
+                                    "detail": "Provided data is not valid",
+                                    "status": 400,
+                                    "invalidElements": ["type"]
                                 }
                             }
                         }

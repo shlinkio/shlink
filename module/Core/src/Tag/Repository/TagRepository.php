@@ -43,7 +43,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
      */
     public function findTagsWithInfo(?TagsListFiltering $filtering = null): array
     {
-        $orderField = OrderableField::toSnakeCaseValidField($filtering?->orderBy?->field);
+        $orderField = OrderableField::toValidField($filtering?->orderBy?->field);
         $orderDir = $filtering?->orderBy?->direction ?? 'ASC';
         $apiKey = $filtering?->apiKey;
         $conn = $this->getEntityManager()->getConnection();
@@ -82,12 +82,12 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
                 : $visitsSubQb->expr()->and(
                     $commonJoinCondition,
                     $visitsSubQb->expr()->eq('v.potential_bot', $conn->quote('0')),
-                );
+                )->__toString();
 
             return $visitsSubQb
                 ->select('st.tag_id AS tag_id', 'COUNT(DISTINCT v.id) AS ' . $aggregateAlias)
                 ->from('visits', 'v')
-                ->join('v', 'short_urls', 's', $visitsJoin) // @phpstan-ignore-line
+                ->join('v', 'short_urls', 's', $visitsJoin)
                 ->join('s', 'short_urls_in_tags', 'st', $visitsSubQb->expr()->eq('st.short_url_id', 's.id'))
                 ->groupBy('st.tag_id');
         };

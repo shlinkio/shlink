@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Domain\Validation;
 
 use Laminas\InputFilter\InputFilter;
-use Shlinkio\Shlink\Common\Validation;
+use Shlinkio\Shlink\Common\Validation\HostAndPortValidator;
+use Shlinkio\Shlink\Common\Validation\InputFactory;
 
 class DomainRedirectsInputFilter extends InputFilter
 {
-    use Validation\InputFactoryTrait;
-
     public const DOMAIN = 'domain';
     public const BASE_URL_REDIRECT = 'baseUrlRedirect';
     public const REGULAR_404_REDIRECT = 'regular404Redirect';
@@ -32,12 +31,12 @@ class DomainRedirectsInputFilter extends InputFilter
 
     private function initializeInputs(): void
     {
-        $domain = $this->createInput(self::DOMAIN);
-        $domain->getValidatorChain()->attach(new Validation\HostAndPortValidator());
+        $domain = InputFactory::basic(self::DOMAIN, required: true);
+        $domain->getValidatorChain()->attach(new HostAndPortValidator());
         $this->add($domain);
 
-        $this->add($this->createInput(self::BASE_URL_REDIRECT, false));
-        $this->add($this->createInput(self::REGULAR_404_REDIRECT, false));
-        $this->add($this->createInput(self::INVALID_SHORT_URL_REDIRECT, false));
+        $this->add(InputFactory::basic(self::BASE_URL_REDIRECT));
+        $this->add(InputFactory::basic(self::REGULAR_404_REDIRECT));
+        $this->add(InputFactory::basic(self::INVALID_SHORT_URL_REDIRECT));
     }
 }

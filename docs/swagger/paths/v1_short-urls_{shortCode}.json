@@ -34,11 +34,6 @@
                             "shortCode": "12Kb3",
                             "shortUrl": "https://s.test/12Kb3",
                             "longUrl": "https://shlink.io",
-                            "deviceLongUrls": {
-                                "android": null,
-                                "ios": null,
-                                "desktop": null
-                            },
                             "dateCreated": "2016-05-01T20:34:16+02:00",
                             "visitsSummary": {
                                 "total": 1029,
@@ -86,11 +81,8 @@
                             ]
                         },
                         "examples": {
-                            "API v3 and newer": {
+                            "Short URL not found": {
                                 "$ref": "../examples/short-url-not-found-v3.json"
-                            },
-                            "Previous to API v3": {
-                                "$ref": "../examples/short-url-not-found-v2.json"
                             }
                         }
                     }
@@ -155,11 +147,6 @@
                             "shortCode": "12Kb3",
                             "shortUrl": "https://s.test/12Kb3",
                             "longUrl": "https://shlink.io",
-                            "deviceLongUrls": {
-                                "android": "https://shlink.io/android",
-                                "ios": null,
-                                "desktop": null
-                            },
                             "dateCreated": "2016-05-01T20:34:16+02:00",
                             "visitsSummary": {
                                 "total": 1029,
@@ -212,11 +199,8 @@
                             ]
                         },
                         "examples": {
-                            "API v3 and newer": {
+                            "Invalid arguments": {
                                 "$ref": "../examples/short-url-invalid-args-v3.json"
-                            },
-                            "Previous to API v3": {
-                                "$ref": "../examples/short-url-invalid-args-v2.json"
                             }
                         }
                     }
@@ -248,11 +232,8 @@
                             ]
                         },
                         "examples": {
-                            "API v3 and newer": {
+                            "Short URL not found": {
                                 "$ref": "../examples/short-url-not-found-v3.json"
-                            },
-                            "Previous to API v3": {
-                                "$ref": "../examples/short-url-not-found-v2.json"
                             }
                         }
                     }
@@ -378,11 +359,8 @@
                             ]
                         },
                         "examples": {
-                            "API v3 and newer": {
+                            "Short URL not found": {
                                 "$ref": "../examples/short-url-not-found-v3.json"
-                            },
-                            "Previous to API v3": {
-                                "$ref": "../examples/short-url-not-found-v2.json"
                             }
                         }
                     }

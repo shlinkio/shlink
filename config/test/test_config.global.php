@@ -6,75 +6,38 @@ namespace Shlinkio\Shlink;
 
 use GuzzleHttp\Client;
 use Laminas\ConfigAggregator\ConfigAggregator;
-use Laminas\Diactoros\Response\EmptyResponse;
+use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\ServiceManager\Factory\InvokableFactory;
-use League\Event\EventDispatcher;
+use Mezzio\Router\FastRouteRouter;
 use Monolog\Level;
-use PHPUnit\Runner\Version;
-use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
-use SebastianBergmann\CodeCoverage\CodeCoverage;
-use SebastianBergmann\CodeCoverage\Driver\Selector;
-use SebastianBergmann\CodeCoverage\Filter;
-use SebastianBergmann\CodeCoverage\Report\Html\Facade as Html;
-use SebastianBergmann\CodeCoverage\Report\PHP;
-use SebastianBergmann\CodeCoverage\Report\Xml\Facade as Xml;
 use Shlinkio\Shlink\Common\Logger\LoggerType;
+use Shlinkio\Shlink\TestUtils\ApiTest\CoverageMiddleware;
+use Shlinkio\Shlink\TestUtils\CliTest\CliCoverageDelegator;
+use Shlinkio\Shlink\TestUtils\Helper\CoverageHelper;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Event\ConsoleCommandEvent;
-use Symfony\Component\Console\Event\ConsoleTerminateEvent;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-use function file_exists;
 use function Laminas\Stratigility\middleware;
 use function Shlinkio\Shlink\Config\env;
-use function Shlinkio\Shlink\Core\ArrayUtils\contains;
+use function sleep;
 use function sprintf;
-use function sys_get_temp_dir;
 
 use const ShlinkioTest\Shlink\API_TESTS_HOST;
 use const ShlinkioTest\Shlink\API_TESTS_PORT;
 
-$isApiTest = env('TEST_ENV') === 'api';
-$isCliTest = env('TEST_ENV') === 'cli';
+$testEnv = env('TEST_ENV');
+$isApiTest = $testEnv === 'api';
+$isCliTest = $testEnv === 'cli';
 $isE2eTest = $isApiTest || $isCliTest;
+
 $coverageType = env('GENERATE_COVERAGE');
-$generateCoverage = contains($coverageType, ['yes', 'pretty']);
-
-$coverage = null;
-if ($isE2eTest && $generateCoverage) {
-    $filter = new Filter();
-    $filter->includeDirectory(__DIR__ . '/../../module/Core/src');
-    $filter->includeDirectory(__DIR__ . '/../../module/' . ($isApiTest ? 'Rest' : 'CLI') . '/src');
-    $coverage = new CodeCoverage((new Selector())->forLineCoverage($filter), $filter);
-}
-
-/**
- * @param 'api'|'cli' $type
- */
-$exportCoverage = static function (string $type = 'api') use (&$coverage, $coverageType): void {
-    if ($coverage === null) {
-        return;
-    }
-
-    $basePath = __DIR__ . '/../../build/coverage-' . $type;
-    $covPath = $basePath . '.cov';
-
-    // Every CLI test runs on its own process and dumps the coverage afterwards.
-    // Try to load it and merge it, so that we end up with the whole coverage at the end.
-    if ($type === 'cli' && file_exists($covPath)) {
-        $coverage->merge(require $covPath);
-    }
-
-    if ($coverageType === 'pretty') {
-        (new Html())->process($coverage, $basePath . '/coverage-html');
-    } else {
-        (new PHP())->process($coverage, $covPath);
-        (new Xml(Version::getVersionString()))->process($coverage, $basePath . '/coverage-xml');
-    }
-};
+$generateCoverage = $coverageType === 'yes';
+$coverage = $isE2eTest && $generateCoverage ? CoverageHelper::createCoverageForDirectories(
+    [
+        __DIR__ . '/../../module/Core/src',
+        __DIR__ . '/../../module/' . ($isApiTest ? 'Rest' : 'CLI') . '/src',
+    ],
+    __DIR__ . '/../../build/coverage-' . $testEnv,
+) : null;
 
 $buildDbConnection = static function (): array {
     $driver = env('DB_DRIVER', 'sqlite');
@@ -89,7 +52,7 @@ $buildDbConnection = static function (): array {
         'postgres' => [
             'driver' => 'pdo_pgsql',
             'host' => $isCi ? '127.0.0.1' : 'shlink_db_postgres',
-            'port' => $isCi ? '5433' : '5432',
+            'port' => $isCi ? '5434' : '5432',
             'user' => 'postgres',
             'password' => 'root',
             'dbname' => 'shlink_test',
@@ -128,6 +91,7 @@ return [
 
     'debug' => true,
     ConfigAggregator::ENABLE_CACHE => false,
+    FastRouteRouter::CONFIG_CACHE_ENABLED => false,
 
     'url_shortener' => [
         'domain' => [
@@ -136,52 +100,27 @@ return [
         ],
     ],
 
-    'mezzio-swoole' => [
-        'enable_coroutine' => false,
-        'swoole-http-server' => [
-            'host' => API_TESTS_HOST,
-            'port' => API_TESTS_PORT,
-            'process-name' => 'shlink_test',
-            'options' => [
-                'pid_file' => sys_get_temp_dir() . '/shlink-test-swoole.pid',
-                'log_file' => __DIR__ . '/../../data/log/api-tests/output.log',
-                'enable_coroutine' => false,
-            ],
-        ],
-    ],
-
-    'routes' => !$isApiTest ? [] : [
+    'routes' => [
+        // This route is used to test that title resolution is skipped if the long URL times out
         [
-            'name' => 'dump_coverage',
-            'path' => '/api-tests/stop-coverage',
-            'middleware' => middleware(static function () use ($exportCoverage) {
-                // TODO I have tried moving this block to a listener so that it's invoked automatically,
-                //      but then the coverage is generated empty ¯\_(ツ)_/¯
-                $exportCoverage();
-                return new EmptyResponse();
-            }),
+            'name' => 'long_url_with_timeout',
+            'path' => '/api-tests/long-url-with-timeout',
             'allowed_methods' => ['GET'],
+            'middleware' => middleware(static function () {
+                sleep(5); // Title resolution times out at 3 seconds
+                return new HtmlResponse('<title>The title</title>');
+            }),
         ],
     ],
 
     'middleware_pipeline' => !$isApiTest ? [] : [
         'capture_code_coverage' => [
-            'middleware' => middleware(static function (
-                ServerRequestInterface $req,
-                RequestHandlerInterface $handler,
-            ) use (&$coverage): ResponseInterface {
-                $coverage?->start($req->getHeaderLine('x-coverage-id'));
-
-                try {
-                    return $handler->handle($req);
-                } finally {
-                    $coverage?->stop();
-                }
-            }),
+            'middleware' => new CoverageMiddleware($coverage),
             'priority' => 9999,
         ],
     ],
 
+    // Disable mercure integration during E2E tests
     'mercure' => [
         'public_hub_url' => null,
         'internal_hub_url' => null,
@@ -200,58 +139,7 @@ return [
         ],
         'delegators' => $isCliTest ? [
             Application::class => [
-                static function (
-                    ContainerInterface $c,
-                    string $serviceName,
-                    callable $callback,
-                ) use (
-                    &$coverage,
-                    $exportCoverage,
-                ) {
-                    /** @var Application $app */
-                    $app = $callback();
-                    $wrappedEventDispatcher = new EventDispatcher();
-
-                    // When the command starts, start collecting coverage
-                    $wrappedEventDispatcher->subscribeTo(
-                        ConsoleCommandEvent::class,
-                        static function () use (&$coverage): void {
-                            $id = env('COVERAGE_ID');
-                            if ($id === null) {
-                                return;
-                            }
-
-                            $coverage?->start($id);
-                        },
-                    );
-                    // When the command ends, stop collecting coverage
-                    $wrappedEventDispatcher->subscribeTo(
-                        ConsoleTerminateEvent::class,
-                        static function () use (&$coverage, $exportCoverage): void {
-                            $id = env('COVERAGE_ID');
-                            if ($id === null) {
-                                return;
-                            }
-
-                            $coverage?->stop();
-                            $exportCoverage('cli');
-                        },
-                    );
-
-                    $app->setDispatcher(new class ($wrappedEventDispatcher) implements EventDispatcherInterface {
-                        public function __construct(private EventDispatcher $wrappedDispatcher)
-                        {
-                        }
-
-                        public function dispatch(object $event, ?string $eventName = null): object
-                        {
-                            $this->wrappedDispatcher->dispatch($event);
-                            return $event;
-                        }
-                    });
-
-                    return $app;
-                },
+                new CliCoverageDelegator($coverage),
             ],
         ] : [],
     ],
@@ -262,7 +150,7 @@ return [
 
     'data_fixtures' => [
         'paths' => [
-            // TODO These are used for CLI tests too, so maybe should be somewhere else
+            // TODO These are used for other module's tests, so maybe should be somewhere else
             __DIR__ . '/../../module/Rest/test-api/Fixtures',
         ],
     ],

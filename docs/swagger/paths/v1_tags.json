@@ -16,20 +16,6 @@
                 "$ref": "../parameters/version.json"
             },
             {
-                "name": "withStats",
-                "deprecated": true,
-                "description": "**[Deprecated]** Use [GET /tags/stats](#/Tags/tagsWithStats) endpoint to get tags with their stats.",
-                "in": "query",
-                "required": false,
-                "schema": {
-                    "type": "string",
-                    "enum": [
-                        "true",
-                        "false"
-                    ]
-                }
-            },
-            {
                 "name": "page",
                 "in": "query",
                 "description": "The page to display. Defaults to 1",
@@ -86,13 +72,6 @@
                                             "type": "array",
                                             "items": {
                                                 "type": "string"
-                                            }
-                                        },
-                                        "stats": {
-                                            "description": "The tag stats will be returned only if the withStats param was provided with value 'true'",
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "../definitions/TagInfo.json"
                                             }
                                         },
                                         "pagination": {
@@ -249,9 +228,6 @@
                         "examples": {
                             "API v3 and newer": {
                                 "$ref": "../examples/tag-not-found-v3.json"
-                            },
-                            "Previous to API v3": {
-                                "$ref": "../examples/tag-not-found-v2.json"
                             }
                         }
                     }

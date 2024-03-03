@@ -10,8 +10,5 @@ interface TitleResolutionModelInterface
 
     public function getLongUrl(): string;
 
-    /** @deprecated */
-    public function doValidateUrl(): bool;
-
     public function withResolvedTitle(string $title): static;
 }

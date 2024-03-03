@@ -7,20 +7,21 @@ namespace Shlinkio\Shlink;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Monolog\Level;
 use Monolog\Logger;
-use PhpMiddleware\RequestId;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Common\Logger\LoggerFactory;
 use Shlinkio\Shlink\Common\Logger\LoggerType;
 use Shlinkio\Shlink\Common\Middleware\AccessLogMiddleware;
+use Shlinkio\Shlink\Common\Middleware\RequestIdMiddleware;
 
 use function Shlinkio\Shlink\Config\runningInRoadRunner;
 
 return (static function (): array {
     $common = [
         'level' => Level::Info->value,
-        'processors' => [RequestId\MonologProcessor::class],
-        'line_format' => '[%datetime%] [%extra.request_id%] %channel%.%level_name% - %message%',
+        'processors' => [RequestIdMiddleware::class],
+        'line_format' =>
+            '[%datetime%] [%extra.' . RequestIdMiddleware::ATTRIBUTE . '%] %channel%.%level_name% - %message%',
     ];
 
     return [
@@ -49,17 +50,6 @@ return (static function (): array {
                 Logger::class => 'Logger_Shlink',
                 LoggerInterface::class => 'Logger_Shlink',
                 AccessLogMiddleware::LOGGER_SERVICE_NAME => 'Logger_Access',
-            ],
-        ],
-
-        // Deprecated. Remove in Shlink 4.0.0
-        'mezzio-swoole' => [
-            'swoole-http-server' => [
-                'logger' => [
-                    // Let's disable mezio-swoole access logging, so that we can provide our own implementation,
-                    // consistent for roadrunner and openswoole
-                    'logger-name' => NullLogger::class,
-                ],
             ],
         ],
 

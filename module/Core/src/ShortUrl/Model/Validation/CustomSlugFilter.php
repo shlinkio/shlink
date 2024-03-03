@@ -12,9 +12,9 @@ use function str_replace;
 use function strtolower;
 use function trim;
 
-class CustomSlugFilter implements FilterInterface
+readonly class CustomSlugFilter implements FilterInterface
 {
-    public function __construct(private readonly UrlShortenerOptions $options)
+    public function __construct(private UrlShortenerOptions $options)
     {
     }
 
@@ -25,9 +25,8 @@ class CustomSlugFilter implements FilterInterface
         }
 
         $value = $this->options->isLooseMode() ? strtolower($value) : $value;
-        return (match ($this->options->multiSegmentSlugsEnabled) {
-            true => trim(str_replace(' ', '-', $value), '/'),
-            false => str_replace([' ', '/'], '-', $value),
-        });
+        return $this->options->multiSegmentSlugsEnabled
+            ? trim(str_replace(' ', '-', $value), '/')
+            : str_replace([' ', '/'], '-', $value);
     }
 }

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Config;
 
-use League\Uri\Exceptions\SyntaxError;
-use League\Uri\Uri;
+use Laminas\Diactoros\Exception\InvalidArgumentException;
+use Laminas\Diactoros\Uri;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
@@ -51,8 +51,8 @@ class NotFoundRedirectResolver implements NotFoundRedirectResolverInterface
     private function resolvePlaceholders(UriInterface $currentUri, string $redirectUrl): string
     {
         try {
-            $redirectUri = Uri::createFromString($redirectUrl);
-        } catch (SyntaxError $e) {
+            $redirectUri = new Uri($redirectUrl);
+        } catch (InvalidArgumentException $e) {
             $this->logger->warning('It was not possible to parse "{url}" as a valid URL: {e}', [
                 'e' => $e,
                 'url' => $redirectUrl,
@@ -63,26 +63,22 @@ class NotFoundRedirectResolver implements NotFoundRedirectResolverInterface
         $path = $currentUri->getPath();
         $domain = $currentUri->getAuthority();
 
-        $replacePlaceholderForPattern = static fn (string $pattern, string $replace, ?string $value): string|null =>
-            $value === null ? null : str_replace($pattern, $replace, $value);
-
         $replacePlaceholders = static function (
             callable $modifier,
-            ?string $value,
+            string $value,
         ) use (
-            $replacePlaceholderForPattern,
             $path,
             $domain,
-        ): string|null {
-            $value = $replacePlaceholderForPattern($modifier(self::DOMAIN_PLACEHOLDER), $modifier($domain), $value);
-            return $replacePlaceholderForPattern($modifier(self::ORIGINAL_PATH_PLACEHOLDER), $modifier($path), $value);
+        ): string {
+            $value = str_replace(urlencode(self::DOMAIN_PLACEHOLDER), $modifier($domain), $value);
+            return str_replace(urlencode(self::ORIGINAL_PATH_PLACEHOLDER), $modifier($path), $value);
         };
 
         $replacePlaceholdersInPath = static function (string $path) use ($replacePlaceholders): string {
             $result = $replacePlaceholders(static fn (mixed $v) => $v, $path);
-            return str_replace('//', '/', $result ?? '');
+            return str_replace('//', '/', $result);
         };
-        $replacePlaceholdersInQuery = static fn (?string $query): string|null => $replacePlaceholders(
+        $replacePlaceholdersInQuery = static fn (string $query): string => $replacePlaceholders(
             urlencode(...),
             $query,
         );

@@ -24,8 +24,11 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolverInterface;
 
 use function getimagesizefromstring;
+use function hexdec;
 use function imagecolorat;
 use function imagecreatefromstring;
+
+use const Shlinkio\Shlink\DEFAULT_QR_CODE_COLOR;
 
 class QrCodeActionTest extends TestCase
 {
@@ -46,10 +49,10 @@ class QrCodeActionTest extends TestCase
         $this->urlResolver->expects($this->once())->method('resolveEnabledShortUrl')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''),
         )->willThrowException(ShortUrlNotFoundException::fromNotFound(ShortUrlIdentifier::fromShortCodeAndDomain('')));
-        $delegate = $this->createMock(RequestHandlerInterface::class);
-        $delegate->expects($this->once())->method('handle')->withAnyParameters()->willReturn(new Response());
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->expects($this->once())->method('handle')->withAnyParameters()->willReturn(new Response());
 
-        $this->action()->process((new ServerRequest())->withAttribute('shortCode', $shortCode), $delegate);
+        $this->action()->process((new ServerRequest())->withAttribute('shortCode', $shortCode), $handler);
     }
 
     #[Test]
@@ -59,10 +62,10 @@ class QrCodeActionTest extends TestCase
         $this->urlResolver->expects($this->once())->method('resolveEnabledShortUrl')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''),
         )->willReturn(ShortUrl::createFake());
-        $delegate = $this->createMock(RequestHandlerInterface::class);
-        $delegate->expects($this->never())->method('handle');
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->expects($this->never())->method('handle');
 
-        $resp = $this->action()->process((new ServerRequest())->withAttribute('shortCode', $shortCode), $delegate);
+        $resp = $this->action()->process((new ServerRequest())->withAttribute('shortCode', $shortCode), $handler);
 
         self::assertInstanceOf(QrCodeResponse::class, $resp);
         self::assertEquals(200, $resp->getStatusCode());
@@ -78,10 +81,10 @@ class QrCodeActionTest extends TestCase
         $this->urlResolver->method('resolveEnabledShortUrl')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain($code, ''),
         )->willReturn(ShortUrl::createFake());
-        $delegate = $this->createMock(RequestHandlerInterface::class);
+        $handler = $this->createMock(RequestHandlerInterface::class);
         $req = (new ServerRequest())->withAttribute('shortCode', $code)->withQueryParams($query);
 
-        $resp = $this->action(new QrCodeOptions(format: $defaultFormat))->process($req, $delegate);
+        $resp = $this->action(new QrCodeOptions(format: $defaultFormat))->process($req, $handler);
 
         self::assertEquals($expectedContentType, $resp->getHeaderLine('Content-Type'));
     }
@@ -108,9 +111,9 @@ class QrCodeActionTest extends TestCase
         $this->urlResolver->method('resolveEnabledShortUrl')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain($code, ''),
         )->willReturn(ShortUrl::createFake());
-        $delegate = $this->createMock(RequestHandlerInterface::class);
+        $handler = $this->createMock(RequestHandlerInterface::class);
 
-        $resp = $this->action($defaultOptions)->process($req->withAttribute('shortCode', $code), $delegate);
+        $resp = $this->action($defaultOptions)->process($req->withAttribute('shortCode', $code), $handler);
         $result = getimagesizefromstring($resp->getBody()->__toString());
         self::assertNotFalse($result);
 
@@ -198,14 +201,14 @@ class QrCodeActionTest extends TestCase
         $this->urlResolver->method('resolveEnabledShortUrl')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain($code, ''),
         )->willReturn(ShortUrl::withLongUrl('https://shlink.io'));
-        $delegate = $this->createMock(RequestHandlerInterface::class);
+        $handler = $this->createMock(RequestHandlerInterface::class);
 
-        $resp = $this->action($defaultOptions)->process($req, $delegate);
+        $resp = $this->action($defaultOptions)->process($req, $handler);
         $image = imagecreatefromstring($resp->getBody()->__toString());
         self::assertNotFalse($image);
 
         $color = imagecolorat($image, 1, 1);
-        self::assertEquals($color, $expectedColor);
+        self::assertEquals($expectedColor, $color);
     }
 
     public static function provideRoundBlockSize(): iterable
@@ -230,10 +233,47 @@ class QrCodeActionTest extends TestCase
         ];
     }
 
+    #[Test, DataProvider('provideColors')]
+    public function properColorsAreUsed(?string $queryColor, ?string $optionsColor, int $expectedColor): void
+    {
+        $code = 'abc123';
+        $req = ServerRequestFactory::fromGlobals()
+            ->withQueryParams(['color' => $queryColor])
+            ->withAttribute('shortCode', $code);
+
+        $this->urlResolver->method('resolveEnabledShortUrl')->with(
+            ShortUrlIdentifier::fromShortCodeAndDomain($code),
+        )->willReturn(ShortUrl::withLongUrl('https://shlink.io'));
+        $handler = $this->createMock(RequestHandlerInterface::class);
+
+        $resp = $this->action(
+            new QrCodeOptions(size: 250, roundBlockSize: false, color: $optionsColor ?? DEFAULT_QR_CODE_COLOR),
+        )->process($req, $handler);
+        $image = imagecreatefromstring($resp->getBody()->__toString());
+        self::assertNotFalse($image);
+
+        $resultingColor = imagecolorat($image, 1, 1);
+        self::assertEquals($expectedColor, $resultingColor);
+    }
+
+    public static function provideColors(): iterable
+    {
+        yield 'no query, no default' => [null, null, self::BLACK];
+        yield '6-char-query black' => ['000000', null, self::BLACK];
+        yield '6-char-query white' => ['ffffff', null, self::WHITE];
+        yield '6-char-query red' => ['ff0000', null, (int) hexdec('ff0000')];
+        yield '3-char-query black' => ['000', null, self::BLACK];
+        yield '3-char-query white' => ['fff', null, self::WHITE];
+        yield '3-char-query red' => ['f00', null, (int) hexdec('ff0000')];
+        yield '3-char-default red' => [null, 'f00', (int) hexdec('ff0000')];
+        yield 'invalid color in query' => ['zzzzzzzz', null, self::BLACK];
+        yield 'invalid color in query with default' => ['zzzzzzzz', 'aa88cc', self::BLACK];
+        yield 'invalid color in default' => [null, 'zzzzzzzz', self::BLACK];
+    }
+
     #[Test, DataProvider('provideEnabled')]
     public function qrCodeIsResolvedBasedOnOptions(bool $enabledForDisabledShortUrls): void
     {
-
         if ($enabledForDisabledShortUrls) {
             $this->urlResolver->expects($this->once())->method('resolvePublicShortUrl')->willThrowException(
                 ShortUrlNotFoundException::fromNotFound(ShortUrlIdentifier::fromShortCodeAndDomain('')),
@@ -253,6 +293,27 @@ class QrCodeActionTest extends TestCase
         );
     }
 
+    #[Test]
+    public function logoIsAddedToQrCodeIfOptionIsDefined(): void
+    {
+        $logoUrl = 'https://avatars.githubusercontent.com/u/20341790?v=4'; // Shlink logo
+        $code = 'abc123';
+        $req = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $code);
+
+        $this->urlResolver->method('resolveEnabledShortUrl')->with(
+            ShortUrlIdentifier::fromShortCodeAndDomain($code),
+        )->willReturn(ShortUrl::withLongUrl('https://shlink.io'));
+        $handler = $this->createMock(RequestHandlerInterface::class);
+
+        $resp = $this->action(new QrCodeOptions(size: 250, logoUrl: $logoUrl))->process($req, $handler);
+        $image = imagecreatefromstring($resp->getBody()->__toString());
+        self::assertNotFalse($image);
+
+        // At around 100x100 px we can already find the logo, which has Shlink's brand color
+        $resultingColor = imagecolorat($image, 100, 100);
+        self::assertEquals(hexdec('4696E5'), $resultingColor);
+    }
+
     public static function provideEnabled(): iterable
     {
         yield 'always enabled' => [true];
@@ -265,7 +326,7 @@ class QrCodeActionTest extends TestCase
             $this->urlResolver,
             new ShortUrlStringifier(['domain' => 's.test']),
             new NullLogger(),
-            $options ?? new QrCodeOptions(),
+            $options ?? new QrCodeOptions(enabledForDisabledShortUrls: false),
         );
     }
 }

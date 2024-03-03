@@ -1,6 +1,6 @@
 .idea
 bin/rr
-config/roadrunner/.pid
+.pid
 build
 !docker/build
 composer.lock
@@ -15,3 +15,4 @@ docs/mercure.html
 docker-compose.override.yml
 .phpunit.result.cache
 docs/swagger/swagger-inlined.json
+phpcov*

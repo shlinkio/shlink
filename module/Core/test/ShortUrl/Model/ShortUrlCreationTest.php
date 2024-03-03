@@ -9,7 +9,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
-use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
@@ -78,43 +77,6 @@ class ShortUrlCreationTest extends TestCase
         ]];
         yield [[
             ShortUrlInputFilter::LONG_URL => 'missing_schema',
-        ]];
-        yield [[
-            ShortUrlInputFilter::LONG_URL => 'https://foo',
-            ShortUrlInputFilter::DEVICE_LONG_URLS => [
-                'invalid' => 'https://shlink.io',
-            ],
-        ]];
-        yield [[
-            ShortUrlInputFilter::LONG_URL => 'https://foo',
-            ShortUrlInputFilter::DEVICE_LONG_URLS => [
-                DeviceType::DESKTOP->value => '',
-            ],
-        ]];
-        yield [[
-            ShortUrlInputFilter::LONG_URL => 'https://foo',
-            ShortUrlInputFilter::DEVICE_LONG_URLS => [
-                DeviceType::DESKTOP->value => null,
-            ],
-        ]];
-        yield [[
-            ShortUrlInputFilter::LONG_URL => 'https://foo',
-            ShortUrlInputFilter::DEVICE_LONG_URLS => [
-                DeviceType::IOS->value => '   ',
-            ],
-        ]];
-        yield [[
-            ShortUrlInputFilter::LONG_URL => 'https://foo',
-            ShortUrlInputFilter::DEVICE_LONG_URLS => [
-                DeviceType::ANDROID->value => 'missing_schema',
-            ],
-        ]];
-        yield [[
-            ShortUrlInputFilter::LONG_URL => 'https://foo',
-            ShortUrlInputFilter::DEVICE_LONG_URLS => [
-                DeviceType::IOS->value => 'https://bar',
-                DeviceType::ANDROID->value => [],
-            ],
         ]];
     }
 

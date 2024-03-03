@@ -163,11 +163,6 @@
                                         "shortCode": "12C18",
                                         "shortUrl": "https://s.test/12C18",
                                         "longUrl": "https://store.steampowered.com",
-                                        "deviceLongUrls": {
-                                            "android": null,
-                                            "ios": null,
-                                            "desktop": null
-                                        },
                                         "dateCreated": "2016-08-21T20:34:16+02:00",
                                         "visitsSummary": {
                                             "total": 328,
@@ -191,11 +186,6 @@
                                         "shortCode": "12Kb3",
                                         "shortUrl": "https://s.test/12Kb3",
                                         "longUrl": "https://shlink.io",
-                                        "deviceLongUrls": {
-                                            "android": null,
-                                            "ios": "https://shlink.io/ios",
-                                            "desktop": null
-                                        },
                                         "dateCreated": "2016-05-01T20:34:16+02:00",
                                         "visitsSummary": {
                                             "total": 1029,
@@ -218,11 +208,6 @@
                                         "shortCode": "123bA",
                                         "shortUrl": "https://example.com/123bA",
                                         "longUrl": "https://www.google.com",
-                                        "deviceLongUrls": {
-                                            "android": null,
-                                            "ios": null,
-                                            "desktop": null
-                                        },
                                         "dateCreated": "2015-10-01T20:34:16+02:00",
                                         "visitsSummary": {
                                             "total": 25,
@@ -296,11 +281,12 @@
                                 "type": "object",
                                 "required": ["longUrl"],
                                 "properties": {
-                                    "deviceLongUrls": {
-                                        "$ref": "../definitions/DeviceLongUrls.json"
-                                    },
                                     "customSlug": {
                                         "description": "A unique custom slug to be used instead of the generated short code",
+                                        "type": "string"
+                                    },
+                                    "pathPrefix": {
+                                        "description": "A prefix that will be prepended to provided custom slug or auto-generated short code",
                                         "type": "string"
                                     },
                                     "findIfExists": {
@@ -334,11 +320,6 @@
                             "shortCode": "12C18",
                             "shortUrl": "https://s.test/12C18",
                             "longUrl": "https://store.steampowered.com",
-                            "deviceLongUrls": {
-                                "android": null,
-                                "ios": null,
-                                "desktop": null
-                            },
                             "dateCreated": "2016-08-21T20:34:16+02:00",
                             "visitsSummary": {
                                 "total": 0,
@@ -382,15 +363,12 @@
                                                     "validSince",
                                                     "validUntil",
                                                     "customSlug",
+                                                    "pathPrefix",
                                                     "maxVisits",
                                                     "findIfExists",
                                                     "domain"
                                                 ]
                                             }
-                                        },
-                                        "url": {
-                                            "type": "string",
-                                            "description": "A URL that could not be verified, if the error type is https://shlink.io/api/error/invalid-url"
                                         },
                                         "customSlug": {
                                             "type": "string",
@@ -405,43 +383,13 @@
                             ]
                         },
                         "examples": {
-                            "Invalid arguments with API v3 and newer": {
+                            "Invalid arguments": {
                                 "$ref": "../examples/short-url-invalid-args-v3.json"
                             },
-                            "Invalid long URL with API v3 and newer": {
-                                "value": {
-                                    "title": "Invalid URL",
-                                    "type": "https://shlink.io/api/error/invalid-url",
-                                    "detail": "Provided URL foo is invalid. Try with a different one.",
-                                    "status": 400,
-                                    "url": "https://invalid-url.com"
-                                }
-                            },
-                            "Non-unique slug with API v3 and newer": {
+                            "Non-unique slug": {
                                 "value": {
                                     "title": "Invalid custom slug",
                                     "type": "https://shlink.io/api/error/non-unique-slug",
-                                    "detail": "Provided slug \"my-slug\" is already in use.",
-                                    "status": 400,
-                                    "customSlug": "my-slug"
-                                }
-                            },
-                            "Invalid arguments previous to API v3": {
-                                "$ref": "../examples/short-url-invalid-args-v2.json"
-                            },
-                            "Invalid long URL previous to API v3": {
-                                "value": {
-                                    "title": "Invalid URL",
-                                    "type": "INVALID_URL",
-                                    "detail": "Provided URL foo is invalid. Try with a different one.",
-                                    "status": 400,
-                                    "url": "https://invalid-url.com"
-                                }
-                            },
-                            "Non-unique slug previous to API v3": {
-                                "value": {
-                                    "title": "Invalid custom slug",
-                                    "type": "INVALID_SLUG",
                                     "detail": "Provided slug \"my-slug\" is already in use.",
                                     "status": 400,
                                     "customSlug": "my-slug"

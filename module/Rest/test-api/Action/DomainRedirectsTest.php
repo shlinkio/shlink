@@ -21,7 +21,7 @@ class DomainRedirectsTest extends ApiTestCase
 
         self::assertEquals(self::STATUS_BAD_REQUEST, $resp->getStatusCode());
         self::assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
-        self::assertEquals('INVALID_ARGUMENT', $payload['type']);
+        self::assertEquals('https://shlink.io/api/error/invalid-data', $payload['type']);
         self::assertEquals('Provided data is not valid', $payload['detail']);
         self::assertEquals('Invalid data', $payload['title']);
     }

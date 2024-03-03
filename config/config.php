@@ -8,19 +8,12 @@ use Laminas\ConfigAggregator;
 use Laminas\Diactoros;
 use Mezzio;
 use Mezzio\ProblemDetails;
-use Mezzio\Swoole;
 use Shlinkio\Shlink\Config\ConfigAggregator\EnvVarLoaderProvider;
 
-use function class_exists;
 use function Shlinkio\Shlink\Config\env;
-use function Shlinkio\Shlink\Config\openswooleIsInstalled;
-use function Shlinkio\Shlink\Config\runningInRoadRunner;
 use function Shlinkio\Shlink\Core\enumValues;
 
-use const PHP_SAPI;
-
 $isTestEnv = env('APP_ENV') === 'test';
-$enableSwoole = PHP_SAPI === 'cli' && openswooleIsInstalled() && ! runningInRoadRunner();
 
 return (new ConfigAggregator\ConfigAggregator(
     providers: [
@@ -30,9 +23,6 @@ return (new ConfigAggregator\ConfigAggregator(
         Mezzio\ConfigProvider::class,
         Mezzio\Router\ConfigProvider::class,
         Mezzio\Router\FastRouteRouter\ConfigProvider::class,
-        $enableSwoole && class_exists(Swoole\ConfigProvider::class)
-            ? Swoole\ConfigProvider::class
-            : new ConfigAggregator\ArrayProvider([]),
         ProblemDetails\ConfigProvider::class,
         Diactoros\ConfigProvider::class,
         Common\ConfigProvider::class,

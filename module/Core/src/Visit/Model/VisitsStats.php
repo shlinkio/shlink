@@ -6,10 +6,10 @@ namespace Shlinkio\Shlink\Core\Visit\Model;
 
 use JsonSerializable;
 
-final class VisitsStats implements JsonSerializable
+final readonly class VisitsStats implements JsonSerializable
 {
-    private readonly VisitsSummary $nonOrphanVisitsSummary;
-    private readonly VisitsSummary $orphanVisitsSummary;
+    private VisitsSummary $nonOrphanVisitsSummary;
+    private VisitsSummary $orphanVisitsSummary;
 
     public function __construct(
         int $nonOrphanVisitsTotal,
@@ -32,10 +32,6 @@ final class VisitsStats implements JsonSerializable
         return [
             'nonOrphanVisits' => $this->nonOrphanVisitsSummary,
             'orphanVisits' => $this->orphanVisitsSummary,
-
-            // Deprecated
-            'visitsCount' => $this->nonOrphanVisitsSummary->total,
-            'orphanVisitsCount' => $this->orphanVisitsSummary->total,
         ];
     }
 }

@@ -1,0 +1,13 @@
+{
+  "type": "object",
+  "required": ["priority"],
+  "properties": {
+    "priority": {
+      "description": "Order in which attempting to match the rule. Lower goes first",
+      "type": "number"
+    }
+  },
+  "allOf": [{
+    "$ref": "./SetShortUrlRedirectRule.json"
+  }]
+}

@@ -24,7 +24,7 @@ class RenameTagTest extends ApiTestCase
 
         self::assertEquals(self::STATUS_FORBIDDEN, $resp->getStatusCode());
         self::assertEquals(self::STATUS_FORBIDDEN, $payload['status']);
-        self::assertEquals('FORBIDDEN_OPERATION', $payload['type']);
+        self::assertEquals('https://shlink.io/api/error/forbidden-tag-operation', $payload['type']);
         self::assertEquals('You are not allowed to rename tags', $payload['detail']);
         self::assertEquals('Forbidden tag operation', $payload['title']);
     }

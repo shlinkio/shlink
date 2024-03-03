@@ -1,0 +1,49 @@
+version: '3'
+
+############################################################################################
+# Routes here need to be relative to the project root, as API tests are run with `-w .`    #
+# See https://github.com/orgs/roadrunner-server/discussions/1440#discussioncomment-8486186 #
+############################################################################################
+
+rpc:
+    listen: tcp://127.0.0.1:6001
+
+server:
+    command: 'php ./bin/roadrunner-worker.php'
+
+http:
+    address: '0.0.0.0:9999'
+    middleware: ['static']
+    static:
+        dir: './public'
+        forbid: ['.php', '.htaccess']
+    pool:
+        num_workers: 1
+        debug: false
+
+jobs:
+    pool:
+        num_workers: 1
+        debug: false
+    timeout: 300
+    consume: ['shlink']
+    pipelines:
+        shlink:
+            driver: memory
+            config:
+                priority: 10
+                prefetch: 10
+
+logs:
+    encoding: json
+    mode: development
+    channels:
+        http:
+            mode: 'off' # Disable logging as Shlink handles it internally
+        server:
+            encoding: json
+            level: info
+        metrics:
+            level: panic
+        jobs:
+            level: panic

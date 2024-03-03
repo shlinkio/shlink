@@ -72,7 +72,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     /**
      * @param LockMode::PESSIMISTIC_WRITE|null $lockMode
      */
-    private function doShortCodeIsInUse(ShortUrlIdentifier $identifier, ?Specification $spec, ?int $lockMode): bool
+    private function doShortCodeIsInUse(ShortUrlIdentifier $identifier, ?Specification $spec, ?LockMode $lockMode): bool
     {
         $qb = $this->createFindOneQueryBuilder($identifier, $spec)->select('s.id');
         $query = $qb->getQuery();

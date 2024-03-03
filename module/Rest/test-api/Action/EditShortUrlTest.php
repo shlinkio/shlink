@@ -75,28 +75,16 @@ class EditShortUrlTest extends ApiTestCase
         return $matchingShortUrl['meta'] ?? [];
     }
 
-    #[Test, DataProvider('provideLongUrls')]
-    public function longUrlCanBeEditedIfItIsValid(string $longUrl, int $expectedStatus, ?string $expectedError): void
+    public function longUrlCanBeEdited(): void
     {
         $shortCode = 'abc123';
         $url = sprintf('/short-urls/%s', $shortCode);
 
         $resp = $this->callApiWithKey(self::METHOD_PATCH, $url, [RequestOptions::JSON => [
-            'longUrl' => $longUrl,
-            'validateUrl' => true,
+            'longUrl' => 'https://shlink.io',
         ]]);
 
-        self::assertEquals($expectedStatus, $resp->getStatusCode());
-        if ($expectedError !== null) {
-            $payload = $this->getJsonResponsePayload($resp);
-            self::assertEquals($expectedError, $payload['type']);
-        }
-    }
-
-    public static function provideLongUrls(): iterable
-    {
-        yield 'valid URL' => ['https://shlink.io', self::STATUS_OK, null];
-        yield 'invalid URL' => ['http://foo', self::STATUS_BAD_REQUEST, 'INVALID_URL'];
+        self::assertEquals(self::STATUS_OK, $resp->getStatusCode());
     }
 
     #[Test, DataProviderExternal(ApiTestDataProviders::class, 'invalidUrlsProvider')]
@@ -112,7 +100,7 @@ class EditShortUrlTest extends ApiTestCase
 
         self::assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
         self::assertEquals(self::STATUS_NOT_FOUND, $payload['status']);
-        self::assertEquals('INVALID_SHORTCODE', $payload['type']);
+        self::assertEquals('https://shlink.io/api/error/short-url-not-found', $payload['type']);
         self::assertEquals($expectedDetail, $payload['detail']);
         self::assertEquals('Short URL not found', $payload['title']);
         self::assertEquals($shortCode, $payload['shortCode']);
@@ -131,7 +119,7 @@ class EditShortUrlTest extends ApiTestCase
 
         self::assertEquals(self::STATUS_BAD_REQUEST, $resp->getStatusCode());
         self::assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
-        self::assertEquals('INVALID_ARGUMENT', $payload['type']);
+        self::assertEquals('https://shlink.io/api/error/invalid-data', $payload['type']);
         self::assertEquals($expectedDetail, $payload['detail']);
         self::assertEquals('Invalid data', $payload['title']);
     }
@@ -164,28 +152,5 @@ class EditShortUrlTest extends ApiTestCase
             'https://blog.alejandrocelaya.com/2019/04/27/considerations-to-properly-use-open-source-software-projects/',
         ];
         yield 'no domain' => [null, 'https://shlink.io/documentation/'];
-    }
-
-    #[Test]
-    public function deviceLongUrlsCanBeEdited(): void
-    {
-        $shortCode = 'def456';
-        $url = new Uri(sprintf('/short-urls/%s', $shortCode));
-        $editResp = $this->callApiWithKey(self::METHOD_PATCH, (string) $url, [RequestOptions::JSON => [
-            'deviceLongUrls' => [
-                'android' => null, // This one will get removed
-                'ios' => 'https://blog.alejandrocelaya.com/ios/edited', // This one will be edited
-                'desktop' => 'https://blog.alejandrocelaya.com/desktop', // This one is new and will be created
-            ],
-        ]]);
-        $deviceLongUrls = $this->getJsonResponsePayload($editResp)['deviceLongUrls'] ?? [];
-
-        self::assertEquals(self::STATUS_OK, $editResp->getStatusCode());
-        self::assertArrayHasKey('ios', $deviceLongUrls);
-        self::assertEquals('https://blog.alejandrocelaya.com/ios/edited', $deviceLongUrls['ios']);
-        self::assertArrayHasKey('desktop', $deviceLongUrls);
-        self::assertEquals('https://blog.alejandrocelaya.com/desktop', $deviceLongUrls['desktop']);
-        self::assertArrayHasKey('android', $deviceLongUrls);
-        self::assertNull($deviceLongUrls['android']);
     }
 }

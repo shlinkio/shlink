@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\CLI\Util\ExitCode;
-use Shlinkio\Shlink\Core\Exception\InvalidUrlException;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
@@ -72,6 +71,12 @@ class CreateShortUrlCommand extends Command
                 'If provided, this slug will be used instead of generating a short code',
             )
             ->addOption(
+                'path-prefix',
+                'p',
+                InputOption::VALUE_REQUIRED,
+                'Prefix to prepend before the generated short code or provided custom slug',
+            )
+            ->addOption(
                 'max-visits',
                 'm',
                 InputOption::VALUE_REQUIRED,
@@ -94,12 +99,6 @@ class CreateShortUrlCommand extends Command
                 'l',
                 InputOption::VALUE_REQUIRED,
                 'The length for generated short code (it will be ignored if --custom-slug was provided).',
-            )
-            ->addOption(
-                'validate-url',
-                null,
-                InputOption::VALUE_NONE,
-                '[DEPRECATED] Makes the URL to be validated as publicly accessible.',
             )
             ->addOption(
                 'crawlable',
@@ -134,7 +133,7 @@ class CreateShortUrlCommand extends Command
         }
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = $this->getIO($input, $output);
         $longUrl = $input->getArgument('longUrl');
@@ -145,22 +144,20 @@ class CreateShortUrlCommand extends Command
 
         $explodeWithComma = static fn (string $tag) => explode(',', $tag);
         $tags = array_unique(flatten(array_map($explodeWithComma, $input->getOption('tags'))));
-        $customSlug = $input->getOption('custom-slug');
         $maxVisits = $input->getOption('max-visits');
         $shortCodeLength = $input->getOption('short-code-length') ?? $this->options->defaultShortCodesLength;
-        $doValidateUrl = $input->getOption('validate-url');
 
         try {
             $result = $this->urlShortener->shorten(ShortUrlCreation::fromRawData([
                 ShortUrlInputFilter::LONG_URL => $longUrl,
                 ShortUrlInputFilter::VALID_SINCE => $input->getOption('valid-since'),
                 ShortUrlInputFilter::VALID_UNTIL => $input->getOption('valid-until'),
-                ShortUrlInputFilter::CUSTOM_SLUG => $customSlug,
                 ShortUrlInputFilter::MAX_VISITS => $maxVisits !== null ? (int) $maxVisits : null,
+                ShortUrlInputFilter::CUSTOM_SLUG => $input->getOption('custom-slug'),
+                ShortUrlInputFilter::PATH_PREFIX => $input->getOption('path-prefix'),
                 ShortUrlInputFilter::FIND_IF_EXISTS => $input->getOption('find-if-exists'),
                 ShortUrlInputFilter::DOMAIN => $input->getOption('domain'),
                 ShortUrlInputFilter::SHORT_CODE_LENGTH => $shortCodeLength,
-                ShortUrlInputFilter::VALIDATE_URL => $doValidateUrl,
                 ShortUrlInputFilter::TAGS => $tags,
                 ShortUrlInputFilter::CRAWLABLE => $input->getOption('crawlable'),
                 ShortUrlInputFilter::FORWARD_QUERY => !$input->getOption('no-forward-query'),
@@ -176,7 +173,7 @@ class CreateShortUrlCommand extends Command
                 sprintf('Generated short URL: <info>%s</info>', $this->stringifier->stringify($result->shortUrl)),
             ]);
             return ExitCode::EXIT_SUCCESS;
-        } catch (InvalidUrlException | NonUniqueSlugException $e) {
+        } catch (NonUniqueSlugException $e) {
             $io->error($e->getMessage());
             return ExitCode::EXIT_FAILURE;
         }

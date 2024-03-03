@@ -8,7 +8,6 @@ on:
       - '*.md'
       - '*.xml'
       - '*.yml*'
-      - '*.json5'
       - '*.neon'
   push:
     branches:
@@ -21,7 +20,6 @@ on:
       - '*.md'
       - '*.xml'
       - '*.yml*'
-      - '*.json5'
       - '*.neon'
 
 jobs:
@@ -36,7 +34,6 @@ jobs:
       - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          php-extensions: openswoole-22.1.0
           extensions-cache-key: tests-extensions-${{ matrix.php-version }}-${{ matrix.command }}
       - run: composer ${{ matrix.command }}
 
@@ -50,89 +47,25 @@ jobs:
     with:
       test-group: cli
 
-  openswoole-api-tests:
+  api-tests:
     uses: './.github/workflows/ci-tests.yml'
     with:
       test-group: api
 
-  roadrunner-api-tests:
-    runs-on: ubuntu-22.04
+  db-tests:
     strategy:
       matrix:
-        php-version: ['8.2', '8.3']
-    continue-on-error: ${{ matrix.php-version == '8.3' }}
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # rr get-binary picks this env automatically
-    steps:
-      - uses: actions/checkout@v4
-      - run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_postgres
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-version }}
-          tools: composer
-      - run: composer install --no-interaction --prefer-dist --ignore-platform-req=ext-openswoole ${{ matrix.php-version == '8.3' && '--ignore-platform-reqs' || '' }}
-      - run: ./vendor/bin/rr get --no-interaction --no-config --location bin/ && chmod +x bin/rr
-      - run: composer test:api:rr
-
-  sqlite-db-tests:
+        platform: ['sqlite:ci', 'mysql', 'maria', 'postgres', 'ms']
     uses: './.github/workflows/ci-db-tests.yml'
     with:
-      platform: 'sqlite:ci'
-
-  mysql-db-tests:
-    uses: './.github/workflows/ci-db-tests.yml'
-    with:
-      platform: 'mysql'
-
-  maria-db-tests:
-    uses: './.github/workflows/ci-db-tests.yml'
-    with:
-      platform: 'maria'
-
-  postgres-db-tests:
-    uses: './.github/workflows/ci-db-tests.yml'
-    with:
-      platform: 'postgres'
-
-  ms-db-tests:
-    uses: './.github/workflows/ci-db-tests.yml'
-    with:
-      platform: 'ms'
-
-  unit-mutation-tests:
-    needs:
-      - unit-tests
-    uses: './.github/workflows/ci-mutation-tests.yml'
-    with:
-      test-group: unit
-
-  db-mutation-tests:
-    needs:
-      - sqlite-db-tests
-    uses: './.github/workflows/ci-mutation-tests.yml'
-    with:
-      test-group: db
-
-  api-mutation-tests:
-    needs:
-      - openswoole-api-tests
-    uses: './.github/workflows/ci-mutation-tests.yml'
-    with:
-      test-group: api
-
-  cli-mutation-tests:
-    needs:
-      - cli-tests
-    uses: './.github/workflows/ci-mutation-tests.yml'
-    with:
-      test-group: cli
+      platform: ${{ matrix.platform }}
 
   upload-coverage:
     needs:
       - unit-tests
-      - openswoole-api-tests
+      - api-tests
       - cli-tests
-      - sqlite-db-tests
+      - db-tests
     runs-on: ubuntu-22.04
     strategy:
       matrix:
@@ -141,11 +74,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Use PHP
-        uses: shivammathur/setup-php@v2
+        uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          coverage: pcov
-          ini-values: pcov.directory=module
+          extensions-cache-key: tests-extensions-${{ matrix.php-version }}
       - uses: actions/download-artifact@v4
         with:
           path: build
@@ -153,19 +85,14 @@ jobs:
       - run: mv build/coverage-db/coverage-db.cov build/coverage-db.cov
       - run: mv build/coverage-api/coverage-api.cov build/coverage-api.cov
       - run: mv build/coverage-cli/coverage-cli.cov build/coverage-cli.cov
-      - run: wget https://phar.phpunit.de/phpcov-9.0.0.phar
-      - run: php phpcov-9.0.0.phar merge build --clover build/clover.xml
+      - run: vendor/bin/phpcov merge build --clover build/clover.xml
       - name: Publish coverage
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v4
         with:
           file: ./build/clover.xml
 
   delete-artifacts:
     needs:
-      - unit-mutation-tests
-      - db-mutation-tests
-      - api-mutation-tests
-      - cli-mutation-tests
       - upload-coverage
     runs-on: ubuntu-22.04
     steps:

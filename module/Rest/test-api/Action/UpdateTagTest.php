@@ -23,7 +23,7 @@ class UpdateTagTest extends ApiTestCase
 
         self::assertEquals(self::STATUS_BAD_REQUEST, $resp->getStatusCode());
         self::assertEquals(self::STATUS_BAD_REQUEST, $payload['status']);
-        self::assertEquals('INVALID_ARGUMENT', $payload['type']);
+        self::assertEquals('https://shlink.io/api/error/invalid-data', $payload['type']);
         self::assertEquals($expectedDetail, $payload['detail']);
         self::assertEquals('Invalid data', $payload['title']);
     }
@@ -55,8 +55,8 @@ class UpdateTagTest extends ApiTestCase
 
     public static function provideTagNotFoundApiVersions(): iterable
     {
-        yield 'version 1' => ['1', 'TAG_NOT_FOUND'];
-        yield 'version 2' => ['2', 'TAG_NOT_FOUND'];
+        yield 'version 1' => ['1', 'https://shlink.io/api/error/tag-not-found'];
+        yield 'version 2' => ['2', 'https://shlink.io/api/error/tag-not-found'];
         yield 'version 3' => ['3', 'https://shlink.io/api/error/tag-not-found'];
     }
 
@@ -80,8 +80,8 @@ class UpdateTagTest extends ApiTestCase
 
     public static function provideTagConflictsApiVersions(): iterable
     {
-        yield 'version 1' => ['1', 'TAG_CONFLICT'];
-        yield 'version 2' => ['2', 'TAG_CONFLICT'];
+        yield 'version 1' => ['1', 'https://shlink.io/api/error/tag-conflict'];
+        yield 'version 2' => ['2', 'https://shlink.io/api/error/tag-conflict'];
         yield 'version 3' => ['3', 'https://shlink.io/api/error/tag-conflict'];
     }
 

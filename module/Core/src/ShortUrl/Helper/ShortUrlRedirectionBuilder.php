@@ -5,19 +5,21 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\ShortUrl\Helper;
 
 use GuzzleHttp\Psr7\Query;
+use Laminas\Diactoros\Uri;
 use Laminas\Stdlib\ArrayUtils;
-use League\Uri\Uri;
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
+use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectionResolverInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 
 use function sprintf;
 
-class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderInterface
+readonly class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderInterface
 {
-    public function __construct(private readonly TrackingOptions $trackingOptions)
-    {
+    public function __construct(
+        private TrackingOptions $trackingOptions,
+        private ShortUrlRedirectionResolverInterface $redirectionResolver,
+    ) {
     }
 
     public function buildShortUrlRedirect(
@@ -25,9 +27,8 @@ class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderInterface
         ServerRequestInterface $request,
         ?string $extraPath = null,
     ): string {
+        $uri = new Uri($this->redirectionResolver->resolveLongUrl($shortUrl, $request));
         $currentQuery = $request->getQueryParams();
-        $device = DeviceType::matchFromUserAgent($request->getHeaderLine('User-Agent'));
-        $uri = Uri::createFromString($shortUrl->longUrlForDevice($device));
         $shouldForwardQuery = $shortUrl->forwardQuery();
 
         return $uri
@@ -36,9 +37,9 @@ class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderInterface
             ->__toString();
     }
 
-    private function resolveQuery(Uri $uri, array $currentQuery): ?string
+    private function resolveQuery(Uri $uri, array $currentQuery): string
     {
-        $hardcodedQuery = Query::parse($uri->getQuery() ?? '');
+        $hardcodedQuery = Query::parse($uri->getQuery());
 
         $disableTrackParam = $this->trackingOptions->disableTrackParam;
         if ($disableTrackParam !== null) {
@@ -48,7 +49,7 @@ class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderInterface
         // We want to merge preserving numeric keys, as some params might be numbers
         $mergedQuery = ArrayUtils::merge($hardcodedQuery, $currentQuery, true);
 
-        return empty($mergedQuery) ? null : Query::build($mergedQuery);
+        return Query::build($mergedQuery);
     }
 
     private function resolvePath(Uri $uri, ?string $extraPath): string

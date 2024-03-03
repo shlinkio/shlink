@@ -17,10 +17,8 @@ class GlobalVisitsTest extends ApiTestCase
         $payload = $this->getJsonResponsePayload($resp);
 
         self::assertArrayHasKey('visits', $payload);
-        self::assertArrayHasKey('visitsCount', $payload['visits']);
-        self::assertArrayHasKey('orphanVisitsCount', $payload['visits']);
-        self::assertEquals($expectedVisits, $payload['visits']['visitsCount']);
-        self::assertEquals($expectedOrphanVisits, $payload['visits']['orphanVisitsCount']);
+        self::assertEquals($expectedVisits, $payload['visits']['nonOrphanVisits']['total']);
+        self::assertEquals($expectedOrphanVisits, $payload['visits']['orphanVisits']['total']);
     }
 
     public static function provideApiKeys(): iterable
