@@ -4,8 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [4.0.0]
 ### Added
+* [#1914](https://github.com/shlinkio/shlink/issues/1914) Add new dynamic redirects engine based on rules. Rules are conditions checked against the visitor's request, and when matching, they can result in a redirect to a different long URL.
+
+  Rules can be based on things like the presence of specific params, headers, locations, etc. This version ships with three initial rule condition types: device, query param and language.
+
 * [#1902](https://github.com/shlinkio/shlink/issues/1902) Add dynamic redirects based on query parameters.
 
   This is implemented on top of the new [rule-based redirects](https://github.com/shlinkio/shlink/discussions/1912).
