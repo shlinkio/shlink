@@ -168,7 +168,9 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
     {
         $choices = [];
         foreach ($currentRules as $index => $rule) {
-            $choices[$rule->longUrl] = $index + 1;
+            $priority = $index + 1;
+            $key = sprintf('%s - %s', $priority, $rule->longUrl);
+            $choices[$key] = $priority;
         }
 
         $resp = $io->choice($message, array_flip($choices));

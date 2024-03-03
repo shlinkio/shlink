@@ -174,7 +174,7 @@ class RedirectRuleHandlerTest extends TestCase
                 $callIndex++;
 
                 if ($message === 'What rule do you want to delete?') {
-                    return 'https://example.com/two'; // Second rule to be removed
+                    return '2 - https://example.com/two'; // Second rule to be removed
                 }
 
                 // First we select remove action to trigger code branch, then save to finish execution
@@ -219,7 +219,7 @@ class RedirectRuleHandlerTest extends TestCase
                 $callIndex++;
 
                 if ($message === 'What rule do you want to re-arrange?') {
-                    return 'https://example.com/two'; // Second rule to be re-arrange
+                    return '2 - https://example.com/two'; // Second rule to be re-arrange
                 }
 
                 // First we select remove action to trigger code branch, then save to finish execution
