@@ -14,14 +14,10 @@ use Throwable;
 use function is_string;
 use function sprintf;
 
-class DateOption
+readonly class DateOption
 {
-    public function __construct(
-        private readonly Command $command,
-        private readonly string $name,
-        string $shortcut,
-        string $description,
-    ) {
+    public function __construct(private Command $command, private string $name, string $shortcut, string $description)
+    {
         $command->addOption($name, $shortcut, InputOption::VALUE_REQUIRED, $description);
     }
 
