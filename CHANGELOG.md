@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* [#2041](https://github.com/shlinkio/shlink/issues/2041) Document `color` and `bgColor` params for the QR code route in the OAS docs.
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* *Nothing*
+
+
 ## [4.0.0] - 2024-03-03
 ### Added
 * [#1914](https://github.com/shlinkio/shlink/issues/1914) Add new dynamic redirects engine based on rules. Rules are conditions checked against the visitor's request, and when matching, they can result in a redirect to a different long URL.
@@ -56,7 +73,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Changed
 * [#1968](https://github.com/shlinkio/shlink/issues/1968) Move migrations from `data` to `module/Core`.
-* *Nothing*
 
 ### Deprecated
 * *Nothing*
