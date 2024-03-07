@@ -75,9 +75,15 @@ class RedirectTest extends ApiTestCase
         ];
         yield 'rule: complex matching accept language' => [
             [
-                RequestOptions::HEADERS => ['Accept-Language' => 'fr-FR, es;q=08, en;q=0.5, *;q=0.2'],
+                RequestOptions::HEADERS => ['Accept-Language' => 'fr-FR, es;q=0.9, en;q=0.9, *;q=0.2'],
             ],
             'https://example.com/only-english',
+        ];
+        yield 'rule: too low quality accept language' => [
+            [
+                RequestOptions::HEADERS => ['Accept-Language' => 'fr-FR, es;q=0.8, en;q=0.5, *;q=0.2'],
+            ],
+            'https://blog.alejandrocelaya.com/2017/12/09/acmailer-7-0-the-most-important-release-in-a-long-time/',
         ];
     }
 }

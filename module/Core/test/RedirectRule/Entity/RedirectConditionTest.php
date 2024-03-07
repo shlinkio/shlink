@@ -35,6 +35,8 @@ class RedirectConditionTest extends TestCase
     #[TestWith(['es, en,fr', 'en', true])] // multiple languages match
     #[TestWith(['es, en-US,fr', 'EN', true])] // multiple locales match
     #[TestWith(['es_ES', 'es-ES', true])] // single locale match
+    #[TestWith(['en-US,es-ES;q=0.6', 'es-ES', false])] // too low quality
+    #[TestWith(['en-US,es-ES;q=0.9', 'es-ES', true])] // quality high enough
     #[TestWith(['en-UK', 'en-uk', true])] // different casing match
     #[TestWith(['en-UK', 'en', true])] // only lang
     #[TestWith(['es-AR', 'en', false])] // different only lang
