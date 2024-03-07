@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* [#2041](https://github.com/shlinkio/shlink/issues/2041) Document `color` and `bgColor` params for the QR code route in the OAS docs.
+* *Nothing*
 
 ### Changed
 * *Nothing*
@@ -18,7 +18,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* *Nothing*
+* [#2041](https://github.com/shlinkio/shlink/issues/2041) Document missing `color` and `bgColor` params for the QR code route in the OAS docs.
+* [#2043](https://github.com/shlinkio/shlink/issues/2043) Fix language redirect conditions matching too low quality accepted languages.
 
 
 ## [4.0.0] - 2024-03-03

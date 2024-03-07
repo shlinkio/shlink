@@ -8,6 +8,7 @@ use BackedEnum;
 use Cake\Chronos\Chronos;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping\Builder\FieldBuilder;
+use GuzzleHttp\Psr7\Query;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use Laminas\Filter\Word\CamelCaseToSeparator;
 use Laminas\Filter\Word\CamelCaseToUnderscore;
@@ -16,7 +17,6 @@ use PUGX\Shortid\Factory as ShortIdFactory;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 
-use function array_filter;
 use function array_keys;
 use function array_map;
 use function array_pad;
@@ -27,6 +27,7 @@ use function implode;
 use function is_array;
 use function print_r;
 use function Shlinkio\Shlink\Common\buildDateRange;
+use function Shlinkio\Shlink\Core\ArrayUtils\map;
 use function sprintf;
 use function str_repeat;
 use function str_replace;
@@ -85,16 +86,30 @@ function normalizeLocale(string $locale): string
 }
 
 /**
+ * Parse an accept-language-like pattern into a list of locales, optionally filtering out those which do not match a
+ * minimum quality
+ *
  * @param non-empty-string $acceptLanguage
- * @return string[];
+ * @param float<0, 1> $minQuality
+ * @return iterable<string>;
  */
-function acceptLanguageToLocales(string $acceptLanguage): array
+function acceptLanguageToLocales(string $acceptLanguage, float $minQuality = 0): iterable
 {
-    $acceptLanguagesList = array_map(function (string $lang): string {
-        [$lang] = explode(';', $lang); // Discard everything after the semicolon (en-US;q=0.7)
-        return normalizeLocale($lang);
-    }, explode(',', $acceptLanguage));
-    return array_filter($acceptLanguagesList, static fn (string $lang) => $lang !== '*');
+    /** @var array{string, float|null}[] $acceptLanguagesList */
+    $acceptLanguagesList = map(explode(',', $acceptLanguage), static function (string $lang): array {
+        // Split locale/language and quality (en-US;q=0.7) -> [en-US, q=0.7]
+        [$lang, $qualityString] = array_pad(explode(';', $lang), length: 2, value: '');
+        $normalizedLang = normalizeLocale($lang);
+        $quality = Query::parse(trim($qualityString))['q'] ?? 1;
+
+        return [$normalizedLang, (float) $quality];
+    });
+
+    foreach ($acceptLanguagesList as [$lang, $quality]) {
+        if ($lang !== '*' && $quality >= $minQuality) {
+            yield $lang;
+        }
+    }
 }
 
 /**
@@ -108,7 +123,7 @@ function acceptLanguageToLocales(string $acceptLanguage): array
  */
 function splitLocale(string $locale): array
 {
-    return array_pad(explode('-', $locale), 2, null);
+    return array_pad(explode('-', $locale), length: 2, value: null);
 }
 
 function getOptionalIntFromInputFilter(InputFilter $inputFilter, string $fieldName): ?int

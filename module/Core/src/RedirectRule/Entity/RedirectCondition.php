@@ -77,7 +77,7 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
             return false;
         }
 
-        $acceptedLanguages = acceptLanguageToLocales($acceptLanguage);
+        $acceptedLanguages = acceptLanguageToLocales($acceptLanguage, minQuality: 0.9);
         [$matchLanguage, $matchCountryCode] = splitLocale(normalizeLocale($this->matchValue));
 
         return some(
