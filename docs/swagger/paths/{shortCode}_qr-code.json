@@ -65,6 +65,26 @@
                     "enum": ["true", "false"],
                     "default": "false"
                 }
+            },
+            {
+                "name": "color",
+                "in": "query",
+                "description": "The QR code foreground color. It should be an hex representation of a color, in 3 or 6 characters, optionally preceded by the \"#\" character.",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "default": "#000000"
+                }
+            },
+            {
+                "name": "bgColor",
+                "in": "query",
+                "description": "The QR code background color. It should be an hex representation of a color, in 3 or 6 characters, optionally preceded by the \"#\" character.",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "default": "#ffffff"
+                }
             }
         ],
         "responses": {
