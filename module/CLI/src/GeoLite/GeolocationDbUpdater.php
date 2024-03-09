@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\GeoLite;
 
 use Cake\Chronos\Chronos;
+use Closure;
 use GeoIp2\Database\Reader;
 use MaxMind\Db\Reader\Metadata;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
@@ -21,12 +22,19 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
 {
     private const LOCK_NAME = 'geolocation-db-update';
 
+    /** @var Closure(): Reader */
+    private readonly Closure $geoLiteDbReaderFactory;
+
+    /**
+     * @param callable(): Reader $geoLiteDbReaderFactory
+     */
     public function __construct(
         private readonly DbUpdaterInterface $dbUpdater,
-        private readonly Reader $geoLiteDbReader,
+        callable $geoLiteDbReaderFactory,
         private readonly LockFactory $locker,
         private readonly TrackingOptions $trackingOptions,
     ) {
+        $this->geoLiteDbReaderFactory = $geoLiteDbReaderFactory(...);
     }
 
     /**
@@ -57,7 +65,7 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
             return $this->downloadNewDb(false, $beforeDownload, $handleProgress);
         }
 
-        $meta = $this->geoLiteDbReader->metadata();
+        $meta = ($this->geoLiteDbReaderFactory)()->metadata();
         if ($this->buildIsTooOld($meta)) {
             return $this->downloadNewDb(true, $beforeDownload, $handleProgress);
         }
