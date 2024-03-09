@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [4.0.2] - 2024-03-09
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#2021](https://github.com/shlinkio/shlink/issues/2021) Fix infinite GeoLite2 downloads.
+
+
 ## [4.0.1] - 2024-03-08
 ### Added
 * *Nothing*

@@ -48,7 +48,7 @@
         "shlinkio/shlink-event-dispatcher": "^4.0",
         "shlinkio/shlink-importer": "^5.3",
         "shlinkio/shlink-installer": "^9.0",
-        "shlinkio/shlink-ip-geolocation": "^3.5",
+        "shlinkio/shlink-ip-geolocation": "^4.0",
         "shlinkio/shlink-json": "^1.1",
         "spiral/roadrunner": "^2023.3",
         "spiral/roadrunner-cli": "^2.6",
