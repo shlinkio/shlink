@@ -187,7 +187,7 @@ class GeolocationDbUpdaterTest extends TestCase
 
         return new GeolocationDbUpdater(
             $this->dbUpdater,
-            $this->geoLiteDbReader,
+            fn () => $this->geoLiteDbReader,
             $locker,
             $options ?? new TrackingOptions(),
         );
