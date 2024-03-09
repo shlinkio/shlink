@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI;
 
-use GeoIp2\Database\Reader;
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Shlinkio\Shlink\Common\Doctrine\NoDbNameConnectionFactory;
@@ -18,6 +17,7 @@ use Shlinkio\Shlink\Core\Tag\TagService;
 use Shlinkio\Shlink\Core\Visit;
 use Shlinkio\Shlink\Installer\Factory\ProcessHelperFactory;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
+use Shlinkio\Shlink\IpGeolocation\GeoLite2\GeoLite2ReaderFactory;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Symfony\Component\Console as SymfonyCli;
 use Symfony\Component\Lock\LockFactory;
@@ -76,7 +76,7 @@ return [
     ConfigAbstractFactory::class => [
         GeoLite\GeolocationDbUpdater::class => [
             DbUpdater::class,
-            Reader::class,
+            GeoLite2ReaderFactory::class,
             LOCAL_LOCK_FACTORY,
             TrackingOptions::class,
         ],
