@@ -17,7 +17,6 @@ function contains(mixed $value, array $array): bool
 
 /**
  * @param array[] $multiArray
- * @return array
  */
 function flatten(array $multiArray): array
 {
