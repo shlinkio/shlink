@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [4.0.3] - 2024-03-15
 ### Added
 * *Nothing*
 
@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#2058](https://github.com/shlinkio/shlink/issues/2058) Fix DB credentials provided as env vars being casted to `int` if they include only numbers.
+* [#2060](https://github.com/shlinkio/shlink/issues/2060) Fix error when trying to redirect to a non-http long URL.
 
 
 ## [4.0.2] - 2024-03-09

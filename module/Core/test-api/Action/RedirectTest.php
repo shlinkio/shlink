@@ -7,6 +7,7 @@ namespace ShlinkioApiTest\Shlink\Core\Action;
 use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use const ShlinkioTest\Shlink\ANDROID_USER_AGENT;
@@ -15,8 +16,8 @@ use const ShlinkioTest\Shlink\IOS_USER_AGENT;
 
 class RedirectTest extends ApiTestCase
 {
-    #[Test, DataProvider('provideUserAgents')]
-    public function properRedirectHappensBasedOnUserAgent(array $options, string $expectedRedirect): void
+    #[Test, DataProvider('provideRequestOptions')]
+    public function properRedirectHappensBasedOnRedirectRules(array $options, string $expectedRedirect): void
     {
         $response = $this->callShortUrl('def456', $options);
 
@@ -24,19 +25,19 @@ class RedirectTest extends ApiTestCase
         self::assertEquals($expectedRedirect, $response->getHeaderLine('Location'));
     }
 
-    public static function provideUserAgents(): iterable
+    public static function provideRequestOptions(): iterable
     {
         yield 'android' => [
             [
                 RequestOptions::HEADERS => ['User-Agent' => ANDROID_USER_AGENT],
             ],
-            'https://blog.alejandrocelaya.com/android',
+            'android://foo/bar',
         ];
         yield 'ios' => [
             [
                 RequestOptions::HEADERS => ['User-Agent' => IOS_USER_AGENT],
             ],
-            'https://blog.alejandrocelaya.com/ios',
+            'fb://profile/33138223345',
         ];
         yield 'desktop' => [
             [
@@ -85,5 +86,28 @@ class RedirectTest extends ApiTestCase
             ],
             'https://blog.alejandrocelaya.com/2017/12/09/acmailer-7-0-the-most-important-release-in-a-long-time/',
         ];
+    }
+
+    /**
+     * @param non-empty-string $longUrl
+     */
+    #[Test]
+    #[TestWith(['android://foo/bar'])]
+    #[TestWith(['fb://profile/33138223345'])]
+    #[TestWith(['viber://pa?chatURI=1234'])]
+    public function properRedirectHappensForNonHttpLongUrls(string $longUrl): void
+    {
+        $slug = 'non-http-schema';
+        $this->callApiWithKey('POST', '/short-urls', [
+            RequestOptions::JSON => [
+                'longUrl' => $longUrl,
+                'customSlug' => $slug,
+            ],
+        ]);
+
+        $response = $this->callShortUrl($slug);
+
+        self::assertEquals(302, $response->getStatusCode());
+        self::assertEquals($longUrl, $response->getHeaderLine('Location'));
     }
 }
