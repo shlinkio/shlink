@@ -16,6 +16,10 @@ return (static function (): array {
         'mssql' => 'pdo_sqlsrv',
         default => 'pdo_mysql',
     };
+    $readCredentialAsString = static function (EnvVars $envVar): string|null {
+        $value = $envVar->loadFromEnv();
+        return $value === null ? null : (string) $value;
+    };
     $resolveDefaultPort = static fn () => match ($driver) {
         'postgres' => '5432',
         'mssql' => '1433',
@@ -28,6 +32,7 @@ return (static function (): array {
         'postgres' => 'utf8',
         default => null,
     };
+
     $resolveConnection = static fn () => match ($driver) {
         null, 'sqlite' => [
             'driver' => 'pdo_sqlite',
@@ -36,8 +41,8 @@ return (static function (): array {
         default => [
             'driver' => $resolveDriver(),
             'dbname' => EnvVars::DB_NAME->loadFromEnv('shlink'),
-            'user' => EnvVars::DB_USER->loadFromEnv(),
-            'password' => EnvVars::DB_PASSWORD->loadFromEnv(),
+            'user' => $readCredentialAsString(EnvVars::DB_USER),
+            'password' => $readCredentialAsString(EnvVars::DB_PASSWORD),
             'host' => EnvVars::DB_HOST->loadFromEnv(EnvVars::DB_UNIX_SOCKET->loadFromEnv()),
             'port' => EnvVars::DB_PORT->loadFromEnv($resolveDefaultPort()),
             'unix_socket' => $isMysqlCompatible ? EnvVars::DB_UNIX_SOCKET->loadFromEnv() : null,
