@@ -87,7 +87,7 @@ class ExtraPathRedirectMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @return array{0: string, 1: string|null}
+     * @return array{string, string|null}
      */
     private function resolvePotentialShortCodeAndExtraPath(UriInterface $uri, int $shortCodeSegments): array
     {

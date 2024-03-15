@@ -49,7 +49,7 @@ class ShortUrlRedirectRulesFixture extends AbstractFixture implements DependentF
         $androidRule = new ShortUrlRedirectRule(
             shortUrl: $defShortUrl,
             priority: 4,
-            longUrl: 'https://blog.alejandrocelaya.com/android',
+            longUrl: 'android://foo/bar',
             conditions: new ArrayCollection([RedirectCondition::forDevice(DeviceType::ANDROID)]),
         );
         $manager->persist($androidRule);
@@ -65,7 +65,7 @@ class ShortUrlRedirectRulesFixture extends AbstractFixture implements DependentF
         $iosRule = new ShortUrlRedirectRule(
             shortUrl: $defShortUrl,
             priority: 5,
-            longUrl: 'https://blog.alejandrocelaya.com/ios',
+            longUrl: 'fb://profile/33138223345',
             conditions: new ArrayCollection([RedirectCondition::forDevice(DeviceType::IOS)]),
         );
         $manager->persist($iosRule);

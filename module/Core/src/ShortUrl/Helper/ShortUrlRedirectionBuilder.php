@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\ShortUrl\Helper;
 
 use GuzzleHttp\Psr7\Query;
-use Laminas\Diactoros\Uri;
+use GuzzleHttp\Psr7\Uri;
 use Laminas\Stdlib\ArrayUtils;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
@@ -30,16 +30,18 @@ readonly class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderI
         $uri = new Uri($this->redirectionResolver->resolveLongUrl($shortUrl, $request));
         $currentQuery = $request->getQueryParams();
         $shouldForwardQuery = $shortUrl->forwardQuery();
+        $baseQueryString = $uri->getQuery();
+        $basePath = $uri->getPath();
 
         return $uri
-            ->withQuery($shouldForwardQuery ? $this->resolveQuery($uri, $currentQuery) : $uri->getQuery())
-            ->withPath($this->resolvePath($uri, $extraPath))
+            ->withQuery($shouldForwardQuery ? $this->resolveQuery($baseQueryString, $currentQuery) : $baseQueryString)
+            ->withPath($this->resolvePath($basePath, $extraPath))
             ->__toString();
     }
 
-    private function resolveQuery(Uri $uri, array $currentQuery): string
+    private function resolveQuery(string $baseQueryString, array $currentQuery): string
     {
-        $hardcodedQuery = Query::parse($uri->getQuery());
+        $hardcodedQuery = Query::parse($baseQueryString);
 
         $disableTrackParam = $this->trackingOptions->disableTrackParam;
         if ($disableTrackParam !== null) {
@@ -47,14 +49,13 @@ readonly class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderI
         }
 
         // We want to merge preserving numeric keys, as some params might be numbers
-        $mergedQuery = ArrayUtils::merge($hardcodedQuery, $currentQuery, true);
+        $mergedQuery = ArrayUtils::merge($hardcodedQuery, $currentQuery, preserveNumericKeys: true);
 
         return Query::build($mergedQuery);
     }
 
-    private function resolvePath(Uri $uri, ?string $extraPath): string
+    private function resolvePath(string $basePath, ?string $extraPath): string
     {
-        $hardcodedPath = $uri->getPath();
-        return $extraPath === null ? $hardcodedPath : sprintf('%s%s', $hardcodedPath, $extraPath);
+        return $extraPath === null ? $basePath : sprintf('%s%s', $basePath, $extraPath);
     }
 }

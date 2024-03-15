@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl\Helper;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -37,7 +38,7 @@ class ShortUrlRedirectionBuilderTest extends TestCase
         ?bool $forwardQuery,
     ): void {
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'longUrl' => 'https://domain.com/foo/bar?some=thing',
+            'longUrl' => 'https://example.com/foo/bar?some=thing',
             'forwardQuery' => $forwardQuery,
         ]));
         $this->redirectionResolver->expects($this->once())->method('resolveLongUrl')->with(
@@ -54,59 +55,81 @@ class ShortUrlRedirectionBuilderTest extends TestCase
     {
         $request = static fn (array $query = []) => ServerRequestFactory::fromGlobals()->withQueryParams($query);
 
-        yield ['https://domain.com/foo/bar?some=thing', $request(), null, true];
-        yield ['https://domain.com/foo/bar?some=thing', $request(), null, null];
-        yield ['https://domain.com/foo/bar?some=thing', $request(), null, false];
-        yield ['https://domain.com/foo/bar?some=thing&else', $request(['else' => null]), null, true];
-        yield ['https://domain.com/foo/bar?some=thing&foo=bar', $request(['foo' => 'bar']), null, true];
-        yield ['https://domain.com/foo/bar?some=thing&foo=bar', $request(['foo' => 'bar']), null, null];
-        yield ['https://domain.com/foo/bar?some=thing', $request(['foo' => 'bar']), null, false];
-        yield ['https://domain.com/foo/bar?some=thing&123=foo', $request(['123' => 'foo']), null, true];
-        yield ['https://domain.com/foo/bar?some=thing&456=foo', $request([456 => 'foo']), null, true];
-        yield ['https://domain.com/foo/bar?some=thing&456=foo', $request([456 => 'foo']), null, null];
-        yield ['https://domain.com/foo/bar?some=thing', $request([456 => 'foo']), null, false];
+        yield ['https://example.com/foo/bar?some=thing', $request(), null, true];
+        yield ['https://example.com/foo/bar?some=thing', $request(), null, null];
+        yield ['https://example.com/foo/bar?some=thing', $request(), null, false];
+        yield ['https://example.com/foo/bar?some=thing&else', $request(['else' => null]), null, true];
+        yield ['https://example.com/foo/bar?some=thing&foo=bar', $request(['foo' => 'bar']), null, true];
+        yield ['https://example.com/foo/bar?some=thing&foo=bar', $request(['foo' => 'bar']), null, null];
+        yield ['https://example.com/foo/bar?some=thing', $request(['foo' => 'bar']), null, false];
+        yield ['https://example.com/foo/bar?some=thing&123=foo', $request(['123' => 'foo']), null, true];
+        yield ['https://example.com/foo/bar?some=thing&456=foo', $request([456 => 'foo']), null, true];
+        yield ['https://example.com/foo/bar?some=thing&456=foo', $request([456 => 'foo']), null, null];
+        yield ['https://example.com/foo/bar?some=thing', $request([456 => 'foo']), null, false];
         yield [
-            'https://domain.com/foo/bar?some=overwritten&foo=bar',
+            'https://example.com/foo/bar?some=overwritten&foo=bar',
             $request(['foo' => 'bar', 'some' => 'overwritten']),
             null,
             true,
         ];
         yield [
-            'https://domain.com/foo/bar?some=overwritten',
+            'https://example.com/foo/bar?some=overwritten',
             $request(['foobar' => 'notrack', 'some' => 'overwritten']),
             null,
             true,
         ];
         yield [
-            'https://domain.com/foo/bar?some=overwritten',
+            'https://example.com/foo/bar?some=overwritten',
             $request(['foobar' => 'notrack', 'some' => 'overwritten']),
             null,
             null,
         ];
         yield [
-            'https://domain.com/foo/bar?some=thing',
+            'https://example.com/foo/bar?some=thing',
             $request(['foobar' => 'notrack', 'some' => 'overwritten']),
             null,
             false,
         ];
-        yield ['https://domain.com/foo/bar/something/else-baz?some=thing', $request(), '/something/else-baz', true];
+        yield ['https://example.com/foo/bar/something/else-baz?some=thing', $request(), '/something/else-baz', true];
         yield [
-            'https://domain.com/foo/bar/something/else-baz?some=thing&hello=world',
+            'https://example.com/foo/bar/something/else-baz?some=thing&hello=world',
             $request(['hello' => 'world']),
             '/something/else-baz',
             true,
         ];
         yield [
-            'https://domain.com/foo/bar/something/else-baz?some=thing&hello=world',
+            'https://example.com/foo/bar/something/else-baz?some=thing&hello=world',
             $request(['hello' => 'world']),
             '/something/else-baz',
             null,
         ];
         yield [
-            'https://domain.com/foo/bar/something/else-baz?some=thing',
+            'https://example.com/foo/bar/something/else-baz?some=thing',
             $request(['hello' => 'world']),
             '/something/else-baz',
             false,
         ];
+    }
+
+    /**
+     * @param non-empty-string $longUrl
+     */
+    #[Test]
+    #[TestWith(['android://foo/bar'])]
+    #[TestWith(['fb://profile/33138223345'])]
+    #[TestWith(['viber://pa?chatURI=1234'])]
+    public function buildShortUrlRedirectBuildsNonHttpUrls(string $longUrl): void
+    {
+        $shortUrl = ShortUrl::withLongUrl($longUrl);
+        $request = ServerRequestFactory::fromGlobals();
+
+        $this->redirectionResolver->expects($this->once())->method('resolveLongUrl')->with(
+            $shortUrl,
+            $request,
+        )->willReturn($shortUrl->getLongUrl());
+
+        $result = $this->redirectionBuilder->buildShortUrlRedirect($shortUrl, $request);
+
+        self::assertEquals($longUrl, $result);
     }
 }
