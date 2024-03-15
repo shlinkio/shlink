@@ -66,7 +66,7 @@ class ListRedirectRulesTest extends ApiTestCase
             'conditions' => [self::LANGUAGE_EN_CONDITION],
         ],
         [
-            'longUrl' => 'https://blog.alejandrocelaya.com/android',
+            'longUrl' => 'android://foo/bar',
             'priority' => 4,
             'conditions' => [
                 [
@@ -77,7 +77,7 @@ class ListRedirectRulesTest extends ApiTestCase
             ],
         ],
         [
-            'longUrl' => 'https://blog.alejandrocelaya.com/ios',
+            'longUrl' => 'fb://profile/33138223345',
             'priority' => 5,
             'conditions' => [
                 [

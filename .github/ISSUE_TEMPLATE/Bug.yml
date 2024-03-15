@@ -58,5 +58,10 @@ body:
     validations:
       required: true
     attributes:
-      label: How to reproduce
-      value: '<!-- Provide steps to reproduce the bug. -->'
+      label: Minimum steps to reproduce
+      value: |
+        <!--
+        Emphasis in MINIMUM: What is the simplest way to reproduce the bug?
+        Avoid things like "Create a kubernetes cluster", or anything related with cloud providers, as that is rarely the root cause and the bug may be closed as "not reproducible".
+        If you can provide a simple docker compose config, that's even better.
+        -->
