@@ -18,7 +18,7 @@ class VisitLocationTest extends TestCase
         $payload = new Location(...$args);
         $location = VisitLocation::fromGeolocation($payload);
 
-        self::assertEquals($isEmpty, $location->isEmpty());
+        self::assertEquals($isEmpty, $location->isEmpty);
     }
 
     public static function provideArgs(): iterable

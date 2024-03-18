@@ -53,10 +53,10 @@ class SendVisitToMatomo
             $location = $visit->getVisitLocation();
             if ($location !== null) {
                 $tracker
-                    ->setCity($location->getCityName())
-                    ->setCountry($location->getCountryName())
-                    ->setLatitude($location->getLatitude())
-                    ->setLongitude($location->getLongitude());
+                    ->setCity($location->cityName)
+                    ->setCountry($location->countryName)
+                    ->setLatitude($location->latitude)
+                    ->setLongitude($location->longitude);
             }
 
             // Set not obfuscated IP if possible, as matomo handles obfuscation itself
