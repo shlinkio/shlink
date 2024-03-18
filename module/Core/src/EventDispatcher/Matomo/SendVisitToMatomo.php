@@ -46,21 +46,21 @@ class SendVisitToMatomo
 
             $tracker
                 ->setUrl($this->resolveUrlToTrack($visit))
-                ->setCustomTrackingParameter('type', $visit->type()->value)
-                ->setUserAgent($visit->userAgent())
-                ->setUrlReferrer($visit->referer());
+                ->setCustomTrackingParameter('type', $visit->type->value)
+                ->setUserAgent($visit->userAgent)
+                ->setUrlReferrer($visit->referer);
 
             $location = $visit->getVisitLocation();
             if ($location !== null) {
                 $tracker
-                    ->setCity($location->getCityName())
-                    ->setCountry($location->getCountryName())
-                    ->setLatitude($location->getLatitude())
-                    ->setLongitude($location->getLongitude());
+                    ->setCity($location->cityName)
+                    ->setCountry($location->countryName)
+                    ->setLatitude($location->latitude)
+                    ->setLongitude($location->longitude);
             }
 
             // Set not obfuscated IP if possible, as matomo handles obfuscation itself
-            $ip = $visitLocated->originalIpAddress ?? $visit->getRemoteAddr();
+            $ip = $visitLocated->originalIpAddress ?? $visit->remoteAddr;
             if ($ip !== null) {
                 $tracker->setIp($ip);
             }
@@ -79,9 +79,9 @@ class SendVisitToMatomo
 
     public function resolveUrlToTrack(Visit $visit): string
     {
-        $shortUrl = $visit->getShortUrl();
+        $shortUrl = $visit->shortUrl;
         if ($shortUrl === null) {
-            return $visit->visitedUrl() ?? '';
+            return $visit->visitedUrl ?? '';
         }
 
         return $this->shortUrlStringifier->stringify($shortUrl);

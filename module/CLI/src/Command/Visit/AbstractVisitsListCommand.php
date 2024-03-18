@@ -55,8 +55,8 @@ abstract class AbstractVisitsListCommand extends Command
 
             $rowData = [
                 ...$visit->jsonSerialize(),
-                'country' => $visit->getVisitLocation()?->getCountryName() ?? 'Unknown',
-                'city' => $visit->getVisitLocation()?->getCityName() ?? 'Unknown',
+                'country' => $visit->getVisitLocation()?->countryName ?? 'Unknown',
+                'city' => $visit->getVisitLocation()?->cityName ?? 'Unknown',
                 ...$extraFields,
             ];
 

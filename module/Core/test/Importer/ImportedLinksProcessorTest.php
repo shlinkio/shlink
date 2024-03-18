@@ -244,7 +244,7 @@ class ImportedLinksProcessorTest extends TestCase
         $this->em->expects($this->once())->method('persist')->willReturnCallback(
             static fn (Visit $visit)  => Assert::assertSame(
                 $foundShortUrl ?? $originalShortUrl,
-                $visit->getShortUrl(),
+                $visit->shortUrl,
             ),
         );
 

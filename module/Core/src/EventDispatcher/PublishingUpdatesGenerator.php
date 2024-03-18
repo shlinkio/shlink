@@ -20,7 +20,7 @@ final class PublishingUpdatesGenerator implements PublishingUpdatesGeneratorInte
     public function newVisitUpdate(Visit $visit): Update
     {
         return Update::forTopicAndPayload(Topic::NEW_VISIT->value, [
-            'shortUrl' => $this->shortUrlTransformer->transform($visit->getShortUrl()),
+            'shortUrl' => $this->shortUrlTransformer->transform($visit->shortUrl),
             'visit' => $visit->jsonSerialize(),
         ]);
     }
@@ -34,7 +34,7 @@ final class PublishingUpdatesGenerator implements PublishingUpdatesGeneratorInte
 
     public function newShortUrlVisitUpdate(Visit $visit): Update
     {
-        $shortUrl = $visit->getShortUrl();
+        $shortUrl = $visit->shortUrl;
         $topic = Topic::newShortUrlVisit($shortUrl?->getShortCode());
 
         return Update::forTopicAndPayload($topic, [

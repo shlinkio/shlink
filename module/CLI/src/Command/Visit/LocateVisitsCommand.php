@@ -132,7 +132,7 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
      */
     public function geolocateVisit(Visit $visit): Location
     {
-        $ipAddr = $visit->getRemoteAddr() ?? '?';
+        $ipAddr = $visit->remoteAddr ?? '?';
         $this->io->write(sprintf('Processing IP <fg=blue>%s</>', $ipAddr));
 
         try {
@@ -154,9 +154,9 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
 
     public function onVisitLocated(VisitLocation $visitLocation, Visit $visit): void
     {
-        if (! $visitLocation->isEmpty()) {
-            $this->io->writeln(sprintf(' [<info>Address located in "%s"</info>]', $visitLocation->getCountryName()));
-        } elseif ($visit->hasRemoteAddr() && $visit->getRemoteAddr() !== IpAddress::LOCALHOST) {
+        if (! $visitLocation->isEmpty) {
+            $this->io->writeln(sprintf(' [<info>Address located in "%s"</info>]', $visitLocation->countryName));
+        } elseif ($visit->hasRemoteAddr() && $visit->remoteAddr !== IpAddress::LOCALHOST) {
             $this->io->writeln(' <comment>[Could not locate address]</comment>');
         }
     }

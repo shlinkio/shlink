@@ -229,11 +229,11 @@ class ListShortUrlsCommand extends Command
         }
         if ($input->getOption('show-api-key')) {
             $columnsMap['API Key'] = static fn (array $_, ShortUrl $shortUrl): string =>
-                $shortUrl->authorApiKey()?->__toString() ?? '';
+                $shortUrl->authorApiKey?->__toString() ?? '';
         }
         if ($input->getOption('show-api-key-name')) {
             $columnsMap['API Key Name'] = static fn (array $_, ShortUrl $shortUrl): ?string =>
-                $shortUrl->authorApiKey()?->name();
+                $shortUrl->authorApiKey?->name;
         }
 
         return $columnsMap;

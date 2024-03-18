@@ -76,13 +76,13 @@ class SendVisitToMatomoTest extends TestCase
 
         if ($visit->isOrphan()) {
             $tracker->expects($this->exactly(2))->method('setCustomTrackingParameter')->willReturnMap([
-                ['type', $visit->type()->value, $tracker],
+                ['type', $visit->type->value, $tracker],
                 ['orphan', 'true', $tracker],
             ]);
         } else {
             $tracker->expects($this->once())->method('setCustomTrackingParameter')->with(
                 'type',
-                $visit->type()->value,
+                $visit->type->value,
             )->willReturn($tracker);
         }
 

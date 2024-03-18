@@ -32,29 +32,30 @@ use function sprintf;
 
 class ShortUrl extends AbstractEntity
 {
-    private string $longUrl;
-    private string $shortCode;
-    private Chronos $dateCreated;
-    /** @var Collection<int, Visit> & Selectable */
-    private Collection & Selectable $visits;
-    /** @var Collection<int, Tag> */
-    private Collection $tags;
-    private ?Chronos $validSince = null;
-    private ?Chronos $validUntil = null;
-    private ?int $maxVisits = null;
-    private ?Domain $domain = null;
-    private bool $customSlugWasProvided;
-    private int $shortCodeLength;
-    private ?string $importSource = null;
-    private ?string $importOriginalShortCode = null;
-    private ?ApiKey $authorApiKey = null;
-    private ?string $title = null;
-    private bool $titleWasAutoResolved = false;
-    private bool $crawlable = false;
-    private bool $forwardQuery = true;
-
-    private function __construct()
-    {
+    /**
+     * @param Collection<int, Tag> $tags
+     * @param Collection<int, Visit> & Selectable $visits
+     */
+    private function __construct(
+        private string $longUrl,
+        private string $shortCode,
+        private Chronos $dateCreated = new Chronos(),
+        private Collection $tags = new ArrayCollection(),
+        private Collection & Selectable $visits = new ArrayCollection(),
+        private ?Chronos $validSince = null,
+        private ?Chronos $validUntil = null,
+        private ?int $maxVisits = null,
+        private ?Domain $domain = null,
+        private bool $customSlugWasProvided = false,
+        private int $shortCodeLength = 0,
+        public readonly ?ApiKey $authorApiKey = null,
+        private ?string $title = null,
+        private bool $titleWasAutoResolved = false,
+        private bool $crawlable = false,
+        private bool $forwardQuery = true,
+        private ?string $importSource = null,
+        private ?string $importOriginalShortCode = null,
+    ) {
     }
 
     /**
@@ -78,31 +79,29 @@ class ShortUrl extends AbstractEntity
         ShortUrlCreation $creation,
         ?ShortUrlRelationResolverInterface $relationResolver = null,
     ): self {
-        $instance = new self();
         $relationResolver = $relationResolver ?? new SimpleShortUrlRelationResolver();
+        $shortCodeLength = $creation->shortCodeLength;
 
-        $instance->longUrl = $creation->getLongUrl();
-        $instance->dateCreated = Chronos::now();
-        $instance->visits = new ArrayCollection();
-        $instance->tags = $relationResolver->resolveTags($creation->tags);
-        $instance->validSince = $creation->validSince;
-        $instance->validUntil = $creation->validUntil;
-        $instance->maxVisits = $creation->maxVisits;
-        $instance->customSlugWasProvided = $creation->hasCustomSlug();
-        $instance->shortCodeLength = $creation->shortCodeLength;
-        $instance->shortCode = sprintf(
-            '%s%s',
-            $creation->pathPrefix ?? '',
-            $creation->customSlug ?? generateRandomShortCode($instance->shortCodeLength, $creation->shortUrlMode),
+        return new self(
+            longUrl: $creation->getLongUrl(),
+            shortCode: sprintf(
+                '%s%s',
+                $creation->pathPrefix ?? '',
+                $creation->customSlug ?? generateRandomShortCode($shortCodeLength, $creation->shortUrlMode),
+            ),
+            tags: $relationResolver->resolveTags($creation->tags),
+            validSince: $creation->validSince,
+            validUntil: $creation->validUntil,
+            maxVisits: $creation->maxVisits,
+            domain: $relationResolver->resolveDomain($creation->domain),
+            customSlugWasProvided: $creation->hasCustomSlug(),
+            shortCodeLength: $shortCodeLength,
+            authorApiKey: $creation->apiKey,
+            title: $creation->title,
+            titleWasAutoResolved: $creation->titleWasAutoResolved,
+            crawlable: $creation->crawlable,
+            forwardQuery: $creation->forwardQuery,
         );
-        $instance->domain = $relationResolver->resolveDomain($creation->domain);
-        $instance->authorApiKey = $creation->apiKey;
-        $instance->title = $creation->title;
-        $instance->titleWasAutoResolved = $creation->titleWasAutoResolved;
-        $instance->crawlable = $creation->crawlable;
-        $instance->forwardQuery = $creation->forwardQuery;
-
-        return $instance;
     }
 
     public static function fromImport(
@@ -123,11 +122,11 @@ class ShortUrl extends AbstractEntity
 
         $instance = self::create(ShortUrlCreation::fromRawData($meta), $relationResolver);
 
-        $instance->importSource = $url->source->value;
-        $instance->importOriginalShortCode = $url->shortCode;
         $instance->validSince = normalizeOptionalDate($url->meta->validSince);
         $instance->validUntil = normalizeOptionalDate($url->meta->validUntil);
         $instance->dateCreated = normalizeDate($url->createdAt);
+        $instance->importSource = $url->source->value;
+        $instance->importOriginalShortCode = $url->shortCode;
 
         return $instance;
     }
@@ -194,11 +193,6 @@ class ShortUrl extends AbstractEntity
     public function getTags(): Collection
     {
         return $this->tags;
-    }
-
-    public function authorApiKey(): ?ApiKey
-    {
-        return $this->authorApiKey;
     }
 
     public function getValidSince(): ?Chronos

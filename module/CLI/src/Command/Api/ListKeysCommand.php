@@ -50,11 +50,11 @@ class ListKeysCommand extends Command
         $enabledOnly = $input->getOption('enabled-only');
 
         $rows = array_map(function (ApiKey $apiKey) use ($enabledOnly) {
-            $expiration = $apiKey->getExpirationDate();
+            $expiration = $apiKey->expirationDate;
             $messagePattern = $this->determineMessagePattern($apiKey);
 
             // Set columns for this row
-            $rowData = [sprintf($messagePattern, $apiKey), sprintf($messagePattern, $apiKey->name() ?? '-')];
+            $rowData = [sprintf($messagePattern, $apiKey), sprintf($messagePattern, $apiKey->name ?? '-')];
             if (! $enabledOnly) {
                 $rowData[] = sprintf($messagePattern, $this->getEnabledSymbol($apiKey));
             }

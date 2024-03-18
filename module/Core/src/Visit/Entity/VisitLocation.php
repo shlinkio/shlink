@@ -11,87 +11,52 @@ use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 class VisitLocation extends AbstractEntity implements JsonSerializable
 {
-    private string $countryCode;
-    private string $countryName;
-    private string $regionName;
-    private string $cityName;
-    private float $latitude;
-    private float $longitude;
-    private string $timezone;
-    private bool $isEmpty;
+    public readonly bool $isEmpty;
 
-    private function __construct()
-    {
+    private function __construct(
+        public readonly string $countryCode,
+        public readonly string $countryName,
+        public readonly string $regionName,
+        public readonly string $cityName,
+        public readonly float $latitude,
+        public readonly float $longitude,
+        public readonly string $timezone,
+    ) {
+        $this->isEmpty = (
+            $countryCode === '' &&
+            $countryName === '' &&
+            $regionName === '' &&
+            $cityName === '' &&
+            $latitude === 0.0 &&
+            $longitude === 0.0 &&
+            $timezone === ''
+        );
     }
 
     public static function fromGeolocation(Location $location): self
     {
-        $instance = new self();
-
-        $instance->countryCode = $location->countryCode;
-        $instance->countryName = $location->countryName;
-        $instance->regionName = $location->regionName;
-        $instance->cityName = $location->city;
-        $instance->latitude = $location->latitude;
-        $instance->longitude = $location->longitude;
-        $instance->timezone = $location->timeZone;
-        $instance->computeIsEmpty();
-
-        return $instance;
+        return new self(
+            countryCode: $location->countryCode,
+            countryName: $location->countryName,
+            regionName: $location->regionName,
+            cityName: $location->city,
+            latitude: $location->latitude,
+            longitude: $location->longitude,
+            timezone: $location->timeZone,
+        );
     }
 
     public static function fromImport(ImportedShlinkVisitLocation $location): self
     {
-        $instance = new self();
-
-        $instance->countryCode = $location->countryCode;
-        $instance->countryName = $location->countryName;
-        $instance->regionName = $location->regionName;
-        $instance->cityName = $location->cityName;
-        $instance->latitude = $location->latitude;
-        $instance->longitude = $location->longitude;
-        $instance->timezone = $location->timezone;
-        $instance->computeIsEmpty();
-
-        return $instance;
-    }
-
-    private function computeIsEmpty(): void
-    {
-        $this->isEmpty = (
-            $this->countryCode === '' &&
-            $this->countryName === '' &&
-            $this->regionName === '' &&
-            $this->cityName === '' &&
-            $this->latitude === 0.0 &&
-            $this->longitude === 0.0 &&
-            $this->timezone === ''
+        return new self(
+            countryCode: $location->countryCode,
+            countryName: $location->countryName,
+            regionName: $location->regionName,
+            cityName: $location->cityName,
+            latitude: $location->latitude,
+            longitude: $location->longitude,
+            timezone: $location->timezone,
         );
-    }
-
-    public function getCountryName(): string
-    {
-        return $this->countryName;
-    }
-
-    public function getLatitude(): float
-    {
-        return $this->latitude;
-    }
-
-    public function getLongitude(): float
-    {
-        return $this->longitude;
-    }
-
-    public function getCityName(): string
-    {
-        return $this->cityName;
-    }
-
-    public function isEmpty(): bool
-    {
-        return $this->isEmpty;
     }
 
     public function jsonSerialize(): array
