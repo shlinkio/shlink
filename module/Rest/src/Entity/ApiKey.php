@@ -17,21 +17,17 @@ use Shlinkio\Shlink\Rest\ApiKey\Role;
 
 class ApiKey extends AbstractEntity
 {
-    private string $key;
-    private ?Chronos $expirationDate = null;
-    private bool $enabled;
-    /** @var Collection<string, ApiKeyRole> */
-    private Collection $roles;
-    private ?string $name = null;
-
     /**
+     * @param Collection<string, ApiKeyRole> $roles
      * @throws Exception
      */
-    private function __construct(string $key)
-    {
-        $this->key = $key;
-        $this->enabled = true;
-        $this->roles = new ArrayCollection();
+    private function __construct(
+        private string $key,
+        public readonly ?string $name = null,
+        public readonly ?Chronos $expirationDate = null,
+        private bool $enabled = true,
+        private Collection $roles = new ArrayCollection(),
+    ) {
     }
 
     /**
@@ -47,10 +43,7 @@ class ApiKey extends AbstractEntity
      */
     public static function fromMeta(ApiKeyMeta $meta): self
     {
-        $apiKey = new self($meta->key);
-        $apiKey->name = $meta->name;
-        $apiKey->expirationDate = $meta->expirationDate;
-
+        $apiKey = new self($meta->key, $meta->name, $meta->expirationDate);
         foreach ($meta->roleDefinitions as $roleDefinition) {
             $apiKey->registerRole($roleDefinition);
         }
@@ -58,19 +51,9 @@ class ApiKey extends AbstractEntity
         return $apiKey;
     }
 
-    public function getExpirationDate(): ?Chronos
-    {
-        return $this->expirationDate;
-    }
-
     public function isExpired(): bool
     {
         return $this->expirationDate !== null && $this->expirationDate->lessThan(Chronos::now());
-    }
-
-    public function name(): ?string
-    {
-        return $this->name;
     }
 
     public function isEnabled(): bool
