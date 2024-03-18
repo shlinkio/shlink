@@ -132,7 +132,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
                 'maxVisits' => null,
             ],
             'domain' => null,
-            'title' => $shortUrl->title(),
+            'title' => 'The title',
             'crawlable' => false,
             'forwardQuery' => true,
             'visitsSummary' => VisitsSummary::fromTotalAndNonBots(0, 0),
