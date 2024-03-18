@@ -20,29 +20,22 @@ use function Shlinkio\Shlink\Core\normalizeDate;
 
 class Visit extends AbstractEntity implements JsonSerializable
 {
-    private string $referer;
-    private Chronos $date;
-    private ?string $remoteAddr = null;
-    private ?string $visitedUrl = null;
-    private string $userAgent;
-    private VisitType $type;
-    private ?ShortUrl $shortUrl;
-    private ?VisitLocation $visitLocation = null;
-    private bool $potentialBot;
-
-    private function __construct(?ShortUrl $shortUrl, VisitType $type)
-    {
-        $this->shortUrl = $shortUrl;
-        $this->date = Chronos::now();
-        $this->type = $type;
+    private function __construct(
+        public readonly ?ShortUrl $shortUrl,
+        public readonly VisitType $type,
+        public readonly string $userAgent,
+        public readonly string $referer,
+        private readonly bool $potentialBot,
+        public readonly ?string $remoteAddr = null,
+        public readonly ?string $visitedUrl = null,
+        private ?VisitLocation $visitLocation = null,
+        private Chronos $date = new Chronos(),
+    ) {
     }
 
     public static function forValidShortUrl(ShortUrl $shortUrl, Visitor $visitor, bool $anonymize = true): self
     {
-        $instance = new self($shortUrl, VisitType::VALID_SHORT_URL);
-        $instance->hydrateFromVisitor($visitor, $anonymize);
-
-        return $instance;
+        return self::hydrateFromVisitor($shortUrl, VisitType::VALID_SHORT_URL, $visitor, $anonymize);
     }
 
     public static function fromImport(ShortUrl $shortUrl, ImportedShlinkVisit $importedVisit): self
@@ -52,13 +45,10 @@ class Visit extends AbstractEntity implements JsonSerializable
 
     public static function fromOrphanImport(ImportedShlinkOrphanVisit $importedVisit): self
     {
-        $instance = self::fromImportOrOrphanImport(
+        return self::fromImportOrOrphanImport(
             $importedVisit,
             VisitType::tryFrom($importedVisit->type) ?? VisitType::IMPORTED,
         );
-        $instance->visitedUrl = $importedVisit->visitedUrl;
-
-        return $instance;
     }
 
     private static function fromImportOrOrphanImport(
@@ -66,52 +56,52 @@ class Visit extends AbstractEntity implements JsonSerializable
         VisitType $type,
         ?ShortUrl $shortUrl = null,
     ): self {
-        $instance = new self($shortUrl, $type);
-        $instance->userAgent = $importedVisit->userAgent;
-        $instance->potentialBot = isCrawler($instance->userAgent);
-        $instance->referer = $importedVisit->referer;
-        $instance->date = normalizeDate($importedVisit->date);
-
         $importedLocation = $importedVisit->location;
-        $instance->visitLocation = $importedLocation !== null ? VisitLocation::fromImport($importedLocation) : null;
-
-        return $instance;
+        return new self(
+            shortUrl: $shortUrl,
+            type: $type,
+            userAgent: $importedVisit->userAgent,
+            referer: $importedVisit->referer,
+            potentialBot: isCrawler($importedVisit->userAgent),
+            visitedUrl: $importedVisit instanceof ImportedShlinkOrphanVisit ? $importedVisit->visitedUrl : null,
+            visitLocation: $importedLocation !== null ? VisitLocation::fromImport($importedLocation) : null,
+            date: normalizeDate($importedVisit->date),
+        );
     }
 
     public static function forBasePath(Visitor $visitor, bool $anonymize = true): self
     {
-        $instance = new self(null, VisitType::BASE_URL);
-        $instance->hydrateFromVisitor($visitor, $anonymize);
-
-        return $instance;
+        return self::hydrateFromVisitor(null, VisitType::BASE_URL, $visitor, $anonymize);
     }
 
     public static function forInvalidShortUrl(Visitor $visitor, bool $anonymize = true): self
     {
-        $instance = new self(null, VisitType::INVALID_SHORT_URL);
-        $instance->hydrateFromVisitor($visitor, $anonymize);
-
-        return $instance;
+        return self::hydrateFromVisitor(null, VisitType::INVALID_SHORT_URL, $visitor, $anonymize);
     }
 
     public static function forRegularNotFound(Visitor $visitor, bool $anonymize = true): self
     {
-        $instance = new self(null, VisitType::REGULAR_404);
-        $instance->hydrateFromVisitor($visitor, $anonymize);
-
-        return $instance;
+        return self::hydrateFromVisitor(null, VisitType::REGULAR_404, $visitor, $anonymize);
     }
 
-    private function hydrateFromVisitor(Visitor $visitor, bool $anonymize = true): void
-    {
-        $this->userAgent = $visitor->userAgent;
-        $this->referer = $visitor->referer;
-        $this->remoteAddr = $this->processAddress($anonymize, $visitor->remoteAddress);
-        $this->visitedUrl = $visitor->visitedUrl;
-        $this->potentialBot = $visitor->isPotentialBot();
+    private static function hydrateFromVisitor(
+        ?ShortUrl $shortUrl,
+        VisitType $type,
+        Visitor $visitor,
+        bool $anonymize,
+    ): self {
+        return new self(
+            shortUrl: $shortUrl,
+            type: $type,
+            userAgent: $visitor->userAgent,
+            referer: $visitor->referer,
+            potentialBot: $visitor->isPotentialBot(),
+            remoteAddr: self::processAddress($anonymize, $visitor->remoteAddress),
+            visitedUrl: $visitor->visitedUrl,
+        );
     }
 
-    private function processAddress(bool $anonymize, ?string $address): ?string
+    private static function processAddress(bool $anonymize, ?string $address): ?string
     {
         // Localhost addresses do not need to be anonymized
         if (! $anonymize || $address === null || $address === IpAddress::LOCALHOST) {
@@ -125,19 +115,9 @@ class Visit extends AbstractEntity implements JsonSerializable
         }
     }
 
-    public function getRemoteAddr(): ?string
-    {
-        return $this->remoteAddr;
-    }
-
     public function hasRemoteAddr(): bool
     {
         return ! empty($this->remoteAddr);
-    }
-
-    public function getShortUrl(): ?ShortUrl
-    {
-        return $this->shortUrl;
     }
 
     public function getVisitLocation(): ?VisitLocation
@@ -161,23 +141,13 @@ class Visit extends AbstractEntity implements JsonSerializable
         return $this->shortUrl === null;
     }
 
-    public function visitedUrl(): ?string
-    {
-        return $this->visitedUrl;
-    }
-
-    public function type(): VisitType
-    {
-        return $this->type;
-    }
-
     /**
      * Needed only for ArrayCollections to be able to apply criteria filtering
      * @internal
      */
     public function getType(): VisitType
     {
-        return $this->type();
+        return $this->type;
     }
 
     /**
@@ -186,16 +156,6 @@ class Visit extends AbstractEntity implements JsonSerializable
     public function getDate(): Chronos
     {
         return $this->date;
-    }
-
-    public function userAgent(): string
-    {
-        return $this->userAgent;
-    }
-
-    public function referer(): string
-    {
-        return $this->referer;
     }
 
     public function jsonSerialize(): array

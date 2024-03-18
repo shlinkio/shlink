@@ -49,7 +49,7 @@ class VisitTest extends TestCase
             $anonymize,
         );
 
-        self::assertEquals($expectedAddress, $visit->getRemoteAddr());
+        self::assertEquals($expectedAddress, $visit->remoteAddr);
     }
 
     public static function provideAddresses(): iterable

@@ -26,7 +26,7 @@ class VisitToLocationHelper implements VisitToLocationHelperInterface
             throw IpCannotBeLocatedException::forEmptyAddress();
         }
 
-        $ipAddr = $visit->getRemoteAddr() ?? '';
+        $ipAddr = $visit->remoteAddr ?? '';
         if ($ipAddr === IpAddress::LOCALHOST) {
             throw IpCannotBeLocatedException::forLocalhost();
         }

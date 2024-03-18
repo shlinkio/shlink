@@ -93,8 +93,8 @@ class PublishingUpdatesGeneratorTest extends TestCase
                 'visitLocation' => null,
                 'date' => $orphanVisit->getDate()->toAtomString(),
                 'potentialBot' => false,
-                'visitedUrl' => $orphanVisit->visitedUrl(),
-                'type' => $orphanVisit->type()->value,
+                'visitedUrl' => $orphanVisit->visitedUrl,
+                'type' => $orphanVisit->type->value,
             ],
         ], $update->payload);
     }

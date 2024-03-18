@@ -55,7 +55,7 @@ class LocateVisit
         }
 
         $isLocatable = $originalIpAddress !== null || $visit->isLocatable();
-        $addr = $originalIpAddress ?? $visit->getRemoteAddr() ?? '';
+        $addr = $originalIpAddress ?? $visit->remoteAddr ?? '';
 
         try {
             $location = $isLocatable ? $this->ipLocationResolver->resolveIpLocation($addr) : Location::emptyInstance();

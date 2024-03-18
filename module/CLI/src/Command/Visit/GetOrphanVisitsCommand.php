@@ -42,6 +42,6 @@ class GetOrphanVisitsCommand extends AbstractVisitsListCommand
      */
     protected function mapExtraFields(Visit $visit): array
     {
-        return ['type' => $visit->type()->value];
+        return ['type' => $visit->type->value];
     }
 }
