@@ -20,10 +20,12 @@ use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
+use Shlinkio\Shlink\Core\Visit\Model\VisitsSummary;
 use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
+use function array_map;
 use function count;
 use function Shlinkio\Shlink\Core\generateRandomShortCode;
 use function Shlinkio\Shlink\Core\normalizeDate;
@@ -187,33 +189,9 @@ class ShortUrl extends AbstractEntity
         return $this->domain;
     }
 
-    /**
-     * @return Collection<int, Tag>
-     */
-    public function getTags(): Collection
+    public function reachedVisits(int $visitsAmount): bool
     {
-        return $this->tags;
-    }
-
-    public function getValidSince(): ?Chronos
-    {
-        return $this->validSince;
-    }
-
-    public function getValidUntil(): ?Chronos
-    {
-        return $this->validUntil;
-    }
-
-    public function getVisitsCount(): int
-    {
-        return count($this->visits);
-    }
-
-    public function nonBotVisitsCount(): int
-    {
-        $criteria = Criteria::create()->where(Criteria::expr()->eq('potentialBot', false));
-        return count($this->visits->matching($criteria));
+        return count($this->visits) >= $visitsAmount;
     }
 
     public function mostRecentImportedVisitDate(): ?Chronos
@@ -234,21 +212,6 @@ class ShortUrl extends AbstractEntity
     {
         $this->visits = $visits;
         return $this;
-    }
-
-    public function getMaxVisits(): ?int
-    {
-        return $this->maxVisits;
-    }
-
-    public function title(): ?string
-    {
-        return $this->title;
-    }
-
-    public function crawlable(): bool
-    {
-        return $this->crawlable;
     }
 
     public function forwardQuery(): bool
@@ -276,7 +239,7 @@ class ShortUrl extends AbstractEntity
 
     public function isEnabled(): bool
     {
-        $maxVisitsReached = $this->maxVisits !== null && $this->getVisitsCount() >= $this->maxVisits;
+        $maxVisitsReached = $this->maxVisits !== null && $this->reachedVisits($this->maxVisits);
         if ($maxVisitsReached) {
             return false;
         }
@@ -293,5 +256,30 @@ class ShortUrl extends AbstractEntity
         }
 
         return true;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'shortCode' => $this->shortCode,
+            'longUrl' => $this->longUrl,
+            'dateCreated' => $this->dateCreated->toAtomString(),
+            'tags' => array_map(static fn (Tag $tag) => $tag->__toString(), $this->tags->toArray()),
+            'meta' => [
+                'validSince' => $this->validSince?->toAtomString(),
+                'validUntil' => $this->validUntil?->toAtomString(),
+                'maxVisits' => $this->maxVisits,
+            ],
+            'domain' => $this->domain,
+            'title' => $this->title,
+            'crawlable' => $this->crawlable,
+            'forwardQuery' => $this->forwardQuery,
+            'visitsSummary' => VisitsSummary::fromTotalAndNonBots(
+                count($this->visits),
+                count($this->visits->matching(
+                    Criteria::create()->where(Criteria::expr()->eq('potentialBot', false)),
+                )),
+            ),
+        ];
     }
 }

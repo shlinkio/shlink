@@ -43,10 +43,8 @@ class DeleteShortUrlService implements DeleteShortUrlServiceInterface
 
     private function isThresholdReached(ShortUrl $shortUrl): bool
     {
-        if (! $this->deleteShortUrlsOptions->checkVisitsThreshold) {
-            return false;
-        }
-
-        return $shortUrl->getVisitsCount() >= $this->deleteShortUrlsOptions->visitsThreshold;
+        return $this->deleteShortUrlsOptions->checkVisitsThreshold && $shortUrl->reachedVisits(
+            $this->deleteShortUrlsOptions->visitsThreshold,
+        );
     }
 }
