@@ -60,12 +60,17 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
                 $leftJoinConditions[] = $qb->expr()->eq('v.potentialBot', 'false');
             }
 
+            $qb->addSelect('SUM(v.count)')
+               ->leftJoin('s.visitsCounts', 'v', Join::WITH, $qb->expr()->andX(...$leftJoinConditions))
+               ->groupBy('s')
+               ->orderBy('SUM(v.count)', $order);
+
             // FIXME This query is inefficient.
             //       Diagnostic: It might need to use a sub-query, as done with the tags list query.
-            $qb->addSelect('COUNT(DISTINCT v)')
-               ->leftJoin('s.visits', 'v', Join::WITH, $qb->expr()->andX(...$leftJoinConditions))
-               ->groupBy('s')
-               ->orderBy('COUNT(DISTINCT v)', $order);
+//            $qb->addSelect('COUNT(DISTINCT v)')
+//               ->leftJoin('s.visits', 'v', Join::WITH, $qb->expr()->andX(...$leftJoinConditions))
+//               ->groupBy('s')
+//               ->orderBy('COUNT(DISTINCT v)', $order);
         }
     }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
+use Cake\Chronos\Chronos;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -22,12 +23,21 @@ use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 class PublishingUpdatesGeneratorTest extends TestCase
 {
     private PublishingUpdatesGenerator $generator;
+    private Chronos $now;
 
     protected function setUp(): void
     {
+        $this->now = Chronos::now();
+        Chronos::setTestNow($this->now);
+
         $this->generator = new PublishingUpdatesGenerator(
             new ShortUrlDataTransformer(new ShortUrlStringifier([])),
         );
+    }
+
+    protected function tearDown(): void
+    {
+        Chronos::setTestNow();
     }
 
     #[Test, DataProvider('provideMethod')]
@@ -49,7 +59,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
                 'shortCode' => $shortUrl->getShortCode(),
                 'shortUrl' => 'http:/' . $shortUrl->getShortCode(),
                 'longUrl' => 'https://longUrl',
-                'dateCreated' => $shortUrl->getDateCreated()->toAtomString(),
+                'dateCreated' => $this->now->toAtomString(),
                 'tags' => [],
                 'meta' => [
                     'validSince' => null,
@@ -123,7 +133,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
             'shortCode' => $shortUrl->getShortCode(),
             'shortUrl' => 'http:/' . $shortUrl->getShortCode(),
             'longUrl' => 'https://longUrl',
-            'dateCreated' => $shortUrl->getDateCreated()->toAtomString(),
+            'dateCreated' => $this->now->toAtomString(),
             'tags' => [],
             'meta' => [
                 'validSince' => null,
