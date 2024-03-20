@@ -110,15 +110,13 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         self::assertCount(1, $this->repo->findList(new ShortUrlsListFiltering(2, 2, Ordering::none())));
 
         $result = $this->repo->findList(
-            new ShortUrlsListFiltering(null, null, Ordering::fromTuple([OrderableField::VISITS->value, 'DESC'])),
+            new ShortUrlsListFiltering(null, null, Ordering::fromFieldDesc(OrderableField::VISITS->value)),
         );
         self::assertCount(3, $result);
         self::assertSame($bar, $result[0]);
 
         $result = $this->repo->findList(
-            new ShortUrlsListFiltering(null, null, Ordering::fromTuple(
-                [OrderableField::NON_BOT_VISITS->value, 'DESC'],
-            )),
+            new ShortUrlsListFiltering(null, null, Ordering::fromFieldDesc(OrderableField::NON_BOT_VISITS->value)),
         );
         self::assertCount(3, $result);
         self::assertSame($foo2, $result[0]);
@@ -155,7 +153,7 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->flush();
 
         $result = $this->repo->findList(
-            new ShortUrlsListFiltering(null, null, Ordering::fromTuple(['longUrl', 'ASC'])),
+            new ShortUrlsListFiltering(null, null, Ordering::fromFieldAsc('longUrl')),
         );
 
         self::assertCount(count($urls), $result);

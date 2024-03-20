@@ -6,7 +6,9 @@ namespace Shlinkio\Shlink\Core\Model;
 
 final readonly class Ordering
 {
-    private const DEFAULT_DIR = 'ASC';
+    private const DESC_DIR = 'DESC';
+    private const ASC_DIR = 'ASC';
+    private const DEFAULT_DIR = self::ASC_DIR;
 
     private function __construct(public ?string $field, public string $direction)
     {
@@ -23,6 +25,16 @@ final readonly class Ordering
 
     public static function none(): self
     {
-        return self::fromTuple([null, null]);
+        return new self(null, self::DEFAULT_DIR);
+    }
+
+    public static function fromFieldAsc(string $field): self
+    {
+        return new self($field, self::ASC_DIR);
+    }
+
+    public static function fromFieldDesc(string $field): self
+    {
+        return new self($field, self::DESC_DIR);
     }
 }

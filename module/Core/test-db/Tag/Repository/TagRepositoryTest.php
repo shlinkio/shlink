@@ -135,11 +135,11 @@ class TagRepositoryTest extends DatabaseTestCase
             ['baz', 1, 3, 2],
         ]];
         yield 'ASC ordering' => [
-            new TagsListFiltering(null, null, null, Ordering::fromTuple([OrderableField::TAG->value, 'ASC'])),
+            new TagsListFiltering(null, null, null, Ordering::fromFieldAsc(OrderableField::TAG->value)),
             $defaultList,
         ];
-        yield 'DESC ordering' => [new TagsListFiltering(null, null, null, Ordering::fromTuple(
-            [OrderableField::TAG->value, 'DESC'],
+        yield 'DESC ordering' => [new TagsListFiltering(null, null, null, Ordering::fromFieldDesc(
+            OrderableField::TAG->value,
         )), [
             ['foo', 2, 4, 3],
             ['baz', 1, 3, 2],
@@ -147,9 +147,7 @@ class TagRepositoryTest extends DatabaseTestCase
             ['another', 0, 0, 0],
         ]];
         yield 'short URLs count ASC ordering' => [
-            new TagsListFiltering(null, null, null, Ordering::fromTuple(
-                [OrderableField::SHORT_URLS_COUNT->value, 'ASC'],
-            )),
+            new TagsListFiltering(null, null, null, Ordering::fromFieldAsc(OrderableField::SHORT_URLS_COUNT->value)),
             [
                 ['another', 0, 0, 0],
                 ['baz', 1, 3, 2],
@@ -158,9 +156,7 @@ class TagRepositoryTest extends DatabaseTestCase
             ],
         ];
         yield 'short URLs count DESC ordering' => [
-            new TagsListFiltering(null, null, null, Ordering::fromTuple(
-                [OrderableField::SHORT_URLS_COUNT->value, 'DESC'],
-            )),
+            new TagsListFiltering(null, null, null, Ordering::fromFieldDesc(OrderableField::SHORT_URLS_COUNT->value)),
             [
                 ['bar', 3, 3, 2],
                 ['foo', 2, 4, 3],
@@ -169,7 +165,7 @@ class TagRepositoryTest extends DatabaseTestCase
             ],
         ];
         yield 'visits count ASC ordering' => [
-            new TagsListFiltering(null, null, null, Ordering::fromTuple([OrderableField::VISITS->value, 'ASC'])),
+            new TagsListFiltering(null, null, null, Ordering::fromFieldAsc(OrderableField::VISITS->value)),
             [
                 ['another', 0, 0, 0],
                 ['bar', 3, 3, 2],
@@ -178,9 +174,7 @@ class TagRepositoryTest extends DatabaseTestCase
             ],
         ];
         yield 'non-bot visits count ASC ordering' => [
-            new TagsListFiltering(null, null, null, Ordering::fromTuple(
-                [OrderableField::NON_BOT_VISITS->value, 'ASC'],
-            )),
+            new TagsListFiltering(null, null, null, Ordering::fromFieldAsc(OrderableField::NON_BOT_VISITS->value)),
             [
                 ['another', 0, 0, 0],
                 ['bar', 3, 3, 2],
@@ -189,7 +183,7 @@ class TagRepositoryTest extends DatabaseTestCase
             ],
         ];
         yield 'visits count DESC ordering' => [
-            new TagsListFiltering(null, null, null, Ordering::fromTuple([OrderableField::VISITS->value, 'DESC'])),
+            new TagsListFiltering(null, null, null, Ordering::fromFieldDesc(OrderableField::VISITS->value)),
             [
                 ['foo', 2, 4, 3],
                 ['bar', 3, 3, 2],
@@ -204,8 +198,8 @@ class TagRepositoryTest extends DatabaseTestCase
             ['baz', 1, 3, 2],
             ['foo', 1, 3, 2],
         ]];
-        yield 'combined' => [new TagsListFiltering(1, null, null, Ordering::fromTuple(
-            [OrderableField::SHORT_URLS_COUNT->value, 'DESC'],
+        yield 'combined' => [new TagsListFiltering(1, null, null, Ordering::fromFieldDesc(
+            OrderableField::SHORT_URLS_COUNT->value,
         ), ApiKey::fromMeta(
             ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()),
         )), [
