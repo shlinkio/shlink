@@ -86,28 +86,28 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->flush();
 
         $result = $this->repo->findList(
-            new ShortUrlsListFiltering(null, null, Ordering::emptyInstance(), 'foo', ['bar']),
+            new ShortUrlsListFiltering(null, null, Ordering::none(), 'foo', ['bar']),
         );
         self::assertCount(1, $result);
         self::assertEquals(1, $this->repo->countList(new ShortUrlsCountFiltering('foo', ['bar'])));
         self::assertSame($foo, $result[0]);
 
         // Assert searched text also applies to tags
-        $result = $this->repo->findList(new ShortUrlsListFiltering(null, null, Ordering::emptyInstance(), 'bar'));
+        $result = $this->repo->findList(new ShortUrlsListFiltering(null, null, Ordering::none(), 'bar'));
         self::assertCount(2, $result);
         self::assertEquals(2, $this->repo->countList(new ShortUrlsCountFiltering('bar')));
         self::assertContains($foo, $result);
 
-        $result = $this->repo->findList(new ShortUrlsListFiltering(null, null, Ordering::emptyInstance()));
+        $result = $this->repo->findList(new ShortUrlsListFiltering(null, null, Ordering::none()));
         self::assertCount(3, $result);
 
-        $result = $this->repo->findList(new ShortUrlsListFiltering(2, null, Ordering::emptyInstance()));
+        $result = $this->repo->findList(new ShortUrlsListFiltering(2, null, Ordering::none()));
         self::assertCount(2, $result);
 
-        $result = $this->repo->findList(new ShortUrlsListFiltering(2, 1, Ordering::emptyInstance()));
+        $result = $this->repo->findList(new ShortUrlsListFiltering(2, 1, Ordering::none()));
         self::assertCount(2, $result);
 
-        self::assertCount(1, $this->repo->findList(new ShortUrlsListFiltering(2, 2, Ordering::emptyInstance())));
+        self::assertCount(1, $this->repo->findList(new ShortUrlsListFiltering(2, 2, Ordering::none())));
 
         $result = $this->repo->findList(
             new ShortUrlsListFiltering(null, null, Ordering::fromTuple([OrderableField::VISITS->value, 'DESC'])),
@@ -124,7 +124,7 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         self::assertSame($foo2, $result[0]);
 
         $result = $this->repo->findList(
-            new ShortUrlsListFiltering(null, null, Ordering::emptyInstance(), null, [], null, DateRange::until(
+            new ShortUrlsListFiltering(null, null, Ordering::none(), null, [], null, DateRange::until(
                 Chronos::now()->subDays(2),
             )),
         );
@@ -135,7 +135,7 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         self::assertSame($foo2, $result[0]);
 
         self::assertCount(2, $this->repo->findList(
-            new ShortUrlsListFiltering(null, null, Ordering::emptyInstance(), null, [], null, DateRange::since(
+            new ShortUrlsListFiltering(null, null, Ordering::none(), null, [], null, DateRange::since(
                 Chronos::now()->subDays(2),
             )),
         ));
@@ -197,12 +197,12 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->flush();
 
         self::assertCount(5, $this->repo->findList(
-            new ShortUrlsListFiltering(null, null, Ordering::emptyInstance(), null, ['foo', 'bar']),
+            new ShortUrlsListFiltering(null, null, Ordering::none(), null, ['foo', 'bar']),
         ));
         self::assertCount(5, $this->repo->findList(new ShortUrlsListFiltering(
             null,
             null,
-            Ordering::emptyInstance(),
+            Ordering::none(),
             null,
             ['foo', 'bar'],
             TagsMode::ANY,
@@ -210,7 +210,7 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         self::assertCount(1, $this->repo->findList(new ShortUrlsListFiltering(
             null,
             null,
-            Ordering::emptyInstance(),
+            Ordering::none(),
             null,
             ['foo', 'bar'],
             TagsMode::ALL,
@@ -220,12 +220,12 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         self::assertEquals(1, $this->repo->countList(new ShortUrlsCountFiltering(null, ['foo', 'bar'], TagsMode::ALL)));
 
         self::assertCount(4, $this->repo->findList(
-            new ShortUrlsListFiltering(null, null, Ordering::emptyInstance(), null, ['bar', 'baz']),
+            new ShortUrlsListFiltering(null, null, Ordering::none(), null, ['bar', 'baz']),
         ));
         self::assertCount(4, $this->repo->findList(new ShortUrlsListFiltering(
             null,
             null,
-            Ordering::emptyInstance(),
+            Ordering::none(),
             null,
             ['bar', 'baz'],
             TagsMode::ANY,
@@ -233,7 +233,7 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         self::assertCount(2, $this->repo->findList(new ShortUrlsListFiltering(
             null,
             null,
-            Ordering::emptyInstance(),
+            Ordering::none(),
             null,
             ['bar', 'baz'],
             TagsMode::ALL,
@@ -247,12 +247,12 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         ));
 
         self::assertCount(5, $this->repo->findList(
-            new ShortUrlsListFiltering(null, null, Ordering::emptyInstance(), null, ['foo', 'bar', 'baz']),
+            new ShortUrlsListFiltering(null, null, Ordering::none(), null, ['foo', 'bar', 'baz']),
         ));
         self::assertCount(5, $this->repo->findList(new ShortUrlsListFiltering(
             null,
             null,
-            Ordering::emptyInstance(),
+            Ordering::none(),
             null,
             ['foo', 'bar', 'baz'],
             TagsMode::ANY,
@@ -260,7 +260,7 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         self::assertCount(0, $this->repo->findList(new ShortUrlsListFiltering(
             null,
             null,
-            Ordering::emptyInstance(),
+            Ordering::none(),
             null,
             ['foo', 'bar', 'baz'],
             TagsMode::ALL,
@@ -298,7 +298,7 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         $buildFiltering = static fn (string $searchTerm) => new ShortUrlsListFiltering(
             null,
             null,
-            Ordering::emptyInstance(),
+            Ordering::none(),
             searchTerm: $searchTerm,
             defaultDomain: 'deFaulT-domain.com',
         );
@@ -343,7 +343,7 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         new ShortUrlsListFiltering(
             null,
             null,
-            Ordering::emptyInstance(),
+            Ordering::none(),
             excludeMaxVisitsReached: $excludeMaxVisitsReached,
             excludePastValidUntil: $excludePastValidUntil,
         );

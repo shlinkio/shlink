@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Model;
 
-final class Ordering
+final readonly class Ordering
 {
     private const DEFAULT_DIR = 'ASC';
 
-    private function __construct(public readonly ?string $field, public readonly string $direction)
+    private function __construct(public ?string $field, public string $direction)
     {
     }
 
@@ -21,13 +21,8 @@ final class Ordering
         return new self($field, $dir ?? self::DEFAULT_DIR);
     }
 
-    public static function emptyInstance(): self
+    public static function none(): self
     {
         return self::fromTuple([null, null]);
-    }
-
-    public function hasOrderField(): bool
-    {
-        return $this->field !== null;
     }
 }
