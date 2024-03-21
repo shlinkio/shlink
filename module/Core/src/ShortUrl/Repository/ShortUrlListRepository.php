@@ -48,21 +48,16 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
 
     private function processOrderByForList(QueryBuilder $qb, ShortUrlsListFiltering $filtering): void
     {
-        // With no explicit order by, fallback to dateCreated-DESC
         $fieldName = $filtering->orderBy->field;
-        if ($fieldName === null) {
-            $qb->orderBy('s.dateCreated', 'DESC');
-            return;
-        }
-
         $order = $filtering->orderBy->direction;
-        if (OrderableField::isBasicField($fieldName)) {
-            $qb->orderBy('s.' . $fieldName, $order);
-        } elseif (OrderableField::VISITS->value === $fieldName) {
-            $qb->orderBy('SUM(v.count)', $order);
-        } elseif (OrderableField::NON_BOT_VISITS->value === $fieldName) {
-            $qb->orderBy('SUM(v2.count)', $order);
-        }
+
+        match (true) {
+            // With no explicit order by, fallback to dateCreated-DESC
+            $fieldName === null => $qb->orderBy('s.dateCreated', 'DESC'),
+            $fieldName === OrderableField::VISITS->value => $qb->orderBy('SUM(v.count)', $order),
+            $fieldName === OrderableField::NON_BOT_VISITS->value => $qb->orderBy('SUM(v2.count)', $order),
+            default => $qb->orderBy('s.' . $fieldName, $order),
+        };
     }
 
     public function countList(ShortUrlsCountFiltering $filtering): int
