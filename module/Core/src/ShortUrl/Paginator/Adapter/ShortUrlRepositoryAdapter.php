@@ -11,13 +11,13 @@ use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlListRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-class ShortUrlRepositoryAdapter implements AdapterInterface
+readonly class ShortUrlRepositoryAdapter implements AdapterInterface
 {
     public function __construct(
-        private readonly ShortUrlListRepositoryInterface $repository,
-        private readonly ShortUrlsParams $params,
-        private readonly ?ApiKey $apiKey,
-        private readonly string $defaultDomain,
+        private ShortUrlListRepositoryInterface $repository,
+        private ShortUrlsParams $params,
+        private ?ApiKey $apiKey,
+        private string $defaultDomain,
     ) {
     }
 

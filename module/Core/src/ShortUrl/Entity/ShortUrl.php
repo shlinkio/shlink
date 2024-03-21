@@ -256,7 +256,7 @@ class ShortUrl extends AbstractEntity
         return true;
     }
 
-    public function toArray(): array
+    public function toArray(?VisitsSummary $precalculatedSummary = null): array
     {
         return [
             'shortCode' => $this->shortCode,
@@ -272,7 +272,7 @@ class ShortUrl extends AbstractEntity
             'title' => $this->title,
             'crawlable' => $this->crawlable,
             'forwardQuery' => $this->forwardQuery,
-            'visitsSummary' => VisitsSummary::fromTotalAndNonBots(
+            'visitsSummary' => $precalculatedSummary ?? VisitsSummary::fromTotalAndNonBots(
                 count($this->visits),
                 count($this->visits->matching(
                     Criteria::create()->where(Criteria::expr()->eq('potentialBot', false)),

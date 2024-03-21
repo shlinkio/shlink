@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtilsTrait;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithVisitsSummary;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlsParamsInputFilter;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlListServiceInterface;
@@ -23,10 +24,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function array_keys;
-use function array_map;
 use function array_pad;
 use function explode;
 use function implode;
+use function Shlinkio\Shlink\Core\ArrayUtils\map;
 use function sprintf;
 
 class ListShortUrlsCommand extends Command
@@ -184,10 +185,10 @@ class ListShortUrlsCommand extends Command
     ): Paginator {
         $shortUrls = $this->shortUrlService->listShortUrls($params);
 
-        $rows = array_map(function (ShortUrl $shortUrl) use ($columnsMap) {
+        $rows = map([...$shortUrls], function (ShortUrlWithVisitsSummary $shortUrl) use ($columnsMap) {
             $rawShortUrl = $this->transformer->transform($shortUrl);
-            return array_map(fn (callable $call) => $call($rawShortUrl, $shortUrl), $columnsMap);
-        }, [...$shortUrls]);
+            return map($columnsMap, fn (callable $call) => $call($rawShortUrl, $shortUrl));
+        });
 
         ShlinkTable::default($output)->render(
             array_keys($columnsMap),
