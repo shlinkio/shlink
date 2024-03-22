@@ -48,6 +48,8 @@ final class Version20240306132518 extends AbstractMigration
             'notnull' => true,
             'default' => 1,
         ]);
+
+        $table->addUniqueIndex(['short_url_id', 'potential_bot', 'slot_id'], 'UQ_slot_per_short_url');
     }
 
     public function down(Schema $schema): void
