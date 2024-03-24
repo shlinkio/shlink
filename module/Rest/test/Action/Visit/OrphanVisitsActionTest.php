@@ -11,7 +11,6 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
-use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams;
@@ -26,14 +25,11 @@ class OrphanVisitsActionTest extends TestCase
 {
     private OrphanVisitsAction $action;
     private MockObject & VisitsStatsHelperInterface $visitsHelper;
-    private MockObject & DataTransformerInterface $orphanVisitTransformer;
 
     protected function setUp(): void
     {
         $this->visitsHelper = $this->createMock(VisitsStatsHelperInterface::class);
-        $this->orphanVisitTransformer = $this->createMock(DataTransformerInterface::class);
-
-        $this->action = new OrphanVisitsAction($this->visitsHelper, $this->orphanVisitTransformer);
+        $this->action = new OrphanVisitsAction($this->visitsHelper);
     }
 
     #[Test]
@@ -45,9 +41,6 @@ class OrphanVisitsActionTest extends TestCase
             $this->isInstanceOf(OrphanVisitsParams::class),
         )->willReturn(new Paginator(new ArrayAdapter($visits)));
         $visitsAmount = count($visits);
-        $this->orphanVisitTransformer->expects($this->exactly($visitsAmount))->method('transform')->with(
-            $this->isInstanceOf(Visit::class),
-        )->willReturn([]);
 
         /** @var JsonResponse $response */
         $response = $this->action->handle(

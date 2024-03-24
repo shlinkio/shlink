@@ -68,7 +68,6 @@ return [
             Visit\Geolocation\VisitLocator::class => ConfigAbstractFactory::class,
             Visit\Geolocation\VisitToLocationHelper::class => ConfigAbstractFactory::class,
             Visit\VisitsStatsHelper::class => ConfigAbstractFactory::class,
-            Visit\Transformer\OrphanVisitDataTransformer::class => InvokableFactory::class,
             Visit\Repository\VisitLocationRepository::class => [
                 EntityRepositoryFactory::class,
                 Visit\Entity\Visit::class,
@@ -199,10 +198,7 @@ return [
         ],
         ShortUrl\Middleware\TrimTrailingSlashMiddleware::class => [Options\UrlShortenerOptions::class],
 
-        EventDispatcher\PublishingUpdatesGenerator::class => [
-            ShortUrl\Transformer\ShortUrlDataTransformer::class,
-            Visit\Transformer\OrphanVisitDataTransformer::class,
-        ],
+        EventDispatcher\PublishingUpdatesGenerator::class => [ShortUrl\Transformer\ShortUrlDataTransformer::class],
 
         Importer\ImportedLinksProcessor::class => [
             'em',

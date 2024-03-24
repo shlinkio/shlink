@@ -9,12 +9,10 @@ use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 
-final class PublishingUpdatesGenerator implements PublishingUpdatesGeneratorInterface
+final readonly class PublishingUpdatesGenerator implements PublishingUpdatesGeneratorInterface
 {
-    public function __construct(
-        private readonly DataTransformerInterface $shortUrlTransformer,
-        private readonly DataTransformerInterface $orphanVisitTransformer,
-    ) {
+    public function __construct(private DataTransformerInterface $shortUrlTransformer)
+    {
     }
 
     public function newVisitUpdate(Visit $visit): Update
@@ -28,7 +26,7 @@ final class PublishingUpdatesGenerator implements PublishingUpdatesGeneratorInte
     public function newOrphanVisitUpdate(Visit $visit): Update
     {
         return Update::forTopicAndPayload(Topic::NEW_ORPHAN_VISIT->value, [
-            'visit' => $this->orphanVisitTransformer->transform($visit),
+            'visit' => $visit->jsonSerialize(),
         ]);
     }
 
