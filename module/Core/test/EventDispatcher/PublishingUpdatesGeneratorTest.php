@@ -18,7 +18,6 @@ use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsSummary;
 use Shlinkio\Shlink\Core\Visit\Model\VisitType;
-use Shlinkio\Shlink\Core\Visit\Transformer\OrphanVisitDataTransformer;
 
 class PublishingUpdatesGeneratorTest extends TestCase
 {
@@ -28,7 +27,6 @@ class PublishingUpdatesGeneratorTest extends TestCase
     {
         $this->generator = new PublishingUpdatesGenerator(
             new ShortUrlDataTransformer(new ShortUrlStringifier([])),
-            new OrphanVisitDataTransformer(),
         );
     }
 
@@ -70,6 +68,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
                 'visitLocation' => null,
                 'date' => $visit->getDate()->toAtomString(),
                 'potentialBot' => false,
+                'visitedUrl' => '',
             ],
         ], $update->payload);
     }

@@ -1,6 +1,6 @@
 {
     "type": "object",
-    "required": ["referer", "date", "userAgent", "visitLocation"],
+    "required": ["referer", "date", "userAgent", "visitLocation", "potentialBot", "visitedUrl"],
     "properties": {
         "referer": {
             "type": "string",
@@ -21,6 +21,10 @@
         "potentialBot": {
             "type": "boolean",
             "description": "Tells if Shlink thinks this visit comes potentially from a bot or crawler"
+        },
+        "visitedUrl": {
+            "type": ["string", "null"],
+            "description": "The originally visited URL that triggered the tracking of this visit"
         }
     }
 }

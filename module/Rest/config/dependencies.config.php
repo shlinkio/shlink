@@ -89,10 +89,7 @@ return [
             'config.url_shortener.domain.hostname',
         ],
         Action\Visit\GlobalVisitsAction::class => [Visit\VisitsStatsHelper::class],
-        Action\Visit\OrphanVisitsAction::class => [
-            Visit\VisitsStatsHelper::class,
-            Visit\Transformer\OrphanVisitDataTransformer::class,
-        ],
+        Action\Visit\OrphanVisitsAction::class => [Visit\VisitsStatsHelper::class],
         Action\Visit\DeleteOrphanVisitsAction::class => [Visit\VisitsDeleter::class],
         Action\Visit\NonOrphanVisitsAction::class => [Visit\VisitsStatsHelper::class],
         Action\ShortUrl\ListShortUrlsAction::class => [

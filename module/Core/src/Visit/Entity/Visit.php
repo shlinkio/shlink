@@ -25,17 +25,60 @@ class Visit extends AbstractEntity implements JsonSerializable
         public readonly VisitType $type,
         public readonly string $userAgent,
         public readonly string $referer,
-        private readonly bool $potentialBot,
+        public readonly bool $potentialBot,
         public readonly ?string $remoteAddr = null,
         public readonly ?string $visitedUrl = null,
         private ?VisitLocation $visitLocation = null,
+        // TODO Make public readonly once VisitRepositoryTest does not try to set it
         private Chronos $date = new Chronos(),
     ) {
     }
 
     public static function forValidShortUrl(ShortUrl $shortUrl, Visitor $visitor, bool $anonymize = true): self
     {
-        return self::hydrateFromVisitor($shortUrl, VisitType::VALID_SHORT_URL, $visitor, $anonymize);
+        return self::fromVisitor($shortUrl, VisitType::VALID_SHORT_URL, $visitor, $anonymize);
+    }
+
+    public static function forBasePath(Visitor $visitor, bool $anonymize = true): self
+    {
+        return self::fromVisitor(null, VisitType::BASE_URL, $visitor, $anonymize);
+    }
+
+    public static function forInvalidShortUrl(Visitor $visitor, bool $anonymize = true): self
+    {
+        return self::fromVisitor(null, VisitType::INVALID_SHORT_URL, $visitor, $anonymize);
+    }
+
+    public static function forRegularNotFound(Visitor $visitor, bool $anonymize = true): self
+    {
+        return self::fromVisitor(null, VisitType::REGULAR_404, $visitor, $anonymize);
+    }
+
+    private static function fromVisitor(?ShortUrl $shortUrl, VisitType $type, Visitor $visitor, bool $anonymize): self
+    {
+        return new self(
+            shortUrl: $shortUrl,
+            type: $type,
+            userAgent: $visitor->userAgent,
+            referer: $visitor->referer,
+            potentialBot: $visitor->isPotentialBot(),
+            remoteAddr: self::processAddress($visitor->remoteAddress, $anonymize),
+            visitedUrl: $visitor->visitedUrl,
+        );
+    }
+
+    private static function processAddress(?string $address, bool $anonymize): ?string
+    {
+        // Localhost address does not need to be anonymized
+        if (! $anonymize || $address === null || $address === IpAddress::LOCALHOST) {
+            return $address;
+        }
+
+        try {
+            return IpAddress::fromString($address)->getAnonymizedCopy()->__toString();
+        } catch (InvalidArgumentException) {
+            return null;
+        }
     }
 
     public static function fromImport(ShortUrl $shortUrl, ImportedShlinkVisit $importedVisit): self
@@ -67,52 +110,6 @@ class Visit extends AbstractEntity implements JsonSerializable
             visitLocation: $importedLocation !== null ? VisitLocation::fromImport($importedLocation) : null,
             date: normalizeDate($importedVisit->date),
         );
-    }
-
-    public static function forBasePath(Visitor $visitor, bool $anonymize = true): self
-    {
-        return self::hydrateFromVisitor(null, VisitType::BASE_URL, $visitor, $anonymize);
-    }
-
-    public static function forInvalidShortUrl(Visitor $visitor, bool $anonymize = true): self
-    {
-        return self::hydrateFromVisitor(null, VisitType::INVALID_SHORT_URL, $visitor, $anonymize);
-    }
-
-    public static function forRegularNotFound(Visitor $visitor, bool $anonymize = true): self
-    {
-        return self::hydrateFromVisitor(null, VisitType::REGULAR_404, $visitor, $anonymize);
-    }
-
-    private static function hydrateFromVisitor(
-        ?ShortUrl $shortUrl,
-        VisitType $type,
-        Visitor $visitor,
-        bool $anonymize,
-    ): self {
-        return new self(
-            shortUrl: $shortUrl,
-            type: $type,
-            userAgent: $visitor->userAgent,
-            referer: $visitor->referer,
-            potentialBot: $visitor->isPotentialBot(),
-            remoteAddr: self::processAddress($anonymize, $visitor->remoteAddress),
-            visitedUrl: $visitor->visitedUrl,
-        );
-    }
-
-    private static function processAddress(bool $anonymize, ?string $address): ?string
-    {
-        // Localhost addresses do not need to be anonymized
-        if (! $anonymize || $address === null || $address === IpAddress::LOCALHOST) {
-            return $address;
-        }
-
-        try {
-            return IpAddress::fromString($address)->getAnonymizedCopy()->__toString();
-        } catch (InvalidArgumentException) {
-            return null;
-        }
     }
 
     public function hasRemoteAddr(): bool
@@ -160,12 +157,21 @@ class Visit extends AbstractEntity implements JsonSerializable
 
     public function jsonSerialize(): array
     {
-        return [
+        $base = [
             'referer' => $this->referer,
             'date' => $this->date->toAtomString(),
             'userAgent' => $this->userAgent,
             'visitLocation' => $this->visitLocation,
             'potentialBot' => $this->potentialBot,
+            'visitedUrl' => $this->visitedUrl,
+        ];
+        if (! $this->isOrphan()) {
+            return $base;
+        }
+
+        return [
+            ...$base,
+            'type' => $this->type->value,
         ];
     }
 }
