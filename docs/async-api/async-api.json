@@ -232,6 +232,11 @@
                     "potentialBot": {
                         "type": "boolean",
                         "description": "Tells if Shlink thinks this visit comes potentially from a bot or crawler"
+                    },
+                    "visitedUrl": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "The originally visited URL that triggered the tracking of this visit"
                     }
                 },
                 "example": {
@@ -247,7 +252,8 @@
                         "regionName": "California",
                         "timezone": "America/Los_Angeles"
                     },
-                    "potentialBot": false
+                    "potentialBot": false,
+                    "visitedUrl": "https://s.test"
                 }
             },
             "OrphanVisit": {
@@ -256,11 +262,6 @@
                     {
                         "type": "object",
                         "properties": {
-                            "visitedUrl": {
-                                "type": "string",
-                                "nullable": true,
-                                "description": "The originally visited URL that triggered the tracking of this visit"
-                            },
                             "type": {
                                 "type": "string",
                                 "enum": [

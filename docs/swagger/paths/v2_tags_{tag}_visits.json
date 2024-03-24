@@ -103,7 +103,8 @@
                                         "date": "2015-08-20T05:05:03+04:00",
                                         "userAgent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0 Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0",
                                         "visitLocation": null,
-                                        "potentialBot": false
+                                        "potentialBot": false,
+                                        "visitedUrl": "https://s.test"
                                     },
                                     {
                                         "referer": "https://t.co",
@@ -118,14 +119,16 @@
                                             "regionName": "California",
                                             "timezone": "America/Los_Angeles"
                                         },
-                                        "potentialBot": false
+                                        "potentialBot": false,
+                                        "visitedUrl": "https://s.test"
                                     },
                                     {
                                         "referer": null,
                                         "date": "2015-08-20T05:05:03+04:00",
                                         "userAgent": "some_web_crawler/1.4",
                                         "visitLocation": null,
-                                        "potentialBot": true
+                                        "potentialBot": true,
+                                        "visitedUrl": "https://s.test"
                                     }
                                 ],
                                 "pagination": {

@@ -30,6 +30,7 @@ class VisitTest extends TestCase
             'userAgent' => $userAgent,
             'visitLocation' => null,
             'potentialBot' => $expectedToBePotentialBot,
+            'visitedUrl' => $visit->visitedUrl,
         ], $visit->jsonSerialize());
     }
 

@@ -68,6 +68,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
                 'visitLocation' => null,
                 'date' => $visit->getDate()->toAtomString(),
                 'potentialBot' => false,
+                'visitedUrl' => '',
             ],
         ], $update->payload);
     }

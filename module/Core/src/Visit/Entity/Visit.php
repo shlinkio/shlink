@@ -163,6 +163,7 @@ class Visit extends AbstractEntity implements JsonSerializable
             'userAgent' => $this->userAgent,
             'visitLocation' => $this->visitLocation,
             'potentialBot' => $this->potentialBot,
+            'visitedUrl' => $this->visitedUrl,
         ];
         if (! $this->isOrphan()) {
             return $base;
@@ -170,7 +171,6 @@ class Visit extends AbstractEntity implements JsonSerializable
 
         return [
             ...$base,
-            'visitedUrl' => $this->visitedUrl,
             'type' => $this->type->value,
         ];
     }
