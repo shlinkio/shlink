@@ -6,7 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* *Nothing*
+* [#1330](https://github.com/shlinkio/shlink/issues/1330) All visit-related endpoints now expose the `visitedUrl` prop for any visit.
+
+  Previously, this was exposed only for orphan visits, since this can be an arbitrary value for those.
 
 ### Changed
 * [#2034](https://github.com/shlinkio/shlink/issues/2034) Modernize entities, using constructor property promotion and readonly wherever possible.
