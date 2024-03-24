@@ -14,10 +14,6 @@ class OrphanVisitDataTransformer implements DataTransformerInterface
      */
     public function transform($visit): array // phpcs:ignore
     {
-        $serializedVisit = $visit->jsonSerialize();
-        $serializedVisit['visitedUrl'] = $visit->visitedUrl;
-        $serializedVisit['type'] = $visit->type->value;
-
-        return $serializedVisit;
+        return $visit->jsonSerialize();
     }
 }
