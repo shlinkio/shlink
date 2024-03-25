@@ -38,4 +38,6 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder->createManyToOne('shortUrl', ShortUrl\Entity\ShortUrl::class)
             ->addJoinColumn('short_url_id', 'id', onDelete: 'CASCADE')
             ->build();
+
+    $builder->addUniqueConstraint(['short_url_id', 'potential_bot', 'slot_id'], 'UQ_slot_per_short_url');
 };

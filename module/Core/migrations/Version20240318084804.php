@@ -30,30 +30,29 @@ final class Version20240318084804 extends AbstractMigration
             $botsCount = $visitsQb->setParameter('potential_bot', '1')->executeQuery()->fetchOne();
             $nonBotsCount = $visitsQb->setParameter('potential_bot', '0')->executeQuery()->fetchOne();
 
-            $this->connection->createQueryBuilder()
-                 ->insert('short_url_visits_counts')
-                 ->values([
-                     'short_url_id' => ':short_url_id',
-                     'count' => ':count',
-                     'potential_bot' => '1',
-                 ])
-                 ->setParameters([
-                     'short_url_id' => $shortUrlId,
-                     'count' => $botsCount,
-                 ])
-                 ->executeStatement();
-            $this->connection->createQueryBuilder()
-                 ->insert('short_url_visits_counts')
-                 ->values([
-                     'short_url_id' => ':short_url_id',
-                     'count' => ':count',
-                     'potential_bot' => '0',
-                 ])
-                 ->setParameters([
-                     'short_url_id' => $shortUrlId,
-                     'count' => $nonBotsCount,
-                 ])
-                 ->executeStatement();
+            if ($botsCount > 0) {
+                $this->insertCount($shortUrlId, $botsCount, potentialBot: true);
+            }
+            if ($nonBotsCount > 0) {
+                $this->insertCount($shortUrlId, $nonBotsCount, potentialBot: false);
+            }
         }
+    }
+
+    private function insertCount(string $shortUrlId, int $count, bool $potentialBot): void
+    {
+        $this->connection->createQueryBuilder()
+            ->insert('short_url_visits_counts')
+            ->values([
+                'short_url_id' => ':short_url_id',
+                'count' => ':count',
+                'potential_bot' => ':potential_bot',
+            ])
+            ->setParameters([
+                'short_url_id' => $shortUrlId,
+                'count' => $count,
+                'potential_bot' => $potentialBot ? '1' : '0',
+            ])
+            ->executeStatement();
     }
 }

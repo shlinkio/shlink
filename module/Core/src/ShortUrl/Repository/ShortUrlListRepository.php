@@ -15,6 +15,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithVisitsSummary;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
+use Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 
 use function Shlinkio\Shlink\Core\ArrayUtils\map;
@@ -27,21 +28,33 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
      */
     public function findList(ShortUrlsListFiltering $filtering): array
     {
+        $buildVisitsSubQuery = function (string $alias, bool $excludingBots): string {
+            $vqb = $this->getEntityManager()->createQueryBuilder();
+            $vqb->select('SUM(' . $alias . '.count)')
+                ->from(ShortUrlVisitsCount::class, $alias)
+                ->where($vqb->expr()->eq($alias . '.shortUrl', 's'));
+
+            if ($excludingBots) {
+                $vqb->andWhere($vqb->expr()->eq($alias . '.potentialBot', ':potentialBot'));
+            }
+
+            return $vqb->getDQL();
+        };
+
         $qb = $this->createListQueryBuilder($filtering);
-        $qb->select('DISTINCT s AS shortUrl', 'SUM(v.count) AS visitsCount', 'SUM(v2.count) AS nonBotVisitsCount')
-           ->addSelect('SUM(v.count)')
-           ->leftJoin('s.visitsCounts', 'v')
-           ->leftJoin('s.visitsCounts', 'v2', Join::WITH, $qb->expr()->andX(
-               $qb->expr()->eq('v.shortUrl', 's'),
-               $qb->expr()->eq('v.potentialBot', 'false'),
-           ))
-           ->groupBy('s')
+        $qb->select(
+            'DISTINCT s AS shortUrl',
+            '(' . $buildVisitsSubQuery('v', excludingBots: false) . ') AS ' . OrderableField::VISITS->value,
+            '(' . $buildVisitsSubQuery('v2', excludingBots: true) . ') AS ' . OrderableField::NON_BOT_VISITS->value,
+        )
            ->setMaxResults($filtering->limit)
-           ->setFirstResult($filtering->offset);
+           ->setFirstResult($filtering->offset)
+           // This param is used in one of the sub-queries, but needs to set in the parent query
+           ->setParameter('potentialBot', 0);
 
         $this->processOrderByForList($qb, $filtering);
 
-        /** @var array{shortUrl: ShortUrl, visitsCount: string, nonBotVisitsCount: string}[] $result */
+        /** @var array{shortUrl: ShortUrl, visits: string, nonBotVisits: string}[] $result */
         $result = $qb->getQuery()->getResult();
         return map($result, static fn (array $s) => ShortUrlWithVisitsSummary::fromArray($s));
     }
@@ -54,8 +67,8 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
         match (true) {
             // With no explicit order by, fallback to dateCreated-DESC
             $fieldName === null => $qb->orderBy('s.dateCreated', 'DESC'),
-            $fieldName === OrderableField::VISITS->value => $qb->orderBy('SUM(v.count)', $order),
-            $fieldName === OrderableField::NON_BOT_VISITS->value => $qb->orderBy('SUM(v2.count)', $order),
+            $fieldName === OrderableField::VISITS->value,
+            $fieldName === OrderableField::NON_BOT_VISITS->value => $qb->orderBy($fieldName, $order),
             default => $qb->orderBy('s.' . $fieldName, $order),
         };
     }

@@ -14,13 +14,13 @@ final readonly class ShortUrlWithVisitsSummary
     }
 
     /**
-     * @param array{shortUrl: ShortUrl, visitsCount: string|int, nonBotVisitsCount: string|int} $data
+     * @param array{shortUrl: ShortUrl, visits: string|int, nonBotVisits: string|int} $data
      */
     public static function fromArray(array $data): self
     {
         return new self($data['shortUrl'], VisitsSummary::fromTotalAndNonBots(
-            (int) $data['visitsCount'],
-            (int) $data['nonBotVisitsCount'],
+            (int) $data['visits'],
+            (int) $data['nonBotVisits'],
         ));
     }
 
