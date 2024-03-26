@@ -76,7 +76,7 @@ return [
                 EntityRepositoryFactory::class,
                 Visit\Entity\Visit::class,
             ],
-            Visit\Listener\ShortUrlVisitsCountPreFlushListener::class => InvokableFactory::class,
+            Visit\Listener\ShortUrlVisitsCountTracker::class => InvokableFactory::class,
 
             Util\DoctrineBatchHelper::class => ConfigAbstractFactory::class,
             Util\RedirectResponseHelper::class => ConfigAbstractFactory::class,

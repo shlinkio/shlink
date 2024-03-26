@@ -62,18 +62,6 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($foo);
 
         $bar = ShortUrl::withLongUrl('https://bar');
-        $this->getEntityManager()->persist($bar);
-
-        $foo2 = ShortUrl::withLongUrl('https://foo_2');
-        $ref = new ReflectionObject($foo2);
-        $dateProp = $ref->getProperty('dateCreated');
-        $dateProp->setAccessible(true);
-        $dateProp->setValue($foo2, Chronos::now()->subDays(5));
-        $this->getEntityManager()->persist($foo2);
-
-        // Flush short URLs first
-        $this->getEntityManager()->flush();
-
         $visits = array_map(function () use ($bar) {
             $visit = Visit::forValidShortUrl($bar, Visitor::botInstance());
             $this->getEntityManager()->persist($visit);
@@ -81,6 +69,9 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
             return $visit;
         }, range(0, 5));
         $bar->setVisits(new ArrayCollection($visits));
+        $this->getEntityManager()->persist($bar);
+
+        $foo2 = ShortUrl::withLongUrl('https://foo_2');
         $visits2 = array_map(function () use ($foo2) {
             $visit = Visit::forValidShortUrl($foo2, Visitor::emptyInstance());
             $this->getEntityManager()->persist($visit);
@@ -88,8 +79,12 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
             return $visit;
         }, range(0, 3));
         $foo2->setVisits(new ArrayCollection($visits2));
+        $ref = new ReflectionObject($foo2);
+        $dateProp = $ref->getProperty('dateCreated');
+        $dateProp->setAccessible(true);
+        $dateProp->setValue($foo2, Chronos::now()->subDays(5));
+        $this->getEntityManager()->persist($foo2);
 
-        // Flush visits afterwards
         $this->getEntityManager()->flush();
 
         $result = $this->repo->findList(new ShortUrlsListFiltering(searchTerm: 'foo', tags: ['bar']));

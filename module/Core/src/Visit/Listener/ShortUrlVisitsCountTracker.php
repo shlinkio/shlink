@@ -10,20 +10,33 @@ use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Platforms\SQLitePlatform;
 use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\PreFlushEventArgs;
+use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\ORM\Event\PostFlushEventArgs;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 
 use function rand;
 
-final readonly class ShortUrlVisitsCountPreFlushListener
+final class ShortUrlVisitsCountTracker
 {
+    /** @var object[] */
+    private array $entitiesToBeCreated = [];
+
+    public function onFlush(OnFlushEventArgs $args): void
+    {
+        // Track entities that are going to be created during this flush operation
+        $this->entitiesToBeCreated = $args->getObjectManager()->getUnitOfWork()->getScheduledEntityInsertions();
+    }
+
     /**
      * @throws Exception
      */
-    public function preFlush(PreFlushEventArgs $args): void
+    public function postFlush(PostFlushEventArgs $args): void
     {
         $em = $args->getObjectManager();
-        $entitiesToBeCreated = $em->getUnitOfWork()->getScheduledEntityInsertions();
+        $entitiesToBeCreated = $this->entitiesToBeCreated;
+
+        // Reset tracked entities until next flush operation
+        $this->entitiesToBeCreated = [];
 
         foreach ($entitiesToBeCreated as $entity) {
             $this->trackVisitCount($em, $entity);
