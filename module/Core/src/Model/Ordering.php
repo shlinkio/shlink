@@ -10,7 +10,7 @@ final readonly class Ordering
     private const ASC_DIR = 'ASC';
     private const DEFAULT_DIR = self::ASC_DIR;
 
-    private function __construct(public ?string $field, public string $direction)
+    public function __construct(public ?string $field = null, public string $direction = self::DEFAULT_DIR)
     {
     }
 

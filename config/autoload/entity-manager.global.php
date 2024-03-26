@@ -5,8 +5,8 @@ declare(strict_types=1);
 use Doctrine\ORM\Events;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Shlinkio\Shlink\Core\Config\EnvVars;
-
 use Shlinkio\Shlink\Core\Visit\Listener\ShortUrlVisitsCountPreFlushListener;
+
 use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 
 return (static function (): array {
