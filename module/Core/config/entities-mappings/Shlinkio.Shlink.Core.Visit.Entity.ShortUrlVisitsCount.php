@@ -28,6 +28,7 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder->createField('count', Types::BIGINT)
             ->columnName('count')
             ->option('unsigned', true)
+            ->option('default', 1)
             ->build();
 
     $builder->createField('slotId', Types::INTEGER)
