@@ -48,14 +48,14 @@ final class ShortUrlVisitsCountTracker
      */
     private function trackVisitCount(EntityManagerInterface $em, object $entity): void
     {
-        // This is not a non-orphan visit
-        if (!$entity instanceof Visit || $entity->shortUrl === null) {
+        // This is not a visit
+        if (!$entity instanceof Visit) {
             return;
         }
         $visit = $entity;
 
-        // The short URL is not persisted yet
-        $shortUrlId = $visit->shortUrl->getId();
+        // The short URL is not persisted yet or this is an orphan visit
+        $shortUrlId = $visit->shortUrl?->getId();
         if ($shortUrlId === null || $shortUrlId === '') {
             return;
         }

@@ -177,6 +177,9 @@ class ListShortUrlsCommand extends Command
         return ExitCode::EXIT_SUCCESS;
     }
 
+    /**
+     * @param array<string, callable(array $serializedShortUrl, ShortUrl $shortUrl): ?string> $columnsMap
+     */
     private function renderPage(
         OutputInterface $output,
         array $columnsMap,
@@ -186,8 +189,8 @@ class ListShortUrlsCommand extends Command
         $shortUrls = $this->shortUrlService->listShortUrls($params);
 
         $rows = map([...$shortUrls], function (ShortUrlWithVisitsSummary $shortUrl) use ($columnsMap) {
-            $rawShortUrl = $this->transformer->transform($shortUrl);
-            return map($columnsMap, fn (callable $call) => $call($rawShortUrl, $shortUrl));
+            $serializedShortUrl = $this->transformer->transform($shortUrl);
+            return map($columnsMap, fn (callable $call) => $call($serializedShortUrl, $shortUrl->shortUrl));
         });
 
         ShlinkTable::default($output)->render(
@@ -210,6 +213,9 @@ class ListShortUrlsCommand extends Command
         return $dir === null ? $field : sprintf('%s-%s', $field, $dir);
     }
 
+    /**
+     * @return array<string, callable(array $serializedShortUrl, ShortUrl $shortUrl): ?string>
+     */
     private function resolveColumnsMap(InputInterface $input): array
     {
         $pickProp = static fn (string $prop): callable => static fn (array $shortUrl) => $shortUrl[$prop];

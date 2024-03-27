@@ -9,7 +9,7 @@ use Shlinkio\Shlink\Core\Visit\Model\VisitsSummary;
 
 final readonly class ShortUrlWithVisitsSummary
 {
-    private function __construct(public ShortUrl $shortUrl, public VisitsSummary $visitsSummary)
+    private function __construct(public ShortUrl $shortUrl, private ?VisitsSummary $visitsSummary = null)
     {
     }
 
@@ -22,6 +22,11 @@ final readonly class ShortUrlWithVisitsSummary
             (int) $data['visits'],
             (int) $data['nonBotVisits'],
         ));
+    }
+
+    public static function fromShortUrl(ShortUrl $shortUrl): self
+    {
+        return new self($shortUrl);
     }
 
     public function toArray(): array
