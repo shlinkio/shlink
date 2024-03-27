@@ -25,6 +25,8 @@ class VisitsTrackerTest extends TestCase
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManager::class);
+        $this->em->method('wrapInTransaction')->willReturnCallback(fn (callable $callback) => $callback());
+
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
     }
 
