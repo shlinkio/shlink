@@ -39,7 +39,7 @@ final class Version20240318084804 extends AbstractMigration
         }
     }
 
-    private function insertCount(string $shortUrlId, int $count, bool $potentialBot): void
+    private function insertCount(string|int $shortUrlId, int $count, bool $potentialBot): void
     {
         $this->connection->createQueryBuilder()
             ->insert('short_url_visits_counts')
