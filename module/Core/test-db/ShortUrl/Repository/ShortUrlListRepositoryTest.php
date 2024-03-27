@@ -115,12 +115,11 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         self::assertCount(3, $result);
         self::assertSame($bar, $result[0]->shortUrl);
 
-        // FIXME Check why this assertion fails
-//        $result = $this->repo->findList(new ShortUrlsListFiltering(
-//            orderBy: Ordering::fromFieldDesc(OrderableField::NON_BOT_VISITS->value),
-//        ));
-//        self::assertCount(3, $result);
-//        self::assertSame($foo2, $result[0]->shortUrl);
+        $result = $this->repo->findList(new ShortUrlsListFiltering(
+            orderBy: Ordering::fromFieldDesc(OrderableField::NON_BOT_VISITS->value),
+        ));
+        self::assertCount(3, $result);
+        self::assertSame($foo2, $result[0]->shortUrl);
 
         $result = $this->repo->findList(new ShortUrlsListFiltering(
             dateRange: DateRange::until(Chronos::now()->subDays(2)),

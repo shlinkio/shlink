@@ -14,6 +14,11 @@ final readonly class Ordering
     {
     }
 
+    public static function none(): self
+    {
+        return new self();
+    }
+
     /**
      * @param array{string|null, string|null} $props
      */
@@ -21,11 +26,6 @@ final readonly class Ordering
     {
         [$field, $dir] = $props;
         return new self($field, $dir ?? self::DEFAULT_DIR);
-    }
-
-    public static function none(): self
-    {
-        return new self(null, self::DEFAULT_DIR);
     }
 
     public static function fromFieldAsc(string $field): self

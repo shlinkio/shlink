@@ -128,7 +128,7 @@ final class ShortUrlVisitsCountTracker
                $qb->expr()->eq('slot_id', ':slot_id'),
            ))
            ->setParameter('short_url_id', $shortUrlId)
-           ->setParameter('potential_bot', $potentialBot)
+           ->setParameter('potential_bot', $potentialBot ? '1' : '0')
            ->setParameter('slot_id', $slotId)
            ->setMaxResults(1);
 
@@ -155,7 +155,7 @@ final class ShortUrlVisitsCountTracker
                    ));
 
         $writeQb->setParameter('short_url_id', $shortUrlId)
-                ->setParameter('potential_bot', $potentialBot)
+                ->setParameter('potential_bot', $potentialBot ? '1' : '0')
                 ->setParameter('slot_id', $slotId)
                 ->executeStatement();
     }

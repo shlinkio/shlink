@@ -30,7 +30,7 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
     {
         $buildVisitsSubQuery = function (string $alias, bool $excludingBots): string {
             $vqb = $this->getEntityManager()->createQueryBuilder();
-            $vqb->select('SUM(' . $alias . '.count)')
+            $vqb->select('COALESCE(SUM(' . $alias . '.count), 0)')
                 ->from(ShortUrlVisitsCount::class, $alias)
                 ->where($vqb->expr()->eq($alias . '.shortUrl', 's'));
 
@@ -50,7 +50,7 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
            ->setMaxResults($filtering->limit)
            ->setFirstResult($filtering->offset)
            // This param is used in one of the sub-queries, but needs to set in the parent query
-           ->setParameter('potentialBot', 0);
+           ->setParameter('potentialBot', false);
 
         $this->processOrderByForList($qb, $filtering);
 
