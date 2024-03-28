@@ -40,7 +40,7 @@ class ShortUrlVisitsCountTrackerTest extends DatabaseTestCase
         self::assertCount(1, $result);
         self::assertEquals('1', $result[0]->count);
         self::assertGreaterThanOrEqual(0, $result[0]->slotId);
-        self::assertLessThan(100, $result[0]->slotId);
+        self::assertLessThanOrEqual(100, $result[0]->slotId);
     }
 
     #[Test]
@@ -49,7 +49,7 @@ class ShortUrlVisitsCountTrackerTest extends DatabaseTestCase
         $shortUrl = ShortUrl::createFake();
         $this->getEntityManager()->persist($shortUrl);
 
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i <= 100; $i++) {
             $this->getEntityManager()->persist(new ShortUrlVisitsCount($shortUrl, slotId: $i));
         }
         $this->getEntityManager()->flush();
@@ -69,7 +69,7 @@ class ShortUrlVisitsCountTrackerTest extends DatabaseTestCase
             static fn (ShortUrlVisitsCount $item) => ((int) $item->count) > 1,
         ));
 
-        self::assertCount(100, $result);
+        self::assertCount(101, $result);
         self::assertCount(1, $itemsWithCountBiggerThanOnce);
         self::assertEquals('2', $itemsWithCountBiggerThanOnce[0]->count);
     }

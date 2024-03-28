@@ -46,7 +46,7 @@
         "shlinkio/shlink-common": "^6.0",
         "shlinkio/shlink-config": "^3.0",
         "shlinkio/shlink-event-dispatcher": "^4.0",
-        "shlinkio/shlink-importer": "^5.3",
+        "shlinkio/shlink-importer": "^5.3.1",
         "shlinkio/shlink-installer": "^9.0",
         "shlinkio/shlink-ip-geolocation": "^4.0",
         "shlinkio/shlink-json": "^1.1",
