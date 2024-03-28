@@ -71,12 +71,15 @@ readonly class VisitsTracker implements VisitsTrackerInterface
             return;
         }
 
-        $this->em->wrapInTransaction(function () use ($createVisit, $visitor): void {
-            $visit = $createVisit($visitor->normalizeForTrackingOptions($this->options));
+        $visit = $createVisit($visitor->normalizeForTrackingOptions($this->options));
+
+        // Wrap persisting and flushing the visit in a transaction, so that the ShortUrlVisitsCountTracker performs
+        // changes inside that very same transaction atomically
+        $this->em->wrapInTransaction(function () use ($visit): void {
             $this->em->persist($visit);
             $this->em->flush();
-
-            $this->eventDispatcher->dispatch(new UrlVisited($visit->getId(), $visitor->remoteAddress));
         });
+
+        $this->eventDispatcher->dispatch(new UrlVisited($visit->getId(), $visitor->remoteAddress));
     }
 }
