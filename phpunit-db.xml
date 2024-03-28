@@ -20,6 +20,7 @@
             <directory>./module/*/src/Spec</directory>
             <directory>./module/*/src/**/Spec</directory>
             <directory>./module/*/src/**/**/Spec</directory>
+            <file>./module/Core/src/Visit/Listener/ShortUrlVisitsCountTracker.php</file>
         </include>
     </source>
 </phpunit>

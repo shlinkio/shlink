@@ -19,6 +19,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
+use Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsSummary;
 use Shlinkio\Shlink\Core\Visit\Model\VisitType;
@@ -37,6 +38,7 @@ class ShortUrl extends AbstractEntity
     /**
      * @param Collection<int, Tag> $tags
      * @param Collection<int, Visit> & Selectable $visits
+     * @param Collection<int, ShortUrlVisitsCount> & Selectable $visitsCounts
      */
     private function __construct(
         private string $longUrl,
@@ -44,6 +46,7 @@ class ShortUrl extends AbstractEntity
         private Chronos $dateCreated = new Chronos(),
         private Collection $tags = new ArrayCollection(),
         private Collection & Selectable $visits = new ArrayCollection(),
+        private Collection & Selectable $visitsCounts = new ArrayCollection(),
         private ?Chronos $validSince = null,
         private ?Chronos $validUntil = null,
         private ?int $maxVisits = null,
@@ -179,14 +182,14 @@ class ShortUrl extends AbstractEntity
         return $this->shortCode;
     }
 
-    public function getDateCreated(): Chronos
-    {
-        return $this->dateCreated;
-    }
-
     public function getDomain(): ?Domain
     {
         return $this->domain;
+    }
+
+    public function forwardQuery(): bool
+    {
+        return $this->forwardQuery;
     }
 
     public function reachedVisits(int $visitsAmount): bool
@@ -212,11 +215,6 @@ class ShortUrl extends AbstractEntity
     {
         $this->visits = $visits;
         return $this;
-    }
-
-    public function forwardQuery(): bool
-    {
-        return $this->forwardQuery;
     }
 
     /**
@@ -258,7 +256,7 @@ class ShortUrl extends AbstractEntity
         return true;
     }
 
-    public function toArray(): array
+    public function toArray(?VisitsSummary $precalculatedSummary = null): array
     {
         return [
             'shortCode' => $this->shortCode,
@@ -274,7 +272,7 @@ class ShortUrl extends AbstractEntity
             'title' => $this->title,
             'crawlable' => $this->crawlable,
             'forwardQuery' => $this->forwardQuery,
-            'visitsSummary' => VisitsSummary::fromTotalAndNonBots(
+            'visitsSummary' => $precalculatedSummary ?? VisitsSummary::fromTotalAndNonBots(
                 count($this->visits),
                 count($this->visits->matching(
                     Criteria::create()->where(Criteria::expr()->eq('potentialBot', false)),
