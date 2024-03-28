@@ -85,7 +85,7 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ShortUrl::class, 's')
-            ->where('1=1');
+           ->where('1=1');
 
         $dateRange = $filtering->dateRange;
         if ($dateRange?->startDate !== null) {
