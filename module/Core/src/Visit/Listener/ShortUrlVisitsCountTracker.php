@@ -136,8 +136,9 @@ final class ShortUrlVisitsCountTracker
             $qb->forUpdate();
         }
 
-        $resultSet = $qb->executeQuery()->fetchOne();
-        $writeQb = ! $resultSet
+        $visitsCountId = $qb->executeQuery()->fetchOne();
+
+        $writeQb = ! $visitsCountId
             ? $conn->createQueryBuilder()
                 ->insert('short_url_visits_counts')
                 ->values([
@@ -145,18 +146,15 @@ final class ShortUrlVisitsCountTracker
                     'potential_bot' => ':potential_bot',
                     'slot_id' => ':slot_id',
                 ])
-            : $conn->createQueryBuilder()
-                   ->update('short_url_visits_counts')
-                   ->set('count', 'count + 1')
-                   ->where($qb->expr()->and(
-                       $qb->expr()->eq('short_url_id', ':short_url_id'),
-                       $qb->expr()->eq('potential_bot', ':potential_bot'),
-                       $qb->expr()->eq('slot_id', ':slot_id'),
-                   ));
-
-        $writeQb->setParameter('short_url_id', $shortUrlId)
+                ->setParameter('short_url_id', $shortUrlId)
                 ->setParameter('potential_bot', $potentialBot ? '1' : '0')
                 ->setParameter('slot_id', $slotId)
-                ->executeStatement();
+            : $conn->createQueryBuilder()
+                ->update('short_url_visits_counts')
+                ->set('count', 'count + 1')
+                ->where($qb->expr()->eq('id', ':visits_count_id'))
+                ->setParameter('visits_count_id', $visitsCountId);
+
+        $writeQb->executeStatement();
     }
 }

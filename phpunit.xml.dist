@@ -30,6 +30,7 @@
             <directory>./module/Core/src/Spec</directory>
             <directory>./module/Core/src/**/Spec</directory>
             <directory>./module/Core/src/**/**/Spec</directory>
+            <file>./module/Core/src/Visit/Listener/ShortUrlVisitsCountTracker.php</file>
         </exclude>
     </source>
 </phpunit>
