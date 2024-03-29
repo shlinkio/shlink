@@ -46,6 +46,8 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
             'DISTINCT s AS shortUrl',
             '(' . $buildVisitsSubQuery('v', excludingBots: false) . ') AS ' . OrderableField::VISITS->value,
             '(' . $buildVisitsSubQuery('v2', excludingBots: true) . ') AS ' . OrderableField::NON_BOT_VISITS->value,
+            // This is added only to have a consistent order by title between database engines
+            'COALESCE(s.title, \'\') AS title',
         )
            ->setMaxResults($filtering->limit)
            ->setFirstResult($filtering->offset)
@@ -62,15 +64,17 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
     private function processOrderByForList(QueryBuilder $qb, ShortUrlsListFiltering $filtering): void
     {
         $fieldName = $filtering->orderBy->field;
-        $order = $filtering->orderBy->direction;
-
-        match (true) {
+        $direction = $filtering->orderBy->direction;
+        [$sort, $order] = match (true) {
             // With no explicit order by, fallback to dateCreated-DESC
-            $fieldName === null => $qb->orderBy('s.dateCreated', 'DESC'),
+            $fieldName === null => ['s.dateCreated', 'DESC'],
             $fieldName === OrderableField::VISITS->value,
-            $fieldName === OrderableField::NON_BOT_VISITS->value => $qb->orderBy($fieldName, $order),
-            default => $qb->orderBy('s.' . $fieldName, $order),
+            $fieldName === OrderableField::NON_BOT_VISITS->value,
+            $fieldName === OrderableField::TITLE->value => [$fieldName, $direction],
+            default => ['s.' . $fieldName, $direction],
         };
+
+        $qb->orderBy($sort, $order);
     }
 
     public function countList(ShortUrlsCountFiltering $filtering): int

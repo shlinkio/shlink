@@ -201,12 +201,12 @@ class ListShortUrlsTest extends ApiTestCase
             self::SHORT_URL_SHLINK_WITH_TITLE,
         ], 'valid_api_key'];
         yield [['orderBy' => 'title-DESC'], [
+            self::SHORT_URL_SHLINK_WITH_TITLE,
             self::SHORT_URL_META,
             self::SHORT_URL_CUSTOM_SLUG,
             self::SHORT_URL_DOCS,
             self::SHORT_URL_CUSTOM_DOMAIN,
             self::SHORT_URL_CUSTOM_SLUG_AND_DOMAIN,
-            self::SHORT_URL_SHLINK_WITH_TITLE,
         ], 'valid_api_key'];
         yield [['startDate' => Chronos::parse('2018-12-01')->toAtomString()], [
             self::SHORT_URL_CUSTOM_DOMAIN,
