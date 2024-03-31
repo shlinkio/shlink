@@ -13,7 +13,7 @@ use Shlinkio\Shlink\Rest\ApiKey\Spec\WithApiKeySpecsEnsuringJoin;
 
 class CountOfNonOrphanVisits extends BaseSpecification
 {
-    public function __construct(private VisitsCountFiltering $filtering)
+    public function __construct(private readonly VisitsCountFiltering $filtering)
     {
         parent::__construct();
     }

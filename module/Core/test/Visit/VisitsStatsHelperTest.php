@@ -22,6 +22,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Repository\TagRepository;
+use Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
@@ -31,6 +32,7 @@ use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
+use Shlinkio\Shlink\Core\Visit\Repository\ShortUrlVisitsCountRepository;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelper;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -54,9 +56,9 @@ class VisitsStatsHelperTest extends TestCase
     #[Test, DataProvider('provideCounts')]
     public function returnsExpectedVisitsStats(int $expectedCount, ?ApiKey $apiKey): void
     {
-        $repo = $this->createMock(VisitRepository::class);
         $callCount = 0;
-        $repo->expects($this->exactly(2))->method('countNonOrphanVisits')->willReturnCallback(
+        $visitsCountRepo = $this->createMock(ShortUrlVisitsCountRepository::class);
+        $visitsCountRepo->expects($this->exactly(2))->method('countNonOrphanVisits')->willReturnCallback(
             function (VisitsCountFiltering $options) use ($expectedCount, $apiKey, &$callCount) {
                 Assert::assertEquals($callCount !== 0, $options->excludeBots);
                 Assert::assertEquals($apiKey, $options->apiKey);
@@ -65,10 +67,16 @@ class VisitsStatsHelperTest extends TestCase
                 return $expectedCount * 3;
             },
         );
-        $repo->expects($this->exactly(2))->method('countOrphanVisits')->with(
+
+        $visitsRepo = $this->createMock(VisitRepository::class);
+        $visitsRepo->expects($this->exactly(2))->method('countOrphanVisits')->with(
             $this->isInstanceOf(VisitsCountFiltering::class),
         )->willReturn($expectedCount);
-        $this->em->expects($this->once())->method('getRepository')->with(Visit::class)->willReturn($repo);
+
+        $this->em->expects($this->exactly(2))->method('getRepository')->willReturnMap([
+            [Visit::class, $visitsRepo],
+            [ShortUrlVisitsCount::class, $visitsCountRepo],
+        ]);
 
         $stats = $this->helper->getVisitsStats($apiKey);
 

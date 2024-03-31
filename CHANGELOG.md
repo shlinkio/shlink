@@ -12,9 +12,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Changed
 * [#2034](https://github.com/shlinkio/shlink/issues/2034) Modernize entities, using constructor property promotion and readonly wherever possible.
-* [#2036](https://github.com/shlinkio/shlink/issues/2036) Deep performance improvement when listing short URLs ordered by visits counts.
+* [#2036](https://github.com/shlinkio/shlink/issues/2036) Deep performance improvement in some endpoints which involve counting visits:
 
-  This has been achieved by introducing a new table which tracks slotted visits counts. We can then `SUM` all counts for certain visit, avoiding `COUNT(visits)` aggregates which are less performant when there are a lot of visits.
+  * listing short URLs ordered by visits counts.
+  * loading tags with stats.
+  * visits overview.
+
+  This has been achieved by introducing a new table which tracks slotted visits counts. We can then `SUM` all counts for certain short URL, avoiding `COUNT(visits)` aggregates which are much less performant when there are a lot of visits.
 
 ### Deprecated
 * *Nothing*
@@ -23,7 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* *Nothing*
+* Fix error when importing short URLs and visits from a Shlink 4.x instance
 
 
 ## [4.0.3] - 2024-03-15
