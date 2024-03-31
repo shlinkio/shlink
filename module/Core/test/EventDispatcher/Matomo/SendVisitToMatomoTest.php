@@ -72,7 +72,7 @@ class SendVisitToMatomoTest extends TestCase
         $tracker->expects($this->once())->method('setUrl')->willReturn($tracker);
         $tracker->expects($this->once())->method('setUserAgent')->willReturn($tracker);
         $tracker->expects($this->once())->method('setUrlReferrer')->willReturn($tracker);
-        $tracker->expects($this->once())->method('doTrackPageView')->with('');
+        $tracker->expects($this->once())->method('doTrackPageView')->with($visit->shortUrl?->title() ?? '');
 
         if ($visit->isOrphan()) {
             $tracker->expects($this->exactly(2))->method('setCustomTrackingParameter')->willReturnMap([
