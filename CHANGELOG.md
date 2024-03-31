@@ -23,7 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* *Nothing*
+* Fix error when importing short URLs and visits from a Shlink 4.x instance
 
 
 ## [4.0.3] - 2024-03-15
