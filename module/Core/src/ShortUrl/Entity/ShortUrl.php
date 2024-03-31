@@ -192,6 +192,11 @@ class ShortUrl extends AbstractEntity
         return $this->forwardQuery;
     }
 
+    public function title(): ?string
+    {
+        return $this->title;
+    }
+
     public function reachedVisits(int $visitsAmount): bool
     {
         return count($this->visits) >= $visitsAmount;

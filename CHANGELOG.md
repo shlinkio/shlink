@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
   Previously, this was exposed only for orphan visits, since this can be an arbitrary value for those.
 
+* [#2077](https://github.com/shlinkio/shlink/issues/2077) When sending visits to Matomo, the short URL title is now used as document title in matomo.
+
 ### Changed
 * [#2034](https://github.com/shlinkio/shlink/issues/2034) Modernize entities, using constructor property promotion and readonly wherever possible.
 * [#2036](https://github.com/shlinkio/shlink/issues/2036) Deep performance improvement in some endpoints which involve counting visits:

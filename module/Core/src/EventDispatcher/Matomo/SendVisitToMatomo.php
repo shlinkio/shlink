@@ -13,14 +13,14 @@ use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Throwable;
 
-class SendVisitToMatomo
+readonly class SendVisitToMatomo
 {
     public function __construct(
-        private readonly EntityManagerInterface $em,
-        private readonly LoggerInterface $logger,
-        private readonly ShortUrlStringifier $shortUrlStringifier,
-        private readonly MatomoOptions $matomoOptions,
-        private readonly MatomoTrackerBuilderInterface $trackerBuilder,
+        private EntityManagerInterface $em,
+        private LoggerInterface $logger,
+        private ShortUrlStringifier $shortUrlStringifier,
+        private MatomoOptions $matomoOptions,
+        private MatomoTrackerBuilderInterface $trackerBuilder,
     ) {
     }
 
@@ -69,8 +69,8 @@ class SendVisitToMatomo
                 $tracker->setCustomTrackingParameter('orphan', 'true');
             }
 
-            // Send empty document title to avoid different actions to be created by matomo
-            $tracker->doTrackPageView('');
+            // Send the short URL title or an empty document title to avoid different actions to be created by matomo
+            $tracker->doTrackPageView($visit->shortUrl?->title() ?? '');
         } catch (Throwable $e) {
             // Capture all exceptions to make sure this does not interfere with the regular execution
             $this->logger->error('An error occurred while trying to send visit to Matomo. {e}', ['e' => $e]);
