@@ -14,6 +14,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
+use Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitType;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
@@ -21,6 +22,7 @@ use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
+use Shlinkio\Shlink\Core\Visit\Repository\ShortUrlVisitsCountRepository;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepository;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
@@ -36,11 +38,15 @@ use const STR_PAD_LEFT;
 class VisitRepositoryTest extends DatabaseTestCase
 {
     private VisitRepository $repo;
+    private ShortUrlVisitsCountRepository $countRepo;
     private PersistenceShortUrlRelationResolver $relationResolver;
 
     protected function setUp(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(Visit::class);
+        // Testing the ShortUrlVisitsCountRepository in this very same test, helps checking the fact that results should
+        // match what VisitRepository returns
+        $this->countRepo = $this->getEntityManager()->getRepository(ShortUrlVisitsCount::class);
         $this->relationResolver = new PersistenceShortUrlRelationResolver($this->getEntityManager());
     }
 
@@ -308,9 +314,15 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->flush();
 
         self::assertEquals(4 + 5 + 7, $this->repo->countNonOrphanVisits(new VisitsCountFiltering()));
+        self::assertEquals(4 + 5 + 7, $this->countRepo->countNonOrphanVisits(new VisitsCountFiltering()));
         self::assertEquals(4, $this->repo->countNonOrphanVisits(new VisitsCountFiltering(apiKey: $apiKey1)));
+        self::assertEquals(4, $this->countRepo->countNonOrphanVisits(new VisitsCountFiltering(apiKey: $apiKey1)));
         self::assertEquals(5 + 7, $this->repo->countNonOrphanVisits(new VisitsCountFiltering(apiKey: $apiKey2)));
+        self::assertEquals(5 + 7, $this->countRepo->countNonOrphanVisits(new VisitsCountFiltering(apiKey: $apiKey2)));
         self::assertEquals(4 + 7, $this->repo->countNonOrphanVisits(new VisitsCountFiltering(apiKey: $domainApiKey)));
+        self::assertEquals(4 + 7, $this->countRepo->countNonOrphanVisits(new VisitsCountFiltering(
+            apiKey: $domainApiKey,
+        )));
         self::assertEquals(0, $this->repo->countOrphanVisits(new OrphanVisitsCountFiltering(
             apiKey: $noOrphanVisitsApiKey,
         )));
@@ -323,7 +335,12 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertEquals(1, $this->repo->countNonOrphanVisits(new VisitsCountFiltering(DateRange::since(
             Chronos::parse('2016-01-07')->startOfDay(),
         ), false, $apiKey2)));
-        self::assertEquals(3 + 5, $this->repo->countNonOrphanVisits(new VisitsCountFiltering(null, true, $apiKey2)));
+        self::assertEquals(3 + 5, $this->repo->countNonOrphanVisits(
+            new VisitsCountFiltering(excludeBots: true, apiKey: $apiKey2),
+        ));
+        self::assertEquals(3 + 5, $this->countRepo->countNonOrphanVisits(
+            new VisitsCountFiltering(excludeBots: true, apiKey: $apiKey2),
+        ));
         self::assertEquals(4, $this->repo->countOrphanVisits(new OrphanVisitsCountFiltering()));
         self::assertEquals(3, $this->repo->countOrphanVisits(new OrphanVisitsCountFiltering(excludeBots: true)));
     }
