@@ -77,6 +77,7 @@ return [
                 Visit\Entity\Visit::class,
             ],
             Visit\Listener\ShortUrlVisitsCountTracker::class => InvokableFactory::class,
+            Visit\Listener\OrphanVisitsCountTracker::class => InvokableFactory::class,
 
             Util\DoctrineBatchHelper::class => ConfigAbstractFactory::class,
             Util\RedirectResponseHelper::class => ConfigAbstractFactory::class,

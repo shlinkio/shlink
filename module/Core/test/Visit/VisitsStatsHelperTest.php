@@ -22,6 +22,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Repository\TagRepository;
+use Shlinkio\Shlink\Core\Visit\Entity\OrphanVisitsCount;
 use Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams;
@@ -32,6 +33,7 @@ use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
+use Shlinkio\Shlink\Core\Visit\Repository\OrphanVisitsCountRepository;
 use Shlinkio\Shlink\Core\Visit\Repository\ShortUrlVisitsCountRepository;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelper;
@@ -68,13 +70,13 @@ class VisitsStatsHelperTest extends TestCase
             },
         );
 
-        $visitsRepo = $this->createMock(VisitRepository::class);
-        $visitsRepo->expects($this->exactly(2))->method('countOrphanVisits')->with(
+        $orphanVisitsCountRepo = $this->createMock(OrphanVisitsCountRepository::class);
+        $orphanVisitsCountRepo->expects($this->exactly(2))->method('countOrphanVisits')->with(
             $this->isInstanceOf(VisitsCountFiltering::class),
         )->willReturn($expectedCount);
 
         $this->em->expects($this->exactly(2))->method('getRepository')->willReturnMap([
-            [Visit::class, $visitsRepo],
+            [OrphanVisitsCount::class, $orphanVisitsCountRepo],
             [ShortUrlVisitsCount::class, $visitsCountRepo],
         ]);
 
