@@ -17,6 +17,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Repository\TagRepository;
+use Shlinkio\Shlink\Core\Visit\Entity\OrphanVisitsCount;
 use Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams;
@@ -29,8 +30,8 @@ use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\ShortUrlVisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\TagVisitsPaginatorAdapter;
 use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
+use Shlinkio\Shlink\Core\Visit\Repository\OrphanVisitsCountRepository;
 use Shlinkio\Shlink\Core\Visit\Repository\ShortUrlVisitsCountRepository;
-use Shlinkio\Shlink\Core\Visit\Repository\VisitRepository;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -42,18 +43,20 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
 
     public function getVisitsStats(?ApiKey $apiKey = null): VisitsStats
     {
-        /** @var VisitRepository $visitsRepo */
-        $visitsRepo = $this->em->getRepository(Visit::class);
+        /** @var OrphanVisitsCountRepository $orphanVisitsCountRepo */
+        $orphanVisitsCountRepo = $this->em->getRepository(OrphanVisitsCount::class);
         /** @var ShortUrlVisitsCountRepository $visitsCountRepo */
         $visitsCountRepo = $this->em->getRepository(ShortUrlVisitsCount::class);
 
         return new VisitsStats(
             nonOrphanVisitsTotal: $visitsCountRepo->countNonOrphanVisits(new VisitsCountFiltering(apiKey: $apiKey)),
-            orphanVisitsTotal: $visitsRepo->countOrphanVisits(new OrphanVisitsCountFiltering(apiKey: $apiKey)),
+            orphanVisitsTotal: $orphanVisitsCountRepo->countOrphanVisits(
+                new OrphanVisitsCountFiltering(apiKey: $apiKey),
+            ),
             nonOrphanVisitsNonBots: $visitsCountRepo->countNonOrphanVisits(
                 new VisitsCountFiltering(excludeBots: true, apiKey: $apiKey),
             ),
-            orphanVisitsNonBots: $visitsRepo->countOrphanVisits(
+            orphanVisitsNonBots: $orphanVisitsCountRepo->countOrphanVisits(
                 new OrphanVisitsCountFiltering(excludeBots: true, apiKey: $apiKey),
             ),
         );

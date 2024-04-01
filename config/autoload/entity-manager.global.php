@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Doctrine\ORM\Events;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Shlinkio\Shlink\Core\Config\EnvVars;
+use Shlinkio\Shlink\Core\Visit\Listener\OrphanVisitsCountTracker;
 use Shlinkio\Shlink\Core\Visit\Listener\ShortUrlVisitsCountTracker;
 
 use function Shlinkio\Shlink\Core\ArrayUtils\contains;
@@ -63,8 +64,8 @@ return (static function (): array {
                 'load_mappings_using_functional_style' => true,
                 'default_repository_classname' => EntitySpecificationRepository::class,
                 'listeners' => [
-                    Events::onFlush => [ShortUrlVisitsCountTracker::class],
-                    Events::postFlush => [ShortUrlVisitsCountTracker::class],
+                    Events::onFlush => [ShortUrlVisitsCountTracker::class, OrphanVisitsCountTracker::class],
+                    Events::postFlush => [ShortUrlVisitsCountTracker::class, OrphanVisitsCountTracker::class],
                 ],
             ],
             'connection' => $resolveConnection(),
