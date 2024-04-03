@@ -23,7 +23,7 @@ jobs:
         run: sudo ./data/infra/ci/install-ms-odbc.sh
       - name: Start database server
         if: ${{ inputs.platform != 'sqlite:ci' }}
-        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_${{ inputs.platform }}
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_${{ inputs.platform }}
       - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
@@ -31,7 +31,7 @@ jobs:
           extensions-cache-key: db-tests-extensions-${{ matrix.php-version }}-${{ inputs.platform }}
       - name: Create test database
         if: ${{ inputs.platform == 'ms' }}
-        run: docker-compose exec -T shlink_db_ms /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'Passw0rd!' -Q "CREATE DATABASE shlink_test;"
+        run: docker compose exec -T shlink_db_ms /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'Passw0rd!' -Q "CREATE DATABASE shlink_test;"
       - name: Run tests
         run: composer test:db:${{ inputs.platform }}
       - name: Upload code coverage

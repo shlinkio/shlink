@@ -16,7 +16,6 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount;
-use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 
 use function Shlinkio\Shlink\Core\ArrayUtils\map;
 use function sprintf;
@@ -147,7 +146,10 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
                 $qb->expr()->isNull('s.maxVisits'),
                 $qb->expr()->gt(
                     's.maxVisits',
-                    sprintf('(SELECT COUNT(innerV.id) FROM %s as innerV WHERE innerV.shortUrl=s)', Visit::class),
+                    sprintf(
+                        '(SELECT COALESCE(SUM(vc.count), 0) FROM %s as vc WHERE vc.shortUrl=s)',
+                        ShortUrlVisitsCount::class,
+                    ),
                 ),
             ));
         }

@@ -57,6 +57,10 @@ return [
                 EntityRepositoryFactory::class,
                 ShortUrl\Entity\ShortUrl::class,
             ],
+            ShortUrl\Repository\ExpiredShortUrlsRepository::class => [
+                EntityRepositoryFactory::class,
+                ShortUrl\Entity\ShortUrl::class,
+            ],
 
             Tag\TagService::class => ConfigAbstractFactory::class,
 
@@ -147,6 +151,7 @@ return [
             'em',
             Options\DeleteShortUrlsOptions::class,
             ShortUrl\ShortUrlResolver::class,
+            ShortUrl\Repository\ExpiredShortUrlsRepository::class,
         ],
         ShortUrl\ShortUrlResolver::class => ['em', Options\UrlShortenerOptions::class],
         ShortUrl\ShortUrlVisitsDeleter::class => [
