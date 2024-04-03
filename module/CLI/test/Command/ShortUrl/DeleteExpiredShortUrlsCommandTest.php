@@ -42,16 +42,17 @@ class DeleteExpiredShortUrlsCommandTest extends TestCase
     }
 
     #[Test]
-    #[TestWith([[], true])]
-    #[TestWith([['--force' => true], false])]
-    #[TestWith([['-f' => true], false])]
-    public function deletionIsExecutedByDefault(array $input, bool $expectsWarning): void
+    #[TestWith([[], [], true])]
+    #[TestWith([['--force' => true], [], false])]
+    #[TestWith([['-f' => true], [], false])]
+    #[TestWith([[], ['interactive' => false], false])]
+    public function deletionIsExecutedByDefault(array $input, array $options, bool $expectsWarning): void
     {
         $this->service->expects($this->never())->method('countExpiredShortUrls');
         $this->service->expects($this->once())->method('deleteExpiredShortUrls')->willReturn(5);
 
         $this->commandTester->setInputs(['y']);
-        $this->commandTester->execute($input);
+        $this->commandTester->execute($input, $options);
         $output = $this->commandTester->getDisplay();
         $status = $this->commandTester->getStatusCode();
 
