@@ -147,7 +147,10 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
                 $qb->expr()->isNull('s.maxVisits'),
                 $qb->expr()->gt(
                     's.maxVisits',
-                    sprintf('(SELECT COUNT(innerV.id) FROM %s as innerV WHERE innerV.shortUrl=s)', Visit::class),
+                    sprintf(
+                        '(SELECT COALESCE(SUM(vc.count), 0) FROM %s as vc WHERE vc.shortUrl=s)',
+                        ShortUrlVisitsCount::class,
+                    ),
                 ),
             ));
         }
