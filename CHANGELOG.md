@@ -11,6 +11,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
   Previously, this was exposed only for orphan visits, since this can be an arbitrary value for those.
 
 * [#2077](https://github.com/shlinkio/shlink/issues/2077) When sending visits to Matomo, the short URL title is now used as document title in matomo.
+* [#2059](https://github.com/shlinkio/shlink/issues/2059) Add new `short-url:delete-expired` command that can be used to programmatically delete expired short URLs.
+
+  Expired short URLs are those that have a `calidUntil` date in the past, or optionally, that have reached the max amount of visits.
+
+  This command can be run periodically by those who create many disposable URLs which are valid only for a period of time, and then can be deleted to save space.
 
 ### Changed
 * [#2034](https://github.com/shlinkio/shlink/issues/2034) Modernize entities, using constructor property promotion and readonly wherever possible.
