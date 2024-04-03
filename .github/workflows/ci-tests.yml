@@ -20,10 +20,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Start postgres database server
         if: ${{ inputs.test-group == 'api' }}
-        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_postgres
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_postgres
       - name: Start maria database server
         if: ${{ inputs.test-group == 'cli' }}
-        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_maria
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_maria
       - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
