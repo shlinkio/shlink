@@ -10,14 +10,6 @@ final readonly class ExpiredShortUrlsConditions
     {
     }
 
-    public static function fromQuery(array $query): self
-    {
-        return new self(
-            pastValidUntil: (bool) ($query['pastValidUntil'] ?? true),
-            maxVisitsReached: (bool) ($query['maxVisitsReached'] ?? true),
-        );
-    }
-
     public function hasConditions(): bool
     {
         return $this->pastValidUntil || $this->maxVisitsReached;

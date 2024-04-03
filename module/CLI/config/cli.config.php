@@ -14,6 +14,8 @@ return [
             Command\ShortUrl\GetShortUrlVisitsCommand::NAME => Command\ShortUrl\GetShortUrlVisitsCommand::class,
             Command\ShortUrl\DeleteShortUrlCommand::NAME => Command\ShortUrl\DeleteShortUrlCommand::class,
             Command\ShortUrl\DeleteShortUrlVisitsCommand::NAME => Command\ShortUrl\DeleteShortUrlVisitsCommand::class,
+            Command\ShortUrl\DeleteExpiredShortUrlsCommand::NAME =>
+                Command\ShortUrl\DeleteExpiredShortUrlsCommand::class,
 
             Command\Visit\LocateVisitsCommand::NAME => Command\Visit\LocateVisitsCommand::class,
             Command\Visit\DownloadGeoLiteDbCommand::NAME => Command\Visit\DownloadGeoLiteDbCommand::class,

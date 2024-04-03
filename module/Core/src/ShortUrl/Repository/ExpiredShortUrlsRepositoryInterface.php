@@ -11,10 +11,10 @@ interface ExpiredShortUrlsRepositoryInterface
     /**
      * Delete expired short URLs matching provided conditions
      */
-    public function delete(ExpiredShortUrlsConditions $conditions = new ExpiredShortUrlsConditions()): int;
+    public function delete(ExpiredShortUrlsConditions $conditions): int;
 
     /**
      * Count how many expired short URLs would be deleted for provided conditions
      */
-    public function dryCount(ExpiredShortUrlsConditions $conditions = new ExpiredShortUrlsConditions()): int;
+    public function dryCount(ExpiredShortUrlsConditions $conditions): int;
 }

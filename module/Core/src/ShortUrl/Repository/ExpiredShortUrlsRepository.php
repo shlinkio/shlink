@@ -18,7 +18,7 @@ class ExpiredShortUrlsRepository extends EntitySpecificationRepository implement
     /**
      * @inheritDoc
      */
-    public function delete(ExpiredShortUrlsConditions $conditions = new ExpiredShortUrlsConditions()): int
+    public function delete(ExpiredShortUrlsConditions $conditions): int
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->delete(ShortUrl::class, 's');
@@ -29,7 +29,7 @@ class ExpiredShortUrlsRepository extends EntitySpecificationRepository implement
     /**
      * @inheritDoc
      */
-    public function dryCount(ExpiredShortUrlsConditions $conditions = new ExpiredShortUrlsConditions()): int
+    public function dryCount(ExpiredShortUrlsConditions $conditions): int
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('COUNT(s.id)')

@@ -151,6 +151,7 @@ return [
             'em',
             Options\DeleteShortUrlsOptions::class,
             ShortUrl\ShortUrlResolver::class,
+            ShortUrl\Repository\ExpiredShortUrlsRepository::class,
         ],
         ShortUrl\ShortUrlResolver::class => ['em', Options\UrlShortenerOptions::class],
         ShortUrl\ShortUrlVisitsDeleter::class => [

@@ -16,7 +16,6 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount;
-use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 
 use function Shlinkio\Shlink\Core\ArrayUtils\map;
 use function sprintf;
