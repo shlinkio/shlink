@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink;
 
+use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Monolog\Level;
 use Monolog\Logger;
@@ -13,6 +14,8 @@ use Shlinkio\Shlink\Common\Logger\LoggerFactory;
 use Shlinkio\Shlink\Common\Logger\LoggerType;
 use Shlinkio\Shlink\Common\Middleware\AccessLogMiddleware;
 use Shlinkio\Shlink\Common\Middleware\RequestIdMiddleware;
+use Shlinkio\Shlink\Core\EventDispatcher\Helper\RequestIdProvider;
+use Shlinkio\Shlink\EventDispatcher\Util\RequestIdProviderInterface;
 
 use function Shlinkio\Shlink\Config\runningInRoadRunner;
 
@@ -44,13 +47,19 @@ return (static function (): array {
                 'Logger_Shlink' => [LoggerFactory::class, 'Shlink'],
                 'Logger_Access' => [LoggerFactory::class, 'Access'],
                 NullLogger::class => InvokableFactory::class,
+                RequestIdProvider::class => ConfigAbstractFactory::class,
             ],
             'aliases' => [
                 'logger' => 'Logger_Shlink',
                 Logger::class => 'Logger_Shlink',
                 LoggerInterface::class => 'Logger_Shlink',
                 AccessLogMiddleware::LOGGER_SERVICE_NAME => 'Logger_Access',
+                RequestIdProviderInterface::class => RequestIdProvider::class,
             ],
+        ],
+
+        ConfigAbstractFactory::class => [
+            RequestIdProvider::class => [RequestIdMiddleware::class],
         ],
 
     ];

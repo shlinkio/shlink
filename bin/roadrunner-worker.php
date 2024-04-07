@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Mezzio\Application;
 use Psr\Container\ContainerInterface;
+use Shlinkio\Shlink\Common\Middleware\RequestIdMiddleware;
 use Shlinkio\Shlink\EventDispatcher\RoadRunner\RoadRunnerTaskConsumerToListener;
 use Spiral\RoadRunner\Http\PSR7Worker;
 
@@ -27,6 +28,9 @@ use function Shlinkio\Shlink\Config\env;
             }
         }
     } else {
-        $container->get(RoadRunnerTaskConsumerToListener::class)->listenForTasks();
+        $requestIdMiddleware = $container->get(RequestIdMiddleware::class);
+        $container->get(RoadRunnerTaskConsumerToListener::class)->listenForTasks(
+            fn (string $requestId) => $requestIdMiddleware->setCurrentRequestId($requestId),
+        );
     }
 })();

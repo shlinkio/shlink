@@ -27,6 +27,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
   This has been achieved by introducing a new table which tracks slotted visits counts. We can then `SUM` all counts for certain short URL, avoiding `COUNT(visits)` aggregates which are much less performant when there are a lot of visits.
 
+* [#2049](https://github.com/shlinkio/shlink/issues/2049) Request ID is now propagated to the background tasks/jobs scheduled during a request.
+
+  This allows for a better traceability, as the logs generated during those jobs will have a matching UUID as the logs generated during the request the triggered the job.
+
 ### Deprecated
 * *Nothing*
 
