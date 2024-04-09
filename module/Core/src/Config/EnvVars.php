@@ -71,6 +71,7 @@ enum EnvVars: string
     case REDIRECT_APPEND_EXTRA_PATH = 'REDIRECT_APPEND_EXTRA_PATH';
     case TIMEZONE = 'TIMEZONE';
     case MULTI_SEGMENT_SLUGS_ENABLED = 'MULTI_SEGMENT_SLUGS_ENABLED';
+    case MEMORY_LIMIT = 'MEMORY_LIMIT';
 
     public function loadFromEnv(mixed $default = null): mixed
     {
