@@ -12,6 +12,7 @@ return [
     'installer' => [
         'enabled_options' => [
             Option\Server\RuntimeConfigOption::class,
+            Option\Server\MemoryLimitConfigOption::class,
             Option\Database\DatabaseDriverConfigOption::class,
             Option\Database\DatabaseNameConfigOption::class,
             Option\Database\DatabaseHostConfigOption::class,
