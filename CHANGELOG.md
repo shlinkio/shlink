@@ -31,6 +31,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
   This allows for a better traceability, as the logs generated during those jobs will have a matching UUID as the logs generated during the request the triggered the job.
 
+* [#2087](https://github.com/shlinkio/shlink/issues/2087) Allow `memory_limit` to be configured via the new `MEMORY_LIMIT` env var.
+
 ### Deprecated
 * *Nothing*
 

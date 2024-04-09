@@ -12,6 +12,8 @@ chdir(dirname(__DIR__));
 
 require 'vendor/autoload.php';
 
+// Set a default memory limit, but allow custom values
+ini_set('memory_limit', EnvVars::MEMORY_LIMIT->loadFromEnv('512M'));
 // This is one of the first files loaded. Configure the timezone here
 date_default_timezone_set(EnvVars::TIMEZONE->loadFromEnv(date_default_timezone_get()));
 
