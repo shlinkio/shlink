@@ -10,6 +10,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Common\Doctrine\EntityRepositoryFactory;
 use Shlinkio\Shlink\Config\Factory\ValinorConfigFactory;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Symfony\Component\Lock;
@@ -101,6 +102,7 @@ return [
 
             Matomo\MatomoOptions::class => [ValinorConfigFactory::class, 'config.matomo'],
             Matomo\MatomoTrackerBuilder::class => ConfigAbstractFactory::class,
+            Matomo\MatomoVisitSender::class => ConfigAbstractFactory::class,
         ],
 
         'aliases' => [
@@ -110,6 +112,7 @@ return [
 
     ConfigAbstractFactory::class => [
         Matomo\MatomoTrackerBuilder::class => [Matomo\MatomoOptions::class],
+        Matomo\MatomoVisitSender::class => [Matomo\MatomoTrackerBuilder::class, ShortUrlStringifier::class],
 
         ErrorHandler\NotFoundTypeResolverMiddleware::class => ['config.router.base_path'],
         ErrorHandler\NotFoundTrackerMiddleware::class => [Visit\RequestTracker::class],

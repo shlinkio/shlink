@@ -12,7 +12,6 @@ use Shlinkio\Shlink\Common\Mercure\MercureHubPublishingHelper;
 use Shlinkio\Shlink\Common\Mercure\MercureOptions;
 use Shlinkio\Shlink\Common\RabbitMq\RabbitMqPublishingHelper;
 use Shlinkio\Shlink\Core\Matomo\MatomoOptions;
-use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitLocator;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitToLocationHelper;
 use Shlinkio\Shlink\EventDispatcher\Listener\EnabledListenerCheckerInterface;
@@ -157,9 +156,8 @@ return (static function (): array {
             EventDispatcher\Matomo\SendVisitToMatomo::class => [
                 'em',
                 'Logger_Shlink',
-                ShortUrlStringifier::class,
                 Matomo\MatomoOptions::class,
-                Matomo\MatomoTrackerBuilder::class,
+                Matomo\MatomoVisitSender::class,
             ],
 
             EventDispatcher\UpdateGeoLiteDb::class => [

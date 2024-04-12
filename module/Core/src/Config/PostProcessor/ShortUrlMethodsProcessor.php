@@ -40,7 +40,7 @@ class ShortUrlMethodsProcessor
         $redirectStatus = RedirectStatus::tryFrom(
             $config['redirects']['redirect_status_code'] ?? 0,
         ) ?? DEFAULT_REDIRECT_STATUS_CODE;
-        $redirectRoute['allowed_methods'] = $redirectStatus->isLegacyStatus()
+        $redirectRoute['allowed_methods'] = $redirectStatus->isGetOnlyStatus()
             ? [RequestMethodInterface::METHOD_GET]
             : Route::HTTP_METHOD_ANY;
 
