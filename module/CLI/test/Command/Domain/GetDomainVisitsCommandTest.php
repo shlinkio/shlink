@@ -60,7 +60,7 @@ class GetDomainVisitsCommandTest extends TestCase
             +---------+---------------------------+------------+---------+--------+---------------+
             | Referer | Date                      | User agent | Country | City   | Short Url     |
             +---------+---------------------------+------------+---------+--------+---------------+
-            | foo     | {$visit->getDate()->toAtomString()} | bar        | Spain   | Madrid | the_short_url |
+            | foo     | {$visit->date->toAtomString()} | bar        | Spain   | Madrid | the_short_url |
             +---------+---------------------------+------------+---------+--------+---------------+
 
             OUTPUT,

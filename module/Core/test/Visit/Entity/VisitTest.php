@@ -26,7 +26,7 @@ class VisitTest extends TestCase
 
         self::assertEquals([
             'referer' => 'some site',
-            'date' => $visit->getDate()->toAtomString(),
+            'date' => $visit->date->toAtomString(),
             'userAgent' => $userAgent,
             'visitLocation' => null,
             'potentialBot' => $expectedToBePotentialBot,
@@ -58,7 +58,7 @@ class VisitTest extends TestCase
             $visit = Visit::forBasePath(Visitor::emptyInstance()),
             [
                 'referer' => '',
-                'date' => $visit->getDate()->toAtomString(),
+                'date' => $visit->date->toAtomString(),
                 'userAgent' => '',
                 'visitLocation' => null,
                 'potentialBot' => false,
@@ -74,7 +74,7 @@ class VisitTest extends TestCase
             )),
             [
                 'referer' => 'bar',
-                'date' => $visit->getDate()->toAtomString(),
+                'date' => $visit->date->toAtomString(),
                 'userAgent' => 'foo',
                 'visitLocation' => null,
                 'potentialBot' => false,
@@ -92,7 +92,7 @@ class VisitTest extends TestCase
             )->locate($location = VisitLocation::fromGeolocation(Location::emptyInstance())),
             [
                 'referer' => 'referer',
-                'date' => $visit->getDate()->toAtomString(),
+                'date' => $visit->date->toAtomString(),
                 'userAgent' => 'user-agent',
                 'visitLocation' => $location,
                 'potentialBot' => false,

@@ -209,7 +209,7 @@ class ShortUrl extends AbstractEntity
                                       ->setMaxResults(1);
         $visit = $this->visits->matching($criteria)->last();
 
-        return $visit instanceof Visit ? $visit->getDate() : null;
+        return $visit instanceof Visit ? $visit->date : null;
     }
 
     /**

@@ -55,7 +55,7 @@ abstract class AbstractVisitsListCommand extends Command
 
             $rowData = [
                 'referer' => $visit->referer,
-                'date' => $visit->getDate()->toAtomString(),
+                'date' => $visit->date->toAtomString(),
                 'userAgent' => $visit->userAgent,
                 'potentialBot' => $visit->potentialBot,
                 'country' => $visit->getVisitLocation()?->countryName ?? 'Unknown',
