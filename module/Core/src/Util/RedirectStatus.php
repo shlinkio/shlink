@@ -2,6 +2,9 @@
 
 namespace Shlinkio\Shlink\Core\Util;
 
+use Fig\Http\Message\RequestMethodInterface;
+use Mezzio\Router\Route;
+
 use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 
 enum RedirectStatus: int
@@ -16,8 +19,13 @@ enum RedirectStatus: int
         return contains($this, [self::STATUS_301, self::STATUS_308]);
     }
 
-    public function isGetOnlyStatus(): bool
+    /**
+     * @return array<RequestMethodInterface::METHOD_*>|Route::HTTP_METHOD_ANY
+     */
+    public function allowedHttpMethods(): array|null
     {
-        return contains($this, [self::STATUS_301, self::STATUS_302]);
+        return contains($this, [self::STATUS_301, self::STATUS_302])
+            ? [RequestMethodInterface::METHOD_GET]
+            : Route::HTTP_METHOD_ANY;
     }
 }
