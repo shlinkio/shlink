@@ -73,7 +73,7 @@ return [
             Visit\Geolocation\VisitLocator::class => ConfigAbstractFactory::class,
             Visit\Geolocation\VisitToLocationHelper::class => ConfigAbstractFactory::class,
             Visit\VisitsStatsHelper::class => ConfigAbstractFactory::class,
-            Visit\Repository\VisitLocationRepository::class => [
+            Visit\Repository\VisitIterationRepository::class => [
                 EntityRepositoryFactory::class,
                 Visit\Entity\Visit::class,
             ],
@@ -146,7 +146,7 @@ return [
             ShortUrl\Repository\ShortUrlListRepository::class,
             Options\UrlShortenerOptions::class,
         ],
-        Visit\Geolocation\VisitLocator::class => ['em', Visit\Repository\VisitLocationRepository::class],
+        Visit\Geolocation\VisitLocator::class => ['em', Visit\Repository\VisitIterationRepository::class],
         Visit\Geolocation\VisitToLocationHelper::class => [IpLocationResolverInterface::class],
         Visit\VisitsStatsHelper::class => ['em'],
         Tag\TagService::class => ['em'],

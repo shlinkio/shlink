@@ -6,9 +6,14 @@ namespace Shlinkio\Shlink\Core\Visit\Repository;
 
 use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
+use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
+use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 
-class VisitLocationRepository extends EntitySpecificationRepository implements VisitLocationRepositoryInterface
+/**
+ * Allows iterating large amounts of visits in a memory-efficient way, to use in batch processes
+ */
+class VisitIterationRepository extends EntitySpecificationRepository implements VisitIterationRepositoryInterface
 {
     /**
      * @return iterable<Visit>
@@ -42,9 +47,18 @@ class VisitLocationRepository extends EntitySpecificationRepository implements V
     /**
      * @return iterable<Visit>
      */
-    public function findAllVisits(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable
+    public function findAllVisits(?DateRange $dateRange = null, int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable
     {
         $qb = $this->createQueryBuilder('v');
+        if ($dateRange?->startDate !== null) {
+            $qb->andWhere($qb->expr()->gte('v.date', ':since'));
+            $qb->setParameter('since', $dateRange->startDate, ChronosDateTimeType::CHRONOS_DATETIME);
+        }
+        if ($dateRange?->endDate !== null) {
+            $qb->andWhere($qb->expr()->lte('v.date', ':until'));
+            $qb->setParameter('until', $dateRange->endDate, ChronosDateTimeType::CHRONOS_DATETIME);
+        }
+
         return $this->visitsIterableForQuery($qb, $blockSize);
     }
 
