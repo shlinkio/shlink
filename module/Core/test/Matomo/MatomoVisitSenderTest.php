@@ -42,6 +42,9 @@ class MatomoVisitSenderTest extends TestCase
         $tracker->expects($this->once())->method('setUserAgent')->willReturn($tracker);
         $tracker->expects($this->once())->method('setUrlReferrer')->willReturn($tracker);
         $tracker->expects($this->once())->method('doTrackPageView')->with($visit->shortUrl?->title() ?? '');
+        $tracker->expects($this->once())->method('setForceVisitDateTime')->with(
+            $visit->date->setTimezone('UTC')->toDateTimeString(),
+        );
 
         if ($visit->isOrphan()) {
             $tracker->expects($this->exactly(2))->method('setCustomTrackingParameter')->willReturnMap([
@@ -93,6 +96,9 @@ class MatomoVisitSenderTest extends TestCase
         $tracker->expects($this->once())->method('setUrlReferrer')->willReturn($tracker);
         $tracker->expects($this->any())->method('setCustomTrackingParameter')->willReturn($tracker);
         $tracker->expects($this->once())->method('doTrackPageView');
+        $tracker->expects($this->once())->method('setForceVisitDateTime')->with(
+            $visit->date->setTimezone('UTC')->toDateTimeString(),
+        );
 
         $this->trackerBuilder->expects($this->once())->method('buildMatomoTracker')->willReturn($tracker);
 
