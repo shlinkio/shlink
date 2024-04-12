@@ -40,6 +40,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
+* [#2095](https://github.com/shlinkio/shlink/issues/2095) Fix custom slugs not being properly imported from bitly
 * Fix error when importing short URLs and visits from a Shlink 4.x instance
 
 
