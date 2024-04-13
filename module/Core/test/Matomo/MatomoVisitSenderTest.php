@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Matomo;
 
 use Exception;
-use Laminas\Validator\Date;
 use MatomoTracker;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;

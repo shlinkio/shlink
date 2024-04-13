@@ -9,7 +9,6 @@ use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Matomo\MatomoOptions;
 use Shlinkio\Shlink\Core\Matomo\MatomoVisitSenderInterface;
 use Shlinkio\Shlink\Core\Matomo\VisitSendingProgressTrackerInterface;
-use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -18,13 +17,15 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
 
 use function Shlinkio\Shlink\Common\buildDateRange;
+use function Shlinkio\Shlink\Core\dateRangeToHumanFriendly;
 use function sprintf;
 
-class MatomoSendVisitsCommand extends Command
+class MatomoSendVisitsCommand extends Command implements VisitSendingProgressTrackerInterface
 {
     public const NAME = 'integration:matomo:send-visits';
 
     private readonly bool $matomoEnabled;
+    private SymfonyStyle $io;
 
     public function __construct(MatomoOptions $matomoOptions, private readonly MatomoVisitSenderInterface $visitSender)
     {
@@ -79,10 +80,10 @@ class MatomoSendVisitsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $this->io = new SymfonyStyle($input, $output);
 
         if (! $this->matomoEnabled) {
-            $io->warning('Matomo integration is not enabled in this Shlink instance');
+            $this->io->warning('Matomo integration is not enabled in this Shlink instance');
             return ExitCode::EXIT_WARNING;
         }
 
@@ -95,50 +96,45 @@ class MatomoSendVisitsCommand extends Command
         );
 
         if ($input->isInteractive()) {
-            // TODO Display the resolved date range in case it didn't fail to parse but the value was incorrect
-            $io->warning([
-                'You are about to send visits in this Shlink instance to Matomo',
+            $this->io->warning([
+                'You are about to send visits from this Shlink instance to Matomo',
+                'Resolved date range -> ' . dateRangeToHumanFriendly($dateRange),
                 'Shlink will not check for already sent visits, which could result in some duplications. Make sure '
                 . 'you have verified only visits in the right date range are going to be sent.',
             ]);
-            if (! $io->confirm('Continue?', default: false)) {
+            if (! $this->io->confirm('Continue?', default: false)) {
                 return ExitCode::EXIT_WARNING;
             }
         }
 
-        $result = $this->visitSender->sendVisitsInDateRange(
-            $dateRange,
-            new class ($io, $this->getApplication()) implements VisitSendingProgressTrackerInterface {
-                public function __construct(private readonly SymfonyStyle $io, private readonly ?Application $app)
-                {
-                }
-
-                public function success(int $index): void
-                {
-                    $this->io->write('.');
-                }
-
-                public function error(int $index, Throwable $e): void
-                {
-                    $this->io->write('<error>E</error>');
-                    if ($this->io->isVerbose()) {
-                        $this->app?->renderThrowable($e, $this->io);
-                    }
-                }
-            },
-        );
+        $result = $this->visitSender->sendVisitsInDateRange($dateRange, $this);
 
         match (true) {
-            $result->hasFailures() && $result->hasSuccesses() => $io->warning(
-                sprintf('%s visits sent to Matomo. %s failed', $result->successfulVisits, $result->failedVisits),
+            $result->hasFailures() && $result->hasSuccesses() => $this->io->warning(
+                sprintf('%s visits sent to Matomo. %s failed.', $result->successfulVisits, $result->failedVisits),
             ),
-            $result->hasFailures() => $io->error(
-                sprintf('%s visits failed to be sent to Matomo.', $result->failedVisits),
+            $result->hasFailures() => $this->io->error(
+                sprintf('Failed to send %s visits to Matomo.', $result->failedVisits),
             ),
-            $result->hasSuccesses() => $io->success(sprintf('%s visits sent to Matomo.', $result->successfulVisits)),
-            default => $io->info('There was no visits matching provided date range'),
+            $result->hasSuccesses() => $this->io->success(
+                sprintf('%s visits sent to Matomo.', $result->successfulVisits),
+            ),
+            default => $this->io->info('There was no visits matching provided date range.'),
         };
 
         return ExitCode::EXIT_SUCCESS;
+    }
+
+    public function success(int $index): void
+    {
+        $this->io->write('.');
+    }
+
+    public function error(int $index, Throwable $e): void
+    {
+        $this->io->write('<error>E</error>');
+        if ($this->io->isVerbose()) {
+            $this->getApplication()?->renderThrowable($e, $this->io);
+        }
     }
 }
