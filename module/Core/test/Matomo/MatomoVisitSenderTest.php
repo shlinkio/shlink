@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Matomo;
 
+use Exception;
+use Laminas\Validator\Date;
 use MatomoTracker;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Matomo\MatomoTrackerBuilderInterface;
 use Shlinkio\Shlink\Core\Matomo\MatomoVisitSender;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -126,5 +129,46 @@ class MatomoVisitSenderTest extends TestCase
             ), Visitor::emptyInstance()),
             'http://s2.test/bar',
         ];
+    }
+
+    #[Test]
+    public function multipleVisitsCanBeSent(): void
+    {
+        $dateRange = DateRange::allTime();
+        $visitor = Visitor::emptyInstance();
+        $bot = Visitor::botInstance();
+
+        $this->visitIterationRepository->expects($this->once())->method('findAllVisits')->with($dateRange)->willReturn([
+            Visit::forBasePath($bot),
+            Visit::forValidShortUrl(ShortUrl::createFake(), $visitor),
+            Visit::forInvalidShortUrl($visitor),
+        ]);
+
+        $tracker = $this->createMock(MatomoTracker::class);
+        $tracker->method('setUrl')->willReturn($tracker);
+        $tracker->method('setUserAgent')->willReturn($tracker);
+        $tracker->method('setUrlReferrer')->willReturn($tracker);
+        $tracker->method('setCustomTrackingParameter')->willReturn($tracker);
+
+        $callCount = 0;
+        $this->trackerBuilder->expects($this->exactly(3))->method('buildMatomoTracker')->willReturnCallback(
+            function () use (&$callCount, $tracker) {
+                $callCount++;
+
+                if ($callCount === 2) {
+                    throw new Exception('Error');
+                }
+
+                return $tracker;
+            },
+        );
+
+        $result = $this->visitSender->sendVisitsInDateRange($dateRange);
+
+        self::assertEquals(2, $result->successfulVisits);
+        self::assertEquals(1, $result->failedVisits);
+        self::assertCount(3, $result);
+        self::assertTrue($result->hasSuccesses());
+        self::assertTrue($result->hasFailures());
     }
 }
