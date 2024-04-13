@@ -51,12 +51,12 @@ class VisitIterationRepository extends EntitySpecificationRepository implements 
     {
         $qb = $this->createQueryBuilder('v');
         if ($dateRange?->startDate !== null) {
-            $qb->andWhere($qb->expr()->gte('v.date', ':since'));
-            $qb->setParameter('since', $dateRange->startDate, ChronosDateTimeType::CHRONOS_DATETIME);
+            $qb->andWhere($qb->expr()->gte('v.date', ':since'))
+               ->setParameter('since', $dateRange->startDate, ChronosDateTimeType::CHRONOS_DATETIME);
         }
         if ($dateRange?->endDate !== null) {
-            $qb->andWhere($qb->expr()->lte('v.date', ':until'));
-            $qb->setParameter('until', $dateRange->endDate, ChronosDateTimeType::CHRONOS_DATETIME);
+            $qb->andWhere($qb->expr()->lte('v.date', ':until'))
+               ->setParameter('until', $dateRange->endDate, ChronosDateTimeType::CHRONOS_DATETIME);
         }
 
         return $this->visitsIterableForQuery($qb, $blockSize);

@@ -55,17 +55,17 @@ class VisitIterationRepositoryTest extends DatabaseTestCase
         $unlocated = $this->repo->findUnlocatedVisits($blockSize);
         $all = $this->repo->findAllVisits(blockSize: $blockSize);
         $lastThreeDays = $this->repo->findAllVisits(
-            dateRange: DateRange::since(Chronos::now()->subDays(2)),
+            dateRange: DateRange::since(Chronos::now()->subDays(2)->startOfDay()),
             blockSize: $blockSize,
         );
         $firstTwoDays = $this->repo->findAllVisits(
-            dateRange: DateRange::until(Chronos::now()->subDays(4)),
+            dateRange: DateRange::until(Chronos::now()->subDays(4)->endOfDay()),
             blockSize: $blockSize,
         );
         $daysInBetween = $this->repo->findAllVisits(
             dateRange: DateRange::between(
-                startDate: Chronos::now()->subDays(5),
-                endDate: Chronos::now()->subDays(2),
+                startDate: Chronos::now()->subDays(5)->startOfDay(),
+                endDate: Chronos::now()->subDays(2)->endOfDay(),
             ),
             blockSize: $blockSize,
         );
