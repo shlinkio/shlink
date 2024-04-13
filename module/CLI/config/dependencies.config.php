@@ -8,6 +8,7 @@ use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Shlinkio\Shlink\Common\Doctrine\NoDbNameConnectionFactory;
 use Shlinkio\Shlink\Core\Domain\DomainService;
+use Shlinkio\Shlink\Core\Matomo;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectRuleService;
@@ -71,6 +72,8 @@ return [
             Command\Domain\GetDomainVisitsCommand::class => ConfigAbstractFactory::class,
 
             Command\RedirectRule\ManageRedirectRulesCommand::class => ConfigAbstractFactory::class,
+
+            Command\Integration\MatomoSendVisitsCommand::class => ConfigAbstractFactory::class,
         ],
     ],
 
@@ -127,6 +130,11 @@ return [
             ShortUrl\ShortUrlResolver::class,
             ShortUrlRedirectRuleService::class,
             RedirectRule\RedirectRuleHandler::class,
+        ],
+
+        Command\Integration\MatomoSendVisitsCommand::class => [
+            Matomo\MatomoOptions::class,
+            Matomo\MatomoVisitSender::class,
         ],
 
         Command\Db\CreateDatabaseCommand::class => [

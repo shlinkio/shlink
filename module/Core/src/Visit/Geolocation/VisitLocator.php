@@ -8,14 +8,14 @@ use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
-use Shlinkio\Shlink\Core\Visit\Repository\VisitLocationRepositoryInterface;
+use Shlinkio\Shlink\Core\Visit\Repository\VisitIterationRepositoryInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 class VisitLocator implements VisitLocatorInterface
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
-        private readonly VisitLocationRepositoryInterface $repo,
+        private readonly VisitIterationRepositoryInterface $repo,
     ) {
     }
 

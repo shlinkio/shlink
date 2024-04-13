@@ -61,6 +61,23 @@ function parseDateRangeFromQuery(array $query, string $startDateName, string $en
     return buildDateRange($startDate, $endDate);
 }
 
+function dateRangeToHumanFriendly(?DateRange $dateRange): string
+{
+    $startDate = $dateRange?->startDate;
+    $endDate = $dateRange?->endDate;
+
+    return match (true) {
+        $startDate !== null && $endDate !== null => sprintf(
+            'Between %s and %s',
+            $startDate->toDateTimeString(),
+            $endDate->toDateTimeString(),
+        ),
+        $startDate !== null => sprintf('Since %s', $startDate->toDateTimeString()),
+        $endDate !== null => sprintf('Until %s', $endDate->toDateTimeString()),
+        default => 'All time',
+    };
+}
+
 /**
  * @return ($date is null ? null : Chronos)
  */

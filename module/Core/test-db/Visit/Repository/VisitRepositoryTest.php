@@ -6,7 +6,6 @@ namespace ShlinkioDbTest\Shlink\Core\Visit\Repository;
 
 use Cake\Chronos\Chronos;
 use PHPUnit\Framework\Attributes\Test;
-use ReflectionObject;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -371,15 +370,15 @@ class VisitRepositoryTest extends DatabaseTestCase
         $botsCount = 3;
         for ($i = 0; $i < 6; $i++) {
             $this->getEntityManager()->persist($this->setDateOnVisit(
-                Visit::forBasePath($botsCount < 1 ? Visitor::emptyInstance() : Visitor::botInstance()),
+                fn () => Visit::forBasePath($botsCount < 1 ? Visitor::emptyInstance() : Visitor::botInstance()),
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
             $this->getEntityManager()->persist($this->setDateOnVisit(
-                Visit::forInvalidShortUrl(Visitor::emptyInstance()),
+                fn () => Visit::forInvalidShortUrl(Visitor::emptyInstance()),
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
             $this->getEntityManager()->persist($this->setDateOnVisit(
-                Visit::forRegularNotFound(Visitor::emptyInstance()),
+                fn () => Visit::forRegularNotFound(Visitor::emptyInstance()),
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
 
@@ -429,15 +428,15 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         for ($i = 0; $i < 6; $i++) {
             $this->getEntityManager()->persist($this->setDateOnVisit(
-                Visit::forBasePath(Visitor::emptyInstance()),
+                fn () => Visit::forBasePath(Visitor::emptyInstance()),
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
             $this->getEntityManager()->persist($this->setDateOnVisit(
-                Visit::forInvalidShortUrl(Visitor::emptyInstance()),
+                fn () => Visit::forInvalidShortUrl(Visitor::emptyInstance()),
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
             $this->getEntityManager()->persist($this->setDateOnVisit(
-                Visit::forRegularNotFound(Visitor::emptyInstance()),
+                fn () => Visit::forRegularNotFound(Visitor::emptyInstance()),
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
         }
@@ -566,7 +565,7 @@ class VisitRepositoryTest extends DatabaseTestCase
     {
         for ($i = 0; $i < $amount; $i++) {
             $visit = $this->setDateOnVisit(
-                Visit::forValidShortUrl(
+                fn () => Visit::forValidShortUrl(
                     $shortUrl,
                     $botsAmount < 1 ? Visitor::emptyInstance() : Visitor::botInstance(),
                 ),
@@ -578,12 +577,14 @@ class VisitRepositoryTest extends DatabaseTestCase
         }
     }
 
-    private function setDateOnVisit(Visit $visit, Chronos $date): Visit
+    /**
+     * @param callable(): Visit $createVisit
+     */
+    private function setDateOnVisit(callable $createVisit, Chronos $date): Visit
     {
-        $ref = new ReflectionObject($visit);
-        $dateProp = $ref->getProperty('date');
-        $dateProp->setAccessible(true);
-        $dateProp->setValue($visit, $date);
+        Chronos::setTestNow($date);
+        $visit = $createVisit();
+        Chronos::setTestNow();
 
         return $visit;
     }

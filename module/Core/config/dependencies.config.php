@@ -10,6 +10,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Common\Doctrine\EntityRepositoryFactory;
 use Shlinkio\Shlink\Config\Factory\ValinorConfigFactory;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Symfony\Component\Lock;
@@ -72,7 +73,7 @@ return [
             Visit\Geolocation\VisitLocator::class => ConfigAbstractFactory::class,
             Visit\Geolocation\VisitToLocationHelper::class => ConfigAbstractFactory::class,
             Visit\VisitsStatsHelper::class => ConfigAbstractFactory::class,
-            Visit\Repository\VisitLocationRepository::class => [
+            Visit\Repository\VisitIterationRepository::class => [
                 EntityRepositoryFactory::class,
                 Visit\Entity\Visit::class,
             ],
@@ -101,6 +102,7 @@ return [
 
             Matomo\MatomoOptions::class => [ValinorConfigFactory::class, 'config.matomo'],
             Matomo\MatomoTrackerBuilder::class => ConfigAbstractFactory::class,
+            Matomo\MatomoVisitSender::class => ConfigAbstractFactory::class,
         ],
 
         'aliases' => [
@@ -110,6 +112,11 @@ return [
 
     ConfigAbstractFactory::class => [
         Matomo\MatomoTrackerBuilder::class => [Matomo\MatomoOptions::class],
+        Matomo\MatomoVisitSender::class => [
+            Matomo\MatomoTrackerBuilder::class,
+            ShortUrlStringifier::class,
+            Visit\Repository\VisitIterationRepository::class,
+        ],
 
         ErrorHandler\NotFoundTypeResolverMiddleware::class => ['config.router.base_path'],
         ErrorHandler\NotFoundTrackerMiddleware::class => [Visit\RequestTracker::class],
@@ -143,7 +150,7 @@ return [
             ShortUrl\Repository\ShortUrlListRepository::class,
             Options\UrlShortenerOptions::class,
         ],
-        Visit\Geolocation\VisitLocator::class => ['em', Visit\Repository\VisitLocationRepository::class],
+        Visit\Geolocation\VisitLocator::class => ['em', Visit\Repository\VisitIterationRepository::class],
         Visit\Geolocation\VisitToLocationHelper::class => [IpLocationResolverInterface::class],
         Visit\VisitsStatsHelper::class => ['em'],
         Tag\TagService::class => ['em'],

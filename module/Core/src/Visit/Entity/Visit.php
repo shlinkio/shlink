@@ -29,8 +29,7 @@ class Visit extends AbstractEntity implements JsonSerializable
         public readonly ?string $remoteAddr = null,
         public readonly ?string $visitedUrl = null,
         private ?VisitLocation $visitLocation = null,
-        // TODO Make public readonly once VisitRepositoryTest does not try to set it
-        private Chronos $date = new Chronos(),
+        public readonly Chronos $date = new Chronos(),
     ) {
     }
 
@@ -145,14 +144,6 @@ class Visit extends AbstractEntity implements JsonSerializable
     public function getType(): VisitType
     {
         return $this->type;
-    }
-
-    /**
-     * @internal
-     */
-    public function getDate(): Chronos
-    {
-        return $this->date;
     }
 
     public function jsonSerialize(): array
