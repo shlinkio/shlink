@@ -18,19 +18,24 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
+use Shlinkio\Shlink\Core\Visit\Repository\VisitIterationRepositoryInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 class MatomoVisitSenderTest extends TestCase
 {
     private MockObject & MatomoTrackerBuilderInterface $trackerBuilder;
+    private MockObject & VisitIterationRepositoryInterface $visitIterationRepository;
     private MatomoVisitSender $visitSender;
 
     protected function setUp(): void
     {
         $this->trackerBuilder = $this->createMock(MatomoTrackerBuilderInterface::class);
+        $this->visitIterationRepository = $this->createMock(VisitIterationRepositoryInterface::class);
+
         $this->visitSender = new MatomoVisitSender(
             $this->trackerBuilder,
             new ShortUrlStringifier(['hostname' => 's2.test']),
+            $this->visitIterationRepository,
         );
     }
 
@@ -64,7 +69,7 @@ class MatomoVisitSenderTest extends TestCase
 
         $this->trackerBuilder->expects($this->once())->method('buildMatomoTracker')->willReturn($tracker);
 
-        $this->visitSender->sendVisitToMatomo($visit, $originalIpAddress);
+        $this->visitSender->sendVisit($visit, $originalIpAddress);
     }
 
     public static function provideTrackerMethods(): iterable
@@ -102,7 +107,7 @@ class MatomoVisitSenderTest extends TestCase
 
         $this->trackerBuilder->expects($this->once())->method('buildMatomoTracker')->willReturn($tracker);
 
-        $this->visitSender->sendVisitToMatomo($visit);
+        $this->visitSender->sendVisit($visit);
     }
 
     public static function provideUrlsToTrack(): iterable

@@ -35,7 +35,7 @@ class SendVisitToMatomoTest extends TestCase
     public function visitIsNotSentWhenMatomoIsDisabled(): void
     {
         $this->em->expects($this->never())->method('find');
-        $this->visitSender->expects($this->never())->method('sendVisitToMatomo');
+        $this->visitSender->expects($this->never())->method('sendVisit');
         $this->logger->expects($this->never())->method('error');
         $this->logger->expects($this->never())->method('warning');
 
@@ -46,7 +46,7 @@ class SendVisitToMatomoTest extends TestCase
     public function visitIsNotSentWhenItDoesNotExist(): void
     {
         $this->em->expects($this->once())->method('find')->willReturn(null);
-        $this->visitSender->expects($this->never())->method('sendVisitToMatomo');
+        $this->visitSender->expects($this->never())->method('sendVisit');
         $this->logger->expects($this->never())->method('error');
         $this->logger->expects($this->once())->method('warning')->with(
             'Tried to send visit with id "{visitId}" to matomo, but it does not exist.',
@@ -63,7 +63,7 @@ class SendVisitToMatomoTest extends TestCase
         $visit = Visit::forBasePath(Visitor::emptyInstance());
 
         $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn($visit);
-        $this->visitSender->expects($this->once())->method('sendVisitToMatomo')->with($visit, $originalIpAddress);
+        $this->visitSender->expects($this->once())->method('sendVisit')->with($visit, $originalIpAddress);
         $this->logger->expects($this->never())->method('error');
         $this->logger->expects($this->never())->method('warning');
 
@@ -85,7 +85,7 @@ class SendVisitToMatomoTest extends TestCase
         $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn(
             $this->createMock(Visit::class),
         );
-        $this->visitSender->expects($this->once())->method('sendVisitToMatomo')->willThrowException($e);
+        $this->visitSender->expects($this->once())->method('sendVisit')->willThrowException($e);
         $this->logger->expects($this->never())->method('warning');
         $this->logger->expects($this->once())->method('error')->with(
             'An error occurred while trying to send visit to Matomo. {e}',

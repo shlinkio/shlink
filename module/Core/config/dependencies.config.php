@@ -112,7 +112,11 @@ return [
 
     ConfigAbstractFactory::class => [
         Matomo\MatomoTrackerBuilder::class => [Matomo\MatomoOptions::class],
-        Matomo\MatomoVisitSender::class => [Matomo\MatomoTrackerBuilder::class, ShortUrlStringifier::class],
+        Matomo\MatomoVisitSender::class => [
+            Matomo\MatomoTrackerBuilder::class,
+            ShortUrlStringifier::class,
+            Visit\Repository\VisitIterationRepository::class,
+        ],
 
         ErrorHandler\NotFoundTypeResolverMiddleware::class => ['config.router.base_path'],
         ErrorHandler\NotFoundTrackerMiddleware::class => [Visit\RequestTracker::class],

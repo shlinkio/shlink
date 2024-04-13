@@ -40,7 +40,7 @@ readonly class SendVisitToMatomo
         }
 
         try {
-            $this->visitSender->sendVisitToMatomo($visit, $visitLocated->originalIpAddress);
+            $this->visitSender->sendVisit($visit, $visitLocated->originalIpAddress);
         } catch (Throwable $e) {
             // Capture all exceptions to make sure this does not interfere with the regular execution
             $this->logger->error('An error occurred while trying to send visit to Matomo. {e}', ['e' => $e]);

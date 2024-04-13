@@ -4,18 +4,48 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Matomo;
 
+use Shlinkio\Shlink\Common\Util\DateRange;
+use Shlinkio\Shlink\Core\Matomo\Model\SendVisitsResult;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
+use Shlinkio\Shlink\Core\Visit\Repository\VisitIterationRepositoryInterface;
+use Throwable;
 
 readonly class MatomoVisitSender implements MatomoVisitSenderInterface
 {
     public function __construct(
         private MatomoTrackerBuilderInterface $trackerBuilder,
         private ShortUrlStringifier $shortUrlStringifier,
+        private VisitIterationRepositoryInterface $visitIterationRepository,
     ) {
     }
 
-    public function sendVisitToMatomo(Visit $visit, ?string $originalIpAddress = null): void
+    /**
+     * Sends all visits in provided date range to matomo, and returns the amount of affected visits
+     */
+    public function sendVisitsInDateRange(
+        DateRange $dateRange,
+        VisitSendingProgressTrackerInterface|null $progressTracker = null,
+    ): SendVisitsResult {
+        $visitsIterator = $this->visitIterationRepository->findAllVisits($dateRange);
+        $successfulVisits = 0;
+        $failedVisits = 0;
+
+        foreach ($visitsIterator as $index => $visit) {
+            try {
+                $this->sendVisit($visit);
+                $progressTracker?->success($index);
+                $successfulVisits++;
+            } catch (Throwable $e) {
+                $progressTracker?->error($index, $e);
+                $failedVisits++;
+            }
+        }
+
+        return new SendVisitsResult($successfulVisits, $failedVisits);
+    }
+
+    public function sendVisit(Visit $visit, ?string $originalIpAddress = null): void
     {
         $tracker = $this->trackerBuilder->buildMatomoTracker();
 
