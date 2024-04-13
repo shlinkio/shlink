@@ -118,7 +118,7 @@
             "@parallel test:unit test:db",
             "@parallel test:api test:cli"
         ],
-        "test:unit": "@php vendor/bin/phpunit --order-by=random --colors=always --testdox",
+        "test:unit": "COLUMNS=120 vendor/bin/phpunit --order-by=random --colors=always --testdox",
         "test:unit:ci": "@test:unit --coverage-php=build/coverage-unit.cov",
         "test:unit:pretty": "@test:unit --coverage-html build/coverage-unit/coverage-html",
         "test:db": "@parallel test:db:sqlite:ci test:db:mysql test:db:maria test:db:postgres test:db:ms",
