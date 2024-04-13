@@ -17,6 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
   This command can be run periodically by those who create many disposable URLs which are valid only for a period of time, and then can be deleted to save space.
 
+* [#1925](https://github.com/shlinkio/shlink/issues/1925) Add new `integration:matomo:send-visits` console command that can be used to send existing visits to integrated Matomo instance.
+
 ### Changed
 * [#2034](https://github.com/shlinkio/shlink/issues/2034) Modernize entities, using constructor property promotion and readonly wherever possible.
 * [#2036](https://github.com/shlinkio/shlink/issues/2036) Deep performance improvement in some endpoints which involve counting visits:
