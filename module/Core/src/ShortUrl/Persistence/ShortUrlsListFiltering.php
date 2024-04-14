@@ -13,9 +13,9 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class ShortUrlsListFiltering extends ShortUrlsCountFiltering
 {
     public function __construct(
-        public readonly ?int $limit,
-        public readonly ?int $offset,
-        public readonly Ordering $orderBy,
+        public readonly ?int $limit = null,
+        public readonly ?int $offset = null,
+        public readonly Ordering $orderBy = new Ordering(),
         ?string $searchTerm = null,
         array $tags = [],
         ?TagsMode $tagsMode = null,

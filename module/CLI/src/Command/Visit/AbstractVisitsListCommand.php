@@ -54,9 +54,12 @@ abstract class AbstractVisitsListCommand extends Command
             $extraKeys = array_keys($extraFields);
 
             $rowData = [
-                ...$visit->jsonSerialize(),
-                'country' => $visit->getVisitLocation()?->getCountryName() ?? 'Unknown',
-                'city' => $visit->getVisitLocation()?->getCityName() ?? 'Unknown',
+                'referer' => $visit->referer,
+                'date' => $visit->date->toAtomString(),
+                'userAgent' => $visit->userAgent,
+                'potentialBot' => $visit->potentialBot,
+                'country' => $visit->getVisitLocation()?->countryName ?? 'Unknown',
+                'city' => $visit->getVisitLocation()?->cityName ?? 'Unknown',
                 ...$extraFields,
             ];
 

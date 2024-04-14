@@ -67,6 +67,11 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->fetchExtraLazy()
             ->build();
 
+    $builder->createOneToMany('visitsCounts', Visit\Entity\ShortUrlVisitsCount::class)
+            ->mappedBy('shortUrl')
+            ->fetchExtraLazy() // TODO Check if this makes sense
+            ->build();
+
     $builder->createManyToMany('tags', Tag\Entity\Tag::class)
             ->setJoinTable(determineTableName('short_urls_in_tags', $emConfig))
             ->addInverseJoinColumn('tag_id', 'id', onDelete: 'CASCADE')

@@ -11,62 +11,69 @@ use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\OrderableField;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithVisitsSummary;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
-use Shlinkio\Shlink\Core\Visit\Entity\Visit;
+use Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount;
 
-use function array_column;
+use function Shlinkio\Shlink\Core\ArrayUtils\map;
 use function sprintf;
 
 class ShortUrlListRepository extends EntitySpecificationRepository implements ShortUrlListRepositoryInterface
 {
     /**
-     * @return ShortUrl[]
+     * @return ShortUrlWithVisitsSummary[]
      */
     public function findList(ShortUrlsListFiltering $filtering): array
     {
+        $buildVisitsSubQuery = function (string $alias, bool $excludingBots): string {
+            $vqb = $this->getEntityManager()->createQueryBuilder();
+            $vqb->select('COALESCE(SUM(' . $alias . '.count), 0)')
+                ->from(ShortUrlVisitsCount::class, $alias)
+                ->where($vqb->expr()->eq($alias . '.shortUrl', 's'));
+
+            if ($excludingBots) {
+                $vqb->andWhere($vqb->expr()->eq($alias . '.potentialBot', ':potentialBot'));
+            }
+
+            return $vqb->getDQL();
+        };
+
         $qb = $this->createListQueryBuilder($filtering);
-        $qb->select('DISTINCT s')
+        $qb->select(
+            'DISTINCT s AS shortUrl',
+            '(' . $buildVisitsSubQuery('v', excludingBots: false) . ') AS ' . OrderableField::VISITS->value,
+            '(' . $buildVisitsSubQuery('v2', excludingBots: true) . ') AS ' . OrderableField::NON_BOT_VISITS->value,
+            // This is added only to have a consistent order by title between database engines
+            'COALESCE(s.title, \'\') AS title',
+        )
            ->setMaxResults($filtering->limit)
-           ->setFirstResult($filtering->offset);
+           ->setFirstResult($filtering->offset)
+           // This param is used in one of the sub-queries, but needs to set in the parent query
+           ->setParameter('potentialBot', false);
 
         $this->processOrderByForList($qb, $filtering);
 
+        /** @var array{shortUrl: ShortUrl, visits: string, nonBotVisits: string}[] $result */
         $result = $qb->getQuery()->getResult();
-        if (OrderableField::isVisitsField($filtering->orderBy->field ?? '')) {
-            return array_column($result, 0);
-        }
-
-        return $result;
+        return map($result, static fn (array $s) => ShortUrlWithVisitsSummary::fromArray($s));
     }
 
     private function processOrderByForList(QueryBuilder $qb, ShortUrlsListFiltering $filtering): void
     {
-        // With no explicit order by, fallback to dateCreated-DESC
         $fieldName = $filtering->orderBy->field;
-        if ($fieldName === null) {
-            $qb->orderBy('s.dateCreated', 'DESC');
-            return;
-        }
+        $direction = $filtering->orderBy->direction;
+        [$sort, $order] = match (true) {
+            // With no explicit order by, fallback to dateCreated-DESC
+            $fieldName === null => ['s.dateCreated', 'DESC'],
+            $fieldName === OrderableField::VISITS->value,
+            $fieldName === OrderableField::NON_BOT_VISITS->value,
+            $fieldName === OrderableField::TITLE->value => [$fieldName, $direction],
+            default => ['s.' . $fieldName, $direction],
+        };
 
-        $order = $filtering->orderBy->direction;
-
-        if (OrderableField::isBasicField($fieldName)) {
-            $qb->orderBy('s.' . $fieldName, $order);
-        } elseif (OrderableField::isVisitsField($fieldName)) {
-            $leftJoinConditions = [$qb->expr()->eq('v.shortUrl', 's')];
-            if ($fieldName === OrderableField::NON_BOT_VISITS->value) {
-                $leftJoinConditions[] = $qb->expr()->eq('v.potentialBot', 'false');
-            }
-
-            // FIXME This query is inefficient.
-            //       Diagnostic: It might need to use a sub-query, as done with the tags list query.
-            $qb->addSelect('COUNT(DISTINCT v)')
-               ->leftJoin('s.visits', 'v', Join::WITH, $qb->expr()->andX(...$leftJoinConditions))
-               ->groupBy('s')
-               ->orderBy('COUNT(DISTINCT v)', $order);
-        }
+        $qb->orderBy($sort, $order);
     }
 
     public function countList(ShortUrlsCountFiltering $filtering): int
@@ -81,7 +88,7 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ShortUrl::class, 's')
-            ->where('1=1');
+           ->where('1=1');
 
         $dateRange = $filtering->dateRange;
         if ($dateRange?->startDate !== null) {
@@ -139,7 +146,10 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
                 $qb->expr()->isNull('s.maxVisits'),
                 $qb->expr()->gt(
                     's.maxVisits',
-                    sprintf('(SELECT COUNT(innerV.id) FROM %s as innerV WHERE innerV.shortUrl=s)', Visit::class),
+                    sprintf(
+                        '(SELECT COALESCE(SUM(vc.count), 0) FROM %s as vc WHERE vc.shortUrl=s)',
+                        ShortUrlVisitsCount::class,
+                    ),
                 ),
             ));
         }

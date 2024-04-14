@@ -8,6 +8,7 @@ use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Shlinkio\Shlink\Common\Doctrine\NoDbNameConnectionFactory;
 use Shlinkio\Shlink\Core\Domain\DomainService;
+use Shlinkio\Shlink\Core\Matomo;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectRuleService;
@@ -45,6 +46,7 @@ return [
             Command\ShortUrl\GetShortUrlVisitsCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\DeleteShortUrlCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\DeleteShortUrlVisitsCommand::class => ConfigAbstractFactory::class,
+            Command\ShortUrl\DeleteExpiredShortUrlsCommand::class => ConfigAbstractFactory::class,
 
             Command\Visit\DownloadGeoLiteDbCommand::class => ConfigAbstractFactory::class,
             Command\Visit\LocateVisitsCommand::class => ConfigAbstractFactory::class,
@@ -70,6 +72,8 @@ return [
             Command\Domain\GetDomainVisitsCommand::class => ConfigAbstractFactory::class,
 
             Command\RedirectRule\ManageRedirectRulesCommand::class => ConfigAbstractFactory::class,
+
+            Command\Integration\MatomoSendVisitsCommand::class => ConfigAbstractFactory::class,
         ],
     ],
 
@@ -96,6 +100,7 @@ return [
         Command\ShortUrl\GetShortUrlVisitsCommand::class => [Visit\VisitsStatsHelper::class],
         Command\ShortUrl\DeleteShortUrlCommand::class => [ShortUrl\DeleteShortUrlService::class],
         Command\ShortUrl\DeleteShortUrlVisitsCommand::class => [ShortUrl\ShortUrlVisitsDeleter::class],
+        Command\ShortUrl\DeleteExpiredShortUrlsCommand::class => [ShortUrl\DeleteShortUrlService::class],
 
         Command\Visit\DownloadGeoLiteDbCommand::class => [GeoLite\GeolocationDbUpdater::class],
         Command\Visit\LocateVisitsCommand::class => [
@@ -125,6 +130,11 @@ return [
             ShortUrl\ShortUrlResolver::class,
             ShortUrlRedirectRuleService::class,
             RedirectRule\RedirectRuleHandler::class,
+        ],
+
+        Command\Integration\MatomoSendVisitsCommand::class => [
+            Matomo\MatomoOptions::class,
+            Matomo\MatomoVisitSender::class,
         ],
 
         Command\Db\CreateDatabaseCommand::class => [

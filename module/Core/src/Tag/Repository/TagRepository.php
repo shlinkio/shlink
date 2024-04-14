@@ -76,19 +76,19 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
 
         $buildVisitsSubQb = static function (bool $excludeBots, string $aggregateAlias) use ($conn) {
             $visitsSubQb = $conn->createQueryBuilder();
-            $commonJoinCondition = $visitsSubQb->expr()->eq('v.short_url_id', 's.id');
+            $commonJoinCondition = $visitsSubQb->expr()->eq('sc.short_url_id', 'st.short_url_id');
             $visitsJoin = ! $excludeBots
                 ? $commonJoinCondition
                 : $visitsSubQb->expr()->and(
                     $commonJoinCondition,
-                    $visitsSubQb->expr()->eq('v.potential_bot', $conn->quote('0')),
+                    $visitsSubQb->expr()->eq('sc.potential_bot', $conn->quote('0')),
                 )->__toString();
 
             return $visitsSubQb
-                ->select('st.tag_id AS tag_id', 'COUNT(DISTINCT v.id) AS ' . $aggregateAlias)
-                ->from('visits', 'v')
-                ->join('v', 'short_urls', 's', $visitsJoin)
-                ->join('s', 'short_urls_in_tags', 'st', $visitsSubQb->expr()->eq('st.short_url_id', 's.id'))
+                ->select('st.tag_id AS tag_id', 'SUM(sc.count) AS ' . $aggregateAlias)
+                ->from('short_url_visits_counts', 'sc')
+                ->join('sc', 'short_urls_in_tags', 'st', $visitsJoin)
+                ->join('sc', 'short_urls', 's', $visitsSubQb->expr()->eq('sc.short_url_id', 's.id'))
                 ->groupBy('st.tag_id');
         };
         $allVisitsSubQb = $buildVisitsSubQb(false, 'visits');

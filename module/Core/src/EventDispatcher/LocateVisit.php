@@ -17,7 +17,7 @@ use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Throwable;
 
-class LocateVisit
+readonly class LocateVisit
 {
     public function __construct(
         private IpLocationResolverInterface $ipLocationResolver,
@@ -55,7 +55,7 @@ class LocateVisit
         }
 
         $isLocatable = $originalIpAddress !== null || $visit->isLocatable();
-        $addr = $originalIpAddress ?? $visit->getRemoteAddr() ?? '';
+        $addr = $originalIpAddress ?? $visit->remoteAddr ?? '';
 
         try {
             $location = $isLocatable ? $this->ipLocationResolver->resolveIpLocation($addr) : Location::emptyInstance();

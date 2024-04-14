@@ -11,12 +11,12 @@ use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 
 class Domain extends AbstractEntity implements JsonSerializable, NotFoundRedirectConfigInterface
 {
-    private ?string $baseUrlRedirect = null;
-    private ?string $regular404Redirect = null;
-    private ?string $invalidShortUrlRedirect = null;
-
-    private function __construct(public readonly string $authority)
-    {
+    private function __construct(
+        public readonly string $authority,
+        private ?string $baseUrlRedirect = null,
+        private ?string $regular404Redirect = null,
+        private ?string $invalidShortUrlRedirect = null,
+    ) {
     }
 
     public static function withAuthority(string $authority): self

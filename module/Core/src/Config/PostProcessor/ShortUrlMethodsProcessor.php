@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Config\PostProcessor;
 
-use Fig\Http\Message\RequestMethodInterface;
-use Mezzio\Router\Route;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Util\RedirectStatus;
 
@@ -40,9 +38,7 @@ class ShortUrlMethodsProcessor
         $redirectStatus = RedirectStatus::tryFrom(
             $config['redirects']['redirect_status_code'] ?? 0,
         ) ?? DEFAULT_REDIRECT_STATUS_CODE;
-        $redirectRoute['allowed_methods'] = $redirectStatus->isLegacyStatus()
-            ? [RequestMethodInterface::METHOD_GET]
-            : Route::HTTP_METHOD_ANY;
+        $redirectRoute['allowed_methods'] = $redirectStatus->allowedHttpMethods();
 
         $config['routes'] = [...$rest, $redirectRoute];
         return $config;

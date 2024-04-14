@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
+use Cake\Chronos\Chronos;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -18,18 +19,25 @@ use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsSummary;
 use Shlinkio\Shlink\Core\Visit\Model\VisitType;
-use Shlinkio\Shlink\Core\Visit\Transformer\OrphanVisitDataTransformer;
 
 class PublishingUpdatesGeneratorTest extends TestCase
 {
     private PublishingUpdatesGenerator $generator;
+    private Chronos $now;
 
     protected function setUp(): void
     {
+        $this->now = Chronos::now();
+        Chronos::setTestNow($this->now);
+
         $this->generator = new PublishingUpdatesGenerator(
             new ShortUrlDataTransformer(new ShortUrlStringifier([])),
-            new OrphanVisitDataTransformer(),
         );
+    }
+
+    protected function tearDown(): void
+    {
+        Chronos::setTestNow();
     }
 
     #[Test, DataProvider('provideMethod')]
@@ -51,7 +59,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
                 'shortCode' => $shortUrl->getShortCode(),
                 'shortUrl' => 'http:/' . $shortUrl->getShortCode(),
                 'longUrl' => 'https://longUrl',
-                'dateCreated' => $shortUrl->getDateCreated()->toAtomString(),
+                'dateCreated' => $this->now->toAtomString(),
                 'tags' => [],
                 'meta' => [
                     'validSince' => null,
@@ -68,8 +76,9 @@ class PublishingUpdatesGeneratorTest extends TestCase
                 'referer' => '',
                 'userAgent' => '',
                 'visitLocation' => null,
-                'date' => $visit->getDate()->toAtomString(),
+                'date' => $visit->date->toAtomString(),
                 'potentialBot' => false,
+                'visitedUrl' => '',
             ],
         ], $update->payload);
     }
@@ -91,10 +100,10 @@ class PublishingUpdatesGeneratorTest extends TestCase
                 'referer' => '',
                 'userAgent' => '',
                 'visitLocation' => null,
-                'date' => $orphanVisit->getDate()->toAtomString(),
+                'date' => $orphanVisit->date->toAtomString(),
                 'potentialBot' => false,
-                'visitedUrl' => $orphanVisit->visitedUrl(),
-                'type' => $orphanVisit->type()->value,
+                'visitedUrl' => $orphanVisit->visitedUrl,
+                'type' => $orphanVisit->type->value,
             ],
         ], $update->payload);
     }
@@ -124,7 +133,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
             'shortCode' => $shortUrl->getShortCode(),
             'shortUrl' => 'http:/' . $shortUrl->getShortCode(),
             'longUrl' => 'https://longUrl',
-            'dateCreated' => $shortUrl->getDateCreated()->toAtomString(),
+            'dateCreated' => $this->now->toAtomString(),
             'tags' => [],
             'meta' => [
                 'validSince' => null,
@@ -132,7 +141,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
                 'maxVisits' => null,
             ],
             'domain' => null,
-            'title' => $shortUrl->title(),
+            'title' => 'The title',
             'crawlable' => false,
             'forwardQuery' => true,
             'visitsSummary' => VisitsSummary::fromTotalAndNonBots(0, 0),

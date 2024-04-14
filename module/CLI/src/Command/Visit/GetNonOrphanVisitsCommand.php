@@ -40,7 +40,7 @@ class GetNonOrphanVisitsCommand extends AbstractVisitsListCommand
      */
     protected function mapExtraFields(Visit $visit): array
     {
-        $shortUrl = $visit->getShortUrl();
+        $shortUrl = $visit->shortUrl;
         return $shortUrl === null ? [] : ['shortUrl' => $this->shortUrlStringifier->stringify($shortUrl)];
     }
 }

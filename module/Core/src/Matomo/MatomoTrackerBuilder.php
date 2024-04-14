@@ -7,11 +7,11 @@ namespace Shlinkio\Shlink\Core\Matomo;
 use MatomoTracker;
 use Shlinkio\Shlink\Core\Exception\RuntimeException;
 
-class MatomoTrackerBuilder implements MatomoTrackerBuilderInterface
+readonly class MatomoTrackerBuilder implements MatomoTrackerBuilderInterface
 {
     public const MATOMO_DEFAULT_TIMEOUT = 10; // Time in seconds
 
-    public function __construct(private readonly MatomoOptions $options)
+    public function __construct(private MatomoOptions $options)
     {
     }
 

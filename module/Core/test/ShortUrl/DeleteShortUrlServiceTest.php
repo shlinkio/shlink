@@ -13,7 +13,9 @@ use Shlinkio\Shlink\Core\Exception\DeleteShortUrlException;
 use Shlinkio\Shlink\Core\Options\DeleteShortUrlsOptions;
 use Shlinkio\Shlink\Core\ShortUrl\DeleteShortUrlService;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ExpiredShortUrlsConditions;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
+use Shlinkio\Shlink\Core\ShortUrl\Repository\ExpiredShortUrlsRepository;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
@@ -26,6 +28,7 @@ class DeleteShortUrlServiceTest extends TestCase
 {
     private MockObject & EntityManagerInterface $em;
     private MockObject & ShortUrlResolverInterface $urlResolver;
+    private MockObject & ExpiredShortUrlsRepository $expiredShortUrlsRepository;
     private string $shortCode;
 
     protected function setUp(): void
@@ -39,6 +42,8 @@ class DeleteShortUrlServiceTest extends TestCase
 
         $this->urlResolver = $this->createMock(ShortUrlResolverInterface::class);
         $this->urlResolver->method('resolveShortUrl')->willReturn($shortUrl);
+
+        $this->expiredShortUrlsRepository = $this->createMock(ExpiredShortUrlsRepository::class);
     }
 
     #[Test]
@@ -94,11 +99,33 @@ class DeleteShortUrlServiceTest extends TestCase
         $service->deleteByShortCode(ShortUrlIdentifier::fromShortCodeAndDomain($this->shortCode));
     }
 
+    #[Test]
+    public function deleteExpiredShortUrlsDelegatesToRepository(): void
+    {
+        $conditions = new ExpiredShortUrlsConditions();
+        $this->expiredShortUrlsRepository->expects($this->once())->method('delete')->with($conditions)->willReturn(5);
+
+        $result = $this->createService()->deleteExpiredShortUrls($conditions);
+
+        self::assertEquals(5, $result);
+    }
+
+    #[Test]
+    public function countExpiredShortUrlsDelegatesToRepository(): void
+    {
+        $conditions = new ExpiredShortUrlsConditions();
+        $this->expiredShortUrlsRepository->expects($this->once())->method('dryCount')->with($conditions)->willReturn(2);
+
+        $result = $this->createService()->countExpiredShortUrls($conditions);
+
+        self::assertEquals(2, $result);
+    }
+
     private function createService(bool $checkVisitsThreshold = true, int $visitsThreshold = 5): DeleteShortUrlService
     {
         return new DeleteShortUrlService($this->em, new DeleteShortUrlsOptions(
             $visitsThreshold,
             $checkVisitsThreshold,
-        ), $this->urlResolver);
+        ), $this->urlResolver, $this->expiredShortUrlsRepository);
     }
 }

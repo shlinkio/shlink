@@ -7,50 +7,26 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Transformer;
 use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
-use Shlinkio\Shlink\Core\Tag\Entity\Tag;
-use Shlinkio\Shlink\Core\Visit\Model\VisitsSummary;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithVisitsSummary;
 
-use function array_map;
-
-class ShortUrlDataTransformer implements DataTransformerInterface
+/**
+ * @fixme Do not implement DataTransformerInterface, but a separate interface
+ */
+readonly class ShortUrlDataTransformer implements DataTransformerInterface
 {
-    public function __construct(private readonly ShortUrlStringifierInterface $stringifier)
+    public function __construct(private ShortUrlStringifierInterface $stringifier)
     {
     }
 
     /**
-     * @param ShortUrl $shortUrl
+     * @param ShortUrlWithVisitsSummary|ShortUrl $data
      */
-    public function transform($shortUrl): array // phpcs:ignore
+    public function transform($data): array // phpcs:ignore
     {
+        $shortUrl = $data instanceof ShortUrlWithVisitsSummary ? $data->shortUrl : $data;
         return [
-            'shortCode' => $shortUrl->getShortCode(),
             'shortUrl' => $this->stringifier->stringify($shortUrl),
-            'longUrl' => $shortUrl->getLongUrl(),
-            'dateCreated' => $shortUrl->getDateCreated()->toAtomString(),
-            'tags' => array_map(static fn (Tag $tag) => $tag->__toString(), $shortUrl->getTags()->toArray()),
-            'meta' => $this->buildMeta($shortUrl),
-            'domain' => $shortUrl->getDomain(),
-            'title' => $shortUrl->title(),
-            'crawlable' => $shortUrl->crawlable(),
-            'forwardQuery' => $shortUrl->forwardQuery(),
-            'visitsSummary' => VisitsSummary::fromTotalAndNonBots(
-                $shortUrl->getVisitsCount(),
-                $shortUrl->nonBotVisitsCount(),
-            ),
-        ];
-    }
-
-    private function buildMeta(ShortUrl $shortUrl): array
-    {
-        $validSince = $shortUrl->getValidSince();
-        $validUntil = $shortUrl->getValidUntil();
-        $maxVisits = $shortUrl->getMaxVisits();
-
-        return [
-            'validSince' => $validSince?->toAtomString(),
-            'validUntil' => $validUntil?->toAtomString(),
-            'maxVisits' => $maxVisits,
+            ...$data->toArray(),
         ];
     }
 }

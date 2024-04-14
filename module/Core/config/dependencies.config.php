@@ -10,6 +10,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Common\Doctrine\EntityRepositoryFactory;
 use Shlinkio\Shlink\Config\Factory\ValinorConfigFactory;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
+use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Symfony\Component\Lock;
@@ -57,6 +58,10 @@ return [
                 EntityRepositoryFactory::class,
                 ShortUrl\Entity\ShortUrl::class,
             ],
+            ShortUrl\Repository\ExpiredShortUrlsRepository::class => [
+                EntityRepositoryFactory::class,
+                ShortUrl\Entity\ShortUrl::class,
+            ],
 
             Tag\TagService::class => ConfigAbstractFactory::class,
 
@@ -68,8 +73,7 @@ return [
             Visit\Geolocation\VisitLocator::class => ConfigAbstractFactory::class,
             Visit\Geolocation\VisitToLocationHelper::class => ConfigAbstractFactory::class,
             Visit\VisitsStatsHelper::class => ConfigAbstractFactory::class,
-            Visit\Transformer\OrphanVisitDataTransformer::class => InvokableFactory::class,
-            Visit\Repository\VisitLocationRepository::class => [
+            Visit\Repository\VisitIterationRepository::class => [
                 EntityRepositoryFactory::class,
                 Visit\Entity\Visit::class,
             ],
@@ -77,6 +81,8 @@ return [
                 EntityRepositoryFactory::class,
                 Visit\Entity\Visit::class,
             ],
+            Visit\Listener\ShortUrlVisitsCountTracker::class => InvokableFactory::class,
+            Visit\Listener\OrphanVisitsCountTracker::class => InvokableFactory::class,
 
             Util\DoctrineBatchHelper::class => ConfigAbstractFactory::class,
             Util\RedirectResponseHelper::class => ConfigAbstractFactory::class,
@@ -96,6 +102,7 @@ return [
 
             Matomo\MatomoOptions::class => [ValinorConfigFactory::class, 'config.matomo'],
             Matomo\MatomoTrackerBuilder::class => ConfigAbstractFactory::class,
+            Matomo\MatomoVisitSender::class => ConfigAbstractFactory::class,
         ],
 
         'aliases' => [
@@ -105,6 +112,11 @@ return [
 
     ConfigAbstractFactory::class => [
         Matomo\MatomoTrackerBuilder::class => [Matomo\MatomoOptions::class],
+        Matomo\MatomoVisitSender::class => [
+            Matomo\MatomoTrackerBuilder::class,
+            ShortUrlStringifier::class,
+            Visit\Repository\VisitIterationRepository::class,
+        ],
 
         ErrorHandler\NotFoundTypeResolverMiddleware::class => ['config.router.base_path'],
         ErrorHandler\NotFoundTrackerMiddleware::class => [Visit\RequestTracker::class],
@@ -138,7 +150,7 @@ return [
             ShortUrl\Repository\ShortUrlListRepository::class,
             Options\UrlShortenerOptions::class,
         ],
-        Visit\Geolocation\VisitLocator::class => ['em', Visit\Repository\VisitLocationRepository::class],
+        Visit\Geolocation\VisitLocator::class => ['em', Visit\Repository\VisitIterationRepository::class],
         Visit\Geolocation\VisitToLocationHelper::class => [IpLocationResolverInterface::class],
         Visit\VisitsStatsHelper::class => ['em'],
         Tag\TagService::class => ['em'],
@@ -146,6 +158,7 @@ return [
             'em',
             Options\DeleteShortUrlsOptions::class,
             ShortUrl\ShortUrlResolver::class,
+            ShortUrl\Repository\ExpiredShortUrlsRepository::class,
         ],
         ShortUrl\ShortUrlResolver::class => ['em', Options\UrlShortenerOptions::class],
         ShortUrl\ShortUrlVisitsDeleter::class => [
@@ -199,10 +212,7 @@ return [
         ],
         ShortUrl\Middleware\TrimTrailingSlashMiddleware::class => [Options\UrlShortenerOptions::class],
 
-        EventDispatcher\PublishingUpdatesGenerator::class => [
-            ShortUrl\Transformer\ShortUrlDataTransformer::class,
-            Visit\Transformer\OrphanVisitDataTransformer::class,
-        ],
+        EventDispatcher\PublishingUpdatesGenerator::class => [ShortUrl\Transformer\ShortUrlDataTransformer::class],
 
         Importer\ImportedLinksProcessor::class => [
             'em',

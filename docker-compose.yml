@@ -169,7 +169,7 @@ services:
 
     shlink_matomo:
         container_name: shlink_matomo
-        image: matomo:4.15-apache
+        image: matomo:5.0-apache
         ports:
             - "8003:80"
         volumes:

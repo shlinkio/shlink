@@ -68,7 +68,7 @@ final readonly class ShortUrlCreation implements TitleResolutionModelInterface
                 ShortUrlInputFilter::SHORT_CODE_LENGTH,
             ) ?? DEFAULT_SHORT_CODES_LENGTH,
             apiKey: $inputFilter->getValue(ShortUrlInputFilter::API_KEY),
-            tags: $inputFilter->getValue(ShortUrlInputFilter::TAGS),
+            tags: $inputFilter->getValue(ShortUrlInputFilter::TAGS) ?? [],
             title: $inputFilter->getValue(ShortUrlInputFilter::TITLE),
             crawlable: $inputFilter->getValue(ShortUrlInputFilter::CRAWLABLE),
             forwardQuery: getOptionalBoolFromInputFilter($inputFilter, ShortUrlInputFilter::FORWARD_QUERY) ?? true,

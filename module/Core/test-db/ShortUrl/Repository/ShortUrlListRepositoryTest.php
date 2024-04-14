@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Core\Model\Ordering;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\OrderableField;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithVisitsSummary;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
@@ -25,6 +26,7 @@ use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
 use function array_map;
 use function count;
 use function range;
+use function Shlinkio\Shlink\Core\ArrayUtils\map;
 
 class ShortUrlListRepositoryTest extends DatabaseTestCase
 {
@@ -85,62 +87,54 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        $result = $this->repo->findList(
-            new ShortUrlsListFiltering(null, null, Ordering::emptyInstance(), 'foo', ['bar']),
-        );
+        $result = $this->repo->findList(new ShortUrlsListFiltering(searchTerm: 'foo', tags: ['bar']));
         self::assertCount(1, $result);
         self::assertEquals(1, $this->repo->countList(new ShortUrlsCountFiltering('foo', ['bar'])));
-        self::assertSame($foo, $result[0]);
+        self::assertSame($foo, $result[0]->shortUrl);
 
         // Assert searched text also applies to tags
-        $result = $this->repo->findList(new ShortUrlsListFiltering(null, null, Ordering::emptyInstance(), 'bar'));
+        $result = $this->repo->findList(new ShortUrlsListFiltering(searchTerm: 'bar'));
         self::assertCount(2, $result);
         self::assertEquals(2, $this->repo->countList(new ShortUrlsCountFiltering('bar')));
-        self::assertContains($foo, $result);
+        self::assertContains($foo, map($result, fn (ShortUrlWithVisitsSummary $s) => $s->shortUrl));
 
-        $result = $this->repo->findList(new ShortUrlsListFiltering(null, null, Ordering::emptyInstance()));
+        $result = $this->repo->findList(new ShortUrlsListFiltering());
         self::assertCount(3, $result);
 
-        $result = $this->repo->findList(new ShortUrlsListFiltering(2, null, Ordering::emptyInstance()));
+        $result = $this->repo->findList(new ShortUrlsListFiltering(limit: 2));
         self::assertCount(2, $result);
 
-        $result = $this->repo->findList(new ShortUrlsListFiltering(2, 1, Ordering::emptyInstance()));
+        $result = $this->repo->findList(new ShortUrlsListFiltering(limit: 2, offset: 1));
         self::assertCount(2, $result);
 
-        self::assertCount(1, $this->repo->findList(new ShortUrlsListFiltering(2, 2, Ordering::emptyInstance())));
+        self::assertCount(1, $this->repo->findList(new ShortUrlsListFiltering(limit: 2, offset: 2)));
 
-        $result = $this->repo->findList(
-            new ShortUrlsListFiltering(null, null, Ordering::fromTuple([OrderableField::VISITS->value, 'DESC'])),
-        );
-        self::assertCount(3, $result);
-        self::assertSame($bar, $result[0]);
-
-        $result = $this->repo->findList(
-            new ShortUrlsListFiltering(null, null, Ordering::fromTuple(
-                [OrderableField::NON_BOT_VISITS->value, 'DESC'],
-            )),
-        );
-        self::assertCount(3, $result);
-        self::assertSame($foo2, $result[0]);
-
-        $result = $this->repo->findList(
-            new ShortUrlsListFiltering(null, null, Ordering::emptyInstance(), null, [], null, DateRange::until(
-                Chronos::now()->subDays(2),
-            )),
-        );
-        self::assertCount(1, $result);
-        self::assertEquals(1, $this->repo->countList(new ShortUrlsCountFiltering(null, [], null, DateRange::until(
-            Chronos::now()->subDays(2),
-        ))));
-        self::assertSame($foo2, $result[0]);
-
-        self::assertCount(2, $this->repo->findList(
-            new ShortUrlsListFiltering(null, null, Ordering::emptyInstance(), null, [], null, DateRange::since(
-                Chronos::now()->subDays(2),
-            )),
+        $result = $this->repo->findList(new ShortUrlsListFiltering(
+            orderBy: Ordering::fromFieldDesc(OrderableField::VISITS->value),
         ));
+        self::assertCount(3, $result);
+        self::assertSame($bar, $result[0]->shortUrl);
+
+        $result = $this->repo->findList(new ShortUrlsListFiltering(
+            orderBy: Ordering::fromFieldDesc(OrderableField::NON_BOT_VISITS->value),
+        ));
+        self::assertCount(3, $result);
+        self::assertSame($foo2, $result[0]->shortUrl);
+
+        $result = $this->repo->findList(new ShortUrlsListFiltering(
+            dateRange: DateRange::until(Chronos::now()->subDays(2)),
+        ));
+        self::assertCount(1, $result);
+        self::assertEquals(1, $this->repo->countList(new ShortUrlsCountFiltering(
+            dateRange: DateRange::until(Chronos::now()->subDays(2)),
+        )));
+        self::assertSame($foo2, $result[0]->shortUrl);
+
+        self::assertCount(2, $this->repo->findList(new ShortUrlsListFiltering(
+            dateRange: DateRange::since(Chronos::now()->subDays(2)),
+        )));
         self::assertEquals(2, $this->repo->countList(
-            new ShortUrlsCountFiltering(null, [], null, DateRange::since(Chronos::now()->subDays(2))),
+            new ShortUrlsCountFiltering(dateRange: DateRange::since(Chronos::now()->subDays(2))),
         ));
     }
 
@@ -154,15 +148,13 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        $result = $this->repo->findList(
-            new ShortUrlsListFiltering(null, null, Ordering::fromTuple(['longUrl', 'ASC'])),
-        );
+        $result = $this->repo->findList(new ShortUrlsListFiltering(orderBy: Ordering::fromFieldAsc('longUrl')));
 
         self::assertCount(count($urls), $result);
-        self::assertEquals('https://a', $result[0]->getLongUrl());
-        self::assertEquals('https://b', $result[1]->getLongUrl());
-        self::assertEquals('https://c', $result[2]->getLongUrl());
-        self::assertEquals('https://z', $result[3]->getLongUrl());
+        self::assertEquals('https://a', $result[0]->shortUrl->getLongUrl());
+        self::assertEquals('https://b', $result[1]->shortUrl->getLongUrl());
+        self::assertEquals('https://c', $result[2]->shortUrl->getLongUrl());
+        self::assertEquals('https://z', $result[3]->shortUrl->getLongUrl());
     }
 
     #[Test]
@@ -196,81 +188,55 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        self::assertCount(5, $this->repo->findList(
-            new ShortUrlsListFiltering(null, null, Ordering::emptyInstance(), null, ['foo', 'bar']),
-        ));
+        self::assertCount(5, $this->repo->findList(new ShortUrlsListFiltering(tags: ['foo', 'bar'])));
         self::assertCount(5, $this->repo->findList(new ShortUrlsListFiltering(
-            null,
-            null,
-            Ordering::emptyInstance(),
-            null,
-            ['foo', 'bar'],
-            TagsMode::ANY,
+            tags: ['foo', 'bar'],
+            tagsMode: TagsMode::ANY,
         )));
         self::assertCount(1, $this->repo->findList(new ShortUrlsListFiltering(
-            null,
-            null,
-            Ordering::emptyInstance(),
-            null,
-            ['foo', 'bar'],
-            TagsMode::ALL,
+            tags: ['foo', 'bar'],
+            tagsMode: TagsMode::ALL,
         )));
-        self::assertEquals(5, $this->repo->countList(new ShortUrlsCountFiltering(null, ['foo', 'bar'])));
-        self::assertEquals(5, $this->repo->countList(new ShortUrlsCountFiltering(null, ['foo', 'bar'], TagsMode::ANY)));
-        self::assertEquals(1, $this->repo->countList(new ShortUrlsCountFiltering(null, ['foo', 'bar'], TagsMode::ALL)));
-
-        self::assertCount(4, $this->repo->findList(
-            new ShortUrlsListFiltering(null, null, Ordering::emptyInstance(), null, ['bar', 'baz']),
+        self::assertEquals(5, $this->repo->countList(new ShortUrlsCountFiltering(tags: ['foo', 'bar'])));
+        self::assertEquals(5, $this->repo->countList(
+            new ShortUrlsCountFiltering(tags: ['foo', 'bar'], tagsMode: TagsMode::ANY),
         ));
+        self::assertEquals(1, $this->repo->countList(
+            new ShortUrlsCountFiltering(tags: ['foo', 'bar'], tagsMode: TagsMode::ALL),
+        ));
+
+        self::assertCount(4, $this->repo->findList(new ShortUrlsListFiltering(tags: ['bar', 'baz'])));
         self::assertCount(4, $this->repo->findList(new ShortUrlsListFiltering(
-            null,
-            null,
-            Ordering::emptyInstance(),
-            null,
-            ['bar', 'baz'],
-            TagsMode::ANY,
+            tags: ['bar', 'baz'],
+            tagsMode: TagsMode::ANY,
         )));
         self::assertCount(2, $this->repo->findList(new ShortUrlsListFiltering(
-            null,
-            null,
-            Ordering::emptyInstance(),
-            null,
-            ['bar', 'baz'],
-            TagsMode::ALL,
+            tags: ['bar', 'baz'],
+            tagsMode: TagsMode::ALL,
         )));
-        self::assertEquals(4, $this->repo->countList(new ShortUrlsCountFiltering(null, ['bar', 'baz'])));
+        self::assertEquals(4, $this->repo->countList(new ShortUrlsCountFiltering(tags: ['bar', 'baz'])));
         self::assertEquals(4, $this->repo->countList(
-            new ShortUrlsCountFiltering(null, ['bar', 'baz'], TagsMode::ANY),
+            new ShortUrlsCountFiltering(tags: ['bar', 'baz'], tagsMode: TagsMode::ANY),
         ));
         self::assertEquals(2, $this->repo->countList(
-            new ShortUrlsCountFiltering(null, ['bar', 'baz'], TagsMode::ALL),
+            new ShortUrlsCountFiltering(tags: ['bar', 'baz'], tagsMode: TagsMode::ALL),
         ));
 
-        self::assertCount(5, $this->repo->findList(
-            new ShortUrlsListFiltering(null, null, Ordering::emptyInstance(), null, ['foo', 'bar', 'baz']),
-        ));
+        self::assertCount(5, $this->repo->findList(new ShortUrlsListFiltering(tags: ['foo', 'bar', 'baz'])));
         self::assertCount(5, $this->repo->findList(new ShortUrlsListFiltering(
-            null,
-            null,
-            Ordering::emptyInstance(),
-            null,
-            ['foo', 'bar', 'baz'],
-            TagsMode::ANY,
+            tags: ['foo', 'bar', 'baz'],
+            tagsMode: TagsMode::ANY,
         )));
         self::assertCount(0, $this->repo->findList(new ShortUrlsListFiltering(
-            null,
-            null,
-            Ordering::emptyInstance(),
-            null,
-            ['foo', 'bar', 'baz'],
-            TagsMode::ALL,
+            tags: ['foo', 'bar', 'baz'],
+            tagsMode: TagsMode::ALL,
         )));
-        self::assertEquals(5, $this->repo->countList(new ShortUrlsCountFiltering(null, ['foo', 'bar', 'baz'])));
+        self::assertEquals(5, $this->repo->countList(new ShortUrlsCountFiltering(tags: ['foo', 'bar', 'baz'])));
         self::assertEquals(5, $this->repo->countList(
-            new ShortUrlsCountFiltering(null, ['foo', 'bar', 'baz'], TagsMode::ANY),
+            new ShortUrlsCountFiltering(tags: ['foo', 'bar', 'baz'], tagsMode: TagsMode::ANY),
         ));
         self::assertEquals(0, $this->repo->countList(
-            new ShortUrlsCountFiltering(null, ['foo', 'bar', 'baz'], TagsMode::ALL),
+            new ShortUrlsCountFiltering(tags: ['foo', 'bar', 'baz'], tagsMode: TagsMode::ALL),
         ));
     }
 
@@ -296,9 +262,6 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->flush();
 
         $buildFiltering = static fn (string $searchTerm) => new ShortUrlsListFiltering(
-            null,
-            null,
-            Ordering::emptyInstance(),
             searchTerm: $searchTerm,
             defaultDomain: 'deFaulT-domain.com',
         );
@@ -341,9 +304,6 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
 
         $filtering = static fn (bool $excludeMaxVisitsReached, bool $excludePastValidUntil) =>
         new ShortUrlsListFiltering(
-            null,
-            null,
-            Ordering::emptyInstance(),
             excludeMaxVisitsReached: $excludeMaxVisitsReached,
             excludePastValidUntil: $excludePastValidUntil,
         );

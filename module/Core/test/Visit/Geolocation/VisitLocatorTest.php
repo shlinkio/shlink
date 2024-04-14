@@ -17,7 +17,7 @@ use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitGeolocationHelperInterface;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitLocator;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
-use Shlinkio\Shlink\Core\Visit\Repository\VisitLocationRepositoryInterface;
+use Shlinkio\Shlink\Core\Visit\Repository\VisitIterationRepositoryInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 use function array_map;
@@ -30,12 +30,12 @@ class VisitLocatorTest extends TestCase
 {
     private VisitLocator $visitService;
     private MockObject & EntityManager $em;
-    private MockObject & VisitLocationRepositoryInterface $repo;
+    private MockObject & VisitIterationRepositoryInterface $repo;
 
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManager::class);
-        $this->repo = $this->createMock(VisitLocationRepositoryInterface::class);
+        $this->repo = $this->createMock(VisitIterationRepositoryInterface::class);
 
         $this->visitService = new VisitLocator($this->em, $this->repo);
     }

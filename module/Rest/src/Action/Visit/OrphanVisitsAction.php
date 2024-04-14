@@ -8,7 +8,6 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtilsTrait;
-use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
@@ -21,10 +20,8 @@ class OrphanVisitsAction extends AbstractRestAction
     protected const ROUTE_PATH = '/visits/orphan';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
-    public function __construct(
-        private readonly VisitsStatsHelperInterface $visitsHelper,
-        private readonly DataTransformerInterface $orphanVisitTransformer,
-    ) {
+    public function __construct(private readonly VisitsStatsHelperInterface $visitsHelper)
+    {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -34,7 +31,7 @@ class OrphanVisitsAction extends AbstractRestAction
         $visits = $this->visitsHelper->orphanVisits($params, $apiKey);
 
         return new JsonResponse([
-            'visits' => $this->serializePaginator($visits, $this->orphanVisitTransformer),
+            'visits' => $this->serializePaginator($visits),
         ]);
     }
 }

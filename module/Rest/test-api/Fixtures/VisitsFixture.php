@@ -8,7 +8,6 @@ use Cake\Chronos\Chronos;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use ReflectionObject;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
@@ -50,27 +49,31 @@ class VisitsFixture extends AbstractFixture implements DependentFixtureInterface
         );
 
         $manager->persist($this->setVisitDate(
-            Visit::forBasePath(new Visitor('shlink-tests-agent', 'https://s.test', '1.2.3.4', '')),
+            fn () => Visit::forBasePath(new Visitor('shlink-tests-agent', 'https://s.test', '1.2.3.4', '')),
             '2020-01-01',
         ));
         $manager->persist($this->setVisitDate(
-            Visit::forRegularNotFound(new Visitor('shlink-tests-agent', 'https://s.test/foo/bar', '1.2.3.4', '')),
+            fn () => Visit::forRegularNotFound(
+                new Visitor('shlink-tests-agent', 'https://s.test/foo/bar', '1.2.3.4', ''),
+            ),
             '2020-02-01',
         ));
         $manager->persist($this->setVisitDate(
-            Visit::forInvalidShortUrl(new Visitor('cf-facebook', 'https://s.test/foo', '1.2.3.4', 'foo.com')),
+            fn () => Visit::forInvalidShortUrl(new Visitor('cf-facebook', 'https://s.test/foo', '1.2.3.4', 'foo.com')),
             '2020-03-01',
         ));
 
         $manager->flush();
     }
 
-    private function setVisitDate(Visit $visit, string $date): Visit
+    /**
+     * @param callable(): Visit $createVisit
+     */
+    private function setVisitDate(callable $createVisit, string $date): Visit
     {
-        $ref = new ReflectionObject($visit);
-        $dateProp = $ref->getProperty('date');
-        $dateProp->setAccessible(true);
-        $dateProp->setValue($visit, Chronos::parse($date));
+        Chronos::setTestNow($date);
+        $visit = $createVisit();
+        Chronos::setTestNow();
 
         return $visit;
     }

@@ -8,15 +8,18 @@ use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Exception;
 use Shlinkio\Shlink\Core\Options\DeleteShortUrlsOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ExpiredShortUrlsConditions;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
+use Shlinkio\Shlink\Core\ShortUrl\Repository\ExpiredShortUrlsRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-class DeleteShortUrlService implements DeleteShortUrlServiceInterface
+readonly class DeleteShortUrlService implements DeleteShortUrlServiceInterface
 {
     public function __construct(
-        private readonly EntityManagerInterface $em,
-        private readonly DeleteShortUrlsOptions $deleteShortUrlsOptions,
-        private readonly ShortUrlResolverInterface $urlResolver,
+        private EntityManagerInterface $em,
+        private DeleteShortUrlsOptions $deleteShortUrlsOptions,
+        private ShortUrlResolverInterface $urlResolver,
+        private ExpiredShortUrlsRepositoryInterface $expiredShortUrlsRepository,
     ) {
     }
 
@@ -43,10 +46,18 @@ class DeleteShortUrlService implements DeleteShortUrlServiceInterface
 
     private function isThresholdReached(ShortUrl $shortUrl): bool
     {
-        if (! $this->deleteShortUrlsOptions->checkVisitsThreshold) {
-            return false;
-        }
+        return $this->deleteShortUrlsOptions->checkVisitsThreshold && $shortUrl->reachedVisits(
+            $this->deleteShortUrlsOptions->visitsThreshold,
+        );
+    }
 
-        return $shortUrl->getVisitsCount() >= $this->deleteShortUrlsOptions->visitsThreshold;
+    public function deleteExpiredShortUrls(ExpiredShortUrlsConditions $conditions): int
+    {
+        return $this->expiredShortUrlsRepository->delete($conditions);
+    }
+
+    public function countExpiredShortUrls(ExpiredShortUrlsConditions $conditions): int
+    {
+        return $this->expiredShortUrlsRepository->dryCount($conditions);
     }
 }

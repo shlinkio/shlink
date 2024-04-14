@@ -44,8 +44,8 @@ class ApiKeyServiceTest extends TestCase
             ApiKeyMeta::fromParams(name: $name, expirationDate: $date, roleDefinitions: $roles),
         );
 
-        self::assertEquals($date, $key->getExpirationDate());
-        self::assertEquals($name, $key->name());
+        self::assertEquals($date, $key->expirationDate);
+        self::assertEquals($name, $key->name);
         foreach ($roles as $roleDefinition) {
             self::assertTrue($key->hasRole($roleDefinition->role));
         }

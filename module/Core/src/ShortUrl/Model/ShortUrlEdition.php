@@ -60,7 +60,7 @@ final readonly class ShortUrlEdition implements TitleResolutionModelInterface
             maxVisitsPropWasProvided: array_key_exists(ShortUrlInputFilter::MAX_VISITS, $data),
             maxVisits: getOptionalIntFromInputFilter($inputFilter, ShortUrlInputFilter::MAX_VISITS),
             tagsPropWasProvided: array_key_exists(ShortUrlInputFilter::TAGS, $data),
-            tags: $inputFilter->getValue(ShortUrlInputFilter::TAGS),
+            tags: $inputFilter->getValue(ShortUrlInputFilter::TAGS) ?? [],
             titlePropWasProvided: array_key_exists(ShortUrlInputFilter::TITLE, $data),
             title: $inputFilter->getValue(ShortUrlInputFilter::TITLE),
             crawlablePropWasProvided: array_key_exists(ShortUrlInputFilter::CRAWLABLE, $data),

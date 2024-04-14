@@ -12,12 +12,12 @@ use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 
-class VisitsTracker implements VisitsTrackerInterface
+readonly class VisitsTracker implements VisitsTrackerInterface
 {
     public function __construct(
-        private readonly ORM\EntityManagerInterface $em,
-        private readonly EventDispatcherInterface $eventDispatcher,
-        private readonly TrackingOptions $options,
+        private ORM\EntityManagerInterface $em,
+        private EventDispatcherInterface $eventDispatcher,
+        private TrackingOptions $options,
     ) {
     }
 
@@ -72,8 +72,13 @@ class VisitsTracker implements VisitsTrackerInterface
         }
 
         $visit = $createVisit($visitor->normalizeForTrackingOptions($this->options));
-        $this->em->persist($visit);
-        $this->em->flush();
+
+        // Wrap persisting and flushing the visit in a transaction, so that the ShortUrlVisitsCountTracker performs
+        // changes inside that very same transaction atomically
+        $this->em->wrapInTransaction(function () use ($visit): void {
+            $this->em->persist($visit);
+            $this->em->flush();
+        });
 
         $this->eventDispatcher->dispatch(new UrlVisited($visit->getId(), $visitor->remoteAddress));
     }
