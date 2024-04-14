@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
   This command can be run periodically by those who create many disposable URLs which are valid only for a period of time, and then can be deleted to save space.
 
 * [#1925](https://github.com/shlinkio/shlink/issues/1925) Add new `integration:matomo:send-visits` console command that can be used to send existing visits to integrated Matomo instance.
+* [#2087](https://github.com/shlinkio/shlink/issues/2087) Allow `memory_limit` to be configured via the new `MEMORY_LIMIT` env var or configuration option.
 
 ### Changed
 * [#2034](https://github.com/shlinkio/shlink/issues/2034) Modernize entities, using constructor property promotion and readonly wherever possible.
@@ -32,8 +33,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#2049](https://github.com/shlinkio/shlink/issues/2049) Request ID is now propagated to the background tasks/jobs scheduled during a request.
 
   This allows for a better traceability, as the logs generated during those jobs will have a matching UUID as the logs generated during the request the triggered the job.
-
-* [#2087](https://github.com/shlinkio/shlink/issues/2087) Allow `memory_limit` to be configured via the new `MEMORY_LIMIT` env var or configuration option.
 
 ### Deprecated
 * *Nothing*
