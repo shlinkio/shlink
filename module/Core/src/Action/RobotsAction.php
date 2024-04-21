@@ -15,9 +15,9 @@ use function sprintf;
 
 use const PHP_EOL;
 
-class RobotsAction implements RequestHandlerInterface, StatusCodeInterface
+readonly class RobotsAction implements RequestHandlerInterface, StatusCodeInterface
 {
-    public function __construct(private readonly CrawlingHelperInterface $crawlingHelper)
+    public function __construct(private CrawlingHelperInterface $crawlingHelper, private bool $allowAllShortUrls)
     {
     }
 
@@ -36,6 +36,12 @@ class RobotsAction implements RequestHandlerInterface, StatusCodeInterface
         User-agent: *
 
         ROBOTS;
+
+        if ($this->allowAllShortUrls) {
+            // Disallow rest URLs, but allow all short codes
+            yield 'Disallow: /rest/';
+            return;
+        }
 
         $shortCodes = $this->crawlingHelper->listCrawlableShortCodes();
         foreach ($shortCodes as $shortCode) {

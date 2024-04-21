@@ -189,7 +189,7 @@ return [
             'Logger_Shlink',
             Options\QrCodeOptions::class,
         ],
-        Action\RobotsAction::class => [Crawling\CrawlingHelper::class],
+        Action\RobotsAction::class => [Crawling\CrawlingHelper::class, 'config.robots.allow-all-short-urls'],
 
         ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => [
             'em',
