@@ -841,3 +841,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * *Nothing*
+
+
+## Older versions
+* [2.x.x](docs/changelog-archive/CHANGELOG-2.x.md)
+* [1.x.x](docs/changelog-archive/CHANGELOG-1.x.md)
