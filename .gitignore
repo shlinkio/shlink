@@ -4,7 +4,6 @@ bin/rr
 config/roadrunner/.pid
 build
 !docker/build
-composer.lock
 composer.phar
 vendor/
 data/database.sqlite
