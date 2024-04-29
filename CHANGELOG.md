@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* *Nothing*
+* [#2111](https://github.com/shlinkio/shlink/issues/2111) Fix typo in OAS docs examples where redirect rules with `query-param` condition type were defined as `query`.
 
 
 ## [4.1.0] - 2024-04-14
