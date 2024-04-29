@@ -77,12 +77,12 @@
                   "priority": 3,
                   "conditions": [
                     {
-                      "type": "query",
+                      "type": "query-param",
                       "matchKey": "foo",
                       "matchValue": "bar"
                     },
                     {
-                      "type": "query",
+                      "type": "query-param",
                       "matchKey": "hello",
                       "matchValue": "world"
                     }
@@ -209,12 +209,12 @@
                 "longUrl": "https://example.com/query-foo-bar-hello-world",
                 "conditions": [
                   {
-                    "type": "query",
+                    "type": "query-param",
                     "matchKey": "foo",
                     "matchValue": "bar"
                   },
                   {
-                    "type": "query",
+                    "type": "query-param",
                     "matchKey": "hello",
                     "matchValue": "world"
                   }
@@ -280,12 +280,12 @@
                   "priority": 3,
                   "conditions": [
                     {
-                      "type": "query",
+                      "type": "query-param",
                       "matchKey": "foo",
                       "matchValue": "bar"
                     },
                     {
-                      "type": "query",
+                      "type": "query-param",
                       "matchKey": "hello",
                       "matchValue": "world"
                     }
