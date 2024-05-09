@@ -42,7 +42,7 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
 
         $qb = $this->createListQueryBuilder($filtering);
         $qb->select(
-            's AS shortUrl',
+            'DISTINCT s AS shortUrl',
             '(' . $buildVisitsSubQuery('v', excludingBots: false) . ') AS ' . OrderableField::VISITS->value,
             '(' . $buildVisitsSubQuery('v2', excludingBots: true) . ') AS ' . OrderableField::NON_BOT_VISITS->value,
             // This is added only to have a consistent order by title between database engines
