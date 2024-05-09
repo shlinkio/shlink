@@ -18,6 +18,8 @@ use function array_flip;
 use function array_slice;
 use function array_values;
 use function count;
+use function explode;
+use function filter_var;
 use function implode;
 use function is_numeric;
 use function max;
@@ -25,10 +27,12 @@ use function min;
 use function Shlinkio\Shlink\Core\ArrayUtils\map;
 use function Shlinkio\Shlink\Core\enumValues;
 use function sprintf;
+use function str_contains;
 use function str_pad;
 use function strlen;
 use function trim;
 
+use const FILTER_VALIDATE_IP;
 use const STR_PAD_LEFT;
 
 class RedirectRuleHandler implements RedirectRuleHandlerInterface
@@ -107,6 +111,9 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
                 RedirectConditionType::QUERY_PARAM => RedirectCondition::forQueryParam(
                     $this->askMandatory('Query param name?', $io),
                     $this->askOptional('Query param value?', $io),
+                ),
+                RedirectConditionType::IP => RedirectCondition::forIP(
+                    $this->askMandatoryIP('IP Address (IP or range), separated by commas', $io),
                 ),
             };
 
@@ -215,6 +222,38 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
                 throw new InvalidArgumentException('The value is mandatory');
             }
             return trim($answer);
+        });
+    }
+
+    private function askMandatoryIP(string $message, StyleInterface $io): string
+    {
+        return $io->ask($message, validator: function (?string $answer): string {
+            if ($answer === null) {
+                throw new InvalidArgumentException('The value is mandatory');
+            }
+
+            foreach (explode(',', $answer) as $IPOrRange) {
+                if (trim($IPOrRange) !== $IPOrRange) {
+                    throw new InvalidArgumentException('No spaces before or after commas');
+                }
+
+                if (str_contains($answer, '/')) {
+                    list($ip, $cidr) = explode('/', $answer);
+                    if ((int) $cidr < 0 || (int) $cidr > 32) {
+                        throw new InvalidArgumentException(sprintf('Invalid CIDR %s', $cidr));
+                    }
+
+                    if (filter_var($ip, FILTER_VALIDATE_IP) === false) {
+                        throw new InvalidArgumentException(sprintf('Invalid IP %s in range', $answer));
+                    }
+                } else {
+                    if (filter_var($answer, FILTER_VALIDATE_IP) === false) {
+                        throw new InvalidArgumentException(sprintf('Invalid IP %s', $answer));
+                    }
+                }
+            }
+
+            return $answer;
         });
     }
 

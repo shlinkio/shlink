@@ -6,6 +6,7 @@ use JsonSerializable;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Model\DeviceType;
+use Shlinkio\Shlink\Core\Model\IPAddress;
 use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
 use Shlinkio\Shlink\Core\RedirectRule\Model\Validation\RedirectRulesInputFilter;
 
@@ -41,6 +42,11 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
         return new self(RedirectConditionType::DEVICE, $device->value);
     }
 
+    public static function forIP(string $value): self
+    {
+        return new self(RedirectConditionType::IP, $value);
+    }
+
     public static function fromRawData(array $rawData): self
     {
         $type = RedirectConditionType::from($rawData[RedirectRulesInputFilter::CONDITION_TYPE]);
@@ -59,6 +65,7 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
             RedirectConditionType::QUERY_PARAM => $this->matchesQueryParam($request),
             RedirectConditionType::LANGUAGE => $this->matchesLanguage($request),
             RedirectConditionType::DEVICE => $this->matchesDevice($request),
+            RedirectConditionType::IP => $this->matchesIP($request),
         };
     }
 
@@ -100,6 +107,11 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
         return $device !== null && $device->value === strtolower($this->matchValue);
     }
 
+    private function matchesIP(ServerRequestInterface $request): bool
+    {
+        return IPAddress::requestComesFromIPOrRange($this->matchValue);
+    }
+
     public function jsonSerialize(): array
     {
         return [
@@ -117,6 +129,10 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
             RedirectConditionType::QUERY_PARAM => sprintf(
                 'query string contains %s=%s',
                 $this->matchKey,
+                $this->matchValue,
+            ),
+            RedirectConditionType::IP => sprintf(
+                'IP is included in %s',
                 $this->matchValue,
             ),
         };
