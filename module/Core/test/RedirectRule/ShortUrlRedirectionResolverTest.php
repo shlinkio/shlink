@@ -42,6 +42,11 @@ class ShortUrlRedirectionResolverTest extends TestCase
             'longUrl' => 'https://example.com/foo/bar',
         ]));
 
+        // We're not in a web-browser, so we must override the $_SERVER["HTTP_X_FORWARDED_FOR"] variable
+        if ($request->hasHeader('X-Forwarded-For')) {
+            $_SERVER['HTTP_X_FORWARDED_FOR'] = $request->getHeader('X-Forwarded-For')[0];
+        }
+
         $this->ruleService->expects($this->once())->method('rulesForShortUrl')->with($shortUrl)->willReturn(
             $condition !== null ? [
                 new ShortUrlRedirectRule($shortUrl, 1, 'https://example.com/from-rule', new ArrayCollection([
@@ -86,6 +91,21 @@ class ShortUrlRedirectionResolverTest extends TestCase
         yield 'matching query params' => [
             $request()->withQueryParams(['foo' => 'bar']),
             RedirectCondition::forQueryParam('foo', 'bar'),
+            'https://example.com/from-rule',
+        ];
+        yield 'matching ip' => [
+            $request()->withHeader('X-Forwarded-For', '121.121.121.121'),
+            RedirectCondition::forIP('121.121.121.121'),
+            'https://example.com/from-rule',
+        ];
+        yield 'matching unspecified ip' => [
+            $request()->withHeader('X-Forwarded-For', '121.121.121.121'),
+            RedirectCondition::forIP('121.121.121.122'),
+            'https://example.com/foo/bar',
+        ];
+        yield 'matching range' => [
+            $request()->withHeader('X-Forwarded-For', '121.121.121.2'),
+            RedirectCondition::forIP('121.121.121.0/24'),
             'https://example.com/from-rule',
         ];
     }
