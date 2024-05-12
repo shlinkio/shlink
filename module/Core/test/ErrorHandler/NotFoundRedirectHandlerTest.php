@@ -10,6 +10,7 @@ use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Rule\InvokedCount as InvokedCountMatcher;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -60,14 +61,19 @@ class NotFoundRedirectHandlerTest extends TestCase
 
     public static function provideNonRedirectScenarios(): iterable
     {
+        $exactly = static fn (int $expectedCount) => new InvokedCountMatcher($expectedCount);
+        $once = static fn () => $exactly(1);
+
         yield 'no domain' => [function (
             MockObject&DomainServiceInterface $domainService,
             MockObject&NotFoundRedirectResolverInterface $resolver,
+        ) use (
+            $once,
         ): void {
-            $domainService->expects(self::once())->method('findByAuthority')->withAnyParameters()->willReturn(
+            $domainService->expects($once())->method('findByAuthority')->withAnyParameters()->willReturn(
                 null,
             );
-            $resolver->expects(self::once())->method('resolveRedirectResponse')->with(
+            $resolver->expects($once())->method('resolveRedirectResponse')->with(
                 self::isInstanceOf(NotFoundType::class),
                 self::isInstanceOf(NotFoundRedirectOptions::class),
                 self::isInstanceOf(UriInterface::class),
@@ -76,12 +82,15 @@ class NotFoundRedirectHandlerTest extends TestCase
         yield 'non-redirecting domain' => [function (
             MockObject&DomainServiceInterface $domainService,
             MockObject&NotFoundRedirectResolverInterface $resolver,
+        ) use (
+            $once,
+            $exactly,
         ): void {
-            $domainService->expects(self::once())->method('findByAuthority')->withAnyParameters()->willReturn(
+            $domainService->expects($once())->method('findByAuthority')->withAnyParameters()->willReturn(
                 Domain::withAuthority(''),
             );
             $callCount = 0;
-            $resolver->expects(self::exactly(2))->method('resolveRedirectResponse')->willReturnCallback(
+            $resolver->expects($exactly(2))->method('resolveRedirectResponse')->willReturnCallback(
                 function (mixed $arg1, mixed $arg2, mixed $arg3) use (&$callCount) {
                     Assert::assertInstanceOf(NotFoundType::class, $arg1);
                     Assert::assertInstanceOf($callCount === 0 ? Domain::class : NotFoundRedirectOptions::class, $arg2);

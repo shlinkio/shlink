@@ -34,8 +34,8 @@ class MatomoSendVisitsCommandTest extends TestCase
     }
 
     #[Test]
-    #[TestWith([true])]
-    #[TestWith([false])]
+    #[TestWith([true], 'interactive')]
+    #[TestWith([false], 'not interactive')]
     public function warningIsOnlyDisplayedInInteractiveMode(bool $interactive): void
     {
         $this->visitSender->method('sendVisitsInDateRange')->willReturn(new SendVisitsResult());
