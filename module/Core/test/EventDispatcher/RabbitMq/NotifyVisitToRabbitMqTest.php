@@ -10,6 +10,7 @@ use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Rule\InvokedCount as InvokedCountMatcher;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
@@ -146,30 +147,34 @@ class NotifyVisitToRabbitMqTest extends TestCase
 
     public static function providePayloads(): iterable
     {
+        $exactly = static fn (int $expectedCount) => new InvokedCountMatcher($expectedCount);
+        $once = static fn () => $exactly(1);
+        $never = static fn () => $exactly(0);
+
         yield 'non-orphan visit' => [
             Visit::forValidShortUrl(ShortUrl::withLongUrl('https://longUrl'), Visitor::emptyInstance()),
-            function (MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator): void {
+            function (MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator) use ($once, $never): void {
                 $update = Update::forTopicAndPayload('', []);
-                $updatesGenerator->expects(self::never())->method('newOrphanVisitUpdate');
-                $updatesGenerator->expects(self::once())->method('newVisitUpdate')->withAnyParameters()->willReturn(
+                $updatesGenerator->expects($never())->method('newOrphanVisitUpdate');
+                $updatesGenerator->expects($once())->method('newVisitUpdate')->withAnyParameters()->willReturn(
                     $update,
                 );
-                $updatesGenerator->expects(self::once())->method('newShortUrlVisitUpdate')->willReturn($update);
+                $updatesGenerator->expects($once())->method('newShortUrlVisitUpdate')->willReturn($update);
             },
-            function (MockObject & PublishingHelperInterface $helper): void {
-                $helper->expects(self::exactly(2))->method('publishUpdate')->with(self::isInstanceOf(Update::class));
+            function (MockObject & PublishingHelperInterface $helper) use ($exactly): void {
+                $helper->expects($exactly(2))->method('publishUpdate')->with(self::isInstanceOf(Update::class));
             },
         ];
         yield 'orphan visit' => [
             Visit::forBasePath(Visitor::emptyInstance()),
-            function (MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator): void {
+            function (MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator) use ($once, $never): void {
                 $update = Update::forTopicAndPayload('', []);
-                $updatesGenerator->expects(self::once())->method('newOrphanVisitUpdate')->willReturn($update);
-                $updatesGenerator->expects(self::never())->method('newVisitUpdate');
-                $updatesGenerator->expects(self::never())->method('newShortUrlVisitUpdate');
+                $updatesGenerator->expects($once())->method('newOrphanVisitUpdate')->willReturn($update);
+                $updatesGenerator->expects($never())->method('newVisitUpdate');
+                $updatesGenerator->expects($never())->method('newShortUrlVisitUpdate');
             },
-            function (MockObject & PublishingHelperInterface $helper): void {
-                $helper->expects(self::once())->method('publishUpdate')->with(self::isInstanceOf(Update::class));
+            function (MockObject & PublishingHelperInterface $helper) use ($once): void {
+                $helper->expects($once())->method('publishUpdate')->with(self::isInstanceOf(Update::class));
             },
         ];
     }

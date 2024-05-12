@@ -25,6 +25,7 @@ class CliTestUtils
         $command = $generator->testDouble(
             Command::class,
             mockObject: true,
+            markAsMockObject: true,
             callOriginalConstructor: false,
             callOriginalClone: false,
             cloneArguments: false,
