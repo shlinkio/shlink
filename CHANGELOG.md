@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Changed
 * Use new reusable workflow to publish docker image
+* [#2015](https://github.com/shlinkio/shlink/issues/2015) Update to PHPUnit 11.
 
 ### Deprecated
 * *Nothing*
