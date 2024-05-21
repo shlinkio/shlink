@@ -4,8 +4,6 @@ includes:
     - vendor/phpstan/phpstan-phpunit/extension.neon
     - vendor/phpstan/phpstan-phpunit/rules.neon
 parameters:
-    checkMissingIterableValueType: false
-    checkGenericClassInNonGenericObjectType: false
     symfony:
         console_application_loader: 'config/cli-app.php'
     doctrine:
@@ -14,3 +12,5 @@ parameters:
     ignoreErrors:
         - '#should return int<0, max> but returns int#'
         - '#expects -1|int<1, max>, int given#'
+        - identifier: missingType.generics
+        - identifier: missingType.iterableValue

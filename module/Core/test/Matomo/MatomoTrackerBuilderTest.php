@@ -37,8 +37,8 @@ class MatomoTrackerBuilderTest extends TestCase
     {
         $tracker = $this->builder()->buildMatomoTracker();
 
-        self::assertEquals('api_token', $tracker->token_auth); // @phpstan-ignore-line
-        self::assertEquals(5, $tracker->idSite); // @phpstan-ignore-line
+        self::assertEquals('api_token', $tracker->token_auth);
+        self::assertEquals(5, $tracker->idSite);
         self::assertEquals(MatomoTrackerBuilder::MATOMO_DEFAULT_TIMEOUT, $tracker->getRequestTimeout());
         self::assertEquals(MatomoTrackerBuilder::MATOMO_DEFAULT_TIMEOUT, $tracker->getRequestConnectTimeout());
     }
