@@ -12,6 +12,7 @@ use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\Stream;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\Builder\InvocationMocker;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -89,10 +90,12 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
     }
 
     #[Test]
-    public function titleIsUpdatedWhenItCanBeResolvedFromResponse(): void
+    #[TestWith(['TEXT/html; charset=utf-8'], name: 'charset')]
+    #[TestWith(['TEXT/html'], name: 'no charset')]
+    public function titleIsUpdatedWhenItCanBeResolvedFromResponse(string $contentType): void
     {
         $data = ShortUrlCreation::fromRawData(['longUrl' => self::LONG_URL]);
-        $this->expectRequestToBeCalled()->willReturn($this->respWithTitle());
+        $this->expectRequestToBeCalled()->willReturn($this->respWithTitle($contentType));
 
         $result = $this->helper(autoResolveTitles: true)->processTitle($data);
 
@@ -122,10 +125,10 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
         return new Response($body, 200, ['Content-Type' => 'text/html']);
     }
 
-    private function respWithTitle(): Response
+    private function respWithTitle(string $contentType): Response
     {
         $body = $this->createStreamWithContent('<title data-foo="bar">  Resolved &quot;title&quot; </title>');
-        return new Response($body, 200, ['Content-Type' => 'TEXT/html; charset=utf-8']);
+        return new Response($body, 200, ['Content-Type' => $contentType]);
     }
 
     private function createStreamWithContent(string $content): Stream

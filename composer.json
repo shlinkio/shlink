@@ -16,6 +16,7 @@
         "ext-curl": "*",
         "ext-gd": "*",
         "ext-json": "*",
+        "ext-mbstring": "*",
         "ext-pdo": "*",
         "akrabat/ip-address-middleware": "^2.1",
         "cakephp/chronos": "^3.0.2",

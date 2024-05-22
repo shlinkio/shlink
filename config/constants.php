@@ -12,7 +12,6 @@ const MIN_SHORT_CODES_LENGTH = 4;
 const DEFAULT_REDIRECT_STATUS_CODE = RedirectStatus::STATUS_302;
 const DEFAULT_REDIRECT_CACHE_LIFETIME = 30;
 const LOCAL_LOCK_FACTORY = 'Shlinkio\Shlink\LocalLockFactory';
-const TITLE_TAG_VALUE = '/<title[^>]*>(.*?)<\/title>/i'; // Matches the value inside a html title tag
 const LOOSE_URI_MATCHER = '/(.+)\:(.+)/i'; // Matches anything starting with a schema.
 const DEFAULT_QR_CODE_SIZE = 300;
 const DEFAULT_QR_CODE_MARGIN = 0;
