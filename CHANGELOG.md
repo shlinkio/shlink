@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#2111](https://github.com/shlinkio/shlink/issues/2111) Fix typo in OAS docs examples where redirect rules with `query-param` condition type were defined as `query`.
+* [#2129](https://github.com/shlinkio/shlink/issues/2129) Fix error when resolving title for sites not using UTF-8 charset (detected with Japanese charsets).
 
 
 ## [4.1.0] - 2024-04-14
