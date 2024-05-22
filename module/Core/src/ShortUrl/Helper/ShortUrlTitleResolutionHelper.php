@@ -12,19 +12,23 @@ use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Throwable;
 
 use function html_entity_decode;
+use function mb_convert_encoding;
 use function preg_match;
 use function str_contains;
 use function str_starts_with;
 use function strtolower;
 use function trim;
 
-use const Shlinkio\Shlink\TITLE_TAG_VALUE;
-
 readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionHelperInterface
 {
     public const MAX_REDIRECTS = 15;
     public const CHROME_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) '
         . 'Chrome/121.0.0.0 Safari/537.36';
+
+    // Matches the value inside a html title tag
+    private const TITLE_TAG_VALUE = '/<title[^>]*>(.*?)<\/title>/i';
+    // Matches the charset inside a Content-Type header
+    private const CHARSET_VALUE = '/charset=([^;]+)/i';
 
     public function __construct(
         private ClientInterface $httpClient,
@@ -53,7 +57,7 @@ readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionH
             return $data;
         }
 
-        $title = $this->tryToResolveTitle($response);
+        $title = $this->tryToResolveTitle($response, $contentType);
         return $title !== null ? $data->withResolvedTitle($title) : $data;
     }
 
@@ -76,7 +80,7 @@ readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionH
         }
     }
 
-    private function tryToResolveTitle(ResponseInterface $response): ?string
+    private function tryToResolveTitle(ResponseInterface $response, string $contentType): ?string
     {
         $collectedBody = '';
         $body = $response->getBody();
@@ -84,12 +88,19 @@ readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionH
         while (! str_contains($collectedBody, '</title>') && ! $body->eof()) {
             $collectedBody .= $body->read(1024);
         }
-        preg_match(TITLE_TAG_VALUE, $collectedBody, $matches);
-        return isset($matches[1]) ? $this->normalizeTitle($matches[1]) : null;
-    }
 
-    private function normalizeTitle(string $title): string
-    {
+        // Try to match the title from the <title /> tag
+        preg_match(self::TITLE_TAG_VALUE, $collectedBody, $titleMatches);
+        if (! isset($titleMatches[1])) {
+            return null;
+        }
+
+        // Get the page's charset from Content-Type header
+        preg_match(self::CHARSET_VALUE, $contentType, $charsetMatches);
+
+        $title = isset($charsetMatches[1])
+            ? mb_convert_encoding($titleMatches[1], 'utf8', $charsetMatches[1])
+            : $titleMatches[1];
         return html_entity_decode(trim($title));
     }
 }
