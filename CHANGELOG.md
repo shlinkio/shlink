@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [4.1.1] - 2024-05-23
+### Added
+* *Nothing*
+
+### Changed
+* Use new reusable workflow to publish docker image
+* [#2015](https://github.com/shlinkio/shlink/issues/2015) Update to PHPUnit 11.
+* [#2130](https://github.com/shlinkio/shlink/pull/2130) Replace deprecated `pugx/shortid-php` package with `hidehalo/nanoid-php`.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#2111](https://github.com/shlinkio/shlink/issues/2111) Fix typo in OAS docs examples where redirect rules with `query-param` condition type were defined as `query`.
+* [#2129](https://github.com/shlinkio/shlink/issues/2129) Fix error when resolving title for sites not using UTF-8 charset (detected with Japanese charsets).
+
+
 ## [4.1.0] - 2024-04-14
 ### Added
 * [#1330](https://github.com/shlinkio/shlink/issues/1330) All visit-related endpoints now expose the `visitedUrl` prop for any visit.
@@ -824,3 +844,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * *Nothing*
+
+
+## Older versions
+* [2.x.x](docs/changelog-archive/CHANGELOG-2.x.md)
+* [1.x.x](docs/changelog-archive/CHANGELOG-1.x.md)

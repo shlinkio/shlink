@@ -9,11 +9,11 @@ use Cake\Chronos\Chronos;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping\Builder\FieldBuilder;
 use GuzzleHttp\Psr7\Query;
+use Hidehalo\Nanoid\Client as NanoidClient;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use Laminas\Filter\Word\CamelCaseToSeparator;
 use Laminas\Filter\Word\CamelCaseToUnderscore;
 use Laminas\InputFilter\InputFilter;
-use PUGX\Shortid\Factory as ShortIdFactory;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 
@@ -37,15 +37,15 @@ use function ucfirst;
 
 function generateRandomShortCode(int $length, ShortUrlMode $mode = ShortUrlMode::STRICT): string
 {
-    static $shortIdFactory;
-    if ($shortIdFactory === null) {
-        $shortIdFactory = new ShortIdFactory();
+    static $nanoIdClient;
+    if ($nanoIdClient === null) {
+        $nanoIdClient = new NanoidClient();
     }
 
     $alphabet = $mode === ShortUrlMode::STRICT
         ? '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
         : '0123456789abcdefghijklmnopqrstuvwxyz';
-    return $shortIdFactory->generate($length, $alphabet)->serialize();
+    return $nanoIdClient->formattedId($alphabet, $length);
 }
 
 function parseDateFromQuery(array $query, string $dateName): ?Chronos
