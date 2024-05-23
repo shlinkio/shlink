@@ -9,6 +9,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#2018](https://github.com/shlinkio/shlink/issues/2018) Add option to allow all short URLs to be unconditionally crawlable in robots.txt, via `ROBOTS_ALLOW_ALL_SHORT_URLS=true` env var, or config options.
 
 ### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* *Nothing*
+
+
+## [4.1.1] - 2024-05-23
+### Added
+* *Nothing*
+
+### Changed
 * Use new reusable workflow to publish docker image
 * [#2015](https://github.com/shlinkio/shlink/issues/2015) Update to PHPUnit 11.
 * [#2130](https://github.com/shlinkio/shlink/pull/2130) Replace deprecated `pugx/shortid-php` package with `hidehalo/nanoid-php`.
