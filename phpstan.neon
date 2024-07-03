@@ -11,6 +11,6 @@ parameters:
         objectManagerLoader: 'config/entity-manager.php'
     ignoreErrors:
         - '#should return int<0, max> but returns int#'
-        - '#expects -1|int<1, max>, int given#'
+        - '#expects -1\|int<1, max>, int given#'
         - identifier: missingType.generics
         - identifier: missingType.iterableValue
