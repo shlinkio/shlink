@@ -1,5 +1,3 @@
-version: '3'
-
 services:
     shlink_db_mysql:
         environment:
