@@ -10,6 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Crawling\CrawlingHelperInterface;
+use Shlinkio\Shlink\Core\Options\RobotsOptions;
 
 use function sprintf;
 
@@ -17,7 +18,7 @@ use const PHP_EOL;
 
 readonly class RobotsAction implements RequestHandlerInterface, StatusCodeInterface
 {
-    public function __construct(private CrawlingHelperInterface $crawlingHelper, private bool $allowAllShortUrls)
+    public function __construct(private CrawlingHelperInterface $crawlingHelper, private RobotsOptions $robotsOptions)
     {
     }
 
@@ -33,11 +34,15 @@ readonly class RobotsAction implements RequestHandlerInterface, StatusCodeInterf
         # For more information about the robots.txt standard, see:
         # https://www.robotstxt.org/orig.html
 
-        User-agent: *
 
         ROBOTS;
 
-        if ($this->allowAllShortUrls) {
+        $userAgents = $this->robotsOptions->hasUserAgents() ? $this->robotsOptions->userAgents : ['*'];
+        foreach ($userAgents as $userAgent) {
+            yield sprintf('User-agent: %s%s', $userAgent, PHP_EOL);
+        }
+
+        if ($this->robotsOptions->allowAllShortUrls) {
             // Disallow rest URLs, but allow all short codes
             yield 'Disallow: /rest/';
             return;
