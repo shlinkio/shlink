@@ -5,10 +5,12 @@ namespace Shlinkio\Shlink\Core\RedirectRule\Entity;
 use JsonSerializable;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
+use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
 use Shlinkio\Shlink\Core\RedirectRule\Model\Validation\RedirectRulesInputFilter;
 
+use Shlinkio\Shlink\Core\Util\IpAddressUtils;
 use function Shlinkio\Shlink\Core\acceptLanguageToLocales;
 use function Shlinkio\Shlink\Core\ArrayUtils\some;
 use function Shlinkio\Shlink\Core\normalizeLocale;
@@ -41,6 +43,15 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
         return new self(RedirectConditionType::DEVICE, $device->value);
     }
 
+    /**
+     * @param string $ipAddressPattern - A static IP address (100.200.80.40), CIDR block (192.168.10.0/24) or wildcard
+     *                                   pattern (11.22.*.*)
+     */
+    public static function forIpAddress(string $ipAddressPattern): self
+    {
+        return new self(RedirectConditionType::IP_ADDRESS, $ipAddressPattern);
+    }
+
     public static function fromRawData(array $rawData): self
     {
         $type = RedirectConditionType::from($rawData[RedirectRulesInputFilter::CONDITION_TYPE]);
@@ -59,6 +70,7 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
             RedirectConditionType::QUERY_PARAM => $this->matchesQueryParam($request),
             RedirectConditionType::LANGUAGE => $this->matchesLanguage($request),
             RedirectConditionType::DEVICE => $this->matchesDevice($request),
+            RedirectConditionType::IP_ADDRESS => $this->matchesRemoteIpAddress($request),
         };
     }
 
@@ -100,6 +112,12 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
         return $device !== null && $device->value === strtolower($this->matchValue);
     }
 
+    private function matchesRemoteIpAddress(ServerRequestInterface $request): bool
+    {
+        $remoteAddress = $request->getAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR);
+        return $remoteAddress !== null && IpAddressUtils::ipAddressMatchesGroups($remoteAddress, [$this->matchValue]);
+    }
+
     public function jsonSerialize(): array
     {
         return [
@@ -119,6 +137,7 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
                 $this->matchKey,
                 $this->matchValue,
             ),
+            RedirectConditionType::IP_ADDRESS => sprintf('IP address matches %s', $this->matchValue),
         };
     }
 }
