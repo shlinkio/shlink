@@ -5,30 +5,20 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Visit;
 
 use Fig\Http\Message\RequestMethodInterface;
-use IPLib\Address\IPv4;
-use IPLib\Factory;
-use IPLib\Range\RangeInterface;
 use Mezzio\Router\Middleware\ImplicitHeadMiddleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Core\ErrorHandler\Model\NotFoundType;
+use Shlinkio\Shlink\Core\Exception\InvalidIpFormatException;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\Util\IpAddressUtils;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 
-use function array_keys;
-use function array_map;
-use function explode;
-use function implode;
-use function Shlinkio\Shlink\Core\ArrayUtils\some;
-use function str_contains;
-
-class RequestTracker implements RequestTrackerInterface, RequestMethodInterface
+readonly class RequestTracker implements RequestTrackerInterface, RequestMethodInterface
 {
-    public function __construct(
-        private readonly VisitsTrackerInterface $visitsTracker,
-        private readonly TrackingOptions $trackingOptions,
-    ) {
+    public function __construct(private VisitsTrackerInterface $visitsTracker, private TrackingOptions $trackingOptions)
+    {
     }
 
     public function trackIfApplicable(ShortUrl $shortUrl, ServerRequestInterface $request): void
@@ -78,35 +68,10 @@ class RequestTracker implements RequestTrackerInterface, RequestMethodInterface
             return false;
         }
 
-        $ip = IPv4::parseString($remoteAddr);
-        if ($ip === null) {
+        try {
+            return IpAddressUtils::ipAddressMatchesGroups($remoteAddr, $this->trackingOptions->disableTrackingFrom);
+        } catch (InvalidIpFormatException) {
             return false;
         }
-
-        $remoteAddrParts = explode('.', $remoteAddr);
-        $disableTrackingFrom = $this->trackingOptions->disableTrackingFrom;
-
-        return some($disableTrackingFrom, function (string $value) use ($ip, $remoteAddrParts): bool {
-            $range = str_contains($value, '*')
-                ? $this->parseValueWithWildcards($value, $remoteAddrParts)
-                : Factory::parseRangeString($value);
-
-            return $range !== null && $ip->matches($range);
-        });
-    }
-
-    private function parseValueWithWildcards(string $value, array $remoteAddrParts): ?RangeInterface
-    {
-        $octets = explode('.', $value);
-        $keys = array_keys($octets);
-
-        // Replace wildcard parts with the corresponding ones from the remote address
-        return Factory::parseRangeString(
-            implode('.', array_map(
-                fn (string $part, int $index) => $part === '*' ? $remoteAddrParts[$index] : $part,
-                $octets,
-                $keys,
-            )),
-        );
     }
 }

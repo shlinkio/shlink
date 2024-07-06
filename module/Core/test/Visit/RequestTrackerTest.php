@@ -93,6 +93,21 @@ class RequestTrackerTest extends TestCase
     }
 
     #[Test]
+    public function trackingHappensOverShortUrlsWhenRemoteAddressIsInvalid(): void
+    {
+        $shortUrl = ShortUrl::withLongUrl(self::LONG_URL);
+        $this->visitsTracker->expects($this->once())->method('track')->with(
+            $shortUrl,
+            $this->isInstanceOf(Visitor::class),
+        );
+
+        $this->requestTracker->trackIfApplicable($shortUrl, ServerRequestFactory::fromGlobals()->withAttribute(
+            IpAddressMiddlewareFactory::REQUEST_ATTR,
+            'invalid',
+        ));
+    }
+
+    #[Test]
     public function baseUrlErrorIsTracked(): void
     {
         $this->notFoundType->expects($this->once())->method('isBaseUrl')->willReturn(true);
