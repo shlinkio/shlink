@@ -260,3 +260,16 @@ function enumToString(string $enum): string
 {
     return sprintf('["%s"]', implode('", "', enumValues($enum)));
 }
+
+/**
+ * Split provided string by comma and return a list of the results.
+ * An empty array is returned if provided value is empty
+ */
+function splitByComma(?string $value): array
+{
+    if ($value === null || trim($value) === '') {
+        return [];
+    }
+
+    return array_map(trim(...), explode(',', $value));
+}

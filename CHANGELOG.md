@@ -6,7 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* [#2018](https://github.com/shlinkio/shlink/issues/2018) Add option to allow all short URLs to be unconditionally crawlable in robots.txt, via `ROBOTS_ALLOW_ALL_SHORT_URLS=true` env var, or config options.
+* [#2018](https://github.com/shlinkio/shlink/issues/2018) Add option to allow all short URLs to be unconditionally crawlable in robots.txt, via `ROBOTS_ALLOW_ALL_SHORT_URLS=true` env var, or config option.
+* [#2109](https://github.com/shlinkio/shlink/issues/2109) Add option to customize user agents robots.txt, via `ROBOTS_USER_AGENTS=foo,bar,baz` env var, or config option.
 
 ### Changed
 * [#2096](https://github.com/shlinkio/shlink/issues/2096) Update to RoadRunner 2024.
