@@ -5,14 +5,14 @@ namespace Shlinkio\Shlink\Core\RedirectRule\Entity;
 use JsonSerializable;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
-use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
 use Shlinkio\Shlink\Core\RedirectRule\Model\Validation\RedirectRulesInputFilter;
-
 use Shlinkio\Shlink\Core\Util\IpAddressUtils;
+
 use function Shlinkio\Shlink\Core\acceptLanguageToLocales;
 use function Shlinkio\Shlink\Core\ArrayUtils\some;
+use function Shlinkio\Shlink\Core\ipAddressFromRequest;
 use function Shlinkio\Shlink\Core\normalizeLocale;
 use function Shlinkio\Shlink\Core\splitLocale;
 use function sprintf;
@@ -114,7 +114,7 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
 
     private function matchesRemoteIpAddress(ServerRequestInterface $request): bool
     {
-        $remoteAddress = $request->getAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR);
+        $remoteAddress = ipAddressFromRequest($request);
         return $remoteAddress !== null && IpAddressUtils::ipAddressMatchesGroups($remoteAddress, [$this->matchValue]);
     }
 

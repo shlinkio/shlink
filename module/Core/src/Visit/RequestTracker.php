@@ -7,13 +7,14 @@ namespace Shlinkio\Shlink\Core\Visit;
 use Fig\Http\Message\RequestMethodInterface;
 use Mezzio\Router\Middleware\ImplicitHeadMiddleware;
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Core\ErrorHandler\Model\NotFoundType;
 use Shlinkio\Shlink\Core\Exception\InvalidIpFormatException;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Util\IpAddressUtils;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
+
+use function Shlinkio\Shlink\Core\ipAddressFromRequest;
 
 readonly class RequestTracker implements RequestTrackerInterface, RequestMethodInterface
 {
@@ -53,7 +54,7 @@ readonly class RequestTracker implements RequestTrackerInterface, RequestMethodI
             return false;
         }
 
-        $remoteAddr = $request->getAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR);
+        $remoteAddr = ipAddressFromRequest($request);
         if ($this->shouldDisableTrackingFromAddress($remoteAddr)) {
             return false;
         }

@@ -14,8 +14,9 @@ use function array_map;
 use function explode;
 use function implode;
 use function Shlinkio\Shlink\Core\ArrayUtils\some;
+use function str_contains;
 
-class IpAddressUtils
+final class IpAddressUtils
 {
     /**
      * Checks if an IP address matches any of provided groups.

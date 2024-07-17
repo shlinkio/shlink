@@ -1,16 +1,19 @@
 <?php
 
-namespace RedirectRule\Entity;
+namespace ShlinkioTest\Shlink\Core\RedirectRule\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule;
 use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
+
+use function sprintf;
 
 class ShortUrlRedirectRuleTest extends TestCase
 {
@@ -55,9 +58,12 @@ class ShortUrlRedirectRuleTest extends TestCase
     #[Test, DataProvider('provideConditionMappingCallbacks')]
     public function conditionsCanBeMapped(callable $callback, array $expectedResult): void
     {
-        $conditions = new ArrayCollection(
-            [RedirectCondition::forLanguage('en-UK'), RedirectCondition::forQueryParam('foo', 'bar')],
-        );
+        $conditions = new ArrayCollection([
+            RedirectCondition::forLanguage('en-UK'),
+            RedirectCondition::forQueryParam('foo', 'bar'),
+            RedirectCondition::forDevice(DeviceType::ANDROID),
+            RedirectCondition::forIpAddress('1.2.3.*'),
+        ]);
         $rule = $this->createRule($conditions);
 
         $result = $rule->mapConditions($callback);
@@ -78,10 +84,22 @@ class ShortUrlRedirectRuleTest extends TestCase
                 'matchKey' => 'foo',
                 'matchValue' => 'bar',
             ],
+            [
+                'type' => RedirectConditionType::DEVICE->value,
+                'matchKey' => null,
+                'matchValue' => DeviceType::ANDROID->value,
+            ],
+            [
+                'type' => RedirectConditionType::IP_ADDRESS->value,
+                'matchKey' => null,
+                'matchValue' => '1.2.3.*',
+            ],
         ]];
         yield 'human-friendly conditions' => [fn (RedirectCondition $cond) => $cond->toHumanFriendly(), [
             'en-UK language is accepted',
             'query string contains foo=bar',
+            sprintf('device is %s', DeviceType::ANDROID->value),
+            'IP address matches 1.2.3.*',
         ]];
     }
 

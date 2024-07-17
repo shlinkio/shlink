@@ -14,6 +14,8 @@ use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use Laminas\Filter\Word\CamelCaseToSeparator;
 use Laminas\Filter\Word\CamelCaseToUnderscore;
 use Laminas\InputFilter\InputFilter;
+use Psr\Http\Message\ServerRequestInterface;
+use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 
@@ -272,4 +274,9 @@ function splitByComma(?string $value): array
     }
 
     return array_map(trim(...), explode(',', $value));
+}
+
+function ipAddressFromRequest(ServerRequestInterface $request): ?string
+{
+    return $request->getAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR);
 }
