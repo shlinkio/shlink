@@ -26,7 +26,7 @@ final class IpAddressUtils
      * Matching will happen as follows:
      *  * Static IP address -> strict equality with provided IP address.
      *  * CIDR block -> provided IP address is part of that block.
-     *  * Wildcard -> static parts match the corresponding ones in provided IP address.
+     *  * Wildcard pattern -> static parts match the corresponding ones in provided IP address.
      *
      * @param string[] $groups
      * @throws InvalidIpFormatException
