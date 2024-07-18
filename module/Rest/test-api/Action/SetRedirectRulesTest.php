@@ -25,7 +25,7 @@ class SetRedirectRulesTest extends ApiTestCase
     ];
 
     #[Test]
-    public function errorIsReturnedWhenInvalidUrlProvided(): void
+    public function errorIsReturnedWhenInvalidUrlIsProvided(): void
     {
         $response = $this->callApiWithKey(self::METHOD_POST, '/short-urls/invalid/redirect-rules');
         $payload = $this->getJsonResponsePayload($response);
@@ -39,16 +39,67 @@ class SetRedirectRulesTest extends ApiTestCase
     }
 
     #[Test]
-    public function errorIsReturnedWhenInvalidDataProvided(): void
-    {
-        $response = $this->callApiWithKey(self::METHOD_POST, '/short-urls/abc123/redirect-rules', [
-            RequestOptions::JSON => [
-                'redirectRules' => [
+    #[TestWith([[
+        'redirectRules' => [
+            [
+                'longUrl' => 'invalid',
+            ],
+        ],
+    ]], 'invalid long URL')]
+    #[TestWith([[
+        'redirectRules' => [
+            [
+                'longUrl' => 'https://example.com',
+                'conditions' => 'foo',
+            ],
+        ],
+    ]], 'non-array conditions')]
+    #[TestWith([[
+        'redirectRules' => [
+            [
+                'longUrl' => 'https://example.com',
+                'conditions' => [
                     [
-                        'longUrl' => 'invalid',
+                        'type' => 'invalid',
+                        'matchKey' => null,
+                        'matchValue' => 'foo',
                     ],
                 ],
             ],
+        ],
+    ]], 'invalid condition type')]
+    #[TestWith([[
+        'redirectRules' => [
+            [
+                'longUrl' => 'https://example.com',
+                'conditions' => [
+                    [
+                        'type' => 'device',
+                        'matchValue' => 'invalid-device',
+                        'matchKey' => null,
+                    ],
+                ],
+            ],
+        ],
+    ]], 'invalid device type')]
+    #[TestWith([[
+        'redirectRules' => [
+            [
+                'longUrl' => 'https://example.com',
+                'conditions' => [
+                    [
+                        'type' => 'ip-address',
+                        'matchKey' => null,
+                        'matchValue' => 'not an IP address',
+                    ],
+                ],
+            ],
+        ],
+    ]], 'invalid IP address')]
+    public function errorIsReturnedWhenInvalidDataIsProvided(array $bodyPayload): void
+    {
+        $response = $this->callApiWithKey(self::METHOD_POST, '/short-urls/abc123/redirect-rules', [
+            RequestOptions::JSON => $bodyPayload,
         ]);
         $payload = $this->getJsonResponsePayload($response);
 

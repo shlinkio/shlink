@@ -87,6 +87,17 @@ class ListRedirectRulesTest extends ApiTestCase
                 ],
             ],
         ],
+        [
+            'longUrl' => 'https://example.com/static-ip-address',
+            'priority' => 6,
+            'conditions' => [
+                [
+                    'type' => 'ip-address',
+                    'matchKey' => null,
+                    'matchValue' => '1.2.3.4',
+                ],
+            ],
+        ],
     ]])]
     public function returnsListOfRulesForShortUrl(string $shortCode, array $expectedRules): void
     {

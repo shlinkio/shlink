@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
+* [#2120](https://github.com/shlinkio/shlink/issues/2120) Add new IP address condition for the dynamic rules redirections system.
+
+  The conditions allow you to define IP addresses to match as static IP (1.2.3.4), CIDR block (192.168.1.0/24) or wildcard pattern (1.2.\*.\*).
+
 * [#2018](https://github.com/shlinkio/shlink/issues/2018) Add option to allow all short URLs to be unconditionally crawlable in robots.txt, via `ROBOTS_ALLOW_ALL_SHORT_URLS=true` env var, or config option.
 * [#2109](https://github.com/shlinkio/shlink/issues/2109) Add option to customize user agents robots.txt, via `ROBOTS_USER_AGENTS=foo,bar,baz` env var, or config option.
 

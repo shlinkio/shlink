@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
+use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule;
@@ -87,6 +88,31 @@ class ShortUrlRedirectionResolverTest extends TestCase
             $request()->withQueryParams(['foo' => 'bar']),
             RedirectCondition::forQueryParam('foo', 'bar'),
             'https://example.com/from-rule',
+        ];
+        yield 'matching static IP address' => [
+            $request()->withAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR, '1.2.3.4'),
+            RedirectCondition::forIpAddress('1.2.3.4'),
+            'https://example.com/from-rule',
+        ];
+        yield 'matching CIDR block' => [
+            $request()->withAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR, '192.168.1.35'),
+            RedirectCondition::forIpAddress('192.168.1.0/24'),
+            'https://example.com/from-rule',
+        ];
+        yield 'matching wildcard IP address' => [
+            $request()->withAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR, '1.2.5.5'),
+            RedirectCondition::forIpAddress('1.2.*.*'),
+            'https://example.com/from-rule',
+        ];
+        yield 'non-matching IP address' => [
+            $request()->withAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR, '4.3.2.1'),
+            RedirectCondition::forIpAddress('1.2.3.4'),
+            'https://example.com/foo/bar',
+        ];
+        yield 'missing remote IP address' => [
+            $request(),
+            RedirectCondition::forIpAddress('1.2.3.4'),
+            'https://example.com/foo/bar',
         ];
     }
 }

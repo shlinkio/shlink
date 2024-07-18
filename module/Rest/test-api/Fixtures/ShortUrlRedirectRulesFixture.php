@@ -70,6 +70,14 @@ class ShortUrlRedirectRulesFixture extends AbstractFixture implements DependentF
         );
         $manager->persist($iosRule);
 
+        $ipAddressRule = new ShortUrlRedirectRule(
+            shortUrl: $defShortUrl,
+            priority: 6,
+            longUrl: 'https://example.com/static-ip-address',
+            conditions: new ArrayCollection([RedirectCondition::forIpAddress('1.2.3.4')]),
+        );
+        $manager->persist($ipAddressRule);
+
         $manager->flush();
     }
 }
