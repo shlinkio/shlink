@@ -10,10 +10,11 @@ on:
 
 jobs:
   db-tests:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
-        php-version: ['8.2', '8.3']
+        php-version: ['8.2', '8.3', '8.4']
+    continue-on-error: ${{ matrix.php-version == '8.4' }}
     env:
       LC_ALL: C
     steps:
@@ -36,7 +37,7 @@ jobs:
         run: composer test:db:${{ inputs.platform }}
       - name: Upload code coverage
         uses: actions/upload-artifact@v4
-        if: ${{ matrix.php-version == '8.2' && inputs.platform == 'sqlite:ci' }}
+        if: ${{ matrix.php-version == '8.3' && inputs.platform == 'sqlite:ci' }}
         with:
           name: coverage-db
           path: |
