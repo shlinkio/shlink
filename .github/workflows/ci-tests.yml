@@ -10,10 +10,11 @@ on:
 
 jobs:
   tests:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
-        php-version: ['8.2', '8.3']
+        php-version: ['8.2', '8.3', '8.4']
+    continue-on-error: ${{ matrix.php-version == '8.4' }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # rr get-binary picks this env automatically
     steps:
@@ -33,7 +34,7 @@ jobs:
         run: ./vendor/bin/rr get --no-interaction --no-config --location bin/ && chmod +x bin/rr
       - run: composer test:${{ inputs.test-group }}:ci
       - uses: actions/upload-artifact@v4
-        if: ${{ matrix.php-version == '8.2' }}
+        if: ${{ matrix.php-version == '8.3' }}
         with:
           name: coverage-${{ inputs.test-group }}
           path: |

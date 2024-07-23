@@ -24,10 +24,10 @@ on:
 
 jobs:
   static-analysis:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
-        php-version: ['8.2']
+        php-version: ['8.3']
         command: ['cs', 'stan', 'swagger:validate']
     steps:
       - uses: actions/checkout@v4
@@ -66,10 +66,10 @@ jobs:
       - api-tests
       - cli-tests
       - db-tests
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
-        php-version: ['8.2']
+        php-version: ['8.3']
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -94,7 +94,7 @@ jobs:
   delete-artifacts:
     needs:
       - upload-coverage
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: geekyeggo/delete-artifact@v2
         with:
