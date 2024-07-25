@@ -137,6 +137,6 @@ class CreateShortUrlCommand extends Command
 
     private function getIO(InputInterface $input, OutputInterface $output): SymfonyStyle
     {
-        return $this->io ?? ($this->io = new SymfonyStyle($input, $output));
+        return $this->io ??= new SymfonyStyle($input, $output);
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Input;
 
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlEdition;
+use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -103,4 +105,21 @@ readonly final class ShortUrlDataInput
     {
         return $input->getOption('no-forward-query');
     }
+
+    public function toShortUrlEdition(InputInterface $input): ShortUrlEdition
+    {
+        return ShortUrlEdition::fromRawData([
+            ShortUrlInputFilter::LONG_URL => $this->longUrl($input),
+            ShortUrlInputFilter::VALID_SINCE => $this->validSince($input),
+            ShortUrlInputFilter::VALID_UNTIL => $this->validUntil($input),
+            ShortUrlInputFilter::MAX_VISITS => $this->maxVisits($input),
+            ShortUrlInputFilter::TAGS => $this->tags($input),
+            ShortUrlInputFilter::CRAWLABLE => $this->crawlable($input),
+            ShortUrlInputFilter::FORWARD_QUERY => !$this->noForwardQuery($input),
+//            ShortUrlInputFilter::TITLE => TODO,
+        ]);
+    }
+
+    // TODO
+    // public function toShortUrlCreation(InputInterface $input)
 }
