@@ -102,18 +102,34 @@ readonly final class ShortUrlDataInput
     private function getCommonData(InputInterface $input): array
     {
         $longUrl = $this->longUrlAsOption ? $input->getOption('long-url') : $input->getArgument('longUrl');
-        $tags = array_unique(flatten(array_map(splitByComma(...), $input->getOption('tags'))));
-        $maxVisits = $input->getOption('max-visits');
+        $data = [ShortUrlInputFilter::LONG_URL => $longUrl];
 
-        return [
-            ShortUrlInputFilter::LONG_URL => $longUrl,
-            ShortUrlInputFilter::VALID_SINCE => $input->getOption('valid-since'),
-            ShortUrlInputFilter::VALID_UNTIL => $input->getOption('valid-until'),
-            ShortUrlInputFilter::MAX_VISITS => $maxVisits !== null ? (int) $maxVisits : null,
-            ShortUrlInputFilter::TAGS => $tags,
-            ShortUrlInputFilter::TITLE => $input->getOption('title'),
-            ShortUrlInputFilter::CRAWLABLE => $input->getOption('crawlable'),
-            ShortUrlInputFilter::FORWARD_QUERY => !$input->getOption('no-forward-query'),
-        ];
+        // Avoid setting arguments that were not explicitly provided.
+        // This is important when editing short URLs and should not make a difference when creating.
+        if ($input->hasParameterOption(['--valid-since', '-s'])) {
+            $data[ShortUrlInputFilter::VALID_SINCE] = $input->getOption('valid-since');
+        }
+        if ($input->hasParameterOption(['--valid-until', '-v'])) {
+            $data[ShortUrlInputFilter::VALID_UNTIL] = $input->getOption('valid-until');
+        }
+        if ($input->hasParameterOption(['--max-visits', '-m'])) {
+            $maxVisits = $input->getOption('max-visits');
+            $data[ShortUrlInputFilter::MAX_VISITS] = $maxVisits !== null ? (int) $maxVisits : null;
+        }
+        if ($input->hasParameterOption(['--tags', '-t'])) {
+            $tags = array_unique(flatten(array_map(splitByComma(...), $input->getOption('tags'))));
+            $data[ShortUrlInputFilter::TAGS] = $tags;
+        }
+        if ($input->hasParameterOption('--title')) {
+            $data[ShortUrlInputFilter::TITLE] = $input->getOption('title');
+        }
+        if ($input->hasParameterOption(['--crawlable', '-r'])) {
+            $data[ShortUrlInputFilter::CRAWLABLE] = $input->getOption('crawlable');
+        }
+        if ($input->hasParameterOption(['--no-forward-query', '-w'])) {
+            $data[ShortUrlInputFilter::FORWARD_QUERY] = !$input->getOption('no-forward-query');
+        }
+
+        return $data;
     }
 }
