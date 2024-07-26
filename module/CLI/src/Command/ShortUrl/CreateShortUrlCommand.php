@@ -9,8 +9,6 @@ use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
-use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
-use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Core\ShortUrl\UrlShortenerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -95,29 +93,17 @@ class CreateShortUrlCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = $this->getIO($input, $output);
-        $longUrl = $this->shortUrlDataInput->longUrl($input);
-        if (empty($longUrl)) {
-            $io->error('A URL was not provided!');
-            return ExitCode::EXIT_FAILURE;
-        }
-
-        $shortCodeLength = $input->getOption('short-code-length') ?? $this->options->defaultShortCodesLength;
 
         try {
-            $result = $this->urlShortener->shorten(ShortUrlCreation::fromRawData([
-                ShortUrlInputFilter::LONG_URL => $longUrl,
-                ShortUrlInputFilter::VALID_SINCE => $this->shortUrlDataInput->validSince($input),
-                ShortUrlInputFilter::VALID_UNTIL => $this->shortUrlDataInput->validUntil($input),
-                ShortUrlInputFilter::MAX_VISITS => $this->shortUrlDataInput->maxVisits($input),
-                ShortUrlInputFilter::CUSTOM_SLUG => $input->getOption('custom-slug'),
-                ShortUrlInputFilter::PATH_PREFIX => $input->getOption('path-prefix'),
-                ShortUrlInputFilter::FIND_IF_EXISTS => $input->getOption('find-if-exists'),
-                ShortUrlInputFilter::DOMAIN => $input->getOption('domain'),
-                ShortUrlInputFilter::SHORT_CODE_LENGTH => $shortCodeLength,
-                ShortUrlInputFilter::TAGS => $this->shortUrlDataInput->tags($input),
-                ShortUrlInputFilter::CRAWLABLE => $this->shortUrlDataInput->crawlable($input),
-                ShortUrlInputFilter::FORWARD_QUERY => !$this->shortUrlDataInput->noForwardQuery($input),
-            ], $this->options));
+            $result = $this->urlShortener->shorten($this->shortUrlDataInput->toShortUrlCreation(
+                $input,
+                $this->options,
+                customSlugField: 'custom-slug',
+                shortCodeLengthField: 'short-code-length',
+                pathPrefixField: 'path-prefix',
+                findIfExistsField: 'find-if-exists',
+                domainField: 'domain',
+            ));
 
             $result->onEventDispatchingError(static fn () => $io->isVerbose() && $io->warning(
                 'Short URL properly created, but the real-time updates cannot be notified when generating the '
@@ -125,7 +111,7 @@ class CreateShortUrlCommand extends Command
             ));
 
             $io->writeln([
-                sprintf('Processed long URL: <info>%s</info>', $longUrl),
+                sprintf('Processed long URL: <info>%s</info>', $result->shortUrl->getLongUrl()),
                 sprintf('Generated short URL: <info>%s</info>', $this->stringifier->stringify($result->shortUrl)),
             ]);
             return ExitCode::EXIT_SUCCESS;

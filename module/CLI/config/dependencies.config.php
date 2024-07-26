@@ -93,7 +93,7 @@ return [
             ShortUrlStringifier::class,
             UrlShortenerOptions::class,
         ],
-        Command\ShortUrl\EditShortUrlCommand::class => [ShortUrl\ShortUrlService::class],
+        Command\ShortUrl\EditShortUrlCommand::class => [ShortUrl\ShortUrlService::class, ShortUrlStringifier::class],
         Command\ShortUrl\ResolveUrlCommand::class => [ShortUrl\ShortUrlResolver::class],
         Command\ShortUrl\ListShortUrlsCommand::class => [
             ShortUrl\ShortUrlListService::class,
