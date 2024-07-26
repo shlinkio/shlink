@@ -20,8 +20,8 @@ class EditShortUrlAction extends AbstractRestAction
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_PATCH];
 
     public function __construct(
-        private ShortUrlServiceInterface $shortUrlService,
-        private DataTransformerInterface $transformer,
+        private readonly ShortUrlServiceInterface $shortUrlService,
+        private readonly DataTransformerInterface $transformer,
     ) {
     }
 
