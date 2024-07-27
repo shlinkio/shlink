@@ -30,45 +30,46 @@ readonly final class ShortUrlDataInput
 
         $command
             ->addOption(
-                'tags',
-                't',
+                ShortUrlDataOption::TAGS->value,
+                ShortUrlDataOption::TAGS->shortcut(),
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
                 'Tags to apply to the short URL',
             )
             ->addOption(
-                'valid-since',
-                's',
+                ShortUrlDataOption::VALID_SINCE->value,
+                ShortUrlDataOption::VALID_SINCE->shortcut(),
                 InputOption::VALUE_REQUIRED,
                 'The date from which this short URL will be valid. '
                 . 'If someone tries to access it before this date, it will not be found.',
             )
             ->addOption(
-                'valid-until',
-                'u',
+                ShortUrlDataOption::VALID_UNTIL->value,
+                ShortUrlDataOption::VALID_UNTIL->shortcut(),
                 InputOption::VALUE_REQUIRED,
                 'The date until which this short URL will be valid. '
                 . 'If someone tries to access it after this date, it will not be found.',
             )
             ->addOption(
-                'max-visits',
-                'm',
+                ShortUrlDataOption::MAX_VISITS->value,
+                ShortUrlDataOption::MAX_VISITS->shortcut(),
                 InputOption::VALUE_REQUIRED,
                 'This will limit the number of visits for this short URL.',
             )
             ->addOption(
-                'title',
-                mode: InputOption::VALUE_REQUIRED,
-                description: 'A descriptive title for the short URL.',
+                ShortUrlDataOption::TITLE->value,
+                ShortUrlDataOption::TITLE->shortcut(),
+                InputOption::VALUE_REQUIRED,
+                'A descriptive title for the short URL.',
             )
             ->addOption(
-                'crawlable',
-                'r',
+                ShortUrlDataOption::CRAWLABLE->value,
+                ShortUrlDataOption::CRAWLABLE->shortcut(),
                 InputOption::VALUE_NONE,
                 'Tells if this short URL will be included as "Allow" in Shlink\'s robots.txt.',
             )
             ->addOption(
-                'no-forward-query',
-                'w',
+                ShortUrlDataOption::NO_FORWARD_QUERY->value,
+                ShortUrlDataOption::NO_FORWARD_QUERY->shortcut(),
                 InputOption::VALUE_NONE,
                 'Disables the forwarding of the query string to the long URL, when the short URL is visited.',
             );
@@ -106,27 +107,27 @@ readonly final class ShortUrlDataInput
 
         // Avoid setting arguments that were not explicitly provided.
         // This is important when editing short URLs and should not make a difference when creating.
-        if ($input->hasParameterOption(['--valid-since', '-s'])) {
+        if (ShortUrlDataOption::VALID_SINCE->wasProvided($input)) {
             $data[ShortUrlInputFilter::VALID_SINCE] = $input->getOption('valid-since');
         }
-        if ($input->hasParameterOption(['--valid-until', '-v'])) {
+        if (ShortUrlDataOption::VALID_UNTIL->wasProvided($input)) {
             $data[ShortUrlInputFilter::VALID_UNTIL] = $input->getOption('valid-until');
         }
-        if ($input->hasParameterOption(['--max-visits', '-m'])) {
+        if (ShortUrlDataOption::MAX_VISITS->wasProvided($input)) {
             $maxVisits = $input->getOption('max-visits');
             $data[ShortUrlInputFilter::MAX_VISITS] = $maxVisits !== null ? (int) $maxVisits : null;
         }
-        if ($input->hasParameterOption(['--tags', '-t'])) {
+        if (ShortUrlDataOption::TAGS->wasProvided($input)) {
             $tags = array_unique(flatten(array_map(splitByComma(...), $input->getOption('tags'))));
             $data[ShortUrlInputFilter::TAGS] = $tags;
         }
-        if ($input->hasParameterOption('--title')) {
+        if (ShortUrlDataOption::TITLE->wasProvided($input)) {
             $data[ShortUrlInputFilter::TITLE] = $input->getOption('title');
         }
-        if ($input->hasParameterOption(['--crawlable', '-r'])) {
+        if (ShortUrlDataOption::CRAWLABLE->wasProvided($input)) {
             $data[ShortUrlInputFilter::CRAWLABLE] = $input->getOption('crawlable');
         }
-        if ($input->hasParameterOption(['--no-forward-query', '-w'])) {
+        if (ShortUrlDataOption::NO_FORWARD_QUERY->wasProvided($input)) {
             $data[ShortUrlInputFilter::FORWARD_QUERY] = !$input->getOption('no-forward-query');
         }
 
