@@ -7,7 +7,7 @@ namespace Shlinkio\Shlink\Rest\Action\Tag;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtilsTrait;
+use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtils;
 use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
@@ -15,8 +15,6 @@ use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class TagsStatsAction extends AbstractRestAction
 {
-    use PagerfantaUtilsTrait;
-
     protected const ROUTE_PATH = '/tags/stats';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
@@ -30,6 +28,6 @@ class TagsStatsAction extends AbstractRestAction
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
         $tagsInfo = $this->tagService->tagsInfo($params, $apiKey);
 
-        return new JsonResponse(['tags' => $this->serializePaginator($tagsInfo)]);
+        return new JsonResponse(['tags' => PagerfantaUtils::serializePaginator($tagsInfo)]);
     }
 }

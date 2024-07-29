@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\EventDispatcher;
 
-use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
+use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformerInterface;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 
 final readonly class PublishingUpdatesGenerator implements PublishingUpdatesGeneratorInterface
 {
-    public function __construct(private DataTransformerInterface $shortUrlTransformer)
+    public function __construct(private ShortUrlDataTransformerInterface $shortUrlTransformer)
     {
     }
 

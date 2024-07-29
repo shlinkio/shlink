@@ -7,7 +7,7 @@ namespace Shlinkio\Shlink\Rest\Action\Visit;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtilsTrait;
+use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtils;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
@@ -15,13 +15,13 @@ use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class DomainVisitsAction extends AbstractRestAction
 {
-    use PagerfantaUtilsTrait;
-
     protected const ROUTE_PATH = '/domains/{domain}/visits';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
-    public function __construct(private VisitsStatsHelperInterface $visitsHelper, private string $defaultDomain)
-    {
+    public function __construct(
+        private readonly VisitsStatsHelperInterface $visitsHelper,
+        private readonly string $defaultDomain,
+    ) {
     }
 
     public function handle(Request $request): Response
@@ -31,9 +31,7 @@ class DomainVisitsAction extends AbstractRestAction
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
         $visits = $this->visitsHelper->visitsForDomain($domain, $params, $apiKey);
 
-        return new JsonResponse([
-            'visits' => $this->serializePaginator($visits),
-        ]);
+        return new JsonResponse(['visits' => PagerfantaUtils::serializePaginator($visits)]);
     }
 
     private function resolveDomainParam(Request $request): string
