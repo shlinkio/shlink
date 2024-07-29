@@ -8,6 +8,7 @@ use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 
+/** @extends EntitySpecificationRepository<Visit> */
 class VisitDeleterRepository extends EntitySpecificationRepository implements VisitDeleterRepositoryInterface
 {
     public function deleteShortUrlVisits(ShortUrl $shortUrl): int

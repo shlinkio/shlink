@@ -13,6 +13,9 @@ use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 
+/**
+ * @extends ObjectRepository<Visit>
+ */
 interface VisitRepositoryInterface extends ObjectRepository, EntitySpecificationRepositoryInterface
 {
     /**

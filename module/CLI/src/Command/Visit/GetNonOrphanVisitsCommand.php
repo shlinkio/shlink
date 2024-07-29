@@ -30,6 +30,9 @@ class GetNonOrphanVisitsCommand extends AbstractVisitsListCommand
             ->setDescription('Returns the list of non-orphan visits.');
     }
 
+    /**
+     * @return Paginator<Visit>
+     */
     protected function getVisitsPaginator(InputInterface $input, DateRange $dateRange): Paginator
     {
         return $this->visitsHelper->nonOrphanVisits(new VisitsParams($dateRange));

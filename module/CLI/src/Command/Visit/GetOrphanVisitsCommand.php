@@ -30,6 +30,9 @@ class GetOrphanVisitsCommand extends AbstractVisitsListCommand
             ));
     }
 
+    /**
+     * @return Paginator<Visit>
+     */
     protected function getVisitsPaginator(InputInterface $input, DateRange $dateRange): Paginator
     {
         $rawType = $input->getOption('type');

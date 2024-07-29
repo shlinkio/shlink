@@ -63,8 +63,7 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
     }
 
     /**
-     * @return Visit[]|Paginator
-     * @throws ShortUrlNotFoundException
+     * @inheritDoc
      */
     public function visitsForShortUrl(
         ShortUrlIdentifier $identifier,
@@ -87,8 +86,7 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
     }
 
     /**
-     * @return Visit[]|Paginator
-     * @throws TagNotFoundException
+     * @inheritDoc
      */
     public function visitsForTag(string $tag, VisitsParams $params, ?ApiKey $apiKey = null): Paginator
     {
@@ -105,8 +103,7 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
     }
 
     /**
-     * @return Visit[]|Paginator
-     * @throws DomainNotFoundException
+     * @inheritDoc
      */
     public function visitsForDomain(string $domain, VisitsParams $params, ?ApiKey $apiKey = null): Paginator
     {
@@ -123,7 +120,7 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
     }
 
     /**
-     * @return Visit[]|Paginator
+     * @inheritDoc
      */
     public function orphanVisits(OrphanVisitsParams $params, ?ApiKey $apiKey = null): Paginator
     {
@@ -141,6 +138,10 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
         return $this->createPaginator(new NonOrphanVisitsPaginatorAdapter($repo, $params, $apiKey), $params);
     }
 
+    /**
+     * @param AdapterInterface<Visit> $adapter
+     * @return Paginator<Visit>
+     */
     private function createPaginator(AdapterInterface $adapter, VisitsParams $params): Paginator
     {
         $paginator = new Paginator($adapter);

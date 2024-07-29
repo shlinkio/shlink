@@ -20,7 +20,7 @@ interface VisitsStatsHelperInterface
     public function getVisitsStats(?ApiKey $apiKey = null): VisitsStats;
 
     /**
-     * @return Visit[]|Paginator
+     * @return Paginator<Visit>
      * @throws ShortUrlNotFoundException
      */
     public function visitsForShortUrl(
@@ -30,24 +30,24 @@ interface VisitsStatsHelperInterface
     ): Paginator;
 
     /**
-     * @return Visit[]|Paginator
+     * @return Paginator<Visit>
      * @throws TagNotFoundException
      */
     public function visitsForTag(string $tag, VisitsParams $params, ?ApiKey $apiKey = null): Paginator;
 
     /**
-     * @return Visit[]|Paginator
+     * @return Paginator<Visit>
      * @throws DomainNotFoundException
      */
     public function visitsForDomain(string $domain, VisitsParams $params, ?ApiKey $apiKey = null): Paginator;
 
     /**
-     * @return Visit[]|Paginator
+     * @return Paginator<Visit>
      */
     public function orphanVisits(OrphanVisitsParams $params, ?ApiKey $apiKey = null): Paginator;
 
     /**
-     * @return Visit[]|Paginator
+     * @return Paginator<Visit>
      */
     public function nonOrphanVisits(VisitsParams $params, ?ApiKey $apiKey = null): Paginator;
 }

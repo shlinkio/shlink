@@ -177,6 +177,7 @@ class ListShortUrlsCommand extends Command
 
     /**
      * @param array<string, callable(array $serializedShortUrl, ShortUrl $shortUrl): ?string> $columnsMap
+     * @return Paginator<ShortUrlWithVisitsSummary>
      */
     private function renderPage(
         OutputInterface $output,

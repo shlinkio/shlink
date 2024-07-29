@@ -37,8 +37,8 @@ class ShortUrl extends AbstractEntity
 {
     /**
      * @param Collection<int, Tag> $tags
-     * @param Collection<int, Visit> & Selectable $visits
-     * @param Collection<int, ShortUrlVisitsCount> & Selectable $visitsCounts
+     * @param Collection<int, Visit> & Selectable<int, Visit> $visits
+     * @param Collection<int, ShortUrlVisitsCount> & Selectable<int, ShortUrlVisitsCount> $visitsCounts
      */
     private function __construct(
         private string $longUrl,
@@ -213,7 +213,7 @@ class ShortUrl extends AbstractEntity
     }
 
     /**
-     * @param Collection<int, Visit> & Selectable $visits
+     * @param Collection<int, Visit> & Selectable<int, Visit> $visits
      * @internal
      */
     public function setVisits(Collection & Selectable $visits): self

@@ -103,6 +103,9 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
         self::assertEquals('Resolved "title"', $result->title);
     }
 
+    /**
+     * @return InvocationMocker<ClientInterface>
+     */
     private function expectRequestToBeCalled(): InvocationMocker
     {
         return $this->httpClient->expects($this->once())->method('request')->with(

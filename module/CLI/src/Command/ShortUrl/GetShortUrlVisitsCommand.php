@@ -46,6 +46,9 @@ class GetShortUrlVisitsCommand extends AbstractVisitsListCommand
         }
     }
 
+    /**
+     * @return Paginator<Visit>
+     */
     protected function getVisitsPaginator(InputInterface $input, DateRange $dateRange): Paginator
     {
         $identifier = $this->shortUrlIdentifierInput->toShortUrlIdentifier($input);

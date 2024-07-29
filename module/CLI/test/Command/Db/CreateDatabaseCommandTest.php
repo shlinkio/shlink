@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\CLI\Command\Db;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Platforms\SQLitePlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -31,6 +32,7 @@ class CreateDatabaseCommandTest extends TestCase
     private MockObject & ProcessRunnerInterface $processHelper;
     private MockObject & Connection $regularConn;
     private MockObject & ClassMetadataFactory $metadataFactory;
+    /** @var MockObject&AbstractSchemaManager<SQLitePlatform> */
     private MockObject & AbstractSchemaManager $schemaManager;
     private MockObject & Driver $driver;
 

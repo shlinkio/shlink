@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Tag\Paginator\Adapter;
 
+use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\Model\TagsListFiltering;
 
+/** @extends AbstractTagsPaginatorAdapter<TagInfo> */
 class TagsInfoPaginatorAdapter extends AbstractTagsPaginatorAdapter
 {
     public function getSlice(int $offset, int $length): iterable

@@ -26,6 +26,9 @@ class ValidationException extends InvalidArgumentException implements ProblemDet
 
     private array $invalidElements;
 
+    /**
+     * @param InputFilterInterface<mixed> $inputFilter
+     */
     public static function fromInputFilter(InputFilterInterface $inputFilter, ?Throwable $prev = null): self
     {
         return static::fromArray($inputFilter->getMessages(), $prev);

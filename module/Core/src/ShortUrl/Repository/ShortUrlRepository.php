@@ -20,6 +20,7 @@ use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use function count;
 use function strtolower;
 
+/** @extends EntitySpecificationRepository<ShortUrl> */
 class ShortUrlRepository extends EntitySpecificationRepository implements ShortUrlRepositoryInterface
 {
     public function findOneWithDomainFallback(ShortUrlIdentifier $identifier, ShortUrlMode $shortUrlMode): ?ShortUrl

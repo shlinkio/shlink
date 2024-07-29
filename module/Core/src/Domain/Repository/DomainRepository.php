@@ -14,6 +14,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Spec\BelongsToApiKey;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
+/** @extends EntitySpecificationRepository<Domain> */
 class DomainRepository extends EntitySpecificationRepository implements DomainRepositoryInterface
 {
     /**

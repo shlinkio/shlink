@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Visit\Paginator\Adapter;
 
 use Shlinkio\Shlink\Core\Paginator\Adapter\AbstractCacheableCountPaginatorAdapter;
+use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams;
 use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
+/** @extends AbstractCacheableCountPaginatorAdapter<Visit> */
 class OrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
 {
     public function __construct(

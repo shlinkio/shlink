@@ -9,6 +9,7 @@ use Shlinkio\Shlink\Core\Visit\Entity\OrphanVisitsCount;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 
+/** @extends EntitySpecificationRepository<OrphanVisitsCount> */
 class OrphanVisitsCountRepository extends EntitySpecificationRepository implements OrphanVisitsCountRepositoryInterface
 {
     public function countOrphanVisits(VisitsCountFiltering $filtering): int
