@@ -18,7 +18,7 @@ final readonly class PublishingUpdatesGenerator implements PublishingUpdatesGene
     public function newVisitUpdate(Visit $visit): Update
     {
         return Update::forTopicAndPayload(Topic::NEW_VISIT->value, [
-            'shortUrl' => $this->shortUrlTransformer->transform($visit->shortUrl),
+            'shortUrl' => $this->transformShortUrl($visit->shortUrl),
             'visit' => $visit->jsonSerialize(),
         ]);
     }
@@ -36,7 +36,7 @@ final readonly class PublishingUpdatesGenerator implements PublishingUpdatesGene
         $topic = Topic::newShortUrlVisit($shortUrl?->getShortCode());
 
         return Update::forTopicAndPayload($topic, [
-            'shortUrl' => $this->shortUrlTransformer->transform($shortUrl),
+            'shortUrl' => $this->transformShortUrl($shortUrl),
             'visit' => $visit->jsonSerialize(),
         ]);
     }
@@ -46,5 +46,10 @@ final readonly class PublishingUpdatesGenerator implements PublishingUpdatesGene
         return Update::forTopicAndPayload(Topic::NEW_SHORT_URL->value, [
             'shortUrl' => $this->shortUrlTransformer->transform($shortUrl),
         ]);
+    }
+
+    private function transformShortUrl(?ShortUrl $shortUrl): array
+    {
+        return $shortUrl === null ? [] : $this->shortUrlTransformer->transform($shortUrl);
     }
 }
