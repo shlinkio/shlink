@@ -17,12 +17,12 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 interface TagServiceInterface
 {
     /**
-     * @return Tag[]|Paginator
+     * @return Paginator<Tag>
      */
     public function listTags(TagsParams $params, ?ApiKey $apiKey = null): Paginator;
 
     /**
-     * @return TagInfo[]|Paginator
+     * @return Paginator<TagInfo>
      */
     public function tagsInfo(TagsParams $params, ?ApiKey $apiKey = null): Paginator;
 

@@ -12,12 +12,12 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\UrlShorteningResult;
+use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformerInterface;
 use Shlinkio\Shlink\Core\ShortUrl\UrlShortener;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\CreateShortUrlAction;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -26,12 +26,12 @@ class CreateShortUrlActionTest extends TestCase
 {
     private CreateShortUrlAction $action;
     private MockObject & UrlShortener $urlShortener;
-    private MockObject & DataTransformerInterface $transformer;
+    private MockObject & ShortUrlDataTransformerInterface $transformer;
 
     protected function setUp(): void
     {
         $this->urlShortener = $this->createMock(UrlShortener::class);
-        $this->transformer = $this->createMock(DataTransformerInterface::class);
+        $this->transformer = $this->createMock(ShortUrlDataTransformerInterface::class);
 
         $this->action = new CreateShortUrlAction($this->urlShortener, $this->transformer, new UrlShortenerOptions());
     }

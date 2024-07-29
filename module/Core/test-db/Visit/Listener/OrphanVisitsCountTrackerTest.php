@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace ShlinkioDbTest\Shlink\Core\Visit\Listener;
 
-use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Core\Visit\Entity\OrphanVisitsCount;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
+use Shlinkio\Shlink\Core\Visit\Repository\OrphanVisitsCountRepository;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
 
 use function array_filter;
@@ -16,7 +16,7 @@ use function array_values;
 
 class OrphanVisitsCountTrackerTest extends DatabaseTestCase
 {
-    private EntityRepository $repo;
+    private OrphanVisitsCountRepository $repo;
 
     protected function setUp(): void
     {

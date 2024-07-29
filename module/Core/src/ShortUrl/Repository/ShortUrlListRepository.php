@@ -20,6 +20,7 @@ use Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount;
 use function Shlinkio\Shlink\Core\ArrayUtils\map;
 use function sprintf;
 
+/** @extends EntitySpecificationRepository<ShortUrl> */
 class ShortUrlListRepository extends EntitySpecificationRepository implements ShortUrlListRepositoryInterface
 {
     /**

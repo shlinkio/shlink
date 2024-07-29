@@ -33,6 +33,9 @@ class GetTagVisitsCommand extends AbstractVisitsListCommand
             ->addArgument('tag', InputArgument::REQUIRED, 'The tag which visits we want to get.');
     }
 
+    /**
+     * @return Paginator<Visit>
+     */
     protected function getVisitsPaginator(InputInterface $input, DateRange $dateRange): Paginator
     {
         $tag = $input->getArgument('tag');

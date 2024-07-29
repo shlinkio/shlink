@@ -104,7 +104,7 @@ class ShortUrlRedirectRuleTest extends TestCase
     }
 
     /**
-     * @param ArrayCollection<RedirectCondition> $conditions
+     * @param ArrayCollection<int, RedirectCondition> $conditions
      */
     private function createRule(ArrayCollection $conditions): ShortUrlRedirectRule
     {

@@ -77,7 +77,7 @@ services:
 
     shlink_db_postgres:
         container_name: shlink_db_postgres
-        image: postgres:12.2-alpine
+        image: postgres:16.3-alpine
         ports:
             - "5434:5432"
         volumes:

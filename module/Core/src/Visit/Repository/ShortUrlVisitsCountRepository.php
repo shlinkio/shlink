@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Visit\Repository;
 
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
+use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 
+/** @extends EntitySpecificationRepository<ShortUrl> */
 class ShortUrlVisitsCountRepository extends EntitySpecificationRepository implements
     ShortUrlVisitsCountRepositoryInterface
 {

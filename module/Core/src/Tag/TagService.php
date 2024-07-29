@@ -11,7 +11,6 @@ use Shlinkio\Shlink\Core\Exception\ForbiddenTagOperationException;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
-use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
 use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
 use Shlinkio\Shlink\Core\Tag\Paginator\Adapter\TagsInfoPaginatorAdapter;
@@ -20,14 +19,14 @@ use Shlinkio\Shlink\Core\Tag\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Tag\Repository\TagRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-class TagService implements TagServiceInterface
+readonly class TagService implements TagServiceInterface
 {
-    public function __construct(private readonly ORM\EntityManagerInterface $em)
+    public function __construct(private ORM\EntityManagerInterface $em)
     {
     }
 
     /**
-     * @return Tag[]|Paginator
+     * @inheritDoc
      */
     public function listTags(TagsParams $params, ?ApiKey $apiKey = null): Paginator
     {
@@ -37,7 +36,7 @@ class TagService implements TagServiceInterface
     }
 
     /**
-     * @return TagInfo[]|Paginator
+     * @inheritDoc
      */
     public function tagsInfo(TagsParams $params, ?ApiKey $apiKey = null): Paginator
     {
@@ -46,6 +45,11 @@ class TagService implements TagServiceInterface
         return $this->createPaginator(new TagsInfoPaginatorAdapter($repo, $params, $apiKey), $params);
     }
 
+    /**
+     * @template T
+     * @param AdapterInterface<T> $adapter
+     * @return Paginator<T>
+     */
     private function createPaginator(AdapterInterface $adapter, TagsParams $params): Paginator
     {
         return (new Paginator($adapter))
@@ -54,8 +58,7 @@ class TagService implements TagServiceInterface
     }
 
     /**
-     * @param string[] $tagNames
-     * @throws ForbiddenTagOperationException
+     * @inheritDoc
      */
     public function deleteTags(array $tagNames, ?ApiKey $apiKey = null): void
     {
@@ -69,9 +72,7 @@ class TagService implements TagServiceInterface
     }
 
     /**
-     * @throws TagNotFoundException
-     * @throws TagConflictException
-     * @throws ForbiddenTagOperationException
+     * @inheritDoc
      */
     public function renameTag(TagRenaming $renaming, ?ApiKey $apiKey = null): Tag
     {

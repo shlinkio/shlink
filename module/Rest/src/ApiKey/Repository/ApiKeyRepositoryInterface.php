@@ -8,6 +8,9 @@ use Doctrine\Persistence\ObjectRepository;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
+/**
+ * @extends ObjectRepository<ApiKey>
+ */
 interface ApiKeyRepositoryInterface extends ObjectRepository, EntitySpecificationRepositoryInterface
 {
     /**

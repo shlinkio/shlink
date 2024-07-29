@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount;
 
 use function sprintf;
 
+/** @extends EntitySpecificationRepository<ShortUrl> */
 class ExpiredShortUrlsRepository extends EntitySpecificationRepository implements ExpiredShortUrlsRepositoryInterface
 {
     /**

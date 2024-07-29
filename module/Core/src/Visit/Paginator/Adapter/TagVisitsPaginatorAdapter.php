@@ -5,19 +5,21 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Visit\Paginator\Adapter;
 
 use Shlinkio\Shlink\Core\Paginator\Adapter\AbstractCacheableCountPaginatorAdapter;
+use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
+/** @extends AbstractCacheableCountPaginatorAdapter<Visit> */
 class TagVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
 {
     public function __construct(
-        private VisitRepositoryInterface $visitRepository,
-        private string $tag,
-        private VisitsParams $params,
-        private ?ApiKey $apiKey,
+        private readonly VisitRepositoryInterface $visitRepository,
+        private readonly string $tag,
+        private readonly VisitsParams $params,
+        private readonly ?ApiKey $apiKey,
     ) {
     }
 

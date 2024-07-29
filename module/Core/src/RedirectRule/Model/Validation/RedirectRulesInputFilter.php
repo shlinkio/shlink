@@ -17,6 +17,7 @@ use Shlinkio\Shlink\Core\Util\IpAddressUtils;
 use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 use function Shlinkio\Shlink\Core\enumValues;
 
+/** @extends InputFilter<mixed> */
 class RedirectRulesInputFilter extends InputFilter
 {
     public const REDIRECT_RULES = 'redirectRules';
@@ -44,6 +45,9 @@ class RedirectRulesInputFilter extends InputFilter
         return $instance;
     }
 
+    /**
+     * @return InputFilter<mixed>
+     */
     private static function createRedirectRuleInputFilter(): InputFilter
     {
         $redirectRuleInputFilter = new InputFilter();
@@ -60,6 +64,9 @@ class RedirectRulesInputFilter extends InputFilter
         return $redirectRuleInputFilter;
     }
 
+    /**
+     * @return InputFilter<mixed>
+     */
     private static function createRedirectConditionInputFilter(): InputFilter
     {
         $redirectConditionInputFilter = new InputFilter();

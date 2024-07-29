@@ -9,6 +9,7 @@ use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryInterfa
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
+/** @extends ObjectRepository<Domain> */
 interface DomainRepositoryInterface extends ObjectRepository, EntitySpecificationRepositoryInterface
 {
     /**

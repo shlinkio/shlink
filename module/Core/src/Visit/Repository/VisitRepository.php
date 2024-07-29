@@ -23,6 +23,7 @@ use Shlinkio\Shlink\Rest\ApiKey\Role;
 
 use const PHP_INT_MAX;
 
+/** @extends EntitySpecificationRepository<Visit> */
 class VisitRepository extends EntitySpecificationRepository implements VisitRepositoryInterface
 {
     /**

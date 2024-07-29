@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Repository;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 
+/** @extends EntitySpecificationRepository<ShortUrl> */
 class CrawlableShortCodesQuery extends EntitySpecificationRepository implements CrawlableShortCodesQueryInterface
 {
     /**

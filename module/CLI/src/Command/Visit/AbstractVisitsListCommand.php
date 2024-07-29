@@ -46,6 +46,9 @@ abstract class AbstractVisitsListCommand extends Command
         return ExitCode::EXIT_SUCCESS;
     }
 
+    /**
+     * @param Paginator<Visit> $paginator
+     */
     private function resolveRowsAndHeaders(Paginator $paginator): array
     {
         $extraKeys = [];
@@ -74,6 +77,9 @@ abstract class AbstractVisitsListCommand extends Command
         ];
     }
 
+    /**
+     * @return Paginator<Visit>
+     */
     abstract protected function getVisitsPaginator(InputInterface $input, DateRange $dateRange): Paginator;
 
     /**

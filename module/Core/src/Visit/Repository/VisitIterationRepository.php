@@ -12,6 +12,7 @@ use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 
 /**
  * Allows iterating large amounts of visits in a memory-efficient way, to use in batch processes
+ * @extends EntitySpecificationRepository<Visit>
  */
 class VisitIterationRepository extends EntitySpecificationRepository implements VisitIterationRepositoryInterface
 {
