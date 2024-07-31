@@ -4,6 +4,11 @@ includes:
     - vendor/phpstan/phpstan-phpunit/extension.neon
     - vendor/phpstan/phpstan-phpunit/rules.neon
 parameters:
+    level: 8
+    paths:
+        - module
+        - config
+        - docker/config
     symfony:
         console_application_loader: 'config/cli-app.php'
     doctrine:

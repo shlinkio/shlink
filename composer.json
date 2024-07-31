@@ -114,7 +114,7 @@
         ],
         "cs": "phpcs -s",
         "cs:fix": "phpcbf",
-        "stan": "APP_ENV=test php vendor/bin/phpstan analyse module/*/src module/*/test* module/*/config module/*/migrations config docker/config --level=8",
+        "stan": "APP_ENV=test php vendor/bin/phpstan analyse",
         "test": [
             "@parallel test:unit test:db",
             "@parallel test:api test:cli"

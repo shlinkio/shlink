@@ -109,7 +109,7 @@ function normalizeLocale(string $locale): string
  * minimum quality
  *
  * @param non-empty-string $acceptLanguage
- * @param float<0, 1> $minQuality
+ * @param float $minQuality
  * @return iterable<string>;
  */
 function acceptLanguageToLocales(string $acceptLanguage, float $minQuality = 0): iterable
@@ -142,21 +142,31 @@ function acceptLanguageToLocales(string $acceptLanguage, float $minQuality = 0):
  */
 function splitLocale(string $locale): array
 {
-    return array_pad(explode('-', $locale), length: 2, value: null);
+    [$lang, $countryCode] = array_pad(explode('-', $locale), length: 2, value: null);
+    return [$lang, $countryCode];
 }
 
+/**
+ * @param InputFilter<mixed> $inputFilter
+ */
 function getOptionalIntFromInputFilter(InputFilter $inputFilter, string $fieldName): ?int
 {
     $value = $inputFilter->getValue($fieldName);
     return $value !== null ? (int) $value : null;
 }
 
+/**
+ * @param InputFilter<mixed> $inputFilter
+ */
 function getOptionalBoolFromInputFilter(InputFilter $inputFilter, string $fieldName): ?bool
 {
     $value = $inputFilter->getValue($fieldName);
     return $value !== null ? (bool) $value : null;
 }
 
+/**
+ * @param InputFilter<mixed> $inputFilter
+ */
 function getNonEmptyOptionalValueFromInputFilter(InputFilter $inputFilter, string $fieldName): mixed
 {
     $value = $inputFilter->getValue($fieldName);
