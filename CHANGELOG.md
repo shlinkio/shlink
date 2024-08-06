@@ -16,6 +16,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
   This brings CLI and API interfaces capabilities closer, and solves an overlook since the feature was implemented years ago.
 
+* [#2164](https://github.com/shlinkio/shlink/pull/2164) Add missing `--title` option to `short-url:create` and `short-url:edit` commands.
+
 ### Changed
 * [#2096](https://github.com/shlinkio/shlink/issues/2096) Update to RoadRunner 2024.
 
