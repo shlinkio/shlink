@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [4.2.0] - 2024-08-11
 ### Added
 * [#2120](https://github.com/shlinkio/shlink/issues/2120) Add new IP address condition for the dynamic rules redirections system.
 
