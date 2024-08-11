@@ -23,6 +23,7 @@ use function Shlinkio\Shlink\Core\camelCaseToSnakeCase;
 
 use const PHP_INT_MAX;
 
+/** @extends EntitySpecificationRepository<Tag> */
 class TagRepository extends EntitySpecificationRepository implements TagRepositoryInterface
 {
     public function deleteByName(array $names): int

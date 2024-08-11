@@ -7,10 +7,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
-        php-version: ['8.2', '8.3']
+        php-version: ['8.2', '8.3'] # TODO 8.4
     steps:
       - uses: actions/checkout@v4
       - uses: './.github/actions/ci-setup'
@@ -26,7 +26,7 @@ jobs:
 
   publish:
     needs: ['build']
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -43,7 +43,7 @@ jobs:
 
   delete-artifacts:
     needs: ['publish']
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: geekyeggo/delete-artifact@v2
         with:

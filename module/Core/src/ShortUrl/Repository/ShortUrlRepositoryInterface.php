@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
+/** @extends ObjectRepository<ShortUrl> */
 interface ShortUrlRepositoryInterface extends ObjectRepository, EntitySpecificationRepositoryInterface
 {
     public function findOneWithDomainFallback(ShortUrlIdentifier $identifier, ShortUrlMode $shortUrlMode): ?ShortUrl;

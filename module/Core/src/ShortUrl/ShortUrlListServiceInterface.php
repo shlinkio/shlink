@@ -12,7 +12,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 interface ShortUrlListServiceInterface
 {
     /**
-     * @return ShortUrlWithVisitsSummary[]|Paginator
+     * @return Paginator<ShortUrlWithVisitsSummary>
      */
     public function listShortUrls(ShortUrlsParams $params, ?ApiKey $apiKey = null): Paginator;
 }

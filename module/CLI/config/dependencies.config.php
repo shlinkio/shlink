@@ -41,6 +41,7 @@ return [
             ApiKey\RoleResolver::class => ConfigAbstractFactory::class,
 
             Command\ShortUrl\CreateShortUrlCommand::class => ConfigAbstractFactory::class,
+            Command\ShortUrl\EditShortUrlCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\ResolveUrlCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\ListShortUrlsCommand::class => ConfigAbstractFactory::class,
             Command\ShortUrl\GetShortUrlVisitsCommand::class => ConfigAbstractFactory::class,
@@ -92,6 +93,7 @@ return [
             ShortUrlStringifier::class,
             UrlShortenerOptions::class,
         ],
+        Command\ShortUrl\EditShortUrlCommand::class => [ShortUrl\ShortUrlService::class, ShortUrlStringifier::class],
         Command\ShortUrl\ResolveUrlCommand::class => [ShortUrl\ShortUrlResolver::class],
         Command\ShortUrl\ListShortUrlsCommand::class => [
             ShortUrl\ShortUrlListService::class,

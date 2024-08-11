@@ -14,6 +14,8 @@ use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use Laminas\Filter\Word\CamelCaseToSeparator;
 use Laminas\Filter\Word\CamelCaseToUnderscore;
 use Laminas\InputFilter\InputFilter;
+use Psr\Http\Message\ServerRequestInterface;
+use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 
@@ -107,7 +109,6 @@ function normalizeLocale(string $locale): string
  * minimum quality
  *
  * @param non-empty-string $acceptLanguage
- * @param float<0, 1> $minQuality
  * @return iterable<string>;
  */
 function acceptLanguageToLocales(string $acceptLanguage, float $minQuality = 0): iterable
@@ -140,21 +141,31 @@ function acceptLanguageToLocales(string $acceptLanguage, float $minQuality = 0):
  */
 function splitLocale(string $locale): array
 {
-    return array_pad(explode('-', $locale), length: 2, value: null);
+    [$lang, $countryCode] = array_pad(explode('-', $locale), length: 2, value: null);
+    return [$lang, $countryCode];
 }
 
+/**
+ * @param InputFilter<mixed> $inputFilter
+ */
 function getOptionalIntFromInputFilter(InputFilter $inputFilter, string $fieldName): ?int
 {
     $value = $inputFilter->getValue($fieldName);
     return $value !== null ? (int) $value : null;
 }
 
+/**
+ * @param InputFilter<mixed> $inputFilter
+ */
 function getOptionalBoolFromInputFilter(InputFilter $inputFilter, string $fieldName): ?bool
 {
     $value = $inputFilter->getValue($fieldName);
     return $value !== null ? (bool) $value : null;
 }
 
+/**
+ * @param InputFilter<mixed> $inputFilter
+ */
 function getNonEmptyOptionalValueFromInputFilter(InputFilter $inputFilter, string $fieldName): mixed
 {
     $value = $inputFilter->getValue($fieldName);
@@ -259,4 +270,22 @@ function enumValues(string $enum): array
 function enumToString(string $enum): string
 {
     return sprintf('["%s"]', implode('", "', enumValues($enum)));
+}
+
+/**
+ * Split provided string by comma and return a list of the results.
+ * An empty array is returned if provided value is empty
+ */
+function splitByComma(?string $value): array
+{
+    if ($value === null || trim($value) === '') {
+        return [];
+    }
+
+    return array_map(trim(...), explode(',', $value));
+}
+
+function ipAddressFromRequest(ServerRequestInterface $request): ?string
+{
+    return $request->getAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR);
 }

@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 
 use function Shlinkio\Shlink\Core\enumValues;
 
+/** @extends InputFilter<mixed> */
 class ShortUrlsParamsInputFilter extends InputFilter
 {
     public const PAGE = 'page';

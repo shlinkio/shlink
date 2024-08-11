@@ -116,6 +116,7 @@ class RedirectRuleHandlerTest extends TestCase
                 'Language to match?' => 'en-US',
                 'Query param name?' => 'foo',
                 'Query param value?' => 'bar',
+                'IP address, CIDR block or wildcard-pattern (1.2.*.*)' => '1.2.3.4',
                 default => '',
             },
         );
@@ -163,6 +164,7 @@ class RedirectRuleHandlerTest extends TestCase
             [RedirectCondition::forQueryParam('foo', 'bar'), RedirectCondition::forQueryParam('foo', 'bar')],
             true,
         ];
+        yield 'IP address' => [RedirectConditionType::IP_ADDRESS, [RedirectCondition::forIpAddress('1.2.3.4')]];
     }
 
     #[Test]

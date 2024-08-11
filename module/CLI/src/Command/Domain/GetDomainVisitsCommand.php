@@ -33,6 +33,9 @@ class GetDomainVisitsCommand extends AbstractVisitsListCommand
             ->addArgument('domain', InputArgument::REQUIRED, 'The domain which visits we want to get.');
     }
 
+    /**
+     * @return Paginator<Visit>
+     */
     protected function getVisitsPaginator(InputInterface $input, DateRange $dateRange): Paginator
     {
         $domain = $input->getArgument('domain');

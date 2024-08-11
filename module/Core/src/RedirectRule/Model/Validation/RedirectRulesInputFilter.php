@@ -12,10 +12,12 @@ use Shlinkio\Shlink\Common\Validation\InputFactory;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
+use Shlinkio\Shlink\Core\Util\IpAddressUtils;
 
 use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 use function Shlinkio\Shlink\Core\enumValues;
 
+/** @extends InputFilter<mixed> */
 class RedirectRulesInputFilter extends InputFilter
 {
     public const REDIRECT_RULES = 'redirectRules';
@@ -43,6 +45,9 @@ class RedirectRulesInputFilter extends InputFilter
         return $instance;
     }
 
+    /**
+     * @return InputFilter<mixed>
+     */
     private static function createRedirectRuleInputFilter(): InputFilter
     {
         $redirectRuleInputFilter = new InputFilter();
@@ -59,6 +64,9 @@ class RedirectRulesInputFilter extends InputFilter
         return $redirectRuleInputFilter;
     }
 
+    /**
+     * @return InputFilter<mixed>
+     */
     private static function createRedirectConditionInputFilter(): InputFilter
     {
         $redirectConditionInputFilter = new InputFilter();
@@ -71,13 +79,14 @@ class RedirectRulesInputFilter extends InputFilter
         $redirectConditionInputFilter->add($type);
 
         $value = InputFactory::basic(self::CONDITION_MATCH_VALUE, required: true);
-        $value->getValidatorChain()->attach(new Callback(function (string $value, array $context) {
-            if ($context[self::CONDITION_TYPE] === RedirectConditionType::DEVICE->value) {
-                return contains($value, enumValues(DeviceType::class));
-            }
-
-            return true;
-        }));
+        $value->getValidatorChain()->attach(new Callback(
+            fn (string $value, array $context) => match ($context[self::CONDITION_TYPE]) {
+                RedirectConditionType::DEVICE->value => contains($value, enumValues(DeviceType::class)),
+                RedirectConditionType::IP_ADDRESS->value => IpAddressUtils::isStaticIpCidrOrWildcard($value),
+                // RedirectConditionType::LANGUAGE->value => TODO,
+                default => true,
+            },
+        ));
         $redirectConditionInputFilter->add($value);
 
         $redirectConditionInputFilter->add(

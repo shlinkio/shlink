@@ -9,14 +9,14 @@ use Shlinkio\Shlink\CLI\Input\StartDateOption;
 use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
-use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtilsTrait;
-use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
+use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtils;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithVisitsSummary;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlsParamsInputFilter;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlListServiceInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -32,8 +32,6 @@ use function sprintf;
 
 class ListShortUrlsCommand extends Command
 {
-    use PagerfantaUtilsTrait;
-
     public const NAME = 'short-url:list';
 
     private readonly StartDateOption $startDateOption;
@@ -41,7 +39,7 @@ class ListShortUrlsCommand extends Command
 
     public function __construct(
         private readonly ShortUrlListServiceInterface $shortUrlService,
-        private readonly DataTransformerInterface $transformer,
+        private readonly ShortUrlDataTransformerInterface $transformer,
     ) {
         parent::__construct();
         $this->startDateOption = new StartDateOption($this, 'short URLs');
@@ -179,6 +177,7 @@ class ListShortUrlsCommand extends Command
 
     /**
      * @param array<string, callable(array $serializedShortUrl, ShortUrl $shortUrl): ?string> $columnsMap
+     * @return Paginator<ShortUrlWithVisitsSummary>
      */
     private function renderPage(
         OutputInterface $output,
@@ -196,7 +195,7 @@ class ListShortUrlsCommand extends Command
         ShlinkTable::default($output)->render(
             array_keys($columnsMap),
             $rows,
-            $all ? null : $this->formatCurrentPageMessage($shortUrls, 'Page %s of %s'),
+            $all ? null : PagerfantaUtils::formatCurrentPageMessage($shortUrls, 'Page %s of %s'),
         );
 
         return $shortUrls;

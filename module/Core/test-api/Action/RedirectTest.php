@@ -10,6 +10,8 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
+use function sprintf;
+
 use const ShlinkioTest\Shlink\ANDROID_USER_AGENT;
 use const ShlinkioTest\Shlink\DESKTOP_USER_AGENT;
 use const ShlinkioTest\Shlink\IOS_USER_AGENT;
@@ -86,6 +88,16 @@ class RedirectTest extends ApiTestCase
             ],
             'https://blog.alejandrocelaya.com/2017/12/09/acmailer-7-0-the-most-important-release-in-a-long-time/',
         ];
+
+        $clientDetection = require __DIR__ . '/../../../../config/autoload/client-detection.global.php';
+        foreach ($clientDetection['ip_address_resolution']['headers_to_inspect'] as $header) {
+            yield sprintf('rule: IP address in "%s" header', $header) => [
+                [
+                    RequestOptions::HEADERS => [$header => '1.2.3.4'],
+                ],
+                'https://example.com/static-ip-address',
+            ];
+        }
     }
 
     /**

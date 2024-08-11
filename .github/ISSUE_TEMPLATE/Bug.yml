@@ -61,7 +61,11 @@ body:
       label: Minimum steps to reproduce
       value: |
         <!--
-        Emphasis in MINIMUM: What is the simplest way to reproduce the bug?
-        Avoid things like "Create a kubernetes cluster", or anything related with cloud providers, as that is rarely the root cause and the bug may be closed as "not reproducible".
-        If you can provide a simple docker compose config, that's even better.
+        Simple but detailed way to reproduce the bug:
+        
+        * Avoid things like "create a kubernetes cluster", or anything related with cloud providers, as that is rarely the root cause.
+        * Avoid too vague steps or one-liners like "Update from v1 to v2".
+        * Providing the reproduction in the form of a self-contained docker-composer is desirable. 
+        
+        Failing in any of these will cause the issue to be closed as "not reproducible".
         -->

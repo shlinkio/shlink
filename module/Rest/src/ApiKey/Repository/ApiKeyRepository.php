@@ -9,6 +9,9 @@ use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
+/**
+ * @extends EntitySpecificationRepository<ApiKey>
+ */
 class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRepositoryInterface
 {
     /**

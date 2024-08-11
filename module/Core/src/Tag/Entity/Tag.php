@@ -7,9 +7,11 @@ namespace Shlinkio\Shlink\Core\Tag\Entity;
 use Doctrine\Common\Collections;
 use JsonSerializable;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
+use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 
 class Tag extends AbstractEntity implements JsonSerializable
 {
+    /** @var Collections\Collection<int, ShortUrl> */
     private Collections\Collection $shortUrls;
 
     public function __construct(private string $name)

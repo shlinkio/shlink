@@ -6,6 +6,10 @@ namespace Shlinkio\Shlink\Core\Paginator\Adapter;
 
 use Pagerfanta\Adapter\AdapterInterface;
 
+/**
+ * @template T
+ * @implements AdapterInterface<T>
+ */
 abstract class AbstractCacheableCountPaginatorAdapter implements AdapterInterface
 {
     private ?int $count = null;

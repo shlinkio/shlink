@@ -7,15 +7,12 @@ namespace Shlinkio\Shlink\Rest\Action\Visit;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtilsTrait;
 use Shlinkio\Shlink\Core\Visit\VisitsDeleterInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class DeleteOrphanVisitsAction extends AbstractRestAction
 {
-    use PagerfantaUtilsTrait;
-
     protected const ROUTE_PATH = '/visits/orphan';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_DELETE];
 

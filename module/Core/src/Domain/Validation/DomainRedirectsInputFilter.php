@@ -8,6 +8,7 @@ use Laminas\InputFilter\InputFilter;
 use Shlinkio\Shlink\Common\Validation\HostAndPortValidator;
 use Shlinkio\Shlink\Common\Validation\InputFactory;
 
+/** @extends InputFilter<mixed> */
 class DomainRedirectsInputFilter extends InputFilter
 {
     public const DOMAIN = 'domain';

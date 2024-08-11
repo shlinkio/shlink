@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Visit\Model;
 
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Core\Options\TrackingOptions;
 
+use function Shlinkio\Shlink\Core\ipAddressFromRequest;
 use function Shlinkio\Shlink\Core\isCrawler;
 use function substr;
 
@@ -46,7 +46,7 @@ final class Visitor
         return new self(
             $request->getHeaderLine('User-Agent'),
             $request->getHeaderLine('Referer'),
-            $request->getAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR),
+            ipAddressFromRequest($request),
             $request->getUri()->__toString(),
         );
     }

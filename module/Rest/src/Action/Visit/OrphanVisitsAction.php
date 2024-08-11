@@ -7,7 +7,7 @@ namespace Shlinkio\Shlink\Rest\Action\Visit;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtilsTrait;
+use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtils;
 use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
@@ -15,8 +15,6 @@ use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class OrphanVisitsAction extends AbstractRestAction
 {
-    use PagerfantaUtilsTrait;
-
     protected const ROUTE_PATH = '/visits/orphan';
     protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
@@ -30,8 +28,6 @@ class OrphanVisitsAction extends AbstractRestAction
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
         $visits = $this->visitsHelper->orphanVisits($params, $apiKey);
 
-        return new JsonResponse([
-            'visits' => $this->serializePaginator($visits),
-        ]);
+        return new JsonResponse(['visits' => PagerfantaUtils::serializePaginator($visits)]);
     }
 }

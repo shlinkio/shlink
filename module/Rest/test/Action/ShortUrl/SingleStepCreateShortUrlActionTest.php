@@ -8,11 +8,11 @@ use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Common\Rest\DataTransformerInterface;
 use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\UrlShorteningResult;
+use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformerInterface;
 use Shlinkio\Shlink\Core\ShortUrl\UrlShortenerInterface;
 use Shlinkio\Shlink\Rest\Action\ShortUrl\SingleStepCreateShortUrlAction;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -25,7 +25,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
     protected function setUp(): void
     {
         $this->urlShortener = $this->createMock(UrlShortenerInterface::class);
-        $transformer = $this->createMock(DataTransformerInterface::class);
+        $transformer = $this->createMock(ShortUrlDataTransformerInterface::class);
         $transformer->method('transform')->willReturn([]);
 
         $this->action = new SingleStepCreateShortUrlAction(

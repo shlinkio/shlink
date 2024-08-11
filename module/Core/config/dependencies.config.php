@@ -32,6 +32,7 @@ return [
             Options\TrackingOptions::class => [ValinorConfigFactory::class, 'config.tracking'],
             Options\QrCodeOptions::class => [ValinorConfigFactory::class, 'config.qr_codes'],
             Options\RabbitMqOptions::class => [ValinorConfigFactory::class, 'config.rabbitmq'],
+            Options\RobotsOptions::class => [ValinorConfigFactory::class, 'config.robots'],
 
             RedirectRule\ShortUrlRedirectRuleService::class => ConfigAbstractFactory::class,
             RedirectRule\ShortUrlRedirectionResolver::class => ConfigAbstractFactory::class,
@@ -189,7 +190,7 @@ return [
             'Logger_Shlink',
             Options\QrCodeOptions::class,
         ],
-        Action\RobotsAction::class => [Crawling\CrawlingHelper::class],
+        Action\RobotsAction::class => [Crawling\CrawlingHelper::class, Options\RobotsOptions::class],
 
         ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => [
             'em',

@@ -20,6 +20,7 @@ use function substr;
 use const Shlinkio\Shlink\LOOSE_URI_MATCHER;
 use const Shlinkio\Shlink\MIN_SHORT_CODES_LENGTH;
 
+/** @extends InputFilter<mixed> */
 class ShortUrlInputFilter extends InputFilter
 {
     // Fields for creation only
