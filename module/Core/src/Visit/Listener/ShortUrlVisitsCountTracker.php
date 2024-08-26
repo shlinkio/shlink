@@ -64,9 +64,10 @@ final class ShortUrlVisitsCountTracker
         $conn = $em->getConnection();
         $platformClass = $conn->getDatabasePlatform();
 
-        match ($platformClass::class) {
-            PostgreSQLPlatform::class => $this->incrementForPostgres($conn, $shortUrlId, $isBot),
-            SQLitePlatform::class, SQLServerPlatform::class => $this->incrementForOthers($conn, $shortUrlId, $isBot),
+        match (true) {
+            $platformClass instanceof PostgreSQLPlatform => $this->incrementForPostgres($conn, $shortUrlId, $isBot),
+            $platformClass instanceof SQLitePlatform || $platformClass instanceof SQLServerPlatform
+                => $this->incrementForOthers($conn, $shortUrlId, $isBot),
             default => $this->incrementForMySQL($conn, $shortUrlId, $isBot),
         };
     }
