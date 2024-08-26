@@ -58,9 +58,10 @@ final class OrphanVisitsCountTracker
         $conn = $em->getConnection();
         $platformClass = $conn->getDatabasePlatform();
 
-        match ($platformClass::class) {
-            PostgreSQLPlatform::class => $this->incrementForPostgres($conn, $isBot),
-            SQLitePlatform::class, SQLServerPlatform::class => $this->incrementForOthers($conn, $isBot),
+        match (true) {
+            $platformClass instanceof PostgreSQLPlatform => $this->incrementForPostgres($conn, $isBot),
+            $platformClass instanceof SQLitePlatform || $platformClass instanceof SQLServerPlatform
+                => $this->incrementForOthers($conn, $isBot),
             default => $this->incrementForMySQL($conn, $isBot),
         };
     }
