@@ -1,0 +1,18 @@
+version: 1.0
+source_code_version:
+  type: BRANCH
+  value: main
+
+runtime: CUSTOM
+instance_configuration:
+  cpu: 1024
+  memory: 2048
+
+# Install dependencies using Composer and build the project
+build_command: |
+  curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
+  composer install --no-dev --optimize-autoloader && \
+  ./build.sh 4.2.0
+
+# Start the Shlink application
+start_command: "php -S 0.0.0.0:8080 -t public"
