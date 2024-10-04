@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [4.2.1] - 2024-10-04
 ### Added
 * [#2183](https://github.com/shlinkio/shlink/issues/2183) Redis database index to be used can now be specified in the connection URI path, and Shlink will honor it.
 
@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* *Nothing*
+* [#2201](https://github.com/shlinkio/shlink/issues/2201) Fix `MEMORY_LIMIT` option being ignored when provided via installer options.
 
 
 ## [4.2.0] - 2024-08-11

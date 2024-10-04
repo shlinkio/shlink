@@ -24,7 +24,7 @@ if (! class_exists(LOCAL_LOCK_FACTORY)) {
 return (static function (): ServiceManager {
     $config = require __DIR__ . '/config.php';
 
-    // Set a default memory limit right after loading config, to ensure installer config has been promoted as env vars
+    // Set memory limit right after loading config, to ensure installer config has been promoted as env vars
     ini_set('memory_limit', EnvVars::MEMORY_LIMIT->loadFromEnv('512M'));
 
     $container = new ServiceManager($config['dependencies']);
