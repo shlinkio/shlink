@@ -12,8 +12,6 @@ chdir(dirname(__DIR__));
 
 require 'vendor/autoload.php';
 
-// Set a default memory limit, but allow custom values
-ini_set('memory_limit', EnvVars::MEMORY_LIMIT->loadFromEnv('512M'));
 // This is one of the first files loaded. Configure the timezone here
 date_default_timezone_set(EnvVars::TIMEZONE->loadFromEnv(date_default_timezone_get()));
 
@@ -25,6 +23,10 @@ if (! class_exists(LOCAL_LOCK_FACTORY)) {
 
 return (static function (): ServiceManager {
     $config = require __DIR__ . '/config.php';
+
+    // Set a default memory limit right after loading config, to ensure installer config has been promoted as env vars
+    ini_set('memory_limit', EnvVars::MEMORY_LIMIT->loadFromEnv('512M'));
+
     $container = new ServiceManager($config['dependencies']);
     $container->setService('config', $config);
 
