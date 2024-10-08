@@ -6,13 +6,20 @@ use Laminas\ServiceManager\ServiceManager;
 use Shlinkio\Shlink\Core\Config\EnvVars;
 use Symfony\Component\Lock;
 
+use function Shlinkio\Shlink\Config\loadEnvVarsFromConfig;
+use function Shlinkio\Shlink\Core\enumValues;
+
 use const Shlinkio\Shlink\LOCAL_LOCK_FACTORY;
 
 chdir(dirname(__DIR__));
 
 require 'vendor/autoload.php';
 
-// This is one of the first files loaded. Configure the timezone here
+// Promote env vars from installer config
+loadEnvVarsFromConfig('config/params/generated_config.php', enumValues(EnvVars::class));
+
+// This is one of the first files loaded. Configure the timezone and memory limit here
+ini_set('memory_limit', EnvVars::MEMORY_LIMIT->loadFromEnv('512M'));
 date_default_timezone_set(EnvVars::TIMEZONE->loadFromEnv(date_default_timezone_get()));
 
 // This class alias tricks the ConfigAbstractFactory to return Lock\Factory instances even with a different service name
@@ -23,10 +30,6 @@ if (! class_exists(LOCAL_LOCK_FACTORY)) {
 
 return (static function (): ServiceManager {
     $config = require __DIR__ . '/config.php';
-
-    // Set memory limit right after loading config, to ensure installer config has been promoted as env vars
-    ini_set('memory_limit', EnvVars::MEMORY_LIMIT->loadFromEnv('512M'));
-
     $container = new ServiceManager($config['dependencies']);
     $container->setService('config', $config);
 
