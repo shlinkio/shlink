@@ -8,18 +8,13 @@ use Laminas\ConfigAggregator;
 use Laminas\Diactoros;
 use Mezzio;
 use Mezzio\ProblemDetails;
-use Shlinkio\Shlink\Config\ConfigAggregator\EnvVarLoaderProvider;
 
 use function Shlinkio\Shlink\Config\env;
-use function Shlinkio\Shlink\Core\enumValues;
 
 $isTestEnv = env('APP_ENV') === 'test';
 
 return (new ConfigAggregator\ConfigAggregator(
     providers: [
-        ! $isTestEnv
-            ? new EnvVarLoaderProvider('config/params/generated_config.php', enumValues(Core\Config\EnvVars::class))
-            : new ConfigAggregator\ArrayProvider([]),
         Mezzio\ConfigProvider::class,
         Mezzio\Router\ConfigProvider::class,
         Mezzio\Router\FastRouteRouter\ConfigProvider::class,

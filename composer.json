@@ -45,7 +45,7 @@
         "ramsey/uuid": "^4.7",
         "shlinkio/doctrine-specification": "^2.1.1",
         "shlinkio/shlink-common": "^6.3",
-        "shlinkio/shlink-config": "^3.0",
+        "shlinkio/shlink-config": "dev-main#76a96ee as 3.1",
         "shlinkio/shlink-event-dispatcher": "^4.1",
         "shlinkio/shlink-importer": "^5.3.2",
         "shlinkio/shlink-installer": "^9.2",
