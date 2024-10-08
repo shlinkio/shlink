@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* [#2208](https://github.com/shlinkio/shlink/issues/2208) Explicitly promote installer config options as env vars, instead of as a side effect of loading the app config.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* *Nothing*
+
+
 ## [4.2.1] - 2024-10-04
 ### Added
 * [#2183](https://github.com/shlinkio/shlink/issues/2183) Redis database index to be used can now be specified in the connection URI path, and Shlink will honor it.
