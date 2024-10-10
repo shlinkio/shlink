@@ -122,4 +122,22 @@ class RedirectTest extends ApiTestCase
         self::assertEquals(302, $response->getStatusCode());
         self::assertEquals($longUrl, $response->getHeaderLine('Location'));
     }
+
+    #[Test]
+    public function queryParametersAreProperlyForwarded(): void
+    {
+        $slug = 'forward-query-params';
+        $this->callApiWithKey('POST', '/short-urls', [
+            RequestOptions::JSON => [
+                'longUrl' => 'https://example.com',
+                'customSlug' => $slug,
+                'forwardQuery' => true,
+            ],
+        ]);
+
+        $response = $this->callShortUrl($slug, [RequestOptions::QUERY => ['foo bar' => '123']]);
+
+        self::assertEquals(302, $response->getStatusCode());
+        self::assertEquals('https://example.com?foo%20bar=123', $response->getHeaderLine('Location'));
+    }
 }

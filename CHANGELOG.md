@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* *Nothing*
+* [#2213](https://github.com/shlinkio/shlink/issues/2213) Fix spaces being replaced with underscores in query parameter names, when forwarded from short URL to long URL.
 
 
 ## [4.2.1] - 2024-10-04
