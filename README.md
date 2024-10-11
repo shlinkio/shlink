@@ -80,6 +80,14 @@ Despite how you built the project, you now need to configure it, by following th
 * Set up the application by running the `vendor/bin/shlink-installer install` script. It is a command line tool that will guide you through the installation process. **Take into account that this tool has to be run directly on the server where you plan to host Shlink. Do not run it before uploading/moving it there.**
 * Generate your first API key by running `bin/cli api-key:generate`. You will need the key in order to interact with Shlink's API.
 
+### One-Click Deploy 
+
+**Elestio :**
+
+You can deploy Shlink on Elestio using one-click deployment. Elestio takes care of version updates, maintenance, security, backups, etc. Additionally, Elestio supports Shlink by providing revenue share so go ahead and click below to deploy and start using.
+
+[![Deploy on Elestio](https://elest.io/images/logos/deploy-to-elestio-btn.png)](https://elest.io/open-source/shlink)
+
 ## Using shlink
 
 Once shlink is installed, there are two main ways to interact with it:
