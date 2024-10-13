@@ -13,6 +13,7 @@ use function Shlinkio\Shlink\Config\env;
 use function Shlinkio\Shlink\Config\parseEnvVar;
 use function sprintf;
 
+use const Shlinkio\Shlink\DEFAULT_QR_CODE_BG_COLOR;
 use const Shlinkio\Shlink\DEFAULT_QR_CODE_COLOR;
 use const Shlinkio\Shlink\DEFAULT_QR_CODE_ENABLED_FOR_DISABLED_SHORT_URLS;
 use const Shlinkio\Shlink\DEFAULT_QR_CODE_ERROR_CORRECTION;
@@ -133,6 +134,7 @@ enum EnvVars: string
             self::DEFAULT_QR_CODE_ROUND_BLOCK_SIZE, => DEFAULT_QR_CODE_ROUND_BLOCK_SIZE,
             self::QR_CODE_FOR_DISABLED_SHORT_URLS, => DEFAULT_QR_CODE_ENABLED_FOR_DISABLED_SHORT_URLS,
             self::DEFAULT_QR_CODE_COLOR, => DEFAULT_QR_CODE_COLOR,
+            self::DEFAULT_QR_CODE_BG_COLOR, => DEFAULT_QR_CODE_BG_COLOR,
 
             self::RABBITMQ_ENABLED, self::RABBITMQ_USE_SSL => false,
             self::RABBITMQ_PORT => 5672,
