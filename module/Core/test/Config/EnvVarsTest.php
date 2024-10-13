@@ -25,9 +25,9 @@ class EnvVarsTest extends TestCase
 
     protected function tearDown(): void
     {
-        putenv(EnvVars::BASE_PATH->value . '=');
-        putenv(EnvVars::DB_NAME->value . '=');
-        putenv(EnvVars::DB_PASSWORD->value . '_FILE=');
+        putenv(EnvVars::BASE_PATH->value);
+        putenv(EnvVars::DB_NAME->value);
+        putenv(EnvVars::DB_PASSWORD->value . '_FILE');
     }
 
     #[Test, DataProvider('provideExistingEnvVars')]
@@ -38,9 +38,9 @@ class EnvVarsTest extends TestCase
 
     public static function provideExistingEnvVars(): iterable
     {
-        yield 'DB_NAME' => [EnvVars::DB_NAME, true];
-        yield 'BASE_PATH' => [EnvVars::BASE_PATH, true];
-        yield 'DB_DRIVER' => [EnvVars::DB_DRIVER, false];
+        yield 'DB_NAME (is set)' => [EnvVars::DB_NAME, true];
+        yield 'BASE_PATH (is set)' => [EnvVars::BASE_PATH, true];
+        yield 'DB_DRIVER (has default)' => [EnvVars::DB_DRIVER, true];
         yield 'DEFAULT_REGULAR_404_REDIRECT' => [EnvVars::DEFAULT_REGULAR_404_REDIRECT, false];
     }
 
@@ -75,7 +75,7 @@ class EnvVarsTest extends TestCase
         try {
             self::assertEquals($expectedPort, EnvVars::DB_PORT->loadFromEnv());
         } finally {
-            putenv(EnvVars::DB_DRIVER->value . '=');
+            putenv(EnvVars::DB_DRIVER->value);
         }
     }
 }

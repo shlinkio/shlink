@@ -8,7 +8,6 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 
 use function date_default_timezone_get;
 use function file_get_contents;
-use function getenv;
 use function is_file;
 use function Shlinkio\Shlink\Config\env;
 use function Shlinkio\Shlink\Config\parseEnvVar;
