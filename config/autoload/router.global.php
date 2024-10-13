@@ -8,7 +8,7 @@ use Shlinkio\Shlink\Core\Config\EnvVars;
 return [
 
     'router' => [
-        'base_path' => EnvVars::BASE_PATH->loadFromEnv(''),
+        'base_path' => EnvVars::BASE_PATH->loadFromEnv(),
 
         'fastroute' => [
             // Disabling config cache for cli, ensures it's never used for RoadRunner, and also that console

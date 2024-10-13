@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 use Shlinkio\Shlink\Core\Config\EnvVars;
 
-use const Shlinkio\Shlink\DEFAULT_REDIRECT_CACHE_LIFETIME;
-use const Shlinkio\Shlink\DEFAULT_REDIRECT_STATUS_CODE;
-
 return [
 
     'not_found_redirects' => [
@@ -16,10 +13,8 @@ return [
     ],
 
     'redirects' => [
-        'redirect_status_code' => (int) EnvVars::REDIRECT_STATUS_CODE->loadFromEnv(DEFAULT_REDIRECT_STATUS_CODE->value),
-        'redirect_cache_lifetime' => (int) EnvVars::REDIRECT_CACHE_LIFETIME->loadFromEnv(
-            DEFAULT_REDIRECT_CACHE_LIFETIME,
-        ),
+        'redirect_status_code' => (int) EnvVars::REDIRECT_STATUS_CODE->loadFromEnv(),
+        'redirect_cache_lifetime' => (int) EnvVars::REDIRECT_CACHE_LIFETIME->loadFromEnv(),
     ],
 
 ];

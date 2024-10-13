@@ -45,6 +45,8 @@ return [
                 Command\RedirectRule\ManageRedirectRulesCommand::class,
 
             Command\Integration\MatomoSendVisitsCommand::NAME => Command\Integration\MatomoSendVisitsCommand::class,
+
+            Command\Config\ReadEnvVarCommand::NAME => Command\Config\ReadEnvVarCommand::class,
         ],
     ],
 

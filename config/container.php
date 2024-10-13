@@ -19,8 +19,8 @@ require 'vendor/autoload.php';
 loadEnvVarsFromConfig('config/params/generated_config.php', enumValues(EnvVars::class));
 
 // This is one of the first files loaded. Configure the timezone and memory limit here
-ini_set('memory_limit', EnvVars::MEMORY_LIMIT->loadFromEnv('512M'));
-date_default_timezone_set(EnvVars::TIMEZONE->loadFromEnv(date_default_timezone_get()));
+ini_set('memory_limit', EnvVars::MEMORY_LIMIT->loadFromEnv());
+date_default_timezone_set(EnvVars::TIMEZONE->loadFromEnv());
 
 // This class alias tricks the ConfigAbstractFactory to return Lock\Factory instances even with a different service name
 // It needs to be placed here as individual config files will not be loaded once config is cached

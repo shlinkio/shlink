@@ -8,6 +8,11 @@ mkdir -p data/cache data/locks data/log data/proxies
 
 flags="--no-interaction --clear-db-cache"
 
+# Read env vars through Shlink command, so that it applies the `_FILE` env var fallback logic
+GEOLITE_LICENSE_KEY=$(bin/cli env-var:read GEOLITE_LICENSE_KEY)
+SKIP_INITIAL_GEOLITE_DOWNLOAD=$(bin/cli env-var:read SKIP_INITIAL_GEOLITE_DOWNLOAD)
+INITIAL_API_KEY=$(bin/cli env-var:read INITIAL_API_KEY)
+
 # Skip downloading GeoLite2 db file if the license key env var was not defined or skipping was explicitly set
 if [ -z "${GEOLITE_LICENSE_KEY}" ] || [ "${SKIP_INITIAL_GEOLITE_DOWNLOAD}" = "true" ]; then
   flags="${flags} --skip-download-geolite"

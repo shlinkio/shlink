@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\Config;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Config\EnvVars;
 
@@ -44,24 +45,37 @@ class EnvVarsTest extends TestCase
     }
 
     #[Test, DataProvider('provideEnvVarsValues')]
-    public function expectedValueIsLoadedFromEnv(EnvVars $envVar, mixed $expected, mixed $default): void
+    public function expectedValueIsLoadedFromEnv(EnvVars $envVar, mixed $expected): void
     {
-        self::assertEquals($expected, $envVar->loadFromEnv($default));
+        self::assertEquals($expected, $envVar->loadFromEnv());
     }
 
     public static function provideEnvVarsValues(): iterable
     {
-        yield 'DB_NAME without default' => [EnvVars::DB_NAME, 'shlink', null];
-        yield 'DB_NAME with default' => [EnvVars::DB_NAME, 'shlink', 'foobar'];
-        yield 'BASE_PATH without default' => [EnvVars::BASE_PATH, 'the_base_path', null];
-        yield 'BASE_PATH with default' => [EnvVars::BASE_PATH, 'the_base_path', 'foobar'];
-        yield 'DB_DRIVER without default' => [EnvVars::DB_DRIVER, null, null];
-        yield 'DB_DRIVER with default' => [EnvVars::DB_DRIVER, 'foobar', 'foobar'];
+        yield 'DB_NAME (is set)' => [EnvVars::DB_NAME, 'shlink'];
+        yield 'BASE_PATH (is set)' => [EnvVars::BASE_PATH, 'the_base_path'];
+        yield 'DB_DRIVER (has default)' => [EnvVars::DB_DRIVER, 'sqlite'];
     }
 
     #[Test]
     public function fallsBackToReadEnvVarsFromFile(): void
     {
         self::assertEquals('this_is_the_password', EnvVars::DB_PASSWORD->loadFromEnv());
+    }
+
+    #[Test]
+    #[TestWith(['mysql', '3306'])]
+    #[TestWith(['maria', '3306'])]
+    #[TestWith(['postgres', '5432'])]
+    #[TestWith(['mssql', '1433'])]
+    public function defaultPortIsResolvedBasedOnDbDriver(string $dbDriver, string $expectedPort): void
+    {
+        putenv(EnvVars::DB_DRIVER->value . '=' . $dbDriver);
+
+        try {
+            self::assertEquals($expectedPort, EnvVars::DB_PORT->loadFromEnv());
+        } finally {
+            putenv(EnvVars::DB_DRIVER->value . '=');
+        }
     }
 }
