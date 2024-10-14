@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [4.2.2] - 2024-10-14
+### Added
+* *Nothing*
+
+### Changed
+* [#2208](https://github.com/shlinkio/shlink/issues/2208) Explicitly promote installer config options as env vars, instead of as a side effect of loading the app config.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#2213](https://github.com/shlinkio/shlink/issues/2213) Fix spaces being replaced with underscores in query parameter names, when forwarded from short URL to long URL.
+* [#2217](https://github.com/shlinkio/shlink/issues/2217) Fix docker image tag suffix being leaked to the version set inside Shlink, producing invalid SemVer version patterns.
+* [#2212](https://github.com/shlinkio/shlink/issues/2212) Fix env vars read in docker entry point not properly falling back to their `_FILE` suffixed counterpart.
+
+
 ## [4.2.1] - 2024-10-04
 ### Added
 * [#2183](https://github.com/shlinkio/shlink/issues/2183) Redis database index to be used can now be specified in the connection URI path, and Shlink will honor it.

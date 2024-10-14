@@ -75,6 +75,8 @@ return [
             Command\RedirectRule\ManageRedirectRulesCommand::class => ConfigAbstractFactory::class,
 
             Command\Integration\MatomoSendVisitsCommand::class => ConfigAbstractFactory::class,
+
+            Command\Config\ReadEnvVarCommand::class => InvokableFactory::class,
         ],
     ],
 

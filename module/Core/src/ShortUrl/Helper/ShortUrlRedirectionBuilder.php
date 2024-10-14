@@ -28,10 +28,14 @@ readonly class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderI
         ?string $extraPath = null,
     ): string {
         $uri = new Uri($this->redirectionResolver->resolveLongUrl($shortUrl, $request));
-        $currentQuery = $request->getQueryParams();
         $shouldForwardQuery = $shortUrl->forwardQuery();
         $baseQueryString = $uri->getQuery();
         $basePath = $uri->getPath();
+
+        // Get current query by manually parsing query string, instead of using $request->getQueryParams().
+        // That prevents some weird PHP logic in which some characters in param names are converted to ensure resulting
+        // names are valid variable names.
+        $currentQuery = Query::parse($request->getUri()->getQuery());
 
         return $uri
             ->withQuery($shouldForwardQuery ? $this->resolveQuery($baseQueryString, $currentQuery) : $baseQueryString)

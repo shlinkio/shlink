@@ -7,7 +7,7 @@ return [
     'rabbitmq' => [
         'enabled' => true,
         'host' => 'shlink_rabbitmq',
-        'port' => '5672',
+        'port' => 5672,
         'user' => 'rabbit',
         'password' => 'rabbit',
     ],

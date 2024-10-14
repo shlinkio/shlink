@@ -15,7 +15,7 @@ return (static function (): array {
 
         'mercure' => [
             'public_hub_url' => $publicUrl,
-            'internal_hub_url' => EnvVars::MERCURE_INTERNAL_HUB_URL->loadFromEnv($publicUrl),
+            'internal_hub_url' => EnvVars::MERCURE_INTERNAL_HUB_URL->loadFromEnv(),
             'jwt_secret' => EnvVars::MERCURE_JWT_SECRET->loadFromEnv(),
             'jwt_issuer' => 'Shlink',
         ],

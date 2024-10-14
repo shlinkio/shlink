@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\ShortUrl\Helper;
 
 use Laminas\Diactoros\ServerRequestFactory;
+use Laminas\Diactoros\Uri;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
@@ -53,61 +54,69 @@ class ShortUrlRedirectionBuilderTest extends TestCase
 
     public static function provideData(): iterable
     {
-        $request = static fn (array $query = []) => ServerRequestFactory::fromGlobals()->withQueryParams($query);
+        $request = static fn (string $query = '') => ServerRequestFactory::fromGlobals()->withUri(
+            (new Uri())->withQuery($query),
+        );
 
         yield ['https://example.com/foo/bar?some=thing', $request(), null, true];
         yield ['https://example.com/foo/bar?some=thing', $request(), null, null];
         yield ['https://example.com/foo/bar?some=thing', $request(), null, false];
-        yield ['https://example.com/foo/bar?some=thing&else', $request(['else' => null]), null, true];
-        yield ['https://example.com/foo/bar?some=thing&foo=bar', $request(['foo' => 'bar']), null, true];
-        yield ['https://example.com/foo/bar?some=thing&foo=bar', $request(['foo' => 'bar']), null, null];
-        yield ['https://example.com/foo/bar?some=thing', $request(['foo' => 'bar']), null, false];
-        yield ['https://example.com/foo/bar?some=thing&123=foo', $request(['123' => 'foo']), null, true];
-        yield ['https://example.com/foo/bar?some=thing&456=foo', $request([456 => 'foo']), null, true];
-        yield ['https://example.com/foo/bar?some=thing&456=foo', $request([456 => 'foo']), null, null];
-        yield ['https://example.com/foo/bar?some=thing', $request([456 => 'foo']), null, false];
+        yield ['https://example.com/foo/bar?some=thing&else', $request('else'), null, true];
+        yield ['https://example.com/foo/bar?some=thing&foo=bar', $request('foo=bar'), null, true];
+        yield ['https://example.com/foo/bar?some=thing&foo=bar', $request('foo=bar'), null, null];
+        yield ['https://example.com/foo/bar?some=thing', $request('foo=bar'), null, false];
+        yield ['https://example.com/foo/bar?some=thing&123=foo', $request('123=foo'), null, true];
+        yield ['https://example.com/foo/bar?some=thing&456=foo', $request('456=foo'), null, true];
+        yield ['https://example.com/foo/bar?some=thing&456=foo', $request('456=foo'), null, null];
+        yield ['https://example.com/foo/bar?some=thing', $request('456=foo'), null, false];
         yield [
             'https://example.com/foo/bar?some=overwritten&foo=bar',
-            $request(['foo' => 'bar', 'some' => 'overwritten']),
+            $request('foo=bar&some=overwritten'),
             null,
             true,
         ];
         yield [
             'https://example.com/foo/bar?some=overwritten',
-            $request(['foobar' => 'notrack', 'some' => 'overwritten']),
+            $request('foobar=notrack&some=overwritten'),
             null,
             true,
         ];
         yield [
             'https://example.com/foo/bar?some=overwritten',
-            $request(['foobar' => 'notrack', 'some' => 'overwritten']),
+            $request('foobar=notrack&some=overwritten'),
             null,
             null,
         ];
         yield [
             'https://example.com/foo/bar?some=thing',
-            $request(['foobar' => 'notrack', 'some' => 'overwritten']),
+            $request('foobar=notrack&some=overwritten'),
             null,
             false,
         ];
         yield ['https://example.com/foo/bar/something/else-baz?some=thing', $request(), '/something/else-baz', true];
         yield [
             'https://example.com/foo/bar/something/else-baz?some=thing&hello=world',
-            $request(['hello' => 'world']),
+            $request('hello=world',),
             '/something/else-baz',
             true,
         ];
         yield [
             'https://example.com/foo/bar/something/else-baz?some=thing&hello=world',
-            $request(['hello' => 'world']),
+            $request('hello=world',),
             '/something/else-baz',
             null,
         ];
         yield [
             'https://example.com/foo/bar/something/else-baz?some=thing',
-            $request(['hello' => 'world']),
+            $request('hello=world',),
             '/something/else-baz',
             false,
+        ];
+        yield [
+            'https://example.com/foo/bar/something/else-baz?some=thing&parameter%20with%20spaces=world',
+            $request('parameter with spaces=world',),
+            '/something/else-baz',
+            true,
         ];
     }
 

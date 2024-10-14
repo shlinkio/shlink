@@ -21,7 +21,7 @@ return (static function (): array {
     $overrideDomainMiddleware = Middleware\ShortUrl\OverrideDomainMiddleware::class;
 
     // TODO This should be based on config, not the env var
-    $shortUrlRouteSuffix = EnvVars::SHORT_URL_TRAILING_SLASH->loadFromEnv(false) ? '[/]' : '';
+    $shortUrlRouteSuffix = EnvVars::SHORT_URL_TRAILING_SLASH->loadFromEnv() ? '[/]' : '';
 
     return [
 
