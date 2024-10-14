@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Config;
 
+use Closure;
 use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Config\EnvVars;
 use Symfony\Component\Console\Command\Command;
@@ -21,6 +22,15 @@ use function sprintf;
 class ReadEnvVarCommand extends Command
 {
     public const NAME = 'env-var:read';
+
+    /** @var Closure(string $envVar): mixed */
+    private readonly Closure $loadEnvVar;
+
+    public function __construct(?Closure $loadEnvVar = null)
+    {
+        $this->loadEnvVar = $loadEnvVar ?? static fn (string $envVar) => EnvVars::from($envVar)->loadFromEnv();
+        parent::__construct();
+    }
 
     protected function configure(): void
     {
@@ -51,7 +61,7 @@ class ReadEnvVarCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $envVar = $input->getArgument('envVar');
-        $output->writeln(formatEnvVarValue(EnvVars::from($envVar)->loadFromEnv()));
+        $output->writeln(formatEnvVarValue(($this->loadEnvVar)($envVar)));
 
         return ExitCode::EXIT_SUCCESS;
     }
