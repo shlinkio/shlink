@@ -23,11 +23,6 @@ return (static function (): array {
         $value = $envVar->loadFromEnv();
         return $value === null ? null : (string) $value;
     };
-    $resolveDefaultPort = static fn () => match ($driver) {
-        'postgres' => '5432',
-        'mssql' => '1433',
-        default => '3306',
-    };
     $resolveCharset = static fn () => match ($driver) {
         // This does not determine charsets or collations in tables or columns, but the charset used in the data
         // flowing in the connection, so it has to match what has been set in the database.
@@ -43,11 +38,11 @@ return (static function (): array {
         ],
         default => [
             'driver' => $resolveDriver(),
-            'dbname' => EnvVars::DB_NAME->loadFromEnv('shlink'),
+            'dbname' => EnvVars::DB_NAME->loadFromEnv(),
             'user' => $readCredentialAsString(EnvVars::DB_USER),
             'password' => $readCredentialAsString(EnvVars::DB_PASSWORD),
-            'host' => EnvVars::DB_HOST->loadFromEnv(EnvVars::DB_UNIX_SOCKET->loadFromEnv()),
-            'port' => EnvVars::DB_PORT->loadFromEnv($resolveDefaultPort()),
+            'host' => EnvVars::DB_HOST->loadFromEnv(),
+            'port' => EnvVars::DB_PORT->loadFromEnv(),
             'unix_socket' => $isMysqlCompatible ? EnvVars::DB_UNIX_SOCKET->loadFromEnv() : null,
             'charset' => $resolveCharset(),
             'driverOptions' => $driver !== 'mssql' ? [] : [
