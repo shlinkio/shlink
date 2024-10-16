@@ -8,7 +8,7 @@ use GuzzleHttp\Psr7\Query;
 use GuzzleHttp\Psr7\Uri;
 use Laminas\Stdlib\ArrayUtils;
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Core\Options\TrackingOptions;
+use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectionResolverInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 

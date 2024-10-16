@@ -129,14 +129,14 @@ return (static function (): array {
                 EventDispatcher\PublishingUpdatesGenerator::class,
                 'em',
                 'Logger_Shlink',
-                Options\RabbitMqOptions::class,
+                Config\Options\RabbitMqOptions::class,
             ],
             EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq::class => [
                 RabbitMqPublishingHelper::class,
                 EventDispatcher\PublishingUpdatesGenerator::class,
                 'em',
                 'Logger_Shlink',
-                Options\RabbitMqOptions::class,
+                Config\Options\RabbitMqOptions::class,
             ],
             EventDispatcher\RedisPubSub\NotifyVisitToRedis::class => [
                 RedisPublishingHelper::class,
@@ -167,7 +167,7 @@ return (static function (): array {
             ],
 
             EventDispatcher\Helper\EnabledListenerChecker::class => [
-                Options\RabbitMqOptions::class,
+                Config\Options\RabbitMqOptions::class,
                 'config.redis.pub_sub_enabled',
                 MercureOptions::class,
                 GeoLite2Options::class,

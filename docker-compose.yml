@@ -33,7 +33,11 @@ services:
             - shlink_rabbitmq
             - shlink_matomo
         environment:
-            LC_ALL: C
+            DEFAULT_DOMAIN: localhost:8000
+        env_file:
+            - path: shlink-dev.env
+            - path: shlink-dev.local.env
+              required: false
         extra_hosts:
             - 'host.docker.internal:host-gateway'
 
@@ -59,7 +63,11 @@ services:
             - shlink_rabbitmq
             - shlink_matomo
         environment:
-            LC_ALL: C
+            DEFAULT_DOMAIN: localhost:8800
+        env_file:
+            - path: shlink-dev.env
+            - path: shlink-dev.local.env
+              required: false
         extra_hosts:
             - 'host.docker.internal:host-gateway'
 

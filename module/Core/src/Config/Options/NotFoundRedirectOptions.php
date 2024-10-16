@@ -2,17 +2,27 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Options;
+namespace Shlinkio\Shlink\Core\Config\Options;
 
+use Shlinkio\Shlink\Core\Config\EnvVars;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirectConfigInterface;
 
-final class NotFoundRedirectOptions implements NotFoundRedirectConfigInterface
+final readonly class NotFoundRedirectOptions implements NotFoundRedirectConfigInterface
 {
     public function __construct(
-        public readonly ?string $invalidShortUrl = null,
-        public readonly ?string $regular404 = null,
-        public readonly ?string $baseUrl = null,
+        public ?string $invalidShortUrl = null,
+        public ?string $regular404 = null,
+        public ?string $baseUrl = null,
     ) {
+    }
+
+    public static function fromEnv(): self
+    {
+        return new self(
+            invalidShortUrl: EnvVars::DEFAULT_INVALID_SHORT_URL_REDIRECT->loadFromEnv(),
+            regular404: EnvVars::DEFAULT_REGULAR_404_REDIRECT->loadFromEnv(),
+            baseUrl: EnvVars::DEFAULT_BASE_URL_REDIRECT->loadFromEnv(),
+        );
     }
 
     public function invalidShortUrlRedirect(): ?string
