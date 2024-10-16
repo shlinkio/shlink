@@ -7,7 +7,7 @@ namespace ShlinkioTest\Shlink\Core\Visit\Model;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Core\Options\TrackingOptions;
+use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 
 use function random_int;

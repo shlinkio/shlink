@@ -4,15 +4,29 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Matomo;
 
-class MatomoOptions
+use Shlinkio\Shlink\Core\Config\EnvVars;
+
+final readonly class MatomoOptions
 {
+    /**
+     * @param numeric-string|int|null $siteId
+     */
     public function __construct(
-        public readonly bool $enabled = false,
-        public readonly ?string $baseUrl = null,
-        /** @var numeric-string|int|null */
-        private readonly string|int|null $siteId = null,
-        public readonly ?string $apiToken = null,
+        public bool $enabled = false,
+        public ?string $baseUrl = null,
+        private string|int|null $siteId = null,
+        public ?string $apiToken = null,
     ) {
+    }
+
+    public static function fromEnv(): self
+    {
+        return new self(
+            enabled: (bool) EnvVars::MATOMO_ENABLED->loadFromEnv(),
+            baseUrl: EnvVars::MATOMO_BASE_URL->loadFromEnv(),
+            siteId: EnvVars::MATOMO_SITE_ID->loadFromEnv(),
+            apiToken: EnvVars::MATOMO_API_TOKEN->loadFromEnv(),
+        );
     }
 
     public function siteId(): ?int

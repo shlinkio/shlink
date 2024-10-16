@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Factory;
 
 use Psr\Container\ContainerInterface;
-use Shlinkio\Shlink\Core\Options\AppOptions;
+use Shlinkio\Shlink\Core\Config\Options\AppOptions;
 use Symfony\Component\Console\Application as CliApp;
 use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;
 

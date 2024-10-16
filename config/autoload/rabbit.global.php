@@ -6,6 +6,7 @@ use Shlinkio\Shlink\Core\Config\EnvVars;
 
 return [
 
+    // This config is used by shlink-common. Do not delete
     'rabbitmq' => [
         'enabled' => (bool) EnvVars::RABBITMQ_ENABLED->loadFromEnv(),
         'host' => EnvVars::RABBITMQ_HOST->loadFromEnv(),

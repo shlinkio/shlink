@@ -10,8 +10,8 @@ use Mezzio\ProblemDetails\ProblemDetailsResponseFactory;
 use Mezzio\Router\Middleware\ImplicitOptionsMiddleware;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Mercure\LcobucciJwtProvider;
+use Shlinkio\Shlink\Core\Config;
 use Shlinkio\Shlink\Core\Domain\DomainService;
-use Shlinkio\Shlink\Core\Options;
 use Shlinkio\Shlink\Core\RedirectRule;
 use Shlinkio\Shlink\Core\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
@@ -64,17 +64,17 @@ return [
     ConfigAbstractFactory::class => [
         ApiKeyService::class => ['em'],
 
-        Action\HealthAction::class => ['em', Options\AppOptions::class],
+        Action\HealthAction::class => ['em', Config\Options\AppOptions::class],
         Action\MercureInfoAction::class => [LcobucciJwtProvider::class, 'config.mercure'],
         Action\ShortUrl\CreateShortUrlAction::class => [
             ShortUrl\UrlShortener::class,
             ShortUrlDataTransformer::class,
-            Options\UrlShortenerOptions::class,
+            Config\Options\UrlShortenerOptions::class,
         ],
         Action\ShortUrl\SingleStepCreateShortUrlAction::class => [
             ShortUrl\UrlShortener::class,
             ShortUrlDataTransformer::class,
-            Options\UrlShortenerOptions::class,
+            Config\Options\UrlShortenerOptions::class,
         ],
         Action\ShortUrl\EditShortUrlAction::class => [ShortUrl\ShortUrlService::class, ShortUrlDataTransformer::class],
         Action\ShortUrl\DeleteShortUrlAction::class => [ShortUrl\DeleteShortUrlService::class],
@@ -101,7 +101,7 @@ return [
         Action\Tag\TagsStatsAction::class => [TagService::class],
         Action\Tag\DeleteTagsAction::class => [TagService::class],
         Action\Tag\UpdateTagAction::class => [TagService::class],
-        Action\Domain\ListDomainsAction::class => [DomainService::class, Options\NotFoundRedirectOptions::class],
+        Action\Domain\ListDomainsAction::class => [DomainService::class, Config\Options\NotFoundRedirectOptions::class],
         Action\Domain\DomainRedirectsAction::class => [DomainService::class],
         Action\RedirectRule\ListRedirectRulesAction::class => [
             ShortUrl\ShortUrlResolver::class,

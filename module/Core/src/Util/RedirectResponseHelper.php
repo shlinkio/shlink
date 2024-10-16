@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\Core\Util;
 
 use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
-use Shlinkio\Shlink\Core\Options\RedirectOptions;
+use Shlinkio\Shlink\Core\Config\Options\RedirectOptions;
 
 use function sprintf;
 

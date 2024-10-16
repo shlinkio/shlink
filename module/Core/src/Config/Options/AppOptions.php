@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Options;
+namespace Shlinkio\Shlink\Core\Config\Options;
 
 use function sprintf;
 

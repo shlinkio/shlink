@@ -18,8 +18,8 @@ use Psr\Http\Message\UriInterface;
 use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirectResolver;
+use Shlinkio\Shlink\Core\Config\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Core\ErrorHandler\Model\NotFoundType;
-use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Core\Util\RedirectResponseHelperInterface;
 
 use function Laminas\Stratigility\middleware;

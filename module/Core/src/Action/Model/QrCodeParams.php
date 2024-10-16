@@ -12,7 +12,7 @@ use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Writer\SvgWriter;
 use Endroid\QrCode\Writer\WriterInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Core\Options\QrCodeOptions;
+use Shlinkio\Shlink\Core\Config\Options\QrCodeOptions;
 
 use function ctype_xdigit;
 use function hexdec;
