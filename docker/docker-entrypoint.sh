@@ -26,5 +26,6 @@ fi
 php vendor/bin/shlink-installer init ${flags}
 
 if [ "$SHLINK_RUNTIME" = 'rr' ]; then
-  ./bin/rr serve -c config/roadrunner/.rr.yml
+  # Run with `exec` so that signals are properly handled
+  exec ./bin/rr serve -c config/roadrunner/.rr.yml
 fi
