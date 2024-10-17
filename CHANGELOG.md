@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [4.2.3] - 2024-10-17
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#2225](https://github.com/shlinkio/shlink/issues/2225) Fix regression introduced in v4.2.2, making config options with `null` value to be promoted as env vars with value `''`, instead of being skipped.
+
+
 ## [4.2.2] - 2024-10-14
 ### Added
 * *Nothing*
