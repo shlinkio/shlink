@@ -97,6 +97,23 @@ enum EnvVars: string
         return env($this->value) ?? $this->loadFromFileEnv() ?? $this->defaultValue();
     }
 
+    /**
+     * Checks if an equivalent environment variable exists with the `_FILE` suffix. If so, it loads its value as a file,
+     * reads it, and returns its contents.
+     * This is useful when loading Shlink with docker compose and using secrets.
+     * See https://docs.docker.com/compose/use-secrets/
+     */
+    private function loadFromFileEnv(): string|int|bool|null
+    {
+        $file = env(sprintf('%s_FILE', $this->value));
+        if ($file === null || ! is_file($file)) {
+            return null;
+        }
+
+        $content = file_get_contents($file);
+        return $content ? parseEnvVar($content) : null;
+    }
+
     private function defaultValue(): string|int|bool|null
     {
         return match ($this) {
@@ -151,23 +168,6 @@ enum EnvVars: string
 
             default => null,
         };
-    }
-
-    /**
-     * Checks if an equivalent environment variable exists with the `_FILE` suffix. If so, it loads its value as a file,
-     * reads it, and returns its contents.
-     * This is useful when loading Shlink with docker compose and using secrets.
-     * See https://docs.docker.com/compose/use-secrets/
-     */
-    private function loadFromFileEnv(): string|int|bool|null
-    {
-        $file = env(sprintf('%s_FILE', $this->value));
-        if ($file === null || ! is_file($file)) {
-            return null;
-        }
-
-        $content = file_get_contents($file);
-        return $content ? parseEnvVar($content) : null;
     }
 
     public function existsInEnv(): bool
