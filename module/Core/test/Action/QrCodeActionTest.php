@@ -17,6 +17,7 @@ use Psr\Log\NullLogger;
 use Shlinkio\Shlink\Common\Response\QrCodeResponse;
 use Shlinkio\Shlink\Core\Action\QrCodeAction;
 use Shlinkio\Shlink\Core\Config\Options\QrCodeOptions;
+use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
@@ -324,7 +325,7 @@ class QrCodeActionTest extends TestCase
     {
         return new QrCodeAction(
             $this->urlResolver,
-            new ShortUrlStringifier(['domain' => 's.test']),
+            new ShortUrlStringifier(),
             new NullLogger(),
             $options ?? new QrCodeOptions(enabledForDisabledShortUrls: false),
         );

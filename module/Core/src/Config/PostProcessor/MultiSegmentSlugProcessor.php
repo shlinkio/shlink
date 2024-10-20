@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Config\PostProcessor;
 
+use Shlinkio\Shlink\Core\Config\EnvVars;
+
 use function array_map;
 use function str_replace;
 
@@ -14,7 +16,7 @@ class MultiSegmentSlugProcessor
 
     public function __invoke(array $config): array
     {
-        $multiSegmentEnabled = $config['url_shortener']['multi_segment_slugs_enabled'] ?? false;
+        $multiSegmentEnabled = (bool) EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->loadFromEnv();
         if (! $multiSegmentEnabled) {
             return $config;
         }

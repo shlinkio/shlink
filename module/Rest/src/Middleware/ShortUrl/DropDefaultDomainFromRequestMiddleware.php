@@ -8,10 +8,11 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 
-class DropDefaultDomainFromRequestMiddleware implements MiddlewareInterface
+readonly class DropDefaultDomainFromRequestMiddleware implements MiddlewareInterface
 {
-    public function __construct(private readonly string $defaultDomain)
+    public function __construct(private UrlShortenerOptions $urlShortenerOptions)
     {
     }
 
@@ -27,7 +28,7 @@ class DropDefaultDomainFromRequestMiddleware implements MiddlewareInterface
 
     private function sanitizeDomainFromPayload(array $payload): array
     {
-        if (isset($payload['domain']) && $payload['domain'] === $this->defaultDomain) {
+        if (isset($payload['domain']) && $payload['domain'] === $this->urlShortenerOptions->defaultDomain()) {
             unset($payload['domain']);
         }
 

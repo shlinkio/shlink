@@ -13,6 +13,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Rest\Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware;
 
 class DropDefaultDomainFromRequestMiddlewareTest extends TestCase
@@ -23,7 +24,9 @@ class DropDefaultDomainFromRequestMiddlewareTest extends TestCase
     protected function setUp(): void
     {
         $this->next = $this->createMock(RequestHandlerInterface::class);
-        $this->middleware = new DropDefaultDomainFromRequestMiddleware('s.test');
+        $this->middleware = new DropDefaultDomainFromRequestMiddleware(
+            new UrlShortenerOptions(domain: ['hostname' => 's.test']),
+        );
     }
 
     #[Test, DataProvider('provideQueryParams')]

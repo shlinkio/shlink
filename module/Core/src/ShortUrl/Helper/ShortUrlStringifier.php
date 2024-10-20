@@ -5,22 +5,23 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\ShortUrl\Helper;
 
 use Laminas\Diactoros\Uri;
+use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 
 use function sprintf;
 
-class ShortUrlStringifier implements ShortUrlStringifierInterface
+readonly class ShortUrlStringifier implements ShortUrlStringifierInterface
 {
-    /**
-     * @param array{schema?: string, hostname?: string} $domainConfig
-     */
-    public function __construct(private readonly array $domainConfig, private readonly string $basePath = '')
-    {
+    public function __construct(
+        private UrlShortenerOptions $urlShortenerOptions = new UrlShortenerOptions(),
+        private string $basePath = '',
+    ) {
     }
 
     public function stringify(ShortUrl $shortUrl): string
     {
-        $uriWithoutShortCode = (new Uri())->withScheme($this->domainConfig['schema'] ?? 'http')
+        $domainConfig = $this->urlShortenerOptions->domain;
+        $uriWithoutShortCode = (new Uri())->withScheme($domainConfig['schema'] ?? 'http')
                                           ->withHost($this->resolveDomain($shortUrl))
                                           ->withPath($this->basePath)
                                           ->__toString();
@@ -31,6 +32,7 @@ class ShortUrlStringifier implements ShortUrlStringifierInterface
 
     private function resolveDomain(ShortUrl $shortUrl): string
     {
-        return $shortUrl->getDomain()?->authority ?? $this->domainConfig['hostname'] ?? '';
+        $domainConfig = $this->urlShortenerOptions->domain;
+        return $shortUrl->getDomain()?->authority ?? $domainConfig['hostname'] ?? '';
     }
 }

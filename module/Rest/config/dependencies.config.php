@@ -86,7 +86,7 @@ return [
         Action\Visit\TagVisitsAction::class => [Visit\VisitsStatsHelper::class],
         Action\Visit\DomainVisitsAction::class => [
             Visit\VisitsStatsHelper::class,
-            'config.url_shortener.domain.hostname',
+            Config\Options\UrlShortenerOptions::class,
         ],
         Action\Visit\GlobalVisitsAction::class => [Visit\VisitsStatsHelper::class],
         Action\Visit\OrphanVisitsAction::class => [Visit\VisitsStatsHelper::class],
@@ -113,10 +113,10 @@ return [
         ],
 
         Middleware\CrossDomainMiddleware::class => ['config.cors'],
-        Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class => ['config.url_shortener.domain.hostname'],
-        Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class => [
-            'config.url_shortener.default_short_codes_length',
+        Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class => [
+            Config\Options\UrlShortenerOptions::class,
         ],
+        Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class => [Config\Options\UrlShortenerOptions::class],
         Middleware\ShortUrl\OverrideDomainMiddleware::class => [DomainService::class],
         Middleware\Mercure\NotConfiguredMercureErrorHandler::class => [
             ProblemDetailsResponseFactory::class,

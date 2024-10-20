@@ -37,7 +37,7 @@ class ListShortUrlsCommandTest extends TestCase
     {
         $this->shortUrlService = $this->createMock(ShortUrlListServiceInterface::class);
         $command = new ListShortUrlsCommand($this->shortUrlService, new ShortUrlDataTransformer(
-            new ShortUrlStringifier([]),
+            new ShortUrlStringifier(),
         ));
         $this->commandTester = CliTestUtils::testerForCommand($command);
     }
