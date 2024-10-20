@@ -25,7 +25,7 @@ class ResolveShortUrlActionTest extends TestCase
     {
         $this->urlResolver = $this->createMock(ShortUrlResolverInterface::class);
         $this->action = new ResolveShortUrlAction($this->urlResolver, new ShortUrlDataTransformer(
-            new ShortUrlStringifier([]),
+            new ShortUrlStringifier(),
         ));
     }
 

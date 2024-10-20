@@ -88,7 +88,7 @@ return [
             TrackingOptions::class,
         ],
         Util\ProcessRunner::class => [SymfonyCli\Helper\ProcessHelper::class],
-        ApiKey\RoleResolver::class => [DomainService::class, 'config.url_shortener.domain.hostname'],
+        ApiKey\RoleResolver::class => [DomainService::class, UrlShortenerOptions::class],
 
         Command\ShortUrl\CreateShortUrlCommand::class => [
             ShortUrl\UrlShortener::class,

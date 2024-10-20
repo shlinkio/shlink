@@ -167,7 +167,7 @@ return [
             ShortUrl\ShortUrlResolver::class,
         ],
         ShortUrl\Helper\ShortCodeUniquenessHelper::class => ['em', Config\Options\UrlShortenerOptions::class],
-        Domain\DomainService::class => ['em', 'config.url_shortener.domain.hostname'],
+        Domain\DomainService::class => ['em', Config\Options\UrlShortenerOptions::class],
 
         Util\DoctrineBatchHelper::class => ['em'],
         Util\RedirectResponseHelper::class => [Config\Options\RedirectOptions::class],
@@ -197,7 +197,10 @@ return [
             Config\Options\UrlShortenerOptions::class,
             Lock\LockFactory::class,
         ],
-        ShortUrl\Helper\ShortUrlStringifier::class => ['config.url_shortener.domain', 'config.router.base_path'],
+        ShortUrl\Helper\ShortUrlStringifier::class => [
+            Config\Options\UrlShortenerOptions::class,
+            'config.router.base_path',
+        ],
         ShortUrl\Helper\ShortUrlTitleResolutionHelper::class => [
             'httpClient',
             Config\Options\UrlShortenerOptions::class,
