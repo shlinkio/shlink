@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\ApiKey;
 
 use Shlinkio\Shlink\CLI\Exception\InvalidRoleConfigException;
+use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
@@ -12,11 +13,11 @@ use Symfony\Component\Console\Input\InputInterface;
 
 use function is_string;
 
-class RoleResolver implements RoleResolverInterface
+readonly class RoleResolver implements RoleResolverInterface
 {
     public function __construct(
-        private readonly DomainServiceInterface $domainService,
-        private readonly string $defaultDomain,
+        private DomainServiceInterface $domainService,
+        private UrlShortenerOptions $urlShortenerOptions,
     ) {
     }
 
@@ -39,7 +40,7 @@ class RoleResolver implements RoleResolverInterface
 
     private function resolveRoleForAuthority(string $domainAuthority): RoleDefinition
     {
-        if ($domainAuthority === $this->defaultDomain) {
+        if ($domainAuthority === $this->urlShortenerOptions->defaultDomain()) {
             throw InvalidRoleConfigException::forDomainOnlyWithDefaultDomain();
         }
 

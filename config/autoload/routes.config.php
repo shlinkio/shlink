@@ -19,8 +19,6 @@ use function sprintf;
 return (static function (): array {
     $dropDomainMiddleware = Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class;
     $overrideDomainMiddleware = Middleware\ShortUrl\OverrideDomainMiddleware::class;
-
-    // TODO This should be based on config, not the env var
     $shortUrlRouteSuffix = EnvVars::SHORT_URL_TRAILING_SLASH->loadFromEnv() ? '[/]' : '';
 
     return [

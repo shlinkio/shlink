@@ -10,7 +10,7 @@ use Laminas\InputFilter\InputFilter;
 use Laminas\Validator;
 use Shlinkio\Shlink\Common\Validation\HostAndPortValidator;
 use Shlinkio\Shlink\Common\Validation\InputFactory;
-use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
+use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function is_string;

@@ -31,7 +31,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
         Chronos::setTestNow($this->now);
 
         $this->generator = new PublishingUpdatesGenerator(
-            new ShortUrlDataTransformer(new ShortUrlStringifier([])),
+            new ShortUrlDataTransformer(new ShortUrlStringifier()),
         );
     }
 

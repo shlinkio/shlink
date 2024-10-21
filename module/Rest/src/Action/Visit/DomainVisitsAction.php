@@ -8,6 +8,7 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtils;
+use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
@@ -20,7 +21,7 @@ class DomainVisitsAction extends AbstractRestAction
 
     public function __construct(
         private readonly VisitsStatsHelperInterface $visitsHelper,
-        private readonly string $defaultDomain,
+        private readonly UrlShortenerOptions $urlShortenerOptions,
     ) {
     }
 
@@ -37,7 +38,7 @@ class DomainVisitsAction extends AbstractRestAction
     private function resolveDomainParam(Request $request): string
     {
         $domainParam = $request->getAttribute('domain', '');
-        if ($domainParam === $this->defaultDomain) {
+        if ($domainParam === $this->urlShortenerOptions->defaultDomain()) {
             return 'DEFAULT';
         }
 

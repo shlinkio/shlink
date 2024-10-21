@@ -7,10 +7,10 @@ namespace Shlinkio\Shlink\CLI;
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Shlinkio\Shlink\Common\Doctrine\NoDbNameConnectionFactory;
+use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
+use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Domain\DomainService;
 use Shlinkio\Shlink\Core\Matomo;
-use Shlinkio\Shlink\Core\Options\TrackingOptions;
-use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectRuleService;
 use Shlinkio\Shlink\Core\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
@@ -88,7 +88,7 @@ return [
             TrackingOptions::class,
         ],
         Util\ProcessRunner::class => [SymfonyCli\Helper\ProcessHelper::class],
-        ApiKey\RoleResolver::class => [DomainService::class, 'config.url_shortener.domain.hostname'],
+        ApiKey\RoleResolver::class => [DomainService::class, UrlShortenerOptions::class],
 
         Command\ShortUrl\CreateShortUrlCommand::class => [
             ShortUrl\UrlShortener::class,

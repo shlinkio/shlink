@@ -9,15 +9,15 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Shlinkio\Shlink\Core\Config;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirectResolverInterface;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\ErrorHandler\Model\NotFoundType;
-use Shlinkio\Shlink\Core\Options;
 
-class NotFoundRedirectHandler implements MiddlewareInterface
+readonly class NotFoundRedirectHandler implements MiddlewareInterface
 {
     public function __construct(
-        private Options\NotFoundRedirectOptions $redirectOptions,
+        private Config\Options\NotFoundRedirectOptions $redirectOptions,
         private NotFoundRedirectResolverInterface $redirectResolver,
         private DomainServiceInterface $domainService,
     ) {

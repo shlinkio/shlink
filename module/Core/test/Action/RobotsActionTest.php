@@ -10,8 +10,8 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Action\RobotsAction;
+use Shlinkio\Shlink\Core\Config\Options\RobotsOptions;
 use Shlinkio\Shlink\Core\Crawling\CrawlingHelperInterface;
-use Shlinkio\Shlink\Core\Options\RobotsOptions;
 
 class RobotsActionTest extends TestCase
 {

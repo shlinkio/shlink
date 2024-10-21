@@ -10,6 +10,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\ApiKey\RoleResolver;
 use Shlinkio\Shlink\CLI\Exception\InvalidRoleConfigException;
+use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
@@ -24,7 +25,10 @@ class RoleResolverTest extends TestCase
     protected function setUp(): void
     {
         $this->domainService = $this->createMock(DomainServiceInterface::class);
-        $this->resolver = new RoleResolver($this->domainService, 'default.com');
+        $this->resolver = new RoleResolver(
+            $this->domainService,
+            new UrlShortenerOptions(domain: ['hostname' => 'default.com']),
+        );
     }
 
     #[Test, DataProvider('provideRoles')]
