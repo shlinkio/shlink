@@ -46,12 +46,13 @@ RUN mkdir -p /usr/src/php/ext/apcu \
   && rm /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini \
   && echo extension=apcu.so > /usr/local/etc/php/conf.d/20-php-ext-apcu.ini
 
-# Install pcov and sqlsrv driver
-RUN wget https://download.microsoft.com/download/${MS_ODBC_DOWNLOAD}/msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
+# Install xdebug and sqlsrv driver
+RUN apk add --update linux-headers && \
+    wget https://download.microsoft.com/download/${MS_ODBC_DOWNLOAD}/msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
     apk add --allow-untrusted msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
     apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS unixodbc-dev && \
-    pecl install pdo_sqlsrv-${PDO_SQLSRV_VERSION} pcov && \
-    docker-php-ext-enable pdo_sqlsrv pcov && \
+    pecl install pdo_sqlsrv-${PDO_SQLSRV_VERSION} xdebug && \
+    docker-php-ext-enable pdo_sqlsrv xdebug && \
     apk del .phpize-deps && \
     rm msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk
 

@@ -15,4 +15,3 @@ docs/mercure.html
 docker-compose.override.yml
 .phpunit.result.cache
 docs/swagger/swagger-inlined.json
-phpcov*
