@@ -9,7 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Changed
-* Run RoadRunner in docker with `exec` to ensure signals are properly handled.
+* [#2232](https://github.com/shlinkio/shlink/issues/2232) Run RoadRunner in docker with `exec` to ensure signals are properly handled.
+* [#2231](https://github.com/shlinkio/shlink/issues/2231) Update to `endroid/qr-code` 6.0.
 
 ### Deprecated
 * *Nothing*
