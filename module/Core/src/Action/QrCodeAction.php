@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Action;
 
 use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Writer\Result\ResultInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
@@ -42,22 +43,30 @@ readonly class QrCodeAction implements MiddlewareInterface
         }
 
         $params = QrCodeParams::fromRequest($request, $this->options);
-        $qrCodeBuilder = Builder::create()
-            ->data($this->stringifier->stringify($shortUrl))
-            ->size($params->size)
-            ->margin($params->margin)
-            ->writer($params->writer)
-            ->errorCorrectionLevel($params->errorCorrectionLevel)
-            ->roundBlockSizeMode($params->roundBlockSizeMode)
-            ->foregroundColor($params->color)
-            ->backgroundColor($params->bgColor);
+        $qrCodeBuilder = new Builder(
+            writer: $params->writer,
+            data: $this->stringifier->stringify($shortUrl),
+            errorCorrectionLevel: $params->errorCorrectionLevel,
+            size: $params->size,
+            margin: $params->margin,
+            roundBlockSizeMode: $params->roundBlockSizeMode,
+            foregroundColor: $params->color,
+            backgroundColor: $params->bgColor,
+        );
 
+        return new QrCodeResponse($this->buildQrCode($qrCodeBuilder, $params));
+    }
+
+    private function buildQrCode(Builder $qrCodeBuilder, QrCodeParams $params): ResultInterface
+    {
         $logoUrl = $this->options->logoUrl;
-        if ($logoUrl !== null) {
-            $qrCodeBuilder->logoPath($logoUrl)
-                          ->logoResizeToHeight((int) ($params->size / 4));
+        if ($logoUrl === null) {
+            return $qrCodeBuilder->build();
         }
 
-        return new QrCodeResponse($qrCodeBuilder->build());
+        return $qrCodeBuilder->build(
+            logoPath: $logoUrl,
+            logoResizeToHeight: (int) ($params->size / 4),
+        );
     }
 }
