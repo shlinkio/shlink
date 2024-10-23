@@ -27,6 +27,7 @@ use const Shlinkio\Shlink\DEFAULT_SHORT_CODES_LENGTH;
 
 enum EnvVars: string
 {
+    case APP_ENV = 'APP_ENV';
     case DELETE_SHORT_URL_THRESHOLD = 'DELETE_SHORT_URL_THRESHOLD';
     case DB_DRIVER = 'DB_DRIVER';
     case DB_NAME = 'DB_NAME';
@@ -117,6 +118,7 @@ enum EnvVars: string
     private function defaultValue(): string|int|bool|null
     {
         return match ($this) {
+            self::APP_ENV => 'prod',
             self::MEMORY_LIMIT => '512M',
             self::TIMEZONE => date_default_timezone_get(),
 
@@ -173,5 +175,20 @@ enum EnvVars: string
     public function existsInEnv(): bool
     {
         return $this->loadFromEnv() !== null;
+    }
+
+    public static function isProdEnv(): bool
+    {
+        return self::APP_ENV->loadFromEnv() === 'prod';
+    }
+
+    public static function isDevEnv(): bool
+    {
+        return self::APP_ENV->loadFromEnv() === 'dev';
+    }
+
+    public static function isTestEnv(): bool
+    {
+        return self::APP_ENV->loadFromEnv() === 'test';
     }
 }

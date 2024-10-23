@@ -61,7 +61,6 @@ EXPOSE 8080
 
 # Copy config specific for the image
 COPY docker/docker-entrypoint.sh docker-entrypoint.sh
-COPY docker/config/shlink_in_docker.local.php config/autoload/shlink_in_docker.local.php
 COPY docker/config/php.ini ${PHP_INI_DIR}/conf.d/
 
 USER ${USER_ID}
