@@ -37,7 +37,7 @@ class MatomoVisitSenderTest extends TestCase
 
         $this->visitSender = new MatomoVisitSender(
             $this->trackerBuilder,
-            new ShortUrlStringifier(new UrlShortenerOptions(domain: ['hostname' => 's2.test'])),
+            new ShortUrlStringifier(new UrlShortenerOptions(defaultDomain: 's2.test')),
             $this->visitIterationRepository,
         );
     }

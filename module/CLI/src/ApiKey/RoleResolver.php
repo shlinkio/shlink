@@ -40,7 +40,7 @@ readonly class RoleResolver implements RoleResolverInterface
 
     private function resolveRoleForAuthority(string $domainAuthority): RoleDefinition
     {
-        if ($domainAuthority === $this->urlShortenerOptions->defaultDomain()) {
+        if ($domainAuthority === $this->urlShortenerOptions->defaultDomain) {
             throw InvalidRoleConfigException::forDomainOnlyWithDefaultDomain();
         }
 

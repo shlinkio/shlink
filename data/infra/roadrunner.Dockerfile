@@ -73,5 +73,7 @@ CMD \
     if [[ ! -d "./vendor" ]]; then /usr/local/bin/composer install ; fi && \
     # Download roadrunner binary
     if [[ ! -f "./bin/rr" ]]; then ./vendor/bin/rr get --no-interaction --no-config --location bin/ && chmod +x bin/rr ; fi && \
+    # Create .env file if it does not exist yet
+    if [[ ! -f "./shlink-dev.env" ]]; then cp ./shlink-dev.env.dist ./shlink-dev.env ; fi && \
     # Run with `exec` so that signals are properly handled
     exec ./bin/rr serve --dotenv /home/shlink/shlink-dev.env -c config/roadrunner/.rr.dev.yml

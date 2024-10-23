@@ -93,13 +93,6 @@ return [
     ConfigAggregator::ENABLE_CACHE => false,
     FastRouteRouter::CONFIG_CACHE_ENABLED => false,
 
-    'url_shortener' => [
-        'domain' => [
-            'schema' => 'http',
-            'hostname' => 's.test',
-        ],
-    ],
-
     'routes' => [
         // This route is used to test that title resolution is skipped if the long URL times out
         [
@@ -118,13 +111,6 @@ return [
             'middleware' => new CoverageMiddleware($coverage),
             'priority' => 9999,
         ],
-    ],
-
-    // Disable mercure integration during E2E tests
-    'mercure' => [
-        'public_hub_url' => null,
-        'internal_hub_url' => null,
-        'jwt_secret' => null,
     ],
 
     'dependencies' => [

@@ -24,9 +24,7 @@ class DropDefaultDomainFromRequestMiddlewareTest extends TestCase
     protected function setUp(): void
     {
         $this->next = $this->createMock(RequestHandlerInterface::class);
-        $this->middleware = new DropDefaultDomainFromRequestMiddleware(
-            new UrlShortenerOptions(domain: ['hostname' => 's.test']),
-        );
+        $this->middleware = new DropDefaultDomainFromRequestMiddleware(new UrlShortenerOptions('s.test'));
     }
 
     #[Test, DataProvider('provideQueryParams')]

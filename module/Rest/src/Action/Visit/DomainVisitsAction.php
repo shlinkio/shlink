@@ -38,7 +38,7 @@ class DomainVisitsAction extends AbstractRestAction
     private function resolveDomainParam(Request $request): string
     {
         $domainParam = $request->getAttribute('domain', '');
-        if ($domainParam === $this->urlShortenerOptions->defaultDomain()) {
+        if ($domainParam === $this->urlShortenerOptions->defaultDomain) {
             return 'DEFAULT';
         }
 

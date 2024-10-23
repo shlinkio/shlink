@@ -61,8 +61,6 @@ services:
             - shlink_mercure_proxy
             - shlink_rabbitmq
             - shlink_matomo
-        environment:
-            DEFAULT_DOMAIN: localhost:8800
         extra_hosts:
             - 'host.docker.internal:host-gateway'
 

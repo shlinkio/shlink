@@ -31,10 +31,7 @@ class ListShortUrlsActionTest extends TestCase
         $this->service = $this->createMock(ShortUrlListServiceInterface::class);
 
         $this->action = new ListShortUrlsAction($this->service, new ShortUrlDataTransformer(
-            new ShortUrlStringifier(new UrlShortenerOptions(domain: [
-                'hostname' => 's.test',
-                'schema' => 'https',
-            ])),
+            new ShortUrlStringifier(new UrlShortenerOptions('s.test')),
         ));
     }
 

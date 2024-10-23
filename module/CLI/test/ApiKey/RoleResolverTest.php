@@ -25,10 +25,7 @@ class RoleResolverTest extends TestCase
     protected function setUp(): void
     {
         $this->domainService = $this->createMock(DomainServiceInterface::class);
-        $this->resolver = new RoleResolver(
-            $this->domainService,
-            new UrlShortenerOptions(domain: ['hostname' => 'default.com']),
-        );
+        $this->resolver = new RoleResolver($this->domainService, new UrlShortenerOptions('default.com'));
     }
 
     #[Test, DataProvider('provideRoles')]

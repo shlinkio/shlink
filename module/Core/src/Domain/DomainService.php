@@ -37,7 +37,7 @@ readonly class DomainService implements DomainServiceInterface
 
         return [
             DomainItem::forDefaultDomain(
-                $this->urlShortenerOptions->defaultDomain(),
+                $this->urlShortenerOptions->defaultDomain,
                 $default ?? new EmptyNotFoundRedirectConfig(),
             ),
             ...$mappedDomains,
@@ -56,7 +56,7 @@ readonly class DomainService implements DomainServiceInterface
         $restOfDomains = [];
 
         foreach ($allDomains as $domain) {
-            if ($domain->authority === $this->urlShortenerOptions->defaultDomain()) {
+            if ($domain->authority === $this->urlShortenerOptions->defaultDomain) {
                 $defaultDomain = $domain;
             } else {
                 $restOfDomains[] = $domain;

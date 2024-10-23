@@ -29,10 +29,7 @@ class DomainServiceTest extends TestCase
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManagerInterface::class);
-        $this->domainService = new DomainService(
-            $this->em,
-            new UrlShortenerOptions(domain: ['hostname' => 'default.com']),
-        );
+        $this->domainService = new DomainService($this->em, new UrlShortenerOptions(defaultDomain: 'default.com'));
     }
 
     #[Test, DataProvider('provideExcludedDomains')]

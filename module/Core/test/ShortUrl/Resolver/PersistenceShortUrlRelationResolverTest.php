@@ -29,9 +29,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
         $this->em = $this->createMock(EntityManagerInterface::class);
         $this->em->method('getEventManager')->willReturn(new EventManager());
 
-        $this->resolver = new PersistenceShortUrlRelationResolver($this->em, new UrlShortenerOptions(
-            domain: ['schema' => 'https', 'hostname' => 'default.com'],
-        ));
+        $this->resolver = new PersistenceShortUrlRelationResolver($this->em, new UrlShortenerOptions('default.com'));
     }
 
     #[Test, DataProvider('provideDomainsThatEmpty')]

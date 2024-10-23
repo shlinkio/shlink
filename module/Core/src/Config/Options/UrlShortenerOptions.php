@@ -15,10 +15,11 @@ use const Shlinkio\Shlink\MIN_SHORT_CODES_LENGTH;
 final readonly class UrlShortenerOptions
 {
     /**
-     * @param array{schema: ?string, hostname: ?string} $domain
+     * @param 'http'|'https' $schema
      */
     public function __construct(
-        public array $domain = ['schema' => null, 'hostname' => null],
+        public string $defaultDomain = '',
+        public string $schema = 'http',
         public int $defaultShortCodesLength = DEFAULT_SHORT_CODES_LENGTH,
         public bool $autoResolveTitles = false,
         public bool $appendExtraPath = false,
@@ -37,10 +38,8 @@ final readonly class UrlShortenerOptions
         $mode = EnvVars::SHORT_URL_MODE->loadFromEnv();
 
         return new self(
-            domain: [
-                'schema' => ((bool) EnvVars::IS_HTTPS_ENABLED->loadFromEnv()) ? 'https' : 'http',
-                'hostname' => EnvVars::DEFAULT_DOMAIN->loadFromEnv(),
-            ],
+            defaultDomain: EnvVars::DEFAULT_DOMAIN->loadFromEnv(),
+            schema: ((bool) EnvVars::IS_HTTPS_ENABLED->loadFromEnv()) ? 'https' : 'http',
             defaultShortCodesLength: $shortCodesLength,
             autoResolveTitles: (bool) EnvVars::AUTO_RESOLVE_TITLES->loadFromEnv(),
             appendExtraPath: (bool) EnvVars::REDIRECT_APPEND_EXTRA_PATH->loadFromEnv(),
@@ -53,10 +52,5 @@ final readonly class UrlShortenerOptions
     public function isLooseMode(): bool
     {
         return $this->mode === ShortUrlMode::LOOSE;
-    }
-
-    public function defaultDomain(): string
-    {
-        return $this->domain['hostname'] ?? '';
     }
 }

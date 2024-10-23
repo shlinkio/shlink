@@ -20,8 +20,7 @@ readonly class ShortUrlStringifier implements ShortUrlStringifierInterface
 
     public function stringify(ShortUrl $shortUrl): string
     {
-        $domainConfig = $this->urlShortenerOptions->domain;
-        $uriWithoutShortCode = (new Uri())->withScheme($domainConfig['schema'] ?? 'http')
+        $uriWithoutShortCode = (new Uri())->withScheme($this->urlShortenerOptions->schema)
                                           ->withHost($this->resolveDomain($shortUrl))
                                           ->withPath($this->basePath)
                                           ->__toString();
@@ -32,7 +31,6 @@ readonly class ShortUrlStringifier implements ShortUrlStringifierInterface
 
     private function resolveDomain(ShortUrl $shortUrl): string
     {
-        $domainConfig = $this->urlShortenerOptions->domain;
-        return $shortUrl->getDomain()?->authority ?? $domainConfig['hostname'] ?? '';
+        return $shortUrl->getDomain()?->authority ?? $this->urlShortenerOptions->defaultDomain;
     }
 }

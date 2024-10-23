@@ -25,10 +25,7 @@ class DomainVisitsActionTest extends TestCase
     protected function setUp(): void
     {
         $this->visitsHelper = $this->createMock(VisitsStatsHelperInterface::class);
-        $this->action = new DomainVisitsAction(
-            $this->visitsHelper,
-            new UrlShortenerOptions(domain: ['hostname' => 'the_default.com']),
-        );
+        $this->action = new DomainVisitsAction($this->visitsHelper, new UrlShortenerOptions('the_default.com'));
     }
 
     #[Test, DataProvider('provideDomainAuthorities')]

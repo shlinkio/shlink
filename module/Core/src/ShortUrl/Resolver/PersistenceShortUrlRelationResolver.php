@@ -40,7 +40,7 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
 
     public function resolveDomain(?string $domain): ?Domain
     {
-        if ($domain === null || $domain === $this->options->defaultDomain()) {
+        if ($domain === null || $domain === $this->options->defaultDomain) {
             return null;
         }
 
