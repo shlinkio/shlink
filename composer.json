@@ -73,7 +73,7 @@
         "phpunit/phpunit": "^11.3",
         "roave/security-advisories": "dev-master",
         "shlinkio/php-coding-standard": "~2.3.0",
-        "shlinkio/shlink-test-utils": "^4.1",
+        "shlinkio/shlink-test-utils": "^4.1.1",
         "symfony/var-dumper": "^7.0",
         "veewee/composer-run-parallel": "^1.3"
     },
@@ -136,7 +136,7 @@
         "test:api:mssql": "DB_DRIVER=mssql composer test:api -- $*",
         "test:api:ci": "GENERATE_COVERAGE=yes composer test:api && vendor/bin/phpcov merge build/coverage-api --php build/coverage-api.cov && rm build/coverage-api/*.cov",
         "test:api:pretty": "GENERATE_COVERAGE=yes composer test:api && vendor/bin/phpcov merge build/coverage-api --html build/coverage-api/coverage-html && rm build/coverage-api/*.cov",
-        "test:cli": "APP_ENV=test DB_DRIVER=maria TEST_ENV=cli php vendor/bin/phpunit --order-by=random --testdox --testdox-summary -c phpunit-cli.xml",
+        "test:cli": "bin/test/run-cli-tests.sh",
         "test:cli:ci": "XDEBUG_MODE=coverage GENERATE_COVERAGE=yes composer test:cli && vendor/bin/phpcov merge build/coverage-cli --php build/coverage-cli.cov && rm build/coverage-cli/*.cov",
         "test:cli:pretty": "XDEBUG_MODE=coverage GENERATE_COVERAGE=yes composer test:cli && vendor/bin/phpcov merge build/coverage-cli --html build/coverage-cli/coverage-html && rm build/coverage-cli/*.cov",
         "swagger:validate": "php-openapi validate docs/swagger/swagger.json",
