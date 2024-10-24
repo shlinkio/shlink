@@ -1,6 +1,6 @@
 bin/rr
 config/autoload/*local*
-config/params/*.dist
+config/params/shlink_dev_env.*
 data/infra
 data/cache/*
 data/log/*
