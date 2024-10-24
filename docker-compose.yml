@@ -33,6 +33,7 @@ services:
             - shlink_rabbitmq
             - shlink_matomo
         environment:
+            LC_ALL: C
             DEFAULT_DOMAIN: localhost:8000
         extra_hosts:
             - 'host.docker.internal:host-gateway'
@@ -58,6 +59,8 @@ services:
             - shlink_mercure_proxy
             - shlink_rabbitmq
             - shlink_matomo
+        environment:
+            LC_ALL: C
         extra_hosts:
             - 'host.docker.internal:host-gateway'
 
