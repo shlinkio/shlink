@@ -43,7 +43,7 @@ RUN apk add --no-cache git && \
     php composer.phar install --no-dev --prefer-dist --optimize-autoloader --no-progress --no-interaction && \
     php composer.phar clear-cache && \
     rm -r docker composer.* && \
-    sed -i "s/%SHLINK_VERSION%/${SHLINK_VERSION}/g" config/autoload/app_options.global.php
+    sed -i "s/%SHLINK_VERSION%/${SHLINK_VERSION}/g" module/Core/src/Config/Options/AppOptions.php
 
 
 # Prepare final image

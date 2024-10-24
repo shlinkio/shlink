@@ -8,7 +8,6 @@ use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Common\Doctrine\EntityRepositoryFactory;
-use Shlinkio\Shlink\Config\Factory\ValinorConfigFactory;
 use Shlinkio\Shlink\Core\Config\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
@@ -24,7 +23,7 @@ return [
             ErrorHandler\NotFoundRedirectHandler::class => ConfigAbstractFactory::class,
             ErrorHandler\NotFoundTemplateHandler::class => InvokableFactory::class,
 
-            Config\Options\AppOptions::class => [ValinorConfigFactory::class, 'config.app_options'],
+            Config\Options\AppOptions::class => [Config\Options\AppOptions::class, 'fromEnv'],
             Config\Options\DeleteShortUrlsOptions::class => [Config\Options\DeleteShortUrlsOptions::class, 'fromEnv'],
             Config\Options\NotFoundRedirectOptions::class => [Config\Options\NotFoundRedirectOptions::class, 'fromEnv'],
             Config\Options\RedirectOptions::class => [Config\Options\RedirectOptions::class, 'fromEnv'],
