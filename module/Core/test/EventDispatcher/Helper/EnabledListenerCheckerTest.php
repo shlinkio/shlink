@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Mercure\MercureOptions;
+use Shlinkio\Shlink\Core\Config\Options\RabbitMqOptions;
 use Shlinkio\Shlink\Core\EventDispatcher\Helper\EnabledListenerChecker;
 use Shlinkio\Shlink\Core\EventDispatcher\Matomo\SendVisitToMatomo;
 use Shlinkio\Shlink\Core\EventDispatcher\Mercure\NotifyNewShortUrlToMercure;
@@ -18,7 +19,6 @@ use Shlinkio\Shlink\Core\EventDispatcher\RedisPubSub\NotifyNewShortUrlToRedis;
 use Shlinkio\Shlink\Core\EventDispatcher\RedisPubSub\NotifyVisitToRedis;
 use Shlinkio\Shlink\Core\EventDispatcher\UpdateGeoLiteDb;
 use Shlinkio\Shlink\Core\Matomo\MatomoOptions;
-use Shlinkio\Shlink\Core\Options\RabbitMqOptions;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\GeoLite2Options;
 
 class EnabledListenerCheckerTest extends TestCase

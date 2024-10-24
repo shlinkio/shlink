@@ -7,10 +7,10 @@ namespace Shlinkio\Shlink\Core\EventDispatcher\RabbitMq;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
+use Shlinkio\Shlink\Core\Config\Options\RabbitMqOptions;
 use Shlinkio\Shlink\Core\EventDispatcher\Async\AbstractNotifyVisitListener;
 use Shlinkio\Shlink\Core\EventDispatcher\Async\RemoteSystem;
 use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
-use Shlinkio\Shlink\Core\Options\RabbitMqOptions;
 
 class NotifyVisitToRabbitMq extends AbstractNotifyVisitListener
 {

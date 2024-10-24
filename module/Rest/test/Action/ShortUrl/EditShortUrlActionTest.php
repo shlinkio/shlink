@@ -25,7 +25,7 @@ class EditShortUrlActionTest extends TestCase
     {
         $this->shortUrlService = $this->createMock(ShortUrlServiceInterface::class);
         $this->action = new EditShortUrlAction($this->shortUrlService, new ShortUrlDataTransformer(
-            new ShortUrlStringifier([]),
+            new ShortUrlStringifier(),
         ));
     }
 

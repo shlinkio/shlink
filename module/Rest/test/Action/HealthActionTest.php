@@ -14,7 +14,7 @@ use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Core\Options\AppOptions;
+use Shlinkio\Shlink\Core\Config\Options\AppOptions;
 use Shlinkio\Shlink\Rest\Action\HealthAction;
 
 class HealthActionTest extends TestCase

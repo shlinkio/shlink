@@ -9,8 +9,8 @@ use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Shlinkio\Shlink\Core\Config\Options\RobotsOptions;
 use Shlinkio\Shlink\Core\Crawling\CrawlingHelperInterface;
-use Shlinkio\Shlink\Core\Options\RobotsOptions;
 
 use function sprintf;
 

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\EventDispatcher\Helper;
 
 use Shlinkio\Shlink\Common\Mercure\MercureOptions;
+use Shlinkio\Shlink\Core\Config\Options\RabbitMqOptions;
 use Shlinkio\Shlink\Core\EventDispatcher;
 use Shlinkio\Shlink\Core\Matomo\MatomoOptions;
-use Shlinkio\Shlink\Core\Options\RabbitMqOptions;
 use Shlinkio\Shlink\EventDispatcher\Listener\EnabledListenerCheckerInterface;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\GeoLite2Options;
 

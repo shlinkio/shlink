@@ -35,8 +35,8 @@ ${composerBin} install --no-dev --prefer-dist --optimize-autoloader --no-progres
 echo 'Deleting dev files...'
 rm composer.*
 
-# Update Shlink version in config
-sed -i "s/%SHLINK_VERSION%/${version}/g" config/autoload/app_options.global.php
+# Update Shlink version
+sed -i "s/%SHLINK_VERSION%/${version}/g" module/Core/src/Config/Options/AppOptions.php
 
 # Compressing file
 echo 'Compressing files...'

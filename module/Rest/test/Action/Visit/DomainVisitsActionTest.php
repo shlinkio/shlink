@@ -11,6 +11,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
+use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\Rest\Action\Visit\DomainVisitsAction;
@@ -24,7 +25,7 @@ class DomainVisitsActionTest extends TestCase
     protected function setUp(): void
     {
         $this->visitsHelper = $this->createMock(VisitsStatsHelperInterface::class);
-        $this->action = new DomainVisitsAction($this->visitsHelper, 'the_default.com');
+        $this->action = new DomainVisitsAction($this->visitsHelper, new UrlShortenerOptions('the_default.com'));
     }
 
     #[Test, DataProvider('provideDomainAuthorities')]

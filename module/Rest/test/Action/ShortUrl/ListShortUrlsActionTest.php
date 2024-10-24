@@ -13,6 +13,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
+use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlListServiceInterface;
@@ -30,10 +31,7 @@ class ListShortUrlsActionTest extends TestCase
         $this->service = $this->createMock(ShortUrlListServiceInterface::class);
 
         $this->action = new ListShortUrlsAction($this->service, new ShortUrlDataTransformer(
-            new ShortUrlStringifier([
-                'hostname' => 's.test',
-                'schema' => 'https',
-            ]),
+            new ShortUrlStringifier(new UrlShortenerOptions('s.test')),
         ));
     }
 

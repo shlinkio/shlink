@@ -1,0 +1,76 @@
+<?php
+
+declare(strict_types=1);
+
+use Shlinkio\Shlink\Core\Config\EnvVars;
+
+return [
+
+    EnvVars::APP_ENV->value => 'dev',
+//    EnvVars::GEOLITE_LICENSE_KEY->value => '',
+
+    // URL shortener
+    EnvVars::DEFAULT_DOMAIN->value => 'localhost:8800',
+    EnvVars::IS_HTTPS_ENABLED->value => false,
+
+    // Database - MySQL
+    EnvVars::DB_DRIVER->value => 'mysql',
+    EnvVars::DB_USER->value => 'root',
+    EnvVars::DB_PASSWORD->value => 'root',
+    EnvVars::DB_NAME->value => 'shlink',
+//    EnvVars::DB_NAME->value => 'shlink_foo',
+    EnvVars::DB_HOST->value => 'shlink_db_mysql',
+
+    // Database - Maria
+//    EnvVars::DB_DRIVER->value => 'maria',
+//    EnvVars::DB_USER->value => 'root',
+//    EnvVars::DB_PASSWORD->value => 'root',
+//    EnvVars::DB_NAME->value => 'shlink_foo',
+//    EnvVars::DB_HOST->value => 'shlink_db_maria',
+
+    // Database - Postgres
+//    EnvVars::DB_DRIVER->value => 'postgres',
+//    EnvVars::DB_USER->value => 'postgres',
+//    EnvVars::DB_PASSWORD->value => 'root',
+//    EnvVars::DB_NAME->value => 'shlink_foo',
+//    EnvVars::DB_HOST->value => 'shlink_db_postgres',
+
+    // Database - MSSQL
+//    EnvVars::DB_DRIVER->value => 'mssql',
+//    EnvVars::DB_USER->value => 'sa',
+//    EnvVars::DB_PASSWORD->value => 'Passw0rd!',
+//    EnvVars::DB_NAME->value => 'shlink_foo',
+//    EnvVars::DB_HOST->value => 'shlink_db_ms',
+
+    // Matomo
+    // Dev matomo instance needs to be manually configured once before enabling the configuration below:
+    // 1. Go to http://localhost:8003 and follow the installation instructions.
+    // 2. Open data/infra/matomo/config/config.ini.php and replace `trusted_hosts[] = "localhost"` with
+    //   `trusted_hosts[] = "localhost:8003"` (see https://github.com/matomo-org/matomo/issues/9549)
+    // 3. Go to http://localhost:8003/index.php?module=SitesManager&action=index and paste the ID for the site you just
+    //    created into the `MATOMO_SITE_ID` var below.
+    // 4. Go to http://localhost:8003/index.php?module=UsersManager&action=userSecurity, scroll down, click
+    //    "Create new token" and once generated, paste the token into the `MATOMO_API_TOKEN` var below.
+    // 5. Copy the config below and paste it in a new shlink-dev.local.env file.
+    EnvVars::MATOMO_ENABLED->value => false,
+    EnvVars::MATOMO_BASE_URL->value => 'http://shlink_matomo',
+//    EnvVars::MATOMO_SITE_ID->value => ,
+//    EnvVars::MATOMO_API_TOKEN->value => ,
+
+    // Mercure
+    EnvVars::MERCURE_PUBLIC_HUB_URL->value => 'http://localhost:8002',
+    EnvVars::MERCURE_INTERNAL_HUB_URL->value => 'http://shlink_mercure_proxy',
+    EnvVars::MERCURE_JWT_SECRET->value => 'mercure_jwt_key_long_enough_to_avoid_error',
+
+    // RabbitMQ
+    EnvVars::RABBITMQ_ENABLED->value => true,
+    EnvVars::RABBITMQ_HOST->value => 'shlink_rabbitmq',
+    EnvVars::RABBITMQ_PORT->value => 5672,
+    EnvVars::RABBITMQ_USER->value => 'rabbit',
+    EnvVars::RABBITMQ_PASSWORD->value => 'rabbit',
+
+    // Redis
+    EnvVars::REDIS_PUB_SUB_ENABLED->value => true,
+    EnvVars::REDIS_SERVERS->value => 'tcp://shlink_redis:6379',
+
+];

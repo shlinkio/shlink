@@ -8,8 +8,7 @@ use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Common\Doctrine\EntityRepositoryFactory;
-use Shlinkio\Shlink\Config\Factory\ValinorConfigFactory;
-use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
+use Shlinkio\Shlink\Core\Config\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
@@ -24,15 +23,15 @@ return [
             ErrorHandler\NotFoundRedirectHandler::class => ConfigAbstractFactory::class,
             ErrorHandler\NotFoundTemplateHandler::class => InvokableFactory::class,
 
-            Options\AppOptions::class => [ValinorConfigFactory::class, 'config.app_options'],
-            Options\DeleteShortUrlsOptions::class => [ValinorConfigFactory::class, 'config.delete_short_urls'],
-            Options\NotFoundRedirectOptions::class => [ValinorConfigFactory::class, 'config.not_found_redirects'],
-            Options\RedirectOptions::class => [ValinorConfigFactory::class, 'config.redirects'],
-            Options\UrlShortenerOptions::class => [ValinorConfigFactory::class, 'config.url_shortener'],
-            Options\TrackingOptions::class => [ValinorConfigFactory::class, 'config.tracking'],
-            Options\QrCodeOptions::class => [ValinorConfigFactory::class, 'config.qr_codes'],
-            Options\RabbitMqOptions::class => [ValinorConfigFactory::class, 'config.rabbitmq'],
-            Options\RobotsOptions::class => [ValinorConfigFactory::class, 'config.robots'],
+            Config\Options\AppOptions::class => [Config\Options\AppOptions::class, 'fromEnv'],
+            Config\Options\DeleteShortUrlsOptions::class => [Config\Options\DeleteShortUrlsOptions::class, 'fromEnv'],
+            Config\Options\NotFoundRedirectOptions::class => [Config\Options\NotFoundRedirectOptions::class, 'fromEnv'],
+            Config\Options\RedirectOptions::class => [Config\Options\RedirectOptions::class, 'fromEnv'],
+            Config\Options\UrlShortenerOptions::class => [Config\Options\UrlShortenerOptions::class, 'fromEnv'],
+            Config\Options\TrackingOptions::class => [Config\Options\TrackingOptions::class, 'fromEnv'],
+            Config\Options\QrCodeOptions::class => [Config\Options\QrCodeOptions::class, 'fromEnv'],
+            Config\Options\RabbitMqOptions::class => [Config\Options\RabbitMqOptions::class, 'fromEnv'],
+            Config\Options\RobotsOptions::class => [Config\Options\RobotsOptions::class, 'fromEnv'],
 
             RedirectRule\ShortUrlRedirectRuleService::class => ConfigAbstractFactory::class,
             RedirectRule\ShortUrlRedirectionResolver::class => ConfigAbstractFactory::class,
@@ -101,7 +100,7 @@ return [
 
             Crawling\CrawlingHelper::class => ConfigAbstractFactory::class,
 
-            Matomo\MatomoOptions::class => [ValinorConfigFactory::class, 'config.matomo'],
+            Matomo\MatomoOptions::class => [Matomo\MatomoOptions::class, 'fromEnv'],
             Matomo\MatomoTrackerBuilder::class => ConfigAbstractFactory::class,
             Matomo\MatomoVisitSender::class => ConfigAbstractFactory::class,
         ],
@@ -137,9 +136,9 @@ return [
         Visit\VisitsTracker::class => [
             'em',
             EventDispatcherInterface::class,
-            Options\TrackingOptions::class,
+            Config\Options\TrackingOptions::class,
         ],
-        Visit\RequestTracker::class => [Visit\VisitsTracker::class, Options\TrackingOptions::class],
+        Visit\RequestTracker::class => [Visit\VisitsTracker::class, Config\Options\TrackingOptions::class],
         Visit\VisitsDeleter::class => [Visit\Repository\VisitDeleterRepository::class],
         ShortUrl\ShortUrlService::class => [
             'em',
@@ -149,7 +148,7 @@ return [
         ],
         ShortUrl\ShortUrlListService::class => [
             ShortUrl\Repository\ShortUrlListRepository::class,
-            Options\UrlShortenerOptions::class,
+            Config\Options\UrlShortenerOptions::class,
         ],
         Visit\Geolocation\VisitLocator::class => ['em', Visit\Repository\VisitIterationRepository::class],
         Visit\Geolocation\VisitToLocationHelper::class => [IpLocationResolverInterface::class],
@@ -157,20 +156,20 @@ return [
         Tag\TagService::class => ['em'],
         ShortUrl\DeleteShortUrlService::class => [
             'em',
-            Options\DeleteShortUrlsOptions::class,
+            Config\Options\DeleteShortUrlsOptions::class,
             ShortUrl\ShortUrlResolver::class,
             ShortUrl\Repository\ExpiredShortUrlsRepository::class,
         ],
-        ShortUrl\ShortUrlResolver::class => ['em', Options\UrlShortenerOptions::class],
+        ShortUrl\ShortUrlResolver::class => ['em', Config\Options\UrlShortenerOptions::class],
         ShortUrl\ShortUrlVisitsDeleter::class => [
             Visit\Repository\VisitDeleterRepository::class,
             ShortUrl\ShortUrlResolver::class,
         ],
-        ShortUrl\Helper\ShortCodeUniquenessHelper::class => ['em', Options\UrlShortenerOptions::class],
-        Domain\DomainService::class => ['em', 'config.url_shortener.domain.hostname'],
+        ShortUrl\Helper\ShortCodeUniquenessHelper::class => ['em', Config\Options\UrlShortenerOptions::class],
+        Domain\DomainService::class => ['em', Config\Options\UrlShortenerOptions::class],
 
         Util\DoctrineBatchHelper::class => ['em'],
-        Util\RedirectResponseHelper::class => [Options\RedirectOptions::class],
+        Util\RedirectResponseHelper::class => [Config\Options\RedirectOptions::class],
 
         Config\NotFoundRedirectResolver::class => [Util\RedirectResponseHelper::class, 'Logger_Shlink'],
 
@@ -188,19 +187,25 @@ return [
             ShortUrl\ShortUrlResolver::class,
             ShortUrl\Helper\ShortUrlStringifier::class,
             'Logger_Shlink',
-            Options\QrCodeOptions::class,
+            Config\Options\QrCodeOptions::class,
         ],
-        Action\RobotsAction::class => [Crawling\CrawlingHelper::class, Options\RobotsOptions::class],
+        Action\RobotsAction::class => [Crawling\CrawlingHelper::class, Config\Options\RobotsOptions::class],
 
         ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => [
             'em',
-            Options\UrlShortenerOptions::class,
+            Config\Options\UrlShortenerOptions::class,
             Lock\LockFactory::class,
         ],
-        ShortUrl\Helper\ShortUrlStringifier::class => ['config.url_shortener.domain', 'config.router.base_path'],
-        ShortUrl\Helper\ShortUrlTitleResolutionHelper::class => ['httpClient', Options\UrlShortenerOptions::class],
+        ShortUrl\Helper\ShortUrlStringifier::class => [
+            Config\Options\UrlShortenerOptions::class,
+            'config.router.base_path',
+        ],
+        ShortUrl\Helper\ShortUrlTitleResolutionHelper::class => [
+            'httpClient',
+            Config\Options\UrlShortenerOptions::class,
+        ],
         ShortUrl\Helper\ShortUrlRedirectionBuilder::class => [
-            Options\TrackingOptions::class,
+            Config\Options\TrackingOptions::class,
             RedirectRule\ShortUrlRedirectionResolver::class,
         ],
         ShortUrl\Transformer\ShortUrlDataTransformer::class => [ShortUrl\Helper\ShortUrlStringifier::class],
@@ -209,9 +214,9 @@ return [
             Visit\RequestTracker::class,
             ShortUrl\Helper\ShortUrlRedirectionBuilder::class,
             Util\RedirectResponseHelper::class,
-            Options\UrlShortenerOptions::class,
+            Config\Options\UrlShortenerOptions::class,
         ],
-        ShortUrl\Middleware\TrimTrailingSlashMiddleware::class => [Options\UrlShortenerOptions::class],
+        ShortUrl\Middleware\TrimTrailingSlashMiddleware::class => [Config\Options\UrlShortenerOptions::class],
 
         EventDispatcher\PublishingUpdatesGenerator::class => [ShortUrl\Transformer\ShortUrlDataTransformer::class],
 

@@ -17,8 +17,12 @@ touch $OUTPUT_LOGS
 # Try to stop server just in case it hanged in last execution
 [ "$TEST_RUNTIME" = 'rr' ] && bin/rr stop -f -w .
 
+# Resolve .env file absolute path, as it fails to load with relative paths
+TESTS_DOTENV="${PWD}/config/test/shlink-test.env"
+
 echo 'Starting server...'
 [ "$TEST_RUNTIME" = 'rr' ] && bin/rr serve -p -w . -c=config/roadrunner/.rr.test.yml \
+  --dotenv "$TESTS_DOTENV" \
   -o=logs.output="${PWD}/${OUTPUT_LOGS}" \
   -o=logs.channels.http.output="${PWD}/${OUTPUT_LOGS}" \
   -o=logs.channels.server.output="${PWD}/${OUTPUT_LOGS}" &
