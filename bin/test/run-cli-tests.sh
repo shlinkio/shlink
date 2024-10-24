@@ -7,11 +7,6 @@ export GENERATE_COVERAGE="${GENERATE_COVERAGE:-"no"}"
 
 [ "$GENERATE_COVERAGE" != 'no' ] && export XDEBUG_MODE=coverage
 
-# Load and export test env vars
-set -a
-. ./config/test/shlink-test.env
-set +a
-
 vendor/bin/phpunit --order-by=random --testdox --testdox-summary -c phpunit-cli.xml $*
 TESTS_EXIT_CODE=$?
 
