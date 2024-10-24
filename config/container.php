@@ -15,8 +15,8 @@ chdir(dirname(__DIR__));
 
 require 'vendor/autoload.php';
 
-// Promote env vars from installer config
-loadEnvVarsFromConfig('config/params/generated_config.php', enumValues(EnvVars::class));
+// Promote env vars from installer or dev config
+loadEnvVarsFromConfig('config/params/*.php', enumValues(EnvVars::class));
 
 // This is one of the first files loaded. Configure the timezone and memory limit here
 ini_set('memory_limit', EnvVars::MEMORY_LIMIT->loadFromEnv());

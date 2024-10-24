@@ -1,5 +1,6 @@
 bin/rr
 config/autoload/*local*
+config/params/*.dist
 data/infra
 data/cache/*
 data/log/*
@@ -23,4 +24,3 @@ php*xml*
 build*
 **/.*
 !config/roadrunner/.rr.yml
-*.env*

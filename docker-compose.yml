@@ -34,9 +34,6 @@ services:
             - shlink_matomo
         environment:
             DEFAULT_DOMAIN: localhost:8000
-        env_file:
-            - path: shlink-dev.env
-              required: false
         extra_hosts:
             - 'host.docker.internal:host-gateway'
 
