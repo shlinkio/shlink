@@ -137,8 +137,8 @@
         "test:api:ci": "GENERATE_COVERAGE=yes composer test:api && vendor/bin/phpcov merge build/coverage-api --php build/coverage-api.cov && rm build/coverage-api/*.cov",
         "test:api:pretty": "GENERATE_COVERAGE=yes composer test:api && vendor/bin/phpcov merge build/coverage-api --html build/coverage-api/coverage-html && rm build/coverage-api/*.cov",
         "test:cli": "bin/test/run-cli-tests.sh",
-        "test:cli:ci": "XDEBUG_MODE=coverage GENERATE_COVERAGE=yes composer test:cli && vendor/bin/phpcov merge build/coverage-cli --php build/coverage-cli.cov && rm build/coverage-cli/*.cov",
-        "test:cli:pretty": "XDEBUG_MODE=coverage GENERATE_COVERAGE=yes composer test:cli && vendor/bin/phpcov merge build/coverage-cli --html build/coverage-cli/coverage-html && rm build/coverage-cli/*.cov",
+        "test:cli:ci": "GENERATE_COVERAGE=yes composer test:cli && vendor/bin/phpcov merge build/coverage-cli --php build/coverage-cli.cov && rm build/coverage-cli/*.cov",
+        "test:cli:pretty": "GENERATE_COVERAGE=yes composer test:cli && vendor/bin/phpcov merge build/coverage-cli --html build/coverage-cli/coverage-html && rm build/coverage-cli/*.cov",
         "swagger:validate": "php-openapi validate docs/swagger/swagger.json",
         "swagger:inline": "php-openapi inline docs/swagger/swagger.json docs/swagger/swagger-inlined.json",
         "clean:dev": "rm -f data/database.sqlite && rm -f config/params/generated_config.php"

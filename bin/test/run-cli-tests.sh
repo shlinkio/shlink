@@ -2,7 +2,10 @@
 
 export APP_ENV=test
 export TEST_ENV=cli
-export DB_DRIVER=maria
+export DB_DRIVER="${DB_DRIVER:-"maria"}"
+export GENERATE_COVERAGE="${GENERATE_COVERAGE:-"no"}"
+
+[ "$GENERATE_COVERAGE" != 'no' ] && export XDEBUG_MODE=coverage
 
 # Load and export test env vars
 set -a
