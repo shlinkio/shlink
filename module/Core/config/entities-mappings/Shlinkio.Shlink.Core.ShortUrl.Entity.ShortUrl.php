@@ -110,4 +110,9 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->columnName('forward_query')
             ->option('default', true)
             ->build();
+
+    $builder->createOneToMany('redirectRules', RedirectRule\Entity\ShortUrlRedirectRule::class)
+            ->mappedBy('shortUrl')
+            ->fetchExtraLazy()
+            ->build();
 };

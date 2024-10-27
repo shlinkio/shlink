@@ -50,7 +50,9 @@
                             },
                             "domain": null,
                             "title": null,
-                            "crawlable": false
+                            "crawlable": false,
+                            "forwardQuery": true,
+                            "hasRedirectRules": true
                         }
                     }
                 }
@@ -163,7 +165,9 @@
                             },
                             "domain": null,
                             "title": "Shlink - The URL shortener",
-                            "crawlable": false
+                            "crawlable": false,
+                            "forwardQuery": false,
+                            "hasRedirectRules": true
                         }
                     }
                 }

@@ -43,7 +43,7 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
 
         $qb = $this->createListQueryBuilder($filtering);
         $qb->select(
-            'DISTINCT s AS shortUrl',
+            'DISTINCT s AS shortUrl, d.authority',
             '(' . $buildVisitsSubQuery('v', excludingBots: false) . ') AS ' . OrderableField::VISITS->value,
             '(' . $buildVisitsSubQuery('v2', excludingBots: true) . ') AS ' . OrderableField::NON_BOT_VISITS->value,
             // This is added only to have a consistent order by title between database engines
@@ -56,7 +56,7 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
 
         $this->processOrderByForList($qb, $filtering);
 
-        /** @var array{shortUrl: ShortUrl, visits: string, nonBotVisits: string}[] $result */
+        /** @var array{shortUrl: ShortUrl, visits: string, nonBotVisits: string, authority: string|null}[] $result */
         $result = $qb->getQuery()->getResult();
         return map($result, static fn (array $s) => ShortUrlWithVisitsSummary::fromArray($s));
     }
@@ -89,6 +89,7 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ShortUrl::class, 's')
+           ->leftJoin('s.domain', 'd')
            ->where('1=1');
 
         $dateRange = $filtering->dateRange;
@@ -129,8 +130,7 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
                 $conditions[] = $qb->expr()->like('t.name', ':searchPattern');
             }
 
-            $qb->leftJoin('s.domain', 'd')
-               ->andWhere($qb->expr()->orX(...$conditions))
+            $qb->andWhere($qb->expr()->orX(...$conditions))
                ->setParameter('searchPattern', '%' . $searchTerm . '%');
         }
 

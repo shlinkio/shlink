@@ -71,6 +71,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
                 'crawlable' => false,
                 'forwardQuery' => true,
                 'visitsSummary' => VisitsSummary::fromTotalAndNonBots(0, 0),
+                'hasRedirectRules' => false,
             ],
             'visit' => [
                 'referer' => '',
@@ -145,6 +146,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
             'crawlable' => false,
             'forwardQuery' => true,
             'visitsSummary' => VisitsSummary::fromTotalAndNonBots(0, 0),
+            'hasRedirectRules' => false,
         ]], $update->payload);
     }
 }

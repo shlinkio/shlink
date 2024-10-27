@@ -12,6 +12,7 @@ use Doctrine\Common\Collections\Selectable;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
+use Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlEdition;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
@@ -39,6 +40,7 @@ class ShortUrl extends AbstractEntity
      * @param Collection<int, Tag> $tags
      * @param Collection<int, Visit> & Selectable<int, Visit> $visits
      * @param Collection<int, ShortUrlVisitsCount> & Selectable<int, ShortUrlVisitsCount> $visitsCounts
+     * @param Collection<int, ShortUrlRedirectRule> $redirectRules
      */
     private function __construct(
         private string $longUrl,
@@ -60,6 +62,7 @@ class ShortUrl extends AbstractEntity
         private bool $forwardQuery = true,
         private ?string $importSource = null,
         private ?string $importOriginalShortCode = null,
+        private Collection $redirectRules = new ArrayCollection(),
     ) {
     }
 
@@ -261,7 +264,13 @@ class ShortUrl extends AbstractEntity
         return true;
     }
 
-    public function toArray(?VisitsSummary $precalculatedSummary = null): array
+    /**
+     * @param null|(callable(): ?string) $getAuthority -
+     *  This is a callback so that we trust its return value if provided, even if it is null.
+     *  Providing the raw authority as `string|null` would result in a fallback to `$this->domain` when the authority
+     *  was null.
+     */
+    public function toArray(?VisitsSummary $precalculatedSummary = null, callable|null $getAuthority = null): array
     {
         return [
             'shortCode' => $this->shortCode,
@@ -273,7 +282,7 @@ class ShortUrl extends AbstractEntity
                 'validUntil' => $this->validUntil?->toAtomString(),
                 'maxVisits' => $this->maxVisits,
             ],
-            'domain' => $this->domain,
+            'domain' => $getAuthority !== null ? $getAuthority() : $this->domain?->authority,
             'title' => $this->title,
             'crawlable' => $this->crawlable,
             'forwardQuery' => $this->forwardQuery,
@@ -283,6 +292,7 @@ class ShortUrl extends AbstractEntity
                     Criteria::create()->where(Criteria::expr()->eq('potentialBot', false)),
                 )),
             ),
+            'hasRedirectRules' => count($this->redirectRules) > 0,
         ];
     }
 }
