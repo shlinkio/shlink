@@ -34,6 +34,7 @@ class ListShortUrlsTest extends ApiTestCase
         'title' => 'My cool title',
         'crawlable' => true,
         'forwardQuery' => true,
+        'hasRedirectRules' => false,
     ];
     private const SHORT_URL_DOCS = [
         'shortCode' => 'ghi789',
@@ -55,6 +56,7 @@ class ListShortUrlsTest extends ApiTestCase
         'title' => null,
         'crawlable' => false,
         'forwardQuery' => true,
+        'hasRedirectRules' => false,
     ];
     private const SHORT_URL_CUSTOM_SLUG_AND_DOMAIN = [
         'shortCode' => 'custom-with-domain',
@@ -76,6 +78,7 @@ class ListShortUrlsTest extends ApiTestCase
         'title' => null,
         'crawlable' => false,
         'forwardQuery' => true,
+        'hasRedirectRules' => false,
     ];
     private const SHORT_URL_META = [
         'shortCode' => 'def456',
@@ -99,6 +102,7 @@ class ListShortUrlsTest extends ApiTestCase
         'title' => null,
         'crawlable' => false,
         'forwardQuery' => true,
+        'hasRedirectRules' => true,
     ];
     private const SHORT_URL_CUSTOM_SLUG = [
         'shortCode' => 'custom',
@@ -120,6 +124,7 @@ class ListShortUrlsTest extends ApiTestCase
         'title' => null,
         'crawlable' => true,
         'forwardQuery' => false,
+        'hasRedirectRules' => false,
     ];
     private const SHORT_URL_CUSTOM_DOMAIN = [
         'shortCode' => 'ghi789',
@@ -143,6 +148,7 @@ class ListShortUrlsTest extends ApiTestCase
         'title' => null,
         'crawlable' => false,
         'forwardQuery' => true,
+        'hasRedirectRules' => false,
     ];
 
     #[Test, DataProvider('provideFilteredLists')]
