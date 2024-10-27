@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* [#2207](https://github.com/shlinkio/shlink/issues/2207) Add `hasRedirectRules` flag to short URL API model. This flag tells if a specific short URL has any redirect rules attached to it.
+* [#1520](https://github.com/shlinkio/shlink/issues/1520) Allow short URLs list to be filtered by `domain`.
+
+  This change applies both to the `GET /short-urls` endpoint, via the `domain` query parameter, and the `short-url:list` console command, via the `--domain`|`-d` flag.
+
+### Changed
+* Update to Shlink PHP coding standard 2.4
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* *Nothing*
+
+
 ## [4.2.5] - 2024-11-03
 ### Added
 * *Nothing*
