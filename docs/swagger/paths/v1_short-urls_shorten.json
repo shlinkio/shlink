@@ -72,7 +72,9 @@
                             },
                             "domain": null,
                             "title": null,
-                            "crawlable": false
+                            "crawlable": false,
+                            "forwardQuery": true,
+                            "hasRedirectRules": false
                         }
                     },
                     "text/plain": {
