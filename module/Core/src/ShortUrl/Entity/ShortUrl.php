@@ -264,7 +264,13 @@ class ShortUrl extends AbstractEntity
         return true;
     }
 
-    public function toArray(?VisitsSummary $precalculatedSummary = null): array
+    /**
+     * @param null|(callable(): string|null) $getAuthority -
+     *  This is a callback so that we trust its return value if provided, even if it is null.
+     *  Providing the raw authority as `string|null` would result in a fallback to `$this->domain` when the authority
+     *  was null.
+     */
+    public function toArray(?VisitsSummary $precalculatedSummary = null, callable|null $getAuthority = null): array
     {
         return [
             'shortCode' => $this->shortCode,
@@ -276,7 +282,7 @@ class ShortUrl extends AbstractEntity
                 'validUntil' => $this->validUntil?->toAtomString(),
                 'maxVisits' => $this->maxVisits,
             ],
-            'domain' => $this->domain,
+            'domain' => $getAuthority !== null ? $getAuthority() : $this->domain?->authority,
             'title' => $this->title,
             'crawlable' => $this->crawlable,
             'forwardQuery' => $this->forwardQuery,
