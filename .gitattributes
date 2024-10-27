@@ -13,7 +13,6 @@
 .travis.yml export-ignore
 build.sh export-ignore
 CHANGELOG.md export-ignore
-docker-compose.override.yml.dist export-ignore
 docker-compose.yml export-ignore
 indocker export-ignore
 phpcs.xml export-ignore

@@ -24,12 +24,6 @@ Then you will have to follow these steps:
 
     The `shlink_dev_env.php` file is gitignored, so you can customize it as you want. For example, by adding your own GeoLite license key.
 
-* Do the same with the `docker-compose.override.yml.dist`:
-
-    ```
-    cp docker-compose.override.yml.dist docker-compose.override.yml
-    ```
-
 * Start-up the project by running `docker compose up`.
 
     The first time this command is run, it will create several containers that are used during development, so it may take some time.

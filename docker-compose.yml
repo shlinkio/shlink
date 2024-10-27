@@ -13,6 +13,7 @@ services:
 
     shlink_php:
         container_name: shlink_php
+        user: 1000:1000
         build:
             context: .
             dockerfile: ./data/infra/php.Dockerfile
@@ -40,6 +41,7 @@ services:
 
     shlink_roadrunner:
         container_name: shlink_roadrunner
+        user: 1000:1000
         build:
             context: .
             dockerfile: ./data/infra/roadrunner.Dockerfile
@@ -66,6 +68,7 @@ services:
 
     shlink_db_mysql:
         container_name: shlink_db_mysql
+        user: 1000:1000
         image: mysql:8.0
         ports:
             - "3307:3306"
@@ -78,6 +81,7 @@ services:
 
     shlink_db_postgres:
         container_name: shlink_db_postgres
+        user: 1000:1000
         image: postgres:16.3-alpine
         ports:
             - "5434:5432"
@@ -91,6 +95,7 @@ services:
 
     shlink_db_maria:
         container_name: shlink_db_maria
+        user: 1000:1000
         image: mariadb:10.7
         ports:
             - "3308:3306"
