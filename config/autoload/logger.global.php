@@ -14,23 +14,33 @@ use Shlinkio\Shlink\Common\Logger\LoggerFactory;
 use Shlinkio\Shlink\Common\Logger\LoggerType;
 use Shlinkio\Shlink\Common\Middleware\AccessLogMiddleware;
 use Shlinkio\Shlink\Common\Middleware\RequestIdMiddleware;
+use Shlinkio\Shlink\Core\Config\EnvVars;
 use Shlinkio\Shlink\Core\EventDispatcher\Helper\RequestIdProvider;
 use Shlinkio\Shlink\EventDispatcher\Util\RequestIdProviderInterface;
 
+use function Shlinkio\Shlink\Config\env;
 use function Shlinkio\Shlink\Config\runningInRoadRunner;
 
 return (static function (): array {
+    $isDev = EnvVars::isDevEnv();
     $common = [
-        'level' => Level::Info->value,
+        'level' => $isDev ? Level::Debug->value : Level::Info->value,
         'processors' => [RequestIdMiddleware::class],
         'line_format' =>
             '[%datetime%] [%extra.' . RequestIdMiddleware::ATTRIBUTE . '%] %channel%.%level_name% - %message%',
     ];
 
+    // In dev env or the docker container, stream Shlink logs to stderr, otherwise send them to a file
+    $useStreamForShlinkLogger = $isDev || env('SHLINK_RUNTIME') !== null;
+
     return [
 
         'logger' => [
-            'Shlink' => [
+            'Shlink' => $useStreamForShlinkLogger ? [
+                'type' => LoggerType::STREAM->value,
+                'destination' => 'php://stderr',
+                ...$common,
+            ] : [
                 'type' => LoggerType::FILE->value,
                 ...$common,
             ],

@@ -8,7 +8,7 @@ use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Factory\ApplicationFactory;
-use Shlinkio\Shlink\Core\Options\AppOptions;
+use Shlinkio\Shlink\Core\Config\Options\AppOptions;
 use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 
 class ApplicationFactoryTest extends TestCase

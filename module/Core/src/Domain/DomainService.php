@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Domain;
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Config\EmptyNotFoundRedirectConfig;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
+use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
@@ -16,9 +17,9 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function array_map;
 
-class DomainService implements DomainServiceInterface
+readonly class DomainService implements DomainServiceInterface
 {
-    public function __construct(private readonly EntityManagerInterface $em, private readonly string $defaultDomain)
+    public function __construct(private EntityManagerInterface $em, private UrlShortenerOptions $urlShortenerOptions)
     {
     }
 
@@ -35,7 +36,10 @@ class DomainService implements DomainServiceInterface
         }
 
         return [
-            DomainItem::forDefaultDomain($this->defaultDomain, $default ?? new EmptyNotFoundRedirectConfig()),
+            DomainItem::forDefaultDomain(
+                $this->urlShortenerOptions->defaultDomain,
+                $default ?? new EmptyNotFoundRedirectConfig(),
+            ),
             ...$mappedDomains,
         ];
     }
@@ -52,7 +56,7 @@ class DomainService implements DomainServiceInterface
         $restOfDomains = [];
 
         foreach ($allDomains as $domain) {
-            if ($domain->authority === $this->defaultDomain) {
+            if ($domain->authority === $this->urlShortenerOptions->defaultDomain) {
                 $defaultDomain = $domain;
             } else {
                 $restOfDomains[] = $domain;

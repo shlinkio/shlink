@@ -8,10 +8,7 @@ use Laminas\ConfigAggregator;
 use Laminas\Diactoros;
 use Mezzio;
 use Mezzio\ProblemDetails;
-
-use function Shlinkio\Shlink\Config\env;
-
-$isTestEnv = env('APP_ENV') === 'test';
+use Shlinkio\Shlink\Core\Config\EnvVars;
 
 return (new ConfigAggregator\ConfigAggregator(
     providers: [
@@ -29,10 +26,10 @@ return (new ConfigAggregator\ConfigAggregator(
         CLI\ConfigProvider::class,
         Rest\ConfigProvider::class,
         new ConfigAggregator\PhpFileProvider('config/autoload/{,*.}global.php'),
-        // Local config should not be loaded during tests, whereas test config should be loaded ONLY during tests
-        new ConfigAggregator\PhpFileProvider(
-            $isTestEnv ? 'config/test/*.global.php' : 'config/autoload/{,*.}local.php',
-        ),
+        // Test config should be loaded ONLY during tests
+        EnvVars::isTestEnv()
+            ? new ConfigAggregator\PhpFileProvider('config/test/*.global.php')
+            : new ConfigAggregator\ArrayProvider([]),
         // Routes have to be loaded last
         new ConfigAggregator\PhpFileProvider('config/autoload/routes.config.php'),
     ],

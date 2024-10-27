@@ -8,8 +8,8 @@ use Doctrine\Common\Collections;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
+use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
-use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 use Symfony\Component\Lock\Lock;
 use Symfony\Component\Lock\LockFactory;
@@ -40,7 +40,7 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
 
     public function resolveDomain(?string $domain): ?Domain
     {
-        if ($domain === null || $domain === $this->options->defaultDomain()) {
+        if ($domain === null || $domain === $this->options->defaultDomain) {
             return null;
         }
 

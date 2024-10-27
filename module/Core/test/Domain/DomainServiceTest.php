@@ -11,6 +11,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Config\EmptyNotFoundRedirectConfig;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
+use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Domain\DomainService;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
@@ -28,7 +29,7 @@ class DomainServiceTest extends TestCase
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManagerInterface::class);
-        $this->domainService = new DomainService($this->em, 'default.com');
+        $this->domainService = new DomainService($this->em, new UrlShortenerOptions(defaultDomain: 'default.com'));
     }
 
     #[Test, DataProvider('provideExcludedDomains')]

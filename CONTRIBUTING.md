@@ -16,11 +16,14 @@ The first thing you need to do is fork the repository, and clone it in your loca
 
 Then you will have to follow these steps:
 
-* Copy all files with `.local.php.dist` extension from `config/autoload` by removing the dist extension.
+* Copy the `config/params/shlink_dev_env.php.dist` in the same directory, but removing the `.dist` extension:
 
-    For example the `common.local.php.dist` file should be copied as `common.local.php`.
+    ```
+    cp config/params/shlink_dev_env.php.dist config/params/shlink_dev_env.php
+    ```
 
-* Copy the file `docker-compose.override.yml.dist` by also removing the `dist` extension.
+    The `shlink_dev_env.php` file is gitignored, so you can customize it as you want. For example, by adding your own GeoLite license key.
+
 * Start-up the project by running `docker compose up`.
 
     The first time this command is run, it will create several containers that are used during development, so it may take some time.

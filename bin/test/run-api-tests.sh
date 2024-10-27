@@ -6,6 +6,8 @@ export TEST_RUNTIME="${TEST_RUNTIME:-"rr"}" # rr is the only runtime currently s
 export DB_DRIVER="${DB_DRIVER:-"postgres"}"
 export GENERATE_COVERAGE="${GENERATE_COVERAGE:-"no"}"
 
+[ "$GENERATE_COVERAGE" != 'no' ] && export XDEBUG_MODE=coverage
+
 # Reset logs
 OUTPUT_LOGS=data/log/api-tests/output.log
 rm -rf data/log/api-tests

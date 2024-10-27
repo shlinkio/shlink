@@ -12,8 +12,8 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\CreateShortUrlCommand;
 use Shlinkio\Shlink\CLI\Util\ExitCode;
+use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
-use Shlinkio\Shlink\Core\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
@@ -37,10 +37,7 @@ class CreateShortUrlCommandTest extends TestCase
         $command = new CreateShortUrlCommand(
             $this->urlShortener,
             $this->stringifier,
-            new UrlShortenerOptions(
-                domain: ['hostname' => 'example.com', 'schema' => ''],
-                defaultShortCodesLength: 5,
-            ),
+            new UrlShortenerOptions(defaultDomain: 'example.com', defaultShortCodesLength: 5),
         );
         $this->commandTester = CliTestUtils::testerForCommand($command);
     }

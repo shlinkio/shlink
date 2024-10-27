@@ -8,11 +8,12 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 
-class DefaultShortCodesLengthMiddleware implements MiddlewareInterface
+readonly class DefaultShortCodesLengthMiddleware implements MiddlewareInterface
 {
-    public function __construct(private int $defaultShortCodesLength)
+    public function __construct(private UrlShortenerOptions $urlShortenerOptions)
     {
     }
 
@@ -21,7 +22,7 @@ class DefaultShortCodesLengthMiddleware implements MiddlewareInterface
         /** @var array $body */
         $body = $request->getParsedBody();
         if (! isset($body[ShortUrlInputFilter::SHORT_CODE_LENGTH])) {
-            $body[ShortUrlInputFilter::SHORT_CODE_LENGTH] = $this->defaultShortCodesLength;
+            $body[ShortUrlInputFilter::SHORT_CODE_LENGTH] = $this->urlShortenerOptions->defaultShortCodesLength;
         }
 
         return $handler->handle($request->withParsedBody($body));

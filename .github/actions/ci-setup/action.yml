@@ -40,8 +40,7 @@ runs:
         php-version: ${{ inputs.php-version }}
         tools: composer
         extensions: ${{ inputs.php-extensions }}
-        coverage: pcov
-        ini-values: pcov.directory=module
+        coverage: xdebug
     - name: Install dependencies
       if: ${{ inputs.install-deps == 'yes' }}
       run: composer install --no-interaction --prefer-dist ${{ inputs.php-version == '8.4' && '--ignore-platform-req=php' || '' }}

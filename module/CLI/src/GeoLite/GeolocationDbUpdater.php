@@ -9,7 +9,7 @@ use Closure;
 use GeoIp2\Database\Reader;
 use MaxMind\Db\Reader\Metadata;
 use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
-use Shlinkio\Shlink\Core\Options\TrackingOptions;
+use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
 use Shlinkio\Shlink\IpGeolocation\Exception\DbUpdateException;
 use Shlinkio\Shlink\IpGeolocation\Exception\MissingLicenseException;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;

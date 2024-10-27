@@ -1,4 +1,4 @@
-name: Build docker image
+name: Test docker image build
 
 on:
   pull_request:
@@ -7,8 +7,4 @@ on:
 
 jobs:
   build-docker-image:
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - run: docker build -t shlink-docker-image:temp .
+    uses: shlinkio/github-actions/.github/workflows/docker-image-build-ci.yml@main
