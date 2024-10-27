@@ -4,13 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [4.2.4] - 2024-10-27
 ### Added
 * *Nothing*
 
 ### Changed
-* [#2232](https://github.com/shlinkio/shlink/issues/2232) Run RoadRunner in docker with `exec` to ensure signals are properly handled.
 * [#2231](https://github.com/shlinkio/shlink/issues/2231) Update to `endroid/qr-code` 6.0.
+* [#2221](https://github.com/shlinkio/shlink/issues/2221) Switch to env vars to handle dev/local options.
 
 ### Deprecated
 * *Nothing*
@@ -19,7 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* *Nothing*
+* [#2232](https://github.com/shlinkio/shlink/issues/2232) Run RoadRunner in docker with `exec` to ensure signals are properly handled.
 
 
 ## [4.2.3] - 2024-10-17
