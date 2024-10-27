@@ -56,7 +56,7 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
 
         $this->processOrderByForList($qb, $filtering);
 
-        /** @var array{shortUrl: ShortUrl, visits: string, nonBotVisits: string}[] $result */
+        /** @var array{shortUrl: ShortUrl, visits: string, nonBotVisits: string, authority: string|null}[] $result */
         $result = $qb->getQuery()->getResult();
         return map($result, static fn (array $s) => ShortUrlWithVisitsSummary::fromArray($s));
     }
