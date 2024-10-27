@@ -265,7 +265,7 @@ class ShortUrl extends AbstractEntity
     }
 
     /**
-     * @param null|(callable(): string|null) $getAuthority -
+     * @param null|(callable(): ?string) $getAuthority -
      *  This is a callback so that we trust its return value if provided, even if it is null.
      *  Providing the raw authority as `string|null` would result in a fallback to `$this->domain` when the authority
      *  was null.
