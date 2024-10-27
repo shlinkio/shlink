@@ -1,12 +1,15 @@
 services:
     shlink_db_mysql:
+        user: '0'
         environment:
             MYSQL_DATABASE: shlink_test
 
     shlink_db_postgres:
+        user: '0'
         environment:
             POSTGRES_DB: shlink_test
 
     shlink_db_maria:
+        user: '0'
         environment:
             MYSQL_DATABASE: shlink_test
