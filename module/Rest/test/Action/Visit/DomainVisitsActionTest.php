@@ -12,6 +12,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
+use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\Rest\Action\Visit\DomainVisitsAction;
@@ -49,7 +50,7 @@ class DomainVisitsActionTest extends TestCase
     public static function provideDomainAuthorities(): iterable
     {
         yield 'no default domain' => ['foo.com', 'foo.com'];
-        yield 'default domain' => ['the_default.com', 'DEFAULT'];
-        yield 'DEFAULT keyword' => ['DEFAULT', 'DEFAULT'];
+        yield 'default domain' => ['the_default.com', Domain::DEFAULT_AUTHORITY];
+        yield 'DEFAULT keyword' => ['DEFAULT', Domain::DEFAULT_AUTHORITY];
     }
 }

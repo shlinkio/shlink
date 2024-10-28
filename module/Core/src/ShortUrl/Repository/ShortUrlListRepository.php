@@ -9,6 +9,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
+use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\OrderableField;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithVisitsSummary;
@@ -104,14 +105,13 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
 
         $searchTerm = $filtering->searchTerm;
         $tags = $filtering->tags;
-        // Apply search term to every searchable field if not empty
         if (! empty($searchTerm)) {
             // Left join with tags only if no tags were provided. In case of tags, an inner join will be done later
             if (empty($tags)) {
                 $qb->leftJoin('s.tags', 't');
             }
 
-            // Apply general search conditions
+            // Apply search term to every "searchable" field
             $conditions = [
                 $qb->expr()->like('s.longUrl', ':searchPattern'),
                 $qb->expr()->like('s.shortCode', ':searchPattern'),
@@ -119,8 +119,8 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
                 $qb->expr()->like('d.authority', ':searchPattern'),
             ];
 
-            // Include default domain in search if provided
-            if ($filtering->searchIncludesDefaultDomain) {
+            // Include default domain in search if included, and a domain was not explicitly provided
+            if ($filtering->searchIncludesDefaultDomain && $filtering->domain === null) {
                 $conditions[] = $qb->expr()->isNull('s.domain');
             }
 
@@ -140,6 +140,15 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
             $tagsMode === TagsMode::ANY
                 ? $qb->join('s.tags', 't')->andWhere($qb->expr()->in('t.name', $tags))
                 : $this->joinAllTags($qb, $tags);
+        }
+
+        if ($filtering->domain !== null) {
+            if ($filtering->domain === Domain::DEFAULT_AUTHORITY) {
+                $qb->andWhere($qb->expr()->isNull('s.domain'));
+            } else {
+                $qb->andWhere($qb->expr()->eq('d.authority', ':domain'))
+                   ->setParameter('domain', $filtering->domain);
+            }
         }
 
         if ($filtering->excludeMaxVisitsReached) {

@@ -74,7 +74,7 @@ class ListShortUrlsCommandTest extends TestCase
         }
 
         $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(
-            ShortUrlsParams::emptyInstance(),
+            ShortUrlsParams::empty(),
         )->willReturn(new Paginator(new ArrayAdapter($data)));
 
         $this->commandTester->setInputs(['n']);
@@ -110,7 +110,7 @@ class ListShortUrlsCommandTest extends TestCase
         ApiKey $apiKey,
     ): void {
         $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(
-            ShortUrlsParams::emptyInstance(),
+            ShortUrlsParams::empty(),
         )->willReturn(new Paginator(new ArrayAdapter([
             ShortUrlWithVisitsSummary::fromShortUrl(
                 ShortUrl::create(ShortUrlCreation::fromRawData([

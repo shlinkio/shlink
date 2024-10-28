@@ -8,6 +8,7 @@ use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Shlinkio\Shlink\Common\Util\DateRange;
+use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
@@ -124,7 +125,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         $qb->from(Visit::class, 'v')
            ->join('v.shortUrl', 's');
 
-        if ($domain === 'DEFAULT') {
+        if ($domain === Domain::DEFAULT_AUTHORITY) {
             $qb->where($qb->expr()->isNull('s.domain'));
         } else {
             $qb->join('s.domain', 'd')
