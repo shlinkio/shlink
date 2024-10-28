@@ -104,14 +104,13 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
 
         $searchTerm = $filtering->searchTerm;
         $tags = $filtering->tags;
-        // Apply search term to every searchable field if not empty
         if (! empty($searchTerm)) {
             // Left join with tags only if no tags were provided. In case of tags, an inner join will be done later
             if (empty($tags)) {
                 $qb->leftJoin('s.tags', 't');
             }
 
-            // Apply general search conditions
+            // Apply search term to every "searchable" field
             $conditions = [
                 $qb->expr()->like('s.longUrl', ':searchPattern'),
                 $qb->expr()->like('s.shortCode', ':searchPattern'),
@@ -140,6 +139,9 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
             $tagsMode === TagsMode::ANY
                 ? $qb->join('s.tags', 't')->andWhere($qb->expr()->in('t.name', $tags))
                 : $this->joinAllTags($qb, $tags);
+        }
+
+        if ($filtering->domain !== null) {
         }
 
         if ($filtering->excludeMaxVisitsReached) {

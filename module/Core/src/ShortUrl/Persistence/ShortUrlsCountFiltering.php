@@ -25,6 +25,7 @@ class ShortUrlsCountFiltering
         public readonly bool $excludePastValidUntil = false,
         public readonly ?ApiKey $apiKey = null,
         ?string $defaultDomain = null,
+        public readonly ?string $domain = null,
     ) {
         $this->searchIncludesDefaultDomain = !empty($searchTerm) && !empty($defaultDomain) && str_contains(
             strtolower($defaultDomain),

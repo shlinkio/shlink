@@ -7,6 +7,7 @@ namespace ShlinkioApiTest\Shlink\Rest\Action;
 use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use function sprintf;
@@ -34,11 +35,11 @@ class DomainVisitsTest extends ApiTestCase
     public static function provideDomains(): iterable
     {
         yield 'example.com with admin API key' => ['valid_api_key', 'example.com', false, 0];
-        yield 'DEFAULT with admin API key' => ['valid_api_key', 'DEFAULT', false, 7];
-        yield 'DEFAULT with admin API key and no bots' => ['valid_api_key', 'DEFAULT', true, 6];
-        yield 'DEFAULT with domain API key' => ['domain_api_key', 'DEFAULT', false, 0];
-        yield 'DEFAULT with author API key' => ['author_api_key', 'DEFAULT', false, 5];
-        yield 'DEFAULT with author API key and no bots' => ['author_api_key', 'DEFAULT', true, 4];
+        yield 'DEFAULT with admin API key' => ['valid_api_key', Domain::DEFAULT_AUTHORITY, false, 7];
+        yield 'DEFAULT with admin API key and no bots' => ['valid_api_key', Domain::DEFAULT_AUTHORITY, true, 6];
+        yield 'DEFAULT with domain API key' => ['domain_api_key', Domain::DEFAULT_AUTHORITY, false, 0];
+        yield 'DEFAULT with author API key' => ['author_api_key', Domain::DEFAULT_AUTHORITY, false, 5];
+        yield 'DEFAULT with author API key and no bots' => ['author_api_key', Domain::DEFAULT_AUTHORITY, true, 4];
     }
 
     #[Test, DataProvider('provideApiKeysAndTags')]

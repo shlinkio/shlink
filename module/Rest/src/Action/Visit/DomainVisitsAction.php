@@ -9,6 +9,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtils;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
+use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
@@ -39,7 +40,7 @@ class DomainVisitsAction extends AbstractRestAction
     {
         $domainParam = $request->getAttribute('domain', '');
         if ($domainParam === $this->urlShortenerOptions->defaultDomain) {
-            return 'DEFAULT';
+            return Domain::DEFAULT_AUTHORITY;
         }
 
         return $domainParam;

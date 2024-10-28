@@ -227,7 +227,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->flush();
 
         self::assertCount(0, $this->repo->findVisitsByDomain('invalid', new VisitsListFiltering()));
-        self::assertCount(6, $this->repo->findVisitsByDomain('DEFAULT', new VisitsListFiltering()));
+        self::assertCount(6, $this->repo->findVisitsByDomain(Domain::DEFAULT_AUTHORITY, new VisitsListFiltering()));
         self::assertCount(3, $this->repo->findVisitsByDomain('s.test', new VisitsListFiltering()));
         self::assertCount(1, $this->repo->findVisitsByDomain('s.test', new VisitsListFiltering(null, true)));
         self::assertCount(2, $this->repo->findVisitsByDomain('s.test', new VisitsListFiltering(
@@ -236,10 +236,10 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertCount(1, $this->repo->findVisitsByDomain('s.test', new VisitsListFiltering(
             DateRange::since(Chronos::parse('2016-01-03')),
         )));
-        self::assertCount(2, $this->repo->findVisitsByDomain('DEFAULT', new VisitsListFiltering(
+        self::assertCount(2, $this->repo->findVisitsByDomain(Domain::DEFAULT_AUTHORITY, new VisitsListFiltering(
             DateRange::between(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
         )));
-        self::assertCount(4, $this->repo->findVisitsByDomain('DEFAULT', new VisitsListFiltering(
+        self::assertCount(4, $this->repo->findVisitsByDomain(Domain::DEFAULT_AUTHORITY, new VisitsListFiltering(
             DateRange::since(Chronos::parse('2016-01-03')),
         )));
     }
@@ -251,7 +251,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->flush();
 
         self::assertEquals(0, $this->repo->countVisitsByDomain('invalid', new VisitsListFiltering()));
-        self::assertEquals(6, $this->repo->countVisitsByDomain('DEFAULT', new VisitsListFiltering()));
+        self::assertEquals(6, $this->repo->countVisitsByDomain(Domain::DEFAULT_AUTHORITY, new VisitsListFiltering()));
         self::assertEquals(3, $this->repo->countVisitsByDomain('s.test', new VisitsListFiltering()));
         self::assertEquals(1, $this->repo->countVisitsByDomain('s.test', new VisitsListFiltering(null, true)));
         self::assertEquals(2, $this->repo->countVisitsByDomain('s.test', new VisitsListFiltering(
@@ -260,10 +260,10 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertEquals(1, $this->repo->countVisitsByDomain('s.test', new VisitsListFiltering(
             DateRange::since(Chronos::parse('2016-01-03')),
         )));
-        self::assertEquals(2, $this->repo->countVisitsByDomain('DEFAULT', new VisitsListFiltering(
+        self::assertEquals(2, $this->repo->countVisitsByDomain(Domain::DEFAULT_AUTHORITY, new VisitsListFiltering(
             DateRange::between(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
         )));
-        self::assertEquals(4, $this->repo->countVisitsByDomain('DEFAULT', new VisitsListFiltering(
+        self::assertEquals(4, $this->repo->countVisitsByDomain(Domain::DEFAULT_AUTHORITY, new VisitsListFiltering(
             DateRange::since(Chronos::parse('2016-01-03')),
         )));
     }
