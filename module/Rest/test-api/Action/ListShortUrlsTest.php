@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use function count;
@@ -263,6 +264,15 @@ class ListShortUrlsTest extends ApiTestCase
         ], 'valid_api_key'];
         yield [['searchTerm' => 'example.com'], [
             self::SHORT_URL_CUSTOM_DOMAIN,
+        ], 'valid_api_key'];
+        yield [['domain' => 'example.com'], [
+            self::SHORT_URL_CUSTOM_DOMAIN,
+        ], 'valid_api_key'];
+        yield [['domain' => Domain::DEFAULT_AUTHORITY], [
+            self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_META,
+            self::SHORT_URL_SHLINK_WITH_TITLE,
+            self::SHORT_URL_DOCS,
         ], 'valid_api_key'];
         yield [[], [
             self::SHORT_URL_CUSTOM_SLUG,
