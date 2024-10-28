@@ -19,17 +19,18 @@ final class ShortUrlsParams
     private function __construct(
         public readonly int $page,
         public readonly int $itemsPerPage,
-        public readonly ?string $searchTerm,
+        public readonly string|null $searchTerm,
         public readonly array $tags,
         public readonly Ordering $orderBy,
         public readonly ?DateRange $dateRange,
         public readonly bool $excludeMaxVisitsReached,
         public readonly bool $excludePastValidUntil,
         public readonly TagsMode $tagsMode = TagsMode::ANY,
+        public readonly string|null $domain = null,
     ) {
     }
 
-    public static function emptyInstance(): self
+    public static function empty(): self
     {
         return self::fromRawData([]);
     }
@@ -59,6 +60,7 @@ final class ShortUrlsParams
             excludeMaxVisitsReached: $inputFilter->getValue(ShortUrlsParamsInputFilter::EXCLUDE_MAX_VISITS_REACHED),
             excludePastValidUntil: $inputFilter->getValue(ShortUrlsParamsInputFilter::EXCLUDE_PAST_VALID_UNTIL),
             tagsMode: self::resolveTagsMode($inputFilter->getValue(ShortUrlsParamsInputFilter::TAGS_MODE)),
+            domain: $inputFilter->getValue(ShortUrlsParamsInputFilter::DOMAIN),
         );
     }
 

@@ -44,6 +44,7 @@ class ShortUrlsCountFiltering
             $params->excludePastValidUntil,
             $apiKey,
             $defaultDomain,
+            $params->domain,
         );
     }
 }
