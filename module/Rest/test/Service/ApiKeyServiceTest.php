@@ -35,7 +35,7 @@ class ApiKeyServiceTest extends TestCase
      * @param RoleDefinition[] $roles
      */
     #[Test, DataProvider('provideCreationDate')]
-    public function apiKeyIsProperlyCreated(?Chronos $date, ?string $name, array $roles): void
+    public function apiKeyIsProperlyCreated(Chronos|null $date, string|null $name, array $roles): void
     {
         $this->em->expects($this->once())->method('flush');
         $this->em->expects($this->once())->method('persist')->with($this->isInstanceOf(ApiKey::class));
@@ -68,7 +68,7 @@ class ApiKeyServiceTest extends TestCase
     }
 
     #[Test, DataProvider('provideInvalidApiKeys')]
-    public function checkReturnsFalseForInvalidApiKeys(?ApiKey $invalidKey): void
+    public function checkReturnsFalseForInvalidApiKeys(ApiKey|null $invalidKey): void
     {
         $this->repo->expects($this->once())->method('findOneBy')->with(['key' => '12345'])->willReturn($invalidKey);
         $this->em->method('getRepository')->with(ApiKey::class)->willReturn($this->repo);
@@ -154,7 +154,7 @@ class ApiKeyServiceTest extends TestCase
     }
 
     #[Test, DataProvider('provideInitialApiKeys')]
-    public function createInitialDelegatesToRepository(?ApiKey $apiKey): void
+    public function createInitialDelegatesToRepository(ApiKey|null $apiKey): void
     {
         $this->repo->expects($this->once())->method('createInitialApiKey')->with('the_key')->willReturn($apiKey);
         $this->em->method('getRepository')->with(ApiKey::class)->willReturn($this->repo);

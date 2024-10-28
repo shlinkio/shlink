@@ -55,7 +55,7 @@ class TagServiceTest extends TestCase
 
     #[Test, DataProvider('provideApiKeysAndSearchTerm')]
     public function tagsInfoDelegatesOnRepository(
-        ?ApiKey $apiKey,
+        ApiKey|null $apiKey,
         TagsParams $params,
         TagsListFiltering $expectedFiltering,
         int $countCalls,
@@ -101,7 +101,7 @@ class TagServiceTest extends TestCase
     }
 
     #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
-    public function deleteTagsDelegatesOnRepository(?ApiKey $apiKey): void
+    public function deleteTagsDelegatesOnRepository(ApiKey|null $apiKey): void
     {
         $this->repo->expects($this->once())->method('deleteByName')->with(['foo', 'bar'])->willReturn(4);
         $this->service->deleteTags(['foo', 'bar'], $apiKey);
@@ -122,7 +122,7 @@ class TagServiceTest extends TestCase
     }
 
     #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
-    public function renameInvalidTagThrowsException(?ApiKey $apiKey): void
+    public function renameInvalidTagThrowsException(ApiKey|null $apiKey): void
     {
         $this->repo->expects($this->once())->method('findOneBy')->willReturn(null);
         $this->expectException(TagNotFoundException::class);
@@ -152,7 +152,7 @@ class TagServiceTest extends TestCase
     }
 
     #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
-    public function renameTagToAnExistingNameThrowsException(?ApiKey $apiKey): void
+    public function renameTagToAnExistingNameThrowsException(ApiKey|null $apiKey): void
     {
         $this->repo->expects($this->once())->method('findOneBy')->willReturn(new Tag('foo'));
         $this->repo->expects($this->once())->method('count')->willReturn(1);

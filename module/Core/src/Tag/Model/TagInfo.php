@@ -15,7 +15,7 @@ final readonly class TagInfo implements JsonSerializable
         public string $tag,
         public int $shortUrlsCount,
         int $visitsCount,
-        ?int $nonBotVisitsCount = null,
+        int|null $nonBotVisitsCount = null,
     ) {
         $this->visitsSummary = VisitsSummary::fromTotalAndNonBots($visitsCount, $nonBotVisitsCount ?? $visitsCount);
     }

@@ -14,9 +14,9 @@ class VisitsParams extends AbstractInfinitePaginableListParams
     public readonly DateRange $dateRange;
 
     public function __construct(
-        ?DateRange $dateRange = null,
-        ?int $page = null,
-        ?int $itemsPerPage = null,
+        DateRange|null $dateRange = null,
+        int|null $page = null,
+        int|null $itemsPerPage = null,
         public readonly bool $excludeBots = false,
     ) {
         parent::__construct($page, $itemsPerPage);

@@ -198,12 +198,12 @@ class ListShortUrlsCommandTest extends TestCase
     #[Test, DataProvider('provideArgs')]
     public function serviceIsInvokedWithProvidedArgs(
         array $commandArgs,
-        ?int $page,
-        ?string $searchTerm,
+        int|null $page,
+        string|null $searchTerm,
         array $tags,
         string $tagsMode,
-        ?string $startDate = null,
-        ?string $endDate = null,
+        string|null $startDate = null,
+        string|null $endDate = null,
     ): void {
         $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(ShortUrlsParams::fromRawData([
             'page' => $page,
@@ -260,7 +260,7 @@ class ListShortUrlsCommandTest extends TestCase
     }
 
     #[Test, DataProvider('provideOrderBy')]
-    public function orderByIsProperlyComputed(array $commandArgs, ?string $expectedOrderBy): void
+    public function orderByIsProperlyComputed(array $commandArgs, string|null $expectedOrderBy): void
     {
         $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(ShortUrlsParams::fromRawData([
             'orderBy' => $expectedOrderBy,

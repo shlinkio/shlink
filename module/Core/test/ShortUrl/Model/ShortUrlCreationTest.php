@@ -147,7 +147,7 @@ class ShortUrlCreationTest extends TestCase
     }
 
     #[Test, DataProvider('provideTitles')]
-    public function titleIsCroppedIfTooLong(?string $title, ?string $expectedTitle): void
+    public function titleIsCroppedIfTooLong(string|null $title, string|null $expectedTitle): void
     {
         $creation = ShortUrlCreation::fromRawData([
             'title' => $title,
@@ -170,7 +170,7 @@ class ShortUrlCreationTest extends TestCase
     }
 
     #[Test, DataProvider('provideDomains')]
-    public function emptyDomainIsDiscarded(?string $domain, ?string $expectedDomain): void
+    public function emptyDomainIsDiscarded(string|null $domain, string|null $expectedDomain): void
     {
         $creation = ShortUrlCreation::fromRawData([
             'domain' => $domain,

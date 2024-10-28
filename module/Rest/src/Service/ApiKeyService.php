@@ -28,7 +28,7 @@ class ApiKeyService implements ApiKeyServiceInterface
         return $apiKey;
     }
 
-    public function createInitial(string $key): ?ApiKey
+    public function createInitial(string $key): ApiKey|null
     {
         /** @var ApiKeyRepositoryInterface $repo */
         $repo = $this->em->getRepository(ApiKey::class);
@@ -67,7 +67,7 @@ class ApiKeyService implements ApiKeyServiceInterface
         return $apiKeys;
     }
 
-    private function getByKey(string $key): ?ApiKey
+    private function getByKey(string $key): ApiKey|null
     {
         /** @var ApiKey|null $apiKey */
         $apiKey = $this->em->getRepository(ApiKey::class)->findOneBy([

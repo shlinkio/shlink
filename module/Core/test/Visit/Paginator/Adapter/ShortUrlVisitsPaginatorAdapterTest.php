@@ -58,7 +58,7 @@ class ShortUrlVisitsPaginatorAdapterTest extends TestCase
         }
     }
 
-    private function createAdapter(?ApiKey $apiKey): ShortUrlVisitsPaginatorAdapter
+    private function createAdapter(ApiKey|null $apiKey): ShortUrlVisitsPaginatorAdapter
     {
         return new ShortUrlVisitsPaginatorAdapter(
             $this->repo,

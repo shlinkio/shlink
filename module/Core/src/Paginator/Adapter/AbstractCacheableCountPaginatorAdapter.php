@@ -12,7 +12,7 @@ use Pagerfanta\Adapter\AdapterInterface;
  */
 abstract class AbstractCacheableCountPaginatorAdapter implements AdapterInterface
 {
-    private ?int $count = null;
+    private int|null $count = null;
 
     final public function getNbResults(): int
     {

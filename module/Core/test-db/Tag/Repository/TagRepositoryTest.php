@@ -57,7 +57,7 @@ class TagRepositoryTest extends DatabaseTestCase
     }
 
     #[Test, DataProvider('provideFilters')]
-    public function properTagsInfoIsReturned(?TagsListFiltering $filtering, array $expectedList): void
+    public function properTagsInfoIsReturned(TagsListFiltering|null $filtering, array $expectedList): void
     {
         $names = ['foo', 'bar', 'baz', 'another'];
         foreach ($names as $name) {
@@ -73,7 +73,7 @@ class TagRepositoryTest extends DatabaseTestCase
 
         [$firstUrlTags] = array_chunk($names, 3);
         $secondUrlTags = [$names[0]];
-        $metaWithTags = static fn (array $tags, ?ApiKey $apiKey) => ShortUrlCreation::fromRawData(
+        $metaWithTags = static fn (array $tags, ApiKey|null $apiKey) => ShortUrlCreation::fromRawData(
             ['longUrl' => 'https://longUrl', 'tags' => $tags, 'apiKey' => $apiKey],
         );
 

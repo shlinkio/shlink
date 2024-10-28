@@ -16,5 +16,5 @@ interface RedirectRuleHandlerInterface
      * @param ShortUrlRedirectRule[] $rules
      * @return ShortUrlRedirectRule[]|null - A new list of rules to save, or null if no changes should be saved
      */
-    public function manageRules(StyleInterface $io, ShortUrl $shortUrl, array $rules): ?array;
+    public function manageRules(StyleInterface $io, ShortUrl $shortUrl, array $rules): array|null;
 }

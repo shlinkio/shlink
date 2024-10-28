@@ -64,7 +64,7 @@ class UrlShortener implements UrlShortenerInterface
         return UrlShorteningResult::withoutErrorOnEventDispatching($newShortUrl);
     }
 
-    private function findExistingShortUrlIfExists(ShortUrlCreation $creation): ?ShortUrl
+    private function findExistingShortUrlIfExists(ShortUrlCreation $creation): ShortUrl|null
     {
         if (! $creation->findIfExists) {
             return null;

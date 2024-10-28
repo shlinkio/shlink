@@ -48,7 +48,7 @@ final readonly class PublishingUpdatesGenerator implements PublishingUpdatesGene
         ]);
     }
 
-    private function transformShortUrl(?ShortUrl $shortUrl): array
+    private function transformShortUrl(ShortUrl|null $shortUrl): array
     {
         return $shortUrl === null ? [] : $this->shortUrlTransformer->transform($shortUrl);
     }

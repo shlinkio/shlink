@@ -28,11 +28,11 @@ class ShortUrlRepositoryAdapterTest extends TestCase
 
     #[Test, DataProvider('provideFilteringArgs')]
     public function getItemsFallsBackToFindList(
-        ?string $searchTerm = null,
+        string|null $searchTerm = null,
         array $tags = [],
-        ?string $startDate = null,
-        ?string $endDate = null,
-        ?string $orderBy = null,
+        string|null $startDate = null,
+        string|null $endDate = null,
+        string|null $orderBy = null,
     ): void {
         $params = ShortUrlsParams::fromRawData([
             'searchTerm' => $searchTerm,
@@ -54,10 +54,10 @@ class ShortUrlRepositoryAdapterTest extends TestCase
 
     #[Test, DataProvider('provideFilteringArgs')]
     public function countFallsBackToCountList(
-        ?string $searchTerm = null,
+        string|null $searchTerm = null,
         array $tags = [],
-        ?string $startDate = null,
-        ?string $endDate = null,
+        string|null $startDate = null,
+        string|null $endDate = null,
     ): void {
         $params = ShortUrlsParams::fromRawData([
             'searchTerm' => $searchTerm,

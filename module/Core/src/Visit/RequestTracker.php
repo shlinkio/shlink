@@ -63,7 +63,7 @@ readonly class RequestTracker implements RequestTrackerInterface, RequestMethodI
         return ! $this->trackingOptions->queryHasDisableTrackParam($query);
     }
 
-    private function shouldDisableTrackingFromAddress(?string $remoteAddr): bool
+    private function shouldDisableTrackingFromAddress(string|null $remoteAddr): bool
     {
         if ($remoteAddr === null || ! $this->trackingOptions->hasDisableTrackingFrom()) {
             return false;

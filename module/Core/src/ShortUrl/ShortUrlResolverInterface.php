@@ -14,7 +14,7 @@ interface ShortUrlResolverInterface
     /**
      * @throws ShortUrlNotFoundException
      */
-    public function resolveShortUrl(ShortUrlIdentifier $identifier, ?ApiKey $apiKey = null): ShortUrl;
+    public function resolveShortUrl(ShortUrlIdentifier $identifier, ApiKey|null $apiKey = null): ShortUrl;
 
     /**
      * Resolves a public short URL matching provided identifier.

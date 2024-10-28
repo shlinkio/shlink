@@ -26,7 +26,7 @@ readonly class DomainService implements DomainServiceInterface
     /**
      * @return DomainItem[]
      */
-    public function listDomains(?ApiKey $apiKey = null): array
+    public function listDomains(ApiKey|null $apiKey = null): array
     {
         [$default, $domains] = $this->defaultDomainAndRest($apiKey);
         $mappedDomains = array_map(fn (Domain $domain) => DomainItem::forNonDefaultDomain($domain), $domains);
@@ -47,7 +47,7 @@ readonly class DomainService implements DomainServiceInterface
     /**
      * @return array{Domain|null, Domain[]}
      */
-    private function defaultDomainAndRest(?ApiKey $apiKey): array
+    private function defaultDomainAndRest(ApiKey|null $apiKey): array
     {
         /** @var DomainRepositoryInterface $repo */
         $repo = $this->em->getRepository(Domain::class);
@@ -80,7 +80,7 @@ readonly class DomainService implements DomainServiceInterface
         return $domain;
     }
 
-    public function findByAuthority(string $authority, ?ApiKey $apiKey = null): ?Domain
+    public function findByAuthority(string $authority, ApiKey|null $apiKey = null): Domain|null
     {
         return $this->em->getRepository(Domain::class)->findOneByAuthority($authority, $apiKey);
     }
@@ -88,7 +88,7 @@ readonly class DomainService implements DomainServiceInterface
     /**
      * @throws DomainNotFoundException
      */
-    public function getOrCreate(string $authority, ?ApiKey $apiKey = null): Domain
+    public function getOrCreate(string $authority, ApiKey|null $apiKey = null): Domain
     {
         $domain = $this->getPersistedDomain($authority, $apiKey);
         $this->em->flush();
@@ -102,7 +102,7 @@ readonly class DomainService implements DomainServiceInterface
     public function configureNotFoundRedirects(
         string $authority,
         NotFoundRedirects $notFoundRedirects,
-        ?ApiKey $apiKey = null,
+        ApiKey|null $apiKey = null,
     ): Domain {
         $domain = $this->getPersistedDomain($authority, $apiKey);
         $domain->configureNotFoundRedirects($notFoundRedirects);
@@ -115,7 +115,7 @@ readonly class DomainService implements DomainServiceInterface
     /**
      * @throws DomainNotFoundException
      */
-    private function getPersistedDomain(string $authority, ?ApiKey $apiKey): Domain
+    private function getPersistedDomain(string $authority, ApiKey|null $apiKey): Domain
     {
         $domain = $this->findByAuthority($authority, $apiKey);
         if ($domain === null && $apiKey?->hasRole(Role::DOMAIN_SPECIFIC)) {

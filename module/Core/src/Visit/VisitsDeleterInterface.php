@@ -9,5 +9,5 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 interface VisitsDeleterInterface
 {
-    public function deleteOrphanVisits(?ApiKey $apiKey = null): BulkDeleteResult;
+    public function deleteOrphanVisits(ApiKey|null $apiKey = null): BulkDeleteResult;
 }

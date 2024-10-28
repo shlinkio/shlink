@@ -17,15 +17,15 @@ class ShortUrlsCountFiltering
     public readonly bool $searchIncludesDefaultDomain;
 
     public function __construct(
-        public readonly ?string $searchTerm = null,
+        public readonly string|null $searchTerm = null,
         public readonly array $tags = [],
-        public readonly ?TagsMode $tagsMode = null,
-        public readonly ?DateRange $dateRange = null,
+        public readonly TagsMode|null $tagsMode = null,
+        public readonly DateRange|null $dateRange = null,
         public readonly bool $excludeMaxVisitsReached = false,
         public readonly bool $excludePastValidUntil = false,
-        public readonly ?ApiKey $apiKey = null,
-        ?string $defaultDomain = null,
-        public readonly ?string $domain = null,
+        public readonly ApiKey|null $apiKey = null,
+        string|null $defaultDomain = null,
+        public readonly string|null $domain = null,
     ) {
         $this->searchIncludesDefaultDomain = !empty($searchTerm) && !empty($defaultDomain) && str_contains(
             strtolower($defaultDomain),
@@ -33,7 +33,7 @@ class ShortUrlsCountFiltering
         );
     }
 
-    public static function fromParams(ShortUrlsParams $params, ?ApiKey $apiKey, string $defaultDomain): self
+    public static function fromParams(ShortUrlsParams $params, ApiKey|null $apiKey, string $defaultDomain): self
     {
         return new self(
             $params->searchTerm,

@@ -19,23 +19,23 @@ interface TagServiceInterface
     /**
      * @return Paginator<Tag>
      */
-    public function listTags(TagsParams $params, ?ApiKey $apiKey = null): Paginator;
+    public function listTags(TagsParams $params, ApiKey|null $apiKey = null): Paginator;
 
     /**
      * @return Paginator<TagInfo>
      */
-    public function tagsInfo(TagsParams $params, ?ApiKey $apiKey = null): Paginator;
+    public function tagsInfo(TagsParams $params, ApiKey|null $apiKey = null): Paginator;
 
     /**
      * @param string[] $tagNames
      * @throws ForbiddenTagOperationException
      */
-    public function deleteTags(array $tagNames, ?ApiKey $apiKey = null): void;
+    public function deleteTags(array $tagNames, ApiKey|null $apiKey = null): void;
 
     /**
      * @throws TagNotFoundException
      * @throws TagConflictException
      * @throws ForbiddenTagOperationException
      */
-    public function renameTag(TagRenaming $renaming, ?ApiKey $apiKey = null): Tag;
+    public function renameTag(TagRenaming $renaming, ApiKey|null $apiKey = null): Tag;
 }

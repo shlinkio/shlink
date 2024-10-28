@@ -20,7 +20,7 @@ class ProcessRunner implements ProcessRunnerInterface
 {
     private Closure $createProcess;
 
-    public function __construct(private ProcessHelper $helper, ?callable $createProcess = null)
+    public function __construct(private ProcessHelper $helper, callable|null $createProcess = null)
     {
         $this->createProcess = $createProcess !== null
             ? $createProcess(...)

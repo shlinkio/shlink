@@ -45,7 +45,7 @@ readonly class MatomoVisitSender implements MatomoVisitSenderInterface
         return new SendVisitsResult($successfulVisits, $failedVisits);
     }
 
-    public function sendVisit(Visit $visit, ?string $originalIpAddress = null): void
+    public function sendVisit(Visit $visit, string|null $originalIpAddress = null): void
     {
         $tracker = $this->trackerBuilder->buildMatomoTracker();
 

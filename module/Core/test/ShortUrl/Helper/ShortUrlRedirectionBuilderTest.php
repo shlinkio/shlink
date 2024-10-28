@@ -35,8 +35,8 @@ class ShortUrlRedirectionBuilderTest extends TestCase
     public function buildShortUrlRedirectBuildsExpectedUrl(
         string $expectedUrl,
         ServerRequestInterface $request,
-        ?string $extraPath,
-        ?bool $forwardQuery,
+        string|null $extraPath,
+        bool|null $forwardQuery,
     ): void {
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
             'longUrl' => 'https://example.com/foo/bar?some=thing',

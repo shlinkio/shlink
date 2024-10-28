@@ -11,7 +11,7 @@ enum OrderableField: string
     case VISITS = 'visits';
     case NON_BOT_VISITS = 'nonBotVisits';
 
-    public static function toValidField(?string $field): self
+    public static function toValidField(string|null $field): self
     {
         if ($field === null) {
             return self::TAG;

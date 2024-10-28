@@ -18,5 +18,5 @@ interface MatomoVisitSenderInterface
         VisitSendingProgressTrackerInterface|null $progressTracker = null,
     ): SendVisitsResult;
 
-    public function sendVisit(Visit $visit, ?string $originalIpAddress = null): void;
+    public function sendVisit(Visit $visit, string|null $originalIpAddress = null): void;
 }

@@ -28,7 +28,7 @@ readonly class TagService implements TagServiceInterface
     /**
      * @inheritDoc
      */
-    public function listTags(TagsParams $params, ?ApiKey $apiKey = null): Paginator
+    public function listTags(TagsParams $params, ApiKey|null $apiKey = null): Paginator
     {
         /** @var TagRepository $repo */
         $repo = $this->em->getRepository(Tag::class);
@@ -38,7 +38,7 @@ readonly class TagService implements TagServiceInterface
     /**
      * @inheritDoc
      */
-    public function tagsInfo(TagsParams $params, ?ApiKey $apiKey = null): Paginator
+    public function tagsInfo(TagsParams $params, ApiKey|null $apiKey = null): Paginator
     {
         /** @var TagRepositoryInterface $repo */
         $repo = $this->em->getRepository(Tag::class);
@@ -60,7 +60,7 @@ readonly class TagService implements TagServiceInterface
     /**
      * @inheritDoc
      */
-    public function deleteTags(array $tagNames, ?ApiKey $apiKey = null): void
+    public function deleteTags(array $tagNames, ApiKey|null $apiKey = null): void
     {
         if (ApiKey::isShortUrlRestricted($apiKey)) {
             throw ForbiddenTagOperationException::forDeletion();
@@ -74,7 +74,7 @@ readonly class TagService implements TagServiceInterface
     /**
      * @inheritDoc
      */
-    public function renameTag(TagRenaming $renaming, ?ApiKey $apiKey = null): Tag
+    public function renameTag(TagRenaming $renaming, ApiKey|null $apiKey = null): Tag
     {
         if (ApiKey::isShortUrlRestricted($apiKey)) {
             throw ForbiddenTagOperationException::forRenaming();

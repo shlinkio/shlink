@@ -56,7 +56,7 @@ class VisitsStatsHelperTest extends TestCase
     }
 
     #[Test, DataProvider('provideCounts')]
-    public function returnsExpectedVisitsStats(int $expectedCount, ?ApiKey $apiKey): void
+    public function returnsExpectedVisitsStats(int $expectedCount, ApiKey|null $apiKey): void
     {
         $callCount = 0;
         $visitsCountRepo = $this->createMock(ShortUrlVisitsCountRepository::class);
@@ -94,7 +94,7 @@ class VisitsStatsHelperTest extends TestCase
     }
 
     #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
-    public function infoReturnsVisitsForCertainShortCode(?ApiKey $apiKey): void
+    public function infoReturnsVisitsForCertainShortCode(ApiKey|null $apiKey): void
     {
         $shortCode = '123ABC';
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
@@ -157,7 +157,7 @@ class VisitsStatsHelperTest extends TestCase
     }
 
     #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
-    public function visitsForTagAreReturnedAsExpected(?ApiKey $apiKey): void
+    public function visitsForTagAreReturnedAsExpected(ApiKey|null $apiKey): void
     {
         $tag = 'foo';
         $repo = $this->createMock(TagRepository::class);
@@ -198,7 +198,7 @@ class VisitsStatsHelperTest extends TestCase
     }
 
     #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
-    public function visitsForNonDefaultDomainAreReturnedAsExpected(?ApiKey $apiKey): void
+    public function visitsForNonDefaultDomainAreReturnedAsExpected(ApiKey|null $apiKey): void
     {
         $domain = 'foo.com';
         $repo = $this->createMock(DomainRepository::class);
@@ -229,7 +229,7 @@ class VisitsStatsHelperTest extends TestCase
     }
 
     #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
-    public function visitsForDefaultDomainAreReturnedAsExpected(?ApiKey $apiKey): void
+    public function visitsForDefaultDomainAreReturnedAsExpected(ApiKey|null $apiKey): void
     {
         $repo = $this->createMock(DomainRepository::class);
         $repo->expects($this->never())->method('domainExists');

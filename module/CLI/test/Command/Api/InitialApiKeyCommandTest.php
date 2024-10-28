@@ -27,8 +27,11 @@ class InitialApiKeyCommandTest extends TestCase
     }
 
     #[Test, DataProvider('provideParams')]
-    public function initialKeyIsCreatedWithProvidedValue(?ApiKey $result, bool $verbose, string $expectedOutput): void
-    {
+    public function initialKeyIsCreatedWithProvidedValue(
+        ApiKey|null $result,
+        bool $verbose,
+        string $expectedOutput,
+    ): void {
         $this->apiKeyService->expects($this->once())->method('createInitial')->with('the_key')->willReturn($result);
 
         $this->commandTester->execute(

@@ -42,7 +42,7 @@ class RedirectConditionTest extends TestCase
     #[TestWith(['en-UK', 'en', true], 'only lang')]
     #[TestWith(['es-AR', 'en', false], 'different only lang')]
     #[TestWith(['fr', 'fr-FR', false], 'less restrictive matching locale')]
-    public function matchesLanguage(?string $acceptLanguage, string $value, bool $expected): void
+    public function matchesLanguage(string|null $acceptLanguage, string $value, bool $expected): void
     {
         $request = ServerRequestFactory::fromGlobals();
         if ($acceptLanguage !== null) {
@@ -62,7 +62,7 @@ class RedirectConditionTest extends TestCase
     #[TestWith([IOS_USER_AGENT, DeviceType::IOS, true])]
     #[TestWith([IOS_USER_AGENT, DeviceType::ANDROID, false])]
     #[TestWith([DESKTOP_USER_AGENT, DeviceType::IOS, false])]
-    public function matchesDevice(?string $userAgent, DeviceType $value, bool $expected): void
+    public function matchesDevice(string|null $userAgent, DeviceType $value, bool $expected): void
     {
         $request = ServerRequestFactory::fromGlobals();
         if ($userAgent !== null) {
@@ -82,7 +82,7 @@ class RedirectConditionTest extends TestCase
     #[TestWith(['1.2.3.4', '192.168.1.0/24', false], 'no CIDR block match')]
     #[TestWith(['192.168.1.35', '192.168.1.*', true], 'wildcard pattern match')]
     #[TestWith(['1.2.3.4', '192.168.1.*', false], 'no wildcard pattern match')]
-    public function matchesRemoteIpAddress(?string $remoteIp, string $ipToMatch, bool $expected): void
+    public function matchesRemoteIpAddress(string|null $remoteIp, string $ipToMatch, bool $expected): void
     {
         $request = ServerRequestFactory::fromGlobals();
         if ($remoteIp !== null) {

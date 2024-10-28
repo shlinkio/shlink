@@ -123,7 +123,7 @@ final class QrCodeParams
         return self::parseHexColor($bgColor, DEFAULT_QR_CODE_BG_COLOR);
     }
 
-    private static function parseHexColor(string $hexColor, ?string $fallback): Color
+    private static function parseHexColor(string $hexColor, string|null $fallback): Color
     {
         $hexColor = ltrim($hexColor, '#');
         if (! ctype_xdigit($hexColor) && $fallback !== null) {

@@ -40,8 +40,10 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     /**
      * @throws GeolocationDbUpdateFailedException
      */
-    public function checkDbUpdate(?callable $beforeDownload = null, ?callable $handleProgress = null): GeolocationResult
-    {
+    public function checkDbUpdate(
+        callable|null $beforeDownload = null,
+        callable|null $handleProgress = null,
+    ): GeolocationResult {
         if ($this->trackingOptions->disableTracking || $this->trackingOptions->disableIpTracking) {
             return GeolocationResult::CHECK_SKIPPED;
         }
@@ -59,7 +61,7 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     /**
      * @throws GeolocationDbUpdateFailedException
      */
-    private function downloadIfNeeded(?callable $beforeDownload, ?callable $handleProgress): GeolocationResult
+    private function downloadIfNeeded(callable|null $beforeDownload, callable|null $handleProgress): GeolocationResult
     {
         if (! $this->dbUpdater->databaseFileExists()) {
             return $this->downloadNewDb(false, $beforeDownload, $handleProgress);
@@ -105,8 +107,8 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
      */
     private function downloadNewDb(
         bool $olderDbExists,
-        ?callable $beforeDownload,
-        ?callable $handleProgress,
+        callable|null $beforeDownload,
+        callable|null $handleProgress,
     ): GeolocationResult {
         if ($beforeDownload !== null) {
             $beforeDownload($olderDbExists);
@@ -124,7 +126,7 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         }
     }
 
-    private function wrapHandleProgressCallback(?callable $handleProgress, bool $olderDbExists): ?callable
+    private function wrapHandleProgressCallback(callable|null $handleProgress, bool $olderDbExists): callable|null
     {
         if ($handleProgress === null) {
             return null;

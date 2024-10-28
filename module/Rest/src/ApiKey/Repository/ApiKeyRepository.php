@@ -17,10 +17,10 @@ class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRe
     /**
      * Will create provided API key with admin permissions, only if there's no other API keys yet
      */
-    public function createInitialApiKey(string $apiKey): ?ApiKey
+    public function createInitialApiKey(string $apiKey): ApiKey|null
     {
         $em = $this->getEntityManager();
-        return $em->wrapInTransaction(function () use ($apiKey, $em): ?ApiKey {
+        return $em->wrapInTransaction(function () use ($apiKey, $em): ApiKey|null {
             // Ideally this would be a SELECT COUNT(...), but MsSQL and Postgres do not allow locking on aggregates
             // Because of that we check if at least one result exists
             $firstResult = $em->createQueryBuilder()->select('a.id')

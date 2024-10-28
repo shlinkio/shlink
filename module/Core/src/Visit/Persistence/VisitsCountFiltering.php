@@ -10,9 +10,9 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class VisitsCountFiltering
 {
     public function __construct(
-        public readonly ?DateRange $dateRange = null,
+        public readonly DateRange|null $dateRange = null,
         public readonly bool $excludeBots = false,
-        public readonly ?ApiKey $apiKey = null,
+        public readonly ApiKey|null $apiKey = null,
     ) {
     }
 }

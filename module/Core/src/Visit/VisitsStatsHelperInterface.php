@@ -17,7 +17,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 interface VisitsStatsHelperInterface
 {
-    public function getVisitsStats(?ApiKey $apiKey = null): VisitsStats;
+    public function getVisitsStats(ApiKey|null $apiKey = null): VisitsStats;
 
     /**
      * @return Paginator<Visit>
@@ -26,28 +26,28 @@ interface VisitsStatsHelperInterface
     public function visitsForShortUrl(
         ShortUrlIdentifier $identifier,
         VisitsParams $params,
-        ?ApiKey $apiKey = null,
+        ApiKey|null $apiKey = null,
     ): Paginator;
 
     /**
      * @return Paginator<Visit>
      * @throws TagNotFoundException
      */
-    public function visitsForTag(string $tag, VisitsParams $params, ?ApiKey $apiKey = null): Paginator;
+    public function visitsForTag(string $tag, VisitsParams $params, ApiKey|null $apiKey = null): Paginator;
 
     /**
      * @return Paginator<Visit>
      * @throws DomainNotFoundException
      */
-    public function visitsForDomain(string $domain, VisitsParams $params, ?ApiKey $apiKey = null): Paginator;
+    public function visitsForDomain(string $domain, VisitsParams $params, ApiKey|null $apiKey = null): Paginator;
 
     /**
      * @return Paginator<Visit>
      */
-    public function orphanVisits(OrphanVisitsParams $params, ?ApiKey $apiKey = null): Paginator;
+    public function orphanVisits(OrphanVisitsParams $params, ApiKey|null $apiKey = null): Paginator;
 
     /**
      * @return Paginator<Visit>
      */
-    public function nonOrphanVisits(VisitsParams $params, ?ApiKey $apiKey = null): Paginator;
+    public function nonOrphanVisits(VisitsParams $params, ApiKey|null $apiKey = null): Paginator;
 }

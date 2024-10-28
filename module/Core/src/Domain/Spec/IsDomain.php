@@ -10,7 +10,7 @@ use Happyr\DoctrineSpecification\Specification\BaseSpecification;
 
 class IsDomain extends BaseSpecification
 {
-    public function __construct(private string $domainId, ?string $context = null)
+    public function __construct(private string $domainId, string|null $context = null)
     {
         parent::__construct($context);
     }

@@ -12,7 +12,7 @@ interface GeolocationDbUpdaterInterface
      * @throws GeolocationDbUpdateFailedException
      */
     public function checkDbUpdate(
-        ?callable $beforeDownload = null,
-        ?callable $handleProgress = null,
+        callable|null $beforeDownload = null,
+        callable|null $handleProgress = null,
     ): GeolocationResult;
 }

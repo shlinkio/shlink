@@ -42,7 +42,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
     /**
      * @return TagInfo[]
      */
-    public function findTagsWithInfo(?TagsListFiltering $filtering = null): array
+    public function findTagsWithInfo(TagsListFiltering|null $filtering = null): array
     {
         $orderField = OrderableField::toValidField($filtering?->orderBy?->field);
         $orderDir = $filtering?->orderBy?->direction ?? 'ASC';
@@ -134,7 +134,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         );
     }
 
-    public function tagExists(string $tag, ?ApiKey $apiKey = null): bool
+    public function tagExists(string $tag, ApiKey|null $apiKey = null): bool
     {
         $result = (int) $this->matchSingleScalarResult(Spec::andX(
             new CountTagsWithName($tag),

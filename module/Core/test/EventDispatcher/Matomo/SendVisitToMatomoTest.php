@@ -57,7 +57,7 @@ class SendVisitToMatomoTest extends TestCase
     }
 
     #[Test, DataProvider('provideOriginalIpAddress')]
-    public function visitIsSentWhenItExists(?string $originalIpAddress): void
+    public function visitIsSentWhenItExists(string|null $originalIpAddress): void
     {
         $visitId = '123';
         $visit = Visit::forBasePath(Visitor::emptyInstance());

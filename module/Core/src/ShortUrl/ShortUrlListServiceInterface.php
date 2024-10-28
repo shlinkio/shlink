@@ -14,5 +14,5 @@ interface ShortUrlListServiceInterface
     /**
      * @return Paginator<ShortUrlWithVisitsSummary>
      */
-    public function listShortUrls(ShortUrlsParams $params, ?ApiKey $apiKey = null): Paginator;
+    public function listShortUrls(ShortUrlsParams $params, ApiKey|null $apiKey = null): Paginator;
 }

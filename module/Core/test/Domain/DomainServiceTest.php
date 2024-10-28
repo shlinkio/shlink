@@ -33,7 +33,7 @@ class DomainServiceTest extends TestCase
     }
 
     #[Test, DataProvider('provideExcludedDomains')]
-    public function listDomainsDelegatesIntoRepository(array $domains, array $expectedResult, ?ApiKey $apiKey): void
+    public function listDomainsDelegatesIntoRepository(array $domains, array $expectedResult, ApiKey|null $apiKey): void
     {
         $repo = $this->createMock(DomainRepository::class);
         $repo->expects($this->once())->method('findDomains')->with($apiKey)->willReturn($domains);
@@ -124,7 +124,7 @@ class DomainServiceTest extends TestCase
     }
 
     #[Test, DataProvider('provideFoundDomains')]
-    public function getOrCreateAlwaysPersistsDomain(?Domain $foundDomain, ?ApiKey $apiKey): void
+    public function getOrCreateAlwaysPersistsDomain(Domain|null $foundDomain, ApiKey|null $apiKey): void
     {
         $authority = 'example.com';
         $repo = $this->createMock(DomainRepository::class);
@@ -161,8 +161,10 @@ class DomainServiceTest extends TestCase
     }
 
     #[Test, DataProvider('provideFoundDomains')]
-    public function configureNotFoundRedirectsConfiguresFetchedDomain(?Domain $foundDomain, ?ApiKey $apiKey): void
-    {
+    public function configureNotFoundRedirectsConfiguresFetchedDomain(
+        Domain|null $foundDomain,
+        ApiKey|null $apiKey,
+    ): void {
         $authority = 'example.com';
         $repo = $this->createMock(DomainRepository::class);
         $repo->method('findOneByAuthority')->with($authority, $apiKey)->willReturn($foundDomain);

@@ -104,7 +104,7 @@ class CreateShortUrlCommandTest extends TestCase
     }
 
     #[Test, DataProvider('provideDomains')]
-    public function properlyProcessesProvidedDomain(array $input, ?string $expectedDomain): void
+    public function properlyProcessesProvidedDomain(array $input, string|null $expectedDomain): void
     {
         $this->urlShortener->expects($this->once())->method('shorten')->with(
             $this->callback(function (ShortUrlCreation $meta) use ($expectedDomain) {
@@ -128,8 +128,10 @@ class CreateShortUrlCommandTest extends TestCase
     }
 
     #[Test, DataProvider('provideFlags')]
-    public function urlValidationHasExpectedValueBasedOnProvidedFlags(array $options, ?bool $expectedCrawlable): void
-    {
+    public function urlValidationHasExpectedValueBasedOnProvidedFlags(
+        array $options,
+        bool|null $expectedCrawlable,
+    ): void {
         $shortUrl = ShortUrl::createFake();
         $this->urlShortener->expects($this->once())->method('shorten')->with(
             $this->callback(function (ShortUrlCreation $meta) use ($expectedCrawlable) {

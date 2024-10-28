@@ -39,7 +39,7 @@ class CreateShortUrlTest extends ApiTestCase
     }
 
     #[Test, DataProvider('provideConflictingSlugs')]
-    public function failsToCreateShortUrlWithDuplicatedSlug(string $slug, ?string $domain): void
+    public function failsToCreateShortUrlWithDuplicatedSlug(string $slug, string|null $domain): void
     {
         $suffix = $domain === null ? '' : sprintf(' for domain "%s"', $domain);
         $detail = sprintf('Provided slug "%s" is already in use%s.', $slug, $suffix);
@@ -171,8 +171,10 @@ class CreateShortUrlTest extends ApiTestCase
     }
 
     #[Test, DataProvider('provideConflictingSlugs')]
-    public function returnsErrorWhenRequestingReturnExistingButCustomSlugIsInUse(string $slug, ?string $domain): void
-    {
+    public function returnsErrorWhenRequestingReturnExistingButCustomSlugIsInUse(
+        string $slug,
+        string|null $domain,
+    ): void {
         $longUrl = 'https://www.alejandrocelaya.com';
 
         [$firstStatusCode] = $this->createShortUrl(['longUrl' => $longUrl]);
@@ -269,7 +271,7 @@ class CreateShortUrlTest extends ApiTestCase
     }
 
     #[Test, DataProvider('provideDomains')]
-    public function apiKeyDomainIsEnforced(?string $providedDomain): void
+    public function apiKeyDomainIsEnforced(string|null $providedDomain): void
     {
         [$statusCode, ['domain' => $returnedDomain]] = $this->createShortUrl(
             ['domain' => $providedDomain],
@@ -315,7 +317,7 @@ class CreateShortUrlTest extends ApiTestCase
     #[Test]
     #[TestWith([null])]
     #[TestWith(['my-custom-slug'])]
-    public function prefixCanBeSet(?string $customSlug): void
+    public function prefixCanBeSet(string|null $customSlug): void
     {
         [$statusCode, $payload] = $this->createShortUrl([
             'longUrl' => 'https://github.com/shlinkio/shlink/issues/1557',

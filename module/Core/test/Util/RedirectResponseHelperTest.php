@@ -18,7 +18,7 @@ class RedirectResponseHelperTest extends TestCase
         int $configuredStatus,
         int $configuredLifetime,
         int $expectedStatus,
-        ?string $expectedCacheControl,
+        string|null $expectedCacheControl,
     ): void {
         $options = new RedirectOptions($configuredStatus, $configuredLifetime);
 
@@ -46,7 +46,7 @@ class RedirectResponseHelperTest extends TestCase
         yield 'status 308 with negative expiration' => [308, -20, 308, 'private,max-age=30'];
     }
 
-    private function helper(?RedirectOptions $options = null): RedirectResponseHelper
+    private function helper(RedirectOptions|null $options = null): RedirectResponseHelper
     {
         return new RedirectResponseHelper($options ?? new RedirectOptions());
     }

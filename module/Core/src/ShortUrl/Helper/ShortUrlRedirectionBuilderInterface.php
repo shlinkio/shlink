@@ -12,6 +12,6 @@ interface ShortUrlRedirectionBuilderInterface
     public function buildShortUrlRedirect(
         ShortUrl $shortUrl,
         ServerRequestInterface $request,
-        ?string $extraPath = null,
+        string|null $extraPath = null,
     ): string;
 }

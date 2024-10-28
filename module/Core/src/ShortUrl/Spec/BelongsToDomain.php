@@ -10,7 +10,7 @@ use Happyr\DoctrineSpecification\Specification\BaseSpecification;
 
 class BelongsToDomain extends BaseSpecification
 {
-    public function __construct(private string $domainId, private ?string $dqlAlias = null)
+    public function __construct(private string $domainId, private string|null $dqlAlias = null)
     {
         parent::__construct();
     }
