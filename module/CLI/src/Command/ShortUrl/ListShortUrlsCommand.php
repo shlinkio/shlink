@@ -66,6 +66,12 @@ class ListShortUrlsCommand extends Command
                 'A query used to filter results by searching for it on the longUrl and shortCode fields.',
             )
             ->addOption(
+                'domain',
+                'd',
+                InputOption::VALUE_REQUIRED,
+                'Used to filter results by domain. Use DEFAULT keyword to filter by default domain',
+            )
+            ->addOption(
                 'tags',
                 't',
                 InputOption::VALUE_REQUIRED,
@@ -135,6 +141,7 @@ class ListShortUrlsCommand extends Command
 
         $page = (int) $input->getOption('page');
         $searchTerm = $input->getOption('search-term');
+        $domain = $input->getOption('domain');
         $tags = $input->getOption('tags');
         $tagsMode = $input->getOption('including-all-tags') === true ? TagsMode::ALL->value : TagsMode::ANY->value;
         $tags = ! empty($tags) ? explode(',', $tags) : [];
@@ -146,6 +153,7 @@ class ListShortUrlsCommand extends Command
 
         $data = [
             ShortUrlsParamsInputFilter::SEARCH_TERM => $searchTerm,
+            ShortUrlsParamsInputFilter::DOMAIN => $domain,
             ShortUrlsParamsInputFilter::TAGS => $tags,
             ShortUrlsParamsInputFilter::TAGS_MODE => $tagsMode,
             ShortUrlsParamsInputFilter::ORDER_BY => $orderBy,
