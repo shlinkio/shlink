@@ -5,6 +5,8 @@
     bootstrap="./config/test/bootstrap_db_tests.php"
     colors="true"
     cacheDirectory="build/.phpunit/db-tests.cache"
+    displayDetailsOnTestsThatTriggerWarnings="true"
+    displayDetailsOnTestsThatTriggerDeprecations="true"
 >
     <testsuites>
         <testsuite name="Shlink database tests">

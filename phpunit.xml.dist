@@ -6,6 +6,7 @@
     colors="true"
     cacheDirectory="build/.phpunit/unit-tests.cache"
     displayDetailsOnTestsThatTriggerWarnings="true"
+    displayDetailsOnTestsThatTriggerDeprecations="true"
 >
     <testsuites>
         <testsuite name="Core">

@@ -5,6 +5,8 @@
     bootstrap="./config/test/bootstrap_api_tests.php"
     colors="true"
     cacheDirectory="build/.phpunit/api-tests.cache"
+    displayDetailsOnTestsThatTriggerWarnings="true"
+    displayDetailsOnTestsThatTriggerDeprecations="true"
 >
     <testsuites>
         <testsuite name="Shlink API tests">
