@@ -43,7 +43,7 @@ class MatomoVisitSenderTest extends TestCase
     }
 
     #[Test, DataProvider('provideTrackerMethods')]
-    public function visitIsSentToMatomo(Visit $visit, ?string $originalIpAddress, array $invokedMethods): void
+    public function visitIsSentToMatomo(Visit $visit, string|null $originalIpAddress, array $invokedMethods): void
     {
         $tracker = $this->createMock(MatomoTracker::class);
         $tracker->expects($this->once())->method('setUrl')->willReturn($tracker);

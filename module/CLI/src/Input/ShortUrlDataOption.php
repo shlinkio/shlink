@@ -18,7 +18,7 @@ enum ShortUrlDataOption: string
     case CRAWLABLE = 'crawlable';
     case NO_FORWARD_QUERY = 'no-forward-query';
 
-    public function shortcut(): ?string
+    public function shortcut(): string|null
     {
         return match ($this) {
             self::TAGS => 't',

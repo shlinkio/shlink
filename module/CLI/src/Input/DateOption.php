@@ -21,7 +21,7 @@ readonly class DateOption
         $command->addOption($name, $shortcut, InputOption::VALUE_REQUIRED, $description);
     }
 
-    public function get(InputInterface $input, OutputInterface $output): ?Chronos
+    public function get(InputInterface $input, OutputInterface $output): Chronos|null
     {
         $value = $input->getOption($this->name);
         if (empty($value) || ! is_string($value)) {

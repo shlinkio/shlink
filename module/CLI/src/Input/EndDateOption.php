@@ -23,7 +23,7 @@ readonly final class EndDateOption
         ));
     }
 
-    public function get(InputInterface $input, OutputInterface $output): ?Chronos
+    public function get(InputInterface $input, OutputInterface $output): Chronos|null
     {
         return $this->dateOption->get($input, $output);
     }

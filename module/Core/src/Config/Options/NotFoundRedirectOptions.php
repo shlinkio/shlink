@@ -10,9 +10,9 @@ use Shlinkio\Shlink\Core\Config\NotFoundRedirectConfigInterface;
 final readonly class NotFoundRedirectOptions implements NotFoundRedirectConfigInterface
 {
     public function __construct(
-        public ?string $invalidShortUrl = null,
-        public ?string $regular404 = null,
-        public ?string $baseUrl = null,
+        public string|null $invalidShortUrl = null,
+        public string|null $regular404 = null,
+        public string|null $baseUrl = null,
     ) {
     }
 
@@ -25,7 +25,7 @@ final readonly class NotFoundRedirectOptions implements NotFoundRedirectConfigIn
         );
     }
 
-    public function invalidShortUrlRedirect(): ?string
+    public function invalidShortUrlRedirect(): string|null
     {
         return $this->invalidShortUrl;
     }
@@ -35,7 +35,7 @@ final readonly class NotFoundRedirectOptions implements NotFoundRedirectConfigIn
         return $this->invalidShortUrl !== null;
     }
 
-    public function regular404Redirect(): ?string
+    public function regular404Redirect(): string|null
     {
         return $this->regular404;
     }
@@ -45,7 +45,7 @@ final readonly class NotFoundRedirectOptions implements NotFoundRedirectConfigIn
         return $this->regular404 !== null;
     }
 
-    public function baseUrlRedirect(): ?string
+    public function baseUrlRedirect(): string|null
     {
         return $this->baseUrl;
     }

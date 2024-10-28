@@ -190,7 +190,7 @@ class QrCodeActionTest extends TestCase
     #[Test, DataProvider('provideRoundBlockSize')]
     public function imageCanRemoveExtraMarginWhenBlockRoundIsDisabled(
         QrCodeOptions $defaultOptions,
-        ?string $roundBlockSize,
+        string|null $roundBlockSize,
         int $expectedColor,
     ): void {
         $code = 'abc123';
@@ -234,7 +234,7 @@ class QrCodeActionTest extends TestCase
     }
 
     #[Test, DataProvider('provideColors')]
-    public function properColorsAreUsed(?string $queryColor, ?string $optionsColor, int $expectedColor): void
+    public function properColorsAreUsed(string|null $queryColor, string|null $optionsColor, int $expectedColor): void
     {
         $code = 'abc123';
         $req = ServerRequestFactory::fromGlobals()
@@ -320,7 +320,7 @@ class QrCodeActionTest extends TestCase
         yield 'only enabled short URLs' => [false];
     }
 
-    public function action(?QrCodeOptions $options = null): QrCodeAction
+    public function action(QrCodeOptions|null $options = null): QrCodeAction
     {
         return new QrCodeAction(
             $this->urlResolver,

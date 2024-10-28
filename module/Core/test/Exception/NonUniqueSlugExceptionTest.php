@@ -12,7 +12,7 @@ use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 class NonUniqueSlugExceptionTest extends TestCase
 {
     #[Test, DataProvider('provideMessages')]
-    public function properlyCreatesExceptionFromSlug(string $expectedMessage, string $slug, ?string $domain): void
+    public function properlyCreatesExceptionFromSlug(string $expectedMessage, string $slug, string|null $domain): void
     {
         $expectedAdditional = ['customSlug' => $slug];
         if ($domain !== null) {

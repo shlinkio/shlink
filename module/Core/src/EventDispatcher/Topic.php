@@ -12,7 +12,7 @@ enum Topic: string
     case NEW_ORPHAN_VISIT = 'https://shlink.io/new-orphan-visit';
     case NEW_SHORT_URL = 'https://shlink.io/new-short-url';
 
-    public static function newShortUrlVisit(?string $shortCode): string
+    public static function newShortUrlVisit(string|null $shortCode): string
     {
         return sprintf('%s/%s', self::NEW_VISIT->value, $shortCode ?? '');
     }

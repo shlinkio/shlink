@@ -53,5 +53,5 @@ interface VisitRepositoryInterface extends ObjectRepository, EntitySpecification
 
     public function countNonOrphanVisits(VisitsCountFiltering $filtering): int;
 
-    public function findMostRecentOrphanVisit(): ?Visit;
+    public function findMostRecentOrphanVisit(): Visit|null;
 }

@@ -41,7 +41,7 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
     {
     }
 
-    public function getVisitsStats(?ApiKey $apiKey = null): VisitsStats
+    public function getVisitsStats(ApiKey|null $apiKey = null): VisitsStats
     {
         /** @var OrphanVisitsCountRepository $orphanVisitsCountRepo */
         $orphanVisitsCountRepo = $this->em->getRepository(OrphanVisitsCount::class);
@@ -68,7 +68,7 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
     public function visitsForShortUrl(
         ShortUrlIdentifier $identifier,
         VisitsParams $params,
-        ?ApiKey $apiKey = null,
+        ApiKey|null $apiKey = null,
     ): Paginator {
         /** @var ShortUrlRepositoryInterface $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
@@ -88,7 +88,7 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
     /**
      * @inheritDoc
      */
-    public function visitsForTag(string $tag, VisitsParams $params, ?ApiKey $apiKey = null): Paginator
+    public function visitsForTag(string $tag, VisitsParams $params, ApiKey|null $apiKey = null): Paginator
     {
         /** @var TagRepository $tagRepo */
         $tagRepo = $this->em->getRepository(Tag::class);
@@ -105,7 +105,7 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
     /**
      * @inheritDoc
      */
-    public function visitsForDomain(string $domain, VisitsParams $params, ?ApiKey $apiKey = null): Paginator
+    public function visitsForDomain(string $domain, VisitsParams $params, ApiKey|null $apiKey = null): Paginator
     {
         /** @var DomainRepository $domainRepo */
         $domainRepo = $this->em->getRepository(Domain::class);
@@ -122,7 +122,7 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
     /**
      * @inheritDoc
      */
-    public function orphanVisits(OrphanVisitsParams $params, ?ApiKey $apiKey = null): Paginator
+    public function orphanVisits(OrphanVisitsParams $params, ApiKey|null $apiKey = null): Paginator
     {
         /** @var VisitRepositoryInterface $repo */
         $repo = $this->em->getRepository(Visit::class);
@@ -130,7 +130,7 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
         return $this->createPaginator(new OrphanVisitsPaginatorAdapter($repo, $params, $apiKey), $params);
     }
 
-    public function nonOrphanVisits(VisitsParams $params, ?ApiKey $apiKey = null): Paginator
+    public function nonOrphanVisits(VisitsParams $params, ApiKey|null $apiKey = null): Paginator
     {
         /** @var VisitRepositoryInterface $repo */
         $repo = $this->em->getRepository(Visit::class);

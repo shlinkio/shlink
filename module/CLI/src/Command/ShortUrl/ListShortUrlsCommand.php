@@ -210,7 +210,7 @@ class ListShortUrlsCommand extends Command
         return $shortUrls;
     }
 
-    private function processOrderBy(InputInterface $input): ?string
+    private function processOrderBy(InputInterface $input): string|null
     {
         $orderBy = $input->getOption('order-by');
         if (empty($orderBy)) {
@@ -247,7 +247,7 @@ class ListShortUrlsCommand extends Command
                 $shortUrl->authorApiKey?->__toString() ?? '';
         }
         if ($input->getOption('show-api-key-name')) {
-            $columnsMap['API Key Name'] = static fn (array $_, ShortUrl $shortUrl): ?string =>
+            $columnsMap['API Key Name'] = static fn (array $_, ShortUrl $shortUrl): string|null =>
                 $shortUrl->authorApiKey?->name;
         }
 

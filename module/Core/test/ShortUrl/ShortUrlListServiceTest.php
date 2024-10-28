@@ -30,7 +30,7 @@ class ShortUrlListServiceTest extends TestCase
     }
 
     #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
-    public function listedUrlsAreReturnedFromEntityManager(?ApiKey $apiKey): void
+    public function listedUrlsAreReturnedFromEntityManager(ApiKey|null $apiKey): void
     {
         $list = [
             ShortUrl::createFake(),

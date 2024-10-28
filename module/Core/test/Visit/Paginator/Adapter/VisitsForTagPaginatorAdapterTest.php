@@ -57,7 +57,7 @@ class VisitsForTagPaginatorAdapterTest extends TestCase
         }
     }
 
-    private function createAdapter(?ApiKey $apiKey): TagVisitsPaginatorAdapter
+    private function createAdapter(ApiKey|null $apiKey): TagVisitsPaginatorAdapter
     {
         return new TagVisitsPaginatorAdapter($this->repo, 'foo', VisitsParams::fromRawData([]), $apiKey);
     }

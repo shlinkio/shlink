@@ -14,8 +14,8 @@ final class ApiKeyMeta
      */
     private function __construct(
         public readonly string $key,
-        public readonly ?string $name,
-        public readonly ?Chronos $expirationDate,
+        public readonly string|null $name,
+        public readonly Chronos|null $expirationDate,
         public readonly iterable $roleDefinitions,
     ) {
     }
@@ -29,9 +29,9 @@ final class ApiKeyMeta
      * @param iterable<RoleDefinition> $roleDefinitions
      */
     public static function fromParams(
-        ?string $key = null,
-        ?string $name = null,
-        ?Chronos $expirationDate = null,
+        string|null $key = null,
+        string|null $name = null,
+        Chronos|null $expirationDate = null,
         iterable $roleDefinitions = [],
     ): self {
         return new self(

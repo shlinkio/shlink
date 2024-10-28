@@ -534,7 +534,7 @@ class VisitRepositoryTest extends DatabaseTestCase
     private function createShortUrlsAndVisits(
         bool|string $withDomain = true,
         array $tags = [],
-        ?ApiKey $apiKey = null,
+        ApiKey|null $apiKey = null,
     ): array {
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
             ShortUrlInputFilter::LONG_URL => 'https://longUrl',

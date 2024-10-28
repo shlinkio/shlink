@@ -103,8 +103,11 @@ class VisitTest extends TestCase
     }
 
     #[Test, DataProvider('provideAddresses')]
-    public function addressIsAnonymizedWhenRequested(bool $anonymize, ?string $address, ?string $expectedAddress): void
-    {
+    public function addressIsAnonymizedWhenRequested(
+        bool $anonymize,
+        string|null $address,
+        string|null $expectedAddress,
+    ): void {
         $visit = Visit::forValidShortUrl(
             ShortUrl::createFake(),
             new Visitor('Chrome', 'some site', $address, ''),

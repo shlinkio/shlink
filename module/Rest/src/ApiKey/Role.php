@@ -38,7 +38,7 @@ enum Role: string
         };
     }
 
-    public static function toSpec(ApiKeyRole $role, ?string $context = null): Specification
+    public static function toSpec(ApiKeyRole $role, string|null $context = null): Specification
     {
         return match ($role->role) {
             self::AUTHORED_SHORT_URLS => new BelongsToApiKey($role->apiKey, $context),

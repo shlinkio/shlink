@@ -77,7 +77,7 @@ class UpdateGeoLiteDbTest extends TestCase
         int $total,
         int $downloaded,
         bool $oldDbExists,
-        ?string $expectedMessage,
+        string|null $expectedMessage,
     ): void {
         $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willReturnCallback(
             function ($_, callable $secondCallback) use ($total, $downloaded, $oldDbExists): GeolocationResult {

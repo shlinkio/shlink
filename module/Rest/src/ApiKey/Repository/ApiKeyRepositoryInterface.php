@@ -16,5 +16,5 @@ interface ApiKeyRepositoryInterface extends ObjectRepository, EntitySpecificatio
     /**
      * Will create provided API key only if there's no API keys yet
      */
-    public function createInitialApiKey(string $apiKey): ?ApiKey;
+    public function createInitialApiKey(string $apiKey): ApiKey|null;
 }

@@ -38,7 +38,7 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
         $this->em->getEventManager()->addEventListener(Events::postFlush, $this);
     }
 
-    public function resolveDomain(?string $domain): ?Domain
+    public function resolveDomain(string|null $domain): Domain|null
     {
         if ($domain === null || $domain === $this->options->defaultDomain) {
             return null;

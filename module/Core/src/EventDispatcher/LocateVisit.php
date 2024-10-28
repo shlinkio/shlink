@@ -45,7 +45,7 @@ readonly class LocateVisit
         $this->eventDispatcher->dispatch(new VisitLocated($visitId, $shortUrlVisited->originalIpAddress));
     }
 
-    private function locateVisit(string $visitId, ?string $originalIpAddress, Visit $visit): void
+    private function locateVisit(string $visitId, string|null $originalIpAddress, Visit $visit): void
     {
         if (! $this->dbUpdater->databaseFileExists()) {
             $this->logger->warning('Tried to locate visit with id "{visitId}", but a GeoLite2 db was not found.', [

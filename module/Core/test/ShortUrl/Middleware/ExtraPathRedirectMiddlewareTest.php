@@ -70,7 +70,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
     public static function provideNonRedirectingRequests(): iterable
     {
         $baseReq = ServerRequestFactory::fromGlobals();
-        $buildReq = static fn (?NotFoundType $type): ServerRequestInterface =>
+        $buildReq = static fn (NotFoundType|null $type): ServerRequestInterface =>
             $baseReq->withAttribute(NotFoundType::class, $type);
 
         yield 'disabled option' => [false, false, $buildReq(NotFoundType::fromRequest($baseReq, '/foo/bar'))];
@@ -127,7 +127,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
     public function visitIsTrackedAndRedirectIsReturnedWhenShortUrlIsFoundAfterExpectedAmountOfIterations(
         bool $multiSegmentEnabled,
         int $expectedResolveCalls,
-        ?string $expectedExtraPath,
+        string|null $expectedExtraPath,
     ): void {
         $options = new UrlShortenerOptions(appendExtraPath: true, multiSegmentSlugsEnabled: $multiSegmentEnabled);
 
@@ -170,7 +170,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         yield [true, 3, null];
     }
 
-    private function middleware(?UrlShortenerOptions $options = null): ExtraPathRedirectMiddleware
+    private function middleware(UrlShortenerOptions|null $options = null): ExtraPathRedirectMiddleware
     {
         return new ExtraPathRedirectMiddleware(
             $this->resolver,

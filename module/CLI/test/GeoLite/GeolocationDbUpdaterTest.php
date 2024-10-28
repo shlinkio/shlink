@@ -180,7 +180,7 @@ class GeolocationDbUpdaterTest extends TestCase
         yield 'both' => [new TrackingOptions(disableTracking: true, disableIpTracking: true)];
     }
 
-    private function geolocationDbUpdater(?TrackingOptions $options = null): GeolocationDbUpdater
+    private function geolocationDbUpdater(TrackingOptions|null $options = null): GeolocationDbUpdater
     {
         $locker = $this->createMock(Lock\LockFactory::class);
         $locker->method('createLock')->with($this->isType('string'))->willReturn($this->lock);

@@ -23,8 +23,8 @@ class ApiKey extends AbstractEntity
      */
     private function __construct(
         private string $key,
-        public readonly ?string $name = null,
-        public readonly ?Chronos $expirationDate = null,
+        public readonly string|null $name = null,
+        public readonly Chronos|null $expirationDate = null,
         private bool $enabled = true,
         private Collection $roles = new ArrayCollection(),
     ) {
@@ -85,7 +85,7 @@ class ApiKey extends AbstractEntity
         return $this->key;
     }
 
-    public function spec(?string $context = null): Specification
+    public function spec(string|null $context = null): Specification
     {
         $specs = $this->roles->map(fn (ApiKeyRole $role) => Role::toSpec($role, $context))->getValues();
         return Spec::andX(...$specs);
@@ -100,7 +100,7 @@ class ApiKey extends AbstractEntity
     /**
      * @return ($apiKey is null ? true : boolean)
      */
-    public static function isAdmin(?ApiKey $apiKey): bool
+    public static function isAdmin(ApiKey|null $apiKey): bool
     {
         return $apiKey === null || $apiKey->roles->isEmpty();
     }
@@ -108,7 +108,7 @@ class ApiKey extends AbstractEntity
     /**
      * Tells if provided API key has any of the roles restricting at the short URL level
      */
-    public static function isShortUrlRestricted(?ApiKey $apiKey): bool
+    public static function isShortUrlRestricted(ApiKey|null $apiKey): bool
     {
         if ($apiKey === null) {
             return false;

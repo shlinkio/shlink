@@ -11,7 +11,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class BelongsToApiKey extends BaseSpecification
 {
-    public function __construct(private ApiKey $apiKey, ?string $context = null)
+    public function __construct(private ApiKey $apiKey, string|null $context = null)
     {
         parent::__construct($context);
     }

@@ -25,7 +25,7 @@ class DeleteTagsActionTest extends TestCase
     }
 
     #[Test, DataProvider('provideTags')]
-    public function processDelegatesIntoService(?array $tags): void
+    public function processDelegatesIntoService(array|null $tags): void
     {
         $request = (new ServerRequest())
             ->withQueryParams(['tags' => $tags])

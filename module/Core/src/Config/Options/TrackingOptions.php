@@ -22,7 +22,7 @@ final readonly class TrackingOptions
         public bool $trackOrphanVisits = true,
         // A query param that, if provided, will disable tracking of one particular visit. Always takes precedence over
         // other options
-        public ?string $disableTrackParam = null,
+        public string|null $disableTrackParam = null,
         // If true, visits will not be tracked at all
         public bool $disableTracking = false,
         // If true, visits will be tracked, but neither the IP address, nor the location will be resolved

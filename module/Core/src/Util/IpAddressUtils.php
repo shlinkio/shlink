@@ -56,7 +56,7 @@ final class IpAddressUtils
      *
      * @param string[] $ipAddressParts
      */
-    private static function candidateToRange(string $candidate, array $ipAddressParts): ?RangeInterface
+    private static function candidateToRange(string $candidate, array $ipAddressParts): RangeInterface|null
     {
         return str_contains($candidate, '*')
             ? self::parseValueWithWildcards($candidate, $ipAddressParts)
@@ -68,7 +68,7 @@ final class IpAddressUtils
      * Factory::parseRangeString can usually do this automatically, but only if wildcards are at the end. This also
      * covers cases where wildcards are in between.
      */
-    private static function parseValueWithWildcards(string $value, array $ipAddressParts): ?RangeInterface
+    private static function parseValueWithWildcards(string $value, array $ipAddressParts): RangeInterface|null
     {
         $octets = explode('.', $value);
         $keys = array_keys($octets);

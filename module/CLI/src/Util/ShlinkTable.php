@@ -34,8 +34,12 @@ final class ShlinkTable
         return new self($baseTable);
     }
 
-    public function render(array $headers, array $rows, ?string $footerTitle = null, ?string $headerTitle = null): void
-    {
+    public function render(
+        array $headers,
+        array $rows,
+        string|null $footerTitle = null,
+        string|null $headerTitle = null,
+    ): void {
         $style = Table::getStyleDefinition(self::DEFAULT_STYLE_NAME);
         $style->setFooterTitleFormat(self::TABLE_TITLE_STYLE)
               ->setHeaderTitleFormat(self::TABLE_TITLE_STYLE);

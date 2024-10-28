@@ -11,7 +11,7 @@ abstract class AbstractVisitEvent implements JsonSerializable, JsonUnserializabl
 {
     final public function __construct(
         public readonly string $visitId,
-        public readonly ?string $originalIpAddress = null,
+        public readonly string|null $originalIpAddress = null,
     ) {
     }
 

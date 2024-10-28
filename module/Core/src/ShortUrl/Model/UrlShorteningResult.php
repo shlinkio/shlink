@@ -11,7 +11,7 @@ final class UrlShorteningResult
 {
     private function __construct(
         public readonly ShortUrl $shortUrl,
-        private readonly ?Throwable $errorOnEventDispatching,
+        private readonly Throwable|null $errorOnEventDispatching,
     ) {
     }
 

@@ -21,10 +21,10 @@ final class Visitor
     public readonly string $userAgent;
     public readonly string $referer;
     public readonly string $visitedUrl;
-    public readonly ?string $remoteAddress;
+    public readonly string|null $remoteAddress;
     private bool $potentialBot;
 
-    public function __construct(string $userAgent, string $referer, ?string $remoteAddress, string $visitedUrl)
+    public function __construct(string $userAgent, string $referer, string|null $remoteAddress, string $visitedUrl)
     {
         $this->userAgent = $this->cropToLength($userAgent, self::USER_AGENT_MAX_LENGTH);
         $this->referer = $this->cropToLength($referer, self::REFERER_MAX_LENGTH);

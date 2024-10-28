@@ -33,7 +33,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
     }
 
     #[Test, DataProvider('provideDomainsThatEmpty')]
-    public function returnsEmptyInSomeCases(?string $domain): void
+    public function returnsEmptyInSomeCases(string|null $domain): void
     {
         $this->em->expects($this->never())->method('getRepository')->with(Domain::class);
         self::assertNull($this->resolver->resolveDomain($domain));
@@ -46,7 +46,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
     }
 
     #[Test, DataProvider('provideFoundDomains')]
-    public function findsOrCreatesDomainWhenValueIsProvided(?Domain $foundDomain, string $authority): void
+    public function findsOrCreatesDomainWhenValueIsProvided(Domain|null $foundDomain, string $authority): void
     {
         $repo = $this->createMock(DomainRepository::class);
         $repo->expects($this->once())->method('findOneBy')->with(['authority' => $authority])->willReturn($foundDomain);
@@ -79,7 +79,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
         $tagRepo = $this->createMock(TagRepository::class);
         $tagRepo->expects($this->exactly($expectedLookedOutTags))->method('findOneBy')->with(
             $this->isType('array'),
-        )->willReturnCallback(function (array $criteria): ?Tag {
+        )->willReturnCallback(function (array $criteria): Tag|null {
             ['name' => $name] = $criteria;
             return $name === 'foo' ? new Tag($name) : null;
         });

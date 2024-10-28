@@ -49,7 +49,7 @@ class MercureInfoActionTest extends TestCase
     }
 
     #[Test, DataProvider('provideDays')]
-    public function returnsExpectedInfoWhenEverythingIsOk(?int $days): void
+    public function returnsExpectedInfoWhenEverythingIsOk(int|null $days): void
     {
         $this->provider->expects($this->once())->method('buildSubscriptionToken')->willReturn('abc.123');
 

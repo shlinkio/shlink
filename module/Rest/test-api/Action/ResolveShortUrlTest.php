@@ -45,7 +45,7 @@ class ResolveShortUrlTest extends ApiTestCase
     #[Test, DataProviderExternal(ApiTestDataProviders::class, 'invalidUrlsProvider')]
     public function tryingToResolveInvalidUrlReturnsNotFoundError(
         string $shortCode,
-        ?string $domain,
+        string|null $domain,
         string $expectedDetail,
         string $apiKey,
     ): void {

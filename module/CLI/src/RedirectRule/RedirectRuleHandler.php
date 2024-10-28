@@ -33,7 +33,7 @@ use const STR_PAD_LEFT;
 
 class RedirectRuleHandler implements RedirectRuleHandlerInterface
 {
-    public function manageRules(StyleInterface $io, ShortUrl $shortUrl, array $rules): ?array
+    public function manageRules(StyleInterface $io, ShortUrl $shortUrl, array $rules): array|null
     {
         $amountOfRules = count($rules);
 
@@ -213,7 +213,7 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
 
     private function askMandatory(string $message, StyleInterface $io): string
     {
-        return $io->ask($message, validator: function (?string $answer): string {
+        return $io->ask($message, validator: function (string|null $answer): string {
             if ($answer === null) {
                 throw new InvalidArgumentException('The value is mandatory');
             }
@@ -223,6 +223,6 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
 
     private function askOptional(string $message, StyleInterface $io): string
     {
-        return $io->ask($message, validator: fn (?string $answer) => $answer === null ? '' : trim($answer));
+        return $io->ask($message, validator: fn (string|null $answer) => $answer === null ? '' : trim($answer));
     }
 }

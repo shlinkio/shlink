@@ -155,7 +155,7 @@ class LocateVisitTest extends TestCase
     }
 
     #[Test, DataProvider('provideIpAddresses')]
-    public function locatableVisitsResolveToLocation(Visit $visit, ?string $originalIpAddress): void
+    public function locatableVisitsResolveToLocation(Visit $visit, string|null $originalIpAddress): void
     {
         $ipAddr = $originalIpAddress ?? $visit->remoteAddr;
         $location = new Location('', '', '', '', 0.0, 0.0, '');

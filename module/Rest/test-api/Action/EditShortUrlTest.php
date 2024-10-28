@@ -90,7 +90,7 @@ class EditShortUrlTest extends ApiTestCase
     #[Test, DataProviderExternal(ApiTestDataProviders::class, 'invalidUrlsProvider')]
     public function tryingToEditInvalidUrlReturnsNotFoundError(
         string $shortCode,
-        ?string $domain,
+        string|null $domain,
         string $expectedDetail,
         string $apiKey,
     ): void {
@@ -125,7 +125,7 @@ class EditShortUrlTest extends ApiTestCase
     }
 
     #[Test, DataProvider('provideDomains')]
-    public function metadataIsEditedOnProperShortUrlBasedOnDomain(?string $domain, string $expectedUrl): void
+    public function metadataIsEditedOnProperShortUrlBasedOnDomain(string|null $domain, string $expectedUrl): void
     {
         $shortCode = 'ghi789';
         $url = new Uri(sprintf('/short-urls/%s', $shortCode));

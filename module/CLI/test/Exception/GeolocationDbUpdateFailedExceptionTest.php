@@ -15,7 +15,7 @@ use Throwable;
 class GeolocationDbUpdateFailedExceptionTest extends TestCase
 {
     #[Test, DataProvider('providePrev')]
-    public function withOlderDbBuildsException(?Throwable $prev): void
+    public function withOlderDbBuildsException(Throwable|null $prev): void
     {
         $e = GeolocationDbUpdateFailedException::withOlderDb($prev);
 
@@ -29,7 +29,7 @@ class GeolocationDbUpdateFailedExceptionTest extends TestCase
     }
 
     #[Test, DataProvider('providePrev')]
-    public function withoutOlderDbBuildsException(?Throwable $prev): void
+    public function withoutOlderDbBuildsException(Throwable|null $prev): void
     {
         $e = GeolocationDbUpdateFailedException::withoutOlderDb($prev);
 

@@ -18,7 +18,7 @@ class DeleteShortUrlTest extends ApiTestCase
     #[Test, DataProviderExternal(ApiTestDataProviders::class, 'invalidUrlsProvider')]
     public function notFoundErrorIsReturnWhenDeletingInvalidUrl(
         string $shortCode,
-        ?string $domain,
+        string|null $domain,
         string $expectedDetail,
         string $apiKey,
     ): void {

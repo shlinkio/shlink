@@ -21,7 +21,7 @@ class SimpleShortUrlRelationResolverTest extends TestCase
     }
 
     #[Test, DataProvider('provideDomains')]
-    public function resolvesExpectedDomain(?string $domain): void
+    public function resolvesExpectedDomain(string|null $domain): void
     {
         $result = $this->resolver->resolveDomain($domain);
 

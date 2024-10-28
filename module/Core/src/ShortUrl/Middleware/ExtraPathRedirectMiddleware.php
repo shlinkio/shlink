@@ -47,7 +47,7 @@ class ExtraPathRedirectMiddleware implements MiddlewareInterface
         return $this->tryToResolveRedirect($request, $handler);
     }
 
-    private function shouldApplyLogic(?NotFoundType $notFoundType): bool
+    private function shouldApplyLogic(NotFoundType|null $notFoundType): bool
     {
         if ($notFoundType === null || ! $this->urlShortenerOptions->appendExtraPath) {
             return false;

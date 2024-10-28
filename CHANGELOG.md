@@ -29,7 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Changed
-* *Nothing*
+* Update to Shlink PHP coding standard 2.4
 
 ### Deprecated
 * *Nothing*

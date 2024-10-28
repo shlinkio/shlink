@@ -22,7 +22,7 @@ final class ShortUrlsParams
         public readonly string|null $searchTerm,
         public readonly array $tags,
         public readonly Ordering $orderBy,
-        public readonly ?DateRange $dateRange,
+        public readonly DateRange|null $dateRange,
         public readonly bool $excludeMaxVisitsReached,
         public readonly bool $excludePastValidUntil,
         public readonly TagsMode $tagsMode = TagsMode::ANY,
@@ -64,7 +64,7 @@ final class ShortUrlsParams
         );
     }
 
-    private static function resolveTagsMode(?string $rawTagsMode): TagsMode
+    private static function resolveTagsMode(string|null $rawTagsMode): TagsMode
     {
         if ($rawTagsMode === null) {
             return TagsMode::ANY;

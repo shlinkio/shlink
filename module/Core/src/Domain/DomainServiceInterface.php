@@ -15,7 +15,7 @@ interface DomainServiceInterface
     /**
      * @return DomainItem[]
      */
-    public function listDomains(?ApiKey $apiKey = null): array;
+    public function listDomains(ApiKey|null $apiKey = null): array;
 
     /**
      * @throws DomainNotFoundException
@@ -25,9 +25,9 @@ interface DomainServiceInterface
     /**
      * @throws DomainNotFoundException If the API key is restricted to one domain and a different one is provided
      */
-    public function getOrCreate(string $authority, ?ApiKey $apiKey = null): Domain;
+    public function getOrCreate(string $authority, ApiKey|null $apiKey = null): Domain;
 
-    public function findByAuthority(string $authority, ?ApiKey $apiKey = null): ?Domain;
+    public function findByAuthority(string $authority, ApiKey|null $apiKey = null): Domain|null;
 
     /**
      * @throws DomainNotFoundException If the API key is restricted to one domain and a different one is provided
@@ -35,6 +35,6 @@ interface DomainServiceInterface
     public function configureNotFoundRedirects(
         string $authority,
         NotFoundRedirects $notFoundRedirects,
-        ?ApiKey $apiKey = null,
+        ApiKey|null $apiKey = null,
     ): Domain;
 }

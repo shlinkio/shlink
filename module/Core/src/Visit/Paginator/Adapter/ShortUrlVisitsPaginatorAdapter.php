@@ -20,7 +20,7 @@ class ShortUrlVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdap
         private readonly VisitRepositoryInterface $visitRepository,
         private readonly ShortUrlIdentifier $identifier,
         private readonly VisitsParams $params,
-        private readonly ?ApiKey $apiKey,
+        private readonly ApiKey|null $apiKey,
     ) {
     }
 

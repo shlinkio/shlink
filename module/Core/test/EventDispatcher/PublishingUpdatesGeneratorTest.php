@@ -41,7 +41,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
     }
 
     #[Test, DataProvider('provideMethod')]
-    public function visitIsProperlySerializedIntoUpdate(string $method, string $expectedTopic, ?string $title): void
+    public function visitIsProperlySerializedIntoUpdate(string $method, string $expectedTopic, string|null $title): void
     {
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
             'customSlug' => 'foo',

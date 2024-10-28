@@ -203,7 +203,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         return $qb;
     }
 
-    private function applyDatesInline(QueryBuilder $qb, ?DateRange $dateRange): void
+    private function applyDatesInline(QueryBuilder $qb, DateRange|null $dateRange): void
     {
         $conn = $this->getEntityManager()->getConnection();
 
@@ -215,7 +215,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         }
     }
 
-    private function resolveVisitsWithNativeQuery(QueryBuilder $qb, ?int $limit, ?int $offset): array
+    private function resolveVisitsWithNativeQuery(QueryBuilder $qb, int|null $limit, int|null $offset): array
     {
         // TODO Order by date and ID, not just by ID (order by date DESC, id DESC).
         //      That ensures imported visits are properly ordered even if inserted in wrong chronological order.
@@ -248,7 +248,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         return $this->getEntityManager()->createNativeQuery($nativeQb->getSQL(), $rsm)->getResult();
     }
 
-    public function findMostRecentOrphanVisit(): ?Visit
+    public function findMostRecentOrphanVisit(): Visit|null
     {
         $dql = <<<DQL
             SELECT v

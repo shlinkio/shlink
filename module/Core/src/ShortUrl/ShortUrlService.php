@@ -29,7 +29,7 @@ readonly class ShortUrlService implements ShortUrlServiceInterface
     public function updateShortUrl(
         ShortUrlIdentifier $identifier,
         ShortUrlEdition $shortUrlEdit,
-        ?ApiKey $apiKey = null,
+        ApiKey|null $apiKey = null,
     ): ShortUrl {
         if ($shortUrlEdit->longUrlWasProvided()) {
             $shortUrlEdit = $this->titleResolutionHelper->processTitle($shortUrlEdit);
