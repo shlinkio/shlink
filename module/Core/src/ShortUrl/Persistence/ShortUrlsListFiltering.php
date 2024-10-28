@@ -23,7 +23,9 @@ class ShortUrlsListFiltering extends ShortUrlsCountFiltering
         bool $excludeMaxVisitsReached = false,
         bool $excludePastValidUntil = false,
         ?ApiKey $apiKey = null,
+        // Used only to determine if search term includes default domain
         ?string $defaultDomain = null,
+        ?string $domain = null,
     ) {
         parent::__construct(
             $searchTerm,
@@ -34,6 +36,7 @@ class ShortUrlsListFiltering extends ShortUrlsCountFiltering
             $excludePastValidUntil,
             $apiKey,
             $defaultDomain,
+            $domain,
         );
     }
 
@@ -56,6 +59,7 @@ class ShortUrlsListFiltering extends ShortUrlsCountFiltering
             $params->excludePastValidUntil,
             $apiKey,
             $defaultDomain,
+            $params->domain,
         );
     }
 }

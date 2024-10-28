@@ -9,6 +9,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
+use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\OrderableField;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithVisitsSummary;
@@ -118,8 +119,8 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
                 $qb->expr()->like('d.authority', ':searchPattern'),
             ];
 
-            // Include default domain in search if provided
-            if ($filtering->searchIncludesDefaultDomain) {
+            // Include default domain in search if included, and a domain was not explicitly provided
+            if ($filtering->searchIncludesDefaultDomain && $filtering->domain === null) {
                 $conditions[] = $qb->expr()->isNull('s.domain');
             }
 
@@ -142,6 +143,12 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
         }
 
         if ($filtering->domain !== null) {
+            if ($filtering->domain === Domain::DEFAULT_AUTHORITY) {
+                $qb->andWhere($qb->expr()->isNull('s.domain'));
+            } else {
+                $qb->andWhere($qb->expr()->eq('d.authority', ':domain'))
+                   ->setParameter('domain', $filtering->domain);
+            }
         }
 
         if ($filtering->excludeMaxVisitsReached) {
