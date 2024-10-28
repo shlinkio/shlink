@@ -240,11 +240,11 @@ class VisitsStatsHelperTest extends TestCase
         );
         $repo2 = $this->createMock(VisitRepository::class);
         $repo2->method('findVisitsByDomain')->with(
-            'DEFAULT',
+            Domain::DEFAULT_AUTHORITY,
             $this->isInstanceOf(VisitsListFiltering::class),
         )->willReturn($list);
         $repo2->method('countVisitsByDomain')->with(
-            'DEFAULT',
+            Domain::DEFAULT_AUTHORITY,
             $this->isInstanceOf(VisitsCountFiltering::class),
         )->willReturn(1);
 
@@ -253,7 +253,7 @@ class VisitsStatsHelperTest extends TestCase
             [Visit::class, $repo2],
         ]);
 
-        $paginator = $this->helper->visitsForDomain('DEFAULT', new VisitsParams(), $apiKey);
+        $paginator = $this->helper->visitsForDomain(Domain::DEFAULT_AUTHORITY, new VisitsParams(), $apiKey);
 
         self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentPageResults()));
     }

@@ -10,6 +10,7 @@ use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtils;
+use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithVisitsSummary;
@@ -231,7 +232,7 @@ class ListShortUrlsCommand extends Command
         }
         if ($input->getOption('show-domain')) {
             $columnsMap['Domain'] = static fn (array $_, ShortUrl $shortUrl): string =>
-                $shortUrl->getDomain()?->authority ?? 'DEFAULT';
+                $shortUrl->getDomain()?->authority ?? Domain::DEFAULT_AUTHORITY;
         }
         if ($input->getOption('show-api-key')) {
             $columnsMap['API Key'] = static fn (array $_, ShortUrl $shortUrl): string =>

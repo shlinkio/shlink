@@ -109,7 +109,7 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
     {
         /** @var DomainRepository $domainRepo */
         $domainRepo = $this->em->getRepository(Domain::class);
-        if ($domain !== 'DEFAULT' && ! $domainRepo->domainExists($domain, $apiKey)) {
+        if ($domain !== Domain::DEFAULT_AUTHORITY && ! $domainRepo->domainExists($domain, $apiKey)) {
             throw DomainNotFoundException::fromAuthority($domain);
         }
 
