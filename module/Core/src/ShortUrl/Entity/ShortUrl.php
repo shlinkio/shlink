@@ -49,19 +49,19 @@ class ShortUrl extends AbstractEntity
         private Collection $tags = new ArrayCollection(),
         private Collection & Selectable $visits = new ArrayCollection(),
         private Collection & Selectable $visitsCounts = new ArrayCollection(),
-        private ?Chronos $validSince = null,
-        private ?Chronos $validUntil = null,
-        private ?int $maxVisits = null,
-        private ?Domain $domain = null,
+        private Chronos|null $validSince = null,
+        private Chronos|null $validUntil = null,
+        private int|null $maxVisits = null,
+        private Domain|null $domain = null,
         private bool $customSlugWasProvided = false,
         private int $shortCodeLength = 0,
-        public readonly ?ApiKey $authorApiKey = null,
-        private ?string $title = null,
+        public readonly ApiKey|null $authorApiKey = null,
+        private string|null $title = null,
         private bool $titleWasAutoResolved = false,
         private bool $crawlable = false,
         private bool $forwardQuery = true,
-        private ?string $importSource = null,
-        private ?string $importOriginalShortCode = null,
+        private string|null $importSource = null,
+        private string|null $importOriginalShortCode = null,
         private Collection $redirectRules = new ArrayCollection(),
     ) {
     }
@@ -85,7 +85,7 @@ class ShortUrl extends AbstractEntity
 
     public static function create(
         ShortUrlCreation $creation,
-        ?ShortUrlRelationResolverInterface $relationResolver = null,
+        ShortUrlRelationResolverInterface|null $relationResolver = null,
     ): self {
         $relationResolver = $relationResolver ?? new SimpleShortUrlRelationResolver();
         $shortCodeLength = $creation->shortCodeLength;
@@ -115,7 +115,7 @@ class ShortUrl extends AbstractEntity
     public static function fromImport(
         ImportedShlinkUrl $url,
         bool $importShortCode,
-        ?ShortUrlRelationResolverInterface $relationResolver = null,
+        ShortUrlRelationResolverInterface|null $relationResolver = null,
     ): self {
         $meta = [
             ShortUrlInputFilter::LONG_URL => $url->longUrl,
@@ -141,7 +141,7 @@ class ShortUrl extends AbstractEntity
 
     public function update(
         ShortUrlEdition $shortUrlEdit,
-        ?ShortUrlRelationResolverInterface $relationResolver = null,
+        ShortUrlRelationResolverInterface|null $relationResolver = null,
     ): void {
         if ($shortUrlEdit->validSinceWasProvided()) {
             $this->validSince = $shortUrlEdit->validSince;
@@ -185,7 +185,7 @@ class ShortUrl extends AbstractEntity
         return $this->shortCode;
     }
 
-    public function getDomain(): ?Domain
+    public function getDomain(): Domain|null
     {
         return $this->domain;
     }
@@ -195,7 +195,7 @@ class ShortUrl extends AbstractEntity
         return $this->forwardQuery;
     }
 
-    public function title(): ?string
+    public function title(): string|null
     {
         return $this->title;
     }
@@ -205,7 +205,7 @@ class ShortUrl extends AbstractEntity
         return count($this->visits) >= $visitsAmount;
     }
 
-    public function mostRecentImportedVisitDate(): ?Chronos
+    public function mostRecentImportedVisitDate(): Chronos|null
     {
         $criteria = Criteria::create()->where(Criteria::expr()->eq('type', VisitType::IMPORTED))
                                       ->orderBy(['id' => 'DESC'])
@@ -270,7 +270,7 @@ class ShortUrl extends AbstractEntity
      *  Providing the raw authority as `string|null` would result in a fallback to `$this->domain` when the authority
      *  was null.
      */
-    public function toArray(?VisitsSummary $precalculatedSummary = null, callable|null $getAuthority = null): array
+    public function toArray(VisitsSummary|null $precalculatedSummary = null, callable|null $getAuthority = null): array
     {
         return [
             'shortCode' => $this->shortCode,

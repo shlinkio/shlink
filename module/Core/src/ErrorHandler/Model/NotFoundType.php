@@ -13,7 +13,7 @@ use function rtrim;
 
 class NotFoundType
 {
-    private function __construct(private readonly ?VisitType $type)
+    private function __construct(private readonly VisitType|null $type)
     {
     }
 

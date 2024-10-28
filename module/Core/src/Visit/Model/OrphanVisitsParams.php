@@ -12,11 +12,11 @@ use function sprintf;
 final class OrphanVisitsParams extends VisitsParams
 {
     public function __construct(
-        ?DateRange $dateRange = null,
-        ?int $page = null,
-        ?int $itemsPerPage = null,
+        DateRange|null $dateRange = null,
+        int|null $page = null,
+        int|null $itemsPerPage = null,
         bool $excludeBots = false,
-        public readonly ?OrphanVisitType $type = null,
+        public readonly OrphanVisitType|null $type = null,
     ) {
         parent::__construct($dateRange, $page, $itemsPerPage, $excludeBots);
     }

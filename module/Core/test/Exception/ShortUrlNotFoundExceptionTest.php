@@ -16,7 +16,7 @@ class ShortUrlNotFoundExceptionTest extends TestCase
     public function properlyCreatesExceptionFromNotFoundShortCode(
         string $expectedMessage,
         string $shortCode,
-        ?string $domain,
+        string|null $domain,
     ): void {
         $expectedAdditional = ['shortCode' => $shortCode];
         if ($domain !== null) {

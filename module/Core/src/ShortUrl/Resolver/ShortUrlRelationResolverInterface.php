@@ -10,7 +10,7 @@ use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 
 interface ShortUrlRelationResolverInterface
 {
-    public function resolveDomain(?string $domain): ?Domain;
+    public function resolveDomain(string|null $domain): Domain|null;
 
     /**
      * @param string[] $tags

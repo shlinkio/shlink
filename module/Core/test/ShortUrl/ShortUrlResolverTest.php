@@ -42,7 +42,7 @@ class ShortUrlResolverTest extends TestCase
     }
 
     #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
-    public function shortCodeIsProperlyParsed(?ApiKey $apiKey): void
+    public function shortCodeIsProperlyParsed(ApiKey|null $apiKey): void
     {
         $shortUrl = ShortUrl::withLongUrl('https://expected_url');
         $shortCode = $shortUrl->getShortCode();
@@ -59,7 +59,7 @@ class ShortUrlResolverTest extends TestCase
     }
 
     #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
-    public function exceptionIsThrownIfShortCodeIsNotFound(?ApiKey $apiKey): void
+    public function exceptionIsThrownIfShortCodeIsNotFound(ApiKey|null $apiKey): void
     {
         $shortCode = 'abc123';
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);

@@ -72,7 +72,7 @@
         "phpunit/phpcov": "^10.0",
         "phpunit/phpunit": "^11.4",
         "roave/security-advisories": "dev-master",
-        "shlinkio/php-coding-standard": "~2.3.0",
+        "shlinkio/php-coding-standard": "~2.4.0",
         "shlinkio/shlink-test-utils": "^4.1.1",
         "symfony/var-dumper": "^7.1",
         "veewee/composer-run-parallel": "^1.4"

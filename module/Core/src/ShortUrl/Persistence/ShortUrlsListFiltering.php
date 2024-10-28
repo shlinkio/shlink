@@ -13,19 +13,19 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class ShortUrlsListFiltering extends ShortUrlsCountFiltering
 {
     public function __construct(
-        public readonly ?int $limit = null,
-        public readonly ?int $offset = null,
+        public readonly int|null $limit = null,
+        public readonly int|null $offset = null,
         public readonly Ordering $orderBy = new Ordering(),
-        ?string $searchTerm = null,
+        string|null $searchTerm = null,
         array $tags = [],
-        ?TagsMode $tagsMode = null,
-        ?DateRange $dateRange = null,
+        TagsMode|null $tagsMode = null,
+        DateRange|null $dateRange = null,
         bool $excludeMaxVisitsReached = false,
         bool $excludePastValidUntil = false,
-        ?ApiKey $apiKey = null,
+        ApiKey|null $apiKey = null,
         // Used only to determine if search term includes default domain
-        ?string $defaultDomain = null,
-        ?string $domain = null,
+        string|null $defaultDomain = null,
+        string|null $domain = null,
     ) {
         parent::__construct(
             $searchTerm,
@@ -44,7 +44,7 @@ class ShortUrlsListFiltering extends ShortUrlsCountFiltering
         int $limit,
         int $offset,
         ShortUrlsParams $params,
-        ?ApiKey $apiKey,
+        ApiKey|null $apiKey,
         string $defaultDomain,
     ): self {
         return new self(

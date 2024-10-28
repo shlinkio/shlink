@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     This change applies both to the `GET /short-urls` endpoint, via the `domain` query parameter, and the `short-url:list` console command, via the `--domain`|`-d` flag.
 
 ### Changed
-* *Nothing*
+* Update to Shlink PHP coding standard 2.4
 
 ### Deprecated
 * *Nothing*

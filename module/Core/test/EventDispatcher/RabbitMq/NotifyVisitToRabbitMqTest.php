@@ -179,7 +179,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         ];
     }
 
-    private function listener(?RabbitMqOptions $options = null): NotifyVisitToRabbitMq
+    private function listener(RabbitMqOptions|null $options = null): NotifyVisitToRabbitMq
     {
         return new NotifyVisitToRabbitMq(
             $this->helper,

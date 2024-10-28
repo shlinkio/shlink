@@ -56,7 +56,7 @@ class RedirectRuleHandlerTest extends TestCase
     #[Test,  DataProvider('provideExitActions')]
     public function commentIsDisplayedWhenRulesListIsEmpty(
         RedirectRuleHandlerAction $action,
-        ?array $expectedResult,
+        array|null $expectedResult,
     ): void {
         $this->io->expects($this->once())->method('choice')->willReturn($action->value);
         $this->io->expects($this->once())->method('newLine');

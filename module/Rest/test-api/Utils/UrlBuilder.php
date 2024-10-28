@@ -11,7 +11,7 @@ use function sprintf;
 
 class UrlBuilder
 {
-    public static function buildShortUrlPath(string $shortCode, ?string $domain, string $suffix = ''): string
+    public static function buildShortUrlPath(string $shortCode, string|null $domain, string $suffix = ''): string
     {
         $url = new Uri(sprintf('/short-urls/%s%s', $shortCode, $suffix));
         if ($domain !== null) {

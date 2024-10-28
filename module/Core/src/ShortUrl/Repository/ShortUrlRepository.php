@@ -23,7 +23,7 @@ use function strtolower;
 /** @extends EntitySpecificationRepository<ShortUrl> */
 class ShortUrlRepository extends EntitySpecificationRepository implements ShortUrlRepositoryInterface
 {
-    public function findOneWithDomainFallback(ShortUrlIdentifier $identifier, ShortUrlMode $shortUrlMode): ?ShortUrl
+    public function findOneWithDomainFallback(ShortUrlIdentifier $identifier, ShortUrlMode $shortUrlMode): ShortUrl|null
     {
         // When ordering DESC, Postgres puts nulls at the beginning while the rest of supported DB engines put them at
         // the bottom
@@ -52,7 +52,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    public function findOne(ShortUrlIdentifier $identifier, ?Specification $spec = null): ?ShortUrl
+    public function findOne(ShortUrlIdentifier $identifier, Specification|null $spec = null): ShortUrl|null
     {
         $qb = $this->createFindOneQueryBuilder($identifier, $spec);
         $qb->select('s');
@@ -60,12 +60,12 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    public function shortCodeIsInUse(ShortUrlIdentifier $identifier, ?Specification $spec = null): bool
+    public function shortCodeIsInUse(ShortUrlIdentifier $identifier, Specification|null $spec = null): bool
     {
         return $this->doShortCodeIsInUse($identifier, $spec, null);
     }
 
-    public function shortCodeIsInUseWithLock(ShortUrlIdentifier $identifier, ?Specification $spec = null): bool
+    public function shortCodeIsInUseWithLock(ShortUrlIdentifier $identifier, Specification|null $spec = null): bool
     {
         return $this->doShortCodeIsInUse($identifier, $spec, LockMode::PESSIMISTIC_WRITE);
     }
@@ -73,8 +73,11 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     /**
      * @param LockMode::PESSIMISTIC_WRITE|null $lockMode
      */
-    private function doShortCodeIsInUse(ShortUrlIdentifier $identifier, ?Specification $spec, ?LockMode $lockMode): bool
-    {
+    private function doShortCodeIsInUse(
+        ShortUrlIdentifier $identifier,
+        Specification|null $spec,
+        LockMode|null $lockMode,
+    ): bool {
         $qb = $this->createFindOneQueryBuilder($identifier, $spec)->select('s.id');
         $query = $qb->getQuery();
 
@@ -85,7 +88,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         return $query->getOneOrNullResult() !== null;
     }
 
-    private function createFindOneQueryBuilder(ShortUrlIdentifier $identifier, ?Specification $spec): QueryBuilder
+    private function createFindOneQueryBuilder(ShortUrlIdentifier $identifier, Specification|null $spec): QueryBuilder
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ShortUrl::class, 's')
@@ -101,7 +104,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         return $qb;
     }
 
-    public function findOneMatching(ShortUrlCreation $creation): ?ShortUrl
+    public function findOneMatching(ShortUrlCreation $creation): ShortUrl|null
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
@@ -166,7 +169,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         }
     }
 
-    public function findOneByImportedUrl(ImportedShlinkUrl $url): ?ShortUrl
+    public function findOneByImportedUrl(ImportedShlinkUrl $url): ShortUrl|null
     {
         $qb = $this->createQueryBuilder('s');
         $qb->andWhere($qb->expr()->eq('s.importOriginalShortCode', ':shortCode'))
@@ -180,7 +183,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    private function whereDomainIs(QueryBuilder $qb, ?string $domain): void
+    private function whereDomainIs(QueryBuilder $qb, string|null $domain): void
     {
         if ($domain !== null) {
             $qb->join('s.domain', 'd')

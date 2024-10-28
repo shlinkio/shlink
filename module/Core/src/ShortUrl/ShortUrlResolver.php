@@ -23,7 +23,7 @@ readonly class ShortUrlResolver implements ShortUrlResolverInterface
     /**
      * @throws ShortUrlNotFoundException
      */
-    public function resolveShortUrl(ShortUrlIdentifier $identifier, ?ApiKey $apiKey = null): ShortUrl
+    public function resolveShortUrl(ShortUrlIdentifier $identifier, ApiKey|null $apiKey = null): ShortUrl
     {
         /** @var ShortUrlRepository $shortUrlRepo */
         $shortUrlRepo = $this->em->getRepository(ShortUrl::class);

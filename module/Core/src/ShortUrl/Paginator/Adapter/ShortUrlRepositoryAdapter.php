@@ -18,7 +18,7 @@ readonly class ShortUrlRepositoryAdapter implements AdapterInterface
     public function __construct(
         private ShortUrlListRepositoryInterface $repository,
         private ShortUrlsParams $params,
-        private ?ApiKey $apiKey,
+        private ApiKey|null $apiKey,
         private string $defaultDomain,
     ) {
     }

@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\Core\Config;
 
 final class EmptyNotFoundRedirectConfig implements NotFoundRedirectConfigInterface
 {
-    public function invalidShortUrlRedirect(): ?string
+    public function invalidShortUrlRedirect(): string|null
     {
         return null;
     }
@@ -16,7 +16,7 @@ final class EmptyNotFoundRedirectConfig implements NotFoundRedirectConfigInterfa
         return false;
     }
 
-    public function regular404Redirect(): ?string
+    public function regular404Redirect(): string|null
     {
         return null;
     }
@@ -26,7 +26,7 @@ final class EmptyNotFoundRedirectConfig implements NotFoundRedirectConfigInterfa
         return false;
     }
 
-    public function baseUrlRedirect(): ?string
+    public function baseUrlRedirect(): string|null
     {
         return null;
     }

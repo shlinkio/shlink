@@ -12,7 +12,7 @@ use function array_map;
 
 class SimpleShortUrlRelationResolver implements ShortUrlRelationResolverInterface
 {
-    public function resolveDomain(?string $domain): ?Domain
+    public function resolveDomain(string|null $domain): Domain|null
     {
         return $domain !== null ? Domain::withAuthority($domain) : null;
     }

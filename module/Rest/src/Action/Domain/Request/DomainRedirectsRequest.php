@@ -14,11 +14,11 @@ use function array_key_exists;
 class DomainRedirectsRequest
 {
     private string $authority;
-    private ?string $baseUrlRedirect = null;
+    private string|null $baseUrlRedirect = null;
     private bool $baseUrlRedirectWasProvided = false;
-    private ?string $regular404Redirect = null;
+    private string|null $regular404Redirect = null;
     private bool $regular404RedirectWasProvided = false;
-    private ?string $invalidShortUrlRedirect = null;
+    private string|null $invalidShortUrlRedirect = null;
     private bool $invalidShortUrlRedirectWasProvided = false;
 
     private function __construct()
@@ -66,7 +66,7 @@ class DomainRedirectsRequest
         return $this->authority;
     }
 
-    public function toNotFoundRedirects(?NotFoundRedirectConfigInterface $defaults = null): NotFoundRedirects
+    public function toNotFoundRedirects(NotFoundRedirectConfigInterface|null $defaults = null): NotFoundRedirects
     {
         return NotFoundRedirects::withRedirects(
             $this->baseUrlRedirectWasProvided ? $this->baseUrlRedirect : $defaults?->baseUrlRedirect(),

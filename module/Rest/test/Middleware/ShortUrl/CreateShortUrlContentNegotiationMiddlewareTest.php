@@ -40,7 +40,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
     }
 
     #[Test, DataProvider('provideData')]
-    public function properResponseIsReturned(?string $accept, array $query, string $expectedContentType): void
+    public function properResponseIsReturned(string|null $accept, array $query, string $expectedContentType): void
     {
         $request = (new ServerRequest())->withQueryParams($query);
         if ($accept !== null) {

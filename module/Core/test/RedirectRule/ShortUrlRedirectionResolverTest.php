@@ -36,7 +36,7 @@ class ShortUrlRedirectionResolverTest extends TestCase
     #[Test, DataProvider('provideData')]
     public function resolveLongUrlReturnsExpectedValue(
         ServerRequestInterface $request,
-        ?RedirectCondition $condition,
+        RedirectCondition|null $condition,
         string $expectedUrl,
     ): void {
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([

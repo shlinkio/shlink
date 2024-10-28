@@ -29,8 +29,8 @@ class TagsPaginatorAdapterTest extends DatabaseTestCase
      */
     #[Test, DataProvider('provideFilters')]
     public function expectedListOfTagsIsReturned(
-        ?string $searchTerm,
-        ?string $orderBy,
+        string|null $searchTerm,
+        string|null $orderBy,
         int $offset,
         int $length,
         array $expectedTags,

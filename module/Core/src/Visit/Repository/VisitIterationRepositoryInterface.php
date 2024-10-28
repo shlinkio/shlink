@@ -24,5 +24,8 @@ interface VisitIterationRepositoryInterface
     /**
      * @return iterable<Visit>
      */
-    public function findAllVisits(?DateRange $dateRange = null, int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable;
+    public function findAllVisits(
+        DateRange|null $dateRange = null,
+        int $blockSize = self::DEFAULT_BLOCK_SIZE,
+    ): iterable;
 }

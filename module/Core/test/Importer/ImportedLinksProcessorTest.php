@@ -127,7 +127,7 @@ class ImportedLinksProcessorTest extends TestCase
 
         $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
         $this->repo->expects($this->exactly(count($urls)))->method('findOneByImportedUrl')->willReturnCallback(
-            fn (ImportedShlinkUrl $url): ?ShortUrl => contains(
+            fn (ImportedShlinkUrl $url): ShortUrl|null => contains(
                 $url->longUrl,
                 ['https://foo', 'https://baz2', 'https://baz3'],
             ) ? ShortUrl::fromImport($url, true) : null,
@@ -175,7 +175,7 @@ class ImportedLinksProcessorTest extends TestCase
         ImportedShlinkUrl $importedUrl,
         string $expectedOutput,
         int $amountOfPersistedVisits,
-        ?ShortUrl $foundShortUrl,
+        ShortUrl|null $foundShortUrl,
     ): void {
         $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
         $this->repo->expects($this->once())->method('findOneByImportedUrl')->willReturn($foundShortUrl);
@@ -232,7 +232,7 @@ class ImportedLinksProcessorTest extends TestCase
     }
 
     #[Test, DataProvider('provideFoundShortUrls')]
-    public function visitsArePersistedWithProperShortUrl(ShortUrl $originalShortUrl, ?ShortUrl $foundShortUrl): void
+    public function visitsArePersistedWithProperShortUrl(ShortUrl $originalShortUrl, ShortUrl|null $foundShortUrl): void
     {
         $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
         $this->repo->expects($this->once())->method('findOneByImportedUrl')->willReturn($originalShortUrl);
@@ -273,7 +273,7 @@ class ImportedLinksProcessorTest extends TestCase
     public function properAmountOfOrphanVisitsIsImported(
         bool $importOrphanVisits,
         iterable $visits,
-        ?Visit $lastOrphanVisit,
+        Visit|null $lastOrphanVisit,
         int $expectedImportedVisits,
     ): void {
         $this->io->expects($this->exactly($importOrphanVisits ? 2 : 1))->method('title');

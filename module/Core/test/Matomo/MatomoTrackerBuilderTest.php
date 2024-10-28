@@ -43,7 +43,7 @@ class MatomoTrackerBuilderTest extends TestCase
         self::assertEquals(MatomoTrackerBuilder::MATOMO_DEFAULT_TIMEOUT, $tracker->getRequestConnectTimeout());
     }
 
-    private function builder(?MatomoOptions $options = null): MatomoTrackerBuilder
+    private function builder(MatomoOptions|null $options = null): MatomoTrackerBuilder
     {
         $options ??= new MatomoOptions(enabled: true, baseUrl: 'base_url', siteId: 5, apiToken: 'api_token');
         return new MatomoTrackerBuilder($options);

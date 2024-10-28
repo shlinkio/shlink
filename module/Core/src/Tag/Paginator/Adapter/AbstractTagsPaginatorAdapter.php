@@ -21,7 +21,7 @@ abstract class AbstractTagsPaginatorAdapter implements AdapterInterface
     public function __construct(
         protected TagRepositoryInterface $repo,
         protected TagsParams $params,
-        protected ?ApiKey $apiKey,
+        protected ApiKey|null $apiKey,
     ) {
     }
 

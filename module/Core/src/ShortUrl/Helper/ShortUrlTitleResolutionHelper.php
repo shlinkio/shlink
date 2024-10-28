@@ -61,7 +61,7 @@ readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionH
         return $title !== null ? $data->withResolvedTitle($title) : $data;
     }
 
-    private function fetchUrl(string $url): ?ResponseInterface
+    private function fetchUrl(string $url): ResponseInterface|null
     {
         try {
             return $this->httpClient->request(RequestMethodInterface::METHOD_GET, $url, [
@@ -80,7 +80,7 @@ readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionH
         }
     }
 
-    private function tryToResolveTitle(ResponseInterface $response, string $contentType): ?string
+    private function tryToResolveTitle(ResponseInterface $response, string $contentType): string|null
     {
         $collectedBody = '';
         $body = $response->getBody();

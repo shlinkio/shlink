@@ -13,7 +13,7 @@ class IpCannotBeLocatedException extends RuntimeException
         string $message,
         public readonly UnlocatableIpType $type,
         int $code = 0,
-        ?Throwable $previous = null,
+        Throwable|null $previous = null,
     ) {
         parent::__construct($message, $code, $previous);
     }

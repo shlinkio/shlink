@@ -23,7 +23,7 @@ class NotFoundTemplateHandler implements RequestHandlerInterface
 
     private Closure $readFile;
 
-    public function __construct(?callable $readFile = null)
+    public function __construct(callable|null $readFile = null)
     {
         $this->readFile = $readFile ? Closure::fromCallable($readFile) : fn (string $file) => file_get_contents($file);
     }

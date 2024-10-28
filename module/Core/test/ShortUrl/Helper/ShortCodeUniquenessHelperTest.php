@@ -32,7 +32,7 @@ class ShortCodeUniquenessHelperTest extends TestCase
     }
 
     #[Test, DataProvider('provideDomains')]
-    public function shortCodeIsRegeneratedIfAlreadyInUse(?Domain $domain, ?string $expectedAuthority): void
+    public function shortCodeIsRegeneratedIfAlreadyInUse(Domain|null $domain, string|null $expectedAuthority): void
     {
         $callIndex = 0;
         $expectedCalls = 3;

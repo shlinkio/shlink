@@ -79,7 +79,7 @@ class VisitsTrackerTest extends TestCase
         yield 'trackRegularNotFoundVisit' => ['trackRegularNotFoundVisit'];
     }
 
-    private function visitsTracker(?TrackingOptions $options = null): VisitsTracker
+    private function visitsTracker(TrackingOptions|null $options = null): VisitsTracker
     {
         return new VisitsTracker($this->em, $this->eventDispatcher, $options ?? new TrackingOptions());
     }

@@ -18,7 +18,7 @@ class NonOrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAda
     public function __construct(
         private readonly VisitRepositoryInterface $repo,
         private readonly VisitsParams $params,
-        private readonly ?ApiKey $apiKey,
+        private readonly ApiKey|null $apiKey,
     ) {
     }
 
