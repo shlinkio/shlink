@@ -39,7 +39,7 @@
         "mezzio/mezzio": "^3.20",
         "mezzio/mezzio-fastroute": "^3.12",
         "mezzio/mezzio-problem-details": "^1.15",
-        "mlocati/ip-lib": "^1.18",
+        "mlocati/ip-lib": "^1.18.1",
         "mobiledetect/mobiledetectlib": "^4.8",
         "pagerfanta/core": "^3.8",
         "ramsey/uuid": "^4.7",
