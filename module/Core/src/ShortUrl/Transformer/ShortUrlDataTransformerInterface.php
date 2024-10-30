@@ -9,5 +9,5 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithVisitsSummary;
 
 interface ShortUrlDataTransformerInterface
 {
-    public function transform(ShortUrlWithVisitsSummary|ShortUrl $data): array;
+    public function transform(ShortUrlWithVisitsSummary|ShortUrl $shortUrl): array;
 }
