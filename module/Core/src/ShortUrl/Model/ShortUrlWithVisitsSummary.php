@@ -11,8 +11,8 @@ final readonly class ShortUrlWithVisitsSummary
 {
     private function __construct(
         public ShortUrl $shortUrl,
+        private string|null $authority,
         private VisitsSummary|null $visitsSummary = null,
-        private string|null $authority = null,
     ) {
     }
 
@@ -23,17 +23,22 @@ final readonly class ShortUrlWithVisitsSummary
     {
         return new self(
             shortUrl: $data['shortUrl'],
+            authority: $data['authority'] ?? null,
             visitsSummary: VisitsSummary::fromTotalAndNonBots(
                 total: (int) $data['visits'],
                 nonBots: (int) $data['nonBotVisits'],
             ),
-            authority: $data['authority'] ?? null,
         );
     }
 
     public static function fromShortUrl(ShortUrl $shortUrl): self
     {
-        return new self($shortUrl);
+        return new self($shortUrl, authority: $shortUrl->getDomain()?->authority);
+    }
+
+    public function toIdentifier(): ShortUrlIdentifier
+    {
+        return ShortUrlIdentifier::fromShortCodeAndDomain($this->shortUrl->getShortCode(), $this->authority);
     }
 
     public function toArray(): array
