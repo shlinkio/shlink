@@ -7,7 +7,7 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Transformer;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
-use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithVisitsSummary;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithDeps;
 
 readonly class ShortUrlDataTransformer implements ShortUrlDataTransformerInterface
 {
@@ -15,7 +15,7 @@ readonly class ShortUrlDataTransformer implements ShortUrlDataTransformerInterfa
     {
     }
 
-    public function transform(ShortUrlWithVisitsSummary|ShortUrl $shortUrl): array
+    public function transform(ShortUrlWithDeps|ShortUrl $shortUrl): array
     {
         $shortUrlIdentifier = $shortUrl instanceof ShortUrl
             ? ShortUrlIdentifier::fromShortUrl($shortUrl)

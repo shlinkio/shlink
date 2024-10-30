@@ -12,7 +12,7 @@ use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\OrderableField;
-use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithVisitsSummary;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithDeps;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
@@ -25,7 +25,7 @@ use function sprintf;
 class ShortUrlListRepository extends EntitySpecificationRepository implements ShortUrlListRepositoryInterface
 {
     /**
-     * @return ShortUrlWithVisitsSummary[]
+     * @return ShortUrlWithDeps[]
      */
     public function findList(ShortUrlsListFiltering $filtering): array
     {
@@ -59,7 +59,7 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
 
         /** @var array{shortUrl: ShortUrl, visits: string, nonBotVisits: string, authority: string|null}[] $result */
         $result = $qb->getQuery()->getResult();
-        return map($result, static fn (array $s) => ShortUrlWithVisitsSummary::fromArray($s));
+        return map($result, static fn (array $s) => ShortUrlWithDeps::fromArray($s));
     }
 
     private function processOrderByForList(QueryBuilder $qb, ShortUrlsListFiltering $filtering): void

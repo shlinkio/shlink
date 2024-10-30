@@ -14,7 +14,7 @@ use Shlinkio\Shlink\Core\Model\Ordering;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\OrderableField;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
-use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithVisitsSummary;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithDeps;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
@@ -97,7 +97,7 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         $result = $this->repo->findList(new ShortUrlsListFiltering(searchTerm: 'bar'));
         self::assertCount(2, $result);
         self::assertEquals(2, $this->repo->countList(new ShortUrlsCountFiltering('bar')));
-        self::assertContains($foo, map($result, fn (ShortUrlWithVisitsSummary $s) => $s->shortUrl));
+        self::assertContains($foo, map($result, fn (ShortUrlWithDeps $s) => $s->shortUrl));
 
         $result = $this->repo->findList(new ShortUrlsListFiltering());
         self::assertCount(3, $result);

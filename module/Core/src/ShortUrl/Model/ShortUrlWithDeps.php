@@ -7,7 +7,7 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Model;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsSummary;
 
-final readonly class ShortUrlWithVisitsSummary
+final readonly class ShortUrlWithDeps
 {
     private function __construct(
         public ShortUrl $shortUrl,
