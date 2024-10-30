@@ -13,7 +13,7 @@ use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtils;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
-use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithVisitsSummary;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithDeps;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlsParamsInputFilter;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlListServiceInterface;
@@ -186,7 +186,7 @@ class ListShortUrlsCommand extends Command
 
     /**
      * @param array<string, callable(array $serializedShortUrl, ShortUrl $shortUrl): ?string> $columnsMap
-     * @return Paginator<ShortUrlWithVisitsSummary>
+     * @return Paginator<ShortUrlWithDeps>
      */
     private function renderPage(
         OutputInterface $output,
@@ -196,7 +196,7 @@ class ListShortUrlsCommand extends Command
     ): Paginator {
         $shortUrls = $this->shortUrlService->listShortUrls($params);
 
-        $rows = map([...$shortUrls], function (ShortUrlWithVisitsSummary $shortUrl) use ($columnsMap) {
+        $rows = map([...$shortUrls], function (ShortUrlWithDeps $shortUrl) use ($columnsMap) {
             $serializedShortUrl = $this->transformer->transform($shortUrl);
             return map($columnsMap, fn (callable $call) => $call($serializedShortUrl, $shortUrl->shortUrl));
         });

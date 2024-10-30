@@ -6,13 +6,13 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Paginator\Adapter;
 
 use Pagerfanta\Adapter\AdapterInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
-use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithVisitsSummary;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithDeps;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlListRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-/** @implements AdapterInterface<ShortUrlWithVisitsSummary> */
+/** @implements AdapterInterface<ShortUrlWithDeps> */
 readonly class ShortUrlRepositoryAdapter implements AdapterInterface
 {
     public function __construct(

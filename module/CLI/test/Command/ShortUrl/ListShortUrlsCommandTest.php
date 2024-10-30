@@ -16,7 +16,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
-use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithVisitsSummary;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithDeps;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlListServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
@@ -48,7 +48,7 @@ class ListShortUrlsCommandTest extends TestCase
         // The paginator will return more than one page
         $data = [];
         for ($i = 0; $i < 50; $i++) {
-            $data[] = ShortUrlWithVisitsSummary::fromShortUrl(ShortUrl::withLongUrl('https://url_' . $i));
+            $data[] = ShortUrlWithDeps::fromShortUrl(ShortUrl::withLongUrl('https://url_' . $i));
         }
 
         $this->shortUrlService->expects($this->exactly(3))->method('listShortUrls')->withAnyParameters()
@@ -70,7 +70,7 @@ class ListShortUrlsCommandTest extends TestCase
         // The paginator will return more than one page
         $data = [];
         for ($i = 0; $i < 30; $i++) {
-            $data[] = ShortUrlWithVisitsSummary::fromShortUrl(ShortUrl::withLongUrl('https://url_' . $i));
+            $data[] = ShortUrlWithDeps::fromShortUrl(ShortUrl::withLongUrl('https://url_' . $i));
         }
 
         $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(
@@ -112,7 +112,7 @@ class ListShortUrlsCommandTest extends TestCase
         $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(
             ShortUrlsParams::empty(),
         )->willReturn(new Paginator(new ArrayAdapter([
-            ShortUrlWithVisitsSummary::fromShortUrl(
+            ShortUrlWithDeps::fromShortUrl(
                 ShortUrl::create(ShortUrlCreation::fromRawData([
                     'longUrl' => 'https://foo.com',
                     'tags' => ['foo', 'bar', 'baz'],
