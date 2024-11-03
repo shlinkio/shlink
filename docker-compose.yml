@@ -118,13 +118,13 @@ services:
 
     shlink_redis:
         container_name: shlink_redis
-        image: redis:6.2-alpine
+        image: redis:7.4-alpine
         ports:
             - "6380:6379"
 
     shlink_redis_acl:
         container_name: shlink_redis_acl
-        image: redis:6.2-alpine
+        image: redis:7.4-alpine
         command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
         ports:
             - "6382:6379"
