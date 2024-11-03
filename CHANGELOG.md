@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [4.2.5] - 2024-11-03
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#2244](https://github.com/shlinkio/shlink/issues/2244) Fix integration with Redis 7.4 and Valkey.
+
+
 ## [4.2.4] - 2024-10-27
 ### Added
 * *Nothing*
