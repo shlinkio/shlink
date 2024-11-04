@@ -109,7 +109,7 @@ class GenerateKeyCommand extends Command
         ));
 
         $io = new SymfonyStyle($input, $output);
-        $io->success(sprintf('Generated API key: "%s"', $apiKey->toString()));
+        $io->success(sprintf('Generated API key: "%s"', $apiKey->key));
 
         if (! ApiKey::isAdmin($apiKey)) {
             ShlinkTable::default($io)->render(
