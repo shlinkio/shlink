@@ -19,10 +19,9 @@ class ApiKey extends AbstractEntity
 {
     /**
      * @param Collection<string, ApiKeyRole> $roles
-     * @throws Exception
      */
     private function __construct(
-        private string $key,
+        public readonly string $key,
         public readonly string|null $name = null,
         public readonly Chronos|null $expirationDate = null,
         private bool $enabled = true,
@@ -73,16 +72,6 @@ class ApiKey extends AbstractEntity
     public function isValid(): bool
     {
         return $this->isEnabled() && ! $this->isExpired();
-    }
-
-    public function __toString(): string
-    {
-        return $this->key;
-    }
-
-    public function toString(): string
-    {
-        return $this->key;
     }
 
     public function spec(string|null $context = null): Specification

@@ -7,16 +7,16 @@ namespace Shlinkio\Shlink\Rest\ApiKey\Model;
 use Cake\Chronos\Chronos;
 use Ramsey\Uuid\Uuid;
 
-final class ApiKeyMeta
+final readonly class ApiKeyMeta
 {
     /**
      * @param iterable<RoleDefinition> $roleDefinitions
      */
     private function __construct(
-        public readonly string $key,
-        public readonly string|null $name,
-        public readonly Chronos|null $expirationDate,
-        public readonly iterable $roleDefinitions,
+        public string $key,
+        public string|null $name,
+        public Chronos|null $expirationDate,
+        public iterable $roleDefinitions,
     ) {
     }
 
