@@ -27,7 +27,7 @@
         "friendsofphp/proxy-manager-lts": "^1.0",
         "geoip2/geoip2": "^3.0",
         "guzzlehttp/guzzle": "^7.9",
-        "hidehalo/nanoid-php": "^1.1",
+        "hidehalo/nanoid-php": "^2.0",
         "jaybizzle/crawler-detect": "^1.2.116",
         "laminas/laminas-config": "^3.9",
         "laminas/laminas-config-aggregator": "^1.15",

@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Changed
 * Update to Shlink PHP coding standard 2.4
+* Update to `hidehalo/nanoid-php` 2.0
 
 ### Deprecated
 * *Nothing*
