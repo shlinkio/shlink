@@ -44,8 +44,7 @@ class ApiKey extends AbstractEntity
      */
     public static function fromMeta(ApiKeyMeta $meta): self
     {
-//        $apiKey = new self(self::hashKey($meta->key), $meta->name, $meta->expirationDate);
-        $apiKey = new self($meta->key, $meta->name, $meta->expirationDate);
+        $apiKey = new self(self::hashKey($meta->key), $meta->name, $meta->expirationDate);
         foreach ($meta->roleDefinitions as $roleDefinition) {
             $apiKey->registerRole($roleDefinition);
         }

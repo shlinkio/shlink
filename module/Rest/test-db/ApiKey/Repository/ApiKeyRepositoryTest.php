@@ -24,9 +24,9 @@ class ApiKeyRepositoryTest extends DatabaseTestCase
         self::assertCount(0, $this->repo->findAll());
         self::assertNotNull($this->repo->createInitialApiKey('initial_value'));
         self::assertCount(1, $this->repo->findAll());
-        self::assertCount(1, $this->repo->findBy(['key' => 'initial_value']));
+        self::assertCount(1, $this->repo->findBy(['key' => ApiKey::hashKey('initial_value')]));
         self::assertNull($this->repo->createInitialApiKey('another_one'));
         self::assertCount(1, $this->repo->findAll());
-        self::assertCount(0, $this->repo->findBy(['key' => 'another_one']));
+        self::assertCount(0, $this->repo->findBy(['key' => ApiKey::hashKey('another_one')]));
     }
 }

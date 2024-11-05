@@ -67,8 +67,7 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
     private function getByKey(string $key): ApiKey|null
     {
         return $this->em->getRepository(ApiKey::class)->findOneBy([
-//            'key' => ApiKey::hashKey($key),
-            'key' => $key,
+            'key' => ApiKey::hashKey($key),
         ]);
     }
 }

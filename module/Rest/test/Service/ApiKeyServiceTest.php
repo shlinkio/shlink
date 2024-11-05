@@ -74,7 +74,9 @@ class ApiKeyServiceTest extends TestCase
     #[Test, DataProvider('provideInvalidApiKeys')]
     public function checkReturnsFalseForInvalidApiKeys(ApiKey|null $invalidKey): void
     {
-        $this->repo->expects($this->once())->method('findOneBy')->with(['key' => '12345'])->willReturn($invalidKey);
+        $this->repo->expects($this->once())->method('findOneBy')->with(['key' => ApiKey::hashKey('12345')])->willReturn(
+            $invalidKey,
+        );
         $this->em->method('getRepository')->with(ApiKey::class)->willReturn($this->repo);
 
         $result = $this->service->check('12345');
@@ -97,7 +99,9 @@ class ApiKeyServiceTest extends TestCase
     {
         $apiKey = ApiKey::create();
 
-        $this->repo->expects($this->once())->method('findOneBy')->with(['key' => '12345'])->willReturn($apiKey);
+        $this->repo->expects($this->once())->method('findOneBy')->with(['key' => ApiKey::hashKey('12345')])->willReturn(
+            $apiKey,
+        );
         $this->em->method('getRepository')->with(ApiKey::class)->willReturn($this->repo);
 
         $result = $this->service->check('12345');
@@ -109,7 +113,9 @@ class ApiKeyServiceTest extends TestCase
     #[Test]
     public function disableThrowsExceptionWhenNoApiKeyIsFound(): void
     {
-        $this->repo->expects($this->once())->method('findOneBy')->with(['key' => '12345'])->willReturn(null);
+        $this->repo->expects($this->once())->method('findOneBy')->with(['key' => ApiKey::hashKey('12345')])->willReturn(
+            null,
+        );
         $this->em->method('getRepository')->with(ApiKey::class)->willReturn($this->repo);
 
         $this->expectException(InvalidArgumentException::class);
@@ -121,7 +127,9 @@ class ApiKeyServiceTest extends TestCase
     public function disableReturnsDisabledApiKeyWhenFound(): void
     {
         $key = ApiKey::create();
-        $this->repo->expects($this->once())->method('findOneBy')->with(['key' => '12345'])->willReturn($key);
+        $this->repo->expects($this->once())->method('findOneBy')->with(['key' => ApiKey::hashKey('12345')])->willReturn(
+            $key,
+        );
         $this->em->method('getRepository')->with(ApiKey::class)->willReturn($this->repo);
         $this->em->expects($this->once())->method('flush');
 
