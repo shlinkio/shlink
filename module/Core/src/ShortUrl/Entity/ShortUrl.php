@@ -200,6 +200,11 @@ class ShortUrl extends AbstractEntity
         return $this->title;
     }
 
+    public function dateCreated(): Chronos
+    {
+        return $this->dateCreated;
+    }
+
     public function reachedVisits(int $visitsAmount): bool
     {
         return count($this->visits) >= $visitsAmount;
