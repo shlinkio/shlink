@@ -41,7 +41,7 @@ final readonly class ApiKeyMeta
 
         // If a name was not provided, fall back to the key
         if (empty($name)) {
-            // If the key was auto-generated, fall back to a "censored" version of the UUID, otherwise simply use the
+            // If the key was auto-generated, fall back to a redacted version of the UUID, otherwise simply use the
             // plain key as fallback name
             $name = $key === null
                 ? sprintf('%s-****-****-****-************', substr($resolvedKey, offset: 0, length: 8))

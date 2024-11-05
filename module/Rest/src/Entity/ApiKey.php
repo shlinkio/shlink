@@ -24,7 +24,7 @@ class ApiKey extends AbstractEntity
      */
     private function __construct(
         public readonly string $key,
-        public readonly string|null $name = null,
+        public readonly string $name,
         public readonly Chronos|null $expirationDate = null,
         private bool $enabled = true,
         private Collection $roles = new ArrayCollection(),
