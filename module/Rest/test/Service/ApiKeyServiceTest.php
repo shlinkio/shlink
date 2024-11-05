@@ -18,6 +18,8 @@ use Shlinkio\Shlink\Rest\ApiKey\Repository\ApiKeyRepository;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 
+use function substr;
+
 class ApiKeyServiceTest extends TestCase
 {
     private ApiKeyService $service;
@@ -40,12 +42,14 @@ class ApiKeyServiceTest extends TestCase
         $this->em->expects($this->once())->method('flush');
         $this->em->expects($this->once())->method('persist')->with($this->isInstanceOf(ApiKey::class));
 
-        $key = $this->service->create(
-            ApiKeyMeta::fromParams(name: $name, expirationDate: $date, roleDefinitions: $roles),
-        );
+        $meta = ApiKeyMeta::fromParams(name: $name, expirationDate: $date, roleDefinitions: $roles);
+        $key = $this->service->create($meta);
 
         self::assertEquals($date, $key->expirationDate);
-        self::assertEquals($name, $key->name);
+        self::assertEquals(
+            empty($name) ? substr($meta->key, 0, 8) . '-****-****-****-************' : $name,
+            $key->name,
+        );
         foreach ($roles as $roleDefinition) {
             self::assertTrue($key->hasRole($roleDefinition->role));
         }

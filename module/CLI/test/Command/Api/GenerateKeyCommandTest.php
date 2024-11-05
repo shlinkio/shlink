@@ -36,7 +36,7 @@ class GenerateKeyCommandTest extends TestCase
     public function noExpirationDateIsDefinedIfNotProvided(): void
     {
         $this->apiKeyService->expects($this->once())->method('create')->with(
-            $this->callback(fn (ApiKeyMeta $meta) => $meta->name === null && $meta->expirationDate === null),
+            $this->callback(fn (ApiKeyMeta $meta) => $meta->expirationDate === null),
         )->willReturn(ApiKey::create());
 
         $this->commandTester->execute([]);

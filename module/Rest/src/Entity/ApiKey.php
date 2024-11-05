@@ -15,6 +15,8 @@ use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 
+use function hash;
+
 class ApiKey extends AbstractEntity
 {
     /**
@@ -42,12 +44,21 @@ class ApiKey extends AbstractEntity
      */
     public static function fromMeta(ApiKeyMeta $meta): self
     {
+//        $apiKey = new self(self::hashKey($meta->key), $meta->name, $meta->expirationDate);
         $apiKey = new self($meta->key, $meta->name, $meta->expirationDate);
         foreach ($meta->roleDefinitions as $roleDefinition) {
             $apiKey->registerRole($roleDefinition);
         }
 
         return $apiKey;
+    }
+
+    /**
+     * Generates a hash for provided key, in the way Shlink expects API keys to be hashed
+     */
+    public static function hashKey(string $key): string
+    {
+        return hash('sha256', $key);
     }
 
     public function isExpired(): bool

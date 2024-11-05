@@ -10,11 +10,9 @@ use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Repository\ApiKeyRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-use function sprintf;
-
-class ApiKeyService implements ApiKeyServiceInterface
+readonly class ApiKeyService implements ApiKeyServiceInterface
 {
-    public function __construct(private readonly EntityManagerInterface $em)
+    public function __construct(private EntityManagerInterface $em)
     {
     }
 
@@ -48,11 +46,12 @@ class ApiKeyService implements ApiKeyServiceInterface
     {
         $apiKey = $this->getByKey($key);
         if ($apiKey === null) {
-            throw new InvalidArgumentException(sprintf('API key "%s" does not exist and can\'t be disabled', $key));
+            throw new InvalidArgumentException('Provided API key does not exist and can\'t be disabled');
         }
 
         $apiKey->disable();
         $this->em->flush();
+
         return $apiKey;
     }
 
@@ -62,17 +61,14 @@ class ApiKeyService implements ApiKeyServiceInterface
     public function listKeys(bool $enabledOnly = false): array
     {
         $conditions = $enabledOnly ? ['enabled' => true] : [];
-        /** @var ApiKey[] $apiKeys */
-        $apiKeys = $this->em->getRepository(ApiKey::class)->findBy($conditions);
-        return $apiKeys;
+        return $this->em->getRepository(ApiKey::class)->findBy($conditions);
     }
 
     private function getByKey(string $key): ApiKey|null
     {
-        /** @var ApiKey|null $apiKey */
-        $apiKey = $this->em->getRepository(ApiKey::class)->findOneBy([
+        return $this->em->getRepository(ApiKey::class)->findOneBy([
+//            'key' => ApiKey::hashKey($key),
             'key' => $key,
         ]);
-        return $apiKey;
     }
 }

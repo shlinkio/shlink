@@ -54,7 +54,7 @@ class ListKeysCommand extends Command
             $messagePattern = $this->determineMessagePattern($apiKey);
 
             // Set columns for this row
-            $rowData = [sprintf($messagePattern, $apiKey->key), sprintf($messagePattern, $apiKey->name ?? '-')];
+            $rowData = [sprintf($messagePattern, $apiKey->name ?? '-')];
             if (! $enabledOnly) {
                 $rowData[] = sprintf($messagePattern, $this->getEnabledSymbol($apiKey));
             }
@@ -67,7 +67,6 @@ class ListKeysCommand extends Command
         }, $this->apiKeyService->listKeys($enabledOnly));
 
         ShlinkTable::withRowSeparators($output)->render(array_filter([
-            'Key',
             'Name',
             ! $enabledOnly ? 'Is enabled' : null,
             'Expiration date',
