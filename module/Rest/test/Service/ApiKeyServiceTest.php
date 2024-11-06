@@ -110,33 +110,35 @@ class ApiKeyServiceTest extends TestCase
         self::assertSame($apiKey, $result->apiKey);
     }
 
-    #[Test]
-    public function disableThrowsExceptionWhenNoApiKeyIsFound(): void
+    #[Test, DataProvider('provideDisableArgs')]
+    public function disableThrowsExceptionWhenNoApiKeyIsFound(string $disableMethod, array $findOneByArg): void
     {
-        $this->repo->expects($this->once())->method('findOneBy')->with(['key' => ApiKey::hashKey('12345')])->willReturn(
-            null,
-        );
+        $this->repo->expects($this->once())->method('findOneBy')->with($findOneByArg)->willReturn(null);
         $this->em->method('getRepository')->with(ApiKey::class)->willReturn($this->repo);
 
         $this->expectException(InvalidArgumentException::class);
 
-        $this->service->disable('12345');
+        $this->service->{$disableMethod}('12345');
     }
 
-    #[Test]
-    public function disableReturnsDisabledApiKeyWhenFound(): void
+    #[Test, DataProvider('provideDisableArgs')]
+    public function disableReturnsDisabledApiKeyWhenFound(string $disableMethod, array $findOneByArg): void
     {
         $key = ApiKey::create();
-        $this->repo->expects($this->once())->method('findOneBy')->with(['key' => ApiKey::hashKey('12345')])->willReturn(
-            $key,
-        );
+        $this->repo->expects($this->once())->method('findOneBy')->with($findOneByArg)->willReturn($key);
         $this->em->method('getRepository')->with(ApiKey::class)->willReturn($this->repo);
         $this->em->expects($this->once())->method('flush');
 
         self::assertTrue($key->isEnabled());
-        $returnedKey = $this->service->disable('12345');
+        $returnedKey = $this->service->{$disableMethod}('12345');
         self::assertFalse($key->isEnabled());
         self::assertSame($key, $returnedKey);
+    }
+
+    public static function provideDisableArgs(): iterable
+    {
+        yield 'disableByKey' => ['disableByKey', ['key' => ApiKey::hashKey('12345')]];
+        yield 'disableByName' => ['disableByName', ['name' => '12345']];
     }
 
     #[Test]

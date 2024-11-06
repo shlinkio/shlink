@@ -19,7 +19,13 @@ interface ApiKeyServiceInterface
     /**
      * @throws InvalidArgumentException
      */
-    public function disable(string $key): ApiKey;
+    public function disableByName(string $apiKeyName): ApiKey;
+
+    /**
+     * @deprecated Use `self::disableByName($name)` instead
+     * @throws InvalidArgumentException
+     */
+    public function disableByKey(string $key): ApiKey;
 
     /**
      * @return ApiKey[]

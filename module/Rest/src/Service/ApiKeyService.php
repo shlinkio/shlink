@@ -40,11 +40,25 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
     }
 
     /**
-     * @throws InvalidArgumentException
+     * @inheritDoc
      */
-    public function disable(string $key): ApiKey
+    public function disableByName(string $apiKeyName): ApiKey
     {
-        $apiKey = $this->getByKey($key);
+        return $this->disableApiKey($this->em->getRepository(ApiKey::class)->findOneBy([
+            'name' => $apiKeyName,
+        ]));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function disableByKey(string $key): ApiKey
+    {
+        return $this->disableApiKey($this->getByKey($key));
+    }
+
+    private function disableApiKey(ApiKey|null $apiKey): ApiKey
+    {
         if ($apiKey === null) {
             throw new InvalidArgumentException('Provided API key does not exist and can\'t be disabled');
         }

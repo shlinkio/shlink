@@ -7,7 +7,6 @@ namespace Shlinkio\Shlink\Rest\Entity;
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Exception;
 use Happyr\DoctrineSpecification\Spec;
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
@@ -31,17 +30,11 @@ class ApiKey extends AbstractEntity
     ) {
     }
 
-    /**
-     * @throws Exception
-     */
     public static function create(): ApiKey
     {
         return self::fromMeta(ApiKeyMeta::empty());
     }
 
-    /**
-     * @throws Exception
-     */
     public static function fromMeta(ApiKeyMeta $meta): self
     {
         $apiKey = new self(self::hashKey($meta->key), $meta->name, $meta->expirationDate);
