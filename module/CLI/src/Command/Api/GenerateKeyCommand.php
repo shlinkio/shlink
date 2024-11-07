@@ -100,16 +100,22 @@ class GenerateKeyCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $io = new SymfonyStyle($input, $output);
         $expirationDate = $input->getOption('expiration-date');
-
         $apiKeyMeta = ApiKeyMeta::fromParams(
             name: $input->getOption('name'),
             expirationDate: isset($expirationDate) ? Chronos::parse($expirationDate) : null,
             roleDefinitions: $this->roleResolver->determineRoles($input),
         );
-        $apiKey = $this->apiKeyService->create($apiKeyMeta);
 
-        $io = new SymfonyStyle($input, $output);
+        if ($this->apiKeyService->existsWithName($apiKeyMeta->name)) {
+            $io->warning(
+                sprintf('An API key with name "%s" already exists. Try with a different ome', $apiKeyMeta->name),
+            );
+            return ExitCode::EXIT_WARNING;
+        }
+
+        $apiKey = $this->apiKeyService->create($apiKeyMeta);
         $io->success(sprintf('Generated API key: "%s"', $apiKeyMeta->key));
 
         if ($input->isInteractive()) {
@@ -120,8 +126,7 @@ class GenerateKeyCommand extends Command
             ShlinkTable::default($io)->render(
                 ['Role name', 'Role metadata'],
                 $apiKey->mapRoles(fn (Role $role, array $meta) => [$role->value, arrayToString($meta, indentSize: 0)]),
-                null,
-                'Roles',
+                headerTitle: 'Roles',
             );
         }
 
