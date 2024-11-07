@@ -14,7 +14,7 @@ use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
-use Shlinkio\Shlink\Rest\ApiKey\Repository\ApiKeyRepository;
+use Shlinkio\Shlink\Rest\ApiKey\Repository\ApiKeyRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 
@@ -24,13 +24,13 @@ class ApiKeyServiceTest extends TestCase
 {
     private ApiKeyService $service;
     private MockObject & EntityManager $em;
-    private MockObject & ApiKeyRepository $repo;
+    private MockObject & ApiKeyRepositoryInterface $repo;
 
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManager::class);
-        $this->repo = $this->createMock(ApiKeyRepository::class);
-        $this->service = new ApiKeyService($this->em);
+        $this->repo = $this->createMock(ApiKeyRepositoryInterface::class);
+        $this->service = new ApiKeyService($this->em, $this->repo);
     }
 
     /**
@@ -77,7 +77,6 @@ class ApiKeyServiceTest extends TestCase
         $this->repo->expects($this->once())->method('findOneBy')->with(['key' => ApiKey::hashKey('12345')])->willReturn(
             $invalidKey,
         );
-        $this->em->method('getRepository')->with(ApiKey::class)->willReturn($this->repo);
 
         $result = $this->service->check('12345');
 
@@ -102,7 +101,6 @@ class ApiKeyServiceTest extends TestCase
         $this->repo->expects($this->once())->method('findOneBy')->with(['key' => ApiKey::hashKey('12345')])->willReturn(
             $apiKey,
         );
-        $this->em->method('getRepository')->with(ApiKey::class)->willReturn($this->repo);
 
         $result = $this->service->check('12345');
 
@@ -114,7 +112,6 @@ class ApiKeyServiceTest extends TestCase
     public function disableThrowsExceptionWhenNoApiKeyIsFound(string $disableMethod, array $findOneByArg): void
     {
         $this->repo->expects($this->once())->method('findOneBy')->with($findOneByArg)->willReturn(null);
-        $this->em->method('getRepository')->with(ApiKey::class)->willReturn($this->repo);
 
         $this->expectException(InvalidArgumentException::class);
 
@@ -126,7 +123,6 @@ class ApiKeyServiceTest extends TestCase
     {
         $key = ApiKey::create();
         $this->repo->expects($this->once())->method('findOneBy')->with($findOneByArg)->willReturn($key);
-        $this->em->method('getRepository')->with(ApiKey::class)->willReturn($this->repo);
         $this->em->expects($this->once())->method('flush');
 
         self::assertTrue($key->isEnabled());
@@ -147,7 +143,6 @@ class ApiKeyServiceTest extends TestCase
         $expectedApiKeys = [ApiKey::create(), ApiKey::create(), ApiKey::create()];
 
         $this->repo->expects($this->once())->method('findBy')->with([])->willReturn($expectedApiKeys);
-        $this->em->method('getRepository')->with(ApiKey::class)->willReturn($this->repo);
 
         $result = $this->service->listKeys();
 
@@ -160,7 +155,6 @@ class ApiKeyServiceTest extends TestCase
         $expectedApiKeys = [ApiKey::create(), ApiKey::create(), ApiKey::create()];
 
         $this->repo->expects($this->once())->method('findBy')->with(['enabled' => true])->willReturn($expectedApiKeys);
-        $this->em->method('getRepository')->with(ApiKey::class)->willReturn($this->repo);
 
         $result = $this->service->listKeys(enabledOnly: true);
 
@@ -171,7 +165,6 @@ class ApiKeyServiceTest extends TestCase
     public function createInitialDelegatesToRepository(ApiKey|null $apiKey): void
     {
         $this->repo->expects($this->once())->method('createInitialApiKey')->with('the_key')->willReturn($apiKey);
-        $this->em->method('getRepository')->with(ApiKey::class)->willReturn($this->repo);
 
         $result = $this->service->createInitial('the_key');
 

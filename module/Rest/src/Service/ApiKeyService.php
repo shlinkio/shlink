@@ -12,7 +12,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 readonly class ApiKeyService implements ApiKeyServiceInterface
 {
-    public function __construct(private EntityManagerInterface $em)
+    public function __construct(private EntityManagerInterface $em, private ApiKeyRepositoryInterface $repo)
     {
     }
 
@@ -28,14 +28,12 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
 
     public function createInitial(string $key): ApiKey|null
     {
-        /** @var ApiKeyRepositoryInterface $repo */
-        $repo = $this->em->getRepository(ApiKey::class);
-        return $repo->createInitialApiKey($key);
+        return $this->repo->createInitialApiKey($key);
     }
 
     public function check(string $key): ApiKeyCheckResult
     {
-        $apiKey = $this->getByKey($key);
+        $apiKey = $this->findByKey($key);
         return new ApiKeyCheckResult($apiKey);
     }
 
@@ -44,9 +42,7 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
      */
     public function disableByName(string $apiKeyName): ApiKey
     {
-        return $this->disableApiKey($this->em->getRepository(ApiKey::class)->findOneBy([
-            'name' => $apiKeyName,
-        ]));
+        return $this->disableApiKey($this->findByName($apiKeyName));
     }
 
     /**
@@ -54,7 +50,7 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
      */
     public function disableByKey(string $key): ApiKey
     {
-        return $this->disableApiKey($this->getByKey($key));
+        return $this->disableApiKey($this->findByKey($key));
     }
 
     private function disableApiKey(ApiKey|null $apiKey): ApiKey
@@ -75,13 +71,16 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
     public function listKeys(bool $enabledOnly = false): array
     {
         $conditions = $enabledOnly ? ['enabled' => true] : [];
-        return $this->em->getRepository(ApiKey::class)->findBy($conditions);
+        return $this->repo->findBy($conditions);
     }
 
-    private function getByKey(string $key): ApiKey|null
+    private function findByKey(string $key): ApiKey|null
     {
-        return $this->em->getRepository(ApiKey::class)->findOneBy([
-            'key' => ApiKey::hashKey($key),
-        ]);
+        return $this->repo->findOneBy(['key' => ApiKey::hashKey($key)]);
+    }
+
+    private function findByName(string $name): ApiKey|null
+    {
+        return $this->repo->findOneBy(['name' => $name]);
     }
 }
