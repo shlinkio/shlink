@@ -42,7 +42,7 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
      */
     public function disableByName(string $apiKeyName): ApiKey
     {
-        return $this->disableApiKey($this->findByName($apiKeyName));
+        return $this->disableApiKey($this->repo->findOneBy(['name' => $apiKeyName]));
     }
 
     /**
@@ -79,8 +79,11 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
         return $this->repo->findOneBy(['key' => ApiKey::hashKey($key)]);
     }
 
-    private function findByName(string $name): ApiKey|null
+    /**
+     * @inheritDoc
+     */
+    public function existsWithName(string $apiKeyName): bool
     {
-        return $this->repo->findOneBy(['name' => $name]);
+        return $this->repo->count(['name' => $apiKeyName]) > 0;
     }
 }

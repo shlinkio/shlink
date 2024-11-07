@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
@@ -175,5 +176,16 @@ class ApiKeyServiceTest extends TestCase
     {
         yield 'first api key' => [ApiKey::create()];
         yield 'existing api keys' => [null];
+    }
+
+    #[Test]
+    #[TestWith([0, false])]
+    #[TestWith([1, true])]
+    #[TestWith([27, true])]
+    public function existsWithNameCountsEntriesInRepository(int $count, bool $expected): void
+    {
+        $name = 'the_key';
+        $this->repo->expects($this->once())->method('count')->with(['name' => $name])->willReturn($count);
+        self::assertEquals($this->service->existsWithName($name), $expected);
     }
 }

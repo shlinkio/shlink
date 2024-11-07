@@ -31,4 +31,9 @@ interface ApiKeyServiceInterface
      * @return ApiKey[]
      */
     public function listKeys(bool $enabledOnly = false): array;
+
+    /**
+     * Check if an API key exists for provided name
+     */
+    public function existsWithName(string $apiKeyName): bool;
 }
