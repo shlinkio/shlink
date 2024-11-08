@@ -13,6 +13,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
+use Shlinkio\Shlink\Core\Model\Renaming;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\ApiKey\Repository\ApiKeyRepositoryInterface;
@@ -187,5 +188,67 @@ class ApiKeyServiceTest extends TestCase
         $name = 'the_key';
         $this->repo->expects($this->once())->method('count')->with(['name' => $name])->willReturn($count);
         self::assertEquals($this->service->existsWithName($name), $expected);
+    }
+
+    #[Test]
+    public function renameApiKeyThrowsExceptionIfApiKeyIsNotFound(): void
+    {
+        $renaming = Renaming::fromNames(oldName: 'old', newName: 'new');
+
+        $this->repo->expects($this->once())->method('findOneBy')->with(['name' => 'old'])->willReturn(null);
+        $this->repo->expects($this->never())->method('count');
+        $this->em->expects($this->never())->method('flush');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('API key with name "old" could not be found');
+
+        $this->service->renameApiKey($renaming);
+    }
+
+    #[Test]
+    public function renameApiKeyReturnsApiKeyVerbatimIfBothNamesAreEqual(): void
+    {
+        $renaming = Renaming::fromNames(oldName: 'same_value', newName: 'same_value');
+        $apiKey = ApiKey::create();
+
+        $this->repo->expects($this->once())->method('findOneBy')->with(['name' => 'same_value'])->willReturn($apiKey);
+        $this->repo->expects($this->never())->method('count');
+        $this->em->expects($this->never())->method('flush');
+
+        $result = $this->service->renameApiKey($renaming);
+
+        self::assertSame($apiKey, $result);
+    }
+
+    #[Test]
+    public function renameApiKeyThrowsExceptionIfNewNameIsInUse(): void
+    {
+        $renaming = Renaming::fromNames(oldName: 'old', newName: 'new');
+        $apiKey = ApiKey::create();
+
+        $this->repo->expects($this->once())->method('findOneBy')->with(['name' => 'old'])->willReturn($apiKey);
+        $this->repo->expects($this->once())->method('count')->with(['name' => 'new'])->willReturn(1);
+        $this->em->expects($this->never())->method('flush');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Another API key with name "new" already exists');
+
+        $this->service->renameApiKey($renaming);
+    }
+
+    #[Test]
+    public function renameApiKeyReturnsApiKeyWithNewName(): void
+    {
+        $renaming = Renaming::fromNames(oldName: 'old', newName: 'new');
+        $apiKey = ApiKey::fromMeta(ApiKeyMeta::fromParams(name: 'old'));
+
+        $this->repo->expects($this->once())->method('findOneBy')->with(['name' => 'old'])->willReturn($apiKey);
+        $this->repo->expects($this->once())->method('count')->with(['name' => 'new'])->willReturn(0);
+        $this->em->expects($this->once())->method('flush');
+
+        $result = $this->service->renameApiKey($renaming);
+
+        self::assertSame($apiKey, $result);
+        self::assertEquals('new', $apiKey->name);
     }
 }

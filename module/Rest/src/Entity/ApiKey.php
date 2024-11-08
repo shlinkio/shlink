@@ -23,7 +23,8 @@ class ApiKey extends AbstractEntity
      */
     private function __construct(
         public readonly string $key,
-        public readonly string $name,
+        // TODO Use a property hook to allow public read but private write
+        public string $name,
         public readonly Chronos|null $expirationDate = null,
         private bool $enabled = true,
         private Collection $roles = new ArrayCollection(),

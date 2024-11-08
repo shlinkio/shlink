@@ -13,9 +13,9 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Exception\ForbiddenTagOperationException;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
+use Shlinkio\Shlink\Core\Model\Renaming;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
-use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
 use Shlinkio\Shlink\Core\Tag\Model\TagsListFiltering;
 use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
 use Shlinkio\Shlink\Core\Tag\Repository\TagRepository;
@@ -127,7 +127,7 @@ class TagServiceTest extends TestCase
         $this->repo->expects($this->once())->method('findOneBy')->willReturn(null);
         $this->expectException(TagNotFoundException::class);
 
-        $this->service->renameTag(TagRenaming::fromNames('foo', 'bar'), $apiKey);
+        $this->service->renameTag(Renaming::fromNames('foo', 'bar'), $apiKey);
     }
 
     #[Test, DataProvider('provideValidRenames')]
@@ -139,7 +139,7 @@ class TagServiceTest extends TestCase
         $this->repo->expects($this->exactly($count > 0 ? 0 : 1))->method('count')->willReturn($count);
         $this->em->expects($this->once())->method('flush');
 
-        $tag = $this->service->renameTag(TagRenaming::fromNames($oldName, $newName));
+        $tag = $this->service->renameTag(Renaming::fromNames($oldName, $newName));
 
         self::assertSame($expected, $tag);
         self::assertEquals($newName, (string) $tag);
@@ -160,7 +160,7 @@ class TagServiceTest extends TestCase
 
         $this->expectException(TagConflictException::class);
 
-        $this->service->renameTag(TagRenaming::fromNames('foo', 'bar'), $apiKey);
+        $this->service->renameTag(Renaming::fromNames('foo', 'bar'), $apiKey);
     }
 
     #[Test]
@@ -172,7 +172,7 @@ class TagServiceTest extends TestCase
         $this->expectExceptionMessage('You are not allowed to rename tags');
 
         $this->service->renameTag(
-            TagRenaming::fromNames('foo', 'bar'),
+            Renaming::fromNames('foo', 'bar'),
             ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls())),
         );
     }

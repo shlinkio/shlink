@@ -6,9 +6,12 @@ namespace Shlinkio\Shlink\Rest\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
+use Shlinkio\Shlink\Core\Model\Renaming;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Repository\ApiKeyRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
+
+use function sprintf;
 
 readonly class ApiKeyService implements ApiKeyServiceInterface
 {
@@ -74,16 +77,44 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
         return $this->repo->findBy($conditions);
     }
 
-    private function findByKey(string $key): ApiKey|null
-    {
-        return $this->repo->findOneBy(['key' => ApiKey::hashKey($key)]);
-    }
-
     /**
      * @inheritDoc
      */
     public function existsWithName(string $apiKeyName): bool
     {
         return $this->repo->count(['name' => $apiKeyName]) > 0;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function renameApiKey(Renaming $apiKeyRenaming): ApiKey
+    {
+        $apiKey = $this->repo->findOneBy(['name' => $apiKeyRenaming->oldName]);
+        if ($apiKey === null) {
+            throw new InvalidArgumentException(
+                sprintf('API key with name "%s" could not be found', $apiKeyRenaming->oldName),
+            );
+        }
+
+        if (! $apiKeyRenaming->nameChanged()) {
+            return $apiKey;
+        }
+
+        if ($this->existsWithName($apiKeyRenaming->newName)) {
+            throw new InvalidArgumentException(
+                sprintf('Another API key with name "%s" already exists', $apiKeyRenaming->newName),
+            );
+        }
+
+        $apiKey->name = $apiKeyRenaming->newName;
+        $this->em->flush();
+
+        return $apiKey;
+    }
+
+    private function findByKey(string $key): ApiKey|null
+    {
+        return $this->repo->findOneBy(['key' => ApiKey::hashKey($key)]);
     }
 }

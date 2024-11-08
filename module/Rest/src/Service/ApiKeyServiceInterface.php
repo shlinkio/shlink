@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Service;
 
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
+use Shlinkio\Shlink\Core\Model\Renaming;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -36,4 +37,9 @@ interface ApiKeyServiceInterface
      * Check if an API key exists for provided name
      */
     public function existsWithName(string $apiKeyName): bool;
+
+    /**
+     * @throws InvalidArgumentException If an API key with oldName does not exist, or newName is in use by another one
+     */
+    public function renameApiKey(Renaming $apiKeyRenaming): ApiKey;
 }
