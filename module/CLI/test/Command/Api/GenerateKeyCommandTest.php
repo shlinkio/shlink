@@ -71,21 +71,4 @@ class GenerateKeyCommandTest extends TestCase
 
         self::assertEquals(ExitCode::EXIT_SUCCESS, $exitCode);
     }
-
-    #[Test]
-    public function warningIsPrintedIfProvidedNameAlreadyExists(): void
-    {
-        $name = 'The API key';
-
-        $this->apiKeyService->expects($this->never())->method('create');
-        $this->apiKeyService->expects($this->once())->method('existsWithName')->with($name)->willReturn(true);
-
-        $exitCode = $this->commandTester->execute([
-            '--name' => $name,
-        ]);
-        $output = $this->commandTester->getDisplay();
-
-        self::assertEquals(ExitCode::EXIT_WARNING, $exitCode);
-        self::assertStringContainsString('An API key with name "The API key" already exists.', $output);
-    }
 }

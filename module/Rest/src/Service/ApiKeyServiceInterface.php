@@ -34,11 +34,6 @@ interface ApiKeyServiceInterface
     public function listKeys(bool $enabledOnly = false): array;
 
     /**
-     * Check if an API key exists for provided name
-     */
-    public function existsWithName(string $apiKeyName): bool;
-
-    /**
      * @throws InvalidArgumentException If an API key with oldName does not exist, or newName is in use by another one
      */
     public function renameApiKey(Renaming $apiKeyRenaming): ApiKey;

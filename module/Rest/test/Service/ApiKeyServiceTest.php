@@ -8,7 +8,6 @@ use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
@@ -41,6 +40,9 @@ class ApiKeyServiceTest extends TestCase
     #[Test, DataProvider('provideCreationDate')]
     public function apiKeyIsProperlyCreated(Chronos|null $date, string|null $name, array $roles): void
     {
+        $this->repo->expects($this->once())->method('count')->with(
+            ! empty($name) ? ['name' => $name] : $this->isType('array'),
+        )->willReturn(0);
         $this->em->expects($this->once())->method('flush');
         $this->em->expects($this->once())->method('persist')->with($this->isInstanceOf(ApiKey::class));
 
@@ -71,6 +73,19 @@ class ApiKeyServiceTest extends TestCase
         yield 'single name' => [null, 'Alice', []];
         yield 'multi-word name' => [null, 'Alice and Bob', []];
         yield 'empty name' => [null, '', []];
+    }
+
+    #[Test]
+    public function exceptionIsThrownWhileCreatingIfNameIsInUse(): void
+    {
+        $this->repo->expects($this->once())->method('count')->with(['name' => 'the_name'])->willReturn(1);
+        $this->em->expects($this->never())->method('flush');
+        $this->em->expects($this->never())->method('persist');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Another API key with name "the_name" already exists');
+
+        $this->service->create(ApiKeyMeta::fromParams(name: 'the_name'));
     }
 
     #[Test, DataProvider('provideInvalidApiKeys')]
@@ -177,17 +192,6 @@ class ApiKeyServiceTest extends TestCase
     {
         yield 'first api key' => [ApiKey::create()];
         yield 'existing api keys' => [null];
-    }
-
-    #[Test]
-    #[TestWith([0, false])]
-    #[TestWith([1, true])]
-    #[TestWith([27, true])]
-    public function existsWithNameCountsEntriesInRepository(int $count, bool $expected): void
-    {
-        $name = 'the_key';
-        $this->repo->expects($this->once())->method('count')->with(['name' => $name])->willReturn($count);
-        self::assertEquals($this->service->existsWithName($name), $expected);
     }
 
     #[Test]

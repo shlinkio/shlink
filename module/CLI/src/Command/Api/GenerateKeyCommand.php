@@ -108,13 +108,6 @@ class GenerateKeyCommand extends Command
             roleDefinitions: $this->roleResolver->determineRoles($input),
         );
 
-        if ($this->apiKeyService->existsWithName($apiKeyMeta->name)) {
-            $io->warning(
-                sprintf('An API key with name "%s" already exists. Try with a different ome', $apiKeyMeta->name),
-            );
-            return ExitCode::EXIT_WARNING;
-        }
-
         $apiKey = $this->apiKeyService->create($apiKeyMeta);
         $io->success(sprintf('Generated API key: "%s"', $apiKeyMeta->key));
 

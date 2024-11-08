@@ -9,9 +9,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#2207](https://github.com/shlinkio/shlink/issues/2207) Add `hasRedirectRules` flag to short URL API model. This flag tells if a specific short URL has any redirect rules attached to it.
 * [#1520](https://github.com/shlinkio/shlink/issues/1520) Allow short URLs list to be filtered by `domain`.
 
-  This change applies both to the `GET /short-urls` endpoint, via the `domain` query parameter, and the `short-url:list` console command, via the `--domain`|`-d` flag.
+    This change applies both to the `GET /short-urls` endpoint, via the `domain` query parameter, and the `short-url:list` console command, via the `--domain`|`-d` flag.
 
 ### Changed
+* [#2193](https://github.com/shlinkio/shlink/issues/2193) API keys are now hashed using SHA256, instead of being saved in plain text.
+
+    As a side effect, API key names have now become more important, and are considered unique.
+
+    When people update to this Shlink version, existing API keys will be hashed for everything to continue working.
+
+    In order to avoid data to be lost, plain-text keys will be written in the `name` field, either together with any existing name, or as the name itself. Then users are responsible for renaming them using the new `api-key:rename` command.
+
+    For newly created API keys, it is recommended to provide a name, but if not provided, a name will be generated from a redacted version of the new API key.
+
 * Update to Shlink PHP coding standard 2.4
 * Update to `hidehalo/nanoid-php` 2.0
 

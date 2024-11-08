@@ -21,7 +21,13 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
 
     public function create(ApiKeyMeta $apiKeyMeta): ApiKey
     {
+        // TODO If name is auto-generated, do not throw. Instead, re-generate a new key
         $apiKey = ApiKey::fromMeta($apiKeyMeta);
+        if ($this->existsWithName($apiKey->name)) {
+            throw new InvalidArgumentException(
+                sprintf('Another API key with name "%s" already exists', $apiKeyMeta->name),
+            );
+        }
 
         $this->em->persist($apiKey);
         $this->em->flush();
@@ -79,14 +85,6 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
 
     /**
      * @inheritDoc
-     */
-    public function existsWithName(string $apiKeyName): bool
-    {
-        return $this->repo->count(['name' => $apiKeyName]) > 0;
-    }
-
-    /**
-     * @inheritDoc
      * @todo This method should be transactional and to a SELECT ... FROM UPDATE when checking if the new name exists,
      *       to avoid a race condition where the method is called twice in parallel for a new name that doesn't exist,
      *       causing two API keys to end up with the same name.
@@ -119,5 +117,10 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
     private function findByKey(string $key): ApiKey|null
     {
         return $this->repo->findOneBy(['key' => ApiKey::hashKey($key)]);
+    }
+
+    private function existsWithName(string $apiKeyName): bool
+    {
+        return $this->repo->count(['name' => $apiKeyName]) > 0;
     }
 }
