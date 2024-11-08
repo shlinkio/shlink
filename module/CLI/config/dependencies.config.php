@@ -59,6 +59,7 @@ return [
             Command\Api\DisableKeyCommand::class => ConfigAbstractFactory::class,
             Command\Api\ListKeysCommand::class => ConfigAbstractFactory::class,
             Command\Api\InitialApiKeyCommand::class => ConfigAbstractFactory::class,
+            Command\Api\RenameApiKeyCommand::class => ConfigAbstractFactory::class,
 
             Command\Tag\ListTagsCommand::class => ConfigAbstractFactory::class,
             Command\Tag\RenameTagCommand::class => ConfigAbstractFactory::class,
@@ -120,6 +121,7 @@ return [
         Command\Api\DisableKeyCommand::class => [ApiKeyService::class],
         Command\Api\ListKeysCommand::class => [ApiKeyService::class],
         Command\Api\InitialApiKeyCommand::class => [ApiKeyService::class],
+        Command\Api\RenameApiKeyCommand::class => [ApiKeyService::class],
 
         Command\Tag\ListTagsCommand::class => [TagService::class],
         Command\Tag\RenameTagCommand::class => [TagService::class],

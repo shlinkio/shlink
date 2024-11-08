@@ -87,6 +87,9 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
 
     /**
      * @inheritDoc
+     * @todo This method should be transactional and to a SELECT ... FROM UPDATE when checking if the new name exists,
+     *       to avoid a race condition where the method is called twice in parallel for a new name that doesn't exist,
+     *       causing two API keys to end up with the same name.
      */
     public function renameApiKey(Renaming $apiKeyRenaming): ApiKey
     {
