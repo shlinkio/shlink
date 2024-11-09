@@ -37,7 +37,7 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
     protected function setUp(): void
     {
         $em = $this->getEntityManager();
-        $this->repo = new ShortUrlListRepository($em, $em->getClassMetadata(ShortUrl::class));
+        $this->repo = $this->createRepository(ShortUrl::class, ShortUrlListRepository::class);
         $this->relationResolver = new PersistenceShortUrlRelationResolver($em);
     }
 

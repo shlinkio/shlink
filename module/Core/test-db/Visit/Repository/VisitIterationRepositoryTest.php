@@ -25,8 +25,7 @@ class VisitIterationRepositoryTest extends DatabaseTestCase
 
     protected function setUp(): void
     {
-        $em = $this->getEntityManager();
-        $this->repo = new VisitIterationRepository($em, $em->getClassMetadata(Visit::class));
+        $this->repo = $this->createRepository(Visit::class, VisitIterationRepository::class);
     }
 
     #[Test, DataProvider('provideBlockSize')]
