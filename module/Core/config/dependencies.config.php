@@ -175,7 +175,10 @@ return [
             Visit\Repository\VisitDeleterRepository::class,
             ShortUrl\ShortUrlResolver::class,
         ],
-        ShortUrl\Helper\ShortCodeUniquenessHelper::class => ['em', Config\Options\UrlShortenerOptions::class],
+        ShortUrl\Helper\ShortCodeUniquenessHelper::class => [
+            ShortUrl\Repository\ShortUrlRepository::class,
+            Config\Options\UrlShortenerOptions::class,
+        ],
         Domain\DomainService::class => [
             'em',
             Config\Options\UrlShortenerOptions::class,

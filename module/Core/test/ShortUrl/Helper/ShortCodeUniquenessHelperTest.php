@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\ShortUrl\Helper;
 
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -14,18 +13,18 @@ use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortCodeUniquenessHelper;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
-use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository;
+use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
 
 class ShortCodeUniquenessHelperTest extends TestCase
 {
     private ShortCodeUniquenessHelper $helper;
-    private MockObject & EntityManagerInterface $em;
+    private MockObject & ShortUrlRepositoryInterface $repo;
     private MockObject & ShortUrl $shortUrl;
 
     protected function setUp(): void
     {
-        $this->em = $this->createMock(EntityManagerInterface::class);
-        $this->helper = new ShortCodeUniquenessHelper($this->em, new UrlShortenerOptions());
+        $this->repo = $this->createMock(ShortUrlRepositoryInterface::class);
+        $this->helper = new ShortCodeUniquenessHelper($this->repo, new UrlShortenerOptions());
 
         $this->shortUrl = $this->createMock(ShortUrl::class);
         $this->shortUrl->method('getShortCode')->willReturn('abc123');
@@ -36,16 +35,12 @@ class ShortCodeUniquenessHelperTest extends TestCase
     {
         $callIndex = 0;
         $expectedCalls = 3;
-        $repo = $this->createMock(ShortUrlRepository::class);
-        $repo->expects($this->exactly($expectedCalls))->method('shortCodeIsInUseWithLock')->with(
+        $this->repo->expects($this->exactly($expectedCalls))->method('shortCodeIsInUseWithLock')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain('abc123', $expectedAuthority),
         )->willReturnCallback(function () use (&$callIndex, $expectedCalls) {
             $callIndex++;
             return $callIndex < $expectedCalls;
         });
-        $this->em->expects($this->exactly($expectedCalls))->method('getRepository')->with(ShortUrl::class)->willReturn(
-            $repo,
-        );
         $this->shortUrl->method('getDomain')->willReturn($domain);
         $this->shortUrl->expects($this->exactly($expectedCalls - 1))->method('regenerateShortCode')->with();
 
@@ -63,11 +58,9 @@ class ShortCodeUniquenessHelperTest extends TestCase
     #[Test]
     public function inUseSlugReturnsError(): void
     {
-        $repo = $this->createMock(ShortUrlRepository::class);
-        $repo->expects($this->once())->method('shortCodeIsInUseWithLock')->with(
+        $this->repo->expects($this->once())->method('shortCodeIsInUseWithLock')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain('abc123'),
         )->willReturn(true);
-        $this->em->expects($this->once())->method('getRepository')->with(ShortUrl::class)->willReturn($repo);
         $this->shortUrl->method('getDomain')->willReturn(null);
         $this->shortUrl->expects($this->never())->method('regenerateShortCode');
 
