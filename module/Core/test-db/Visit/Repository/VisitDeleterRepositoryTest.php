@@ -20,8 +20,7 @@ class VisitDeleterRepositoryTest extends DatabaseTestCase
 
     protected function setUp(): void
     {
-        $em = $this->getEntityManager();
-        $this->repo = new VisitDeleterRepository($em, $em->getClassMetadata(Visit::class));
+        $this->repo = $this->createRepository(Visit::class, VisitDeleterRepository::class);
     }
 
     #[Test]

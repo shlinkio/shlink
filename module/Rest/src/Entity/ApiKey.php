@@ -33,7 +33,7 @@ class ApiKey extends AbstractEntity
 
     public static function create(): ApiKey
     {
-        return self::fromMeta(ApiKeyMeta::empty());
+        return self::fromMeta(ApiKeyMeta::create());
     }
 
     public static function fromMeta(ApiKeyMeta $meta): self
