@@ -15,13 +15,12 @@ use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
 use Shlinkio\Shlink\Core\Tag\Paginator\Adapter\TagsInfoPaginatorAdapter;
 use Shlinkio\Shlink\Core\Tag\Paginator\Adapter\TagsPaginatorAdapter;
-use Shlinkio\Shlink\Core\Tag\Repository\TagRepository;
 use Shlinkio\Shlink\Core\Tag\Repository\TagRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 readonly class TagService implements TagServiceInterface
 {
-    public function __construct(private ORM\EntityManagerInterface $em)
+    public function __construct(private ORM\EntityManagerInterface $em, private TagRepositoryInterface $repo)
     {
     }
 
@@ -30,9 +29,7 @@ readonly class TagService implements TagServiceInterface
      */
     public function listTags(TagsParams $params, ApiKey|null $apiKey = null): Paginator
     {
-        /** @var TagRepository $repo */
-        $repo = $this->em->getRepository(Tag::class);
-        return $this->createPaginator(new TagsPaginatorAdapter($repo, $params, $apiKey), $params);
+        return $this->createPaginator(new TagsPaginatorAdapter($this->repo, $params, $apiKey), $params);
     }
 
     /**
@@ -40,9 +37,7 @@ readonly class TagService implements TagServiceInterface
      */
     public function tagsInfo(TagsParams $params, ApiKey|null $apiKey = null): Paginator
     {
-        /** @var TagRepositoryInterface $repo */
-        $repo = $this->em->getRepository(Tag::class);
-        return $this->createPaginator(new TagsInfoPaginatorAdapter($repo, $params, $apiKey), $params);
+        return $this->createPaginator(new TagsInfoPaginatorAdapter($this->repo, $params, $apiKey), $params);
     }
 
     /**
@@ -66,9 +61,7 @@ readonly class TagService implements TagServiceInterface
             throw ForbiddenTagOperationException::forDeletion();
         }
 
-        /** @var TagRepository $repo */
-        $repo = $this->em->getRepository(Tag::class);
-        $repo->deleteByName($tagNames);
+        $this->repo->deleteByName($tagNames);
     }
 
     /**
@@ -80,16 +73,12 @@ readonly class TagService implements TagServiceInterface
             throw ForbiddenTagOperationException::forRenaming();
         }
 
-        /** @var TagRepository $repo */
-        $repo = $this->em->getRepository(Tag::class);
-
-        /** @var Tag|null $tag */
-        $tag = $repo->findOneBy(['name' => $renaming->oldName]);
+        $tag = $this->repo->findOneBy(['name' => $renaming->oldName]);
         if ($tag === null) {
             throw TagNotFoundException::fromTag($renaming->oldName);
         }
 
-        $newNameExists = $renaming->nameChanged() && $repo->count(['name' => $renaming->newName]) > 0;
+        $newNameExists = $renaming->nameChanged() && $this->repo->count(['name' => $renaming->newName]) > 0;
         if ($newNameExists) {
             throw TagConflictException::forExistingTag($renaming);
         }
