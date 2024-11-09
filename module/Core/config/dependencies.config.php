@@ -50,6 +50,10 @@ return [
             ShortUrl\Transformer\ShortUrlDataTransformer::class => ConfigAbstractFactory::class,
             ShortUrl\Middleware\ExtraPathRedirectMiddleware::class => ConfigAbstractFactory::class,
             ShortUrl\Middleware\TrimTrailingSlashMiddleware::class => ConfigAbstractFactory::class,
+            ShortUrl\Repository\ShortUrlRepository::class => [
+                EntityRepositoryFactory::class,
+                ShortUrl\Entity\ShortUrl::class,
+            ],
             ShortUrl\Repository\ShortUrlListRepository::class => [
                 EntityRepositoryFactory::class,
                 ShortUrl\Entity\ShortUrl::class,
@@ -162,7 +166,10 @@ return [
             ShortUrl\ShortUrlResolver::class,
             ShortUrl\Repository\ExpiredShortUrlsRepository::class,
         ],
-        ShortUrl\ShortUrlResolver::class => ['em', Config\Options\UrlShortenerOptions::class],
+        ShortUrl\ShortUrlResolver::class => [
+            ShortUrl\Repository\ShortUrlRepository::class,
+            Config\Options\UrlShortenerOptions::class,
+        ],
         ShortUrl\ShortUrlVisitsDeleter::class => [
             Visit\Repository\VisitDeleterRepository::class,
             ShortUrl\ShortUrlResolver::class,

@@ -25,13 +25,13 @@ use Throwable;
 use function Shlinkio\Shlink\Core\normalizeDate;
 use function sprintf;
 
-class ImportedLinksProcessor implements ImportedLinksProcessorInterface
+readonly class ImportedLinksProcessor implements ImportedLinksProcessorInterface
 {
     public function __construct(
-        private readonly EntityManagerInterface $em,
-        private readonly ShortUrlRelationResolverInterface $relationResolver,
-        private readonly ShortCodeUniquenessHelperInterface $shortCodeHelper,
-        private readonly DoctrineBatchHelperInterface $batchHelper,
+        private EntityManagerInterface $em,
+        private ShortUrlRelationResolverInterface $relationResolver,
+        private ShortCodeUniquenessHelperInterface $shortCodeHelper,
+        private DoctrineBatchHelperInterface $batchHelper,
     ) {
     }
 
