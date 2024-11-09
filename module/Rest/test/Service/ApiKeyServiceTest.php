@@ -30,6 +30,8 @@ class ApiKeyServiceTest extends TestCase
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManager::class);
+        $this->em->method('wrapInTransaction')->willReturnCallback(fn (callable $callback) => $callback());
+
         $this->repo = $this->createMock(ApiKeyRepositoryInterface::class);
         $this->service = new ApiKeyService($this->em, $this->repo);
     }
@@ -40,9 +42,9 @@ class ApiKeyServiceTest extends TestCase
     #[Test, DataProvider('provideCreationDate')]
     public function apiKeyIsProperlyCreated(Chronos|null $date, string|null $name, array $roles): void
     {
-        $this->repo->expects($this->once())->method('count')->with(
-            ! empty($name) ? ['name' => $name] : $this->isType('array'),
-        )->willReturn(0);
+        $this->repo->expects($this->once())->method('nameExists')->with(
+            ! empty($name) ? $name : $this->isType('string'),
+        )->willReturn(false);
         $this->em->expects($this->once())->method('flush');
         $this->em->expects($this->once())->method('persist')->with($this->isInstanceOf(ApiKey::class));
 
@@ -78,7 +80,7 @@ class ApiKeyServiceTest extends TestCase
     #[Test]
     public function exceptionIsThrownWhileCreatingIfNameIsInUse(): void
     {
-        $this->repo->expects($this->once())->method('count')->with(['name' => 'the_name'])->willReturn(1);
+        $this->repo->expects($this->once())->method('nameExists')->with('the_name')->willReturn(true);
         $this->em->expects($this->never())->method('flush');
         $this->em->expects($this->never())->method('persist');
 
@@ -200,7 +202,7 @@ class ApiKeyServiceTest extends TestCase
         $renaming = Renaming::fromNames(oldName: 'old', newName: 'new');
 
         $this->repo->expects($this->once())->method('findOneBy')->with(['name' => 'old'])->willReturn(null);
-        $this->repo->expects($this->never())->method('count');
+        $this->repo->expects($this->never())->method('nameExists');
         $this->em->expects($this->never())->method('flush');
 
         $this->expectException(InvalidArgumentException::class);
@@ -216,7 +218,7 @@ class ApiKeyServiceTest extends TestCase
         $apiKey = ApiKey::create();
 
         $this->repo->expects($this->once())->method('findOneBy')->with(['name' => 'same_value'])->willReturn($apiKey);
-        $this->repo->expects($this->never())->method('count');
+        $this->repo->expects($this->never())->method('nameExists');
         $this->em->expects($this->never())->method('flush');
 
         $result = $this->service->renameApiKey($renaming);
@@ -231,7 +233,7 @@ class ApiKeyServiceTest extends TestCase
         $apiKey = ApiKey::create();
 
         $this->repo->expects($this->once())->method('findOneBy')->with(['name' => 'old'])->willReturn($apiKey);
-        $this->repo->expects($this->once())->method('count')->with(['name' => 'new'])->willReturn(1);
+        $this->repo->expects($this->once())->method('nameExists')->with('new')->willReturn(true);
         $this->em->expects($this->never())->method('flush');
 
         $this->expectException(InvalidArgumentException::class);
@@ -247,7 +249,7 @@ class ApiKeyServiceTest extends TestCase
         $apiKey = ApiKey::fromMeta(ApiKeyMeta::fromParams(name: 'old'));
 
         $this->repo->expects($this->once())->method('findOneBy')->with(['name' => 'old'])->willReturn($apiKey);
-        $this->repo->expects($this->once())->method('count')->with(['name' => 'new'])->willReturn(0);
+        $this->repo->expects($this->once())->method('nameExists')->with('new')->willReturn(false);
         $this->em->expects($this->once())->method('flush');
 
         $result = $this->service->renameApiKey($renaming);

@@ -14,7 +14,12 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 interface ApiKeyRepositoryInterface extends EntityRepositoryInterface, EntitySpecificationRepositoryInterface
 {
     /**
-     * Will create provided API key only if there's no API keys yet
+     * Will create provided API key with admin permissions, only if no other API keys exist yet
      */
     public function createInitialApiKey(string $apiKey): ApiKey|null;
+
+    /**
+     * Checks whether an API key with provided name exists or not
+     */
+    public function nameExists(string $name): bool;
 }

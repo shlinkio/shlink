@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRepositoryInterface
 {
     /**
-     * Will create provided API key with admin permissions, only if no other API keys exist yet
+     * @inheritDoc
      */
     public function createInitialApiKey(string $apiKey): ApiKey|null
     {
@@ -40,5 +40,24 @@ class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRe
 
             return $initialApiKey;
         });
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function nameExists(string $name): bool
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('a.id')
+           ->from(ApiKey::class, 'a')
+           ->where($qb->expr()->eq('a.name', ':name'))
+           ->setParameter('name', $name)
+           ->setMaxResults(1);
+
+        // Lock for update, to avoid a race condition that inserts a duplicate name after we have checked if one existed
+        $query = $qb->getQuery();
+        $query->setLockMode(LockMode::PESSIMISTIC_WRITE);
+
+        return $query->getOneOrNullResult() !== null;
     }
 }
