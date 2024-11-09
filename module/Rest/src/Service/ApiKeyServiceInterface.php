@@ -11,6 +11,9 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 interface ApiKeyServiceInterface
 {
+    /**
+     * @throws InvalidArgumentException
+     */
     public function create(ApiKeyMeta $apiKeyMeta): ApiKey;
 
     public function createInitial(string $key): ApiKey|null;
