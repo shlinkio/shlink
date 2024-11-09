@@ -67,6 +67,7 @@ return [
             Tag\Repository\TagRepository::class => [EntityRepositoryFactory::class, Tag\Entity\Tag::class],
 
             Domain\DomainService::class => ConfigAbstractFactory::class,
+            Domain\Repository\DomainRepository::class => [EntityRepositoryFactory::class, Domain\Entity\Domain::class],
 
             Visit\VisitsTracker::class => ConfigAbstractFactory::class,
             Visit\RequestTracker::class => ConfigAbstractFactory::class,
@@ -167,7 +168,11 @@ return [
             ShortUrl\ShortUrlResolver::class,
         ],
         ShortUrl\Helper\ShortCodeUniquenessHelper::class => ['em', Config\Options\UrlShortenerOptions::class],
-        Domain\DomainService::class => ['em', Config\Options\UrlShortenerOptions::class],
+        Domain\DomainService::class => [
+            'em',
+            Config\Options\UrlShortenerOptions::class,
+            Domain\Repository\DomainRepository::class,
+        ],
 
         Util\DoctrineBatchHelper::class => ['em'],
         Util\RedirectResponseHelper::class => [Config\Options\RedirectOptions::class],
