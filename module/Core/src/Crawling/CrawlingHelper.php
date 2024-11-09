@@ -6,9 +6,9 @@ namespace Shlinkio\Shlink\Core\Crawling;
 
 use Shlinkio\Shlink\Core\ShortUrl\Repository\CrawlableShortCodesQueryInterface;
 
-class CrawlingHelper implements CrawlingHelperInterface
+readonly class CrawlingHelper implements CrawlingHelperInterface
 {
-    public function __construct(private readonly CrawlableShortCodesQueryInterface $query)
+    public function __construct(private CrawlableShortCodesQueryInterface $query)
     {
     }
 

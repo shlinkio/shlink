@@ -13,11 +13,11 @@ use Shlinkio\Shlink\Core\Visit\Geolocation\VisitLocatorInterface;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitToLocationHelperInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
-class LocateUnlocatedVisits implements VisitGeolocationHelperInterface
+readonly class LocateUnlocatedVisits implements VisitGeolocationHelperInterface
 {
     public function __construct(
-        private readonly VisitLocatorInterface $locator,
-        private readonly VisitToLocationHelperInterface $visitToLocation,
+        private VisitLocatorInterface $locator,
+        private VisitToLocationHelperInterface $visitToLocation,
     ) {
     }
 

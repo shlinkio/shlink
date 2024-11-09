@@ -9,9 +9,9 @@ use Shlinkio\Shlink\Core\Visit\Repository\VisitDeleterRepositoryInterface;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-class VisitsDeleter implements VisitsDeleterInterface
+readonly class VisitsDeleter implements VisitsDeleterInterface
 {
-    public function __construct(private readonly VisitDeleterRepositoryInterface $repository)
+    public function __construct(private VisitDeleterRepositoryInterface $repository)
     {
     }
 

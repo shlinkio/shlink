@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use function sprintf;
 
-readonly final class EndDateOption
+final readonly class EndDateOption
 {
     private DateOption $dateOption;
 

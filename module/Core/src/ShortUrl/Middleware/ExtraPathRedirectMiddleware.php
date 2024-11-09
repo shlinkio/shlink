@@ -25,14 +25,14 @@ use function implode;
 use function sprintf;
 use function trim;
 
-class ExtraPathRedirectMiddleware implements MiddlewareInterface
+readonly class ExtraPathRedirectMiddleware implements MiddlewareInterface
 {
     public function __construct(
-        private readonly ShortUrlResolverInterface $resolver,
-        private readonly RequestTrackerInterface $requestTracker,
-        private readonly ShortUrlRedirectionBuilderInterface $redirectionBuilder,
-        private readonly RedirectResponseHelperInterface $redirectResponseHelper,
-        private readonly UrlShortenerOptions $urlShortenerOptions,
+        private ShortUrlResolverInterface $resolver,
+        private RequestTrackerInterface $requestTracker,
+        private ShortUrlRedirectionBuilderInterface $redirectionBuilder,
+        private RedirectResponseHelperInterface $redirectResponseHelper,
+        private UrlShortenerOptions $urlShortenerOptions,
     ) {
     }
 
