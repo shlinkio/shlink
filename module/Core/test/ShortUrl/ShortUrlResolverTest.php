@@ -6,7 +6,6 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl;
 
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\DataProviderExternal;
 use PHPUnit\Framework\Attributes\Test;
@@ -31,14 +30,12 @@ use function range;
 class ShortUrlResolverTest extends TestCase
 {
     private ShortUrlResolver $urlResolver;
-    private MockObject & EntityManagerInterface $em;
     private MockObject & ShortUrlRepository $repo;
 
     protected function setUp(): void
     {
-        $this->em = $this->createMock(EntityManagerInterface::class);
         $this->repo = $this->createMock(ShortUrlRepository::class);
-        $this->urlResolver = new ShortUrlResolver($this->em, new UrlShortenerOptions());
+        $this->urlResolver = new ShortUrlResolver($this->repo, new UrlShortenerOptions());
     }
 
     #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
@@ -51,7 +48,6 @@ class ShortUrlResolverTest extends TestCase
         $this->repo->expects($this->once())->method('findOne')->with($identifier, $apiKey?->spec())->willReturn(
             $shortUrl,
         );
-        $this->em->expects($this->once())->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
 
         $result = $this->urlResolver->resolveShortUrl($identifier, $apiKey);
 
@@ -65,7 +61,6 @@ class ShortUrlResolverTest extends TestCase
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
 
         $this->repo->expects($this->once())->method('findOne')->with($identifier, $apiKey?->spec())->willReturn(null);
-        $this->em->expects($this->once())->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
 
         $this->expectException(ShortUrlNotFoundException::class);
 
@@ -82,7 +77,6 @@ class ShortUrlResolverTest extends TestCase
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
             ShortUrlMode::STRICT,
         )->willReturn($shortUrl);
-        $this->em->expects($this->once())->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
 
         $result = $this->urlResolver->resolveEnabledShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode));
 
@@ -98,7 +92,6 @@ class ShortUrlResolverTest extends TestCase
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
             ShortUrlMode::STRICT,
         )->willReturn(null);
-        $this->em->expects($this->once())->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
 
         $this->expectException(ShortUrlNotFoundException::class);
 
@@ -120,7 +113,6 @@ class ShortUrlResolverTest extends TestCase
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
             ShortUrlMode::STRICT,
         )->willReturn($shortUrl);
-        $this->em->expects($this->once())->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
 
         $this->expectException(ShortUrlNotFoundException::class);
 

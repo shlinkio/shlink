@@ -50,6 +50,10 @@ return [
             ShortUrl\Transformer\ShortUrlDataTransformer::class => ConfigAbstractFactory::class,
             ShortUrl\Middleware\ExtraPathRedirectMiddleware::class => ConfigAbstractFactory::class,
             ShortUrl\Middleware\TrimTrailingSlashMiddleware::class => ConfigAbstractFactory::class,
+            ShortUrl\Repository\ShortUrlRepository::class => [
+                EntityRepositoryFactory::class,
+                ShortUrl\Entity\ShortUrl::class,
+            ],
             ShortUrl\Repository\ShortUrlListRepository::class => [
                 EntityRepositoryFactory::class,
                 ShortUrl\Entity\ShortUrl::class,
@@ -67,6 +71,7 @@ return [
             Tag\Repository\TagRepository::class => [EntityRepositoryFactory::class, Tag\Entity\Tag::class],
 
             Domain\DomainService::class => ConfigAbstractFactory::class,
+            Domain\Repository\DomainRepository::class => [EntityRepositoryFactory::class, Domain\Entity\Domain::class],
 
             Visit\VisitsTracker::class => ConfigAbstractFactory::class,
             Visit\RequestTracker::class => ConfigAbstractFactory::class,
@@ -133,6 +138,7 @@ return [
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
             ShortUrl\Helper\ShortCodeUniquenessHelper::class,
             EventDispatcherInterface::class,
+            ShortUrl\Repository\ShortUrlRepository::class,
         ],
         Visit\VisitsTracker::class => [
             'em',
@@ -161,13 +167,23 @@ return [
             ShortUrl\ShortUrlResolver::class,
             ShortUrl\Repository\ExpiredShortUrlsRepository::class,
         ],
-        ShortUrl\ShortUrlResolver::class => ['em', Config\Options\UrlShortenerOptions::class],
+        ShortUrl\ShortUrlResolver::class => [
+            ShortUrl\Repository\ShortUrlRepository::class,
+            Config\Options\UrlShortenerOptions::class,
+        ],
         ShortUrl\ShortUrlVisitsDeleter::class => [
             Visit\Repository\VisitDeleterRepository::class,
             ShortUrl\ShortUrlResolver::class,
         ],
-        ShortUrl\Helper\ShortCodeUniquenessHelper::class => ['em', Config\Options\UrlShortenerOptions::class],
-        Domain\DomainService::class => ['em', Config\Options\UrlShortenerOptions::class],
+        ShortUrl\Helper\ShortCodeUniquenessHelper::class => [
+            ShortUrl\Repository\ShortUrlRepository::class,
+            Config\Options\UrlShortenerOptions::class,
+        ],
+        Domain\DomainService::class => [
+            'em',
+            Config\Options\UrlShortenerOptions::class,
+            Domain\Repository\DomainRepository::class,
+        ],
 
         Util\DoctrineBatchHelper::class => ['em'],
         Util\RedirectResponseHelper::class => [Config\Options\RedirectOptions::class],
