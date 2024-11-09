@@ -7,13 +7,14 @@ namespace Shlinkio\Shlink\Rest\Entity;
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Exception;
 use Happyr\DoctrineSpecification\Spec;
 use Happyr\DoctrineSpecification\Specification\Specification;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
+
+use function hash;
 
 class ApiKey extends AbstractEntity
 {
@@ -22,32 +23,35 @@ class ApiKey extends AbstractEntity
      */
     private function __construct(
         public readonly string $key,
-        public readonly string|null $name = null,
+        // TODO Use a property hook to allow public read but private write
+        public string $name,
         public readonly Chronos|null $expirationDate = null,
         private bool $enabled = true,
         private Collection $roles = new ArrayCollection(),
     ) {
     }
 
-    /**
-     * @throws Exception
-     */
     public static function create(): ApiKey
     {
         return self::fromMeta(ApiKeyMeta::empty());
     }
 
-    /**
-     * @throws Exception
-     */
     public static function fromMeta(ApiKeyMeta $meta): self
     {
-        $apiKey = new self($meta->key, $meta->name, $meta->expirationDate);
+        $apiKey = new self(self::hashKey($meta->key), $meta->name, $meta->expirationDate);
         foreach ($meta->roleDefinitions as $roleDefinition) {
             $apiKey->registerRole($roleDefinition);
         }
 
         return $apiKey;
+    }
+
+    /**
+     * Generates a hash for provided key, in the way Shlink expects API keys to be hashed
+     */
+    public static function hashKey(string $key): string
+    {
+        return hash('sha256', $key);
     }
 
     public function isExpired(): bool

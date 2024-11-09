@@ -7,6 +7,9 @@ namespace Shlinkio\Shlink\Rest\ApiKey\Model;
 use Cake\Chronos\Chronos;
 use Ramsey\Uuid\Uuid;
 
+use function sprintf;
+use function substr;
+
 final readonly class ApiKeyMeta
 {
     /**
@@ -14,7 +17,7 @@ final readonly class ApiKeyMeta
      */
     private function __construct(
         public string $key,
-        public string|null $name,
+        public string $name,
         public Chronos|null $expirationDate,
         public iterable $roleDefinitions,
     ) {
@@ -34,8 +37,19 @@ final readonly class ApiKeyMeta
         Chronos|null $expirationDate = null,
         iterable $roleDefinitions = [],
     ): self {
+        $resolvedKey = $key ?? Uuid::uuid4()->toString();
+
+        // If a name was not provided, fall back to the key
+        if (empty($name)) {
+            // If the key was auto-generated, fall back to a redacted version of the UUID, otherwise simply use the
+            // plain key as fallback name
+            $name = $key === null
+                ? sprintf('%s-****-****-****-************', substr($resolvedKey, offset: 0, length: 8))
+                : $key;
+        }
+
         return new self(
-            key: $key ?? Uuid::uuid4()->toString(),
+            key: $resolvedKey,
             name: $name,
             expirationDate: $expirationDate,
             roleDefinitions: $roleDefinitions,

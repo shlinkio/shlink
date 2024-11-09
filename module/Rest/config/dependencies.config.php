@@ -9,6 +9,7 @@ use Laminas\ServiceManager\Factory\InvokableFactory;
 use Mezzio\ProblemDetails\ProblemDetailsResponseFactory;
 use Mezzio\Router\Middleware\ImplicitOptionsMiddleware;
 use Psr\Log\LoggerInterface;
+use Shlinkio\Shlink\Common\Doctrine\EntityRepositoryFactory;
 use Shlinkio\Shlink\Common\Mercure\LcobucciJwtProvider;
 use Shlinkio\Shlink\Core\Config;
 use Shlinkio\Shlink\Core\Domain\DomainService;
@@ -17,6 +18,7 @@ use Shlinkio\Shlink\Core\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformer;
 use Shlinkio\Shlink\Core\Tag\TagService;
 use Shlinkio\Shlink\Core\Visit;
+use Shlinkio\Shlink\Rest\ApiKey\Repository\ApiKeyRepository;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 
 return [
@@ -24,6 +26,7 @@ return [
     'dependencies' => [
         'factories' => [
             ApiKeyService::class => ConfigAbstractFactory::class,
+            ApiKeyRepository::class => [EntityRepositoryFactory::class, Entity\ApiKey::class],
 
             Action\HealthAction::class => ConfigAbstractFactory::class,
             Action\MercureInfoAction::class => ConfigAbstractFactory::class,
@@ -62,7 +65,7 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
-        ApiKeyService::class => ['em'],
+        ApiKeyService::class => ['em', ApiKeyRepository::class],
 
         Action\HealthAction::class => ['em', Config\Options\AppOptions::class],
         Action\MercureInfoAction::class => [LcobucciJwtProvider::class, 'config.mercure'],

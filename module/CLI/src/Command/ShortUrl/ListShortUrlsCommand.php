@@ -118,14 +118,9 @@ class ListShortUrlsCommand extends Command
                 'show-api-key',
                 'k',
                 InputOption::VALUE_NONE,
-                'Whether to display the API key from which the URL was generated or not.',
-            )
-            ->addOption(
-                'show-api-key-name',
-                'm',
-                InputOption::VALUE_NONE,
                 'Whether to display the API key name from which the URL was generated or not.',
             )
+            ->addOption('show-api-key-name', 'm', InputOption::VALUE_NONE, '[DEPRECATED] Use show-api-key')
             ->addOption(
                 'all',
                 'a',
@@ -242,11 +237,7 @@ class ListShortUrlsCommand extends Command
             $columnsMap['Domain'] = static fn (array $_, ShortUrl $shortUrl): string =>
                 $shortUrl->getDomain()?->authority ?? Domain::DEFAULT_AUTHORITY;
         }
-        if ($input->getOption('show-api-key')) {
-            $columnsMap['API Key'] = static fn (array $_, ShortUrl $shortUrl): string =>
-                $shortUrl->authorApiKey?->key ?? '';
-        }
-        if ($input->getOption('show-api-key-name')) {
+        if ($input->getOption('show-api-key') || $input->getOption('show-api-key-name')) {
             $columnsMap['API Key Name'] = static fn (array $_, ShortUrl $shortUrl): string|null =>
                 $shortUrl->authorApiKey?->name;
         }

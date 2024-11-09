@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\ApiKey\Repository;
 
-use Doctrine\Persistence\ObjectRepository;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryInterface;
+use Shlinkio\Shlink\Core\Repository\EntityRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 /**
- * @extends ObjectRepository<ApiKey>
+ * @extends EntityRepositoryInterface<ApiKey>
  */
-interface ApiKeyRepositoryInterface extends ObjectRepository, EntitySpecificationRepositoryInterface
+interface ApiKeyRepositoryInterface extends EntityRepositoryInterface, EntitySpecificationRepositoryInterface
 {
     /**
      * Will create provided API key only if there's no API keys yet

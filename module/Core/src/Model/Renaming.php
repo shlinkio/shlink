@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\Core\Tag\Model;
+namespace Shlinkio\Shlink\Core\Model;
 
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 
 use function sprintf;
 
-final class TagRenaming
+final readonly class Renaming
 {
-    private function __construct(public readonly string $oldName, public readonly string $newName)
+    private function __construct(public string $oldName, public string $newName)
     {
     }
 

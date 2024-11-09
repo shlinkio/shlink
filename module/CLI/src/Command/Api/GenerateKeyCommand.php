@@ -100,23 +100,26 @@ class GenerateKeyCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $io = new SymfonyStyle($input, $output);
         $expirationDate = $input->getOption('expiration-date');
-
-        $apiKey = $this->apiKeyService->create(ApiKeyMeta::fromParams(
+        $apiKeyMeta = ApiKeyMeta::fromParams(
             name: $input->getOption('name'),
             expirationDate: isset($expirationDate) ? Chronos::parse($expirationDate) : null,
             roleDefinitions: $this->roleResolver->determineRoles($input),
-        ));
+        );
 
-        $io = new SymfonyStyle($input, $output);
-        $io->success(sprintf('Generated API key: "%s"', $apiKey->key));
+        $apiKey = $this->apiKeyService->create($apiKeyMeta);
+        $io->success(sprintf('Generated API key: "%s"', $apiKeyMeta->key));
+
+        if ($input->isInteractive()) {
+            $io->warning('Save the key in a secure location. You will not be able to get it afterwards.');
+        }
 
         if (! ApiKey::isAdmin($apiKey)) {
             ShlinkTable::default($io)->render(
                 ['Role name', 'Role metadata'],
-                $apiKey->mapRoles(fn (Role $role, array $meta) => [$role->value, arrayToString($meta, 0)]),
-                null,
-                'Roles',
+                $apiKey->mapRoles(fn (Role $role, array $meta) => [$role->value, arrayToString($meta, indentSize: 0)]),
+                headerTitle: 'Roles',
             );
         }
 

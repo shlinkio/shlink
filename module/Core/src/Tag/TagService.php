@@ -10,8 +10,8 @@ use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Exception\ForbiddenTagOperationException;
 use Shlinkio\Shlink\Core\Exception\TagConflictException;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
+use Shlinkio\Shlink\Core\Model\Renaming;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
-use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
 use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
 use Shlinkio\Shlink\Core\Tag\Paginator\Adapter\TagsInfoPaginatorAdapter;
 use Shlinkio\Shlink\Core\Tag\Paginator\Adapter\TagsPaginatorAdapter;
@@ -74,7 +74,7 @@ readonly class TagService implements TagServiceInterface
     /**
      * @inheritDoc
      */
-    public function renameTag(TagRenaming $renaming, ApiKey|null $apiKey = null): Tag
+    public function renameTag(Renaming $renaming, ApiKey|null $apiKey = null): Tag
     {
         if (ApiKey::isShortUrlRestricted($apiKey)) {
             throw ForbiddenTagOperationException::forRenaming();
