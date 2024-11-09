@@ -35,9 +35,8 @@ class TagServiceTest extends TestCase
     {
         $this->em = $this->createMock(EntityManagerInterface::class);
         $this->repo = $this->createMock(TagRepository::class);
-        $this->em->method('getRepository')->with(Tag::class)->willReturn($this->repo);
 
-        $this->service = new TagService($this->em);
+        $this->service = new TagService($this->em, $this->repo);
     }
 
     #[Test]
@@ -166,7 +165,7 @@ class TagServiceTest extends TestCase
     #[Test]
     public function renamingTagThrowsExceptionWhenProvidedApiKeyIsNotAdmin(): void
     {
-        $this->em->expects($this->never())->method('getRepository')->with(Tag::class);
+        $this->repo->expects($this->never())->method('findOneBy');
 
         $this->expectExceptionMessage(ForbiddenTagOperationException::class);
         $this->expectExceptionMessage('You are not allowed to rename tags');

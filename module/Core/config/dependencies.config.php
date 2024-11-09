@@ -64,6 +64,7 @@ return [
             ],
 
             Tag\TagService::class => ConfigAbstractFactory::class,
+            Tag\Repository\TagRepository::class => [EntityRepositoryFactory::class, Tag\Entity\Tag::class],
 
             Domain\DomainService::class => ConfigAbstractFactory::class,
 
@@ -153,7 +154,7 @@ return [
         Visit\Geolocation\VisitLocator::class => ['em', Visit\Repository\VisitIterationRepository::class],
         Visit\Geolocation\VisitToLocationHelper::class => [IpLocationResolverInterface::class],
         Visit\VisitsStatsHelper::class => ['em'],
-        Tag\TagService::class => ['em'],
+        Tag\TagService::class => ['em', Tag\Repository\TagRepository::class],
         ShortUrl\DeleteShortUrlService::class => [
             'em',
             Config\Options\DeleteShortUrlsOptions::class,
