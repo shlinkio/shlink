@@ -10,9 +10,9 @@ use Shlinkio\Shlink\Core\Config\Options\RedirectOptions;
 
 use function sprintf;
 
-class RedirectResponseHelper implements RedirectResponseHelperInterface
+readonly class RedirectResponseHelper implements RedirectResponseHelperInterface
 {
-    public function __construct(private readonly RedirectOptions $options)
+    public function __construct(private RedirectOptions $options)
     {
     }
 

@@ -7,11 +7,11 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Model;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Throwable;
 
-final class UrlShorteningResult
+final readonly class UrlShorteningResult
 {
     private function __construct(
-        public readonly ShortUrl $shortUrl,
-        private readonly Throwable|null $errorOnEventDispatching,
+        public ShortUrl $shortUrl,
+        private Throwable|null $errorOnEventDispatching,
     ) {
     }
 

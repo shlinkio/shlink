@@ -11,11 +11,11 @@ use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitIterationRepositoryInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
-class VisitLocator implements VisitLocatorInterface
+readonly class VisitLocator implements VisitLocatorInterface
 {
     public function __construct(
-        private readonly EntityManagerInterface $em,
-        private readonly VisitIterationRepositoryInterface $repo,
+        private EntityManagerInterface $em,
+        private VisitIterationRepositoryInterface $repo,
     ) {
     }
 

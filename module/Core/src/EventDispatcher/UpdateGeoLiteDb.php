@@ -13,12 +13,12 @@ use Throwable;
 
 use function sprintf;
 
-class UpdateGeoLiteDb
+readonly class UpdateGeoLiteDb
 {
     public function __construct(
-        private readonly GeolocationDbUpdaterInterface $dbUpdater,
-        private readonly LoggerInterface $logger,
-        private readonly EventDispatcherInterface $eventDispatcher,
+        private GeolocationDbUpdaterInterface $dbUpdater,
+        private LoggerInterface $logger,
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
