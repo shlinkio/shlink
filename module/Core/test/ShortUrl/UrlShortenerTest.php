@@ -17,7 +17,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortCodeUniquenessHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
-use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository;
+use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\ShortUrl\UrlShortener;
 
@@ -28,6 +28,7 @@ class UrlShortenerTest extends TestCase
     private MockObject & ShortUrlTitleResolutionHelperInterface $titleResolutionHelper;
     private MockObject & ShortCodeUniquenessHelperInterface $shortCodeHelper;
     private MockObject & EventDispatcherInterface $dispatcher;
+    private MockObject & ShortUrlRepositoryInterface $repo;
 
     protected function setUp(): void
     {
@@ -42,6 +43,7 @@ class UrlShortenerTest extends TestCase
         );
 
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->repo = $this->createMock(ShortUrlRepositoryInterface::class);
 
         $this->urlShortener = new UrlShortener(
             $this->titleResolutionHelper,
@@ -49,6 +51,7 @@ class UrlShortenerTest extends TestCase
             new SimpleShortUrlRelationResolver(),
             $this->shortCodeHelper,
             $this->dispatcher,
+            $this->repo,
         );
     }
 
@@ -102,9 +105,7 @@ class UrlShortenerTest extends TestCase
     #[Test, DataProvider('provideExistingShortUrls')]
     public function existingShortUrlIsReturnedWhenRequested(ShortUrlCreation $meta, ShortUrl $expected): void
     {
-        $repo = $this->createMock(ShortUrlRepository::class);
-        $repo->expects($this->once())->method('findOneMatching')->willReturn($expected);
-        $this->em->expects($this->once())->method('getRepository')->with(ShortUrl::class)->willReturn($repo);
+        $this->repo->expects($this->once())->method('findOneMatching')->willReturn($expected);
         $this->titleResolutionHelper->expects($this->never())->method('processTitle');
         $this->shortCodeHelper->method('ensureShortCodeUniqueness')->willReturn(true);
 

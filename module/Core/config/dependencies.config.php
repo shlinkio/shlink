@@ -138,6 +138,7 @@ return [
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
             ShortUrl\Helper\ShortCodeUniquenessHelper::class,
             EventDispatcherInterface::class,
+            ShortUrl\Repository\ShortUrlRepository::class,
         ],
         Visit\VisitsTracker::class => [
             'em',
