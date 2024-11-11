@@ -27,7 +27,6 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
         return $this->em->wrapInTransaction(function () use ($apiKeyMeta) {
             $apiKey = ApiKey::fromMeta($this->ensureUniqueName($apiKeyMeta));
             $this->em->persist($apiKey);
-            $this->em->flush();
 
             return $apiKey;
         });
@@ -120,7 +119,7 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
             return $apiKey;
         }
 
-        return $this->em->wrapInTransaction(function () use ($apiKeyRenaming, $apiKey) {
+        $this->em->wrapInTransaction(function () use ($apiKeyRenaming, $apiKey): void {
             if ($this->repo->nameExists($apiKeyRenaming->newName)) {
                 throw new InvalidArgumentException(
                     sprintf('Another API key with name "%s" already exists', $apiKeyRenaming->newName),
@@ -128,10 +127,9 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
             }
 
             $apiKey->name = $apiKeyRenaming->newName;
-            $this->em->flush();
-
-            return $apiKey;
         });
+
+        return $apiKey;
     }
 
     private function findByKey(string $key): ApiKey|null
