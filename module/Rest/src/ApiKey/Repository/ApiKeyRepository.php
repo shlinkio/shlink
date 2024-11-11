@@ -36,7 +36,6 @@ class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRe
 
             $initialApiKey = ApiKey::fromMeta(ApiKeyMeta::fromParams(key: $apiKey));
             $em->persist($initialApiKey);
-            $em->flush();
 
             return $initialApiKey;
         });

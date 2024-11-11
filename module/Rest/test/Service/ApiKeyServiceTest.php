@@ -45,7 +45,6 @@ class ApiKeyServiceTest extends TestCase
         $this->repo->expects($this->once())->method('nameExists')->with(
             ! empty($name) ? $name : $this->isType('string'),
         )->willReturn(false);
-        $this->em->expects($this->once())->method('flush');
         $this->em->expects($this->once())->method('persist')->with($this->isInstanceOf(ApiKey::class));
 
         $meta = ApiKeyMeta::fromParams(name: $name, expirationDate: $date, roleDefinitions: $roles);
@@ -87,7 +86,6 @@ class ApiKeyServiceTest extends TestCase
             $callCount++;
             return $callCount < 3;
         });
-        $this->em->expects($this->once())->method('flush');
         $this->em->expects($this->once())->method('persist')->with($this->isInstanceOf(ApiKey::class));
 
         $this->service->create(ApiKeyMeta::create());
@@ -97,7 +95,6 @@ class ApiKeyServiceTest extends TestCase
     public function exceptionIsThrownWhileCreatingIfExplicitlyProvidedNameIsInUse(): void
     {
         $this->repo->expects($this->once())->method('nameExists')->with('the_name')->willReturn(true);
-        $this->em->expects($this->never())->method('flush');
         $this->em->expects($this->never())->method('persist');
 
         $this->expectException(InvalidArgumentException::class);
@@ -219,7 +216,6 @@ class ApiKeyServiceTest extends TestCase
 
         $this->repo->expects($this->once())->method('findOneBy')->with(['name' => 'old'])->willReturn(null);
         $this->repo->expects($this->never())->method('nameExists');
-        $this->em->expects($this->never())->method('flush');
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('API key with name "old" could not be found');
@@ -235,7 +231,6 @@ class ApiKeyServiceTest extends TestCase
 
         $this->repo->expects($this->once())->method('findOneBy')->with(['name' => 'same_value'])->willReturn($apiKey);
         $this->repo->expects($this->never())->method('nameExists');
-        $this->em->expects($this->never())->method('flush');
 
         $result = $this->service->renameApiKey($renaming);
 
@@ -250,7 +245,6 @@ class ApiKeyServiceTest extends TestCase
 
         $this->repo->expects($this->once())->method('findOneBy')->with(['name' => 'old'])->willReturn($apiKey);
         $this->repo->expects($this->once())->method('nameExists')->with('new')->willReturn(true);
-        $this->em->expects($this->never())->method('flush');
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Another API key with name "new" already exists');
@@ -266,7 +260,6 @@ class ApiKeyServiceTest extends TestCase
 
         $this->repo->expects($this->once())->method('findOneBy')->with(['name' => 'old'])->willReturn($apiKey);
         $this->repo->expects($this->once())->method('nameExists')->with('new')->willReturn(false);
-        $this->em->expects($this->once())->method('flush');
 
         $result = $this->service->renameApiKey($renaming);
 
