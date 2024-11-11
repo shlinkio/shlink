@@ -61,7 +61,7 @@ class NotifyVisitToMercureTest extends TestCase
     public function notificationsAreSentWhenVisitIsFound(): void
     {
         $visitId = '123';
-        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance());
+        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::empty());
         $update = Update::forTopicAndPayload('', []);
 
         $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn($visit);
@@ -81,7 +81,7 @@ class NotifyVisitToMercureTest extends TestCase
     public function debugIsLoggedWhenExceptionIsThrown(): void
     {
         $visitId = '123';
-        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance());
+        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::empty());
         $update = Update::forTopicAndPayload('', []);
         $e = new RuntimeException('Error');
 
@@ -122,7 +122,7 @@ class NotifyVisitToMercureTest extends TestCase
 
     public static function provideOrphanVisits(): iterable
     {
-        $visitor = Visitor::emptyInstance();
+        $visitor = Visitor::empty();
 
         yield VisitType::REGULAR_404->value => [Visit::forRegularNotFound($visitor)];
         yield VisitType::INVALID_SHORT_URL->value => [Visit::forInvalidShortUrl($visitor)];

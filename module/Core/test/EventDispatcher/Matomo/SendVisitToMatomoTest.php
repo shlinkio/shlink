@@ -60,7 +60,7 @@ class SendVisitToMatomoTest extends TestCase
     public function visitIsSentWhenItExists(string|null $originalIpAddress): void
     {
         $visitId = '123';
-        $visit = Visit::forBasePath(Visitor::emptyInstance());
+        $visit = Visit::forBasePath(Visitor::empty());
 
         $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn($visit);
         $this->visitSender->expects($this->once())->method('sendVisit')->with($visit, $originalIpAddress);

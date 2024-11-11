@@ -128,7 +128,7 @@ class ShortUrlResolverTest extends TestCase
                 ShortUrlCreation::fromRawData(['maxVisits' => 3, 'longUrl' => 'https://longUrl']),
             );
             $shortUrl->setVisits(new ArrayCollection(array_map(
-                fn () => Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()),
+                fn () => Visit::forValidShortUrl($shortUrl, Visitor::empty()),
                 range(0, 4),
             )));
 
@@ -147,7 +147,7 @@ class ShortUrlResolverTest extends TestCase
                 'longUrl' => 'https://longUrl',
             ]));
             $shortUrl->setVisits(new ArrayCollection(array_map(
-                fn () => Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()),
+                fn () => Visit::forValidShortUrl($shortUrl, Visitor::empty()),
                 range(0, 4),
             )));
 

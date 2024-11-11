@@ -53,7 +53,7 @@ class NonOrphanVisitsPaginatorAdapterTest extends TestCase
     #[Test, DataProvider('provideLimitAndOffset')]
     public function getSliceDelegatesToRepository(int $limit, int $offset): void
     {
-        $visitor = Visitor::emptyInstance();
+        $visitor = Visitor::empty();
         $list = [Visit::forRegularNotFound($visitor), Visit::forInvalidShortUrl($visitor)];
         $this->repo->expects($this->once())->method('findNonOrphanVisits')->with(new VisitsListFiltering(
             $this->params->dateRange,

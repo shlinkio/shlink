@@ -107,7 +107,7 @@ class LocateVisitsCommandTest extends TestCase
     #[Test, DataProvider('provideIgnoredAddresses')]
     public function localhostAndEmptyAddressesAreIgnored(IpCannotBeLocatedException $e, string $message): void
     {
-        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance());
+        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::empty());
         $location = VisitLocation::fromGeolocation(Location::emptyInstance());
 
         $this->lock->method('acquire')->with($this->isFalse())->willReturn(true);

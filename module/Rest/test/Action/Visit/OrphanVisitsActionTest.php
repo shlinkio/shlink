@@ -35,7 +35,7 @@ class OrphanVisitsActionTest extends TestCase
     #[Test]
     public function requestIsHandled(): void
     {
-        $visitor = Visitor::emptyInstance();
+        $visitor = Visitor::empty();
         $visits = [Visit::forInvalidShortUrl($visitor), Visit::forRegularNotFound($visitor)];
         $this->visitsHelper->expects($this->once())->method('orphanVisits')->with(
             $this->isInstanceOf(OrphanVisitsParams::class),

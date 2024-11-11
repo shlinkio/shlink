@@ -28,8 +28,8 @@ class VisitDeleterRepositoryTest extends DatabaseTestCase
     {
         $shortUrl1 = ShortUrl::withLongUrl('https://foo.com');
         $this->getEntityManager()->persist($shortUrl1);
-        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl1, Visitor::emptyInstance()));
-        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl1, Visitor::emptyInstance()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl1, Visitor::empty()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl1, Visitor::empty()));
 
         $shortUrl2 = ShortUrl::create(ShortUrlCreation::fromRawData([
             ShortUrlInputFilter::LONG_URL => 'https://foo.com',
@@ -37,17 +37,17 @@ class VisitDeleterRepositoryTest extends DatabaseTestCase
             ShortUrlInputFilter::CUSTOM_SLUG => 'foo',
         ]), new PersistenceShortUrlRelationResolver($this->getEntityManager()));
         $this->getEntityManager()->persist($shortUrl2);
-        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::emptyInstance()));
-        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::emptyInstance()));
-        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::emptyInstance()));
-        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::emptyInstance()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::empty()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::empty()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::empty()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::empty()));
 
         $shortUrl3 = ShortUrl::create(ShortUrlCreation::fromRawData([
             ShortUrlInputFilter::LONG_URL => 'https://foo.com',
             ShortUrlInputFilter::CUSTOM_SLUG => 'foo',
         ]), new PersistenceShortUrlRelationResolver($this->getEntityManager()));
         $this->getEntityManager()->persist($shortUrl3);
-        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl3, Visitor::emptyInstance()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl3, Visitor::empty()));
 
         $this->getEntityManager()->flush();
 
@@ -62,7 +62,7 @@ class VisitDeleterRepositoryTest extends DatabaseTestCase
     #[Test]
     public function deletesExpectedOrphanVisits(): void
     {
-        $visitor = Visitor::emptyInstance();
+        $visitor = Visitor::empty();
         $this->getEntityManager()->persist(Visit::forBasePath($visitor));
         $this->getEntityManager()->persist(Visit::forInvalidShortUrl($visitor));
         $this->getEntityManager()->persist(Visit::forRegularNotFound($visitor));

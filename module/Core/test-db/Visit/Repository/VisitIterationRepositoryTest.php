@@ -37,7 +37,7 @@ class VisitIterationRepositoryTest extends DatabaseTestCase
         $unmodifiedDate = Chronos::now();
         for ($i = 0; $i < 6; $i++) {
             Chronos::setTestNow($unmodifiedDate->subDays($i)); // Enforce a different day for every visit
-            $visit = Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance());
+            $visit = Visit::forValidShortUrl($shortUrl, Visitor::empty());
 
             if ($i >= 2) {
                 $location = VisitLocation::fromGeolocation(Location::emptyInstance());

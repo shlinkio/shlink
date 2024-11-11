@@ -74,7 +74,7 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
 
         $foo2 = ShortUrl::withLongUrl('https://foo_2');
         $visits2 = array_map(function () use ($foo2) {
-            $visit = Visit::forValidShortUrl($foo2, Visitor::emptyInstance());
+            $visit = Visit::forValidShortUrl($foo2, Visitor::empty());
             $this->getEntityManager()->persist($visit);
 
             return $visit;
@@ -304,9 +304,9 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
             'maxVisits' => 3,
         ]), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl4);
-        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl4, Visitor::emptyInstance()));
-        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl4, Visitor::emptyInstance()));
-        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl4, Visitor::emptyInstance()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl4, Visitor::empty()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl4, Visitor::empty()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl4, Visitor::empty()));
 
         $this->getEntityManager()->flush();
 
