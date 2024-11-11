@@ -311,9 +311,9 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($domainApiKey);
 
         // Visits not linked to any short URL
-        $this->getEntityManager()->persist(Visit::forBasePath(Visitor::emptyInstance()));
-        $this->getEntityManager()->persist(Visit::forInvalidShortUrl(Visitor::emptyInstance()));
-        $this->getEntityManager()->persist(Visit::forRegularNotFound(Visitor::emptyInstance()));
+        $this->getEntityManager()->persist(Visit::forBasePath(Visitor::empty()));
+        $this->getEntityManager()->persist(Visit::forInvalidShortUrl(Visitor::empty()));
+        $this->getEntityManager()->persist(Visit::forRegularNotFound(Visitor::empty()));
         $this->getEntityManager()->persist(Visit::forRegularNotFound(Visitor::botInstance()));
 
         $this->getEntityManager()->flush();
@@ -370,15 +370,15 @@ class VisitRepositoryTest extends DatabaseTestCase
         $botsCount = 3;
         for ($i = 0; $i < 6; $i++) {
             $this->getEntityManager()->persist($this->setDateOnVisit(
-                fn () => Visit::forBasePath($botsCount < 1 ? Visitor::emptyInstance() : Visitor::botInstance()),
+                fn () => Visit::forBasePath($botsCount < 1 ? Visitor::empty() : Visitor::botInstance()),
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
             $this->getEntityManager()->persist($this->setDateOnVisit(
-                fn () => Visit::forInvalidShortUrl(Visitor::emptyInstance()),
+                fn () => Visit::forInvalidShortUrl(Visitor::empty()),
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
             $this->getEntityManager()->persist($this->setDateOnVisit(
-                fn () => Visit::forRegularNotFound(Visitor::emptyInstance()),
+                fn () => Visit::forRegularNotFound(Visitor::empty()),
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
 
@@ -428,15 +428,15 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         for ($i = 0; $i < 6; $i++) {
             $this->getEntityManager()->persist($this->setDateOnVisit(
-                fn () => Visit::forBasePath(Visitor::emptyInstance()),
+                fn () => Visit::forBasePath(Visitor::empty()),
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
             $this->getEntityManager()->persist($this->setDateOnVisit(
-                fn () => Visit::forInvalidShortUrl(Visitor::emptyInstance()),
+                fn () => Visit::forInvalidShortUrl(Visitor::empty()),
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
             $this->getEntityManager()->persist($this->setDateOnVisit(
-                fn () => Visit::forRegularNotFound(Visitor::emptyInstance()),
+                fn () => Visit::forRegularNotFound(Visitor::empty()),
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
         }
@@ -515,7 +515,7 @@ class VisitRepositoryTest extends DatabaseTestCase
     {
         $this->assertNull($this->repo->findMostRecentOrphanVisit());
 
-        $lastVisit = Visit::forBasePath(Visitor::emptyInstance());
+        $lastVisit = Visit::forBasePath(Visitor::empty());
         $this->getEntityManager()->persist($lastVisit);
         $this->getEntityManager()->flush();
 
@@ -567,7 +567,7 @@ class VisitRepositoryTest extends DatabaseTestCase
             $visit = $this->setDateOnVisit(
                 fn () => Visit::forValidShortUrl(
                     $shortUrl,
-                    $botsAmount < 1 ? Visitor::emptyInstance() : Visitor::botInstance(),
+                    $botsAmount < 1 ? Visitor::empty() : Visitor::botInstance(),
                 ),
                 Chronos::parse(sprintf('2016-01-%s', str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT)))->startOfDay(),
             );

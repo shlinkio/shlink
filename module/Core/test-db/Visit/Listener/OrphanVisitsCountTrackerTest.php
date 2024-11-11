@@ -26,7 +26,7 @@ class OrphanVisitsCountTrackerTest extends DatabaseTestCase
     #[Test]
     public function createsNewEntriesWhenNoneExist(): void
     {
-        $visit = Visit::forBasePath(Visitor::emptyInstance());
+        $visit = Visit::forBasePath(Visitor::empty());
         $this->getEntityManager()->persist($visit);
         $this->getEntityManager()->flush();
 
@@ -47,7 +47,7 @@ class OrphanVisitsCountTrackerTest extends DatabaseTestCase
         }
         $this->getEntityManager()->flush();
 
-        $visit = Visit::forRegularNotFound(Visitor::emptyInstance());
+        $visit = Visit::forRegularNotFound(Visitor::empty());
         $this->getEntityManager()->persist($visit);
         $this->getEntityManager()->flush();
 

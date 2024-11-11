@@ -92,7 +92,7 @@ class DeleteExpiredShortUrlsRepositoryTest extends DatabaseTestCase
             $this->getEntityManager()->persist($shortUrl);
 
             for ($j = 0; $j < $visitsPerShortUrl; $j++) {
-                $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()));
+                $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::empty()));
             }
         }
     }

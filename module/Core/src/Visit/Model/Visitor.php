@@ -51,7 +51,7 @@ final class Visitor
         );
     }
 
-    public static function emptyInstance(): self
+    public static function empty(): self
     {
         return new self('', '', null, '');
     }

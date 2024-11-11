@@ -55,7 +55,7 @@ class VisitTest extends TestCase
     public static function provideOrphanVisits(): iterable
     {
         yield 'base path visit' => [
-            $visit = Visit::forBasePath(Visitor::emptyInstance()),
+            $visit = Visit::forBasePath(Visitor::empty()),
             [
                 'referer' => '',
                 'date' => $visit->date->toAtomString(),

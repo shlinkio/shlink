@@ -53,7 +53,7 @@ class NotifyVisitToRedisTest extends TestCase
     {
         $visitId = '123';
         $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn(
-            Visit::forBasePath(Visitor::emptyInstance()),
+            Visit::forBasePath(Visitor::empty()),
         );
         $this->updatesGenerator->expects($this->once())->method('newOrphanVisitUpdate')->with(
             $this->isInstanceOf(Visit::class),

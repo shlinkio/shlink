@@ -90,7 +90,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
 
     public static function provideVisits(): iterable
     {
-        $visitor = Visitor::emptyInstance();
+        $visitor = Visitor::empty();
 
         yield 'orphan visit' => [Visit::forBasePath($visitor), ['newOrphanVisitUpdate']];
         yield 'non-orphan visit' => [
@@ -110,7 +110,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
     {
         $visitId = '123';
         $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn(
-            Visit::forBasePath(Visitor::emptyInstance()),
+            Visit::forBasePath(Visitor::empty()),
         );
         $this->updatesGenerator->expects($this->once())->method('newOrphanVisitUpdate')->with(
             $this->isInstanceOf(Visit::class),
@@ -152,7 +152,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         $never = static fn () => $exactly(0);
 
         yield 'non-orphan visit' => [
-            Visit::forValidShortUrl(ShortUrl::withLongUrl('https://longUrl'), Visitor::emptyInstance()),
+            Visit::forValidShortUrl(ShortUrl::withLongUrl('https://longUrl'), Visitor::empty()),
             function (MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator) use ($once, $never): void {
                 $update = Update::forTopicAndPayload('', []);
                 $updatesGenerator->expects($never())->method('newOrphanVisitUpdate');
@@ -166,7 +166,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
             },
         ];
         yield 'orphan visit' => [
-            Visit::forBasePath(Visitor::emptyInstance()),
+            Visit::forBasePath(Visitor::empty()),
             function (MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator) use ($once, $never): void {
                 $update = Update::forTopicAndPayload('', []);
                 $updatesGenerator->expects($once())->method('newOrphanVisitUpdate')->willReturn($update);

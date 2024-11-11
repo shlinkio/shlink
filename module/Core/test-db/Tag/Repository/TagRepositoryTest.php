@@ -79,13 +79,13 @@ class TagRepositoryTest extends DatabaseTestCase
 
         $shortUrl = ShortUrl::create($metaWithTags($firstUrlTags, $apiKey), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl);
-        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()));
-        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::empty()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::empty()));
         $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::botInstance()));
 
         $shortUrl2 = ShortUrl::create($metaWithTags($secondUrlTags, null), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl2);
-        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::emptyInstance()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::empty()));
 
         // One of the tags has two extra short URLs, but with no visits
         $this->getEntityManager()->persist(

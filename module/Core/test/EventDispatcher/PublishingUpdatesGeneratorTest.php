@@ -48,7 +48,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
             'longUrl' => 'https://longUrl',
             'title' => $title,
         ]));
-        $visit = Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance());
+        $visit = Visit::forValidShortUrl($shortUrl, Visitor::empty());
 
         /** @var Update $update */
         $update = $this->generator->{$method}($visit);
@@ -111,7 +111,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
 
     public static function provideOrphanVisits(): iterable
     {
-        $visitor = Visitor::emptyInstance();
+        $visitor = Visitor::empty();
 
         yield VisitType::REGULAR_404->value => [Visit::forRegularNotFound($visitor)];
         yield VisitType::INVALID_SHORT_URL->value => [Visit::forInvalidShortUrl($visitor)];

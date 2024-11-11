@@ -40,7 +40,7 @@ class VisitToLocationHelperTest extends TestCase
 
     public static function provideNonLocatableVisits(): iterable
     {
-        yield [Visit::forBasePath(Visitor::emptyInstance()), IpCannotBeLocatedException::forEmptyAddress()];
+        yield [Visit::forBasePath(Visitor::empty()), IpCannotBeLocatedException::forEmptyAddress()];
         yield [
             Visit::forBasePath(new Visitor('foo', 'bar', IpAddress::LOCALHOST, '')),
             IpCannotBeLocatedException::forLocalhost(),
