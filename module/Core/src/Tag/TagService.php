@@ -47,9 +47,11 @@ readonly class TagService implements TagServiceInterface
      */
     private function createPaginator(AdapterInterface $adapter, TagsParams $params): Paginator
     {
-        return (new Paginator($adapter))
-            ->setMaxPerPage($params->itemsPerPage)
-            ->setCurrentPage($params->page);
+        $paginator = new Paginator($adapter);
+        $paginator->setMaxPerPage($params->itemsPerPage)
+                  ->setCurrentPage($params->page);
+
+        return $paginator;
     }
 
     /**

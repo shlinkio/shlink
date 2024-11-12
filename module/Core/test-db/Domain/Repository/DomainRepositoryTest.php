@@ -139,7 +139,7 @@ class DomainRepositoryTest extends DatabaseTestCase
                 {
                 }
 
-                public function resolveDomain(string|null $domain): Domain|null
+                public function resolveDomain(string|null $domain): Domain
                 {
                     return $this->domain;
                 }

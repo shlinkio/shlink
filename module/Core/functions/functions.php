@@ -109,7 +109,7 @@ function normalizeLocale(string $locale): string
  * minimum quality
  *
  * @param non-empty-string $acceptLanguage
- * @return iterable<string>;
+ * @return iterable<string>
  */
 function acceptLanguageToLocales(string $acceptLanguage, float $minQuality = 0): iterable
 {

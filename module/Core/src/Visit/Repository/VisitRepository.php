@@ -11,7 +11,7 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
-use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsCountFiltering;
@@ -48,7 +48,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         ShortUrlIdentifier $identifier,
         VisitsCountFiltering $filtering,
     ): QueryBuilder {
-        /** @var ShortUrlRepositoryInterface $shortUrlRepo */
+        /** @var ShortUrlRepository $shortUrlRepo */
         $shortUrlRepo = $this->getEntityManager()->getRepository(ShortUrl::class);
         $shortUrlId = $shortUrlRepo->findOne($identifier, $filtering->apiKey?->spec())?->getId() ?? '-1';
 
