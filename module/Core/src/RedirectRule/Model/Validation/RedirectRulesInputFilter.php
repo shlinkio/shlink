@@ -9,12 +9,9 @@ use Laminas\InputFilter\InputFilter;
 use Laminas\Validator\Callback;
 use Laminas\Validator\InArray;
 use Shlinkio\Shlink\Common\Validation\InputFactory;
-use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
-use Shlinkio\Shlink\Core\Util\IpAddressUtils;
 
-use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 use function Shlinkio\Shlink\Core\enumValues;
 
 /** @extends InputFilter<mixed> */
@@ -80,11 +77,9 @@ class RedirectRulesInputFilter extends InputFilter
 
         $value = InputFactory::basic(self::CONDITION_MATCH_VALUE, required: true);
         $value->getValidatorChain()->attach(new Callback(
-            fn (string $value, array $context) => match ($context[self::CONDITION_TYPE]) {
-                RedirectConditionType::DEVICE->value => contains($value, enumValues(DeviceType::class)),
-                RedirectConditionType::IP_ADDRESS->value => IpAddressUtils::isStaticIpCidrOrWildcard($value),
-                // RedirectConditionType::LANGUAGE->value => TODO,
-                default => true,
+            function (string $value, array $context): bool {
+                $conditionType = RedirectConditionType::tryFrom($context[self::CONDITION_TYPE]);
+                return $conditionType === null || $conditionType->isValid($value);
             },
         ));
         $redirectConditionInputFilter->add($value);
