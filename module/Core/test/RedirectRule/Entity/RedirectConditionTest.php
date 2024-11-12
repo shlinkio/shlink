@@ -3,12 +3,14 @@
 namespace ShlinkioTest\Shlink\Core\RedirectRule\Entity;
 
 use Laminas\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition;
+use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 use const ShlinkioTest\Shlink\ANDROID_USER_AGENT;
 use const ShlinkioTest\Shlink\DESKTOP_USER_AGENT;
@@ -92,5 +94,21 @@ class RedirectConditionTest extends TestCase
         $result = RedirectCondition::forIpAddress($ipToMatch)->matchesRequest($request);
 
         self::assertEquals($expected, $result);
+    }
+
+    #[Test, DataProvider('provideVisits')]
+    public function matchesGeolocationCountryCode(Location|null $location, string $countryCodeToMatch, bool $expected): void
+    {
+        $request = ServerRequestFactory::fromGlobals()->withAttribute(Location::class, $location);
+        $result = RedirectCondition::forGeolocationCountryCode($countryCodeToMatch)->matchesRequest($request);
+
+        self::assertEquals($expected, $result);
+    }
+    public static function provideVisits(): iterable
+    {
+        yield 'no location' => [null, 'US', false];
+        yield 'non-matching location' => [new Location(countryCode: 'ES'), 'US', false];
+        yield 'matching location' => [new Location(countryCode: 'US'), 'US', true];
+        yield 'matching case-insensitive' => [new Location(countryCode: 'US'), 'us', true];
     }
 }
