@@ -22,7 +22,7 @@ class CreateShortUrlCommand extends Command
 {
     public const NAME = 'short-url:create';
 
-    private SymfonyStyle|null $io;
+    private SymfonyStyle $io;
     private readonly ShortUrlDataInput $shortUrlDataInput;
 
     public function __construct(

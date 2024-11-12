@@ -99,8 +99,6 @@ class ShortUrlRedirectRuleServiceTest extends TestCase
         $result = $this->ruleService->setRulesForShortUrl($shortUrl, $data);
 
         self::assertCount(2, $result);
-        self::assertInstanceOf(ShortUrlRedirectRule::class, $result[0]);
-        self::assertInstanceOf(ShortUrlRedirectRule::class, $result[1]);
     }
 
     #[Test]

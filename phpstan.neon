@@ -10,7 +10,7 @@ parameters:
         - config
         - docker/config
     symfony:
-        console_application_loader: 'config/cli-app.php'
+        consoleApplicationLoader: 'config/cli-app.php'
     doctrine:
         repositoryClass: Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository
         objectManagerLoader: 'config/entity-manager.php'

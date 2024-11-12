@@ -90,8 +90,8 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
     }
 
     #[Test]
-    #[TestWith(['TEXT/html; charset=utf-8'], name: 'charset')]
-    #[TestWith(['TEXT/html'], name: 'no charset')]
+    #[TestWith(['TEXT/html; charset=utf-8'], 'charset')]
+    #[TestWith(['TEXT/html'], 'no charset')]
     public function titleIsUpdatedWhenItCanBeResolvedFromResponse(string $contentType): void
     {
         $data = ShortUrlCreation::fromRawData(['longUrl' => self::LONG_URL]);

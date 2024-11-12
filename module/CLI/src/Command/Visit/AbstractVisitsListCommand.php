@@ -61,8 +61,8 @@ abstract class AbstractVisitsListCommand extends Command
                 'date' => $visit->date->toAtomString(),
                 'userAgent' => $visit->userAgent,
                 'potentialBot' => $visit->potentialBot,
-                'country' => $visit->getVisitLocation()?->countryName ?? 'Unknown',
-                'city' => $visit->getVisitLocation()?->cityName ?? 'Unknown',
+                'country' => $visit->getVisitLocation()->countryName ?? 'Unknown',
+                'city' => $visit->getVisitLocation()->cityName ?? 'Unknown',
                 ...$extraFields,
             ];
 

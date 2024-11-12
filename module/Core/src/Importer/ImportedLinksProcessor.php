@@ -8,11 +8,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortCodeUniquenessHelperInterface;
-use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 use Shlinkio\Shlink\Core\Util\DoctrineBatchHelperInterface;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
-use Shlinkio\Shlink\Core\Visit\Repository\VisitRepositoryInterface;
+use Shlinkio\Shlink\Core\Visit\Repository\VisitRepository;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkOrphanVisit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
@@ -93,7 +93,7 @@ readonly class ImportedLinksProcessor implements ImportedLinksProcessorInterface
         bool $importShortCodes,
         callable $skipOnShortCodeConflict,
     ): ShortUrlImporting {
-        /** @var ShortUrlRepositoryInterface $shortUrlRepo */
+        /** @var ShortUrlRepository $shortUrlRepo */
         $shortUrlRepo = $this->em->getRepository(ShortUrl::class);
         $alreadyImportedShortUrl = $shortUrlRepo->findOneByImportedUrl($importedUrl);
         if ($alreadyImportedShortUrl !== null) {
@@ -132,7 +132,7 @@ readonly class ImportedLinksProcessor implements ImportedLinksProcessorInterface
     {
         $iterable = $this->batchHelper->wrapIterable($orphanVisits, 100);
 
-        /** @var VisitRepositoryInterface $visitRepo */
+        /** @var VisitRepository $visitRepo */
         $visitRepo = $this->em->getRepository(Visit::class);
         $mostRecentOrphanVisit = $visitRepo->findMostRecentOrphanVisit();
 
