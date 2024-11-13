@@ -97,8 +97,11 @@ class RedirectConditionTest extends TestCase
     }
 
     #[Test, DataProvider('provideVisits')]
-    public function matchesGeolocationCountryCode(Location|null $location, string $countryCodeToMatch, bool $expected): void
-    {
+    public function matchesGeolocationCountryCode(
+        Location|null $location,
+        string $countryCodeToMatch,
+        bool $expected,
+    ): void {
         $request = ServerRequestFactory::fromGlobals()->withAttribute(Location::class, $location);
         $result = RedirectCondition::forGeolocationCountryCode($countryCodeToMatch)->matchesRequest($request);
 
