@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     This change applies both to the `GET /short-urls` endpoint, via the `domain` query parameter, and the `short-url:list` console command, via the `--domain`|`-d` flag.
 
+* [#1774](https://github.com/shlinkio/shlink/issues/1774) Add new geolocation redirect rules for the dynamic redirects system.
+
+    * `geolocation-country-code`: Allows to perform redirections based on the ISO 3166-1 alpha-2 two-letter country code resolved while geolocating the visitor.
+
 ### Changed
 * [#2193](https://github.com/shlinkio/shlink/issues/2193) API keys are now hashed using SHA256, instead of being saved in plain text.
 

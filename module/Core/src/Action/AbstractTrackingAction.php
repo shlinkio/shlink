@@ -15,6 +15,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Visit\RequestTrackerInterface;
+use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 abstract class AbstractTrackingAction implements MiddlewareInterface, RequestMethodInterface
 {
@@ -30,9 +31,12 @@ abstract class AbstractTrackingAction implements MiddlewareInterface, RequestMet
 
         try {
             $shortUrl = $this->urlResolver->resolveEnabledShortUrl($identifier);
-            $this->requestTracker->trackIfApplicable($shortUrl, $request);
+            $visit = $this->requestTracker->trackIfApplicable($shortUrl, $request);
 
-            return $this->createSuccessResp($shortUrl, $request);
+            return $this->createSuccessResp(
+                $shortUrl,
+                $request->withAttribute(Location::class, $visit?->getVisitLocation()),
+            );
         } catch (ShortUrlNotFoundException) {
             return $this->createErrorResp($request, $handler);
         }

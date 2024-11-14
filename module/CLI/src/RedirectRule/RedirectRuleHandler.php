@@ -111,6 +111,9 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
                 RedirectConditionType::IP_ADDRESS => RedirectCondition::forIpAddress(
                     $this->askMandatory('IP address, CIDR block or wildcard-pattern (1.2.*.*)', $io),
                 ),
+                RedirectConditionType::GEOLOCATION_COUNTRY_CODE => RedirectCondition::forGeolocationCountryCode(
+                    $this->askMandatory('Country code to match?', $io),
+                )
             };
 
             $continue = $io->confirm('Do you want to add another condition?');

@@ -9,6 +9,8 @@ use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
 use Shlinkio\Shlink\Core\RedirectRule\Model\Validation\RedirectRulesInputFilter;
 use Shlinkio\Shlink\Core\Util\IpAddressUtils;
+use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
+use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 use function Shlinkio\Shlink\Core\acceptLanguageToLocales;
 use function Shlinkio\Shlink\Core\ArrayUtils\some;
@@ -16,7 +18,7 @@ use function Shlinkio\Shlink\Core\ipAddressFromRequest;
 use function Shlinkio\Shlink\Core\normalizeLocale;
 use function Shlinkio\Shlink\Core\splitLocale;
 use function sprintf;
-use function strtolower;
+use function strcasecmp;
 use function trim;
 
 class RedirectCondition extends AbstractEntity implements JsonSerializable
@@ -52,6 +54,11 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
         return new self(RedirectConditionType::IP_ADDRESS, $ipAddressPattern);
     }
 
+    public static function forGeolocationCountryCode(string $countryCode): self
+    {
+        return new self(RedirectConditionType::GEOLOCATION_COUNTRY_CODE, $countryCode);
+    }
+
     public static function fromRawData(array $rawData): self
     {
         $type = RedirectConditionType::from($rawData[RedirectRulesInputFilter::CONDITION_TYPE]);
@@ -71,6 +78,7 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
             RedirectConditionType::LANGUAGE => $this->matchesLanguage($request),
             RedirectConditionType::DEVICE => $this->matchesDevice($request),
             RedirectConditionType::IP_ADDRESS => $this->matchesRemoteIpAddress($request),
+            RedirectConditionType::GEOLOCATION_COUNTRY_CODE => $this->matchesGeolocationCountryCode($request),
         };
     }
 
@@ -109,13 +117,24 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
     private function matchesDevice(ServerRequestInterface $request): bool
     {
         $device = DeviceType::matchFromUserAgent($request->getHeaderLine('User-Agent'));
-        return $device !== null && $device->value === strtolower($this->matchValue);
+        return $device !== null && $device->value === $this->matchValue;
     }
 
     private function matchesRemoteIpAddress(ServerRequestInterface $request): bool
     {
         $remoteAddress = ipAddressFromRequest($request);
         return $remoteAddress !== null && IpAddressUtils::ipAddressMatchesGroups($remoteAddress, [$this->matchValue]);
+    }
+
+    private function matchesGeolocationCountryCode(ServerRequestInterface $request): bool
+    {
+        $geolocation = $request->getAttribute(Location::class);
+        // TODO We should eventually rely on `Location` type only
+        if (! ($geolocation instanceof Location) && ! ($geolocation instanceof VisitLocation)) {
+            return false;
+        }
+
+        return strcasecmp($geolocation->countryCode, $this->matchValue) === 0;
     }
 
     public function jsonSerialize(): array
@@ -138,6 +157,7 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
                 $this->matchValue,
             ),
             RedirectConditionType::IP_ADDRESS => sprintf('IP address matches %s', $this->matchValue),
+            RedirectConditionType::GEOLOCATION_COUNTRY_CODE => sprintf('country code is %s', $this->matchValue),
         };
     }
 }
