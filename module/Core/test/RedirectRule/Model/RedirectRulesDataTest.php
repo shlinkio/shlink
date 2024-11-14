@@ -63,6 +63,18 @@ class RedirectRulesDataTest extends TestCase
             ],
         ],
     ]]])]
+    #[TestWith([['redirectRules' => [
+        [
+            'longUrl' => 'https://example.com',
+            'conditions' => [
+                [
+                    'type' => 'geolocation-country-code',
+                    'matchKey' => null,
+                    'matchValue' => 'not an country code',
+                ],
+            ],
+        ],
+    ]]])]
     public function throwsWhenProvidedDataIsInvalid(array $invalidData): void
     {
         $this->expectException(ValidationException::class);
@@ -118,6 +130,18 @@ class RedirectRulesDataTest extends TestCase
             ],
         ],
     ]]], 'in-between IP wildcard pattern')]
+    #[TestWith([['redirectRules' => [
+        [
+            'longUrl' => 'https://example.com',
+            'conditions' => [
+                [
+                    'type' => 'geolocation-country-code',
+                    'matchKey' => null,
+                    'matchValue' => 'US',
+                ],
+            ],
+        ],
+    ]]], 'country code')]
     public function allowsValidDataToBeSet(array $validData): void
     {
         $result = RedirectRulesData::fromRawData($validData);
