@@ -118,6 +118,7 @@ class RedirectRuleHandlerTest extends TestCase
                 'Query param value?' => 'bar',
                 'IP address, CIDR block or wildcard-pattern (1.2.*.*)' => '1.2.3.4',
                 'Country code to match?' => 'FR',
+                'City name to match?' => 'Los angeles',
                 default => '',
             },
         );
@@ -169,6 +170,10 @@ class RedirectRuleHandlerTest extends TestCase
         yield 'Geolocation country code' => [
             RedirectConditionType::GEOLOCATION_COUNTRY_CODE,
             [RedirectCondition::forGeolocationCountryCode('FR')],
+        ];
+        yield 'Geolocation city name' => [
+            RedirectConditionType::GEOLOCATION_CITY_NAME,
+            [RedirectCondition::forGeolocationCityName('Los angeles')],
         ];
     }
 

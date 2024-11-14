@@ -97,7 +97,7 @@ class RedirectConditionTest extends TestCase
         self::assertEquals($expected, $result);
     }
 
-    #[Test, DataProvider('provideVisits')]
+    #[Test, DataProvider('provideVisitsWithCountry')]
     public function matchesGeolocationCountryCode(
         Location|VisitLocation|null $location,
         string $countryCodeToMatch,
@@ -108,7 +108,7 @@ class RedirectConditionTest extends TestCase
 
         self::assertEquals($expected, $result);
     }
-    public static function provideVisits(): iterable
+    public static function provideVisitsWithCountry(): iterable
     {
         yield 'no location' => [null, 'US', false];
         yield 'non-matching location' => [new Location(countryCode: 'ES'), 'US', false];
@@ -122,6 +122,35 @@ class RedirectConditionTest extends TestCase
         yield 'matching visit case-insensitive' => [
             VisitLocation::fromGeolocation(new Location(countryCode: 'es')),
             'ES',
+            true,
+        ];
+    }
+
+    #[Test, DataProvider('provideVisitsWithCity')]
+    public function matchesGeolocationCityName(
+        Location|VisitLocation|null $location,
+        string $cityNameToMatch,
+        bool $expected,
+    ): void {
+        $request = ServerRequestFactory::fromGlobals()->withAttribute(Location::class, $location);
+        $result = RedirectCondition::forGeolocationCityName($cityNameToMatch)->matchesRequest($request);
+
+        self::assertEquals($expected, $result);
+    }
+    public static function provideVisitsWithCity(): iterable
+    {
+        yield 'no location' => [null, 'New York', false];
+        yield 'non-matching location' => [new Location(city: 'Los Angeles'), 'New York', false];
+        yield 'matching location' => [new Location(city: 'Madrid'), 'Madrid', true];
+        yield 'matching case-insensitive' => [new Location(city: 'Los Angeles'), 'los angeles', true];
+        yield 'matching visit location' => [
+            VisitLocation::fromGeolocation(new Location(city: 'New York')),
+            'New York',
+            true,
+        ];
+        yield 'matching visit case-insensitive' => [
+            VisitLocation::fromGeolocation(new Location(city: 'barcelona')),
+            'Barcelona',
             true,
         ];
     }
