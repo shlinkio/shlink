@@ -72,7 +72,7 @@ class LocateVisitTest extends TestCase
     {
         $event = new UrlVisited('123');
         $this->em->expects($this->once())->method('find')->with(Visit::class, '123')->willReturn(
-            Visit::forValidShortUrl(ShortUrl::createFake(), new Visitor('', '', '1.2.3.4', '')),
+            Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::fromParams(remoteAddress: '1.2.3.4')),
         );
         $this->em->expects($this->never())->method('flush');
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->withAnyParameters()->willReturn(false);
@@ -91,7 +91,7 @@ class LocateVisitTest extends TestCase
     {
         $event = new UrlVisited('123');
         $this->em->expects($this->once())->method('find')->with(Visit::class, '123')->willReturn(
-            Visit::forValidShortUrl(ShortUrl::createFake(), new Visitor('', '', '1.2.3.4', '')),
+            Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::fromParams(remoteAddress: '1.2.3.4')),
         );
         $this->em->expects($this->never())->method('flush');
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->withAnyParameters()->willReturn(true);
@@ -112,7 +112,7 @@ class LocateVisitTest extends TestCase
     {
         $event = new UrlVisited('123');
         $this->em->expects($this->once())->method('find')->with(Visit::class, '123')->willReturn(
-            Visit::forValidShortUrl(ShortUrl::createFake(), new Visitor('', '', '1.2.3.4', '')),
+            Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::fromParams(remoteAddress: '1.2.3.4')),
         );
         $this->em->expects($this->never())->method('flush');
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->withAnyParameters()->willReturn(true);
@@ -149,9 +149,11 @@ class LocateVisitTest extends TestCase
     {
         $shortUrl = ShortUrl::createFake();
 
-        yield 'null IP' => [Visit::forValidShortUrl($shortUrl, new Visitor('', '', null, ''))];
-        yield 'empty IP' => [Visit::forValidShortUrl($shortUrl, new Visitor('', '', '', ''))];
-        yield 'localhost' => [Visit::forValidShortUrl($shortUrl, new Visitor('', '', IpAddress::LOCALHOST, ''))];
+        yield 'null IP' => [Visit::forValidShortUrl($shortUrl, Visitor::empty())];
+        yield 'empty IP' => [Visit::forValidShortUrl($shortUrl, Visitor::fromParams(remoteAddress: ''))];
+        yield 'localhost' => [
+            Visit::forValidShortUrl($shortUrl, Visitor::fromParams(remoteAddress: IpAddress::LOCALHOST)),
+        ];
     }
 
     #[Test, DataProvider('provideIpAddresses')]
@@ -181,15 +183,21 @@ class LocateVisitTest extends TestCase
     public static function provideIpAddresses(): iterable
     {
         yield 'no original IP address' => [
-            Visit::forValidShortUrl(ShortUrl::createFake(), new Visitor('', '', '1.2.3.4', '')),
+            Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::fromParams(remoteAddress: '1.2.3.4')),
             null,
         ];
         yield 'original IP address' => [
-            Visit::forValidShortUrl(ShortUrl::createFake(), new Visitor('', '', '1.2.3.4', '')),
+            Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::fromParams(remoteAddress: '1.2.3.4')),
             '1.2.3.4',
         ];
-        yield 'base url' => [Visit::forBasePath(new Visitor('', '', '1.2.3.4', '')), '1.2.3.4'];
-        yield 'invalid short url' => [Visit::forInvalidShortUrl(new Visitor('', '', '1.2.3.4', '')), '1.2.3.4'];
-        yield 'regular not found' => [Visit::forRegularNotFound(new Visitor('', '', '1.2.3.4', '')), '1.2.3.4'];
+        yield 'base url' => [Visit::forBasePath(Visitor::fromParams(remoteAddress: '1.2.3.4')), '1.2.3.4'];
+        yield 'invalid short url' => [
+            Visit::forInvalidShortUrl(Visitor::fromParams(remoteAddress: '1.2.3.4')),
+            '1.2.3.4',
+        ];
+        yield 'regular not found' => [
+            Visit::forRegularNotFound(Visitor::fromParams(remoteAddress: '1.2.3.4')),
+            '1.2.3.4',
+        ];
     }
 }

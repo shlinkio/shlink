@@ -64,7 +64,7 @@ class Visit extends AbstractEntity implements JsonSerializable
             type: $type,
             userAgent: $visitor->userAgent,
             referer: $visitor->referer,
-            potentialBot: $visitor->isPotentialBot(),
+            potentialBot: $visitor->potentialBot,
             remoteAddr: self::processAddress($visitor->remoteAddress, $anonymize),
             visitedUrl: $visitor->visitedUrl,
         );

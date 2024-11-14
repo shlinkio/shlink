@@ -59,4 +59,12 @@ final readonly class TrackingOptions
     {
         return $this->disableTrackParam !== null && array_key_exists($this->disableTrackParam, $query);
     }
+
+    /**
+     * If IP address tracking is disabled, or tracking is disabled all together, then geolocation is not relevant
+     */
+    public function isGeolocationRelevant(): bool
+    {
+        return ! $this->disableTracking && ! $this->disableIpTracking;
+    }
 }

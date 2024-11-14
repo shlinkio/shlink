@@ -92,7 +92,7 @@ class MatomoVisitSenderTest extends TestCase
             '1.2.3.4',
             ['setCity', 'setCountry', 'setLatitude', 'setLongitude', 'setIp'],
         ];
-        yield 'fallback IP' => [Visit::forBasePath(new Visitor('', '', '1.2.3.4', '')), null, ['setIp']];
+        yield 'fallback IP' => [Visit::forBasePath(Visitor::fromParams(remoteAddress: '1.2.3.4')), null, ['setIp']];
     }
 
     #[Test, DataProvider('provideUrlsToTrack')]
@@ -117,7 +117,7 @@ class MatomoVisitSenderTest extends TestCase
     {
         yield 'orphan visit without visited URL' => [Visit::forBasePath(Visitor::empty()), ''];
         yield 'orphan visit with visited URL' => [
-            Visit::forBasePath(new Visitor('', '', null, 'https://s.test/foo')),
+            Visit::forBasePath(Visitor::fromParams(visitedUrl: 'https://s.test/foo')),
             'https://s.test/foo',
         ];
         yield 'non-orphan visit' => [

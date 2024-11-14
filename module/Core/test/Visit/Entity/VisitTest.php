@@ -22,7 +22,10 @@ class VisitTest extends TestCase
     #[Test, DataProvider('provideUserAgents')]
     public function isProperlyJsonSerialized(string $userAgent, bool $expectedToBePotentialBot): void
     {
-        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), new Visitor($userAgent, 'some site', '1.2.3.4', ''));
+        $visit = Visit::forValidShortUrl(
+            ShortUrl::createFake(),
+            Visitor::fromParams($userAgent, 'some site', '1.2.3.4'),
+        );
 
         self::assertEquals([
             'referer' => 'some site',
@@ -110,7 +113,7 @@ class VisitTest extends TestCase
     ): void {
         $visit = Visit::forValidShortUrl(
             ShortUrl::createFake(),
-            new Visitor('Chrome', 'some site', $address, ''),
+            Visitor::fromParams('Chrome', 'some site', $address),
             $anonymize,
         );
 
