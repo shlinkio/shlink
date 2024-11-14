@@ -9,6 +9,7 @@ use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
 use Shlinkio\Shlink\Core\RedirectRule\Model\Validation\RedirectRulesInputFilter;
 use Shlinkio\Shlink\Core\Util\IpAddressUtils;
+use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 use function Shlinkio\Shlink\Core\acceptLanguageToLocales;
@@ -128,7 +129,8 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
     private function matchesGeolocationCountryCode(ServerRequestInterface $request): bool
     {
         $geolocation = $request->getAttribute(Location::class);
-        if (!($geolocation instanceof Location)) {
+        // TODO We should eventually rely on `Location` type only
+        if (! ($geolocation instanceof Location) && ! ($geolocation instanceof VisitLocation)) {
             return false;
         }
 

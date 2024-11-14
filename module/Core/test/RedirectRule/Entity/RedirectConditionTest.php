@@ -10,6 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition;
+use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 use const ShlinkioTest\Shlink\ANDROID_USER_AGENT;
@@ -98,7 +99,7 @@ class RedirectConditionTest extends TestCase
 
     #[Test, DataProvider('provideVisits')]
     public function matchesGeolocationCountryCode(
-        Location|null $location,
+        Location|VisitLocation|null $location,
         string $countryCodeToMatch,
         bool $expected,
     ): void {
@@ -113,5 +114,15 @@ class RedirectConditionTest extends TestCase
         yield 'non-matching location' => [new Location(countryCode: 'ES'), 'US', false];
         yield 'matching location' => [new Location(countryCode: 'US'), 'US', true];
         yield 'matching case-insensitive' => [new Location(countryCode: 'US'), 'us', true];
+        yield 'matching visit location' => [
+            VisitLocation::fromGeolocation(new Location(countryCode: 'US')),
+            'US',
+            true,
+        ];
+        yield 'matching visit case-insensitive' => [
+            VisitLocation::fromGeolocation(new Location(countryCode: 'es')),
+            'ES',
+            true,
+        ];
     }
 }
