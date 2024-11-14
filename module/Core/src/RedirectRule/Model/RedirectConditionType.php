@@ -26,6 +26,7 @@ enum RedirectConditionType: string
             // RedirectConditionType::LANGUAGE => TODO Validate at least format,
             RedirectConditionType::IP_ADDRESS => IpAddressUtils::isStaticIpCidrOrWildcard($value),
             RedirectConditionType::GEOLOCATION_COUNTRY_CODE => contains($value, [
+                // List of ISO 3166-1 alpha-2 two-letter country codes https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
                 'AF', 'AX', 'AL', 'DZ', 'AS', 'AD', 'AO', 'AI', 'AQ', 'AG', 'AR', 'AM', 'AW', 'AU', 'AT', 'AZ',
                 'BS', 'BH', 'BD', 'BB', 'BY', 'BE', 'BZ', 'BJ', 'BM', 'BT', 'BO', 'BQ', 'BA', 'BW', 'BV', 'BR',
                 'IO', 'BN', 'BG', 'BF', 'BI', 'CV', 'KH', 'CM', 'CA', 'KY', 'CF', 'TD', 'CL', 'CN', 'CX', 'CC',
