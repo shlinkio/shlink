@@ -113,6 +113,9 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
                 ),
                 RedirectConditionType::GEOLOCATION_COUNTRY_CODE => RedirectCondition::forGeolocationCountryCode(
                     $this->askMandatory('Country code to match?', $io),
+                ),
+                RedirectConditionType::GEOLOCATION_CITY_NAME => RedirectCondition::forGeolocationCityName(
+                    $this->askMandatory('City name to match?', $io),
                 )
             };
 

@@ -59,6 +59,11 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
         return new self(RedirectConditionType::GEOLOCATION_COUNTRY_CODE, $countryCode);
     }
 
+    public static function forGeolocationCityName(string $cityName): self
+    {
+        return new self(RedirectConditionType::GEOLOCATION_CITY_NAME, $cityName);
+    }
+
     public static function fromRawData(array $rawData): self
     {
         $type = RedirectConditionType::from($rawData[RedirectRulesInputFilter::CONDITION_TYPE]);
@@ -79,6 +84,7 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
             RedirectConditionType::DEVICE => $this->matchesDevice($request),
             RedirectConditionType::IP_ADDRESS => $this->matchesRemoteIpAddress($request),
             RedirectConditionType::GEOLOCATION_COUNTRY_CODE => $this->matchesGeolocationCountryCode($request),
+            RedirectConditionType::GEOLOCATION_CITY_NAME => $this->matchesGeolocationCityName($request),
         };
     }
 
@@ -137,6 +143,18 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
         return strcasecmp($geolocation->countryCode, $this->matchValue) === 0;
     }
 
+    private function matchesGeolocationCityName(ServerRequestInterface $request): bool
+    {
+        $geolocation = $request->getAttribute(Location::class);
+        // TODO We should eventually rely on `Location` type only
+        if (! ($geolocation instanceof Location) && ! ($geolocation instanceof VisitLocation)) {
+            return false;
+        }
+
+        $cityName = $geolocation instanceof Location ? $geolocation->city : $geolocation->cityName;
+        return strcasecmp($cityName, $this->matchValue) === 0;
+    }
+
     public function jsonSerialize(): array
     {
         return [
@@ -158,6 +176,7 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
             ),
             RedirectConditionType::IP_ADDRESS => sprintf('IP address matches %s', $this->matchValue),
             RedirectConditionType::GEOLOCATION_COUNTRY_CODE => sprintf('country code is %s', $this->matchValue),
+            RedirectConditionType::GEOLOCATION_CITY_NAME => sprintf('city name is %s', $this->matchValue),
         };
     }
 }

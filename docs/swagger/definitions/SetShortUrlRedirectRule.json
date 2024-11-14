@@ -15,7 +15,14 @@
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["device", "language", "query-param", "ip-address", "geolocation-country-code"],
+            "enum": [
+              "device",
+              "language",
+              "query-param",
+              "ip-address",
+              "geolocation-country-code",
+              "geolocation-city-name"
+            ],
             "description": "The type of the condition, which will determine the logic used to match it"
           },
           "matchKey":  {
