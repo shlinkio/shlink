@@ -17,7 +17,6 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Util\RedirectResponseHelperInterface;
 use Shlinkio\Shlink\Core\Visit\RequestTrackerInterface;
-use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 use function array_slice;
 use function count;
@@ -74,13 +73,9 @@ readonly class ExtraPathRedirectMiddleware implements MiddlewareInterface
 
         try {
             $shortUrl = $this->resolver->resolveEnabledShortUrl($identifier);
-            $visit = $this->requestTracker->trackIfApplicable($shortUrl, $request);
+            $this->requestTracker->trackIfApplicable($shortUrl, $request);
 
-            $longUrl = $this->redirectionBuilder->buildShortUrlRedirect(
-                $shortUrl,
-                $request->withAttribute(Location::class, $visit?->getVisitLocation()),
-                $extraPath,
-            );
+            $longUrl = $this->redirectionBuilder->buildShortUrlRedirect($shortUrl, $request, $extraPath);
             return $this->redirectResponseHelper->buildRedirectResponse($longUrl);
         } catch (ShortUrlNotFoundException) {
             if ($extraPath === null || ! $this->urlShortenerOptions->multiSegmentSlugsEnabled) {

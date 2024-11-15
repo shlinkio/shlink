@@ -18,6 +18,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
+use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 use function array_keys;
 use function array_map;
@@ -288,4 +289,14 @@ function splitByComma(string|null $value): array
 function ipAddressFromRequest(ServerRequestInterface $request): string|null
 {
     return $request->getAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR);
+}
+
+function geolocationFromRequest(ServerRequestInterface $request): Location|null
+{
+    $geolocation = $request->getAttribute(Location::class);
+    if ($geolocation !== null && ! $geolocation instanceof Location) {
+        // TODO Throw exception
+    }
+
+    return $geolocation;
 }

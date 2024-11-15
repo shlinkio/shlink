@@ -11,6 +11,7 @@ use RKA\Middleware\IpAddress;
 use Shlinkio\Shlink\Common\Middleware\AccessLogMiddleware;
 use Shlinkio\Shlink\Common\Middleware\ContentLengthMiddleware;
 use Shlinkio\Shlink\Common\Middleware\RequestIdMiddleware;
+use Shlinkio\Shlink\Core\Geolocation\Middleware\IpGeolocationMiddleware;
 
 return [
 
@@ -67,8 +68,11 @@ return [
         ],
         'not-found' => [
             'middleware' => [
-                // This middleware is in front of tracking actions explicitly. Putting here for orphan visits tracking
+                // These two middlewares are in front of other tracking actions.
+                // Putting them here for orphan visits tracking
                 IpAddress::class,
+                IpGeolocationMiddleware::class,
+
                 Core\ErrorHandler\NotFoundTypeResolverMiddleware::class,
                 Core\ShortUrl\Middleware\ExtraPathRedirectMiddleware::class,
                 Core\ErrorHandler\NotFoundTrackerMiddleware::class,

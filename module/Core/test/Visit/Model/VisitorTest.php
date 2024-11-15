@@ -20,7 +20,7 @@ class VisitorTest extends TestCase
     #[Test, DataProvider('provideParams')]
     public function providedFieldsValuesAreCropped(array $params, array $expected): void
     {
-        $visitor = new Visitor(...$params);
+        $visitor = Visitor::fromParams(...$params);
         ['userAgent' => $userAgent, 'referer' => $referer, 'remoteAddress' => $remoteAddress] = $expected;
 
         self::assertEquals($userAgent, $visitor->userAgent);
@@ -75,7 +75,7 @@ class VisitorTest extends TestCase
     #[Test]
     public function newNormalizedInstanceIsCreatedFromTrackingOptions(): void
     {
-        $visitor = new Visitor(
+        $visitor = Visitor::fromParams(
             self::generateRandomString(2000),
             self::generateRandomString(2000),
             self::generateRandomString(2000),
