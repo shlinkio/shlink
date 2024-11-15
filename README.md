@@ -5,7 +5,6 @@
 [![Latest Stable Version](https://img.shields.io/github/release/shlinkio/shlink.svg?style=flat-square)](https://packagist.org/packages/shlinkio/shlink)
 [![Docker pulls](https://img.shields.io/docker/pulls/shlinkio/shlink.svg?logo=docker&style=flat-square)](https://hub.docker.com/r/shlinkio/shlink/)
 [![License](https://img.shields.io/github/license/shlinkio/shlink.svg?style=flat-square)](https://github.com/shlinkio/shlink/blob/main/LICENSE)
-[![Gurubase](https://img.shields.io/badge/Gurubase-Ask%20Shlink%20Guru-006BFF?style=flat-square)](https://gurubase.io/g/shlink)
 
 [![Mastodon](https://img.shields.io/mastodon/follow/109329425426175098?color=%236364ff&domain=https%3A%2F%2Ffosstodon.org&label=follow&logo=mastodon&logoColor=white&style=flat-square)](https://fosstodon.org/@shlinkio)
 [![Bluesky](https://img.shields.io/badge/follow-shlinkio-0285FF.svg?style=flat-square&logo=bluesky&logoColor=white)](https://bsky.app/profile/shlink.io)
@@ -26,6 +25,7 @@ A PHP-based self-hosted URL shortener that can be used to serve shortened URLs u
 ## Full documentation
 
 This document contains the very basics to get started with Shlink. If you want to learn everything you can do with it, visit the [full searchable documentation](https://shlink.io/documentation/).
+You can also [Ask Shlink Guru](https://gurubase.io/g/shlink), it is a Shlink-focused AI to answer your quesions.
 
 ## Docker image
 
