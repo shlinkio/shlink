@@ -17,7 +17,7 @@ use RuntimeException;
 use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\Config\Options\RabbitMqOptions;
-use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
+use Shlinkio\Shlink\Core\EventDispatcher\Event\UrlVisited;
 use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
 use Shlinkio\Shlink\Core\EventDispatcher\RabbitMq\NotifyVisitToRabbitMq;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -52,7 +52,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         $this->logger->expects($this->never())->method('warning');
         $this->logger->expects($this->never())->method('debug');
 
-        ($this->listener(new RabbitMqOptions(enabled: false)))(new VisitLocated('123'));
+        ($this->listener(new RabbitMqOptions(enabled: false)))(new UrlVisited('123'));
     }
 
     #[Test]
@@ -67,7 +67,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         $this->logger->expects($this->never())->method('debug');
         $this->helper->expects($this->never())->method('publishUpdate');
 
-        ($this->listener())(new VisitLocated($visitId));
+        ($this->listener())(new UrlVisited($visitId));
     }
 
     #[Test, DataProvider('provideVisits')]
@@ -85,7 +85,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         );
         $this->logger->expects($this->never())->method('debug');
 
-        ($this->listener())(new VisitLocated($visitId));
+        ($this->listener())(new UrlVisited($visitId));
     }
 
     public static function provideVisits(): iterable
@@ -121,7 +121,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
             ['e' => $e, 'name' => 'RabbitMQ'],
         );
 
-        ($this->listener())(new VisitLocated($visitId));
+        ($this->listener())(new UrlVisited($visitId));
     }
 
     public static function provideExceptions(): iterable
@@ -142,7 +142,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         $setup($this->updatesGenerator);
         $expect($this->helper, $this->updatesGenerator);
 
-        ($this->listener())(new VisitLocated($visitId));
+        ($this->listener())(new UrlVisited($visitId));
     }
 
     public static function providePayloads(): iterable

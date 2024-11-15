@@ -44,7 +44,7 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         callable|null $beforeDownload = null,
         callable|null $handleProgress = null,
     ): GeolocationResult {
-        if ($this->trackingOptions->disableTracking || $this->trackingOptions->disableIpTracking) {
+        if (! $this->trackingOptions->isGeolocationRelevant()) {
             return GeolocationResult::CHECK_SKIPPED;
         }
 

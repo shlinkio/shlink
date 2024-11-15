@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\Update;
-use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
+use Shlinkio\Shlink\Core\EventDispatcher\Event\UrlVisited;
 use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Throwable;
@@ -25,7 +25,7 @@ abstract class AbstractNotifyVisitListener extends AbstractAsyncListener
     ) {
     }
 
-    public function __invoke(VisitLocated $visitLocated): void
+    public function __invoke(UrlVisited $visitLocated): void
     {
         if (! $this->isEnabled()) {
             return;

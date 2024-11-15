@@ -10,7 +10,6 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition;
-use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 use const ShlinkioTest\Shlink\ANDROID_USER_AGENT;
@@ -99,7 +98,7 @@ class RedirectConditionTest extends TestCase
 
     #[Test, DataProvider('provideVisitsWithCountry')]
     public function matchesGeolocationCountryCode(
-        Location|VisitLocation|null $location,
+        Location|null $location,
         string $countryCodeToMatch,
         bool $expected,
     ): void {
@@ -114,21 +113,11 @@ class RedirectConditionTest extends TestCase
         yield 'non-matching location' => [new Location(countryCode: 'ES'), 'US', false];
         yield 'matching location' => [new Location(countryCode: 'US'), 'US', true];
         yield 'matching case-insensitive' => [new Location(countryCode: 'US'), 'us', true];
-        yield 'matching visit location' => [
-            VisitLocation::fromGeolocation(new Location(countryCode: 'US')),
-            'US',
-            true,
-        ];
-        yield 'matching visit case-insensitive' => [
-            VisitLocation::fromGeolocation(new Location(countryCode: 'es')),
-            'ES',
-            true,
-        ];
     }
 
     #[Test, DataProvider('provideVisitsWithCity')]
     public function matchesGeolocationCityName(
-        Location|VisitLocation|null $location,
+        Location|null $location,
         string $cityNameToMatch,
         bool $expected,
     ): void {
@@ -143,15 +132,5 @@ class RedirectConditionTest extends TestCase
         yield 'non-matching location' => [new Location(city: 'Los Angeles'), 'New York', false];
         yield 'matching location' => [new Location(city: 'Madrid'), 'Madrid', true];
         yield 'matching case-insensitive' => [new Location(city: 'Los Angeles'), 'los angeles', true];
-        yield 'matching visit location' => [
-            VisitLocation::fromGeolocation(new Location(city: 'New York')),
-            'New York',
-            true,
-        ];
-        yield 'matching visit case-insensitive' => [
-            VisitLocation::fromGeolocation(new Location(city: 'barcelona')),
-            'Barcelona',
-            true,
-        ];
     }
 }

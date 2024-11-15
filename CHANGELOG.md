@@ -38,7 +38,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* *Nothing*
+* [#2264](https://github.com/shlinkio/shlink/issues/2264) Fix visits counts not being deleted when deleting short URL or orphan visits.
 
 
 ## [4.2.5] - 2024-11-03

@@ -9,7 +9,6 @@ use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Uri;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
-use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -27,7 +26,6 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Util\RedirectResponseHelperInterface;
 use Shlinkio\Shlink\Core\Visit\RequestTrackerInterface;
-use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 use function Laminas\Stratigility\middleware;
 use function str_starts_with;
@@ -155,10 +153,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         );
         $this->redirectionBuilder->expects($this->once())->method('buildShortUrlRedirect')->with(
             $shortUrl,
-            $this->callback(function (ServerRequestInterface $req) {
-                Assert::assertArrayHasKey(Location::class, $req->getAttributes());
-                return true;
-            }),
+            $this->isInstanceOf(ServerRequestInterface::class),
             $expectedExtraPath,
         )->willReturn('the_built_long_url');
         $this->redirectResponseHelper->expects($this->once())->method('buildRedirectResponse')->with(

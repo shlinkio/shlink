@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\Core\EventDispatcher\Matomo;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
+use Shlinkio\Shlink\Core\EventDispatcher\Event\UrlVisited;
 use Shlinkio\Shlink\Core\Matomo\MatomoOptions;
 use Shlinkio\Shlink\Core\Matomo\MatomoVisitSenderInterface;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
@@ -22,7 +22,7 @@ readonly class SendVisitToMatomo
     ) {
     }
 
-    public function __invoke(VisitLocated $visitLocated): void
+    public function __invoke(UrlVisited $visitLocated): void
     {
         if (! $this->matomoOptions->enabled) {
             return;
