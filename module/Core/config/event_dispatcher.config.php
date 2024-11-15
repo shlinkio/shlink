@@ -15,23 +15,18 @@ use Shlinkio\Shlink\Core\Matomo\MatomoOptions;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitLocator;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitToLocationHelper;
 use Shlinkio\Shlink\EventDispatcher\Listener\EnabledListenerCheckerInterface;
-use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\GeoLite2Options;
-use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 
 use function Shlinkio\Shlink\Config\runningInRoadRunner;
 
 return (static function (): array {
     $regularEvents = [
-        EventDispatcher\Event\UrlVisited::class => [
-            EventDispatcher\LocateVisit::class,
-        ],
         EventDispatcher\Event\GeoLiteDbCreated::class => [
             EventDispatcher\LocateUnlocatedVisits::class,
         ],
     ];
     $asyncEvents = [
-        EventDispatcher\Event\VisitLocated::class => [
+        EventDispatcher\Event\UrlVisited::class => [
             EventDispatcher\Mercure\NotifyVisitToMercure::class,
             EventDispatcher\RabbitMq\NotifyVisitToRabbitMq::class,
             EventDispatcher\RedisPubSub\NotifyVisitToRedis::class,
@@ -46,9 +41,9 @@ return (static function (): array {
 
     // Send visits to matomo asynchronously if the runtime allows it
     if (runningInRoadRunner()) {
-        $asyncEvents[EventDispatcher\Event\VisitLocated::class][] = EventDispatcher\Matomo\SendVisitToMatomo::class;
+        $asyncEvents[EventDispatcher\Event\UrlVisited::class][] = EventDispatcher\Matomo\SendVisitToMatomo::class;
     } else {
-        $regularEvents[EventDispatcher\Event\VisitLocated::class] = [EventDispatcher\Matomo\SendVisitToMatomo::class];
+        $regularEvents[EventDispatcher\Event\UrlVisited::class] = [EventDispatcher\Matomo\SendVisitToMatomo::class];
     }
 
     return [
@@ -60,7 +55,6 @@ return (static function (): array {
 
         'dependencies' => [
             'factories' => [
-                EventDispatcher\LocateVisit::class => ConfigAbstractFactory::class,
                 EventDispatcher\Matomo\SendVisitToMatomo::class => ConfigAbstractFactory::class,
                 EventDispatcher\LocateUnlocatedVisits::class => ConfigAbstractFactory::class,
                 EventDispatcher\Mercure\NotifyVisitToMercure::class => ConfigAbstractFactory::class,
@@ -104,13 +98,6 @@ return (static function (): array {
         ],
 
         ConfigAbstractFactory::class => [
-            EventDispatcher\LocateVisit::class => [
-                IpLocationResolverInterface::class,
-                'em',
-                'Logger_Shlink',
-                DbUpdater::class,
-                EventDispatcherInterface::class,
-            ],
             EventDispatcher\LocateUnlocatedVisits::class => [VisitLocator::class, VisitToLocationHelper::class],
             EventDispatcher\Mercure\NotifyVisitToMercure::class => [
                 MercureHubPublishingHelper::class,

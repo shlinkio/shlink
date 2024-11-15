@@ -59,6 +59,7 @@ class Visit extends AbstractEntity implements JsonSerializable
         Visitor $visitor,
         bool $anonymize,
     ): self {
+        $geolocation = $visitor->geolocation;
         return new self(
             shortUrl: $shortUrl,
             type: $type,
@@ -67,6 +68,7 @@ class Visit extends AbstractEntity implements JsonSerializable
             potentialBot: $visitor->potentialBot,
             remoteAddr: self::processAddress($visitor->remoteAddress, $anonymize),
             visitedUrl: $visitor->visitedUrl,
+            visitLocation: $geolocation !== null ? VisitLocation::fromGeolocation($geolocation) : null,
         );
     }
 

@@ -13,7 +13,7 @@ use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\Update;
-use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
+use Shlinkio\Shlink\Core\EventDispatcher\Event\UrlVisited;
 use Shlinkio\Shlink\Core\EventDispatcher\Mercure\NotifyVisitToMercure;
 use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -54,7 +54,7 @@ class NotifyVisitToMercureTest extends TestCase
         $this->updatesGenerator->expects($this->never())->method('newVisitUpdate');
         $this->helper->expects($this->never())->method('publishUpdate');
 
-        ($this->listener)(new VisitLocated($visitId));
+        ($this->listener)(new UrlVisited($visitId));
     }
 
     #[Test]
@@ -74,7 +74,7 @@ class NotifyVisitToMercureTest extends TestCase
         $this->updatesGenerator->expects($this->once())->method('newVisitUpdate')->with($visit)->willReturn($update);
         $this->helper->expects($this->exactly(2))->method('publishUpdate')->with($update);
 
-        ($this->listener)(new VisitLocated($visitId));
+        ($this->listener)(new UrlVisited($visitId));
     }
 
     #[Test]
@@ -98,7 +98,7 @@ class NotifyVisitToMercureTest extends TestCase
         $this->updatesGenerator->expects($this->once())->method('newVisitUpdate')->with($visit)->willReturn($update);
         $this->helper->expects($this->once())->method('publishUpdate')->with($update)->willThrowException($e);
 
-        ($this->listener)(new VisitLocated($visitId));
+        ($this->listener)(new UrlVisited($visitId));
     }
 
     #[Test, DataProvider('provideOrphanVisits')]
@@ -117,7 +117,7 @@ class NotifyVisitToMercureTest extends TestCase
         $this->updatesGenerator->expects($this->never())->method('newVisitUpdate');
         $this->helper->expects($this->once())->method('publishUpdate')->with($update);
 
-        ($this->listener)(new VisitLocated($visitId));
+        ($this->listener)(new UrlVisited($visitId));
     }
 
     public static function provideOrphanVisits(): iterable

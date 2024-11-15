@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Common\Doctrine\EntityRepositoryFactory;
 use Shlinkio\Shlink\Core\Config\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
+use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Symfony\Component\Lock;
 
@@ -101,6 +102,8 @@ return [
             Action\RobotsAction::class => ConfigAbstractFactory::class,
 
             EventDispatcher\PublishingUpdatesGenerator::class => ConfigAbstractFactory::class,
+
+            Geolocation\Middleware\IpGeolocationMiddleware::class => ConfigAbstractFactory::class,
 
             Importer\ImportedLinksProcessor::class => ConfigAbstractFactory::class,
 
@@ -236,6 +239,13 @@ return [
         ShortUrl\Middleware\TrimTrailingSlashMiddleware::class => [Config\Options\UrlShortenerOptions::class],
 
         EventDispatcher\PublishingUpdatesGenerator::class => [ShortUrl\Transformer\ShortUrlDataTransformer::class],
+
+        Geolocation\Middleware\IpGeolocationMiddleware::class => [
+            IpLocationResolverInterface::class,
+            DbUpdater::class,
+            'Logger_Shlink',
+            Config\Options\TrackingOptions::class,
+        ],
 
         Importer\ImportedLinksProcessor::class => [
             'em',
