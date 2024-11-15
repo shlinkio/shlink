@@ -9,11 +9,10 @@ use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
 use Shlinkio\Shlink\Core\RedirectRule\Model\Validation\RedirectRulesInputFilter;
 use Shlinkio\Shlink\Core\Util\IpAddressUtils;
-use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
-use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 use function Shlinkio\Shlink\Core\acceptLanguageToLocales;
 use function Shlinkio\Shlink\Core\ArrayUtils\some;
+use function Shlinkio\Shlink\Core\geolocationFromRequest;
 use function Shlinkio\Shlink\Core\ipAddressFromRequest;
 use function Shlinkio\Shlink\Core\normalizeLocale;
 use function Shlinkio\Shlink\Core\splitLocale;
@@ -134,9 +133,8 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
 
     private function matchesGeolocationCountryCode(ServerRequestInterface $request): bool
     {
-        $geolocation = $request->getAttribute(Location::class);
-        // TODO We should eventually rely on `Location` type only
-        if (! ($geolocation instanceof Location) && ! ($geolocation instanceof VisitLocation)) {
+        $geolocation = geolocationFromRequest($request);
+        if ($geolocation === null) {
             return false;
         }
 
@@ -145,14 +143,12 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
 
     private function matchesGeolocationCityName(ServerRequestInterface $request): bool
     {
-        $geolocation = $request->getAttribute(Location::class);
-        // TODO We should eventually rely on `Location` type only
-        if (! ($geolocation instanceof Location) && ! ($geolocation instanceof VisitLocation)) {
+        $geolocation = geolocationFromRequest($request);
+        if ($geolocation === null) {
             return false;
         }
 
-        $cityName = $geolocation instanceof Location ? $geolocation->city : $geolocation->cityName;
-        return strcasecmp($cityName, $this->matchValue) === 0;
+        return strcasecmp($geolocation->city, $this->matchValue) === 0;
     }
 
     public function jsonSerialize(): array

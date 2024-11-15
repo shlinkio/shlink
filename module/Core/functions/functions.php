@@ -293,5 +293,10 @@ function ipAddressFromRequest(ServerRequestInterface $request): string|null
 
 function geolocationFromRequest(ServerRequestInterface $request): Location|null
 {
-    return $request->getAttribute(Location::class);
+    $geolocation = $request->getAttribute(Location::class);
+    if ($geolocation !== null && ! $geolocation instanceof Location) {
+        // TODO Throw exception
+    }
+
+    return $geolocation;
 }
