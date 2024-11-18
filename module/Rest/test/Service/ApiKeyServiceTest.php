@@ -17,6 +17,8 @@ use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 use Shlinkio\Shlink\Rest\ApiKey\Repository\ApiKeyRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
+use Shlinkio\Shlink\Rest\Exception\ApiKeyConflictException;
+use Shlinkio\Shlink\Rest\Exception\ApiKeyNotFoundException;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 
 use function substr;
@@ -145,7 +147,7 @@ class ApiKeyServiceTest extends TestCase
     {
         $this->repo->expects($this->once())->method('findOneBy')->with($findOneByArg)->willReturn(null);
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(ApiKeyNotFoundException::class);
 
         $this->service->{$disableMethod}('12345');
     }
@@ -217,8 +219,8 @@ class ApiKeyServiceTest extends TestCase
         $this->repo->expects($this->once())->method('findOneBy')->with(['name' => 'old'])->willReturn(null);
         $this->repo->expects($this->never())->method('nameExists');
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('API key with name "old" could not be found');
+        $this->expectException(ApiKeyNotFoundException::class);
+        $this->expectExceptionMessage('API key with name "old" not found');
 
         $this->service->renameApiKey($renaming);
     }
@@ -246,8 +248,8 @@ class ApiKeyServiceTest extends TestCase
         $this->repo->expects($this->once())->method('findOneBy')->with(['name' => 'old'])->willReturn($apiKey);
         $this->repo->expects($this->once())->method('nameExists')->with('new')->willReturn(true);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Another API key with name "new" already exists');
+        $this->expectException(ApiKeyConflictException::class);
+        $this->expectExceptionMessage('An API key with name "new" already exists');
 
         $this->service->renameApiKey($renaming);
     }

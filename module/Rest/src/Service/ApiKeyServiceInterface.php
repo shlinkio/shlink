@@ -8,6 +8,8 @@ use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Model\Renaming;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
+use Shlinkio\Shlink\Rest\Exception\ApiKeyConflictException;
+use Shlinkio\Shlink\Rest\Exception\ApiKeyNotFoundException;
 
 interface ApiKeyServiceInterface
 {
@@ -21,13 +23,13 @@ interface ApiKeyServiceInterface
     public function check(string $key): ApiKeyCheckResult;
 
     /**
-     * @throws InvalidArgumentException
+     * @throws ApiKeyNotFoundException
      */
     public function disableByName(string $apiKeyName): ApiKey;
 
     /**
      * @deprecated Use `self::disableByName($name)` instead
-     * @throws InvalidArgumentException
+     * @throws ApiKeyNotFoundException
      */
     public function disableByKey(string $key): ApiKey;
 
@@ -37,7 +39,8 @@ interface ApiKeyServiceInterface
     public function listKeys(bool $enabledOnly = false): array;
 
     /**
-     * @throws InvalidArgumentException If an API key with oldName does not exist, or newName is in use by another one
+     * @throws ApiKeyNotFoundException
+     * @throws ApiKeyConflictException
      */
     public function renameApiKey(Renaming $apiKeyRenaming): ApiKey;
 }
