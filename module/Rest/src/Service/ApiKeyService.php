@@ -10,6 +10,8 @@ use Shlinkio\Shlink\Core\Model\Renaming;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Repository\ApiKeyRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
+use Shlinkio\Shlink\Rest\Exception\ApiKeyConflictException;
+use Shlinkio\Shlink\Rest\Exception\ApiKeyNotFoundException;
 
 use function sprintf;
 
@@ -71,7 +73,12 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
      */
     public function disableByName(string $apiKeyName): ApiKey
     {
-        return $this->disableApiKey($this->repo->findOneBy(['name' => $apiKeyName]));
+        $apiKey = $this->repo->findOneBy(['name' => $apiKeyName]);
+        if ($apiKey === null) {
+            throw ApiKeyNotFoundException::forName($apiKeyName);
+        }
+
+        return $this->disableApiKey($apiKey);
     }
 
     /**
@@ -79,15 +86,16 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
      */
     public function disableByKey(string $key): ApiKey
     {
-        return $this->disableApiKey($this->findByKey($key));
-    }
-
-    private function disableApiKey(ApiKey|null $apiKey): ApiKey
-    {
+        $apiKey = $this->findByKey($key);
         if ($apiKey === null) {
-            throw new InvalidArgumentException('Provided API key does not exist and can\'t be disabled');
+            throw ApiKeyNotFoundException::forKey($key);
         }
 
+        return $this->disableApiKey($apiKey);
+    }
+
+    private function disableApiKey(ApiKey $apiKey): ApiKey
+    {
         $apiKey->disable();
         $this->em->flush();
 
@@ -110,9 +118,7 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
     {
         $apiKey = $this->repo->findOneBy(['name' => $apiKeyRenaming->oldName]);
         if ($apiKey === null) {
-            throw new InvalidArgumentException(
-                sprintf('API key with name "%s" could not be found', $apiKeyRenaming->oldName),
-            );
+            throw ApiKeyNotFoundException::forName($apiKeyRenaming->oldName);
         }
 
         if (! $apiKeyRenaming->nameChanged()) {
@@ -121,9 +127,7 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
 
         $this->em->wrapInTransaction(function () use ($apiKeyRenaming, $apiKey): void {
             if ($this->repo->nameExists($apiKeyRenaming->newName)) {
-                throw new InvalidArgumentException(
-                    sprintf('Another API key with name "%s" already exists', $apiKeyRenaming->newName),
-                );
+                throw ApiKeyConflictException::forName($apiKeyRenaming->newName);
             }
 
             $apiKey->name = $apiKeyRenaming->newName;
