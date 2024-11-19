@@ -151,6 +151,15 @@ class Visit extends AbstractEntity implements JsonSerializable
 
     public function jsonSerialize(): array
     {
+        return $this->toArray();
+    }
+
+    /**
+     * @phpstan-type VisitedShortUrl array{shortCode: string, domain: string|null, shortUrl: string}
+     * @param (callable(ShortUrl $shortUrl): VisitedShortUrl)|null $visitedShortUrlToArray
+     */
+    public function toArray(callable|null $visitedShortUrlToArray = null): array
+    {
         $base = [
             'referer' => $this->referer,
             'date' => $this->date->toAtomString(),
@@ -160,8 +169,11 @@ class Visit extends AbstractEntity implements JsonSerializable
             'visitedUrl' => $this->visitedUrl,
             'redirectUrl' => $this->redirectUrl,
         ];
-        if (! $this->isOrphan()) {
-            return $base;
+        if ($this->shortUrl !== null) {
+            return $visitedShortUrlToArray === null ? $base : [
+                ...$base,
+                'visitedShortUrl' => $visitedShortUrlToArray($this->shortUrl),
+            ];
         }
 
         return [
