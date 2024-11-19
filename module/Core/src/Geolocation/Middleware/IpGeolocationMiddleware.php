@@ -9,6 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
+use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
@@ -46,7 +47,9 @@ readonly class IpGeolocationMiddleware implements MiddlewareInterface
     private function geolocateIpAddress(string|null $ipAddress): Location
     {
         try {
-            return $ipAddress === null ? Location::empty() : $this->ipLocationResolver->resolveIpLocation($ipAddress);
+            return $ipAddress === null || $ipAddress === IpAddress::LOCALHOST
+                ? Location::empty()
+                : $this->ipLocationResolver->resolveIpLocation($ipAddress);
         } catch (WrongIpException $e) {
             $this->logger->warning('Tried to locate IP address, but it seems to be wrong. {e}', ['e' => $e]);
             return Location::empty();
