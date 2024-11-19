@@ -15,6 +15,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
+use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\Geolocation\Middleware\IpGeolocationMiddleware;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
@@ -67,13 +68,18 @@ class IpGeolocationMiddlewareTest extends TestCase
     }
 
     #[Test]
-    public function emptyLocationIsReturnedIfIpAddressDoesNotExistInRequest(): void
+    #[TestWith([null])]
+    #[TestWith([IpAddress::LOCALHOST])]
+    public function emptyLocationIsReturnedIfIpAddressIsNotLocatable(string|null $ipAddress): void
     {
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(true);
         $this->ipLocationResolver->expects($this->never())->method('resolveIpLocation');
         $this->logger->expects($this->never())->method('warning');
 
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals()->withAttribute(
+            IpAddressMiddlewareFactory::REQUEST_ATTR,
+            $ipAddress,
+        );
         $this->handler->expects($this->once())->method('handle')->with($this->callback(
             function (ServerRequestInterface $req): bool {
                 $location = $req->getAttribute(Location::class);

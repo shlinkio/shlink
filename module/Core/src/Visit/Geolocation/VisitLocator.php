@@ -54,7 +54,7 @@ readonly class VisitLocator implements VisitLocatorInterface
                 }
 
                 // If the IP address is non-locatable, locate it as empty to prevent next processes to pick it again
-                $location = Location::emptyInstance();
+                $location = Location::empty();
             }
 
             $this->locateVisit($visit, VisitLocation::fromGeolocation($location), $helper);
