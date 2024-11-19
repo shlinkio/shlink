@@ -29,7 +29,6 @@
         "guzzlehttp/guzzle": "^7.9",
         "hidehalo/nanoid-php": "^2.0",
         "jaybizzle/crawler-detect": "^1.2.116",
-        "laminas/laminas-config": "^3.9",
         "laminas/laminas-config-aggregator": "^1.15",
         "laminas/laminas-diactoros": "^3.5",
         "laminas/laminas-inputfilter": "^2.30",
