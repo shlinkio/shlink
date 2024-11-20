@@ -4,36 +4,29 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\Visit;
 
-use Laminas\Diactoros\Response\JsonResponse;
-use Psr\Http\Message\ResponseInterface as Response;
+use Pagerfanta\Pagerfanta;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtils;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
-use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
-use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-class DomainVisitsAction extends AbstractRestAction
+class DomainVisitsAction extends AbstractListVisitsAction
 {
     protected const ROUTE_PATH = '/domains/{domain}/visits';
-    protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
     public function __construct(
-        private readonly VisitsStatsHelperInterface $visitsHelper,
+        VisitsStatsHelperInterface $visitsHelper,
         private readonly UrlShortenerOptions $urlShortenerOptions,
     ) {
+        parent::__construct($visitsHelper);
     }
 
-    public function handle(Request $request): Response
+    protected function getVisitsPaginator(Request $request, VisitsParams $params, ApiKey $apiKey): Pagerfanta
     {
         $domain = $this->resolveDomainParam($request);
-        $params = VisitsParams::fromRawData($request->getQueryParams());
-        $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
-        $visits = $this->visitsHelper->visitsForDomain($domain, $params, $apiKey);
-
-        return new JsonResponse(['visits' => PagerfantaUtils::serializePaginator($visits)]);
+        return $this->visitsHelper->visitsForDomain($domain, $params, $apiKey);
     }
 
     private function resolveDomainParam(Request $request): string

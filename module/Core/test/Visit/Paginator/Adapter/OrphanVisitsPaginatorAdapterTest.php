@@ -27,7 +27,7 @@ class OrphanVisitsPaginatorAdapterTest extends TestCase
     protected function setUp(): void
     {
         $this->repo = $this->createMock(VisitRepositoryInterface::class);
-        $this->params = OrphanVisitsParams::fromRawData([]);
+        $this->params = new OrphanVisitsParams();
         $this->apiKey = ApiKey::create();
 
         $this->adapter = new OrphanVisitsPaginatorAdapter($this->repo, $this->params, $this->apiKey);

@@ -21,9 +21,8 @@ final class OrphanVisitsParams extends VisitsParams
         parent::__construct($dateRange, $page, $itemsPerPage, $excludeBots);
     }
 
-    public static function fromRawData(array $query): self
+    public static function fromVisitsParamsAndRawData(VisitsParams $visitsParams, array $query): self
     {
-        $visitsParams = parent::fromRawData($query);
         $type = $query['type'] ?? null;
 
         return new self(
