@@ -10,7 +10,6 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Common\Doctrine\EntityRepositoryFactory;
 use Shlinkio\Shlink\Core\Config\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Core\Geolocation\GeolocationDbUpdater;
-use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\GeoLite2ReaderFactory;
@@ -94,6 +93,7 @@ return [
             ],
             Visit\Listener\ShortUrlVisitsCountTracker::class => InvokableFactory::class,
             Visit\Listener\OrphanVisitsCountTracker::class => InvokableFactory::class,
+            Visit\Transformer\VisitDataTransformer::class => ConfigAbstractFactory::class,
 
             Util\DoctrineBatchHelper::class => ConfigAbstractFactory::class,
             Util\RedirectResponseHelper::class => ConfigAbstractFactory::class,
@@ -128,7 +128,7 @@ return [
         Matomo\MatomoTrackerBuilder::class => [Matomo\MatomoOptions::class],
         Matomo\MatomoVisitSender::class => [
             Matomo\MatomoTrackerBuilder::class,
-            ShortUrlStringifier::class,
+            ShortUrl\Helper\ShortUrlStringifier::class,
             Visit\Repository\VisitIterationRepository::class,
         ],
 
@@ -168,6 +168,7 @@ return [
         Visit\Geolocation\VisitLocator::class => ['em', Visit\Repository\VisitIterationRepository::class],
         Visit\Geolocation\VisitToLocationHelper::class => [IpLocationResolverInterface::class],
         Visit\VisitsStatsHelper::class => ['em'],
+        Visit\Transformer\VisitDataTransformer::class => [ShortUrl\Helper\ShortUrlStringifier::class],
         Tag\TagService::class => ['em', Tag\Repository\TagRepository::class],
         ShortUrl\DeleteShortUrlService::class => [
             'em',

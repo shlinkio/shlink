@@ -85,16 +85,29 @@ return [
             ShortUrl\ShortUrlResolver::class,
             ShortUrlDataTransformer::class,
         ],
-        Action\Visit\ShortUrlVisitsAction::class => [Visit\VisitsStatsHelper::class],
-        Action\Visit\TagVisitsAction::class => [Visit\VisitsStatsHelper::class],
+        Action\Visit\ShortUrlVisitsAction::class => [
+            Visit\VisitsStatsHelper::class,
+            Visit\Transformer\VisitDataTransformer::class,
+        ],
+        Action\Visit\TagVisitsAction::class => [
+            Visit\VisitsStatsHelper::class,
+            Visit\Transformer\VisitDataTransformer::class,
+        ],
         Action\Visit\DomainVisitsAction::class => [
             Visit\VisitsStatsHelper::class,
             Config\Options\UrlShortenerOptions::class,
+            Visit\Transformer\VisitDataTransformer::class,
         ],
         Action\Visit\GlobalVisitsAction::class => [Visit\VisitsStatsHelper::class],
-        Action\Visit\OrphanVisitsAction::class => [Visit\VisitsStatsHelper::class],
+        Action\Visit\OrphanVisitsAction::class => [
+            Visit\VisitsStatsHelper::class,
+            Visit\Transformer\VisitDataTransformer::class,
+        ],
         Action\Visit\DeleteOrphanVisitsAction::class => [Visit\VisitsDeleter::class],
-        Action\Visit\NonOrphanVisitsAction::class => [Visit\VisitsStatsHelper::class],
+        Action\Visit\NonOrphanVisitsAction::class => [
+            Visit\VisitsStatsHelper::class,
+            Visit\Transformer\VisitDataTransformer::class,
+        ],
         Action\ShortUrl\ListShortUrlsAction::class => [
             ShortUrl\ShortUrlListService::class,
             ShortUrlDataTransformer::class,
