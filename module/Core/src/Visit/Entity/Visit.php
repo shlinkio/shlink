@@ -166,16 +166,24 @@ class Visit extends AbstractEntity implements JsonSerializable
             'potentialBot' => $this->potentialBot,
             'visitedUrl' => $this->visitedUrl,
         ];
-        if ($this->shortUrl !== null) {
-            return $visitedShortUrlToArray === null ? $base : [
+
+        // Orphan visit
+        if ($this->shortUrl === null) {
+            return [
                 ...$base,
-                'visitedShortUrl' => $visitedShortUrlToArray($this->shortUrl),
+                'type' => $this->type->value,
             ];
+
+        }
+
+        // Should not include visited short URL
+        if ($visitedShortUrlToArray === null) {
+            return $base;
         }
 
         return [
             ...$base,
-            'type' => $this->type->value,
+            'visitedShortUrl' => $visitedShortUrlToArray($this->shortUrl),
         ];
     }
 }
