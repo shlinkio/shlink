@@ -12,13 +12,14 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\ErrorHandler\Model\NotFoundType;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\RequestTracker;
 use Shlinkio\Shlink\Core\Visit\VisitsTrackerInterface;
+
+use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
 
 class RequestTrackerTest extends TestCase
 {
@@ -67,15 +68,15 @@ class RequestTrackerTest extends TestCase
             ServerRequestFactory::fromGlobals()->withQueryParams(['foobar' => null]),
         ];
         yield 'exact remote address' => [ServerRequestFactory::fromGlobals()->withAttribute(
-            IpAddressMiddlewareFactory::REQUEST_ATTR,
+            IP_ADDRESS_REQUEST_ATTRIBUTE,
             '80.90.100.110',
         )];
         yield 'matching wildcard remote address' => [ServerRequestFactory::fromGlobals()->withAttribute(
-            IpAddressMiddlewareFactory::REQUEST_ATTR,
+            IP_ADDRESS_REQUEST_ATTRIBUTE,
             '1.2.3.4',
         )];
         yield 'matching CIDR block remote address' => [ServerRequestFactory::fromGlobals()->withAttribute(
-            IpAddressMiddlewareFactory::REQUEST_ATTR,
+            IP_ADDRESS_REQUEST_ATTRIBUTE,
             '192.168.10.100',
         )];
     }
@@ -102,7 +103,7 @@ class RequestTrackerTest extends TestCase
         );
 
         $this->requestTracker->trackIfApplicable($shortUrl, ServerRequestFactory::fromGlobals()->withAttribute(
-            IpAddressMiddlewareFactory::REQUEST_ATTR,
+            IP_ADDRESS_REQUEST_ATTRIBUTE,
             'invalid',
         ));
     }

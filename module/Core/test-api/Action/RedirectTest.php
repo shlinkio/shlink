@@ -89,8 +89,8 @@ class RedirectTest extends ApiTestCase
             'https://blog.alejandrocelaya.com/2017/12/09/acmailer-7-0-the-most-important-release-in-a-long-time/',
         ];
 
-        $clientDetection = require __DIR__ . '/../../../../config/autoload/client-detection.global.php';
-        foreach ($clientDetection['ip_address_resolution']['headers_to_inspect'] as $header) {
+        $ipAddressConfig = require __DIR__ . '/../../../../config/autoload/ip-address.global.php';
+        foreach ($ipAddressConfig['rka']['ip_address']['headers_to_inspect'] as $header) {
             yield sprintf('rule: IP address in "%s" header', $header) => [
                 [
                     RequestOptions::HEADERS => [$header => '1.2.3.4'],
