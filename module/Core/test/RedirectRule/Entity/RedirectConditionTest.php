@@ -7,11 +7,11 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
+use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
 use const ShlinkioTest\Shlink\ANDROID_USER_AGENT;
 use const ShlinkioTest\Shlink\DESKTOP_USER_AGENT;
 use const ShlinkioTest\Shlink\IOS_USER_AGENT;
@@ -88,7 +88,7 @@ class RedirectConditionTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
         if ($remoteIp !== null) {
-            $request = $request->withAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR, $remoteIp);
+            $request = $request->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, $remoteIp);
         }
 
         $result = RedirectCondition::forIpAddress($ipToMatch)->matchesRequest($request);

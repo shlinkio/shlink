@@ -15,7 +15,6 @@ use Laminas\Filter\Word\CamelCaseToSeparator;
 use Laminas\Filter\Word\CamelCaseToUnderscore;
 use Laminas\InputFilter\InputFilter;
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
@@ -37,6 +36,8 @@ use function str_replace;
 use function strtolower;
 use function trim;
 use function ucfirst;
+
+use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
 
 function generateRandomShortCode(int $length, ShortUrlMode $mode = ShortUrlMode::STRICT): string
 {
@@ -288,7 +289,7 @@ function splitByComma(string|null $value): array
 
 function ipAddressFromRequest(ServerRequestInterface $request): string|null
 {
-    return $request->getAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR);
+    return $request->getAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE);
 }
 
 function geolocationFromRequest(ServerRequestInterface $request): Location|null

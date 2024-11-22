@@ -9,7 +9,6 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule;
@@ -18,6 +17,7 @@ use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectRuleServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 
+use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
 use const ShlinkioTest\Shlink\ANDROID_USER_AGENT;
 use const ShlinkioTest\Shlink\DESKTOP_USER_AGENT;
 use const ShlinkioTest\Shlink\IOS_USER_AGENT;
@@ -90,22 +90,22 @@ class ShortUrlRedirectionResolverTest extends TestCase
             'https://example.com/from-rule',
         ];
         yield 'matching static IP address' => [
-            $request()->withAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR, '1.2.3.4'),
+            $request()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, '1.2.3.4'),
             RedirectCondition::forIpAddress('1.2.3.4'),
             'https://example.com/from-rule',
         ];
         yield 'matching CIDR block' => [
-            $request()->withAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR, '192.168.1.35'),
+            $request()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, '192.168.1.35'),
             RedirectCondition::forIpAddress('192.168.1.0/24'),
             'https://example.com/from-rule',
         ];
         yield 'matching wildcard IP address' => [
-            $request()->withAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR, '1.2.5.5'),
+            $request()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, '1.2.5.5'),
             RedirectCondition::forIpAddress('1.2.*.*'),
             'https://example.com/from-rule',
         ];
         yield 'non-matching IP address' => [
-            $request()->withAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR, '4.3.2.1'),
+            $request()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, '4.3.2.1'),
             RedirectCondition::forIpAddress('1.2.3.4'),
             'https://example.com/foo/bar',
         ];

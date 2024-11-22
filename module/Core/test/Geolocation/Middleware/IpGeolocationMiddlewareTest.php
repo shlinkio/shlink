@@ -14,7 +14,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
-use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\Geolocation\Middleware\IpGeolocationMiddleware;
@@ -23,6 +22,8 @@ use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Throwable;
+
+use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
 
 class IpGeolocationMiddlewareTest extends TestCase
 {
@@ -76,10 +77,7 @@ class IpGeolocationMiddlewareTest extends TestCase
         $this->ipLocationResolver->expects($this->never())->method('resolveIpLocation');
         $this->logger->expects($this->never())->method('warning');
 
-        $request = ServerRequestFactory::fromGlobals()->withAttribute(
-            IpAddressMiddlewareFactory::REQUEST_ATTR,
-            $ipAddress,
-        );
+        $request = ServerRequestFactory::fromGlobals()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, $ipAddress);
         $this->handler->expects($this->once())->method('handle')->with($this->callback(
             function (ServerRequestInterface $req): bool {
                 $location = $req->getAttribute(Location::class);
@@ -104,10 +102,7 @@ class IpGeolocationMiddlewareTest extends TestCase
         );
         $this->logger->expects($this->never())->method('warning');
 
-        $request = ServerRequestFactory::fromGlobals()->withAttribute(
-            IpAddressMiddlewareFactory::REQUEST_ATTR,
-            '1.2.3.4',
-        );
+        $request = ServerRequestFactory::fromGlobals()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, '1.2.3.4');
         $this->handler->expects($this->once())->method('handle')->with($this->callback(
             function (ServerRequestInterface $req): bool {
                 $location = $req->getAttribute(Location::class);
@@ -147,10 +142,7 @@ class IpGeolocationMiddlewareTest extends TestCase
             ->willThrowException($exception);
         $this->logger->expects($this->once())->method($loggerMethod)->with($expectedLoggedMessage, ['e' => $exception]);
 
-        $request = ServerRequestFactory::fromGlobals()->withAttribute(
-            IpAddressMiddlewareFactory::REQUEST_ATTR,
-            '1.2.3.4',
-        );
+        $request = ServerRequestFactory::fromGlobals()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, '1.2.3.4');
         $this->handler->expects($this->once())->method('handle')->with($this->callback(
             function (ServerRequestInterface $req): bool {
                 $location = $req->getAttribute(Location::class);
