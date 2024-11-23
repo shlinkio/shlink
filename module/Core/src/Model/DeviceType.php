@@ -2,7 +2,7 @@
 
 namespace Shlinkio\Shlink\Core\Model;
 
-use Detection\MobileDetect;
+use foroco\BrowserDetection;
 
 enum DeviceType: string
 {
@@ -12,17 +12,20 @@ enum DeviceType: string
 
     public static function matchFromUserAgent(string $userAgent): self|null
     {
-        $detect = new MobileDetect();
-        $detect->setUserAgent($userAgent);
+        static $detection = null;
+        if ($detection === null) {
+            $detection = new BrowserDetection();
+        }
+        ['os_family' => $osFamily, 'os_type' => $osType, 'os_name' => $osName] = $detection->getOS($userAgent);
 
         return match (true) {
-//            $detect->is('iOS') && $detect->isTablet() => self::IOS, // TODO To detect iPad only
-//            $detect->is('iOS') && ! $detect->isTablet() => self::IOS, // TODO To detect iPhone only
-//            $detect->is('androidOS') && $detect->isTablet() => self::ANDROID, // TODO To detect Android tablets
-//            $detect->is('androidOS') && ! $detect->isTablet() => self::ANDROID, // TODO To detect Android phones
-            $detect->is('iOS') => self::IOS, // Detects both iPhone and iPad
-            $detect->is('androidOS') => self::ANDROID, // Detects both android phones and android tablets
-            ! $detect->isMobile() && ! $detect->isTablet() => self::DESKTOP,
+            // TODO To detect iPad only
+            // TODO To detect iPhone only
+            // TODO To detect Android tablets
+            // TODO To detect Android phones
+            $osType === 'desktop' => self::DESKTOP,
+            $osFamily === 'android' => self::ANDROID, // Detects both android phones and android tablets
+            $osName === 'iOS' => self::IOS, // Detects both iPhone and iPad
             default => null,
         };
     }
