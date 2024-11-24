@@ -11,7 +11,8 @@
         "domain",
         "title",
         "crawlable",
-        "forwardQuery"
+        "forwardQuery",
+        "hasRedirectRules"
     ],
     "properties": {
         "shortCode": {
@@ -59,6 +60,10 @@
         "forwardQuery": {
             "type": "boolean",
             "description": "Tells if this URL will forward the query params to the long URL when visited, as explained in [the docs](https://shlink.io/documentation/some-features/#query-params-forwarding)."
+        },
+        "hasRedirectRules": {
+            "type": "boolean",
+            "description": "Whether this short URL has redirect rules attached to it or not. Use [this endpoint](https://api-spec.shlink.io/#/Redirect%20rules/listShortUrlRedirectRules) to get the actual list of rules."
         }
     }
 }

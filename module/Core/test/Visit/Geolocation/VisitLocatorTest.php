@@ -48,7 +48,7 @@ class VisitLocatorTest extends TestCase
         $unlocatedVisits = array_map(
             fn (int $i) => Visit::forValidShortUrl(
                 ShortUrl::withLongUrl(sprintf('https://short_code_%s', $i)),
-                Visitor::emptyInstance(),
+                Visitor::empty(),
             ),
             range(1, 200),
         );
@@ -87,7 +87,7 @@ class VisitLocatorTest extends TestCase
         bool $isNonLocatableAddress,
     ): void {
         $unlocatedVisits = [
-            Visit::forValidShortUrl(ShortUrl::withLongUrl('https://foo'), Visitor::emptyInstance()),
+            Visit::forValidShortUrl(ShortUrl::withLongUrl('https://foo'), Visitor::empty()),
         ];
 
         $this->repo->expects($this->once())->method($expectedRepoMethodName)->willReturn($unlocatedVisits);

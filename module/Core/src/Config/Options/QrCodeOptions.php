@@ -26,7 +26,7 @@ final readonly class QrCodeOptions
         public bool $enabledForDisabledShortUrls = DEFAULT_QR_CODE_ENABLED_FOR_DISABLED_SHORT_URLS,
         public string $color = DEFAULT_QR_CODE_COLOR,
         public string $bgColor = DEFAULT_QR_CODE_BG_COLOR,
-        public ?string $logoUrl = null,
+        public string|null $logoUrl = null,
     ) {
     }
 

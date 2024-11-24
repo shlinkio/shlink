@@ -9,8 +9,8 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Tag\RenameTagCommand;
 use Shlinkio\Shlink\Core\Exception\TagNotFoundException;
+use Shlinkio\Shlink\Core\Model\Renaming;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
-use Shlinkio\Shlink\Core\Tag\Model\TagRenaming;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
 use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -32,7 +32,7 @@ class RenameTagCommandTest extends TestCase
         $oldName = 'foo';
         $newName = 'bar';
         $this->tagService->expects($this->once())->method('renameTag')->with(
-            TagRenaming::fromNames($oldName, $newName),
+            Renaming::fromNames($oldName, $newName),
         )->willThrowException(TagNotFoundException::fromTag('foo'));
 
         $this->commandTester->execute([
@@ -50,7 +50,7 @@ class RenameTagCommandTest extends TestCase
         $oldName = 'foo';
         $newName = 'bar';
         $this->tagService->expects($this->once())->method('renameTag')->with(
-            TagRenaming::fromNames($oldName, $newName),
+            Renaming::fromNames($oldName, $newName),
         )->willReturn(new Tag($newName));
 
         $this->commandTester->execute([

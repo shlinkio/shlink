@@ -21,65 +21,63 @@ readonly class VisitsTracker implements VisitsTrackerInterface
     ) {
     }
 
-    public function track(ShortUrl $shortUrl, Visitor $visitor): void
+    public function track(ShortUrl $shortUrl, Visitor $visitor): Visit|null
     {
-        $this->trackVisit(
+        return $this->trackVisit(
             fn (Visitor $v) => Visit::forValidShortUrl($shortUrl, $v, $this->options->anonymizeRemoteAddr),
             $visitor,
         );
     }
 
-    public function trackInvalidShortUrlVisit(Visitor $visitor): void
+    public function trackInvalidShortUrlVisit(Visitor $visitor): Visit|null
     {
-        $this->trackOrphanVisit(
+        return $this->trackOrphanVisit(
             fn (Visitor $v) => Visit::forInvalidShortUrl($v, $this->options->anonymizeRemoteAddr),
             $visitor,
         );
     }
 
-    public function trackBaseUrlVisit(Visitor $visitor): void
+    public function trackBaseUrlVisit(Visitor $visitor): Visit|null
     {
-        $this->trackOrphanVisit(
+        return $this->trackOrphanVisit(
             fn (Visitor $v) => Visit::forBasePath($v, $this->options->anonymizeRemoteAddr),
             $visitor,
         );
     }
 
-    public function trackRegularNotFoundVisit(Visitor $visitor): void
+    public function trackRegularNotFoundVisit(Visitor $visitor): Visit|null
     {
-        $this->trackOrphanVisit(
+        return $this->trackOrphanVisit(
             fn (Visitor $v) => Visit::forRegularNotFound($v, $this->options->anonymizeRemoteAddr),
             $visitor,
         );
     }
 
-    private function trackOrphanVisit(callable $createVisit, Visitor $visitor): void
+    private function trackOrphanVisit(callable $createVisit, Visitor $visitor): Visit|null
     {
         if (! $this->options->trackOrphanVisits) {
-            return;
+            return null;
         }
 
-        $this->trackVisit($createVisit, $visitor);
+        return $this->trackVisit($createVisit, $visitor);
     }
 
     /**
      * @param callable(Visitor $visitor): Visit $createVisit
      */
-    private function trackVisit(callable $createVisit, Visitor $visitor): void
+    private function trackVisit(callable $createVisit, Visitor $visitor): Visit|null
     {
         if ($this->options->disableTracking) {
-            return;
+            return null;
         }
 
         $visit = $createVisit($visitor->normalizeForTrackingOptions($this->options));
 
-        // Wrap persisting and flushing the visit in a transaction, so that the ShortUrlVisitsCountTracker performs
-        // changes inside that very same transaction atomically
-        $this->em->wrapInTransaction(function () use ($visit): void {
-            $this->em->persist($visit);
-            $this->em->flush();
-        });
-
+        // Wrap persisting the visit in a transaction, so that the ShortUrlVisitsCountTracker performs changes inside
+        // that very same transaction atomically
+        $this->em->wrapInTransaction(fn () => $this->em->persist($visit));
         $this->eventDispatcher->dispatch(new UrlVisited($visit->getId(), $visitor->remoteAddress));
+
+        return $visit;
     }
 }

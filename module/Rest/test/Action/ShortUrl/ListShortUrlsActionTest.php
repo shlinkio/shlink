@@ -39,11 +39,11 @@ class ListShortUrlsActionTest extends TestCase
     public function properListReturnsSuccessResponse(
         array $query,
         int $expectedPage,
-        ?string $expectedSearchTerm,
+        string|null $expectedSearchTerm,
         array $expectedTags,
-        ?string $expectedOrderBy,
-        ?string $startDate = null,
-        ?string $endDate = null,
+        string|null $expectedOrderBy,
+        string|null $startDate = null,
+        string|null $endDate = null,
     ): void {
         $apiKey = ApiKey::create();
         $request = ServerRequestFactory::fromGlobals()->withQueryParams($query)

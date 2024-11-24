@@ -11,7 +11,7 @@ use function sprintf;
 
 final readonly class ShortUrlIdentifier
 {
-    private function __construct(public string $shortCode, public ?string $domain = null)
+    private function __construct(public string $shortCode, public string|null $domain = null)
     {
     }
 
@@ -33,13 +33,11 @@ final readonly class ShortUrlIdentifier
 
     public static function fromShortUrl(ShortUrl $shortUrl): self
     {
-        $domain = $shortUrl->getDomain();
-        $domainAuthority = $domain?->authority;
-
-        return new self($shortUrl->getShortCode(), $domainAuthority);
+        $domain = $shortUrl->getDomain()?->authority;
+        return new self($shortUrl->getShortCode(), $domain);
     }
 
-    public static function fromShortCodeAndDomain(string $shortCode, ?string $domain = null): self
+    public static function fromShortCodeAndDomain(string $shortCode, string|null $domain = null): self
     {
         return new self($shortCode, $domain);
     }

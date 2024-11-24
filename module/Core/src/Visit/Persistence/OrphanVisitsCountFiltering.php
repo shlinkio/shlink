@@ -11,10 +11,10 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class OrphanVisitsCountFiltering extends VisitsCountFiltering
 {
     public function __construct(
-        ?DateRange $dateRange = null,
+        DateRange|null $dateRange = null,
         bool $excludeBots = false,
-        ?ApiKey $apiKey = null,
-        public readonly ?OrphanVisitType $type = null,
+        ApiKey|null $apiKey = null,
+        public readonly OrphanVisitType|null $type = null,
     ) {
         parent::__construct($dateRange, $excludeBots, $apiKey);
     }

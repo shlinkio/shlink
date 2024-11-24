@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use function sprintf;
 
-readonly final class StartDateOption
+final readonly class StartDateOption
 {
     private DateOption $dateOption;
 
@@ -23,7 +23,7 @@ readonly final class StartDateOption
         ));
     }
 
-    public function get(InputInterface $input, OutputInterface $output): ?Chronos
+    public function get(InputInterface $input, OutputInterface $output): Chronos|null
     {
         return $this->dateOption->get($input, $output);
     }

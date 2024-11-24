@@ -25,8 +25,7 @@ class VisitIterationRepositoryTest extends DatabaseTestCase
 
     protected function setUp(): void
     {
-        $em = $this->getEntityManager();
-        $this->repo = new VisitIterationRepository($em, $em->getClassMetadata(Visit::class));
+        $this->repo = $this->createRepository(Visit::class, VisitIterationRepository::class);
     }
 
     #[Test, DataProvider('provideBlockSize')]
@@ -38,7 +37,7 @@ class VisitIterationRepositoryTest extends DatabaseTestCase
         $unmodifiedDate = Chronos::now();
         for ($i = 0; $i < 6; $i++) {
             Chronos::setTestNow($unmodifiedDate->subDays($i)); // Enforce a different day for every visit
-            $visit = Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance());
+            $visit = Visit::forValidShortUrl($shortUrl, Visitor::empty());
 
             if ($i >= 2) {
                 $location = VisitLocation::fromGeolocation(Location::emptyInstance());

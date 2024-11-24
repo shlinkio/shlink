@@ -40,7 +40,7 @@ readonly class NotFoundRedirectHandler implements MiddlewareInterface
     private function resolveDomainSpecificRedirect(
         UriInterface $currentUri,
         NotFoundType $notFoundType,
-    ): ?ResponseInterface {
+    ): ResponseInterface|null {
         $domain = $this->domainService->findByAuthority($currentUri->getAuthority());
         if ($domain === null) {
             return null;

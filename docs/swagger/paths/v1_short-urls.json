@@ -125,6 +125,15 @@
                         "false"
                     ]
                 }
+            },
+            {
+                "name": "domain",
+                "in": "query",
+                "description": "Get short URLs for this particular domain only. Use **DEFAULT** keyword for default domain.",
+                "required": false,
+                "schema": {
+                    "type": "string"
+                }
             }
         ],
         "security": [
@@ -180,7 +189,9 @@
                                         },
                                         "domain": null,
                                         "title": "Welcome to Steam",
-                                        "crawlable": false
+                                        "crawlable": false,
+                                        "forwardQuery": true,
+                                        "hasRedirectRules": true
                                     },
                                     {
                                         "shortCode": "12Kb3",
@@ -202,7 +213,9 @@
                                         },
                                         "domain":  null,
                                         "title": null,
-                                        "crawlable": false
+                                        "crawlable": false,
+                                        "forwardQuery": true,
+                                        "hasRedirectRules": false
                                     },
                                     {
                                         "shortCode": "123bA",
@@ -222,7 +235,9 @@
                                         },
                                         "domain":  "example.com",
                                         "title": null,
-                                        "crawlable": false
+                                        "crawlable": false,
+                                        "forwardQuery": false,
+                                        "hasRedirectRules": true
                                     }
                                 ],
                                 "pagination": {
@@ -337,7 +352,9 @@
                             },
                             "domain": null,
                             "title": null,
-                            "crawlable": false
+                            "crawlable": false,
+                            "forwardQuery": true,
+                            "hasRedirectRules": false
                         }
                     }
                 }

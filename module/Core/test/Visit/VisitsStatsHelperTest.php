@@ -56,7 +56,7 @@ class VisitsStatsHelperTest extends TestCase
     }
 
     #[Test, DataProvider('provideCounts')]
-    public function returnsExpectedVisitsStats(int $expectedCount, ?ApiKey $apiKey): void
+    public function returnsExpectedVisitsStats(int $expectedCount, ApiKey|null $apiKey): void
     {
         $callCount = 0;
         $visitsCountRepo = $this->createMock(ShortUrlVisitsCountRepository::class);
@@ -94,7 +94,7 @@ class VisitsStatsHelperTest extends TestCase
     }
 
     #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
-    public function infoReturnsVisitsForCertainShortCode(?ApiKey $apiKey): void
+    public function infoReturnsVisitsForCertainShortCode(ApiKey|null $apiKey): void
     {
         $shortCode = '123ABC';
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
@@ -104,7 +104,7 @@ class VisitsStatsHelperTest extends TestCase
         $repo->expects($this->once())->method('shortCodeIsInUse')->with($identifier, $spec)->willReturn(true);
 
         $list = array_map(
-            static fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance()),
+            static fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::empty()),
             range(0, 1),
         );
         $repo2 = $this->createMock(VisitRepository::class);
@@ -157,14 +157,14 @@ class VisitsStatsHelperTest extends TestCase
     }
 
     #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
-    public function visitsForTagAreReturnedAsExpected(?ApiKey $apiKey): void
+    public function visitsForTagAreReturnedAsExpected(ApiKey|null $apiKey): void
     {
         $tag = 'foo';
         $repo = $this->createMock(TagRepository::class);
         $repo->expects($this->once())->method('tagExists')->with($tag, $apiKey)->willReturn(true);
 
         $list = array_map(
-            static fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance()),
+            static fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::empty()),
             range(0, 1),
         );
         $repo2 = $this->createMock(VisitRepository::class);
@@ -198,14 +198,14 @@ class VisitsStatsHelperTest extends TestCase
     }
 
     #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
-    public function visitsForNonDefaultDomainAreReturnedAsExpected(?ApiKey $apiKey): void
+    public function visitsForNonDefaultDomainAreReturnedAsExpected(ApiKey|null $apiKey): void
     {
         $domain = 'foo.com';
         $repo = $this->createMock(DomainRepository::class);
         $repo->expects($this->once())->method('domainExists')->with($domain, $apiKey)->willReturn(true);
 
         $list = array_map(
-            static fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance()),
+            static fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::empty()),
             range(0, 1),
         );
         $repo2 = $this->createMock(VisitRepository::class);
@@ -229,22 +229,22 @@ class VisitsStatsHelperTest extends TestCase
     }
 
     #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
-    public function visitsForDefaultDomainAreReturnedAsExpected(?ApiKey $apiKey): void
+    public function visitsForDefaultDomainAreReturnedAsExpected(ApiKey|null $apiKey): void
     {
         $repo = $this->createMock(DomainRepository::class);
         $repo->expects($this->never())->method('domainExists');
 
         $list = array_map(
-            static fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance()),
+            static fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::empty()),
             range(0, 1),
         );
         $repo2 = $this->createMock(VisitRepository::class);
         $repo2->method('findVisitsByDomain')->with(
-            'DEFAULT',
+            Domain::DEFAULT_AUTHORITY,
             $this->isInstanceOf(VisitsListFiltering::class),
         )->willReturn($list);
         $repo2->method('countVisitsByDomain')->with(
-            'DEFAULT',
+            Domain::DEFAULT_AUTHORITY,
             $this->isInstanceOf(VisitsCountFiltering::class),
         )->willReturn(1);
 
@@ -253,7 +253,7 @@ class VisitsStatsHelperTest extends TestCase
             [Visit::class, $repo2],
         ]);
 
-        $paginator = $this->helper->visitsForDomain('DEFAULT', new VisitsParams(), $apiKey);
+        $paginator = $this->helper->visitsForDomain(Domain::DEFAULT_AUTHORITY, new VisitsParams(), $apiKey);
 
         self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentPageResults()));
     }
@@ -261,7 +261,7 @@ class VisitsStatsHelperTest extends TestCase
     #[Test]
     public function orphanVisitsAreReturnedAsExpected(): void
     {
-        $list = array_map(static fn () => Visit::forBasePath(Visitor::emptyInstance()), range(0, 3));
+        $list = array_map(static fn () => Visit::forBasePath(Visitor::empty()), range(0, 3));
         $repo = $this->createMock(VisitRepository::class);
         $repo->expects($this->once())->method('countOrphanVisits')->with(
             $this->isInstanceOf(OrphanVisitsCountFiltering::class),
@@ -280,7 +280,7 @@ class VisitsStatsHelperTest extends TestCase
     public function nonOrphanVisitsAreReturnedAsExpected(): void
     {
         $list = array_map(
-            static fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance()),
+            static fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::empty()),
             range(0, 3),
         );
         $repo = $this->createMock(VisitRepository::class);

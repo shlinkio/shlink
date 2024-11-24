@@ -11,7 +11,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
+use Shlinkio\Shlink\Core\EventDispatcher\Event\UrlVisited;
 use Shlinkio\Shlink\Core\EventDispatcher\Matomo\SendVisitToMatomo;
 use Shlinkio\Shlink\Core\Matomo\MatomoOptions;
 use Shlinkio\Shlink\Core\Matomo\MatomoVisitSenderInterface;
@@ -39,7 +39,7 @@ class SendVisitToMatomoTest extends TestCase
         $this->logger->expects($this->never())->method('error');
         $this->logger->expects($this->never())->method('warning');
 
-        ($this->listener(enabled: false))(new VisitLocated('123'));
+        ($this->listener(enabled: false))(new UrlVisited('123'));
     }
 
     #[Test]
@@ -53,21 +53,21 @@ class SendVisitToMatomoTest extends TestCase
             ['visitId' => '123'],
         );
 
-        ($this->listener())(new VisitLocated('123'));
+        ($this->listener())(new UrlVisited('123'));
     }
 
     #[Test, DataProvider('provideOriginalIpAddress')]
-    public function visitIsSentWhenItExists(?string $originalIpAddress): void
+    public function visitIsSentWhenItExists(string|null $originalIpAddress): void
     {
         $visitId = '123';
-        $visit = Visit::forBasePath(Visitor::emptyInstance());
+        $visit = Visit::forBasePath(Visitor::empty());
 
         $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn($visit);
         $this->visitSender->expects($this->once())->method('sendVisit')->with($visit, $originalIpAddress);
         $this->logger->expects($this->never())->method('error');
         $this->logger->expects($this->never())->method('warning');
 
-        ($this->listener())(new VisitLocated($visitId, $originalIpAddress));
+        ($this->listener())(new UrlVisited($visitId, $originalIpAddress));
     }
 
     public static function provideOriginalIpAddress(): iterable
@@ -92,7 +92,7 @@ class SendVisitToMatomoTest extends TestCase
             ['e' => $e],
         );
 
-        ($this->listener())(new VisitLocated($visitId));
+        ($this->listener())(new UrlVisited($visitId));
     }
 
     private function listener(bool $enabled = true): SendVisitToMatomo

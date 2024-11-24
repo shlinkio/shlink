@@ -96,6 +96,20 @@ class SetRedirectRulesTest extends ApiTestCase
             ],
         ],
     ]], 'invalid IP address')]
+    #[TestWith([[
+        'redirectRules' => [
+            [
+                'longUrl' => 'https://example.com',
+                'conditions' => [
+                    [
+                        'type' => 'geolocation-country-code',
+                        'matchKey' => null,
+                        'matchValue' => 'not a country code',
+                    ],
+                ],
+            ],
+        ],
+    ]], 'invalid country code')]
     public function errorIsReturnedWhenInvalidDataIsProvided(array $bodyPayload): void
     {
         $response = $this->callApiWithKey(self::METHOD_POST, '/short-urls/abc123/redirect-rules', [

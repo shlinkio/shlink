@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
-readonly final class ShortUrlIdentifierInput
+final readonly class ShortUrlIdentifierInput
 {
     public function __construct(Command $command, string $shortCodeDesc, string $domainDesc)
     {
@@ -19,7 +19,7 @@ readonly final class ShortUrlIdentifierInput
             ->addOption('domain', 'd', InputOption::VALUE_REQUIRED, $domainDesc);
     }
 
-    public function shortCode(InputInterface $input): ?string
+    public function shortCode(InputInterface $input): string|null
     {
         return $input->getArgument('shortCode');
     }

@@ -109,7 +109,7 @@ class ShortUrlInputFilter extends InputFilter
 
         $title = InputFactory::basic(self::TITLE);
         $title->getFilterChain()->attach(new Filter\Callback(
-            static fn (?string $value) => $value === null ? $value : substr($value, 0, 512),
+            static fn (string|null $value) => $value === null ? $value : substr($value, 0, 512),
         ));
         $this->add($title);
 

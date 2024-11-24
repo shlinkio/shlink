@@ -37,7 +37,7 @@ class GetOrphanVisitsCommandTest extends TestCase
     #[TestWith([['--type' => OrphanVisitType::BASE_URL->value], true])]
     public function outputIsProperlyGenerated(array $args, bool $includesType): void
     {
-        $visit = Visit::forBasePath(new Visitor('bar', 'foo', '', ''))->locate(
+        $visit = Visit::forBasePath(Visitor::fromParams('bar', 'foo', ''))->locate(
             VisitLocation::fromGeolocation(new Location('', 'Spain', '', 'Madrid', 0, 0, '')),
         );
         $this->visitsHelper->expects($this->once())->method('orphanVisits')->with($this->callback(

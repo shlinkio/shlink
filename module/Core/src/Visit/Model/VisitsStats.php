@@ -14,8 +14,8 @@ final readonly class VisitsStats implements JsonSerializable
     public function __construct(
         int $nonOrphanVisitsTotal,
         int $orphanVisitsTotal,
-        ?int $nonOrphanVisitsNonBots = null,
-        ?int $orphanVisitsNonBots = null,
+        int|null $nonOrphanVisitsNonBots = null,
+        int|null $orphanVisitsNonBots = null,
     ) {
         $this->nonOrphanVisitsSummary = VisitsSummary::fromTotalAndNonBots(
             $nonOrphanVisitsTotal,

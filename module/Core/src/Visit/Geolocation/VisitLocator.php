@@ -11,11 +11,11 @@ use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitIterationRepositoryInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
-class VisitLocator implements VisitLocatorInterface
+readonly class VisitLocator implements VisitLocatorInterface
 {
     public function __construct(
-        private readonly EntityManagerInterface $em,
-        private readonly VisitIterationRepositoryInterface $repo,
+        private EntityManagerInterface $em,
+        private VisitIterationRepositoryInterface $repo,
     ) {
     }
 
@@ -54,7 +54,7 @@ class VisitLocator implements VisitLocatorInterface
                 }
 
                 // If the IP address is non-locatable, locate it as empty to prevent next processes to pick it again
-                $location = Location::emptyInstance();
+                $location = Location::empty();
             }
 
             $this->locateVisit($visit, VisitLocation::fromGeolocation($location), $helper);

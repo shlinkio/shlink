@@ -25,14 +25,16 @@ use function implode;
 use function sprintf;
 use function trim;
 
-class ExtraPathRedirectMiddleware implements MiddlewareInterface
+use const Shlinkio\Shlink\REDIRECT_URL_REQUEST_ATTRIBUTE;
+
+readonly class ExtraPathRedirectMiddleware implements MiddlewareInterface
 {
     public function __construct(
-        private readonly ShortUrlResolverInterface $resolver,
-        private readonly RequestTrackerInterface $requestTracker,
-        private readonly ShortUrlRedirectionBuilderInterface $redirectionBuilder,
-        private readonly RedirectResponseHelperInterface $redirectResponseHelper,
-        private readonly UrlShortenerOptions $urlShortenerOptions,
+        private ShortUrlResolverInterface $resolver,
+        private RequestTrackerInterface $requestTracker,
+        private ShortUrlRedirectionBuilderInterface $redirectionBuilder,
+        private RedirectResponseHelperInterface $redirectResponseHelper,
+        private UrlShortenerOptions $urlShortenerOptions,
     ) {
     }
 
@@ -47,7 +49,7 @@ class ExtraPathRedirectMiddleware implements MiddlewareInterface
         return $this->tryToResolveRedirect($request, $handler);
     }
 
-    private function shouldApplyLogic(?NotFoundType $notFoundType): bool
+    private function shouldApplyLogic(NotFoundType|null $notFoundType): bool
     {
         if ($notFoundType === null || ! $this->urlShortenerOptions->appendExtraPath) {
             return false;
@@ -73,9 +75,12 @@ class ExtraPathRedirectMiddleware implements MiddlewareInterface
 
         try {
             $shortUrl = $this->resolver->resolveEnabledShortUrl($identifier);
-            $this->requestTracker->trackIfApplicable($shortUrl, $request);
-
             $longUrl = $this->redirectionBuilder->buildShortUrlRedirect($shortUrl, $request, $extraPath);
+            $this->requestTracker->trackIfApplicable(
+                $shortUrl,
+                $request->withAttribute(REDIRECT_URL_REQUEST_ATTRIBUTE, $longUrl),
+            );
+
             return $this->redirectResponseHelper->buildRedirectResponse($longUrl);
         } catch (ShortUrlNotFoundException) {
             if ($extraPath === null || ! $this->urlShortenerOptions->multiSegmentSlugsEnabled) {

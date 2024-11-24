@@ -22,7 +22,7 @@ final readonly class TrackingOptions
         public bool $trackOrphanVisits = true,
         // A query param that, if provided, will disable tracking of one particular visit. Always takes precedence over
         // other options
-        public ?string $disableTrackParam = null,
+        public string|null $disableTrackParam = null,
         // If true, visits will not be tracked at all
         public bool $disableTracking = false,
         // If true, visits will be tracked, but neither the IP address, nor the location will be resolved
@@ -58,5 +58,13 @@ final readonly class TrackingOptions
     public function queryHasDisableTrackParam(array $query): bool
     {
         return $this->disableTrackParam !== null && array_key_exists($this->disableTrackParam, $query);
+    }
+
+    /**
+     * If IP address tracking is disabled, or tracking is disabled all together, then geolocation is not relevant
+     */
+    public function isGeolocationRelevant(): bool
+    {
+        return ! $this->disableTracking && ! $this->disableIpTracking;
     }
 }

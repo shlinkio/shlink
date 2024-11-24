@@ -30,6 +30,8 @@ use Shlinkio\Shlink\Core\Visit\RequestTrackerInterface;
 use function Laminas\Stratigility\middleware;
 use function str_starts_with;
 
+use const Shlinkio\Shlink\REDIRECT_URL_REQUEST_ATTRIBUTE;
+
 class ExtraPathRedirectMiddlewareTest extends TestCase
 {
     private MockObject & ShortUrlResolverInterface $resolver;
@@ -70,7 +72,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
     public static function provideNonRedirectingRequests(): iterable
     {
         $baseReq = ServerRequestFactory::fromGlobals();
-        $buildReq = static fn (?NotFoundType $type): ServerRequestInterface =>
+        $buildReq = static fn (NotFoundType|null $type): ServerRequestInterface =>
             $baseReq->withAttribute(NotFoundType::class, $type);
 
         yield 'disabled option' => [false, false, $buildReq(NotFoundType::fromRequest($baseReq, '/foo/bar'))];
@@ -127,7 +129,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
     public function visitIsTrackedAndRedirectIsReturnedWhenShortUrlIsFoundAfterExpectedAmountOfIterations(
         bool $multiSegmentEnabled,
         int $expectedResolveCalls,
-        ?string $expectedExtraPath,
+        string|null $expectedExtraPath,
     ): void {
         $options = new UrlShortenerOptions(appendExtraPath: true, multiSegmentSlugsEnabled: $multiSegmentEnabled);
 
@@ -159,7 +161,10 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         $this->redirectResponseHelper->expects($this->once())->method('buildRedirectResponse')->with(
             'the_built_long_url',
         )->willReturn(new RedirectResponse(''));
-        $this->requestTracker->expects($this->once())->method('trackIfApplicable')->with($shortUrl, $request);
+        $this->requestTracker->expects($this->once())->method('trackIfApplicable')->with(
+            $shortUrl,
+            $request->withAttribute(REDIRECT_URL_REQUEST_ATTRIBUTE, 'the_built_long_url'),
+        );
 
         $this->middleware($options)->process($request, $this->handler);
     }
@@ -170,7 +175,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         yield [true, 3, null];
     }
 
-    private function middleware(?UrlShortenerOptions $options = null): ExtraPathRedirectMiddleware
+    private function middleware(UrlShortenerOptions|null $options = null): ExtraPathRedirectMiddleware
     {
         return new ExtraPathRedirectMiddleware(
             $this->resolver,

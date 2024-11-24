@@ -130,18 +130,17 @@ class AuthenticationMiddlewareTest extends TestCase
     public function validApiKeyFallsBackToNextMiddleware(): void
     {
         $apiKey = ApiKey::create();
-        $key = $apiKey->toString();
         $request = ServerRequestFactory::fromGlobals()
             ->withAttribute(
                 RouteResult::class,
                 RouteResult::fromRoute(new Route('bar', self::getDummyMiddleware()), []),
             )
-            ->withHeader('X-Api-Key', $key);
+            ->withHeader('X-Api-Key', $apiKey->key);
 
         $this->handler->expects($this->once())->method('handle')->with(
             $request->withAttribute(ApiKey::class, $apiKey),
         )->willReturn(new Response());
-        $this->apiKeyService->expects($this->once())->method('check')->with($key)->willReturn(
+        $this->apiKeyService->expects($this->once())->method('check')->with($apiKey->key)->willReturn(
             new ApiKeyCheckResult($apiKey),
         );
 

@@ -16,8 +16,7 @@ class CrawlableShortCodesQueryTest extends DatabaseTestCase
 
     protected function setUp(): void
     {
-        $em = $this->getEntityManager();
-        $this->query = new CrawlableShortCodesQuery($em, $em->getClassMetadata(ShortUrl::class));
+        $this->query = $this->createRepository(ShortUrl::class, CrawlableShortCodesQuery::class);
     }
 
     #[Test]

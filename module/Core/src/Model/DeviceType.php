@@ -10,7 +10,7 @@ enum DeviceType: string
     case IOS = 'ios';
     case DESKTOP = 'desktop';
 
-    public static function matchFromUserAgent(string $userAgent): ?self
+    public static function matchFromUserAgent(string $userAgent): self|null
     {
         $detect = new MobileDetect();
         $detect->setUserAgent($userAgent);

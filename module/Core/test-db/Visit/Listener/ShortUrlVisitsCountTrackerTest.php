@@ -30,7 +30,7 @@ class ShortUrlVisitsCountTrackerTest extends DatabaseTestCase
         $shortUrl = ShortUrl::createFake();
         $this->getEntityManager()->persist($shortUrl);
 
-        $visit = Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance());
+        $visit = Visit::forValidShortUrl($shortUrl, Visitor::empty());
         $this->getEntityManager()->persist($visit);
         $this->getEntityManager()->flush();
 
@@ -54,7 +54,7 @@ class ShortUrlVisitsCountTrackerTest extends DatabaseTestCase
         }
         $this->getEntityManager()->flush();
 
-        $visit = Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance());
+        $visit = Visit::forValidShortUrl($shortUrl, Visitor::empty());
         $this->getEntityManager()->persist($visit);
         $this->getEntityManager()->flush();
 

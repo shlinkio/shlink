@@ -14,5 +14,5 @@ interface NotFoundRedirectResolverInterface
         NotFoundType $notFoundType,
         NotFoundRedirectConfigInterface $config,
         UriInterface $currentUri,
-    ): ?ResponseInterface;
+    ): ResponseInterface|null;
 }

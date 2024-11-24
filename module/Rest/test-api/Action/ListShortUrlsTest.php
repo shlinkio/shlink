@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
 use function count;
@@ -34,6 +35,7 @@ class ListShortUrlsTest extends ApiTestCase
         'title' => 'My cool title',
         'crawlable' => true,
         'forwardQuery' => true,
+        'hasRedirectRules' => false,
     ];
     private const SHORT_URL_DOCS = [
         'shortCode' => 'ghi789',
@@ -55,6 +57,7 @@ class ListShortUrlsTest extends ApiTestCase
         'title' => null,
         'crawlable' => false,
         'forwardQuery' => true,
+        'hasRedirectRules' => false,
     ];
     private const SHORT_URL_CUSTOM_SLUG_AND_DOMAIN = [
         'shortCode' => 'custom-with-domain',
@@ -76,6 +79,7 @@ class ListShortUrlsTest extends ApiTestCase
         'title' => null,
         'crawlable' => false,
         'forwardQuery' => true,
+        'hasRedirectRules' => false,
     ];
     private const SHORT_URL_META = [
         'shortCode' => 'def456',
@@ -99,6 +103,7 @@ class ListShortUrlsTest extends ApiTestCase
         'title' => null,
         'crawlable' => false,
         'forwardQuery' => true,
+        'hasRedirectRules' => true,
     ];
     private const SHORT_URL_CUSTOM_SLUG = [
         'shortCode' => 'custom',
@@ -120,6 +125,7 @@ class ListShortUrlsTest extends ApiTestCase
         'title' => null,
         'crawlable' => true,
         'forwardQuery' => false,
+        'hasRedirectRules' => false,
     ];
     private const SHORT_URL_CUSTOM_DOMAIN = [
         'shortCode' => 'ghi789',
@@ -143,6 +149,7 @@ class ListShortUrlsTest extends ApiTestCase
         'title' => null,
         'crawlable' => false,
         'forwardQuery' => true,
+        'hasRedirectRules' => false,
     ];
 
     #[Test, DataProvider('provideFilteredLists')]
@@ -257,6 +264,15 @@ class ListShortUrlsTest extends ApiTestCase
         ], 'valid_api_key'];
         yield [['searchTerm' => 'example.com'], [
             self::SHORT_URL_CUSTOM_DOMAIN,
+        ], 'valid_api_key'];
+        yield [['domain' => 'example.com'], [
+            self::SHORT_URL_CUSTOM_DOMAIN,
+        ], 'valid_api_key'];
+        yield [['domain' => Domain::DEFAULT_AUTHORITY], [
+            self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_META,
+            self::SHORT_URL_SHLINK_WITH_TITLE,
+            self::SHORT_URL_DOCS,
         ], 'valid_api_key'];
         yield [[], [
             self::SHORT_URL_CUSTOM_SLUG,

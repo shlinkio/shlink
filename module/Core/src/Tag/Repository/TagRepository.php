@@ -42,10 +42,10 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
     /**
      * @return TagInfo[]
      */
-    public function findTagsWithInfo(?TagsListFiltering $filtering = null): array
+    public function findTagsWithInfo(TagsListFiltering|null $filtering = null): array
     {
         $orderField = OrderableField::toValidField($filtering?->orderBy?->field);
-        $orderDir = $filtering?->orderBy?->direction ?? 'ASC';
+        $orderDir = $filtering->orderBy->direction ?? 'ASC';
         $apiKey = $filtering?->apiKey;
         $conn = $this->getEntityManager()->getConnection();
 
@@ -113,8 +113,8 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
             ->from('(' . $tagsSubQb->getSQL() . ')', 't')
             ->leftJoin('t', '(' . $allVisitsSubQb->getSQL() . ')', 'v', $mainQb->expr()->eq('t.tag_id', 'v.tag_id'))
             ->leftJoin('t', '(' . $nonBotVisitsSubQb->getSQL() . ')', 'b', $mainQb->expr()->eq('t.tag_id', 'b.tag_id'))
-            ->setMaxResults($filtering?->limit ?? PHP_INT_MAX)
-            ->setFirstResult($filtering?->offset ?? 0);
+            ->setMaxResults($filtering->limit ?? PHP_INT_MAX)
+            ->setFirstResult($filtering->offset ?? 0);
 
         $mainQb->orderBy(camelCaseToSnakeCase($orderField->value), $orderDir);
         if ($orderField !== OrderableField::TAG) {
@@ -134,7 +134,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         );
     }
 
-    public function tagExists(string $tag, ?ApiKey $apiKey = null): bool
+    public function tagExists(string $tag, ApiKey|null $apiKey = null): bool
     {
         $result = (int) $this->matchSingleScalarResult(Spec::andX(
             new CountTagsWithName($tag),

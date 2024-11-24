@@ -12,10 +12,10 @@ use function Shlinkio\Shlink\Common\parseOrderBy;
 final class TagsParams extends AbstractInfinitePaginableListParams
 {
     private function __construct(
-        public readonly ?string $searchTerm,
+        public readonly string|null $searchTerm,
         public readonly Ordering $orderBy,
-        ?int $page,
-        ?int $itemsPerPage,
+        int|null $page,
+        int|null $itemsPerPage,
     ) {
         parent::__construct($page, $itemsPerPage);
     }

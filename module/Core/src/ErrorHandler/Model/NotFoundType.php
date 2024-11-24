@@ -11,9 +11,9 @@ use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 
 use function rtrim;
 
-class NotFoundType
+readonly class NotFoundType
 {
-    private function __construct(private readonly ?VisitType $type)
+    private function __construct(private VisitType|null $type)
     {
     }
 

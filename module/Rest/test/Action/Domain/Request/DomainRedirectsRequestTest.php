@@ -30,11 +30,11 @@ class DomainRedirectsRequestTest extends TestCase
     #[Test, DataProvider('provideValidData')]
     public function isProperlyCastToNotFoundRedirects(
         array $data,
-        ?NotFoundRedirectConfigInterface $defaults,
+        NotFoundRedirectConfigInterface|null $defaults,
         string $expectedAuthority,
-        ?string $expectedBaseUrlRedirect,
-        ?string $expectedRegular404Redirect,
-        ?string $expectedInvalidShortUrlRedirect,
+        string|null $expectedBaseUrlRedirect,
+        string|null $expectedRegular404Redirect,
+        string|null $expectedInvalidShortUrlRedirect,
     ): void {
         $request = DomainRedirectsRequest::fromRawData($data);
         $notFound = $request->toNotFoundRedirects($defaults);

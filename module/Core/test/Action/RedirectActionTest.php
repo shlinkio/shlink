@@ -19,6 +19,8 @@ use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Util\RedirectResponseHelperInterface;
 use Shlinkio\Shlink\Core\Visit\RequestTrackerInterface;
 
+use const Shlinkio\Shlink\REDIRECT_URL_REQUEST_ATTRIBUTE;
+
 class RedirectActionTest extends TestCase
 {
     private const LONG_URL = 'https://domain.com/foo/bar?some=thing';
@@ -50,16 +52,20 @@ class RedirectActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $shortUrl = ShortUrl::withLongUrl(self::LONG_URL);
+        $expectedResp = new Response\RedirectResponse(self::LONG_URL);
+        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
+
         $this->urlResolver->expects($this->once())->method('resolveEnabledShortUrl')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''),
         )->willReturn($shortUrl);
-        $this->requestTracker->expects($this->once())->method('trackIfApplicable');
-        $expectedResp = new Response\RedirectResponse(self::LONG_URL);
+        $this->requestTracker->expects($this->once())->method('trackIfApplicable')->with(
+            $shortUrl,
+            $request->withAttribute(REDIRECT_URL_REQUEST_ATTRIBUTE, self::LONG_URL),
+        );
         $this->redirectRespHelper->expects($this->once())->method('buildRedirectResponse')->with(
             self::LONG_URL,
         )->willReturn($expectedResp);
 
-        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
         $response = $this->action->process($request, $this->createMock(RequestHandlerInterface::class));
 
         self::assertSame($expectedResp, $response);

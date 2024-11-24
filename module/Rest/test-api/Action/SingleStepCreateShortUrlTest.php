@@ -13,7 +13,7 @@ use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 class SingleStepCreateShortUrlTest extends ApiTestCase
 {
     #[Test, DataProvider('provideFormats')]
-    public function createsNewShortUrlWithExpectedResponse(?string $format, string $expectedContentType): void
+    public function createsNewShortUrlWithExpectedResponse(string|null $format, string $expectedContentType): void
     {
         $resp = $this->createShortUrl($format, 'valid_api_key');
 
@@ -43,7 +43,7 @@ class SingleStepCreateShortUrlTest extends ApiTestCase
         self::assertEquals('Invalid authorization', $payload['title']);
     }
 
-    private function createShortUrl(?string $format = 'json', ?string $apiKey = null): ResponseInterface
+    private function createShortUrl(string|null $format = 'json', string|null $apiKey = null): ResponseInterface
     {
         $query = [
             'longUrl' => 'https://app.shlink.io',

@@ -26,6 +26,7 @@ class ShortUrlsParamsInputFilter extends InputFilter
     public const ORDER_BY = 'orderBy';
     public const EXCLUDE_MAX_VISITS_REACHED = 'excludeMaxVisitsReached';
     public const EXCLUDE_PAST_VALID_UNTIL = 'excludePastValidUntil';
+    public const DOMAIN = 'domain';
 
     public function __construct(array $data)
     {
@@ -56,5 +57,7 @@ class ShortUrlsParamsInputFilter extends InputFilter
 
         $this->add(InputFactory::boolean(self::EXCLUDE_MAX_VISITS_REACHED));
         $this->add(InputFactory::boolean(self::EXCLUDE_PAST_VALID_UNTIL));
+
+        $this->add(InputFactory::basic(self::DOMAIN));
     }
 }

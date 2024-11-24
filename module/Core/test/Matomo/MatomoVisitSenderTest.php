@@ -43,7 +43,7 @@ class MatomoVisitSenderTest extends TestCase
     }
 
     #[Test, DataProvider('provideTrackerMethods')]
-    public function visitIsSentToMatomo(Visit $visit, ?string $originalIpAddress, array $invokedMethods): void
+    public function visitIsSentToMatomo(Visit $visit, string|null $originalIpAddress, array $invokedMethods): void
     {
         $tracker = $this->createMock(MatomoTracker::class);
         $tracker->expects($this->once())->method('setUrl')->willReturn($tracker);
@@ -77,9 +77,9 @@ class MatomoVisitSenderTest extends TestCase
 
     public static function provideTrackerMethods(): iterable
     {
-        yield 'unlocated orphan visit' => [Visit::forBasePath(Visitor::emptyInstance()), null, []];
+        yield 'unlocated orphan visit' => [Visit::forBasePath(Visitor::empty()), null, []];
         yield 'located regular visit' => [
-            Visit::forValidShortUrl(ShortUrl::withLongUrl('https://shlink.io'), Visitor::emptyInstance())
+            Visit::forValidShortUrl(ShortUrl::withLongUrl('https://shlink.io'), Visitor::empty())
                 ->locate(VisitLocation::fromGeolocation(new Location(
                     countryCode: 'countryCode',
                     countryName: 'countryName',
@@ -92,7 +92,7 @@ class MatomoVisitSenderTest extends TestCase
             '1.2.3.4',
             ['setCity', 'setCountry', 'setLatitude', 'setLongitude', 'setIp'],
         ];
-        yield 'fallback IP' => [Visit::forBasePath(new Visitor('', '', '1.2.3.4', '')), null, ['setIp']];
+        yield 'fallback IP' => [Visit::forBasePath(Visitor::fromParams(remoteAddress: '1.2.3.4')), null, ['setIp']];
     }
 
     #[Test, DataProvider('provideUrlsToTrack')]
@@ -115,9 +115,9 @@ class MatomoVisitSenderTest extends TestCase
 
     public static function provideUrlsToTrack(): iterable
     {
-        yield 'orphan visit without visited URL' => [Visit::forBasePath(Visitor::emptyInstance()), ''];
+        yield 'orphan visit without visited URL' => [Visit::forBasePath(Visitor::empty()), ''];
         yield 'orphan visit with visited URL' => [
-            Visit::forBasePath(new Visitor('', '', null, 'https://s.test/foo')),
+            Visit::forBasePath(Visitor::fromParams(visitedUrl: 'https://s.test/foo')),
             'https://s.test/foo',
         ];
         yield 'non-orphan visit' => [
@@ -126,7 +126,7 @@ class MatomoVisitSenderTest extends TestCase
                     ShortUrlInputFilter::LONG_URL => 'https://shlink.io',
                     ShortUrlInputFilter::CUSTOM_SLUG => 'bar',
                 ]),
-            ), Visitor::emptyInstance()),
+            ), Visitor::empty()),
             'http://s2.test/bar',
         ];
     }
@@ -135,7 +135,7 @@ class MatomoVisitSenderTest extends TestCase
     public function multipleVisitsCanBeSent(): void
     {
         $dateRange = DateRange::allTime();
-        $visitor = Visitor::emptyInstance();
+        $visitor = Visitor::empty();
         $bot = Visitor::botInstance();
 
         $this->visitIterationRepository->expects($this->once())->method('findAllVisits')->with($dateRange)->willReturn([

@@ -11,11 +11,13 @@ use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 
 class Domain extends AbstractEntity implements JsonSerializable, NotFoundRedirectConfigInterface
 {
+    public const DEFAULT_AUTHORITY = 'DEFAULT';
+
     private function __construct(
         public readonly string $authority,
-        private ?string $baseUrlRedirect = null,
-        private ?string $regular404Redirect = null,
-        private ?string $invalidShortUrlRedirect = null,
+        private string|null $baseUrlRedirect = null,
+        private string|null $regular404Redirect = null,
+        private string|null $invalidShortUrlRedirect = null,
     ) {
     }
 
@@ -29,7 +31,7 @@ class Domain extends AbstractEntity implements JsonSerializable, NotFoundRedirec
         return $this->authority;
     }
 
-    public function invalidShortUrlRedirect(): ?string
+    public function invalidShortUrlRedirect(): string|null
     {
         return $this->invalidShortUrlRedirect;
     }
@@ -39,7 +41,7 @@ class Domain extends AbstractEntity implements JsonSerializable, NotFoundRedirec
         return $this->invalidShortUrlRedirect !== null;
     }
 
-    public function regular404Redirect(): ?string
+    public function regular404Redirect(): string|null
     {
         return $this->regular404Redirect;
     }
@@ -49,7 +51,7 @@ class Domain extends AbstractEntity implements JsonSerializable, NotFoundRedirec
         return $this->regular404Redirect !== null;
     }
 
-    public function baseUrlRedirect(): ?string
+    public function baseUrlRedirect(): string|null
     {
         return $this->baseUrlRedirect;
     }

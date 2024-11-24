@@ -14,5 +14,5 @@ interface ShortUrlVisitsDeleterInterface
     /**
      * @throws ShortUrlNotFoundException
      */
-    public function deleteShortUrlVisits(ShortUrlIdentifier $identifier, ?ApiKey $apiKey = null): BulkDeleteResult;
+    public function deleteShortUrlVisits(ShortUrlIdentifier $identifier, ApiKey|null $apiKey = null): BulkDeleteResult;
 }

@@ -3,13 +3,15 @@
 namespace ShlinkioTest\Shlink\Core\RedirectRule\Entity;
 
 use Laminas\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition;
+use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
+use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
 use const ShlinkioTest\Shlink\ANDROID_USER_AGENT;
 use const ShlinkioTest\Shlink\DESKTOP_USER_AGENT;
 use const ShlinkioTest\Shlink\IOS_USER_AGENT;
@@ -42,7 +44,7 @@ class RedirectConditionTest extends TestCase
     #[TestWith(['en-UK', 'en', true], 'only lang')]
     #[TestWith(['es-AR', 'en', false], 'different only lang')]
     #[TestWith(['fr', 'fr-FR', false], 'less restrictive matching locale')]
-    public function matchesLanguage(?string $acceptLanguage, string $value, bool $expected): void
+    public function matchesLanguage(string|null $acceptLanguage, string $value, bool $expected): void
     {
         $request = ServerRequestFactory::fromGlobals();
         if ($acceptLanguage !== null) {
@@ -62,7 +64,7 @@ class RedirectConditionTest extends TestCase
     #[TestWith([IOS_USER_AGENT, DeviceType::IOS, true])]
     #[TestWith([IOS_USER_AGENT, DeviceType::ANDROID, false])]
     #[TestWith([DESKTOP_USER_AGENT, DeviceType::IOS, false])]
-    public function matchesDevice(?string $userAgent, DeviceType $value, bool $expected): void
+    public function matchesDevice(string|null $userAgent, DeviceType $value, bool $expected): void
     {
         $request = ServerRequestFactory::fromGlobals();
         if ($userAgent !== null) {
@@ -82,15 +84,53 @@ class RedirectConditionTest extends TestCase
     #[TestWith(['1.2.3.4', '192.168.1.0/24', false], 'no CIDR block match')]
     #[TestWith(['192.168.1.35', '192.168.1.*', true], 'wildcard pattern match')]
     #[TestWith(['1.2.3.4', '192.168.1.*', false], 'no wildcard pattern match')]
-    public function matchesRemoteIpAddress(?string $remoteIp, string $ipToMatch, bool $expected): void
+    public function matchesRemoteIpAddress(string|null $remoteIp, string $ipToMatch, bool $expected): void
     {
         $request = ServerRequestFactory::fromGlobals();
         if ($remoteIp !== null) {
-            $request = $request->withAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR, $remoteIp);
+            $request = $request->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, $remoteIp);
         }
 
         $result = RedirectCondition::forIpAddress($ipToMatch)->matchesRequest($request);
 
         self::assertEquals($expected, $result);
+    }
+
+    #[Test, DataProvider('provideVisitsWithCountry')]
+    public function matchesGeolocationCountryCode(
+        Location|null $location,
+        string $countryCodeToMatch,
+        bool $expected,
+    ): void {
+        $request = ServerRequestFactory::fromGlobals()->withAttribute(Location::class, $location);
+        $result = RedirectCondition::forGeolocationCountryCode($countryCodeToMatch)->matchesRequest($request);
+
+        self::assertEquals($expected, $result);
+    }
+    public static function provideVisitsWithCountry(): iterable
+    {
+        yield 'no location' => [null, 'US', false];
+        yield 'non-matching location' => [new Location(countryCode: 'ES'), 'US', false];
+        yield 'matching location' => [new Location(countryCode: 'US'), 'US', true];
+        yield 'matching case-insensitive' => [new Location(countryCode: 'US'), 'us', true];
+    }
+
+    #[Test, DataProvider('provideVisitsWithCity')]
+    public function matchesGeolocationCityName(
+        Location|null $location,
+        string $cityNameToMatch,
+        bool $expected,
+    ): void {
+        $request = ServerRequestFactory::fromGlobals()->withAttribute(Location::class, $location);
+        $result = RedirectCondition::forGeolocationCityName($cityNameToMatch)->matchesRequest($request);
+
+        self::assertEquals($expected, $result);
+    }
+    public static function provideVisitsWithCity(): iterable
+    {
+        yield 'no location' => [null, 'New York', false];
+        yield 'non-matching location' => [new Location(city: 'Los Angeles'), 'New York', false];
+        yield 'matching location' => [new Location(city: 'Madrid'), 'Madrid', true];
+        yield 'matching case-insensitive' => [new Location(city: 'Los Angeles'), 'los angeles', true];
     }
 }

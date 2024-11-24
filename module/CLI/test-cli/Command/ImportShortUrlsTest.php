@@ -6,6 +6,7 @@ namespace ShlinkioCliTest\Shlink\CLI\Command;
 
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\ListShortUrlsCommand;
+use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Importer\Command\ImportCommand;
 use Shlinkio\Shlink\TestUtils\CliTest\CliTestCase;
 
@@ -66,10 +67,10 @@ class ImportShortUrlsTest extends CliTestCase
         [$listOutput1] = $this->exec(
             [ListShortUrlsCommand::NAME, '--show-domain', '--search-term', 'testing-default-domain-import-1'],
         );
-        self::assertStringContainsString('DEFAULT', $listOutput1);
+        self::assertStringContainsString(Domain::DEFAULT_AUTHORITY, $listOutput1);
         [$listOutput1] = $this->exec(
             [ListShortUrlsCommand::NAME, '--show-domain', '--search-term', 'testing-default-domain-import-2'],
         );
-        self::assertStringContainsString('DEFAULT', $listOutput1);
+        self::assertStringContainsString(Domain::DEFAULT_AUTHORITY, $listOutput1);
     }
 }

@@ -22,7 +22,10 @@ class VisitTest extends TestCase
     #[Test, DataProvider('provideUserAgents')]
     public function isProperlyJsonSerialized(string $userAgent, bool $expectedToBePotentialBot): void
     {
-        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), new Visitor($userAgent, 'some site', '1.2.3.4', ''));
+        $visit = Visit::forValidShortUrl(
+            ShortUrl::createFake(),
+            Visitor::fromParams($userAgent, 'some site', '1.2.3.4'),
+        );
 
         self::assertEquals([
             'referer' => 'some site',
@@ -31,6 +34,7 @@ class VisitTest extends TestCase
             'visitLocation' => null,
             'potentialBot' => $expectedToBePotentialBot,
             'visitedUrl' => $visit->visitedUrl,
+            'redirectUrl' => $visit->redirectUrl,
         ], $visit->jsonSerialize());
     }
 
@@ -55,7 +59,7 @@ class VisitTest extends TestCase
     public static function provideOrphanVisits(): iterable
     {
         yield 'base path visit' => [
-            $visit = Visit::forBasePath(Visitor::emptyInstance()),
+            $visit = Visit::forBasePath(Visitor::empty()),
             [
                 'referer' => '',
                 'date' => $visit->date->toAtomString(),
@@ -64,6 +68,7 @@ class VisitTest extends TestCase
                 'potentialBot' => false,
                 'visitedUrl' => '',
                 'type' => VisitType::BASE_URL->value,
+                'redirectUrl' => null,
             ],
         ];
         yield 'invalid short url visit' => [
@@ -80,6 +85,7 @@ class VisitTest extends TestCase
                 'potentialBot' => false,
                 'visitedUrl' => 'https://example.com/foo',
                 'type' => VisitType::INVALID_SHORT_URL->value,
+                'redirectUrl' => null,
             ],
         ];
         yield 'regular 404 visit' => [
@@ -98,16 +104,20 @@ class VisitTest extends TestCase
                 'potentialBot' => false,
                 'visitedUrl' => 'https://s.test/foo/bar',
                 'type' => VisitType::REGULAR_404->value,
+                'redirectUrl' => null,
             ],
         ];
     }
 
     #[Test, DataProvider('provideAddresses')]
-    public function addressIsAnonymizedWhenRequested(bool $anonymize, ?string $address, ?string $expectedAddress): void
-    {
+    public function addressIsAnonymizedWhenRequested(
+        bool $anonymize,
+        string|null $address,
+        string|null $expectedAddress,
+    ): void {
         $visit = Visit::forValidShortUrl(
             ShortUrl::createFake(),
-            new Visitor('Chrome', 'some site', $address, ''),
+            Visitor::fromParams('Chrome', 'some site', $address),
             $anonymize,
         );
 

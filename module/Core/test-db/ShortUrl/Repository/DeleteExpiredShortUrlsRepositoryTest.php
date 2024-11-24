@@ -22,8 +22,7 @@ class DeleteExpiredShortUrlsRepositoryTest extends DatabaseTestCase
 
     protected function setUp(): void
     {
-        $em = $this->getEntityManager();
-        $this->repository = new ExpiredShortUrlsRepository($em, $em->getClassMetadata(ShortUrl::class));
+        $this->repository = $this->createRepository(ShortUrl::class, ExpiredShortUrlsRepository::class);
     }
 
     #[Test]
@@ -93,7 +92,7 @@ class DeleteExpiredShortUrlsRepositoryTest extends DatabaseTestCase
             $this->getEntityManager()->persist($shortUrl);
 
             for ($j = 0; $j < $visitsPerShortUrl; $j++) {
-                $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance()));
+                $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl, Visitor::empty()));
             }
         }
     }

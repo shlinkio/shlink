@@ -33,7 +33,7 @@ use const STR_PAD_LEFT;
 
 class RedirectRuleHandler implements RedirectRuleHandlerInterface
 {
-    public function manageRules(StyleInterface $io, ShortUrl $shortUrl, array $rules): ?array
+    public function manageRules(StyleInterface $io, ShortUrl $shortUrl, array $rules): array|null
     {
         $amountOfRules = count($rules);
 
@@ -111,6 +111,12 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
                 RedirectConditionType::IP_ADDRESS => RedirectCondition::forIpAddress(
                     $this->askMandatory('IP address, CIDR block or wildcard-pattern (1.2.*.*)', $io),
                 ),
+                RedirectConditionType::GEOLOCATION_COUNTRY_CODE => RedirectCondition::forGeolocationCountryCode(
+                    $this->askMandatory('Country code to match?', $io),
+                ),
+                RedirectConditionType::GEOLOCATION_CITY_NAME => RedirectCondition::forGeolocationCityName(
+                    $this->askMandatory('City name to match?', $io),
+                )
             };
 
             $continue = $io->confirm('Do you want to add another condition?');
@@ -213,7 +219,7 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
 
     private function askMandatory(string $message, StyleInterface $io): string
     {
-        return $io->ask($message, validator: function (?string $answer): string {
+        return $io->ask($message, validator: function (string|null $answer): string {
             if ($answer === null) {
                 throw new InvalidArgumentException('The value is mandatory');
             }
@@ -223,6 +229,6 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
 
     private function askOptional(string $message, StyleInterface $io): string
     {
-        return $io->ask($message, validator: fn (?string $answer) => $answer === null ? '' : trim($answer));
+        return $io->ask($message, validator: fn (string|null $answer) => $answer === null ? '' : trim($answer));
     }
 }

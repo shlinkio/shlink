@@ -10,9 +10,10 @@ use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtils;
+use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
-use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithVisitsSummary;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithDeps;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlsParamsInputFilter;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlListServiceInterface;
@@ -65,6 +66,12 @@ class ListShortUrlsCommand extends Command
                 'A query used to filter results by searching for it on the longUrl and shortCode fields.',
             )
             ->addOption(
+                'domain',
+                'd',
+                InputOption::VALUE_REQUIRED,
+                'Used to filter results by domain. Use DEFAULT keyword to filter by default domain',
+            )
+            ->addOption(
                 'tags',
                 't',
                 InputOption::VALUE_REQUIRED,
@@ -111,14 +118,9 @@ class ListShortUrlsCommand extends Command
                 'show-api-key',
                 'k',
                 InputOption::VALUE_NONE,
-                'Whether to display the API key from which the URL was generated or not.',
-            )
-            ->addOption(
-                'show-api-key-name',
-                'm',
-                InputOption::VALUE_NONE,
                 'Whether to display the API key name from which the URL was generated or not.',
             )
+            ->addOption('show-api-key-name', 'm', InputOption::VALUE_NONE, '[DEPRECATED] Use show-api-key')
             ->addOption(
                 'all',
                 'a',
@@ -134,6 +136,7 @@ class ListShortUrlsCommand extends Command
 
         $page = (int) $input->getOption('page');
         $searchTerm = $input->getOption('search-term');
+        $domain = $input->getOption('domain');
         $tags = $input->getOption('tags');
         $tagsMode = $input->getOption('including-all-tags') === true ? TagsMode::ALL->value : TagsMode::ANY->value;
         $tags = ! empty($tags) ? explode(',', $tags) : [];
@@ -145,6 +148,7 @@ class ListShortUrlsCommand extends Command
 
         $data = [
             ShortUrlsParamsInputFilter::SEARCH_TERM => $searchTerm,
+            ShortUrlsParamsInputFilter::DOMAIN => $domain,
             ShortUrlsParamsInputFilter::TAGS => $tags,
             ShortUrlsParamsInputFilter::TAGS_MODE => $tagsMode,
             ShortUrlsParamsInputFilter::ORDER_BY => $orderBy,
@@ -177,7 +181,7 @@ class ListShortUrlsCommand extends Command
 
     /**
      * @param array<string, callable(array $serializedShortUrl, ShortUrl $shortUrl): ?string> $columnsMap
-     * @return Paginator<ShortUrlWithVisitsSummary>
+     * @return Paginator<ShortUrlWithDeps>
      */
     private function renderPage(
         OutputInterface $output,
@@ -187,7 +191,7 @@ class ListShortUrlsCommand extends Command
     ): Paginator {
         $shortUrls = $this->shortUrlService->listShortUrls($params);
 
-        $rows = map([...$shortUrls], function (ShortUrlWithVisitsSummary $shortUrl) use ($columnsMap) {
+        $rows = map([...$shortUrls], function (ShortUrlWithDeps $shortUrl) use ($columnsMap) {
             $serializedShortUrl = $this->transformer->transform($shortUrl);
             return map($columnsMap, fn (callable $call) => $call($serializedShortUrl, $shortUrl->shortUrl));
         });
@@ -201,7 +205,7 @@ class ListShortUrlsCommand extends Command
         return $shortUrls;
     }
 
-    private function processOrderBy(InputInterface $input): ?string
+    private function processOrderBy(InputInterface $input): string|null
     {
         $orderBy = $input->getOption('order-by');
         if (empty($orderBy)) {
@@ -231,14 +235,10 @@ class ListShortUrlsCommand extends Command
         }
         if ($input->getOption('show-domain')) {
             $columnsMap['Domain'] = static fn (array $_, ShortUrl $shortUrl): string =>
-                $shortUrl->getDomain()?->authority ?? 'DEFAULT';
+                $shortUrl->getDomain()->authority ?? Domain::DEFAULT_AUTHORITY;
         }
-        if ($input->getOption('show-api-key')) {
-            $columnsMap['API Key'] = static fn (array $_, ShortUrl $shortUrl): string =>
-                $shortUrl->authorApiKey?->__toString() ?? '';
-        }
-        if ($input->getOption('show-api-key-name')) {
-            $columnsMap['API Key Name'] = static fn (array $_, ShortUrl $shortUrl): ?string =>
+        if ($input->getOption('show-api-key') || $input->getOption('show-api-key-name')) {
+            $columnsMap['API Key Name'] = static fn (array $_, ShortUrl $shortUrl): string|null =>
                 $shortUrl->authorApiKey?->name;
         }
 

@@ -30,7 +30,7 @@ class ShortUrlListServiceTest extends TestCase
     }
 
     #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
-    public function listedUrlsAreReturnedFromEntityManager(?ApiKey $apiKey): void
+    public function listedUrlsAreReturnedFromEntityManager(ApiKey|null $apiKey): void
     {
         $list = [
             ShortUrl::createFake(),
@@ -42,7 +42,7 @@ class ShortUrlListServiceTest extends TestCase
         $this->repo->expects($this->once())->method('findList')->willReturn($list);
         $this->repo->expects($this->once())->method('countList')->willReturn(count($list));
 
-        $paginator = $this->service->listShortUrls(ShortUrlsParams::emptyInstance(), $apiKey);
+        $paginator = $this->service->listShortUrls(ShortUrlsParams::empty(), $apiKey);
 
         self::assertCount(4, $paginator);
         self::assertCount(4, $paginator->getCurrentPageResults());

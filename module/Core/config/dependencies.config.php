@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Common\Doctrine\EntityRepositoryFactory;
 use Shlinkio\Shlink\Core\Config\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
+use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Symfony\Component\Lock;
 
@@ -50,6 +51,10 @@ return [
             ShortUrl\Transformer\ShortUrlDataTransformer::class => ConfigAbstractFactory::class,
             ShortUrl\Middleware\ExtraPathRedirectMiddleware::class => ConfigAbstractFactory::class,
             ShortUrl\Middleware\TrimTrailingSlashMiddleware::class => ConfigAbstractFactory::class,
+            ShortUrl\Repository\ShortUrlRepository::class => [
+                EntityRepositoryFactory::class,
+                ShortUrl\Entity\ShortUrl::class,
+            ],
             ShortUrl\Repository\ShortUrlListRepository::class => [
                 EntityRepositoryFactory::class,
                 ShortUrl\Entity\ShortUrl::class,
@@ -64,8 +69,10 @@ return [
             ],
 
             Tag\TagService::class => ConfigAbstractFactory::class,
+            Tag\Repository\TagRepository::class => [EntityRepositoryFactory::class, Tag\Entity\Tag::class],
 
             Domain\DomainService::class => ConfigAbstractFactory::class,
+            Domain\Repository\DomainRepository::class => [EntityRepositoryFactory::class, Domain\Entity\Domain::class],
 
             Visit\VisitsTracker::class => ConfigAbstractFactory::class,
             Visit\RequestTracker::class => ConfigAbstractFactory::class,
@@ -95,6 +102,8 @@ return [
             Action\RobotsAction::class => ConfigAbstractFactory::class,
 
             EventDispatcher\PublishingUpdatesGenerator::class => ConfigAbstractFactory::class,
+
+            Geolocation\Middleware\IpGeolocationMiddleware::class => ConfigAbstractFactory::class,
 
             Importer\ImportedLinksProcessor::class => ConfigAbstractFactory::class,
 
@@ -132,6 +141,7 @@ return [
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
             ShortUrl\Helper\ShortCodeUniquenessHelper::class,
             EventDispatcherInterface::class,
+            ShortUrl\Repository\ShortUrlRepository::class,
         ],
         Visit\VisitsTracker::class => [
             'em',
@@ -153,20 +163,30 @@ return [
         Visit\Geolocation\VisitLocator::class => ['em', Visit\Repository\VisitIterationRepository::class],
         Visit\Geolocation\VisitToLocationHelper::class => [IpLocationResolverInterface::class],
         Visit\VisitsStatsHelper::class => ['em'],
-        Tag\TagService::class => ['em'],
+        Tag\TagService::class => ['em', Tag\Repository\TagRepository::class],
         ShortUrl\DeleteShortUrlService::class => [
             'em',
             Config\Options\DeleteShortUrlsOptions::class,
             ShortUrl\ShortUrlResolver::class,
             ShortUrl\Repository\ExpiredShortUrlsRepository::class,
         ],
-        ShortUrl\ShortUrlResolver::class => ['em', Config\Options\UrlShortenerOptions::class],
+        ShortUrl\ShortUrlResolver::class => [
+            ShortUrl\Repository\ShortUrlRepository::class,
+            Config\Options\UrlShortenerOptions::class,
+        ],
         ShortUrl\ShortUrlVisitsDeleter::class => [
             Visit\Repository\VisitDeleterRepository::class,
             ShortUrl\ShortUrlResolver::class,
         ],
-        ShortUrl\Helper\ShortCodeUniquenessHelper::class => ['em', Config\Options\UrlShortenerOptions::class],
-        Domain\DomainService::class => ['em', Config\Options\UrlShortenerOptions::class],
+        ShortUrl\Helper\ShortCodeUniquenessHelper::class => [
+            ShortUrl\Repository\ShortUrlRepository::class,
+            Config\Options\UrlShortenerOptions::class,
+        ],
+        Domain\DomainService::class => [
+            'em',
+            Config\Options\UrlShortenerOptions::class,
+            Domain\Repository\DomainRepository::class,
+        ],
 
         Util\DoctrineBatchHelper::class => ['em'],
         Util\RedirectResponseHelper::class => [Config\Options\RedirectOptions::class],
@@ -219,6 +239,13 @@ return [
         ShortUrl\Middleware\TrimTrailingSlashMiddleware::class => [Config\Options\UrlShortenerOptions::class],
 
         EventDispatcher\PublishingUpdatesGenerator::class => [ShortUrl\Transformer\ShortUrlDataTransformer::class],
+
+        Geolocation\Middleware\IpGeolocationMiddleware::class => [
+            IpLocationResolverInterface::class,
+            DbUpdater::class,
+            'Logger_Shlink',
+            Config\Options\TrackingOptions::class,
+        ],
 
         Importer\ImportedLinksProcessor::class => [
             'em',

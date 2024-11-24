@@ -128,7 +128,7 @@ class DomainRepositoryTest extends DatabaseTestCase
         self::assertFalse($this->repo->domainExists('foo.com', $detachedWithRedirectsApiKey));
     }
 
-    private function createShortUrl(Domain $domain, ?ApiKey $apiKey = null): ShortUrl
+    private function createShortUrl(Domain $domain, ApiKey|null $apiKey = null): ShortUrl
     {
         return ShortUrl::create(
             ShortUrlCreation::fromRawData(
@@ -139,7 +139,7 @@ class DomainRepositoryTest extends DatabaseTestCase
                 {
                 }
 
-                public function resolveDomain(?string $domain): ?Domain
+                public function resolveDomain(string|null $domain): Domain
                 {
                     return $this->domain;
                 }

@@ -31,7 +31,7 @@ class DomainRedirectsCommandTest extends TestCase
     }
 
     #[Test, DataProvider('provideDomains')]
-    public function onlyPlainQuestionsAreAskedForNewDomainsAndDomainsWithNoRedirects(?Domain $domain): void
+    public function onlyPlainQuestionsAreAskedForNewDomainsAndDomainsWithNoRedirects(Domain|null $domain): void
     {
         $domainAuthority = 'my-domain.com';
         $this->domainService->expects($this->once())->method('findByAuthority')->with($domainAuthority)->willReturn(

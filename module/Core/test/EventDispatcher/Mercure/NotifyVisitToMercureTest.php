@@ -13,7 +13,7 @@ use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\Update;
-use Shlinkio\Shlink\Core\EventDispatcher\Event\VisitLocated;
+use Shlinkio\Shlink\Core\EventDispatcher\Event\UrlVisited;
 use Shlinkio\Shlink\Core\EventDispatcher\Mercure\NotifyVisitToMercure;
 use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -54,14 +54,14 @@ class NotifyVisitToMercureTest extends TestCase
         $this->updatesGenerator->expects($this->never())->method('newVisitUpdate');
         $this->helper->expects($this->never())->method('publishUpdate');
 
-        ($this->listener)(new VisitLocated($visitId));
+        ($this->listener)(new UrlVisited($visitId));
     }
 
     #[Test]
     public function notificationsAreSentWhenVisitIsFound(): void
     {
         $visitId = '123';
-        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance());
+        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::empty());
         $update = Update::forTopicAndPayload('', []);
 
         $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn($visit);
@@ -74,14 +74,14 @@ class NotifyVisitToMercureTest extends TestCase
         $this->updatesGenerator->expects($this->once())->method('newVisitUpdate')->with($visit)->willReturn($update);
         $this->helper->expects($this->exactly(2))->method('publishUpdate')->with($update);
 
-        ($this->listener)(new VisitLocated($visitId));
+        ($this->listener)(new UrlVisited($visitId));
     }
 
     #[Test]
     public function debugIsLoggedWhenExceptionIsThrown(): void
     {
         $visitId = '123';
-        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance());
+        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::empty());
         $update = Update::forTopicAndPayload('', []);
         $e = new RuntimeException('Error');
 
@@ -98,7 +98,7 @@ class NotifyVisitToMercureTest extends TestCase
         $this->updatesGenerator->expects($this->once())->method('newVisitUpdate')->with($visit)->willReturn($update);
         $this->helper->expects($this->once())->method('publishUpdate')->with($update)->willThrowException($e);
 
-        ($this->listener)(new VisitLocated($visitId));
+        ($this->listener)(new UrlVisited($visitId));
     }
 
     #[Test, DataProvider('provideOrphanVisits')]
@@ -117,12 +117,12 @@ class NotifyVisitToMercureTest extends TestCase
         $this->updatesGenerator->expects($this->never())->method('newVisitUpdate');
         $this->helper->expects($this->once())->method('publishUpdate')->with($update);
 
-        ($this->listener)(new VisitLocated($visitId));
+        ($this->listener)(new UrlVisited($visitId));
     }
 
     public static function provideOrphanVisits(): iterable
     {
-        $visitor = Visitor::emptyInstance();
+        $visitor = Visitor::empty();
 
         yield VisitType::REGULAR_404->value => [Visit::forRegularNotFound($visitor)];
         yield VisitType::INVALID_SHORT_URL->value => [Visit::forInvalidShortUrl($visitor)];

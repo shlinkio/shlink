@@ -15,9 +15,9 @@ use Laminas\Filter\Word\CamelCaseToSeparator;
 use Laminas\Filter\Word\CamelCaseToUnderscore;
 use Laminas\InputFilter\InputFilter;
 use Psr\Http\Message\ServerRequestInterface;
-use Shlinkio\Shlink\Common\Middleware\IpAddressMiddlewareFactory;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
+use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 use function array_keys;
 use function array_map;
@@ -37,6 +37,8 @@ use function strtolower;
 use function trim;
 use function ucfirst;
 
+use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
+
 function generateRandomShortCode(int $length, ShortUrlMode $mode = ShortUrlMode::STRICT): string
 {
     static $nanoIdClient;
@@ -50,7 +52,7 @@ function generateRandomShortCode(int $length, ShortUrlMode $mode = ShortUrlMode:
     return $nanoIdClient->formattedId($alphabet, $length);
 }
 
-function parseDateFromQuery(array $query, string $dateName): ?Chronos
+function parseDateFromQuery(array $query, string $dateName): Chronos|null
 {
     return normalizeOptionalDate(empty($query[$dateName] ?? null) ? null : Chronos::parse($query[$dateName]));
 }
@@ -63,7 +65,7 @@ function parseDateRangeFromQuery(array $query, string $startDateName, string $en
     return buildDateRange($startDate, $endDate);
 }
 
-function dateRangeToHumanFriendly(?DateRange $dateRange): string
+function dateRangeToHumanFriendly(DateRange|null $dateRange): string
 {
     $startDate = $dateRange?->startDate;
     $endDate = $dateRange?->endDate;
@@ -83,7 +85,7 @@ function dateRangeToHumanFriendly(?DateRange $dateRange): string
 /**
  * @return ($date is null ? null : Chronos)
  */
-function normalizeOptionalDate(string|DateTimeInterface|Chronos|null $date): ?Chronos
+function normalizeOptionalDate(string|DateTimeInterface|Chronos|null $date): Chronos|null
 {
     $parsedDate = match (true) {
         $date === null || $date instanceof Chronos => $date,
@@ -109,7 +111,7 @@ function normalizeLocale(string $locale): string
  * minimum quality
  *
  * @param non-empty-string $acceptLanguage
- * @return iterable<string>;
+ * @return iterable<string>
  */
 function acceptLanguageToLocales(string $acceptLanguage, float $minQuality = 0): iterable
 {
@@ -148,7 +150,7 @@ function splitLocale(string $locale): array
 /**
  * @param InputFilter<mixed> $inputFilter
  */
-function getOptionalIntFromInputFilter(InputFilter $inputFilter, string $fieldName): ?int
+function getOptionalIntFromInputFilter(InputFilter $inputFilter, string $fieldName): int|null
 {
     $value = $inputFilter->getValue($fieldName);
     return $value !== null ? (int) $value : null;
@@ -157,7 +159,7 @@ function getOptionalIntFromInputFilter(InputFilter $inputFilter, string $fieldNa
 /**
  * @param InputFilter<mixed> $inputFilter
  */
-function getOptionalBoolFromInputFilter(InputFilter $inputFilter, string $fieldName): ?bool
+function getOptionalBoolFromInputFilter(InputFilter $inputFilter, string $fieldName): bool|null
 {
     $value = $inputFilter->getValue($fieldName);
     return $value !== null ? (bool) $value : null;
@@ -276,7 +278,7 @@ function enumToString(string $enum): string
  * Split provided string by comma and return a list of the results.
  * An empty array is returned if provided value is empty
  */
-function splitByComma(?string $value): array
+function splitByComma(string|null $value): array
 {
     if ($value === null || trim($value) === '') {
         return [];
@@ -285,7 +287,17 @@ function splitByComma(?string $value): array
     return array_map(trim(...), explode(',', $value));
 }
 
-function ipAddressFromRequest(ServerRequestInterface $request): ?string
+function ipAddressFromRequest(ServerRequestInterface $request): string|null
 {
-    return $request->getAttribute(IpAddressMiddlewareFactory::REQUEST_ATTR);
+    return $request->getAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE);
+}
+
+function geolocationFromRequest(ServerRequestInterface $request): Location|null
+{
+    $geolocation = $request->getAttribute(Location::class);
+    if ($geolocation !== null && ! $geolocation instanceof Location) {
+        // TODO Throw exception
+    }
+
+    return $geolocation;
 }

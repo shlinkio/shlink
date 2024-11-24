@@ -18,7 +18,7 @@ use function array_unique;
 use function Shlinkio\Shlink\Core\ArrayUtils\flatten;
 use function Shlinkio\Shlink\Core\splitByComma;
 
-readonly final class ShortUrlDataInput
+final readonly class ShortUrlDataInput
 {
     public function __construct(Command $command, private bool $longUrlAsOption = false)
     {

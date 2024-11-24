@@ -20,7 +20,7 @@ use function print_r;
 class ValidationExceptionTest extends TestCase
 {
     #[Test, DataProvider('provideExceptions')]
-    public function createsExceptionFromInputFilter(?Throwable $prev): void
+    public function createsExceptionFromInputFilter(Throwable|null $prev): void
     {
         $invalidData = [
             'foo' => 'bar',

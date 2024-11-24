@@ -75,7 +75,7 @@ class ShortUrlTest extends TestCase
     }
 
     #[Test, DataProvider('provideLengths')]
-    public function shortCodesHaveExpectedLength(?int $length, int $expectedLength): void
+    public function shortCodesHaveExpectedLength(int|null $length, int $expectedLength): void
     {
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(
             [ShortUrlInputFilter::SHORT_CODE_LENGTH => $length, 'longUrl' => 'https://longUrl'],
@@ -94,7 +94,7 @@ class ShortUrlTest extends TestCase
     #[TestWith([null, '', 5])]
     #[TestWith(['foo bar/', 'foo-bar-', 13])]
     public function shortCodesHaveExpectedPrefix(
-        ?string $pathPrefix,
+        string|null $pathPrefix,
         string $expectedPrefix,
         int $expectedShortCodeLength,
     ): void {

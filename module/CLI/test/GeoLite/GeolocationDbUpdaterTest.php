@@ -41,22 +41,24 @@ class GeolocationDbUpdaterTest extends TestCase
     #[Test]
     public function properResultIsReturnedWhenLicenseIsMissing(): void
     {
-        $mustBeUpdated = fn () => self::assertTrue(true);
-
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(false);
         $this->dbUpdater->expects($this->once())->method('downloadFreshCopy')->willThrowException(
             new MissingLicenseException(''),
         );
         $this->geoLiteDbReader->expects($this->never())->method('metadata');
 
-        $result = $this->geolocationDbUpdater()->checkDbUpdate($mustBeUpdated);
+        $isCalled = false;
+        $result = $this->geolocationDbUpdater()->checkDbUpdate(function () use (&$isCalled): void {
+            $isCalled = true;
+        });
+
+        self::assertTrue($isCalled);
         self::assertEquals(GeolocationResult::LICENSE_MISSING, $result);
     }
 
     #[Test]
     public function exceptionIsThrownWhenOlderDbDoesNotExistAndDownloadFails(): void
     {
-        $mustBeUpdated = fn () => self::assertTrue(true);
         $prev = new DbUpdateException('');
 
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(false);
@@ -65,14 +67,17 @@ class GeolocationDbUpdaterTest extends TestCase
         )->willThrowException($prev);
         $this->geoLiteDbReader->expects($this->never())->method('metadata');
 
+        $isCalled = false;
         try {
-            $this->geolocationDbUpdater()->checkDbUpdate($mustBeUpdated);
+            $this->geolocationDbUpdater()->checkDbUpdate(function () use (&$isCalled): void {
+                $isCalled = true;
+            });
             self::fail();
         } catch (Throwable $e) {
-            /** @var GeolocationDbUpdateFailedException $e */
             self::assertInstanceOf(GeolocationDbUpdateFailedException::class, $e);
             self::assertSame($prev, $e->getPrevious());
             self::assertFalse($e->olderDbExists());
+            self::assertTrue($isCalled);
         }
     }
 
@@ -92,7 +97,6 @@ class GeolocationDbUpdaterTest extends TestCase
             $this->geolocationDbUpdater()->checkDbUpdate();
             self::fail();
         } catch (Throwable $e) {
-            /** @var GeolocationDbUpdateFailedException $e */
             self::assertInstanceOf(GeolocationDbUpdateFailedException::class, $e);
             self::assertSame($prev, $e->getPrevious());
             self::assertTrue($e->olderDbExists());
@@ -180,7 +184,7 @@ class GeolocationDbUpdaterTest extends TestCase
         yield 'both' => [new TrackingOptions(disableTracking: true, disableIpTracking: true)];
     }
 
-    private function geolocationDbUpdater(?TrackingOptions $options = null): GeolocationDbUpdater
+    private function geolocationDbUpdater(TrackingOptions|null $options = null): GeolocationDbUpdater
     {
         $locker = $this->createMock(Lock\LockFactory::class);
         $locker->method('createLock')->with($this->isType('string'))->willReturn($this->lock);

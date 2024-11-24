@@ -21,7 +21,7 @@ class DomainVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
         private readonly VisitRepositoryInterface $visitRepository,
         private readonly string $domain,
         private readonly VisitsParams $params,
-        private readonly ?ApiKey $apiKey,
+        private readonly ApiKey|null $apiKey,
     ) {
     }
 

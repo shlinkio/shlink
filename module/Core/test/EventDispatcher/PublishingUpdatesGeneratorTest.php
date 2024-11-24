@@ -41,14 +41,14 @@ class PublishingUpdatesGeneratorTest extends TestCase
     }
 
     #[Test, DataProvider('provideMethod')]
-    public function visitIsProperlySerializedIntoUpdate(string $method, string $expectedTopic, ?string $title): void
+    public function visitIsProperlySerializedIntoUpdate(string $method, string $expectedTopic, string|null $title): void
     {
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
             'customSlug' => 'foo',
             'longUrl' => 'https://longUrl',
             'title' => $title,
         ]));
-        $visit = Visit::forValidShortUrl($shortUrl, Visitor::emptyInstance());
+        $visit = Visit::forValidShortUrl($shortUrl, Visitor::empty());
 
         /** @var Update $update */
         $update = $this->generator->{$method}($visit);
@@ -71,6 +71,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
                 'crawlable' => false,
                 'forwardQuery' => true,
                 'visitsSummary' => VisitsSummary::fromTotalAndNonBots(0, 0),
+                'hasRedirectRules' => false,
             ],
             'visit' => [
                 'referer' => '',
@@ -79,6 +80,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
                 'date' => $visit->date->toAtomString(),
                 'potentialBot' => false,
                 'visitedUrl' => '',
+                'redirectUrl' => null,
             ],
         ], $update->payload);
     }
@@ -104,13 +106,14 @@ class PublishingUpdatesGeneratorTest extends TestCase
                 'potentialBot' => false,
                 'visitedUrl' => $orphanVisit->visitedUrl,
                 'type' => $orphanVisit->type->value,
+                'redirectUrl' => null,
             ],
         ], $update->payload);
     }
 
     public static function provideOrphanVisits(): iterable
     {
-        $visitor = Visitor::emptyInstance();
+        $visitor = Visitor::empty();
 
         yield VisitType::REGULAR_404->value => [Visit::forRegularNotFound($visitor)];
         yield VisitType::INVALID_SHORT_URL->value => [Visit::forInvalidShortUrl($visitor)];
@@ -145,6 +148,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
             'crawlable' => false,
             'forwardQuery' => true,
             'visitsSummary' => VisitsSummary::fromTotalAndNonBots(0, 0),
+            'hasRedirectRules' => false,
         ]], $update->payload);
     }
 }

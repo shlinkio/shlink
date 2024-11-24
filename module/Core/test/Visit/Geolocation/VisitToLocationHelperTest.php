@@ -40,9 +40,9 @@ class VisitToLocationHelperTest extends TestCase
 
     public static function provideNonLocatableVisits(): iterable
     {
-        yield [Visit::forBasePath(Visitor::emptyInstance()), IpCannotBeLocatedException::forEmptyAddress()];
+        yield [Visit::forBasePath(Visitor::empty()), IpCannotBeLocatedException::forEmptyAddress()];
         yield [
-            Visit::forBasePath(new Visitor('foo', 'bar', IpAddress::LOCALHOST, '')),
+            Visit::forBasePath(Visitor::fromParams('foo', 'bar', IpAddress::LOCALHOST)),
             IpCannotBeLocatedException::forLocalhost(),
         ];
     }
@@ -55,6 +55,6 @@ class VisitToLocationHelperTest extends TestCase
         $this->expectExceptionObject(IpCannotBeLocatedException::forError($e));
         $this->ipLocationResolver->expects($this->once())->method('resolveIpLocation')->willThrowException($e);
 
-        $this->helper->resolveVisitLocation(Visit::forBasePath(new Visitor('foo', 'bar', '1.2.3.4', '')));
+        $this->helper->resolveVisitLocation(Visit::forBasePath(Visitor::fromParams('foo', 'bar', '1.2.3.4')));
     }
 }

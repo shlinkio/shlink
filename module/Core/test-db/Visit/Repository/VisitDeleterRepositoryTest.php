@@ -9,19 +9,26 @@ use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
+use Shlinkio\Shlink\Core\Visit\Entity\OrphanVisitsCount;
+use Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
+use Shlinkio\Shlink\Core\Visit\Repository\OrphanVisitsCountRepository;
+use Shlinkio\Shlink\Core\Visit\Repository\ShortUrlVisitsCountRepository;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitDeleterRepository;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
 
 class VisitDeleterRepositoryTest extends DatabaseTestCase
 {
     private VisitDeleterRepository $repo;
+    private ShortUrlVisitsCountRepository $visitsCountRepo;
+    private OrphanVisitsCountRepository $orphanVisitsCountRepo;
 
     protected function setUp(): void
     {
-        $em = $this->getEntityManager();
-        $this->repo = new VisitDeleterRepository($em, $em->getClassMetadata(Visit::class));
+        $this->repo = $this->createRepository(Visit::class, VisitDeleterRepository::class);
+        $this->visitsCountRepo = $this->getEntityManager()->getRepository(ShortUrlVisitsCount::class);
+        $this->orphanVisitsCountRepo = $this->getEntityManager()->getRepository(OrphanVisitsCount::class);
     }
 
     #[Test]
@@ -29,8 +36,8 @@ class VisitDeleterRepositoryTest extends DatabaseTestCase
     {
         $shortUrl1 = ShortUrl::withLongUrl('https://foo.com');
         $this->getEntityManager()->persist($shortUrl1);
-        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl1, Visitor::emptyInstance()));
-        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl1, Visitor::emptyInstance()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl1, Visitor::empty()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl1, Visitor::empty()));
 
         $shortUrl2 = ShortUrl::create(ShortUrlCreation::fromRawData([
             ShortUrlInputFilter::LONG_URL => 'https://foo.com',
@@ -38,32 +45,40 @@ class VisitDeleterRepositoryTest extends DatabaseTestCase
             ShortUrlInputFilter::CUSTOM_SLUG => 'foo',
         ]), new PersistenceShortUrlRelationResolver($this->getEntityManager()));
         $this->getEntityManager()->persist($shortUrl2);
-        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::emptyInstance()));
-        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::emptyInstance()));
-        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::emptyInstance()));
-        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::emptyInstance()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::empty()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::empty()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::empty()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl2, Visitor::empty()));
 
         $shortUrl3 = ShortUrl::create(ShortUrlCreation::fromRawData([
             ShortUrlInputFilter::LONG_URL => 'https://foo.com',
             ShortUrlInputFilter::CUSTOM_SLUG => 'foo',
         ]), new PersistenceShortUrlRelationResolver($this->getEntityManager()));
         $this->getEntityManager()->persist($shortUrl3);
-        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl3, Visitor::emptyInstance()));
+        $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl3, Visitor::empty()));
 
         $this->getEntityManager()->flush();
 
-        self::assertEquals(2, $this->repo->deleteShortUrlVisits($shortUrl1));
-        self::assertEquals(0, $this->repo->deleteShortUrlVisits($shortUrl1));
-        self::assertEquals(4, $this->repo->deleteShortUrlVisits($shortUrl2));
-        self::assertEquals(0, $this->repo->deleteShortUrlVisits($shortUrl2));
-        self::assertEquals(1, $this->repo->deleteShortUrlVisits($shortUrl3));
-        self::assertEquals(0, $this->repo->deleteShortUrlVisits($shortUrl3));
+        $this->assertVisitsDeletionForShortUrl($shortUrl1, 2);
+        $this->assertVisitsDeletionForShortUrl($shortUrl2, 4);
+        $this->assertVisitsDeletionForShortUrl($shortUrl3, 1);
+    }
+
+    private function assertVisitsDeletionForShortUrl(ShortUrl $shortUrl, int $expectedDeleteCount): void
+    {
+        // There should be at least one visit count before deletion
+        self::assertGreaterThan(0, $this->visitsCountRepo->count(['shortUrl' => $shortUrl]));
+        self::assertEquals($expectedDeleteCount, $this->repo->deleteShortUrlVisits($shortUrl));
+
+        // Visits counts are also deleted, and trying to delete again results in no visits deleted
+        self::assertEquals(0, $this->visitsCountRepo->count(['shortUrl' => $shortUrl]));
+        self::assertEquals(0, $this->repo->deleteShortUrlVisits($shortUrl));
     }
 
     #[Test]
     public function deletesExpectedOrphanVisits(): void
     {
-        $visitor = Visitor::emptyInstance();
+        $visitor = Visitor::empty();
         $this->getEntityManager()->persist(Visit::forBasePath($visitor));
         $this->getEntityManager()->persist(Visit::forInvalidShortUrl($visitor));
         $this->getEntityManager()->persist(Visit::forRegularNotFound($visitor));
@@ -73,7 +88,9 @@ class VisitDeleterRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
+        self::assertGreaterThan(0, $this->orphanVisitsCountRepo->count());
         self::assertEquals(6, $this->repo->deleteOrphanVisits());
         self::assertEquals(0, $this->repo->deleteOrphanVisits());
+        self::assertEquals(0, $this->orphanVisitsCountRepo->count());
     }
 }

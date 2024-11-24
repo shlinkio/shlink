@@ -63,8 +63,8 @@ class LocateVisitsCommandTest extends TestCase
         bool $expectWarningPrint,
         array $args,
     ): void {
-        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), new Visitor('', '', '1.2.3.4', ''));
-        $location = VisitLocation::fromGeolocation(Location::emptyInstance());
+        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::fromParams('', '', '1.2.3.4'));
+        $location = VisitLocation::fromGeolocation(Location::empty());
         $mockMethodBehavior = $this->invokeHelperMethods($visit, $location);
 
         $this->lock->method('acquire')->with($this->isFalse())->willReturn(true);
@@ -107,7 +107,7 @@ class LocateVisitsCommandTest extends TestCase
     #[Test, DataProvider('provideIgnoredAddresses')]
     public function localhostAndEmptyAddressesAreIgnored(IpCannotBeLocatedException $e, string $message): void
     {
-        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::emptyInstance());
+        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::empty());
         $location = VisitLocation::fromGeolocation(Location::emptyInstance());
 
         $this->lock->method('acquire')->with($this->isFalse())->willReturn(true);
@@ -134,7 +134,7 @@ class LocateVisitsCommandTest extends TestCase
     #[Test]
     public function errorWhileLocatingIpIsDisplayed(): void
     {
-        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), new Visitor('', '', '1.2.3.4', ''));
+        $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::fromParams(remoteAddress: '1.2.3.4'));
         $location = VisitLocation::fromGeolocation(Location::emptyInstance());
 
         $this->lock->method('acquire')->with($this->isFalse())->willReturn(true);

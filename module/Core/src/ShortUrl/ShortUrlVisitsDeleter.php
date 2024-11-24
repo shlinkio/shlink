@@ -10,18 +10,18 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitDeleterRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-class ShortUrlVisitsDeleter implements ShortUrlVisitsDeleterInterface
+readonly class ShortUrlVisitsDeleter implements ShortUrlVisitsDeleterInterface
 {
     public function __construct(
-        private readonly VisitDeleterRepositoryInterface $repository,
-        private readonly ShortUrlResolverInterface $resolver,
+        private VisitDeleterRepositoryInterface $repository,
+        private ShortUrlResolverInterface $resolver,
     ) {
     }
 
     /**
      * @throws ShortUrlNotFoundException
      */
-    public function deleteShortUrlVisits(ShortUrlIdentifier $identifier, ?ApiKey $apiKey = null): BulkDeleteResult
+    public function deleteShortUrlVisits(ShortUrlIdentifier $identifier, ApiKey|null $apiKey = null): BulkDeleteResult
     {
         $shortUrl = $this->resolver->resolveShortUrl($identifier, $apiKey);
         return new BulkDeleteResult($this->repository->deleteShortUrlVisits($shortUrl));

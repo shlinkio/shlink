@@ -56,7 +56,7 @@ class RedirectRuleHandlerTest extends TestCase
     #[Test,  DataProvider('provideExitActions')]
     public function commentIsDisplayedWhenRulesListIsEmpty(
         RedirectRuleHandlerAction $action,
-        ?array $expectedResult,
+        array|null $expectedResult,
     ): void {
         $this->io->expects($this->once())->method('choice')->willReturn($action->value);
         $this->io->expects($this->once())->method('newLine');
@@ -117,6 +117,8 @@ class RedirectRuleHandlerTest extends TestCase
                 'Query param name?' => 'foo',
                 'Query param value?' => 'bar',
                 'IP address, CIDR block or wildcard-pattern (1.2.*.*)' => '1.2.3.4',
+                'Country code to match?' => 'FR',
+                'City name to match?' => 'Los angeles',
                 default => '',
             },
         );
@@ -165,6 +167,14 @@ class RedirectRuleHandlerTest extends TestCase
             true,
         ];
         yield 'IP address' => [RedirectConditionType::IP_ADDRESS, [RedirectCondition::forIpAddress('1.2.3.4')]];
+        yield 'Geolocation country code' => [
+            RedirectConditionType::GEOLOCATION_COUNTRY_CODE,
+            [RedirectCondition::forGeolocationCountryCode('FR')],
+        ];
+        yield 'Geolocation city name' => [
+            RedirectConditionType::GEOLOCATION_CITY_NAME,
+            [RedirectCondition::forGeolocationCityName('Los angeles')],
+        ];
     }
 
     #[Test]

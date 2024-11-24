@@ -9,9 +9,10 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
+use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\OrderableField;
-use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithVisitsSummary;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithDeps;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
@@ -24,7 +25,7 @@ use function sprintf;
 class ShortUrlListRepository extends EntitySpecificationRepository implements ShortUrlListRepositoryInterface
 {
     /**
-     * @return ShortUrlWithVisitsSummary[]
+     * @return ShortUrlWithDeps[]
      */
     public function findList(ShortUrlsListFiltering $filtering): array
     {
@@ -43,7 +44,7 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
 
         $qb = $this->createListQueryBuilder($filtering);
         $qb->select(
-            'DISTINCT s AS shortUrl',
+            'DISTINCT s AS shortUrl, d.authority',
             '(' . $buildVisitsSubQuery('v', excludingBots: false) . ') AS ' . OrderableField::VISITS->value,
             '(' . $buildVisitsSubQuery('v2', excludingBots: true) . ') AS ' . OrderableField::NON_BOT_VISITS->value,
             // This is added only to have a consistent order by title between database engines
@@ -56,9 +57,9 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
 
         $this->processOrderByForList($qb, $filtering);
 
-        /** @var array{shortUrl: ShortUrl, visits: string, nonBotVisits: string}[] $result */
+        /** @var array{shortUrl: ShortUrl, visits: string, nonBotVisits: string, authority: string|null}[] $result */
         $result = $qb->getQuery()->getResult();
-        return map($result, static fn (array $s) => ShortUrlWithVisitsSummary::fromArray($s));
+        return map($result, static fn (array $s) => ShortUrlWithDeps::fromArray($s));
     }
 
     private function processOrderByForList(QueryBuilder $qb, ShortUrlsListFiltering $filtering): void
@@ -89,6 +90,7 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ShortUrl::class, 's')
+           ->leftJoin('s.domain', 'd')
            ->where('1=1');
 
         $dateRange = $filtering->dateRange;
@@ -103,14 +105,13 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
 
         $searchTerm = $filtering->searchTerm;
         $tags = $filtering->tags;
-        // Apply search term to every searchable field if not empty
         if (! empty($searchTerm)) {
             // Left join with tags only if no tags were provided. In case of tags, an inner join will be done later
             if (empty($tags)) {
                 $qb->leftJoin('s.tags', 't');
             }
 
-            // Apply general search conditions
+            // Apply search term to every "searchable" field
             $conditions = [
                 $qb->expr()->like('s.longUrl', ':searchPattern'),
                 $qb->expr()->like('s.shortCode', ':searchPattern'),
@@ -118,8 +119,8 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
                 $qb->expr()->like('d.authority', ':searchPattern'),
             ];
 
-            // Include default domain in search if provided
-            if ($filtering->searchIncludesDefaultDomain) {
+            // Include default domain in search if included, and a domain was not explicitly provided
+            if ($filtering->searchIncludesDefaultDomain && $filtering->domain === null) {
                 $conditions[] = $qb->expr()->isNull('s.domain');
             }
 
@@ -129,8 +130,7 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
                 $conditions[] = $qb->expr()->like('t.name', ':searchPattern');
             }
 
-            $qb->leftJoin('s.domain', 'd')
-               ->andWhere($qb->expr()->orX(...$conditions))
+            $qb->andWhere($qb->expr()->orX(...$conditions))
                ->setParameter('searchPattern', '%' . $searchTerm . '%');
         }
 
@@ -140,6 +140,15 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
             $tagsMode === TagsMode::ANY
                 ? $qb->join('s.tags', 't')->andWhere($qb->expr()->in('t.name', $tags))
                 : $this->joinAllTags($qb, $tags);
+        }
+
+        if ($filtering->domain !== null) {
+            if ($filtering->domain === Domain::DEFAULT_AUTHORITY) {
+                $qb->andWhere($qb->expr()->isNull('s.domain'));
+            } else {
+                $qb->andWhere($qb->expr()->eq('d.authority', ':domain'))
+                   ->setParameter('domain', $filtering->domain);
+            }
         }
 
         if ($filtering->excludeMaxVisitsReached) {

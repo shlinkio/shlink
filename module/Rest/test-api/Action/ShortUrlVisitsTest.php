@@ -21,7 +21,7 @@ class ShortUrlVisitsTest extends ApiTestCase
     #[Test, DataProviderExternal(ApiTestDataProviders::class, 'invalidUrlsProvider')]
     public function tryingToGetVisitsForInvalidUrlReturnsNotFoundError(
         string $shortCode,
-        ?string $domain,
+        string|null $domain,
         string $expectedDetail,
         string $apiKey,
     ): void {
@@ -42,7 +42,7 @@ class ShortUrlVisitsTest extends ApiTestCase
     }
 
     #[Test, DataProvider('provideDomains')]
-    public function properVisitsAreReturnedWhenDomainIsProvided(?string $domain, int $expectedAmountOfVisits): void
+    public function properVisitsAreReturnedWhenDomainIsProvided(string|null $domain, int $expectedAmountOfVisits): void
     {
         $shortCode = 'ghi789';
         $url = new Uri(sprintf('/short-urls/%s/visits', $shortCode));

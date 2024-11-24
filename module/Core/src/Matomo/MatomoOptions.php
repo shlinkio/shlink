@@ -13,9 +13,9 @@ final readonly class MatomoOptions
      */
     public function __construct(
         public bool $enabled = false,
-        public ?string $baseUrl = null,
+        public string|null $baseUrl = null,
         private string|int|null $siteId = null,
-        public ?string $apiToken = null,
+        public string|null $apiToken = null,
     ) {
     }
 
@@ -29,7 +29,7 @@ final readonly class MatomoOptions
         );
     }
 
-    public function siteId(): ?int
+    public function siteId(): int|null
     {
         if ($this->siteId === null) {
             return null;

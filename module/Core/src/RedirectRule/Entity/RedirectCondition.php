@@ -12,11 +12,12 @@ use Shlinkio\Shlink\Core\Util\IpAddressUtils;
 
 use function Shlinkio\Shlink\Core\acceptLanguageToLocales;
 use function Shlinkio\Shlink\Core\ArrayUtils\some;
+use function Shlinkio\Shlink\Core\geolocationFromRequest;
 use function Shlinkio\Shlink\Core\ipAddressFromRequest;
 use function Shlinkio\Shlink\Core\normalizeLocale;
 use function Shlinkio\Shlink\Core\splitLocale;
 use function sprintf;
-use function strtolower;
+use function strcasecmp;
 use function trim;
 
 class RedirectCondition extends AbstractEntity implements JsonSerializable
@@ -24,7 +25,7 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
     private function __construct(
         private readonly RedirectConditionType $type,
         private readonly string $matchValue,
-        private readonly ?string $matchKey = null,
+        private readonly string|null $matchKey = null,
     ) {
     }
 
@@ -52,6 +53,16 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
         return new self(RedirectConditionType::IP_ADDRESS, $ipAddressPattern);
     }
 
+    public static function forGeolocationCountryCode(string $countryCode): self
+    {
+        return new self(RedirectConditionType::GEOLOCATION_COUNTRY_CODE, $countryCode);
+    }
+
+    public static function forGeolocationCityName(string $cityName): self
+    {
+        return new self(RedirectConditionType::GEOLOCATION_CITY_NAME, $cityName);
+    }
+
     public static function fromRawData(array $rawData): self
     {
         $type = RedirectConditionType::from($rawData[RedirectRulesInputFilter::CONDITION_TYPE]);
@@ -71,6 +82,8 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
             RedirectConditionType::LANGUAGE => $this->matchesLanguage($request),
             RedirectConditionType::DEVICE => $this->matchesDevice($request),
             RedirectConditionType::IP_ADDRESS => $this->matchesRemoteIpAddress($request),
+            RedirectConditionType::GEOLOCATION_COUNTRY_CODE => $this->matchesGeolocationCountryCode($request),
+            RedirectConditionType::GEOLOCATION_CITY_NAME => $this->matchesGeolocationCityName($request),
         };
     }
 
@@ -109,13 +122,33 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
     private function matchesDevice(ServerRequestInterface $request): bool
     {
         $device = DeviceType::matchFromUserAgent($request->getHeaderLine('User-Agent'));
-        return $device !== null && $device->value === strtolower($this->matchValue);
+        return $device !== null && $device->value === $this->matchValue;
     }
 
     private function matchesRemoteIpAddress(ServerRequestInterface $request): bool
     {
         $remoteAddress = ipAddressFromRequest($request);
         return $remoteAddress !== null && IpAddressUtils::ipAddressMatchesGroups($remoteAddress, [$this->matchValue]);
+    }
+
+    private function matchesGeolocationCountryCode(ServerRequestInterface $request): bool
+    {
+        $geolocation = geolocationFromRequest($request);
+        if ($geolocation === null) {
+            return false;
+        }
+
+        return strcasecmp($geolocation->countryCode, $this->matchValue) === 0;
+    }
+
+    private function matchesGeolocationCityName(ServerRequestInterface $request): bool
+    {
+        $geolocation = geolocationFromRequest($request);
+        if ($geolocation === null) {
+            return false;
+        }
+
+        return strcasecmp($geolocation->city, $this->matchValue) === 0;
     }
 
     public function jsonSerialize(): array
@@ -138,6 +171,8 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
                 $this->matchValue,
             ),
             RedirectConditionType::IP_ADDRESS => sprintf('IP address matches %s', $this->matchValue),
+            RedirectConditionType::GEOLOCATION_COUNTRY_CODE => sprintf('country code is %s', $this->matchValue),
+            RedirectConditionType::GEOLOCATION_CITY_NAME => sprintf('city name is %s', $this->matchValue),
         };
     }
 }

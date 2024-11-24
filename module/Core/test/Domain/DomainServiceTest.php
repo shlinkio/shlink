@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Domain\DomainService;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
-use Shlinkio\Shlink\Core\Domain\Repository\DomainRepository;
+use Shlinkio\Shlink\Core\Domain\Repository\DomainRepositoryInterface;
 use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
@@ -25,19 +25,23 @@ class DomainServiceTest extends TestCase
 {
     private DomainService $domainService;
     private MockObject & EntityManagerInterface $em;
+    private MockObject & DomainRepositoryInterface $repo;
 
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManagerInterface::class);
-        $this->domainService = new DomainService($this->em, new UrlShortenerOptions(defaultDomain: 'default.com'));
+        $this->repo = $this->createMock(DomainRepositoryInterface::class);
+        $this->domainService = new DomainService(
+            $this->em,
+            new UrlShortenerOptions(defaultDomain: 'default.com'),
+            $this->repo,
+        );
     }
 
     #[Test, DataProvider('provideExcludedDomains')]
-    public function listDomainsDelegatesIntoRepository(array $domains, array $expectedResult, ?ApiKey $apiKey): void
+    public function listDomainsDelegatesIntoRepository(array $domains, array $expectedResult, ApiKey|null $apiKey): void
     {
-        $repo = $this->createMock(DomainRepository::class);
-        $repo->expects($this->once())->method('findDomains')->with($apiKey)->willReturn($domains);
-        $this->em->expects($this->once())->method('getRepository')->with(Domain::class)->willReturn($repo);
+        $this->repo->expects($this->once())->method('findDomains')->with($apiKey)->willReturn($domains);
 
         $result = $this->domainService->listDomains($apiKey);
 
@@ -124,14 +128,12 @@ class DomainServiceTest extends TestCase
     }
 
     #[Test, DataProvider('provideFoundDomains')]
-    public function getOrCreateAlwaysPersistsDomain(?Domain $foundDomain, ?ApiKey $apiKey): void
+    public function getOrCreateAlwaysPersistsDomain(Domain|null $foundDomain, ApiKey|null $apiKey): void
     {
         $authority = 'example.com';
-        $repo = $this->createMock(DomainRepository::class);
-        $repo->method('findOneByAuthority')->with($authority, $apiKey)->willReturn(
+        $this->repo->expects($this->once())->method('findOneByAuthority')->with($authority, $apiKey)->willReturn(
             $foundDomain,
         );
-        $this->em->expects($this->once())->method('getRepository')->with(Domain::class)->willReturn($repo);
         $this->em->expects($this->once())->method('persist')->with($foundDomain ?? $this->isInstanceOf(Domain::class));
         $this->em->expects($this->once())->method('flush');
 
@@ -149,9 +151,7 @@ class DomainServiceTest extends TestCase
         $domain = Domain::withAuthority($authority);
         $domain->setId('1');
         $apiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forDomain($domain)));
-        $repo = $this->createMock(DomainRepository::class);
-        $repo->method('findOneByAuthority')->with($authority, $apiKey)->willReturn(null);
-        $this->em->expects($this->once())->method('getRepository')->with(Domain::class)->willReturn($repo);
+        $this->repo->expects($this->once())->method('findOneByAuthority')->with($authority, $apiKey)->willReturn(null);
         $this->em->expects($this->never())->method('persist');
         $this->em->expects($this->never())->method('flush');
 
@@ -161,12 +161,14 @@ class DomainServiceTest extends TestCase
     }
 
     #[Test, DataProvider('provideFoundDomains')]
-    public function configureNotFoundRedirectsConfiguresFetchedDomain(?Domain $foundDomain, ?ApiKey $apiKey): void
-    {
+    public function configureNotFoundRedirectsConfiguresFetchedDomain(
+        Domain|null $foundDomain,
+        ApiKey|null $apiKey,
+    ): void {
         $authority = 'example.com';
-        $repo = $this->createMock(DomainRepository::class);
-        $repo->method('findOneByAuthority')->with($authority, $apiKey)->willReturn($foundDomain);
-        $this->em->expects($this->once())->method('getRepository')->with(Domain::class)->willReturn($repo);
+        $this->repo->expects($this->once())->method('findOneByAuthority')->with($authority, $apiKey)->willReturn(
+            $foundDomain,
+        );
         $this->em->expects($this->once())->method('persist')->with($foundDomain ?? $this->isInstanceOf(Domain::class));
         $this->em->expects($this->once())->method('flush');
 

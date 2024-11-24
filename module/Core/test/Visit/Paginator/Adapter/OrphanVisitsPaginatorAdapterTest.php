@@ -27,7 +27,7 @@ class OrphanVisitsPaginatorAdapterTest extends TestCase
     protected function setUp(): void
     {
         $this->repo = $this->createMock(VisitRepositoryInterface::class);
-        $this->params = OrphanVisitsParams::fromRawData([]);
+        $this->params = new OrphanVisitsParams();
         $this->apiKey = ApiKey::create();
 
         $this->adapter = new OrphanVisitsPaginatorAdapter($this->repo, $this->params, $this->apiKey);
@@ -53,7 +53,7 @@ class OrphanVisitsPaginatorAdapterTest extends TestCase
     #[Test, DataProvider('provideLimitAndOffset')]
     public function getSliceDelegatesToRepository(int $limit, int $offset): void
     {
-        $visitor = Visitor::emptyInstance();
+        $visitor = Visitor::empty();
         $list = [Visit::forRegularNotFound($visitor), Visit::forInvalidShortUrl($visitor)];
         $this->repo->expects($this->once())->method('findOrphanVisits')->with(new OrphanVisitsListFiltering(
             dateRange: $this->params->dateRange,

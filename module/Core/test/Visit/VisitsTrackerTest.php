@@ -33,43 +33,44 @@ class VisitsTrackerTest extends TestCase
     #[Test, DataProvider('provideTrackingMethodNames')]
     public function trackPersistsVisitAndDispatchesEvent(string $method, array $args): void
     {
-        $this->em->expects($this->once())->method('persist')->with(
-            $this->callback(fn (Visit $visit) => $visit->setId('1') !== null),
-        );
-        $this->em->expects($this->once())->method('flush');
+        $this->em->expects($this->once())->method('persist')->with($this->isInstanceOf(Visit::class));
         $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
             $this->isInstanceOf(UrlVisited::class),
         );
 
-        $this->visitsTracker()->{$method}(...$args);
+        $result = $this->visitsTracker()->{$method}(...$args);
+
+        self::assertInstanceOf(Visit::class, $result);
     }
 
     #[Test, DataProvider('provideTrackingMethodNames')]
     public function trackingIsSkippedCompletelyWhenDisabledFromOptions(string $method, array $args): void
     {
         $this->em->expects($this->never())->method('persist');
-        $this->em->expects($this->never())->method('flush');
         $this->eventDispatcher->expects($this->never())->method('dispatch');
 
-        $this->visitsTracker(new TrackingOptions(disableTracking: true))->{$method}(...$args);
+        $result = $this->visitsTracker(new TrackingOptions(disableTracking: true))->{$method}(...$args);
+
+        self::assertNull($result);
     }
 
     public static function provideTrackingMethodNames(): iterable
     {
-        yield 'track' => ['track', [ShortUrl::createFake(), Visitor::emptyInstance()]];
-        yield 'trackInvalidShortUrlVisit' => ['trackInvalidShortUrlVisit', [Visitor::emptyInstance()]];
-        yield 'trackBaseUrlVisit' => ['trackBaseUrlVisit', [Visitor::emptyInstance()]];
-        yield 'trackRegularNotFoundVisit' => ['trackRegularNotFoundVisit', [Visitor::emptyInstance()]];
+        yield 'track' => ['track', [ShortUrl::createFake(), Visitor::empty()]];
+        yield 'trackInvalidShortUrlVisit' => ['trackInvalidShortUrlVisit', [Visitor::empty()]];
+        yield 'trackBaseUrlVisit' => ['trackBaseUrlVisit', [Visitor::empty()]];
+        yield 'trackRegularNotFoundVisit' => ['trackRegularNotFoundVisit', [Visitor::empty()]];
     }
 
     #[Test, DataProvider('provideOrphanTrackingMethodNames')]
     public function orphanVisitsAreNotTrackedWhenDisabled(string $method): void
     {
         $this->em->expects($this->never())->method('persist');
-        $this->em->expects($this->never())->method('flush');
         $this->eventDispatcher->expects($this->never())->method('dispatch');
 
-        $this->visitsTracker(new TrackingOptions(trackOrphanVisits: false))->{$method}(Visitor::emptyInstance());
+        $result = $this->visitsTracker(new TrackingOptions(trackOrphanVisits: false))->{$method}(Visitor::empty());
+
+        self::assertNull($result);
     }
 
     public static function provideOrphanTrackingMethodNames(): iterable
@@ -79,7 +80,7 @@ class VisitsTrackerTest extends TestCase
         yield 'trackRegularNotFoundVisit' => ['trackRegularNotFoundVisit'];
     }
 
-    private function visitsTracker(?TrackingOptions $options = null): VisitsTracker
+    private function visitsTracker(TrackingOptions|null $options = null): VisitsTracker
     {
         return new VisitsTracker($this->em, $this->eventDispatcher, $options ?? new TrackingOptions());
     }

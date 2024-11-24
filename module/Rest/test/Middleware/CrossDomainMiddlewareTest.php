@@ -82,7 +82,7 @@ class CrossDomainMiddlewareTest extends TestCase
 
     #[Test, DataProvider('provideRouteResults')]
     public function optionsRequestParsesRouteMatchToDetermineAllowedMethods(
-        ?string $allowHeader,
+        string|null $allowHeader,
         string $expectedAllowedMethods,
     ): void {
         $originalResponse = new Response();

@@ -20,7 +20,7 @@ class DownloadGeoLiteDbCommand extends Command
 {
     public const NAME = 'visit:download-db';
 
-    private ?ProgressBar $progressBar = null;
+    private ProgressBar|null $progressBar = null;
 
     public function __construct(private GeolocationDbUpdaterInterface $dbUpdater)
     {

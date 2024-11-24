@@ -23,14 +23,14 @@ class ShortUrlMethodsProcessorTest extends TestCase
     #[Test, DataProvider('provideConfigs')]
     public function onlyFirstRouteIdentifiedAsRedirectIsEditedWithProperAllowedMethods(
         array $config,
-        ?array $expectedRoutes,
+        array|null $expectedRoutes,
     ): void {
         self::assertEquals($expectedRoutes, ($this->processor)($config)['routes'] ?? null);
     }
 
     public static function provideConfigs(): iterable
     {
-        $buildConfigWithStatus = static fn (int $status, ?array $expectedAllowedMethods) => [[
+        $buildConfigWithStatus = static fn (int $status, array|null $expectedAllowedMethods) => [[
             'routes' => [
                 ['name' => 'foo'],
                 ['name' => 'bar'],
