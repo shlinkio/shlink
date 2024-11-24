@@ -80,6 +80,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
                 'date' => $visit->date->toAtomString(),
                 'potentialBot' => false,
                 'visitedUrl' => '',
+                'redirectUrl' => null,
             ],
         ], $update->payload);
     }
@@ -105,6 +106,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
                 'potentialBot' => false,
                 'visitedUrl' => $orphanVisit->visitedUrl,
                 'type' => $orphanVisit->type->value,
+                'redirectUrl' => null,
             ],
         ], $update->payload);
     }

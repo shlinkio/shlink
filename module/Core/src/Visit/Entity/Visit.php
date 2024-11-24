@@ -28,6 +28,7 @@ class Visit extends AbstractEntity implements JsonSerializable
         public readonly bool $potentialBot,
         public readonly string|null $remoteAddr = null,
         public readonly string|null $visitedUrl = null,
+        public readonly string|null $redirectUrl = null,
         private VisitLocation|null $visitLocation = null,
         public readonly Chronos $date = new Chronos(),
     ) {
@@ -68,6 +69,7 @@ class Visit extends AbstractEntity implements JsonSerializable
             potentialBot: $visitor->potentialBot,
             remoteAddr: self::processAddress($visitor->remoteAddress, $anonymize),
             visitedUrl: $visitor->visitedUrl,
+            redirectUrl: null, // TODO
             visitLocation: $geolocation !== null ? VisitLocation::fromGeolocation($geolocation) : null,
         );
     }
@@ -156,6 +158,7 @@ class Visit extends AbstractEntity implements JsonSerializable
             'visitLocation' => $this->visitLocation,
             'potentialBot' => $this->potentialBot,
             'visitedUrl' => $this->visitedUrl,
+            'redirectUrl' => $this->redirectUrl,
         ];
         if (! $this->isOrphan()) {
             return $base;
