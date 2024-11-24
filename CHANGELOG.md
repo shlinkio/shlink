@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
+* [#2159](https://github.com/shlinkio/shlink/issues/2159) Add support for PHP 8.4.
 * [#2207](https://github.com/shlinkio/shlink/issues/2207) Add `hasRedirectRules` flag to short URL API model. This flag tells if a specific short URL has any redirect rules attached to it.
 * [#1520](https://github.com/shlinkio/shlink/issues/1520) Allow short URLs list to be filtered by `domain`.
 
