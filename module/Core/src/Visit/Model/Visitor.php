@@ -12,6 +12,7 @@ use function Shlinkio\Shlink\Core\geolocationFromRequest;
 use function Shlinkio\Shlink\Core\ipAddressFromRequest;
 use function Shlinkio\Shlink\Core\isCrawler;
 use function substr;
+
 use const Shlinkio\Shlink\REDIRECT_URL_REQUEST_ATTRIBUTE;
 
 final readonly class Visitor

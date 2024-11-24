@@ -16,6 +16,8 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolverInterface;
 use Shlinkio\Shlink\Core\Visit\RequestTrackerInterface;
 
+use const Shlinkio\Shlink\REDIRECT_URL_REQUEST_ATTRIBUTE;
+
 class PixelActionTest extends TestCase
 {
     private PixelAction $action;
@@ -34,12 +36,17 @@ class PixelActionTest extends TestCase
     public function imageIsReturned(): void
     {
         $shortCode = 'abc123';
+        $shortUrl = ShortUrl::withLongUrl('http://domain.com/foo/bar');
+        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
+
         $this->urlResolver->expects($this->once())->method('resolveEnabledShortUrl')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''),
-        )->willReturn(ShortUrl::withLongUrl('http://domain.com/foo/bar'));
-        $this->requestTracker->expects($this->once())->method('trackIfApplicable')->withAnyParameters();
+        )->willReturn($shortUrl);
+        $this->requestTracker->expects($this->once())->method('trackIfApplicable')->with(
+            $shortUrl,
+            $request->withAttribute(REDIRECT_URL_REQUEST_ATTRIBUTE, null),
+        );
 
-        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
         $response = $this->action->process($request, $this->createMock(RequestHandlerInterface::class));
 
         self::assertInstanceOf(PixelResponse::class, $response);
