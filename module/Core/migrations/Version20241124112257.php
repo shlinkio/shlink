@@ -18,7 +18,7 @@ final class Version20241124112257 extends AbstractMigration
         $visits = $schema->getTable('visits');
         $this->skipIf($visits->hasColumn(self::COLUMN_NAME));
 
-        $visits->addColumn('redirected_url', Types::STRING, [
+        $visits->addColumn(self::COLUMN_NAME, Types::STRING, [
             'length' => 2048,
             'notnull' => false,
             'default' => null,
