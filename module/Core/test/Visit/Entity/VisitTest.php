@@ -34,6 +34,7 @@ class VisitTest extends TestCase
             'visitLocation' => null,
             'potentialBot' => $expectedToBePotentialBot,
             'visitedUrl' => $visit->visitedUrl,
+            'redirectUrl' => $visit->redirectUrl,
         ], $visit->jsonSerialize());
     }
 
@@ -67,6 +68,7 @@ class VisitTest extends TestCase
                 'potentialBot' => false,
                 'visitedUrl' => '',
                 'type' => VisitType::BASE_URL->value,
+                'redirectUrl' => null,
             ],
         ];
         yield 'invalid short url visit' => [
@@ -83,6 +85,7 @@ class VisitTest extends TestCase
                 'potentialBot' => false,
                 'visitedUrl' => 'https://example.com/foo',
                 'type' => VisitType::INVALID_SHORT_URL->value,
+                'redirectUrl' => null,
             ],
         ];
         yield 'regular 404 visit' => [
@@ -101,6 +104,7 @@ class VisitTest extends TestCase
                 'potentialBot' => false,
                 'visitedUrl' => 'https://s.test/foo/bar',
                 'type' => VisitType::REGULAR_404->value,
+                'redirectUrl' => null,
             ],
         ];
     }

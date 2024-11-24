@@ -25,6 +25,10 @@
         "visitedUrl": {
             "type": ["string", "null"],
             "description": "The originally visited URL that triggered the tracking of this visit"
+        },
+        "redirectUrl": {
+            "type": ["string", "null"],
+            "description": "The URL to which the visitor was redirected, or null if a redirect did not occur, like for 404 requests or pixel tracking"
         }
     }
 }

@@ -21,6 +21,7 @@ class OrphanVisitsTest extends ApiTestCase
         'potentialBot' => true,
         'visitedUrl' => 'foo.com',
         'type' => 'invalid_short_url',
+        'redirectUrl' => null,
     ];
     private const REGULAR_NOT_FOUND = [
         'referer' => 'https://s.test/foo/bar',
@@ -30,6 +31,7 @@ class OrphanVisitsTest extends ApiTestCase
         'potentialBot' => false,
         'visitedUrl' => '',
         'type' => 'regular_404',
+        'redirectUrl' => null,
     ];
     private const BASE_URL = [
         'referer' => 'https://s.test',
@@ -39,6 +41,7 @@ class OrphanVisitsTest extends ApiTestCase
         'potentialBot' => false,
         'visitedUrl' => '',
         'type' => 'base_url',
+        'redirectUrl' => null,
     ];
 
     #[Test, DataProvider('provideQueries')]

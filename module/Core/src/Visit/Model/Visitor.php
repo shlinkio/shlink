@@ -13,12 +13,15 @@ use function Shlinkio\Shlink\Core\ipAddressFromRequest;
 use function Shlinkio\Shlink\Core\isCrawler;
 use function substr;
 
+use const Shlinkio\Shlink\REDIRECT_URL_REQUEST_ATTRIBUTE;
+
 final readonly class Visitor
 {
     public const USER_AGENT_MAX_LENGTH = 512;
     public const REFERER_MAX_LENGTH = 1024;
     public const REMOTE_ADDRESS_MAX_LENGTH = 256;
     public const VISITED_URL_MAX_LENGTH = 2048;
+    public const REDIRECT_URL_MAX_LENGTH = 2048;
 
     private function __construct(
         public string $userAgent,
@@ -27,6 +30,7 @@ final readonly class Visitor
         public string $visitedUrl,
         public bool $potentialBot,
         public Location|null $geolocation,
+        public string|null $redirectUrl,
     ) {
     }
 
@@ -36,6 +40,7 @@ final readonly class Visitor
         string|null $remoteAddress = null,
         string $visitedUrl = '',
         Location|null $geolocation = null,
+        string|null $redirectUrl = null,
     ): self {
         return new self(
             userAgent: self::cropToLength($userAgent, self::USER_AGENT_MAX_LENGTH),
@@ -46,6 +51,7 @@ final readonly class Visitor
             visitedUrl: self::cropToLength($visitedUrl, self::VISITED_URL_MAX_LENGTH),
             potentialBot: isCrawler($userAgent),
             geolocation: $geolocation,
+            redirectUrl: $redirectUrl === null ? null : self::cropToLength($redirectUrl, self::REDIRECT_URL_MAX_LENGTH),
         );
     }
 
@@ -62,6 +68,7 @@ final readonly class Visitor
             remoteAddress: ipAddressFromRequest($request),
             visitedUrl: $request->getUri()->__toString(),
             geolocation: geolocationFromRequest($request),
+            redirectUrl: $request->getAttribute(REDIRECT_URL_REQUEST_ATTRIBUTE),
         );
     }
 
@@ -85,6 +92,7 @@ final readonly class Visitor
             // Keep the fact that the visit was a potential bot, even if we no longer save the user agent
             potentialBot: $this->potentialBot,
             geolocation: $this->geolocation,
+            redirectUrl: $this->redirectUrl,
         );
     }
 }

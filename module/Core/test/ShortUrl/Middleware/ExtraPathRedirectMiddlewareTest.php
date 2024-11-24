@@ -30,6 +30,8 @@ use Shlinkio\Shlink\Core\Visit\RequestTrackerInterface;
 use function Laminas\Stratigility\middleware;
 use function str_starts_with;
 
+use const Shlinkio\Shlink\REDIRECT_URL_REQUEST_ATTRIBUTE;
+
 class ExtraPathRedirectMiddlewareTest extends TestCase
 {
     private MockObject & ShortUrlResolverInterface $resolver;
@@ -159,7 +161,10 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         $this->redirectResponseHelper->expects($this->once())->method('buildRedirectResponse')->with(
             'the_built_long_url',
         )->willReturn(new RedirectResponse(''));
-        $this->requestTracker->expects($this->once())->method('trackIfApplicable')->with($shortUrl, $request);
+        $this->requestTracker->expects($this->once())->method('trackIfApplicable')->with(
+            $shortUrl,
+            $request->withAttribute(REDIRECT_URL_REQUEST_ATTRIBUTE, 'the_built_long_url'),
+        );
 
         $this->middleware($options)->process($request, $this->handler);
     }

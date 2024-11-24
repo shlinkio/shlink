@@ -22,3 +22,4 @@ const DEFAULT_QR_CODE_ENABLED_FOR_DISABLED_SHORT_URLS = true;
 const DEFAULT_QR_CODE_COLOR = '#000000'; // Black
 const DEFAULT_QR_CODE_BG_COLOR = '#ffffff'; // White
 const IP_ADDRESS_REQUEST_ATTRIBUTE = 'remote_address';
+const REDIRECT_URL_REQUEST_ATTRIBUTE = 'redirect_url';

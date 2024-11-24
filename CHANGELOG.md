@@ -17,6 +17,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     * `geolocation-country-code`: Allows to perform redirections based on the ISO 3166-1 alpha-2 two-letter country code resolved while geolocating the visitor.
     * `geolocation-city-name`: Allows to perform redirections based on the city name resolved while geolocating the visitor.
 
+* [#2032](https://github.com/shlinkio/shlink/issues/2032) Save the URL to which a visitor is redirected when a visit is tracked.
+
+    The value is exposed in the API as a new `redirectUrl` field for visit objects.
+
+    This is useful to know where a visitor was redirected for a short URL with dynamic redirect rules, for special redirects, or simply in case the long URL was changed over time, and you still want to know where visitors were redirected originally.
+
+    Some visits may not have a redirect URL if a redirect didn't happen, like for orphan visits when no special redirects are configured, or when a visit is tracked as part of the pixel action.
+
 ### Changed
 * [#2193](https://github.com/shlinkio/shlink/issues/2193) API keys are now hashed using SHA256, instead of being saved in plain text.
 

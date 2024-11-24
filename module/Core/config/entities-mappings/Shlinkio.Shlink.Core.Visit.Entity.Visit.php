@@ -75,4 +75,10 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->columnName('potential_bot')
             ->option('default', false)
             ->build();
+
+    fieldWithUtf8Charset($builder->createField('redirectUrl', Types::STRING), $emConfig)
+        ->columnName('redirect_url')
+        ->length(Visitor::REDIRECT_URL_MAX_LENGTH)
+        ->nullable()
+        ->build();
 };
