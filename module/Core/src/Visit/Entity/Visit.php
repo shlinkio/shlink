@@ -69,7 +69,7 @@ class Visit extends AbstractEntity implements JsonSerializable
             potentialBot: $visitor->potentialBot,
             remoteAddr: self::processAddress($visitor->remoteAddress, $anonymize),
             visitedUrl: $visitor->visitedUrl,
-            redirectUrl: null, // TODO
+            redirectUrl: $visitor->redirectUrl,
             visitLocation: $geolocation !== null ? VisitLocation::fromGeolocation($geolocation) : null,
         );
     }

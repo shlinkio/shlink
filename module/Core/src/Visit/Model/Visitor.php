@@ -12,6 +12,7 @@ use function Shlinkio\Shlink\Core\geolocationFromRequest;
 use function Shlinkio\Shlink\Core\ipAddressFromRequest;
 use function Shlinkio\Shlink\Core\isCrawler;
 use function substr;
+use const Shlinkio\Shlink\REDIRECT_URL_REQUEST_ATTRIBUTE;
 
 final readonly class Visitor
 {
@@ -28,7 +29,7 @@ final readonly class Visitor
         public string $visitedUrl,
         public bool $potentialBot,
         public Location|null $geolocation,
-        public string $redirectUrl,
+        public string|null $redirectUrl,
     ) {
     }
 
@@ -38,7 +39,7 @@ final readonly class Visitor
         string|null $remoteAddress = null,
         string $visitedUrl = '',
         Location|null $geolocation = null,
-        string $redirectUrl = '',
+        string|null $redirectUrl = null,
     ): self {
         return new self(
             userAgent: self::cropToLength($userAgent, self::USER_AGENT_MAX_LENGTH),
@@ -49,7 +50,7 @@ final readonly class Visitor
             visitedUrl: self::cropToLength($visitedUrl, self::VISITED_URL_MAX_LENGTH),
             potentialBot: isCrawler($userAgent),
             geolocation: $geolocation,
-            redirectUrl: self::cropToLength($redirectUrl, self::REDIRECT_URL_MAX_LENGTH),
+            redirectUrl: $redirectUrl === null ? null : self::cropToLength($redirectUrl, self::REDIRECT_URL_MAX_LENGTH),
         );
     }
 
@@ -66,8 +67,7 @@ final readonly class Visitor
             remoteAddress: ipAddressFromRequest($request),
             visitedUrl: $request->getUri()->__toString(),
             geolocation: geolocationFromRequest($request),
-            // TODO
-            redirectUrl: '',
+            redirectUrl: $request->getAttribute(REDIRECT_URL_REQUEST_ATTRIBUTE),
         );
     }
 

@@ -25,6 +25,8 @@ use function implode;
 use function sprintf;
 use function trim;
 
+use const Shlinkio\Shlink\REDIRECT_URL_REQUEST_ATTRIBUTE;
+
 readonly class ExtraPathRedirectMiddleware implements MiddlewareInterface
 {
     public function __construct(
@@ -73,9 +75,12 @@ readonly class ExtraPathRedirectMiddleware implements MiddlewareInterface
 
         try {
             $shortUrl = $this->resolver->resolveEnabledShortUrl($identifier);
-            $this->requestTracker->trackIfApplicable($shortUrl, $request);
-
             $longUrl = $this->redirectionBuilder->buildShortUrlRedirect($shortUrl, $request, $extraPath);
+            $this->requestTracker->trackIfApplicable(
+                $shortUrl,
+                $request->withAttribute(REDIRECT_URL_REQUEST_ATTRIBUTE, $longUrl),
+            );
+
             return $this->redirectResponseHelper->buildRedirectResponse($longUrl);
         } catch (ShortUrlNotFoundException) {
             if ($extraPath === null || ! $this->urlShortenerOptions->multiSegmentSlugsEnabled) {
