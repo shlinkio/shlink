@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+# [4.3.1] - 2024-11-25
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#2285](https://github.com/shlinkio/shlink/issues/2285) Fix performance degradation when using Microsoft SQL due to incorrect order of columns in `unique_short_code_plus_domain` index.
+
+
 ## [4.3.0] - 2024-11-24
 ### Added
 * [#2159](https://github.com/shlinkio/shlink/issues/2159) Add support for PHP 8.4.
