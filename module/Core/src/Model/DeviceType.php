@@ -2,7 +2,8 @@
 
 namespace Shlinkio\Shlink\Core\Model;
 
-use Detection\MobileDetect;
+use donatj\UserAgent\Platforms;
+use donatj\UserAgent\UserAgentParser;
 
 enum DeviceType: string
 {
@@ -12,17 +13,13 @@ enum DeviceType: string
 
     public static function matchFromUserAgent(string $userAgent): self|null
     {
-        $detect = new MobileDetect();
-        $detect->setUserAgent($userAgent);
+        static $uaParser = new UserAgentParser();
+        $ua = $uaParser->parse($userAgent);
 
-        return match (true) {
-//            $detect->is('iOS') && $detect->isTablet() => self::IOS, // TODO To detect iPad only
-//            $detect->is('iOS') && ! $detect->isTablet() => self::IOS, // TODO To detect iPhone only
-//            $detect->is('androidOS') && $detect->isTablet() => self::ANDROID, // TODO To detect Android tablets
-//            $detect->is('androidOS') && ! $detect->isTablet() => self::ANDROID, // TODO To detect Android phones
-            $detect->is('iOS') => self::IOS, // Detects both iPhone and iPad
-            $detect->is('androidOS') => self::ANDROID, // Detects both android phones and android tablets
-            ! $detect->isMobile() && ! $detect->isTablet() => self::DESKTOP,
+        return match ($ua->platform()) {
+            Platforms::IPHONE, Platforms::IPAD => self::IOS, // Detects both iPhone and iPad (except iPadOS 13+)
+            Platforms::ANDROID => self::ANDROID, // Detects both android phones and android tablets
+            Platforms::LINUX, Platforms::WINDOWS, Platforms::MACINTOSH, Platforms::CHROME_OS => self::DESKTOP,
             default => null,
         };
     }
