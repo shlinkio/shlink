@@ -20,7 +20,6 @@ final class Version20240220214031 extends AbstractMigration
     private const DOMAINS_COLUMNS = ['base_url_redirect', 'regular_not_found_redirect', 'invalid_short_url_redirect'];
     private const TEXT_COLUMNS = [
         'domains' => self::DOMAINS_COLUMNS,
-        'device_long_urls' => ['long_url'],
         'short_urls' => ['original_url'],
     ];
 
