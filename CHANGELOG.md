@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+# [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* * [#2281](https://github.com/shlinkio/shlink/issues/2281) Update docker image to PHP 8.4
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* *Nothing*
+
+
 # [4.3.1] - 2024-11-25
 ### Added
 * *Nothing*
