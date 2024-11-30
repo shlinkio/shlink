@@ -1,4 +1,4 @@
-FROM php:8.3-alpine3.20 AS base
+FROM php:8.4-alpine3.20 AS base
 
 ARG SHLINK_VERSION=latest
 ENV SHLINK_VERSION ${SHLINK_VERSION}
@@ -36,7 +36,7 @@ RUN apk add --no-cache --virtual .phpize-deps ${PHPIZE_DEPS} unixodbc-dev && \
     apk del .phpize-deps
 
 # Install shlink
-FROM base as builder
+FROM base AS builder
 COPY . .
 COPY --from=composer:2 /usr/bin/composer ./composer.phar
 RUN apk add --no-cache git && \
