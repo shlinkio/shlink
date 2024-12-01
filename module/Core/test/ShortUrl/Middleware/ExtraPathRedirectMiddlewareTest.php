@@ -11,11 +11,13 @@ use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
+use Shlinkio\Shlink\Core\Config\Options\ExtraPathMode;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ErrorHandler\Model\NotFoundType;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
@@ -57,8 +59,8 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         ServerRequestInterface $request,
     ): void {
         $options = new UrlShortenerOptions(
-            appendExtraPath: $appendExtraPath,
             multiSegmentSlugsEnabled: $multiSegmentEnabled,
+            extraPathMode: $appendExtraPath ? ExtraPathMode::APPEND : ExtraPathMode::DEFAULT,
         );
         $this->resolver->expects($this->never())->method('resolveEnabledShortUrl');
         $this->requestTracker->expects($this->never())->method('trackIfApplicable');
@@ -102,12 +104,17 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         ];
     }
 
-    #[Test, DataProvider('provideResolves')]
+    #[Test]
+    #[TestWith(['multiSegmentEnabled' => false, 'expectedResolveCalls' => 1])]
+    #[TestWith(['multiSegmentEnabled' => true, 'expectedResolveCalls' => 3])]
     public function handlerIsCalledWhenNoShortUrlIsFoundAfterExpectedAmountOfIterations(
         bool $multiSegmentEnabled,
         int $expectedResolveCalls,
     ): void {
-        $options = new UrlShortenerOptions(appendExtraPath: true, multiSegmentSlugsEnabled: $multiSegmentEnabled);
+        $options = new UrlShortenerOptions(
+            multiSegmentSlugsEnabled: $multiSegmentEnabled,
+            extraPathMode: ExtraPathMode::APPEND,
+        );
 
         $type = $this->createMock(NotFoundType::class);
         $type->method('isRegularNotFound')->willReturn(true);
@@ -127,11 +134,15 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
 
     #[Test, DataProvider('provideResolves')]
     public function visitIsTrackedAndRedirectIsReturnedWhenShortUrlIsFoundAfterExpectedAmountOfIterations(
+        ExtraPathMode $extraPathMode,
         bool $multiSegmentEnabled,
         int $expectedResolveCalls,
         string|null $expectedExtraPath,
     ): void {
-        $options = new UrlShortenerOptions(appendExtraPath: true, multiSegmentSlugsEnabled: $multiSegmentEnabled);
+        $options = new UrlShortenerOptions(
+            multiSegmentSlugsEnabled: $multiSegmentEnabled,
+            extraPathMode: $extraPathMode,
+        );
 
         $type = $this->createMock(NotFoundType::class);
         $type->method('isRegularNotFound')->willReturn(true);
@@ -171,8 +182,10 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
 
     public static function provideResolves(): iterable
     {
-        yield [false, 1, '/bar/baz'];
-        yield [true, 3, null];
+        yield [ExtraPathMode::APPEND, false, 1, '/bar/baz'];
+        yield [ExtraPathMode::APPEND, true, 3, null];
+        yield [ExtraPathMode::IGNORE, false, 1, null];
+        yield [ExtraPathMode::IGNORE, true, 3, null];
     }
 
     private function middleware(UrlShortenerOptions|null $options = null): ExtraPathRedirectMiddleware
@@ -182,7 +195,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
             $this->requestTracker,
             $this->redirectionBuilder,
             $this->redirectResponseHelper,
-            $options ?? new UrlShortenerOptions(appendExtraPath: true),
+            $options ?? new UrlShortenerOptions(extraPathMode: ExtraPathMode::APPEND),
         );
     }
 }

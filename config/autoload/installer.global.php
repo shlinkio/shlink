@@ -41,7 +41,7 @@ return [
             Option\UrlShortener\RedirectStatusCodeConfigOption::class,
             Option\UrlShortener\RedirectCacheLifeTimeConfigOption::class,
             Option\UrlShortener\AutoResolveTitlesConfigOption::class,
-            Option\UrlShortener\AppendExtraPathConfigOption::class,
+            Option\UrlShortener\ExtraPathModeConfigOption::class,
             Option\UrlShortener\EnableMultiSegmentSlugsConfigOption::class,
             Option\UrlShortener\EnableTrailingSlashConfigOption::class,
             Option\UrlShortener\ShortUrlModeConfigOption::class,
