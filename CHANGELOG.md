@@ -6,7 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 # [Unreleased]
 ### Added
-* *Nothing*
+* [#2265](https://github.com/shlinkio/shlink/issues/2265) Add a new `REDIRECT_EXTRA_PATH_MODE` option that accepts three values:
+
+    * `default`: Short URLs only match if the path matches their short code or custom slug.
+    * `append`: Short URLs are matched as soon as the path starts with the short code or custom slug, and the extra path is appended to the long URL before redirecting.
+    * `ignore`: Short URLs are matched as soon as the path starts with the short code or custom slug, and the extra path is ignored.
+
+    This option effectively replaces the old `REDIRECT_APPEND_EXTRA_PATH` option, which is now deprecated and will be removed in Shlink 5.0.0
 
 ### Changed
 * * [#2281](https://github.com/shlinkio/shlink/issues/2281) Update docker image to PHP 8.4
