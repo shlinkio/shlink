@@ -20,7 +20,7 @@ use function is_int;
 
 class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
 {
-    private const LOCK_NAME = 'geolocation-db-update';
+    private const string LOCK_NAME = 'geolocation-db-update';
 
     /** @var Closure(): Reader */
     private readonly Closure $geoLiteDbReaderFactory;

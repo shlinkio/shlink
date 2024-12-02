@@ -21,14 +21,14 @@ use function trim;
 
 readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionHelperInterface
 {
-    public const MAX_REDIRECTS = 15;
-    public const CHROME_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) '
+    public const int MAX_REDIRECTS = 15;
+    public const string CHROME_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) '
         . 'Chrome/121.0.0.0 Safari/537.36';
 
     // Matches the value inside a html title tag
-    private const TITLE_TAG_VALUE = '/<title[^>]*>(.*?)<\/title>/i';
+    private const string TITLE_TAG_VALUE = '/<title[^>]*>(.*?)<\/title>/i';
     // Matches the charset inside a Content-Type header
-    private const CHARSET_VALUE = '/charset=([^;]+)/i';
+    private const string CHARSET_VALUE = '/charset=([^;]+)/i';
 
     public function __construct(
         private ClientInterface $httpClient,

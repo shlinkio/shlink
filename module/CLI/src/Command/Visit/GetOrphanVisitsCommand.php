@@ -17,7 +17,7 @@ use function sprintf;
 
 class GetOrphanVisitsCommand extends AbstractVisitsListCommand
 {
-    public const NAME = 'visit:orphan';
+    public const string NAME = 'visit:orphan';
 
     protected function configure(): void
     {

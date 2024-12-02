@@ -8,7 +8,7 @@ use function array_map;
 
 class BasePathPrefixer
 {
-    private const ELEMENTS_WITH_PATH = ['routes', 'middleware_pipeline'];
+    private const array ELEMENTS_WITH_PATH = ['routes', 'middleware_pipeline'];
 
     public function __invoke(array $config): array
     {

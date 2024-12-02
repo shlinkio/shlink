@@ -16,17 +16,17 @@ use function Shlinkio\Shlink\Core\enumValues;
 /** @extends InputFilter<mixed> */
 class ShortUrlsParamsInputFilter extends InputFilter
 {
-    public const PAGE = 'page';
-    public const SEARCH_TERM = 'searchTerm';
-    public const TAGS = 'tags';
-    public const START_DATE = 'startDate';
-    public const END_DATE = 'endDate';
-    public const ITEMS_PER_PAGE = 'itemsPerPage';
-    public const TAGS_MODE = 'tagsMode';
-    public const ORDER_BY = 'orderBy';
-    public const EXCLUDE_MAX_VISITS_REACHED = 'excludeMaxVisitsReached';
-    public const EXCLUDE_PAST_VALID_UNTIL = 'excludePastValidUntil';
-    public const DOMAIN = 'domain';
+    public const string PAGE = 'page';
+    public const string SEARCH_TERM = 'searchTerm';
+    public const string TAGS = 'tags';
+    public const string START_DATE = 'startDate';
+    public const string END_DATE = 'endDate';
+    public const string ITEMS_PER_PAGE = 'itemsPerPage';
+    public const string TAGS_MODE = 'tagsMode';
+    public const string ORDER_BY = 'orderBy';
+    public const string EXCLUDE_MAX_VISITS_REACHED = 'excludeMaxVisitsReached';
+    public const string EXCLUDE_PAST_VALID_UNTIL = 'excludePastValidUntil';
+    public const string DOMAIN = 'domain';
 
     public function __construct(array $data)
     {

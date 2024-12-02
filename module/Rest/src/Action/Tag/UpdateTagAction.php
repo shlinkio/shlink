@@ -14,10 +14,10 @@ use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class UpdateTagAction extends AbstractRestAction
 {
-    protected const ROUTE_PATH = '/tags';
-    protected const ROUTE_ALLOWED_METHODS = [self::METHOD_PUT];
+    protected const string ROUTE_PATH = '/tags';
+    protected const array ROUTE_ALLOWED_METHODS = [self::METHOD_PUT];
 
-    public function __construct(private TagServiceInterface $tagService)
+    public function __construct(private readonly TagServiceInterface $tagService)
     {
     }
 

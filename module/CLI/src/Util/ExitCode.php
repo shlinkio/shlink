@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\CLI\Util;
 
 final class ExitCode
 {
-    public const EXIT_SUCCESS = 0;
-    public const EXIT_FAILURE = -1;
-    public const EXIT_WARNING = 1;
+    public const int EXIT_SUCCESS = 0;
+    public const int EXIT_FAILURE = -1;
+    public const int EXIT_WARNING = 1;
 }

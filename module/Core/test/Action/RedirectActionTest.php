@@ -23,7 +23,7 @@ use const Shlinkio\Shlink\REDIRECT_URL_REQUEST_ATTRIBUTE;
 
 class RedirectActionTest extends TestCase
 {
-    private const LONG_URL = 'https://domain.com/foo/bar?some=thing';
+    private const string LONG_URL = 'https://domain.com/foo/bar?some=thing';
 
     private RedirectAction $action;
     private MockObject & ShortUrlResolverInterface $urlResolver;

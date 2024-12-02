@@ -15,7 +15,7 @@ use function count;
 
 class ListShortUrlsTest extends ApiTestCase
 {
-    private const SHORT_URL_SHLINK_WITH_TITLE = [
+    private const array SHORT_URL_SHLINK_WITH_TITLE = [
         'shortCode' => 'abc123',
         'shortUrl' => 'http://s.test/abc123',
         'longUrl' => 'https://shlink.io',
@@ -37,7 +37,7 @@ class ListShortUrlsTest extends ApiTestCase
         'forwardQuery' => true,
         'hasRedirectRules' => false,
     ];
-    private const SHORT_URL_DOCS = [
+    private const array SHORT_URL_DOCS = [
         'shortCode' => 'ghi789',
         'shortUrl' => 'http://s.test/ghi789',
         'longUrl' => 'https://shlink.io/documentation/',
@@ -59,7 +59,7 @@ class ListShortUrlsTest extends ApiTestCase
         'forwardQuery' => true,
         'hasRedirectRules' => false,
     ];
-    private const SHORT_URL_CUSTOM_SLUG_AND_DOMAIN = [
+    private const array SHORT_URL_CUSTOM_SLUG_AND_DOMAIN = [
         'shortCode' => 'custom-with-domain',
         'shortUrl' => 'http://some-domain.com/custom-with-domain',
         'longUrl' => 'https://google.com',
@@ -81,7 +81,7 @@ class ListShortUrlsTest extends ApiTestCase
         'forwardQuery' => true,
         'hasRedirectRules' => false,
     ];
-    private const SHORT_URL_META = [
+    private const array SHORT_URL_META = [
         'shortCode' => 'def456',
         'shortUrl' => 'http://s.test/def456',
         'longUrl' =>
@@ -105,7 +105,7 @@ class ListShortUrlsTest extends ApiTestCase
         'forwardQuery' => true,
         'hasRedirectRules' => true,
     ];
-    private const SHORT_URL_CUSTOM_SLUG = [
+    private const array SHORT_URL_CUSTOM_SLUG = [
         'shortCode' => 'custom',
         'shortUrl' => 'http://s.test/custom',
         'longUrl' => 'https://shlink.io',
@@ -127,7 +127,7 @@ class ListShortUrlsTest extends ApiTestCase
         'forwardQuery' => false,
         'hasRedirectRules' => false,
     ];
-    private const SHORT_URL_CUSTOM_DOMAIN = [
+    private const array SHORT_URL_CUSTOM_DOMAIN = [
         'shortCode' => 'ghi789',
         'shortUrl' => 'http://example.com/ghi789',
         'longUrl' =>

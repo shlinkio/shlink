@@ -14,7 +14,7 @@ use function rtrim;
 
 class TrimTrailingSlashMiddleware implements MiddlewareInterface
 {
-    private const SHORT_CODE_ATTR = 'shortCode';
+    private const string SHORT_CODE_ATTR = 'shortCode';
 
     public function __construct(private readonly UrlShortenerOptions $options)
     {

@@ -11,8 +11,8 @@ use function str_replace;
 
 class MultiSegmentSlugProcessor
 {
-    private const SINGLE_SEGMENT_PATTERN = '{shortCode}';
-    private const MULTI_SEGMENT_PATTERN = '{shortCode:.+}';
+    private const string SINGLE_SEGMENT_PATTERN = '{shortCode}';
+    private const string MULTI_SEGMENT_PATTERN = '{shortCode:.+}';
 
     public function __invoke(array $config): array
     {

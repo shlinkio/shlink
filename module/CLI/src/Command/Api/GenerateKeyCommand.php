@@ -23,7 +23,7 @@ use function sprintf;
 
 class GenerateKeyCommand extends Command
 {
-    public const NAME = 'api-key:generate';
+    public const string NAME = 'api-key:generate';
 
     public function __construct(
         private readonly ApiKeyServiceInterface $apiKeyService,

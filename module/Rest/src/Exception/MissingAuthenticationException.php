@@ -16,8 +16,8 @@ class MissingAuthenticationException extends RuntimeException implements Problem
 {
     use CommonProblemDetailsExceptionTrait;
 
-    private const TITLE = 'Invalid authorization';
-    public const ERROR_CODE = 'missing-authentication';
+    private const string TITLE = 'Invalid authorization';
+    public const string ERROR_CODE = 'missing-authentication';
 
     public static function forHeaders(array $expectedHeaders): self
     {

@@ -13,7 +13,7 @@ use function sprintf;
 
 class DeleteOrphanVisitsCommand extends AbstractDeleteVisitsCommand
 {
-    public const NAME = 'visit:orphan-delete';
+    public const string NAME = 'visit:orphan-delete';
 
     public function __construct(private readonly VisitsDeleterInterface $deleter)
     {

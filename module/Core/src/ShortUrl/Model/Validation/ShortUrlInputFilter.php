@@ -24,22 +24,22 @@ use const Shlinkio\Shlink\MIN_SHORT_CODES_LENGTH;
 class ShortUrlInputFilter extends InputFilter
 {
     // Fields for creation only
-    public const SHORT_CODE_LENGTH = 'shortCodeLength';
-    public const CUSTOM_SLUG = 'customSlug';
-    public const PATH_PREFIX = 'pathPrefix';
-    public const FIND_IF_EXISTS = 'findIfExists';
-    public const DOMAIN = 'domain';
+    public const string SHORT_CODE_LENGTH = 'shortCodeLength';
+    public const string CUSTOM_SLUG = 'customSlug';
+    public const string PATH_PREFIX = 'pathPrefix';
+    public const string FIND_IF_EXISTS = 'findIfExists';
+    public const string DOMAIN = 'domain';
 
     // Fields for creation and edition
-    public const LONG_URL = 'longUrl';
-    public const VALID_SINCE = 'validSince';
-    public const VALID_UNTIL = 'validUntil';
-    public const MAX_VISITS = 'maxVisits';
-    public const TITLE = 'title';
-    public const TAGS = 'tags';
-    public const CRAWLABLE = 'crawlable';
-    public const FORWARD_QUERY = 'forwardQuery';
-    public const API_KEY = 'apiKey';
+    public const string LONG_URL = 'longUrl';
+    public const string VALID_SINCE = 'validSince';
+    public const string VALID_UNTIL = 'validUntil';
+    public const string MAX_VISITS = 'maxVisits';
+    public const string TITLE = 'title';
+    public const string TAGS = 'tags';
+    public const string CRAWLABLE = 'crawlable';
+    public const string FORWARD_QUERY = 'forwardQuery';
+    public const string API_KEY = 'apiKey';
 
     public static function forCreation(array $data, UrlShortenerOptions $options): self
     {

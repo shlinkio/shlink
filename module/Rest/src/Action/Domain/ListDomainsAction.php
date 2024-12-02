@@ -15,11 +15,13 @@ use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class ListDomainsAction extends AbstractRestAction
 {
-    protected const ROUTE_PATH = '/domains';
-    protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
+    protected const string ROUTE_PATH = '/domains';
+    protected const array ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
-    public function __construct(private DomainServiceInterface $domainService, private NotFoundRedirectOptions $options)
-    {
+    public function __construct(
+        private readonly DomainServiceInterface $domainService,
+        private readonly NotFoundRedirectOptions $options,
+    ) {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface

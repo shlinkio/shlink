@@ -21,7 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Removed
-* *Nothing*
+* * [#2247](https://github.com/shlinkio/shlink/issues/2247) Drop support for PHP 8.2
 
 ### Fixed
 * *Nothing*

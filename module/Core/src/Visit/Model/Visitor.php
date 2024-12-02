@@ -17,11 +17,11 @@ use const Shlinkio\Shlink\REDIRECT_URL_REQUEST_ATTRIBUTE;
 
 final readonly class Visitor
 {
-    public const USER_AGENT_MAX_LENGTH = 512;
-    public const REFERER_MAX_LENGTH = 1024;
-    public const REMOTE_ADDRESS_MAX_LENGTH = 256;
-    public const VISITED_URL_MAX_LENGTH = 2048;
-    public const REDIRECT_URL_MAX_LENGTH = 2048;
+    public const int USER_AGENT_MAX_LENGTH = 512;
+    public const int REFERER_MAX_LENGTH = 1024;
+    public const int REMOTE_ADDRESS_MAX_LENGTH = 256;
+    public const int VISITED_URL_MAX_LENGTH = 2048;
+    public const int REDIRECT_URL_MAX_LENGTH = 2048;
 
     private function __construct(
         public string $userAgent,

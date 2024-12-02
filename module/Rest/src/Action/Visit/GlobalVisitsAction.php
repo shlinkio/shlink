@@ -13,10 +13,10 @@ use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class GlobalVisitsAction extends AbstractRestAction
 {
-    protected const ROUTE_PATH = '/visits';
-    protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
+    protected const string ROUTE_PATH = '/visits';
+    protected const array ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
-    public function __construct(private VisitsStatsHelperInterface $statsHelper)
+    public function __construct(private readonly VisitsStatsHelperInterface $statsHelper)
     {
     }
 

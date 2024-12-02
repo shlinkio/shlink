@@ -6,7 +6,7 @@ namespace Shlinkio\Shlink\CLI\Command\Util;
 
 final class LockedCommandConfig
 {
-    public const DEFAULT_TTL = 600.0; // 10 minutes
+    public const float DEFAULT_TTL = 600.0; // 10 minutes
 
     private function __construct(
         public readonly string $lockName,

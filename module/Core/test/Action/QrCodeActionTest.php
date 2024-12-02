@@ -32,8 +32,8 @@ use const Shlinkio\Shlink\DEFAULT_QR_CODE_COLOR;
 
 class QrCodeActionTest extends TestCase
 {
-    private const WHITE = 0xFFFFFF;
-    private const BLACK = 0x0;
+    private const int WHITE = 0xFFFFFF;
+    private const int BLACK = 0x0;
 
     private MockObject & ShortUrlResolverInterface $urlResolver;
 

@@ -19,7 +19,7 @@ use function sprintf;
 
 class EditShortUrlCommand extends Command
 {
-    public const NAME = 'short-url:edit';
+    public const string NAME = 'short-url:edit';
 
     private readonly ShortUrlDataInput $shortUrlDataInput;
     private readonly ShortUrlIdentifierInput $shortUrlIdentifierInput;

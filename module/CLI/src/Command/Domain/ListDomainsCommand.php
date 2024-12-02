@@ -18,7 +18,7 @@ use function array_map;
 
 class ListDomainsCommand extends Command
 {
-    public const NAME = 'domain:list';
+    public const string NAME = 'domain:list';
 
     public function __construct(private readonly DomainServiceInterface $domainService)
     {

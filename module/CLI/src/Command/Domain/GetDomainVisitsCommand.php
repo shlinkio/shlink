@@ -16,7 +16,7 @@ use Symfony\Component\Console\Input\InputInterface;
 
 class GetDomainVisitsCommand extends AbstractVisitsListCommand
 {
-    public const NAME = 'domain:visits';
+    public const string NAME = 'domain:visits';
 
     public function __construct(
         VisitsStatsHelperInterface $visitsHelper,

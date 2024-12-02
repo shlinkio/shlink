@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 
 final class Version20230211171904 extends AbstractMigration
 {
-    private const INDEX_NAME = 'IDX_visits_potential_bot';
+    private const string INDEX_NAME = 'IDX_visits_potential_bot';
 
     public function up(Schema $schema): void
     {

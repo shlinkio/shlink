@@ -17,7 +17,7 @@ use function sprintf;
 
 class ResolveUrlCommand extends Command
 {
-    public const NAME = 'short-url:parse';
+    public const string NAME = 'short-url:parse';
 
     private readonly ShortUrlIdentifierInput $shortUrlIdentifierInput;
 

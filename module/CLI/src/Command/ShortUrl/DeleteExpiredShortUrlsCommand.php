@@ -17,7 +17,7 @@ use function sprintf;
 
 class DeleteExpiredShortUrlsCommand extends Command
 {
-    public const NAME = 'short-url:delete-expired';
+    public const string NAME = 'short-url:delete-expired';
 
     public function __construct(private readonly DeleteShortUrlServiceInterface $deleteShortUrlService)
     {

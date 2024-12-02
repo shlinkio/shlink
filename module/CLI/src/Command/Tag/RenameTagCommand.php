@@ -17,7 +17,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class RenameTagCommand extends Command
 {
-    public const NAME = 'tag:rename';
+    public const string NAME = 'tag:rename';
 
     public function __construct(private readonly TagServiceInterface $tagService)
     {

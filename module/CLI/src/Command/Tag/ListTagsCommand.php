@@ -17,7 +17,7 @@ use function array_map;
 
 class ListTagsCommand extends Command
 {
-    public const NAME = 'tag:list';
+    public const string NAME = 'tag:list';
 
     public function __construct(private readonly TagServiceInterface $tagService)
     {

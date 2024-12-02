@@ -12,8 +12,8 @@ use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class CreateShortUrlAction extends AbstractCreateShortUrlAction
 {
-    protected const ROUTE_PATH = '/short-urls';
-    protected const ROUTE_ALLOWED_METHODS = [self::METHOD_POST];
+    protected const string ROUTE_PATH = '/short-urls';
+    protected const array ROUTE_ALLOWED_METHODS = [self::METHOD_POST];
 
     /**
      * @throws ValidationException

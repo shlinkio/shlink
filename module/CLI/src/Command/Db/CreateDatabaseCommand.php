@@ -24,9 +24,9 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
 {
     private readonly Connection $regularConn;
 
-    public const NAME = 'db:create';
-    public const DOCTRINE_SCRIPT = 'bin/doctrine';
-    public const DOCTRINE_CREATE_SCHEMA_COMMAND = 'orm:schema-tool:create';
+    public const string NAME = 'db:create';
+    public const string DOCTRINE_SCRIPT = 'bin/doctrine';
+    public const string DOCTRINE_CREATE_SCHEMA_COMMAND = 'orm:schema-tool:create';
 
     public function __construct(
         LockFactory $locker,

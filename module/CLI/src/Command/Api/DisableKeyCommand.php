@@ -20,7 +20,7 @@ use function sprintf;
 
 class DisableKeyCommand extends Command
 {
-    public const NAME = 'api-key:disable';
+    public const string NAME = 'api-key:disable';
 
     public function __construct(private readonly ApiKeyServiceInterface $apiKeyService)
     {

@@ -14,9 +14,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class DeleteTagsCommand extends Command
 {
-    public const NAME = 'tag:delete';
+    public const string NAME = 'tag:delete';
 
-    public function __construct(private TagServiceInterface $tagService)
+    public function __construct(private readonly TagServiceInterface $tagService)
     {
         parent::__construct();
     }

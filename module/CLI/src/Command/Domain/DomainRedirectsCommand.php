@@ -21,7 +21,7 @@ use function str_contains;
 
 class DomainRedirectsCommand extends Command
 {
-    public const NAME = 'domain:redirects';
+    public const string NAME = 'domain:redirects';
 
     public function __construct(private readonly DomainServiceInterface $domainService)
     {

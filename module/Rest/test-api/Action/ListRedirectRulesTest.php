@@ -12,12 +12,12 @@ use function sprintf;
 
 class ListRedirectRulesTest extends ApiTestCase
 {
-    private const LANGUAGE_EN_CONDITION = [
+    private const array LANGUAGE_EN_CONDITION = [
         'type' => 'language',
         'matchKey' => null,
         'matchValue' => 'en',
     ];
-    private const QUERY_FOO_BAR_CONDITION = [
+    private const array QUERY_FOO_BAR_CONDITION = [
         'type' => 'query-param',
         'matchKey' => 'foo',
         'matchValue' => 'bar',
