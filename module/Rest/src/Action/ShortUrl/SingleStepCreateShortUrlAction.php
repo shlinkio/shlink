@@ -11,8 +11,8 @@ use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
 {
-    protected const ROUTE_PATH = '/short-urls/shorten';
-    protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
+    protected const string ROUTE_PATH = '/short-urls/shorten';
+    protected const array ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
     protected function buildShortUrlData(Request $request): ShortUrlCreation
     {

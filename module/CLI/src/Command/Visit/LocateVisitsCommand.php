@@ -29,7 +29,7 @@ use function sprintf;
 
 class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocationHelperInterface
 {
-    public const NAME = 'visit:locate';
+    public const string NAME = 'visit:locate';
 
     private SymfonyStyle $io;
 

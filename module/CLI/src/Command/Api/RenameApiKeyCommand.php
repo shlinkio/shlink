@@ -19,7 +19,7 @@ use function Shlinkio\Shlink\Core\ArrayUtils\map;
 
 class RenameApiKeyCommand extends Command
 {
-    public const NAME = 'api-key:rename';
+    public const string NAME = 'api-key:rename';
 
     public function __construct(private readonly ApiKeyServiceInterface $apiKeyService)
     {

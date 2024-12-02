@@ -19,7 +19,7 @@ use function sprintf;
 
 class DeleteShortUrlCommand extends Command
 {
-    public const NAME = 'short-url:delete';
+    public const string NAME = 'short-url:delete';
 
     private readonly ShortUrlIdentifierInput $shortUrlIdentifierInput;
 

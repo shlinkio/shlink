@@ -22,7 +22,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 
 class ShortUrlTitleResolutionHelperTest extends TestCase
 {
-    private const LONG_URL = 'http://foobar.com/12345/hello?foo=bar';
+    private const string LONG_URL = 'http://foobar.com/12345/hello?foo=bar';
 
     private MockObject & ClientInterface $httpClient;
 

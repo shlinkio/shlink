@@ -13,10 +13,10 @@ use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class DeleteTagsAction extends AbstractRestAction
 {
-    protected const ROUTE_PATH = '/tags';
-    protected const ROUTE_ALLOWED_METHODS = [self::METHOD_DELETE];
+    protected const string ROUTE_PATH = '/tags';
+    protected const array ROUTE_ALLOWED_METHODS = [self::METHOD_DELETE];
 
-    public function __construct(private TagServiceInterface $tagService)
+    public function __construct(private readonly TagServiceInterface $tagService)
     {
     }
 

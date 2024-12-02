@@ -11,10 +11,10 @@ use Shlinkio\Shlink\Common\Validation\InputFactory;
 /** @extends InputFilter<mixed> */
 class DomainRedirectsInputFilter extends InputFilter
 {
-    public const DOMAIN = 'domain';
-    public const BASE_URL_REDIRECT = 'baseUrlRedirect';
-    public const REGULAR_404_REDIRECT = 'regular404Redirect';
-    public const INVALID_SHORT_URL_REDIRECT = 'invalidShortUrlRedirect';
+    public const string DOMAIN = 'domain';
+    public const string BASE_URL_REDIRECT = 'baseUrlRedirect';
+    public const string REGULAR_404_REDIRECT = 'regular404Redirect';
+    public const string INVALID_SHORT_URL_REDIRECT = 'invalidShortUrlRedirect';
 
     private function __construct()
     {

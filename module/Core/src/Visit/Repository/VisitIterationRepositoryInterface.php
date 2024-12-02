@@ -9,7 +9,7 @@ use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 
 interface VisitIterationRepositoryInterface
 {
-    public const DEFAULT_BLOCK_SIZE = 10000;
+    public const int DEFAULT_BLOCK_SIZE = 10000;
 
     /**
      * @return iterable<Visit>

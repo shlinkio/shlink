@@ -30,9 +30,9 @@ use const Shlinkio\Shlink\DEFAULT_QR_CODE_COLOR;
 
 final class QrCodeParams
 {
-    private const MIN_SIZE = 50;
-    private const MAX_SIZE = 1000;
-    private const SUPPORTED_FORMATS = ['png', 'svg'];
+    private const int MIN_SIZE = 50;
+    private const int MAX_SIZE = 1000;
+    private const array SUPPORTED_FORMATS = ['png', 'svg'];
 
     private function __construct(
         public readonly int $size,

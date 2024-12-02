@@ -15,8 +15,8 @@ use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class TagsStatsAction extends AbstractRestAction
 {
-    protected const ROUTE_PATH = '/tags/stats';
-    protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
+    protected const string ROUTE_PATH = '/tags/stats';
+    protected const array ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
     public function __construct(private readonly TagServiceInterface $tagService)
     {

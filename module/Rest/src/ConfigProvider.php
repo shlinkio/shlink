@@ -12,9 +12,9 @@ use function sprintf;
 
 class ConfigProvider
 {
-    private const ROUTES_PREFIX = '/rest/v{version:1|2|3}';
-    private const UNVERSIONED_ROUTES_PREFIX = '/rest';
-    public const UNVERSIONED_HEALTH_ENDPOINT_NAME = 'unversioned_health';
+    private const string ROUTES_PREFIX = '/rest/v{version:1|2|3}';
+    private const string UNVERSIONED_ROUTES_PREFIX = '/rest';
+    public const string UNVERSIONED_HEALTH_ENDPOINT_NAME = 'unversioned_health';
 
     public function __invoke(): array
     {

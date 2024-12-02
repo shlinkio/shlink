@@ -14,7 +14,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class DomainVisitsAction extends AbstractListVisitsAction
 {
-    protected const ROUTE_PATH = '/domains/{domain}/visits';
+    protected const string ROUTE_PATH = '/domains/{domain}/visits';
 
     public function __construct(
         VisitsStatsHelperInterface $visitsHelper,

@@ -11,7 +11,7 @@ use Doctrine\Migrations\AbstractMigration;
 
 final class Version20241124112257 extends AbstractMigration
 {
-    private const COLUMN_NAME = 'redirect_url';
+    private const string COLUMN_NAME = 'redirect_url';
 
     public function up(Schema $schema): void
     {

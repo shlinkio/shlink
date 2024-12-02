@@ -18,7 +18,7 @@ use function sprintf;
 
 class DownloadGeoLiteDbCommand extends Command
 {
-    public const NAME = 'visit:download-db';
+    public const string NAME = 'visit:download-db';
 
     private ProgressBar|null $progressBar = null;
 

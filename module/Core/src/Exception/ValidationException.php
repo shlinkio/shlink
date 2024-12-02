@@ -21,8 +21,8 @@ class ValidationException extends InvalidArgumentException implements ProblemDet
 {
     use CommonProblemDetailsExceptionTrait;
 
-    private const TITLE = 'Invalid data';
-    public const ERROR_CODE = 'invalid-data';
+    private const string TITLE = 'Invalid data';
+    public const string ERROR_CODE = 'invalid-data';
 
     private array $invalidElements;
 

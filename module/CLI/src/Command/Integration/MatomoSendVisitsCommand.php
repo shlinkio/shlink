@@ -22,7 +22,7 @@ use function sprintf;
 
 class MatomoSendVisitsCommand extends Command implements VisitSendingProgressTrackerInterface
 {
-    public const NAME = 'integration:matomo:send-visits';
+    public const string NAME = 'integration:matomo:send-visits';
 
     private readonly bool $matomoEnabled;
     private SymfonyStyle $io;

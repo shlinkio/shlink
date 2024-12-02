@@ -19,7 +19,7 @@ use function sprintf;
 
 class ManageRedirectRulesCommand extends Command
 {
-    public const NAME = 'short-url:manage-rules';
+    public const string NAME = 'short-url:manage-rules';
 
     private readonly ShortUrlIdentifierInput $shortUrlIdentifierInput;
 

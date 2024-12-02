@@ -12,7 +12,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class OrphanVisitsAction extends AbstractListVisitsAction
 {
-    protected const ROUTE_PATH = '/visits/orphan';
+    protected const string ROUTE_PATH = '/visits/orphan';
 
     protected function getVisitsPaginator(
         ServerRequestInterface $request,

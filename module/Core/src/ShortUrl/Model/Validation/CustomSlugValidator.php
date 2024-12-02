@@ -12,8 +12,8 @@ use function strpbrk;
 
 class CustomSlugValidator extends AbstractValidator
 {
-    private const NOT_STRING = 'NOT_STRING';
-    private const CONTAINS_URL_CHARACTERS = 'CONTAINS_URL_CHARACTERS';
+    private const string NOT_STRING = 'NOT_STRING';
+    private const string CONTAINS_URL_CHARACTERS = 'CONTAINS_URL_CHARACTERS';
 
     protected array $messageTemplates = [
         self::NOT_STRING => 'Provided value is not a string.',

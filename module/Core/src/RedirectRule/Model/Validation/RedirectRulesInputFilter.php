@@ -17,14 +17,14 @@ use function Shlinkio\Shlink\Core\enumValues;
 /** @extends InputFilter<mixed> */
 class RedirectRulesInputFilter extends InputFilter
 {
-    public const REDIRECT_RULES = 'redirectRules';
+    public const string REDIRECT_RULES = 'redirectRules';
 
-    public const RULE_LONG_URL = 'longUrl';
-    public const RULE_CONDITIONS = 'conditions';
+    public const string RULE_LONG_URL = 'longUrl';
+    public const string RULE_CONDITIONS = 'conditions';
 
-    public const CONDITION_TYPE = 'type';
-    public const CONDITION_MATCH_VALUE = 'matchValue';
-    public const CONDITION_MATCH_KEY = 'matchKey';
+    public const string CONDITION_TYPE = 'type';
+    public const string CONDITION_MATCH_VALUE = 'matchValue';
+    public const string CONDITION_MATCH_KEY = 'matchKey';
 
     private function __construct()
     {

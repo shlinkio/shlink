@@ -6,9 +6,9 @@ namespace Shlinkio\Shlink\Core\Model;
 
 final readonly class Ordering
 {
-    private const DESC_DIR = 'DESC';
-    private const ASC_DIR = 'ASC';
-    private const DEFAULT_DIR = self::ASC_DIR;
+    private const string DESC_DIR = 'DESC';
+    private const string ASC_DIR = 'ASC';
+    private const string DEFAULT_DIR = self::ASC_DIR;
 
     public function __construct(public string|null $field = null, public string $direction = self::DEFAULT_DIR)
     {
