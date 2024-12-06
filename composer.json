@@ -61,7 +61,7 @@
         "symfony/string": "^7.1"
     },
     "require-dev": {
-        "devizzent/cebe-php-openapi": "^1.0.1",
+        "devizzent/cebe-php-openapi": "^1.1.1",
         "devster/ubench": "^2.1",
         "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-doctrine": "^2.0",
@@ -108,7 +108,7 @@
     },
     "scripts": {
         "ci": [
-            "@parallel cs stan swagger:validate test:unit:ci test:db:sqlite:ci test:db:postgres test:db:mysql test:db:maria test:db:ms",
+            "@parallel cs stan openapi:validate test:unit:ci test:db:sqlite:ci test:db:postgres test:db:mysql test:db:maria test:db:ms",
             "@parallel test:api:ci test:cli:ci"
         ],
         "cs": "phpcs -s",
@@ -154,35 +154,17 @@
             "@test:cli",
             "phpcov merge build/coverage-cli --html build/coverage-cli/coverage-html && rm build/coverage-cli/*.cov"
         ],
-        "swagger:validate": "@php -d error_reporting=\"E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED\" vendor/bin/php-openapi validate docs/swagger/swagger.json",
-        "swagger:inline": "@php -d error_reporting=\"E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED\" vendor/bin/php-openapi inline docs/swagger/swagger.json docs/swagger/swagger-inlined.json",
+        "openapi:validate": "@php -d error_reporting=\"E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED\" vendor/bin/php-openapi validate docs/swagger/swagger.json",
+        "openapi:inline": "@php -d error_reporting=\"E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED\" vendor/bin/php-openapi inline docs/swagger/swagger.json docs/swagger/openapi-inlined.json",
+        "swagger:validate": [
+            "echo \"This command is deprecated. Use openapi:validate instead\"",
+            "@openapi:validate"
+        ],
+        "swagger:inline": [
+            "echo \"This command is deprecated. Use openapi:inline instead\"",
+            "@openapi:inline"
+        ],
         "clean:dev": "rm -f data/database.sqlite && rm -f config/params/generated_config.php"
-    },
-    "scripts-descriptions": {
-        "ci": "<fg=blue;options=bold>Alias for \"cs\", \"stan\", \"swagger:validate\" and \"test:ci\"</>",
-        "cs": "<fg=blue;options=bold>Checks coding styles</>",
-        "cs:fix": "<fg=blue;options=bold>Fixes coding styles, when possible</>",
-        "stan": "<fg=blue;options=bold>Inspects code with phpstan</>",
-        "test": "<fg=blue;options=bold>Runs all test suites</>",
-        "test:unit": "<fg=blue;options=bold>Runs unit test suites</>",
-        "test:unit:ci": "<fg=blue;options=bold>Runs unit test suites, generating all needed reports and logs for CI envs</>",
-        "test:unit:pretty": "<fg=blue;options=bold>Runs unit test suites and generates an HTML code coverage report</>",
-        "test:db": "<fg=blue;options=bold>Runs database test suites on a SQLite, MySQL, MariaDB, PostgreSQL and MsSQL</>",
-        "test:db:sqlite": "<fg=blue;options=bold>Runs database test suites on a SQLite database</>",
-        "test:db:sqlite:ci": "<fg=blue;options=bold>Runs database test suites on a SQLite database, generating all needed reports and logs for CI envs</>",
-        "test:db:mysql": "<fg=blue;options=bold>Runs database test suites on a MySQL database</>",
-        "test:db:maria": "<fg=blue;options=bold>Runs database test suites on a MariaDB database</>",
-        "test:db:postgres": "<fg=blue;options=bold>Runs database test suites on a PostgreSQL database</>",
-        "test:db:ms": "<fg=blue;options=bold>Runs database test suites on a Microsoft SQL Server database</>",
-        "test:api": "<fg=blue;options=bold>Runs API test suites</>",
-        "test:api:ci": "<fg=blue;options=bold>Runs API test suites, and generates code coverage for CI</>",
-        "test:api:pretty": "<fg=blue;options=bold>Runs API test suites, and generates code coverage in HTML format</>",
-        "test:cli": "<fg=blue;options=bold>Runs CLI test suites</>",
-        "test:cli:ci": "<fg=blue;options=bold>Runs CLI test suites, and generates code coverage for CI</>",
-        "test:cli:pretty": "<fg=blue;options=bold>Runs CLI test suites, and generates code coverage in HTML format</>",
-        "swagger:validate": "<fg=blue;options=bold>Validates the swagger docs, making sure they fulfil the spec</>",
-        "swagger:inline": "<fg=blue;options=bold>Inlines swagger docs in a single file</>",
-        "clean:dev": "<fg=blue;options=bold>Deletes artifacts which are gitignored and could affect dev env</>"
     },
     "config": {
         "sort-packages": true,
