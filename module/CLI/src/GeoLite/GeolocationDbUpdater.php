@@ -64,12 +64,12 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     private function downloadIfNeeded(callable|null $beforeDownload, callable|null $handleProgress): GeolocationResult
     {
         if (! $this->dbUpdater->databaseFileExists()) {
-            return $this->downloadNewDb(false, $beforeDownload, $handleProgress);
+            return $this->downloadNewDb($beforeDownload, $handleProgress, olderDbExists: false);
         }
 
         $meta = ($this->geoLiteDbReaderFactory)()->metadata();
         if ($this->buildIsTooOld($meta)) {
-            return $this->downloadNewDb(true, $beforeDownload, $handleProgress);
+            return $this->downloadNewDb($beforeDownload, $handleProgress, olderDbExists: true);
         }
 
         return GeolocationResult::DB_IS_UP_TO_DATE;
@@ -106,9 +106,9 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
      * @throws GeolocationDbUpdateFailedException
      */
     private function downloadNewDb(
-        bool $olderDbExists,
         callable|null $beforeDownload,
         callable|null $handleProgress,
+        bool $olderDbExists,
     ): GeolocationResult {
         if ($beforeDownload !== null) {
             $beforeDownload($olderDbExists);

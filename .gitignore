@@ -10,7 +10,6 @@ data/database.sqlite
 data/shlink-tests.db
 data/GeoLite2-City.*
 data/infra/matomo
-docs/swagger-ui*
 docs/mercure.html
 .phpunit.result.cache
-docs/swagger/swagger-inlined.json
+docs/swagger/openapi-inlined.json
