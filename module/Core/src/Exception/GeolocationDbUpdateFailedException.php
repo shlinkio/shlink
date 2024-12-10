@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\CLI\Exception;
+namespace Shlinkio\Shlink\Core\Exception;
 
 use RuntimeException;
 use Throwable;

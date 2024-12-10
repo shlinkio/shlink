@@ -7,9 +7,9 @@ namespace Shlinkio\Shlink\CLI;
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Shlinkio\Shlink\Common\Doctrine\NoDbNameConnectionFactory;
-use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Domain\DomainService;
+use Shlinkio\Shlink\Core\Geolocation\GeolocationDbUpdater;
 use Shlinkio\Shlink\Core\Matomo;
 use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectRuleService;
 use Shlinkio\Shlink\Core\ShortUrl;
@@ -17,14 +17,10 @@ use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\Tag\TagService;
 use Shlinkio\Shlink\Core\Visit;
 use Shlinkio\Shlink\Installer\Factory\ProcessHelperFactory;
-use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
-use Shlinkio\Shlink\IpGeolocation\GeoLite2\GeoLite2ReaderFactory;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 use Symfony\Component\Console as SymfonyCli;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Process\PhpExecutableFinder;
-
-use const Shlinkio\Shlink\LOCAL_LOCK_FACTORY;
 
 return [
 
@@ -34,7 +30,6 @@ return [
             SymfonyCli\Helper\ProcessHelper::class => ProcessHelperFactory::class,
             PhpExecutableFinder::class => InvokableFactory::class,
 
-            GeoLite\GeolocationDbUpdater::class => ConfigAbstractFactory::class,
             RedirectRule\RedirectRuleHandler::class => InvokableFactory::class,
             Util\ProcessRunner::class => ConfigAbstractFactory::class,
 
@@ -82,12 +77,6 @@ return [
     ],
 
     ConfigAbstractFactory::class => [
-        GeoLite\GeolocationDbUpdater::class => [
-            DbUpdater::class,
-            GeoLite2ReaderFactory::class,
-            LOCAL_LOCK_FACTORY,
-            TrackingOptions::class,
-        ],
         Util\ProcessRunner::class => [SymfonyCli\Helper\ProcessHelper::class],
         ApiKey\RoleResolver::class => [DomainService::class, UrlShortenerOptions::class],
 
@@ -107,7 +96,7 @@ return [
         Command\ShortUrl\DeleteShortUrlVisitsCommand::class => [ShortUrl\ShortUrlVisitsDeleter::class],
         Command\ShortUrl\DeleteExpiredShortUrlsCommand::class => [ShortUrl\DeleteShortUrlService::class],
 
-        Command\Visit\DownloadGeoLiteDbCommand::class => [GeoLite\GeolocationDbUpdater::class],
+        Command\Visit\DownloadGeoLiteDbCommand::class => [GeolocationDbUpdater::class],
         Command\Visit\LocateVisitsCommand::class => [
             Visit\Geolocation\VisitLocator::class,
             Visit\Geolocation\VisitToLocationHelper::class,

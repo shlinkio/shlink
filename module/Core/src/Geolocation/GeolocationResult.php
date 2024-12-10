@@ -1,6 +1,6 @@
 <?php
 
-namespace Shlinkio\Shlink\CLI\GeoLite;
+namespace Shlinkio\Shlink\Core\Geolocation;
 
 enum GeolocationResult
 {

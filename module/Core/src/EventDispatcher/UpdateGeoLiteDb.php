@@ -6,9 +6,9 @@ namespace Shlinkio\Shlink\Core\EventDispatcher;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdaterInterface;
-use Shlinkio\Shlink\CLI\GeoLite\GeolocationResult;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\GeoLiteDbCreated;
+use Shlinkio\Shlink\Core\Geolocation\GeolocationDbUpdaterInterface;
+use Shlinkio\Shlink\Core\Geolocation\GeolocationResult;
 use Throwable;
 
 use function sprintf;

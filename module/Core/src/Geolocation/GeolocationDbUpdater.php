@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\CLI\GeoLite;
+namespace Shlinkio\Shlink\Core\Geolocation;
 
 use Cake\Chronos\Chronos;
 use Closure;
 use GeoIp2\Database\Reader;
 use MaxMind\Db\Reader\Metadata;
-use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
+use Shlinkio\Shlink\Core\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\IpGeolocation\Exception\DbUpdateException;
 use Shlinkio\Shlink\IpGeolocation\Exception\MissingLicenseException;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;

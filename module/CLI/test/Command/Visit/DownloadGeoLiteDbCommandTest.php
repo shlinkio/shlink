@@ -9,10 +9,10 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Visit\DownloadGeoLiteDbCommand;
-use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
-use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdaterInterface;
-use Shlinkio\Shlink\CLI\GeoLite\GeolocationResult;
 use Shlinkio\Shlink\CLI\Util\ExitCode;
+use Shlinkio\Shlink\Core\Exception\GeolocationDbUpdateFailedException;
+use Shlinkio\Shlink\Core\Geolocation\GeolocationDbUpdaterInterface;
+use Shlinkio\Shlink\Core\Geolocation\GeolocationResult;
 use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Tester\CommandTester;
 

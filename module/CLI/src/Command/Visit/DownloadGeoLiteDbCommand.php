@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Visit;
 
-use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
-use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdaterInterface;
-use Shlinkio\Shlink\CLI\GeoLite\GeolocationResult;
 use Shlinkio\Shlink\CLI\Util\ExitCode;
+use Shlinkio\Shlink\Core\Exception\GeolocationDbUpdateFailedException;
+use Shlinkio\Shlink\Core\Geolocation\GeolocationDbUpdaterInterface;
+use Shlinkio\Shlink\Core\Geolocation\GeolocationResult;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;

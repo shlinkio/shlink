@@ -9,7 +9,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
-use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
+use Shlinkio\Shlink\Core\Exception\GeolocationDbUpdateFailedException;
 use Throwable;
 
 class GeolocationDbUpdateFailedExceptionTest extends TestCase
