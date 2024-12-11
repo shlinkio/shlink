@@ -14,6 +14,7 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\Core\Geolocation\GeolocationDbUpdater;
+use Shlinkio\Shlink\Core\Geolocation\GeolocationDownloadProgressHandlerInterface;
 use Shlinkio\Shlink\Core\Geolocation\GeolocationResult;
 use Shlinkio\Shlink\IpGeolocation\Exception\DbUpdateException;
 use Shlinkio\Shlink\IpGeolocation\Exception\MissingLicenseException;
@@ -29,6 +30,8 @@ class GeolocationDbUpdaterTest extends TestCase
     private MockObject & DbUpdaterInterface $dbUpdater;
     private MockObject & Reader $geoLiteDbReader;
     private MockObject & Lock\LockInterface $lock;
+    /** @var GeolocationDownloadProgressHandlerInterface&object{beforeDownloadCalled: bool, handleProgressCalled: bool} */
+    private GeolocationDownloadProgressHandlerInterface $progressHandler;
 
     protected function setUp(): void
     {
@@ -36,6 +39,23 @@ class GeolocationDbUpdaterTest extends TestCase
         $this->geoLiteDbReader = $this->createMock(Reader::class);
         $this->lock = $this->createMock(Lock\SharedLockInterface::class);
         $this->lock->method('acquire')->with($this->isTrue())->willReturn(true);
+        $this->progressHandler = new class implements GeolocationDownloadProgressHandlerInterface {
+            public function __construct(
+                public bool $beforeDownloadCalled = false,
+                public bool $handleProgressCalled = false,
+            ) {
+            }
+
+            public function beforeDownload(bool $olderDbExists): void
+            {
+                $this->beforeDownloadCalled = true;
+            }
+
+            public function handleProgress(int $total, int $downloaded, bool $olderDbExists): void
+            {
+                $this->handleProgressCalled = true;
+            }
+        };
     }
 
     #[Test]
@@ -47,12 +67,9 @@ class GeolocationDbUpdaterTest extends TestCase
         );
         $this->geoLiteDbReader->expects($this->never())->method('metadata');
 
-        $isCalled = false;
-        $result = $this->geolocationDbUpdater()->checkDbUpdate(function () use (&$isCalled): void {
-            $isCalled = true;
-        });
+        $result = $this->geolocationDbUpdater()->checkDbUpdate($this->progressHandler);
 
-        self::assertTrue($isCalled);
+        self::assertTrue($this->progressHandler->beforeDownloadCalled);
         self::assertEquals(GeolocationResult::LICENSE_MISSING, $result);
     }
 
@@ -67,17 +84,14 @@ class GeolocationDbUpdaterTest extends TestCase
         )->willThrowException($prev);
         $this->geoLiteDbReader->expects($this->never())->method('metadata');
 
-        $isCalled = false;
         try {
-            $this->geolocationDbUpdater()->checkDbUpdate(function () use (&$isCalled): void {
-                $isCalled = true;
-            });
+            $this->geolocationDbUpdater()->checkDbUpdate($this->progressHandler);
             self::fail();
         } catch (Throwable $e) {
             self::assertInstanceOf(GeolocationDbUpdateFailedException::class, $e);
             self::assertSame($prev, $e->getPrevious());
             self::assertFalse($e->olderDbExists());
-            self::assertTrue($isCalled);
+            self::assertTrue($this->progressHandler->beforeDownloadCalled);
         }
     }
 
