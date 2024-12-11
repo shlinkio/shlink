@@ -2,17 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Shlinkio\Shlink\CLI\GeoLite;
+namespace Shlinkio\Shlink\Core\Geolocation;
 
 use Cake\Chronos\Chronos;
 use Closure;
 use GeoIp2\Database\Reader;
 use MaxMind\Db\Reader\Metadata;
-use Shlinkio\Shlink\CLI\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
+use Shlinkio\Shlink\Core\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\IpGeolocation\Exception\DbUpdateException;
 use Shlinkio\Shlink\IpGeolocation\Exception\MissingLicenseException;
-use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Symfony\Component\Lock\LockFactory;
 
@@ -41,8 +40,7 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
      * @throws GeolocationDbUpdateFailedException
      */
     public function checkDbUpdate(
-        callable|null $beforeDownload = null,
-        callable|null $handleProgress = null,
+        GeolocationDownloadProgressHandlerInterface|null $downloadProgressHandler = null,
     ): GeolocationResult {
         if (! $this->trackingOptions->isGeolocationRelevant()) {
             return GeolocationResult::CHECK_SKIPPED;
@@ -52,7 +50,7 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         $lock->acquire(true); // Block until lock is released
 
         try {
-            return $this->downloadIfNeeded($beforeDownload, $handleProgress);
+            return $this->downloadIfNeeded($downloadProgressHandler);
         } finally {
             $lock->release();
         }
@@ -61,15 +59,16 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     /**
      * @throws GeolocationDbUpdateFailedException
      */
-    private function downloadIfNeeded(callable|null $beforeDownload, callable|null $handleProgress): GeolocationResult
-    {
+    private function downloadIfNeeded(
+        GeolocationDownloadProgressHandlerInterface|null $downloadProgressHandler,
+    ): GeolocationResult {
         if (! $this->dbUpdater->databaseFileExists()) {
-            return $this->downloadNewDb($beforeDownload, $handleProgress, olderDbExists: false);
+            return $this->downloadNewDb($downloadProgressHandler, olderDbExists: false);
         }
 
         $meta = ($this->geoLiteDbReaderFactory)()->metadata();
         if ($this->buildIsTooOld($meta)) {
-            return $this->downloadNewDb($beforeDownload, $handleProgress, olderDbExists: true);
+            return $this->downloadNewDb($downloadProgressHandler, olderDbExists: true);
         }
 
         return GeolocationResult::DB_IS_UP_TO_DATE;
@@ -106,32 +105,23 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
      * @throws GeolocationDbUpdateFailedException
      */
     private function downloadNewDb(
-        callable|null $beforeDownload,
-        callable|null $handleProgress,
+        GeolocationDownloadProgressHandlerInterface|null $downloadProgressHandler,
         bool $olderDbExists,
     ): GeolocationResult {
-        if ($beforeDownload !== null) {
-            $beforeDownload($olderDbExists);
-        }
+        $downloadProgressHandler?->beforeDownload($olderDbExists);
 
         try {
-            $this->dbUpdater->downloadFreshCopy($this->wrapHandleProgressCallback($handleProgress, $olderDbExists));
+            $this->dbUpdater->downloadFreshCopy(
+                static fn (int $total, int $downloaded)
+                    => $downloadProgressHandler?->handleProgress($total, $downloaded, $olderDbExists),
+            );
             return $olderDbExists ? GeolocationResult::DB_UPDATED : GeolocationResult::DB_CREATED;
         } catch (MissingLicenseException) {
             return GeolocationResult::LICENSE_MISSING;
-        } catch (DbUpdateException | WrongIpException $e) {
+        } catch (DbUpdateException $e) {
             throw $olderDbExists
                 ? GeolocationDbUpdateFailedException::withOlderDb($e)
                 : GeolocationDbUpdateFailedException::withoutOlderDb($e);
         }
-    }
-
-    private function wrapHandleProgressCallback(callable|null $handleProgress, bool $olderDbExists): callable|null
-    {
-        if ($handleProgress === null) {
-            return null;
-        }
-
-        return static fn (int $total, int $downloaded) => $handleProgress($total, $downloaded, $olderDbExists);
     }
 }

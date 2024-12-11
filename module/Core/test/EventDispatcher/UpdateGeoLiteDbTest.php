@@ -11,10 +11,11 @@ use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
-use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdaterInterface;
-use Shlinkio\Shlink\CLI\GeoLite\GeolocationResult;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\GeoLiteDbCreated;
 use Shlinkio\Shlink\Core\EventDispatcher\UpdateGeoLiteDb;
+use Shlinkio\Shlink\Core\Geolocation\GeolocationDbUpdaterInterface;
+use Shlinkio\Shlink\Core\Geolocation\GeolocationDownloadProgressHandlerInterface;
+use Shlinkio\Shlink\Core\Geolocation\GeolocationResult;
 
 use function array_map;
 
@@ -51,11 +52,11 @@ class UpdateGeoLiteDbTest extends TestCase
     }
 
     #[Test, DataProvider('provideFlags')]
-    public function noticeMessageIsPrintedWhenFirstCallbackIsInvoked(bool $oldDbExists, string $expectedMessage): void
+    public function noticeMessageIsPrintedWhenDownloadIsStarted(bool $oldDbExists, string $expectedMessage): void
     {
         $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willReturnCallback(
-            function (callable $firstCallback) use ($oldDbExists): GeolocationResult {
-                $firstCallback($oldDbExists);
+            function (GeolocationDownloadProgressHandlerInterface $handler) use ($oldDbExists): GeolocationResult {
+                $handler->beforeDownload($oldDbExists);
                 return GeolocationResult::DB_IS_UP_TO_DATE;
             },
         );
@@ -73,18 +74,24 @@ class UpdateGeoLiteDbTest extends TestCase
     }
 
     #[Test, DataProvider('provideDownloaded')]
-    public function noticeMessageIsPrintedWhenSecondCallbackIsInvoked(
+    public function noticeMessageIsPrintedWhenDownloadIsFinished(
         int $total,
         int $downloaded,
         bool $oldDbExists,
         string|null $expectedMessage,
     ): void {
         $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willReturnCallback(
-            function ($_, callable $secondCallback) use ($total, $downloaded, $oldDbExists): GeolocationResult {
+            function (
+                GeolocationDownloadProgressHandlerInterface $handler,
+            ) use (
+                $total,
+                $downloaded,
+                $oldDbExists,
+            ): GeolocationResult {
                 // Invoke several times to ensure the log is printed only once
-                $secondCallback($total, $downloaded, $oldDbExists);
-                $secondCallback($total, $downloaded, $oldDbExists);
-                $secondCallback($total, $downloaded, $oldDbExists);
+                $handler->handleProgress($total, $downloaded, $oldDbExists);
+                $handler->handleProgress($total, $downloaded, $oldDbExists);
+                $handler->handleProgress($total, $downloaded, $oldDbExists);
 
                 return GeolocationResult::DB_UPDATED;
             },
