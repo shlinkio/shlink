@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace ShlinkioTest\Shlink\CLI\GeoLite;
+namespace ShlinkioTest\Shlink\Core\Geolocation;
 
 use Cake\Chronos\Chronos;
+use Closure;
 use GeoIp2\Database\Reader;
 use MaxMind\Db\Reader\Metadata;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -80,7 +81,7 @@ class GeolocationDbUpdaterTest extends TestCase
 
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(false);
         $this->dbUpdater->expects($this->once())->method('downloadFreshCopy')->with(
-            $this->isNull(),
+            $this->isInstanceOf(Closure::class),
         )->willThrowException($prev);
         $this->geoLiteDbReader->expects($this->never())->method('metadata');
 
@@ -101,7 +102,7 @@ class GeolocationDbUpdaterTest extends TestCase
         $prev = new DbUpdateException('');
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(true);
         $this->dbUpdater->expects($this->once())->method('downloadFreshCopy')->with(
-            $this->isNull(),
+            $this->isInstanceOf(Closure::class),
         )->willThrowException($prev);
         $this->geoLiteDbReader->expects($this->once())->method('metadata')->with()->willReturn(
             $this->buildMetaWithBuildEpoch(Chronos::now()->subDays($days)->getTimestamp()),
