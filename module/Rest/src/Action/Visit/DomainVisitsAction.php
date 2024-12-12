@@ -9,6 +9,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
+use Shlinkio\Shlink\Core\Visit\Transformer\VisitDataTransformerInterface;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -19,8 +20,9 @@ class DomainVisitsAction extends AbstractListVisitsAction
     public function __construct(
         VisitsStatsHelperInterface $visitsHelper,
         private readonly UrlShortenerOptions $urlShortenerOptions,
+        VisitDataTransformerInterface $transformer,
     ) {
-        parent::__construct($visitsHelper);
+        parent::__construct($visitsHelper, $transformer);
     }
 
     protected function getVisitsPaginator(Request $request, VisitsParams $params, ApiKey $apiKey): Pagerfanta
