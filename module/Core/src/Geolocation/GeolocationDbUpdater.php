@@ -47,7 +47,7 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         }
 
         $lock = $this->locker->createLock(self::LOCK_NAME);
-        $lock->acquire(true); // Block until lock is released
+        $lock->acquire(blocking: true);
 
         try {
             return $this->downloadIfNeeded($downloadProgressHandler);
