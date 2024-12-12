@@ -1,4 +1,4 @@
-FROM php:8.4-alpine3.20 AS base
+FROM php:8.4-alpine3.21 AS base
 
 ARG SHLINK_VERSION=latest
 ENV SHLINK_VERSION ${SHLINK_VERSION}
