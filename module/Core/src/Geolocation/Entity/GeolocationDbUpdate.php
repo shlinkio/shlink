@@ -49,17 +49,11 @@ class GeolocationDbUpdate extends AbstractEntity
     }
 
     /**
-     * This update would require a new download if:
-     * - It is successful and older than 30 days
-     * - It is error and older than 2 days
+     * @param positive-int $days
      */
-    public function needsUpdate(): bool
+    public function isOlderThan(int $days): bool
     {
-        return match ($this->status) {
-            GeolocationDbUpdateStatus::SUCCESS => Chronos::now()->greaterThan($this->dateUpdated->addDays(30)),
-            GeolocationDbUpdateStatus::ERROR => Chronos::now()->greaterThan($this->dateUpdated->addDays(2)),
-            default => false,
-        };
+        return Chronos::now()->greaterThan($this->dateUpdated->addDays($days));
     }
 
     public function isInProgress(): bool
@@ -70,5 +64,10 @@ class GeolocationDbUpdate extends AbstractEntity
     public function isError(): bool
     {
         return $this->status === GeolocationDbUpdateStatus::ERROR;
+    }
+
+    public function isSuccess(): bool
+    {
+        return $this->status === GeolocationDbUpdateStatus::SUCCESS;
     }
 }

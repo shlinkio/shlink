@@ -51,6 +51,11 @@ class DownloadGeoLiteDbCommand extends Command implements GeolocationDownloadPro
                 return ExitCode::EXIT_WARNING;
             }
 
+            if ($result === GeolocationResult::MAX_ERRORS_REACHED) {
+                $this->io->warning('Max consecutive errors reached. Cannot retry for a couple of days.');
+                return ExitCode::EXIT_WARNING;
+            }
+
             if ($this->progressBar === null) {
                 $this->io->info('GeoLite2 db file is up to date.');
             } else {

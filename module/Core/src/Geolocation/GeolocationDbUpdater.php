@@ -13,8 +13,6 @@ use Shlinkio\Shlink\IpGeolocation\Exception\MissingLicenseException;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Symfony\Component\Lock\LockFactory;
 
-use function count;
-use function Shlinkio\Shlink\Core\ArrayUtils\every;
 use function sprintf;
 
 readonly class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
@@ -26,6 +24,7 @@ readonly class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         private LockFactory $locker,
         private TrackingOptions $trackingOptions,
         private EntityManagerInterface $em,
+        private int $maxRecentAttemptsToCheck = 15, // TODO Make this configurable
     ) {
     }
 
@@ -56,16 +55,12 @@ readonly class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     private function downloadIfNeeded(
         GeolocationDownloadProgressHandlerInterface|null $downloadProgressHandler,
     ): GeolocationResult {
-        $maxRecentAttemptsToCheck = 15; // TODO Make this configurable
-
-        // Get last 15 download attempts
         $recentDownloads = $this->em->getRepository(GeolocationDbUpdate::class)->findBy(
             criteria: ['filesystemId' => GeolocationDbUpdate::currentFilesystemId()],
             orderBy: ['dateUpdated' => 'DESC'],
-            limit: $maxRecentAttemptsToCheck,
+            limit: $this->maxRecentAttemptsToCheck,
         );
         $mostRecentDownload = $recentDownloads[0] ?? null;
-        $amountOfRecentAttempts = count($recentDownloads);
 
         // If most recent attempt is in progress, skip check.
         // This is a safety check in case the lock is released before the previous download has finished.
@@ -73,19 +68,31 @@ readonly class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
             return GeolocationResult::CHECK_SKIPPED;
         }
 
-        // If all recent attempts are errors, and the most recent one is not old enough, skip download
-        if (
-            $amountOfRecentAttempts === $maxRecentAttemptsToCheck
-            && every($recentDownloads, static fn (GeolocationDbUpdate $update) => $update->isError())
-            && ! $mostRecentDownload->needsUpdate()
-        ) {
-            return GeolocationResult::CHECK_SKIPPED;
+        $amountOfErrorsSinceLastSuccess = 0;
+        foreach ($recentDownloads as $recentDownload) {
+            // Count attempts until a success is found
+            if ($recentDownload->isSuccess()) {
+                break;
+            }
+            $amountOfErrorsSinceLastSuccess++;
         }
 
-        // Try to download if there are no attempts, the database file does not exist or most recent attempt was
-        // successful and is old enough
-        $olderDbExists = $amountOfRecentAttempts > 0 && $this->dbUpdater->databaseFileExists();
-        if (! $olderDbExists || $mostRecentDownload->needsUpdate()) {
+        // If max amount of consecutive errors has been reached and the most recent one is not old enough, skip download
+        // for 2 days to avoid hitting potential API limits in geolocation services
+        $lastAttemptIsError = $mostRecentDownload !== null && $mostRecentDownload->isError();
+        // FIXME Once max errors are reached there will be one attempt every 2 days, but it should be 15 attempts every
+        //       2 days. Leaving like this for simplicity for now.
+        $maxConsecutiveErrorsReached = $amountOfErrorsSinceLastSuccess === $this->maxRecentAttemptsToCheck;
+        if ($lastAttemptIsError && $maxConsecutiveErrorsReached && ! $mostRecentDownload->isOlderThan(days: 2)) {
+            return GeolocationResult::MAX_ERRORS_REACHED;
+        }
+
+        // Try to download if:
+        // - There are no attempts or the database file does not exist
+        // - Last update errored (and implicitly, the max amount of consecutive errors has not been reached)
+        // - Most recent attempt is older than 30 days (and implicitly, successful)
+        $olderDbExists = $mostRecentDownload !== null && $this->dbUpdater->databaseFileExists();
+        if (! $olderDbExists || $lastAttemptIsError || $mostRecentDownload->isOlderThan(days: 30)) {
             return $this->downloadAndTrackUpdate($downloadProgressHandler, $olderDbExists);
         }
 
@@ -112,7 +119,7 @@ readonly class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
             return GeolocationResult::LICENSE_MISSING;
         } catch (GeolocationDbUpdateFailedException $e) {
             $dbUpdate->finishWithError(
-                sprintf('%s. Prev: %s', $e->getMessage(), $e->getPrevious()?->getMessage() ?? '-'),
+                sprintf('%s Prev: %s', $e->getMessage(), $e->getPrevious()?->getMessage() ?? '-'),
             );
             throw $e;
         } finally {
