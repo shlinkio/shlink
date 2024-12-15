@@ -53,6 +53,6 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
 
     // Index on date_updated, as we'll usually sort the query by this field
     $builder->addIndex(['date_updated'], 'IDX_geolocation_date_updated');
-    // Index on status and filesystem_id, as we'll usually filter the query by those fields
-    $builder->addIndex(['status', 'filesystem_id'], 'IDX_geolocation_status_filesystem');
+    // Index on filesystem_id, as we'll usually filter the query by this field
+    $builder->addIndex(['filesystem_id'], 'IDX_geolocation_status_filesystem');
 };

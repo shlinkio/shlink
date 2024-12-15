@@ -46,8 +46,8 @@ final class Version20241212131058 extends AbstractMigration
 
         // Index on date_updated, as we'll usually sort the query by this field
         $table->addIndex(['date_updated'], 'IDX_geolocation_date_updated');
-        // Index on status and filesystem_id, as we'll usually filter the query by those fields
-        $table->addIndex(['status', 'filesystem_id'], 'IDX_geolocation_status_filesystem');
+        // Index on filesystem_id, as we'll usually filter the query by this field
+        $table->addIndex(['filesystem_id'], 'IDX_geolocation_status_filesystem');
     }
 
     public function down(Schema $schema): void
