@@ -13,7 +13,6 @@ use Shlinkio\Shlink\Core\Geolocation\GeolocationDbUpdater;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
-use Shlinkio\Shlink\IpGeolocation\GeoLite2\GeoLite2ReaderFactory;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Symfony\Component\Lock;
 
@@ -247,9 +246,9 @@ return [
 
         GeolocationDbUpdater::class => [
             DbUpdater::class,
-            GeoLite2ReaderFactory::class,
             LOCAL_LOCK_FACTORY,
             Config\Options\TrackingOptions::class,
+            'em',
         ],
         Geolocation\Middleware\IpGeolocationMiddleware::class => [
             IpLocationResolverInterface::class,

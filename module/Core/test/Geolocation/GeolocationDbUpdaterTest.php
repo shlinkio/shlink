@@ -91,7 +91,7 @@ class GeolocationDbUpdaterTest extends TestCase
         } catch (Throwable $e) {
             self::assertInstanceOf(GeolocationDbUpdateFailedException::class, $e);
             self::assertSame($prev, $e->getPrevious());
-            self::assertFalse($e->olderDbExists());
+            self::assertFalse($e->olderDbExists);
             self::assertTrue($this->progressHandler->beforeDownloadCalled);
         }
     }
@@ -114,7 +114,7 @@ class GeolocationDbUpdaterTest extends TestCase
         } catch (Throwable $e) {
             self::assertInstanceOf(GeolocationDbUpdateFailedException::class, $e);
             self::assertSame($prev, $e->getPrevious());
-            self::assertTrue($e->olderDbExists());
+            self::assertTrue($e->olderDbExists);
         }
     }
 

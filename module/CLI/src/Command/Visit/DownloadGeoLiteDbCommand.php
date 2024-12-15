@@ -66,7 +66,7 @@ class DownloadGeoLiteDbCommand extends Command implements GeolocationDownloadPro
 
     private function processGeoLiteUpdateError(GeolocationDbUpdateFailedException $e, SymfonyStyle $io): int
     {
-        $olderDbExists = $e->olderDbExists();
+        $olderDbExists = $e->olderDbExists;
 
         if ($olderDbExists) {
             $io->warning(

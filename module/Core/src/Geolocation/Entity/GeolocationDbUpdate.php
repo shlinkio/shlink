@@ -16,27 +16,59 @@ class GeolocationDbUpdate extends AbstractEntity
         private GeolocationDbUpdateStatus $status = GeolocationDbUpdateStatus::IN_PROGRESS,
         private readonly Chronos $dateCreated = new Chronos(),
         private Chronos $dateUpdated = new Chronos(),
-        private string|null $filename = null,
         private string|null $error = null,
     ) {
     }
 
-    public static function createForCurrentFilesystem(): self
+    public static function forFilesystemId(string|null $filesystemId = null): self
     {
-        return new self(stat(__FILE__)['dev']);
+        return new self($filesystemId ?? self::currentFilesystemId());
     }
 
-    public function finishSuccessfully(string $filename): void
+    public static function currentFilesystemId(): string
+    {
+        $system = stat(__FILE__);
+        if (! $system) {
+            // TODO Throw error
+        }
+
+        return (string) $system['dev'];
+    }
+
+    public function finishSuccessfully(): void
     {
         $this->dateUpdated = Chronos::now();
-        $this->filename = $filename;
         $this->status = GeolocationDbUpdateStatus::SUCCESS;
     }
 
     public function finishWithError(string $error): void
     {
-        $this->dateUpdated = Chronos::now();
         $this->error = $error;
+        $this->dateUpdated = Chronos::now();
         $this->status = GeolocationDbUpdateStatus::ERROR;
+    }
+
+    /**
+     * This update would require a new download if:
+     * - It is successful and older than 30 days
+     * - It is error and older than 2 days
+     */
+    public function needsUpdate(): bool
+    {
+        return match ($this->status) {
+            GeolocationDbUpdateStatus::SUCCESS => Chronos::now()->greaterThan($this->dateUpdated->addDays(30)),
+            GeolocationDbUpdateStatus::ERROR => Chronos::now()->greaterThan($this->dateUpdated->addDays(2)),
+            default => false,
+        };
+    }
+
+    public function isInProgress(): bool
+    {
+        return $this->status === GeolocationDbUpdateStatus::IN_PROGRESS;
+    }
+
+    public function isError(): bool
+    {
+        return $this->status === GeolocationDbUpdateStatus::ERROR;
     }
 }

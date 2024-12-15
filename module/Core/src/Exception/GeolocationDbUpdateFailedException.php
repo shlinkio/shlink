@@ -7,52 +7,28 @@ namespace Shlinkio\Shlink\Core\Exception;
 use RuntimeException;
 use Throwable;
 
-use function sprintf;
-
 class GeolocationDbUpdateFailedException extends RuntimeException implements ExceptionInterface
 {
-    private bool $olderDbExists;
-
-    private function __construct(string $message, Throwable|null $previous = null)
+    private function __construct(string $message, public readonly bool $olderDbExists, Throwable|null $prev = null)
     {
-        parent::__construct($message, previous: $previous);
+        parent::__construct($message, previous: $prev);
     }
 
     public static function withOlderDb(Throwable|null $prev = null): self
     {
-        $e = new self(
+        return new self(
             'An error occurred while updating geolocation database, but an older DB is already present.',
-            $prev,
+            olderDbExists: true,
+            prev: $prev,
         );
-        $e->olderDbExists = true;
-
-        return $e;
     }
 
     public static function withoutOlderDb(Throwable|null $prev = null): self
     {
-        $e = new self(
+        return new self(
             'An error occurred while updating geolocation database, and an older version could not be found.',
-            $prev,
+            olderDbExists: false,
+            prev: $prev,
         );
-        $e->olderDbExists = false;
-
-        return $e;
-    }
-
-    public static function withInvalidEpochInOldDb(mixed $buildEpoch): self
-    {
-        $e = new self(sprintf(
-            'Build epoch with value "%s" from existing geolocation database, could not be parsed to integer.',
-            $buildEpoch,
-        ));
-        $e->olderDbExists = true;
-
-        return $e;
-    }
-
-    public function olderDbExists(): bool
-    {
-        return $this->olderDbExists;
     }
 }

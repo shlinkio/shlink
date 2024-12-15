@@ -40,12 +40,6 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
        ->length(128)
        ->build();
 
-    fieldWithUtf8Charset($builder->createField('filename', Types::STRING), $emConfig)
-        ->columnName('filename')
-        ->length(512)
-        ->nullable()
-        ->build();
-
     fieldWithUtf8Charset($builder->createField('error', Types::STRING), $emConfig)
         ->columnName('error')
         ->length(1024)
