@@ -12,6 +12,7 @@ use Shlinkio\Shlink\IpGeolocation\Exception\DbUpdateException;
 use Shlinkio\Shlink\IpGeolocation\Exception\MissingLicenseException;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Symfony\Component\Lock\LockFactory;
+use Throwable;
 
 use function sprintf;
 
@@ -65,7 +66,7 @@ readonly class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         // If most recent attempt is in progress, skip check.
         // This is a safety check in case the lock is released before the previous download has finished.
         if ($mostRecentDownload?->isInProgress()) {
-            return GeolocationResult::CHECK_SKIPPED;
+            return GeolocationResult::UPDATE_IN_PROGRESS;
         }
 
         $amountOfErrorsSinceLastSuccess = 0;
@@ -121,6 +122,9 @@ readonly class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
             $dbUpdate->finishWithError(
                 sprintf('%s Prev: %s', $e->getMessage(), $e->getPrevious()?->getMessage() ?? '-'),
             );
+            throw $e;
+        } catch (Throwable $e) {
+            $dbUpdate->finishWithError(sprintf('Unknown error: %s', $e->getMessage()));
             throw $e;
         } finally {
             $this->em->flush();

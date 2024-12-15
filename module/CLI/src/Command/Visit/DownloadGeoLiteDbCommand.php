@@ -56,6 +56,11 @@ class DownloadGeoLiteDbCommand extends Command implements GeolocationDownloadPro
                 return ExitCode::EXIT_WARNING;
             }
 
+            if ($result === GeolocationResult::UPDATE_IN_PROGRESS) {
+                $this->io->warning('A geolocation db is already being downloaded by another process.');
+                return ExitCode::EXIT_WARNING;
+            }
+
             if ($this->progressBar === null) {
                 $this->io->info('GeoLite2 db file is up to date.');
             } else {

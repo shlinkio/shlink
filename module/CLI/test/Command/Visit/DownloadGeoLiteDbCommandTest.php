@@ -77,6 +77,7 @@ class DownloadGeoLiteDbCommandTest extends TestCase
     #[Test]
     #[TestWith([GeolocationResult::LICENSE_MISSING, 'It was not possible to download GeoLite2 db'])]
     #[TestWith([GeolocationResult::MAX_ERRORS_REACHED, 'Max consecutive errors reached'])]
+    #[TestWith([GeolocationResult::UPDATE_IN_PROGRESS, 'A geolocation db is already being downloaded'])]
     public function warningIsPrintedForSomeResults(GeolocationResult $result, string $expectedWarningMessage): void
     {
         $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willReturn($result);
