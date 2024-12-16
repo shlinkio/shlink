@@ -13,6 +13,7 @@ class GeolocationDbUpdate extends AbstractEntity
 {
     private function __construct(
         private readonly string $filesystemId,
+        private readonly string $reason,
         private GeolocationDbUpdateStatus $status = GeolocationDbUpdateStatus::IN_PROGRESS,
         private readonly Chronos $dateCreated = new Chronos(),
         private Chronos $dateUpdated = new Chronos(),
@@ -20,9 +21,9 @@ class GeolocationDbUpdate extends AbstractEntity
     ) {
     }
 
-    public static function forFilesystemId(string|null $filesystemId = null): self
+    public static function withReason(string $reason, string|null $filesystemId = null): self
     {
-        return new self($filesystemId ?? self::currentFilesystemId());
+        return new self($reason, $filesystemId ?? self::currentFilesystemId());
     }
 
     public static function currentFilesystemId(): string

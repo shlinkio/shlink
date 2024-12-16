@@ -38,6 +38,7 @@ final class Version20241212131058 extends AbstractMigration
         ]);
         $table->addColumn('filesystem_id', Types::STRING, ['length' => 512]);
 
+        $table->addColumn('reason', Types::STRING, ['length' => 1024]);
         $table->addColumn('error', Types::STRING, [
             'length' => 1024,
             'default' => null,

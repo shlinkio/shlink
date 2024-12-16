@@ -89,12 +89,20 @@ readonly class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         }
 
         // Try to download if:
-        // - There are no attempts or the database file does not exist
+        // - There are no attempts tracked
+        // - The database file does not exist
         // - Last update errored (and implicitly, the max amount of consecutive errors has not been reached)
         // - Most recent attempt is older than 30 days (and implicitly, successful)
-        $olderDbExists = $mostRecentDownload !== null && $this->dbUpdater->databaseFileExists();
-        if (! $olderDbExists || $lastAttemptIsError || $mostRecentDownload->isOlderThan(days: 30)) {
-            return $this->downloadAndTrackUpdate($downloadProgressHandler, $olderDbExists);
+        $reasonMatch = match (true) {
+            $mostRecentDownload === null => [false, 'No download attempts tracked for this instance'],
+            $this->dbUpdater->databaseFileExists() => [false, 'Geolocation db file does not exist'],
+            $lastAttemptIsError => [true, 'Max consecutive errors not reached'],
+            $mostRecentDownload->isOlderThan(days: 30) => [true, 'Last successful attempt'],
+            default => null,
+        };
+        if ($reasonMatch !== null) {
+            [$olderDbExists, $reason] = $reasonMatch;
+            return $this->downloadAndTrackUpdate($downloadProgressHandler, $olderDbExists, $reason);
         }
 
         return GeolocationResult::DB_IS_UP_TO_DATE;
@@ -106,8 +114,9 @@ readonly class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     private function downloadAndTrackUpdate(
         GeolocationDownloadProgressHandlerInterface|null $downloadProgressHandler,
         bool $olderDbExists,
+        string $reason,
     ): GeolocationResult {
-        $dbUpdate = GeolocationDbUpdate::forFilesystemId();
+        $dbUpdate = GeolocationDbUpdate::withReason($reason);
         $this->em->persist($dbUpdate);
         $this->em->flush();
 

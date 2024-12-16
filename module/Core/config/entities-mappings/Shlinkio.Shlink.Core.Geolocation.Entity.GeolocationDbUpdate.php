@@ -46,6 +46,11 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
         ->nullable()
         ->build();
 
+    fieldWithUtf8Charset($builder->createField('reason', Types::STRING), $emConfig)
+        ->columnName('reason')
+        ->length(1024)
+        ->build();
+
     fieldWithUtf8Charset($builder->createField('filesystemId', Types::STRING), $emConfig)
         ->columnName('filesystem_id')
         ->length(512)
