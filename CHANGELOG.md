@@ -15,13 +15,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     This option effectively replaces the old `REDIRECT_APPEND_EXTRA_PATH` option, which is now deprecated and will be removed in Shlink 5.0.0
 
 ### Changed
-* * [#2281](https://github.com/shlinkio/shlink/issues/2281) Update docker image to PHP 8.4
+* [#2281](https://github.com/shlinkio/shlink/issues/2281) Update docker image to PHP 8.4
+* [#2124](https://github.com/shlinkio/shlink/issues/2124) Improve how Shlink decides if a GeoLite db file needs to be downloaded, and reduces the chances for API limits to be reached.
+
+    Now Shlink tracks all download attempts, and knows which of them failed and succeeded. This lets it know when was the last error or success, how many consecutive errors have happened, etc.
+
+    It also tracks now the reason for a download to be attempted, and the error that happened when one fails.
 
 ### Deprecated
 * *Nothing*
 
 ### Removed
-* * [#2247](https://github.com/shlinkio/shlink/issues/2247) Drop support for PHP 8.2
+* [#2247](https://github.com/shlinkio/shlink/issues/2247) Drop support for PHP 8.2
 
 ### Fixed
 * *Nothing*

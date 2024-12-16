@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\CLI\Command\Visit;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Visit\DownloadGeoLiteDbCommand;
@@ -74,17 +75,18 @@ class DownloadGeoLiteDbCommandTest extends TestCase
     }
 
     #[Test]
-    public function warningIsPrintedWhenLicenseIsMissing(): void
+    #[TestWith([GeolocationResult::LICENSE_MISSING, 'It was not possible to download GeoLite2 db'])]
+    #[TestWith([GeolocationResult::MAX_ERRORS_REACHED, 'Max consecutive errors reached'])]
+    #[TestWith([GeolocationResult::UPDATE_IN_PROGRESS, 'A geolocation db is already being downloaded'])]
+    public function warningIsPrintedForSomeResults(GeolocationResult $result, string $expectedWarningMessage): void
     {
-        $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willReturn(
-            GeolocationResult::LICENSE_MISSING,
-        );
+        $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willReturn($result);
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
         $exitCode = $this->commandTester->getStatusCode();
 
-        self::assertStringContainsString('[WARNING] It was not possible to download GeoLite2 db', $output);
+        self::assertStringContainsString('[WARNING] ' . $expectedWarningMessage, $output);
         self::assertSame(ExitCode::EXIT_WARNING, $exitCode);
     }
 

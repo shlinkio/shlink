@@ -4,36 +4,29 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Geolocation;
 
-use Cake\Chronos\Chronos;
-use Closure;
-use GeoIp2\Database\Reader;
-use MaxMind\Db\Reader\Metadata;
+use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\Exception\GeolocationDbUpdateFailedException;
+use Shlinkio\Shlink\Core\Geolocation\Entity\GeolocationDbUpdate;
 use Shlinkio\Shlink\IpGeolocation\Exception\DbUpdateException;
 use Shlinkio\Shlink\IpGeolocation\Exception\MissingLicenseException;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Symfony\Component\Lock\LockFactory;
+use Throwable;
 
-use function is_int;
+use function sprintf;
 
-class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
+readonly class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
 {
     private const string LOCK_NAME = 'geolocation-db-update';
 
-    /** @var Closure(): Reader */
-    private readonly Closure $geoLiteDbReaderFactory;
-
-    /**
-     * @param callable(): Reader $geoLiteDbReaderFactory
-     */
     public function __construct(
-        private readonly DbUpdaterInterface $dbUpdater,
-        callable $geoLiteDbReaderFactory,
-        private readonly LockFactory $locker,
-        private readonly TrackingOptions $trackingOptions,
+        private DbUpdaterInterface $dbUpdater,
+        private LockFactory $locker,
+        private TrackingOptions $trackingOptions,
+        private EntityManagerInterface $em,
+        private int $maxRecentAttemptsToCheck = 15, // TODO Make this configurable
     ) {
-        $this->geoLiteDbReaderFactory = $geoLiteDbReaderFactory(...);
     }
 
     /**
@@ -45,6 +38,7 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         if (! $this->trackingOptions->isGeolocationRelevant()) {
             return GeolocationResult::CHECK_SKIPPED;
         }
+
 
         $lock = $this->locker->createLock(self::LOCK_NAME);
         $lock->acquire(blocking: true);
@@ -62,43 +56,88 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     private function downloadIfNeeded(
         GeolocationDownloadProgressHandlerInterface|null $downloadProgressHandler,
     ): GeolocationResult {
-        if (! $this->dbUpdater->databaseFileExists()) {
-            return $this->downloadNewDb($downloadProgressHandler, olderDbExists: false);
+        $recentDownloads = $this->em->getRepository(GeolocationDbUpdate::class)->findBy(
+            criteria: ['filesystemId' => GeolocationDbUpdate::currentFilesystemId()],
+            orderBy: ['dateUpdated' => 'DESC'],
+            limit: $this->maxRecentAttemptsToCheck,
+        );
+        $mostRecentDownload = $recentDownloads[0] ?? null;
+
+        // If most recent attempt is in progress, skip check.
+        // This is a safety check in case the lock is released before the previous download has finished.
+        if ($mostRecentDownload?->isInProgress()) {
+            return GeolocationResult::UPDATE_IN_PROGRESS;
         }
 
-        $meta = ($this->geoLiteDbReaderFactory)()->metadata();
-        if ($this->buildIsTooOld($meta)) {
-            return $this->downloadNewDb($downloadProgressHandler, olderDbExists: true);
+        $amountOfErrorsSinceLastSuccess = 0;
+        foreach ($recentDownloads as $recentDownload) {
+            // Count attempts until a success is found
+            if ($recentDownload->isSuccess()) {
+                break;
+            }
+            $amountOfErrorsSinceLastSuccess++;
+        }
+
+        // If max amount of consecutive errors has been reached and the most recent one is not old enough, skip download
+        // for 2 days to avoid hitting potential API limits in geolocation services
+        $lastAttemptIsError = $mostRecentDownload !== null && $mostRecentDownload->isError();
+        // FIXME Once max errors are reached there will be one attempt every 2 days, but it should be 15 attempts every
+        //       2 days. Leaving like this for simplicity for now.
+        $maxConsecutiveErrorsReached = $amountOfErrorsSinceLastSuccess === $this->maxRecentAttemptsToCheck;
+        if ($lastAttemptIsError && $maxConsecutiveErrorsReached && ! $mostRecentDownload->isOlderThan(days: 2)) {
+            return GeolocationResult::MAX_ERRORS_REACHED;
+        }
+
+        // Try to download if:
+        // - There are no attempts tracked
+        // - The database file does not exist
+        // - Last update errored (and implicitly, the max amount of consecutive errors has not been reached)
+        // - Most recent attempt is older than 30 days (and implicitly, successful)
+        $reasonMatch = match (true) {
+            $mostRecentDownload === null => [false, 'No download attempts tracked for this instance'],
+            ! $this->dbUpdater->databaseFileExists() => [false, 'Geolocation db file does not exist'],
+            $lastAttemptIsError => [true, 'Max consecutive errors not reached'],
+            $mostRecentDownload->isOlderThan(days: 30) => [true, 'Last successful attempt is old enough'],
+            default => null,
+        };
+        if ($reasonMatch !== null) {
+            [$olderDbExists, $reason] = $reasonMatch;
+            return $this->downloadAndTrackUpdate($downloadProgressHandler, $olderDbExists, $reason);
         }
 
         return GeolocationResult::DB_IS_UP_TO_DATE;
     }
 
-    private function buildIsTooOld(Metadata $meta): bool
-    {
-        $buildTimestamp = $this->resolveBuildTimestamp($meta);
-        $buildDate = Chronos::createFromTimestamp($buildTimestamp);
+    /**
+     * @throws GeolocationDbUpdateFailedException
+     */
+    private function downloadAndTrackUpdate(
+        GeolocationDownloadProgressHandlerInterface|null $downloadProgressHandler,
+        bool $olderDbExists,
+        string $reason,
+    ): GeolocationResult {
+        $dbUpdate = GeolocationDbUpdate::withReason($reason);
+        $this->em->persist($dbUpdate);
+        $this->em->flush();
 
-        return Chronos::now()->greaterThan($buildDate->addDays(35));
-    }
-
-    private function resolveBuildTimestamp(Metadata $meta): int
-    {
-        // In theory the buildEpoch should be an int, but it has been reported to come as a string.
-        // See https://github.com/shlinkio/shlink/issues/1002 for context
-
-        /** @var int|string $buildEpoch */
-        $buildEpoch = $meta->buildEpoch;
-        if (is_int($buildEpoch)) {
-            return $buildEpoch;
+        try {
+            $result = $this->downloadNewDb($downloadProgressHandler, $olderDbExists);
+            $dbUpdate->finishSuccessfully();
+            return $result;
+        } catch (MissingLicenseException) {
+            $dbUpdate->finishWithError('Geolocation license key is missing');
+            return GeolocationResult::LICENSE_MISSING;
+        } catch (GeolocationDbUpdateFailedException $e) {
+            $dbUpdate->finishWithError(
+                sprintf('%s Prev: %s', $e->getMessage(), $e->getPrevious()?->getMessage() ?? '-'),
+            );
+            throw $e;
+        } catch (Throwable $e) {
+            $dbUpdate->finishWithError(sprintf('Unknown error: %s', $e->getMessage()));
+            throw $e;
+        } finally {
+            $this->em->flush();
         }
-
-        $intBuildEpoch = (int) $buildEpoch;
-        if ($buildEpoch === (string) $intBuildEpoch) {
-            return $intBuildEpoch;
-        }
-
-        throw GeolocationDbUpdateFailedException::withInvalidEpochInOldDb($buildEpoch);
     }
 
     /**
@@ -116,8 +155,6 @@ class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
                     => $downloadProgressHandler?->handleProgress($total, $downloaded, $olderDbExists),
             );
             return $olderDbExists ? GeolocationResult::DB_UPDATED : GeolocationResult::DB_CREATED;
-        } catch (MissingLicenseException) {
-            return GeolocationResult::LICENSE_MISSING;
         } catch (DbUpdateException $e) {
             throw $olderDbExists
                 ? GeolocationDbUpdateFailedException::withOlderDb($e)
