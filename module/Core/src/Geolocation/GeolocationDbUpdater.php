@@ -95,9 +95,9 @@ readonly class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
         // - Most recent attempt is older than 30 days (and implicitly, successful)
         $reasonMatch = match (true) {
             $mostRecentDownload === null => [false, 'No download attempts tracked for this instance'],
-            $this->dbUpdater->databaseFileExists() => [false, 'Geolocation db file does not exist'],
+            ! $this->dbUpdater->databaseFileExists() => [false, 'Geolocation db file does not exist'],
             $lastAttemptIsError => [true, 'Max consecutive errors not reached'],
-            $mostRecentDownload->isOlderThan(days: 30) => [true, 'Last successful attempt'],
+            $mostRecentDownload->isOlderThan(days: 30) => [true, 'Last successful attempt is old enough'],
             default => null,
         };
         if ($reasonMatch !== null) {
