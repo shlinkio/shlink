@@ -46,10 +46,10 @@ class CustomSlugValidator extends AbstractValidator
             return false;
         }
 
-        // URL reserved characters: https://datatracker.ietf.org/doc/html/rfc3986#section-2.2
-        $reservedChars = "!*'();:@&=+$,?%#[]";
+        // URL gen-delimiter reserved characters, except `/`: https://datatracker.ietf.org/doc/html/rfc3986#section-2.2
+        $reservedChars = ':?#[]@';
         if (! $this->options->multiSegmentSlugsEnabled) {
-            // Slashes should be allowed for multi-segment slugs
+            // Slashes should only be allowed if multi-segment slugs are enabled
             $reservedChars .= '/';
         }
 
