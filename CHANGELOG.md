@@ -14,6 +14,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     This option effectively replaces the old `REDIRECT_APPEND_EXTRA_PATH` option, which is now deprecated and will be removed in Shlink 5.0.0
 
+* [#2156](https://github.com/shlinkio/shlink/issues/2156) Be less restrictive on what characters are disallowed in custom slugs.
+
+    All [URI-reserved characters](https://datatracker.ietf.org/doc/html/rfc3986#section-2.2) were disallowed up until now, but from now on, only the gen-delimiters are.
+
 ### Changed
 * [#2281](https://github.com/shlinkio/shlink/issues/2281) Update docker image to PHP 8.4
 * [#2124](https://github.com/shlinkio/shlink/issues/2124) Improve how Shlink decides if a GeoLite db file needs to be downloaded, and reduces the chances for API limits to be reached.
