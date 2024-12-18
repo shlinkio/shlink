@@ -9,6 +9,7 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -294,11 +295,16 @@ class QrCodeActionTest extends TestCase
     }
 
     #[Test]
-    public function logoIsAddedToQrCodeIfOptionIsDefined(): void
+    #[TestWith([[], '4696E5'])] // The logo has Shlink's brand color
+    #[TestWith([['logo' => 'invalid'], '4696E5'])] // Invalid `logo` values are ignored. Default logo is still rendered
+    #[TestWith([['logo' => 'disable'], '000000'])] // No logo will be added if explicitly disabled
+    public function logoIsAddedToQrCodeIfOptionIsDefined(array $query, string $expectedColor): void
     {
-        $logoUrl = 'https://avatars.githubusercontent.com/u/20341790?v=4'; // Shlink logo
+        $logoUrl = 'https://avatars.githubusercontent.com/u/20341790?v=4'; // Shlink's logo
         $code = 'abc123';
-        $req = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', $code);
+        $req = ServerRequestFactory::fromGlobals()
+            ->withAttribute('shortCode', $code)
+            ->withQueryParams($query);
 
         $this->urlResolver->method('resolveEnabledShortUrl')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain($code),
@@ -309,9 +315,9 @@ class QrCodeActionTest extends TestCase
         $image = imagecreatefromstring($resp->getBody()->__toString());
         self::assertNotFalse($image);
 
-        // At around 100x100 px we can already find the logo, which has Shlink's brand color
+        // At around 100x100 px we can already find the logo, if present
         $resultingColor = imagecolorat($image, 100, 100);
-        self::assertEquals(hexdec('4696E5'), $resultingColor);
+        self::assertEquals(hexdec($expectedColor), $resultingColor);
     }
 
     public static function provideEnabled(): iterable

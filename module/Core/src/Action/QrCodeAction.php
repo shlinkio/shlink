@@ -60,7 +60,7 @@ readonly class QrCodeAction implements MiddlewareInterface
     private function buildQrCode(Builder $qrCodeBuilder, QrCodeParams $params): ResultInterface
     {
         $logoUrl = $this->options->logoUrl;
-        if ($logoUrl === null) {
+        if ($logoUrl === null || $params->disableLogo) {
             return $qrCodeBuilder->build();
         }
 
