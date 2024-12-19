@@ -36,6 +36,7 @@ enum EnvVars: string
     case DB_HOST = 'DB_HOST';
     case DB_UNIX_SOCKET = 'DB_UNIX_SOCKET';
     case DB_PORT = 'DB_PORT';
+    case DB_USE_ENCRYPTION = 'DB_USE_ENCRYPTION';
     case GEOLITE_LICENSE_KEY = 'GEOLITE_LICENSE_KEY';
     case CACHE_NAMESPACE = 'CACHE_NAMESPACE';
     case REDIS_SERVERS = 'REDIS_SERVERS';
@@ -147,6 +148,7 @@ enum EnvVars: string
                 'mssql' => '1433',
                 default => '3306',
             },
+            self::DB_USE_ENCRYPTION => false,
 
             self::MERCURE_INTERNAL_HUB_URL => self::MERCURE_PUBLIC_HUB_URL->loadFromEnv(),
 
