@@ -93,7 +93,7 @@ class RedirectTest extends ApiTestCase
         foreach ($ipAddressConfig['rka']['ip_address']['headers_to_inspect'] as $header) {
             yield sprintf('rule: IP address in "%s" header', $header) => [
                 [
-                    RequestOptions::HEADERS => [$header => '1.2.3.4'],
+                    RequestOptions::HEADERS => [$header => $header !== 'Forwarded' ? '1.2.3.4' : 'for=1.2.3.4'],
                 ],
                 'https://example.com/static-ip-address',
             ];
