@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     All [URI-reserved characters](https://datatracker.ietf.org/doc/html/rfc3986#section-2.2) were disallowed up until now, but from now on, only the gen-delimiters are.
 
 * [#2229](https://github.com/shlinkio/shlink/issues/2229) Add `logo=disabled` query param to dynamically disable the default logo on QR codes.
+* [#2206](https://github.com/shlinkio/shlink/issues/2206) Add new `DB_USE_ENCRYPTION` config option to enable SSL database connections trusting any server certificate.
 
 ### Changed
 * [#2281](https://github.com/shlinkio/shlink/issues/2281) Update docker image to PHP 8.4
