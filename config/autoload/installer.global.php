@@ -20,6 +20,7 @@ return [
             Option\Database\DatabaseUserConfigOption::class,
             Option\Database\DatabasePasswordConfigOption::class,
             Option\Database\DatabaseUnixSocketConfigOption::class,
+            Option\Database\DatabaseUseEncryptionConfigOption::class,
             Option\UrlShortener\ShortDomainHostConfigOption::class,
             Option\UrlShortener\ShortDomainSchemaConfigOption::class,
             Option\Redirect\BaseUrlRedirectConfigOption::class,
