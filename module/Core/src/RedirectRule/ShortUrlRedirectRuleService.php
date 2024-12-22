@@ -20,7 +20,7 @@ readonly class ShortUrlRedirectRuleService implements ShortUrlRedirectRuleServic
     }
 
     /**
-     * @return ShortUrlRedirectRule[]
+     * @inheritDoc
      */
     public function rulesForShortUrl(ShortUrl $shortUrl): array
     {
@@ -31,7 +31,7 @@ readonly class ShortUrlRedirectRuleService implements ShortUrlRedirectRuleServic
     }
 
     /**
-     * @return ShortUrlRedirectRule[]
+     * @inheritDoc
      */
     public function setRulesForShortUrl(ShortUrl $shortUrl, RedirectRulesData $data): array
     {
@@ -55,7 +55,7 @@ readonly class ShortUrlRedirectRuleService implements ShortUrlRedirectRuleServic
     }
 
     /**
-     * @param ShortUrlRedirectRule[] $rules
+     * @inheritDoc
      */
     public function saveRulesForShortUrl(ShortUrl $shortUrl, array $rules): void
     {
@@ -74,7 +74,7 @@ readonly class ShortUrlRedirectRuleService implements ShortUrlRedirectRuleServic
     /**
      * @param ShortUrlRedirectRule[] $rules
      */
-    public function doSetRulesForShortUrl(ShortUrl $shortUrl, array $rules): void
+    private function doSetRulesForShortUrl(ShortUrl $shortUrl, array $rules): void
     {
         $this->em->wrapInTransaction(function () use ($shortUrl, $rules): void {
             // First, delete existing rules for the short URL

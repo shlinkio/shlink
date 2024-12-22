@@ -14,6 +14,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Shlinkio\Shlink\Core\Importer\ImportedLinksProcessor;
+use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectRuleServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortCodeUniquenessHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository;
@@ -44,13 +45,15 @@ class ImportedLinksProcessorTest extends TestCase
     private MockObject & ShortCodeUniquenessHelperInterface $shortCodeHelper;
     private MockObject & ShortUrlRepository $repo;
     private MockObject & StyleInterface $io;
+    private MockObject & ShortUrlRedirectRuleServiceInterface $redirectRuleService;
 
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManagerInterface::class);
         $this->repo = $this->createMock(ShortUrlRepository::class);
-
         $this->shortCodeHelper = $this->createMock(ShortCodeUniquenessHelperInterface::class);
+        $this->redirectRuleService = $this->createMock(ShortUrlRedirectRuleServiceInterface::class);
+
         $batchHelper = $this->createMock(DoctrineBatchHelperInterface::class);
         $batchHelper->method('wrapIterable')->willReturnArgument(0);
 
@@ -59,6 +62,7 @@ class ImportedLinksProcessorTest extends TestCase
             new SimpleShortUrlRelationResolver(),
             $this->shortCodeHelper,
             $batchHelper,
+            $this->redirectRuleService,
         );
 
         $this->io = $this->createMock(StyleInterface::class);

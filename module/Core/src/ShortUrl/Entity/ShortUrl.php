@@ -76,7 +76,6 @@ class ShortUrl extends AbstractEntity
 
     /**
      * @param non-empty-string $longUrl
-     * @internal
      */
     public static function withLongUrl(string $longUrl): self
     {
