@@ -45,7 +45,7 @@ class ApiKeyServiceTest extends TestCase
     public function apiKeyIsProperlyCreated(Chronos|null $date, string|null $name, array $roles): void
     {
         $this->repo->expects($this->once())->method('nameExists')->with(
-            ! empty($name) ? $name : $this->isType('string'),
+            ! empty($name) ? $name : $this->isString(),
         )->willReturn(false);
         $this->em->expects($this->once())->method('persist')->with($this->isInstanceOf(ApiKey::class));
 
@@ -83,7 +83,7 @@ class ApiKeyServiceTest extends TestCase
     {
         $callCount = 0;
         $this->repo->expects($this->exactly(3))->method('nameExists')->with(
-            $this->isType('string'),
+            $this->isString(),
         )->willReturnCallback(function () use (&$callCount): bool {
             $callCount++;
             return $callCount < 3;

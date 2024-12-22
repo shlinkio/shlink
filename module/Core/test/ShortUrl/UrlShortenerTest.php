@@ -38,7 +38,7 @@ class UrlShortenerTest extends TestCase
         // FIXME Should use the interface, but it doe snot define wrapInTransaction explicitly
         $this->em = $this->createMock(EntityManager::class);
         $this->em->method('persist')->willReturnCallback(fn (ShortUrl $shortUrl) => $shortUrl->setId('10'));
-        $this->em->method('wrapInTransaction')->with($this->isType('callable'))->willReturnCallback(
+        $this->em->method('wrapInTransaction')->with($this->isCallable())->willReturnCallback(
             fn (callable $callback) => $callback(),
         );
 

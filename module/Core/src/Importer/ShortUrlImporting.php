@@ -14,6 +14,7 @@ use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkRedirectRule;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
 
+use function count;
 use function Shlinkio\Shlink\Core\ArrayUtils\map;
 use function Shlinkio\Shlink\Core\normalizeDate;
 use function sprintf;
@@ -69,6 +70,10 @@ final readonly class ShortUrlImporting
         EntityManagerInterface $em,
         ShortUrlRedirectRuleServiceInterface $redirectRuleService,
     ): void {
+        if ($this->isNew && count($rules) === 0) {
+            return;
+        }
+
         $shortUrl = $this->resolveShortUrl($em);
         $redirectRules = map(
             $rules,

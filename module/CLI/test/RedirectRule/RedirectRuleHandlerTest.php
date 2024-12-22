@@ -77,7 +77,7 @@ class RedirectRuleHandlerTest extends TestCase
         $this->io->expects($this->once())->method('choice')->willReturn($action->value);
         $this->io->expects($this->never())->method('newLine');
         $this->io->expects($this->never())->method('text');
-        $this->io->expects($this->once())->method('table')->with($this->isType('array'), [
+        $this->io->expects($this->once())->method('table')->with($this->isArray(), [
             ['1', $comment($this->cond1->toHumanFriendly()), 'https://example.com/one'],
             [
                 '2',

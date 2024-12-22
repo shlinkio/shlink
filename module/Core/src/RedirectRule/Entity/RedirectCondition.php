@@ -24,7 +24,7 @@ use function trim;
 class RedirectCondition extends AbstractEntity implements JsonSerializable
 {
     private function __construct(
-        private readonly RedirectConditionType $type,
+        public readonly RedirectConditionType $type,
         private readonly string $matchValue,
         private readonly string|null $matchKey = null,
     ) {
