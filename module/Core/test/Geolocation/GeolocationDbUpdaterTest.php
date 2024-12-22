@@ -291,7 +291,7 @@ class GeolocationDbUpdaterTest extends TestCase
     private function geolocationDbUpdater(TrackingOptions|null $options = null): GeolocationDbUpdater
     {
         $locker = $this->createMock(Lock\LockFactory::class);
-        $locker->method('createLock')->with($this->isType('string'))->willReturn($this->lock);
+        $locker->method('createLock')->with($this->isString())->willReturn($this->lock);
 
         return new GeolocationDbUpdater($this->dbUpdater, $locker, $options ?? new TrackingOptions(), $this->em, 3);
     }

@@ -262,6 +262,7 @@ return [
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
             ShortUrl\Helper\ShortCodeUniquenessHelper::class,
             Util\DoctrineBatchHelper::class,
+            RedirectRule\ShortUrlRedirectRuleService::class,
         ],
 
         Crawling\CrawlingHelper::class => [ShortUrl\Repository\CrawlableShortCodesQuery::class],

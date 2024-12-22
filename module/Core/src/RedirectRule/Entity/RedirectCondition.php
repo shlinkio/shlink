@@ -9,6 +9,7 @@ use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
 use Shlinkio\Shlink\Core\RedirectRule\Model\Validation\RedirectRulesInputFilter;
 use Shlinkio\Shlink\Core\Util\IpAddressUtils;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkRedirectCondition;
 
 use function Shlinkio\Shlink\Core\acceptLanguageToLocales;
 use function Shlinkio\Shlink\Core\ArrayUtils\some;
@@ -23,7 +24,7 @@ use function trim;
 class RedirectCondition extends AbstractEntity implements JsonSerializable
 {
     private function __construct(
-        private readonly RedirectConditionType $type,
+        public readonly RedirectConditionType $type,
         private readonly string $matchValue,
         private readonly string|null $matchKey = null,
     ) {
@@ -70,6 +71,23 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
         $key = $rawData[RedirectRulesInputFilter::CONDITION_MATCH_KEY] ?? null;
 
         return new self($type, $value, $key);
+    }
+
+    public static function fromImport(ImportedShlinkRedirectCondition $cond): self|null
+    {
+        $type = RedirectConditionType::tryFrom($cond->type);
+        if ($type === null) {
+            return null;
+        }
+
+        return match ($type) {
+            RedirectConditionType::QUERY_PARAM => self::forQueryParam($cond->matchKey ?? '', $cond->matchValue),
+            RedirectConditionType::LANGUAGE => self::forLanguage($cond->matchValue),
+            RedirectConditionType::DEVICE => self::forDevice(DeviceType::from($cond->matchValue)),
+            RedirectConditionType::IP_ADDRESS => self::forIpAddress($cond->matchValue),
+            RedirectConditionType::GEOLOCATION_COUNTRY_CODE => self::forGeolocationCountryCode($cond->matchValue),
+            RedirectConditionType::GEOLOCATION_CITY_NAME => self::forGeolocationCityName($cond->matchValue),
+        };
     }
 
     /**

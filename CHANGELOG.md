@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#2229](https://github.com/shlinkio/shlink/issues/2229) Add `logo=disabled` query param to dynamically disable the default logo on QR codes.
 * [#2206](https://github.com/shlinkio/shlink/issues/2206) Add new `DB_USE_ENCRYPTION` config option to enable SSL database connections trusting any server certificate.
+* [#2209](https://github.com/shlinkio/shlink/issues/2209) Redirect rules are now imported when importing short URLs from a Shlink >=4.0 instance.
 
 ### Changed
 * [#2281](https://github.com/shlinkio/shlink/issues/2281) Update docker image to PHP 8.4

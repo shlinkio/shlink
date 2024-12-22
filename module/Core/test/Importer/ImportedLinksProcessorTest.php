@@ -14,6 +14,10 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Shlinkio\Shlink\Core\Importer\ImportedLinksProcessor;
+use Shlinkio\Shlink\Core\Model\DeviceType;
+use Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule;
+use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
+use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectRuleServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortCodeUniquenessHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository;
@@ -23,6 +27,8 @@ use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepository;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkOrphanVisit;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkRedirectCondition;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkRedirectRule;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
 use Shlinkio\Shlink\Importer\Model\ImportResult;
@@ -44,13 +50,15 @@ class ImportedLinksProcessorTest extends TestCase
     private MockObject & ShortCodeUniquenessHelperInterface $shortCodeHelper;
     private MockObject & ShortUrlRepository $repo;
     private MockObject & StyleInterface $io;
+    private MockObject & ShortUrlRedirectRuleServiceInterface $redirectRuleService;
 
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManagerInterface::class);
         $this->repo = $this->createMock(ShortUrlRepository::class);
-
         $this->shortCodeHelper = $this->createMock(ShortCodeUniquenessHelperInterface::class);
+        $this->redirectRuleService = $this->createMock(ShortUrlRedirectRuleServiceInterface::class);
+
         $batchHelper = $this->createMock(DoctrineBatchHelperInterface::class);
         $batchHelper->method('wrapIterable')->willReturnArgument(0);
 
@@ -59,6 +67,7 @@ class ImportedLinksProcessorTest extends TestCase
             new SimpleShortUrlRelationResolver(),
             $this->shortCodeHelper,
             $batchHelper,
+            $this->redirectRuleService,
         );
 
         $this->io = $this->createMock(StyleInterface::class);
@@ -67,10 +76,31 @@ class ImportedLinksProcessorTest extends TestCase
     #[Test]
     public function newUrlsWithNoErrorsAreAllPersisted(): void
     {
+        $now = Chronos::now();
         $urls = [
-            new ImportedShlinkUrl(ImportSource::BITLY, 'https://foo', [], Chronos::now(), null, 'foo', null),
-            new ImportedShlinkUrl(ImportSource::BITLY, 'https://bar', [], Chronos::now(), null, 'bar', 'foo'),
-            new ImportedShlinkUrl(ImportSource::BITLY, 'https://baz', [], Chronos::now(), null, 'baz', null),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'https://foo', [], $now, null, 'foo', null),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'https://bar', [], $now, null, 'bar', 'foo'),
+            new ImportedShlinkUrl(ImportSource::BITLY, 'https://baz', [], $now, null, 'baz', null, redirectRules: [
+                new ImportedShlinkRedirectRule(
+                    longUrl: 'https://example.com/android',
+                    conditions: [
+                        new ImportedShlinkRedirectCondition(
+                            RedirectConditionType::DEVICE->value,
+                            DeviceType::ANDROID->value,
+                        ),
+                    ],
+                ),
+                new ImportedShlinkRedirectRule(
+                    longUrl: 'https://example.com/spain',
+                    conditions: [
+                        new ImportedShlinkRedirectCondition(
+                            RedirectConditionType::GEOLOCATION_COUNTRY_CODE->value,
+                            'ES',
+                        ),
+                        new ImportedShlinkRedirectCondition(RedirectConditionType::LANGUAGE->value, 'es-ES'),
+                    ],
+                ),
+            ]),
         ];
         $expectedCalls = count($urls);
 
@@ -82,7 +112,19 @@ class ImportedLinksProcessorTest extends TestCase
         $this->em->expects($this->exactly($expectedCalls))->method('persist')->with(
             $this->isInstanceOf(ShortUrl::class),
         );
-        $this->io->expects($this->exactly($expectedCalls))->method('text')->with($this->isType('string'));
+        $this->io->expects($this->exactly($expectedCalls))->method('text')->with($this->isString());
+        $this->redirectRuleService->expects($this->once())->method('saveRulesForShortUrl')->with(
+            $this->isInstanceOf(ShortUrl::class),
+            $this->callback(function (array $rules): bool {
+                Assert::assertCount(2, $rules);
+                Assert::assertInstanceOf(ShortUrlRedirectRule::class, $rules[0]);
+                Assert::assertInstanceOf(ShortUrlRedirectRule::class, $rules[1]);
+                Assert::assertCount(1, $rules[0]->mapConditions(fn ($c) => $c));
+                Assert::assertCount(2, $rules[1]->mapConditions(fn ($c) => $c));
+
+                return true;
+            }),
+        );
 
         $this->processor->process($this->io, ImportResult::withShortUrls($urls), $this->buildParams());
     }
@@ -239,7 +281,8 @@ class ImportedLinksProcessorTest extends TestCase
         if (!$originalShortUrl->getId()) {
             $this->em->expects($this->never())->method('find');
         } else {
-            $this->em->expects($this->exactly(2))->method('find')->willReturn($foundShortUrl);
+            // 3 times: Initial short URL checking, before creating redirect rules, before creating visits
+            $this->em->expects($this->exactly(3))->method('find')->willReturn($foundShortUrl);
         }
         $this->em->expects($this->once())->method('persist')->willReturnCallback(
             static fn (Visit $visit)  => Assert::assertSame(
