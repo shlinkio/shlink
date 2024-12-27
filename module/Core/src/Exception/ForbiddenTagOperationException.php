@@ -14,8 +14,8 @@ class ForbiddenTagOperationException extends DomainException implements ProblemD
 {
     use CommonProblemDetailsExceptionTrait;
 
-    private const TITLE = 'Forbidden tag operation';
-    public const ERROR_CODE = 'forbidden-tag-operation';
+    private const string TITLE = 'Forbidden tag operation';
+    public const string ERROR_CODE = 'forbidden-tag-operation';
 
     public static function forDeletion(): self
     {

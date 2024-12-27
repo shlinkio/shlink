@@ -14,7 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 
 class GetNonOrphanVisitsCommand extends AbstractVisitsListCommand
 {
-    public const NAME = 'visit:non-orphan';
+    public const string NAME = 'visit:non-orphan';
 
     public function __construct(
         VisitsStatsHelperInterface $visitsHelper,

@@ -1,4 +1,4 @@
-name: Publish swagger spec
+name: Publish openapi spec
 
 on:
   push:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        php-version: ['8.2']
+        php-version: ['8.3']
     steps:
       - uses: actions/checkout@v4
       - name: Determine version
@@ -20,10 +20,10 @@ jobs:
       - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
-          extensions-cache-key: publish-swagger-spec-extensions-${{ matrix.php-version }}
-      - run: composer swagger:inline
+          extensions-cache-key: publish-openapi-spec-extensions-${{ matrix.php-version }}
+      - run: composer openapi:inline
       - run: mkdir ${{ steps.determine_version.outputs.version }}
-      - run: mv docs/swagger/swagger-inlined.json ${{ steps.determine_version.outputs.version }}/open-api-spec.json
+      - run: mv docs/swagger/openapi-inlined.json ${{ steps.determine_version.outputs.version }}/open-api-spec.json
       - name: Publish spec
         uses: JamesIves/github-pages-deploy-action@v4
         with:

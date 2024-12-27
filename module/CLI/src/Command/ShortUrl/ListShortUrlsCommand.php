@@ -33,7 +33,7 @@ use function sprintf;
 
 class ListShortUrlsCommand extends Command
 {
-    public const NAME = 'short-url:list';
+    public const string NAME = 'short-url:list';
 
     private readonly StartDateOption $startDateOption;
     private readonly EndDateOption $endDateOption;

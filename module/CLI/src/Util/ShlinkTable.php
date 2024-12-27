@@ -12,8 +12,8 @@ use function array_pop;
 
 final class ShlinkTable
 {
-    private const DEFAULT_STYLE_NAME = 'default';
-    private const TABLE_TITLE_STYLE = '<options=bold> %s </>';
+    private const string DEFAULT_STYLE_NAME = 'default';
+    private const string TABLE_TITLE_STYLE = '<options=bold> %s </>';
 
     private function __construct(private readonly Table $baseTable, private readonly bool $withRowSeparators = false)
     {

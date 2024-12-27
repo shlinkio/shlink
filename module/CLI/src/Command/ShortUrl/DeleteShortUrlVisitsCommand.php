@@ -16,7 +16,7 @@ use function sprintf;
 
 class DeleteShortUrlVisitsCommand extends AbstractDeleteVisitsCommand
 {
-    public const NAME = 'short-url:visits-delete';
+    public const string NAME = 'short-url:visits-delete';
 
     private readonly ShortUrlIdentifierInput $shortUrlIdentifierInput;
 

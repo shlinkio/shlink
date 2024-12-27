@@ -15,8 +15,8 @@ class DomainNotFoundException extends DomainException implements ProblemDetailsE
 {
     use CommonProblemDetailsExceptionTrait;
 
-    private const TITLE = 'Domain not found';
-    public const ERROR_CODE = 'domain-not-found';
+    private const string TITLE = 'Domain not found';
+    public const string ERROR_CODE = 'domain-not-found';
 
     private function __construct(string $message, array $additional)
     {

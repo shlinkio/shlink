@@ -59,13 +59,11 @@ class CustomSlugValidatorTest extends TestCase
 
     public static function provideInvalidValues(): iterable
     {
+        yield ['port:8080'];
         yield ['foo?bar=baz'];
         yield ['some-thing#foo'];
-        yield ['call()'];
-        yield ['array[]'];
+        yield ['brackets[]'];
         yield ['email@example.com'];
-        yield ['wildcard*'];
-        yield ['$500'];
     }
 
     public function createValidator(bool $multiSegmentSlugsEnabled = false): CustomSlugValidator

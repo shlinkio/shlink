@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Importer;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
+use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectRuleServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortCodeUniquenessHelperInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository;
@@ -32,6 +33,7 @@ readonly class ImportedLinksProcessor implements ImportedLinksProcessorInterface
         private ShortUrlRelationResolverInterface $relationResolver,
         private ShortCodeUniquenessHelperInterface $shortCodeHelper,
         private DoctrineBatchHelperInterface $batchHelper,
+        private ShortUrlRedirectRuleServiceInterface $redirectRuleService,
     ) {
     }
 
@@ -80,6 +82,7 @@ readonly class ImportedLinksProcessor implements ImportedLinksProcessorInterface
                 continue;
             }
 
+            $shortUrlImporting->importRedirectRules($importedUrl->redirectRules, $this->em, $this->redirectRuleService);
             $resultMessage = $shortUrlImporting->importVisits(
                 $this->batchHelper->wrapIterable($importedUrl->visits, 100),
                 $this->em,

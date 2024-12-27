@@ -106,8 +106,8 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
     {
         // Lock dependency creation for up to 5 seconds. This will prevent errors when trying to create the same one
         // more than once in parallel.
-        $locks[$name] = $lock = $this->locker->createLock($name, 5);
-        $lock->acquire(true);
+        $locks[$name] = $lock = $this->locker->createLock($name, ttl: 5);
+        $lock->acquire(blocking: true);
     }
 
     /**

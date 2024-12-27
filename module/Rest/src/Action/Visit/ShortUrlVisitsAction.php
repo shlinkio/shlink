@@ -12,7 +12,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ShortUrlVisitsAction extends AbstractListVisitsAction
 {
-    protected const ROUTE_PATH = '/short-urls/{shortCode}/visits';
+    protected const string ROUTE_PATH = '/short-urls/{shortCode}/visits';
 
     protected function getVisitsPaginator(Request $request, VisitsParams $params, ApiKey $apiKey): Pagerfanta
     {

@@ -6,13 +6,15 @@ namespace Shlinkio\Shlink\Core\EventDispatcher;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\CLI\GeoLite\GeolocationDbUpdaterInterface;
-use Shlinkio\Shlink\CLI\GeoLite\GeolocationResult;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\GeoLiteDbCreated;
+use Shlinkio\Shlink\Core\Geolocation\GeolocationDbUpdaterInterface;
+use Shlinkio\Shlink\Core\Geolocation\GeolocationDownloadProgressHandlerInterface;
+use Shlinkio\Shlink\Core\Geolocation\GeolocationResult;
 use Throwable;
 
 use function sprintf;
 
+/** @todo Rename to UpdateGeolocationDb */
 readonly class UpdateGeoLiteDb
 {
     public function __construct(
@@ -24,21 +26,35 @@ readonly class UpdateGeoLiteDb
 
     public function __invoke(): void
     {
-        $beforeDownload = fn (bool $olderDbExists) => $this->logger->notice(
-            sprintf('%s GeoLite2 db file...', $olderDbExists ? 'Updating' : 'Downloading'),
-        );
-        $messageLogged = false;
-        $handleProgress = function (int $total, int $downloaded, bool $olderDbExists) use (&$messageLogged): void {
-            if ($messageLogged || $total > $downloaded) {
-                return;
-            }
-
-            $messageLogged = true;
-            $this->logger->notice(sprintf('Finished %s GeoLite2 db file', $olderDbExists ? 'updating' : 'downloading'));
-        };
-
         try {
-            $result = $this->dbUpdater->checkDbUpdate($beforeDownload, $handleProgress);
+            $result = $this->dbUpdater->checkDbUpdate(
+                new class ($this->logger) implements GeolocationDownloadProgressHandlerInterface {
+                    public function __construct(
+                        private readonly LoggerInterface $logger,
+                        private bool $messageLogged = false,
+                    ) {
+                    }
+
+                    public function beforeDownload(bool $olderDbExists): void
+                    {
+                        $this->logger->notice(
+                            sprintf('%s GeoLite2 db file...', $olderDbExists ? 'Updating' : 'Downloading'),
+                        );
+                    }
+
+                    public function handleProgress(int $total, int $downloaded, bool $olderDbExists): void
+                    {
+                        if ($this->messageLogged || $total > $downloaded) {
+                            return;
+                        }
+
+                        $this->messageLogged = true;
+                        $this->logger->notice(
+                            sprintf('Finished %s GeoLite2 db file', $olderDbExists ? 'updating' : 'downloading'),
+                        );
+                    }
+                },
+            );
             if ($result === GeolocationResult::DB_CREATED) {
                 $this->eventDispatcher->dispatch(new GeoLiteDbCreated());
             }

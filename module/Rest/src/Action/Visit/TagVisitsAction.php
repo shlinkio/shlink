@@ -11,7 +11,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class TagVisitsAction extends AbstractListVisitsAction
 {
-    protected const ROUTE_PATH = '/tags/{tag}/visits';
+    protected const string ROUTE_PATH = '/tags/{tag}/visits';
 
     protected function getVisitsPaginator(Request $request, VisitsParams $params, ApiKey $apiKey): Pagerfanta
     {

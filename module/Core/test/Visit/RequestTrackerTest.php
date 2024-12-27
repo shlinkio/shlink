@@ -23,7 +23,7 @@ use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
 
 class RequestTrackerTest extends TestCase
 {
-    private const LONG_URL = 'https://domain.com/foo/bar?some=thing';
+    private const string LONG_URL = 'https://domain.com/foo/bar?some=thing';
 
     private RequestTracker $requestTracker;
     private MockObject & VisitsTrackerInterface $visitsTracker;

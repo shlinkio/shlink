@@ -9,11 +9,14 @@ use Laminas\ServiceManager\Factory\InvokableFactory;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Common\Doctrine\EntityRepositoryFactory;
 use Shlinkio\Shlink\Core\Config\Options\NotFoundRedirectOptions;
+use Shlinkio\Shlink\Core\Geolocation\GeolocationDbUpdater;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Symfony\Component\Lock;
+
+use const Shlinkio\Shlink\LOCAL_LOCK_FACTORY;
 
 return [
 
@@ -103,6 +106,7 @@ return [
 
             EventDispatcher\PublishingUpdatesGenerator::class => ConfigAbstractFactory::class,
 
+            Geolocation\GeolocationDbUpdater::class => ConfigAbstractFactory::class,
             Geolocation\Middleware\IpGeolocationMiddleware::class => ConfigAbstractFactory::class,
 
             Importer\ImportedLinksProcessor::class => ConfigAbstractFactory::class,
@@ -240,6 +244,12 @@ return [
 
         EventDispatcher\PublishingUpdatesGenerator::class => [ShortUrl\Transformer\ShortUrlDataTransformer::class],
 
+        GeolocationDbUpdater::class => [
+            DbUpdater::class,
+            LOCAL_LOCK_FACTORY,
+            Config\Options\TrackingOptions::class,
+            'em',
+        ],
         Geolocation\Middleware\IpGeolocationMiddleware::class => [
             IpLocationResolverInterface::class,
             DbUpdater::class,
@@ -252,6 +262,7 @@ return [
             ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class,
             ShortUrl\Helper\ShortCodeUniquenessHelper::class,
             Util\DoctrineBatchHelper::class,
+            RedirectRule\ShortUrlRedirectRuleService::class,
         ],
 
         Crawling\CrawlingHelper::class => [ShortUrl\Repository\CrawlableShortCodesQuery::class],

@@ -36,6 +36,7 @@ enum EnvVars: string
     case DB_HOST = 'DB_HOST';
     case DB_UNIX_SOCKET = 'DB_UNIX_SOCKET';
     case DB_PORT = 'DB_PORT';
+    case DB_USE_ENCRYPTION = 'DB_USE_ENCRYPTION';
     case GEOLITE_LICENSE_KEY = 'GEOLITE_LICENSE_KEY';
     case CACHE_NAMESPACE = 'CACHE_NAMESPACE';
     case REDIS_SERVERS = 'REDIS_SERVERS';
@@ -84,7 +85,7 @@ enum EnvVars: string
     case IS_HTTPS_ENABLED = 'IS_HTTPS_ENABLED';
     case DEFAULT_DOMAIN = 'DEFAULT_DOMAIN';
     case AUTO_RESOLVE_TITLES = 'AUTO_RESOLVE_TITLES';
-    case REDIRECT_APPEND_EXTRA_PATH = 'REDIRECT_APPEND_EXTRA_PATH';
+    case REDIRECT_EXTRA_PATH_MODE = 'REDIRECT_EXTRA_PATH_MODE';
     case MULTI_SEGMENT_SLUGS_ENABLED = 'MULTI_SEGMENT_SLUGS_ENABLED';
     case ROBOTS_ALLOW_ALL_SHORT_URLS = 'ROBOTS_ALLOW_ALL_SHORT_URLS';
     case ROBOTS_USER_AGENTS = 'ROBOTS_USER_AGENTS';
@@ -92,6 +93,8 @@ enum EnvVars: string
     case MEMORY_LIMIT = 'MEMORY_LIMIT';
     case INITIAL_API_KEY = 'INITIAL_API_KEY';
     case SKIP_INITIAL_GEOLITE_DOWNLOAD = 'SKIP_INITIAL_GEOLITE_DOWNLOAD';
+    /** @deprecated Use REDIRECT_EXTRA_PATH */
+    case REDIRECT_APPEND_EXTRA_PATH = 'REDIRECT_APPEND_EXTRA_PATH';
 
     public function loadFromEnv(): mixed
     {
@@ -125,11 +128,13 @@ enum EnvVars: string
             self::DEFAULT_SHORT_CODES_LENGTH => DEFAULT_SHORT_CODES_LENGTH,
             self::SHORT_URL_MODE => ShortUrlMode::STRICT->value,
             self::IS_HTTPS_ENABLED, self::AUTO_RESOLVE_TITLES => true,
-            self::REDIRECT_APPEND_EXTRA_PATH,
             self::MULTI_SEGMENT_SLUGS_ENABLED,
             self::SHORT_URL_TRAILING_SLASH => false,
             self::DEFAULT_DOMAIN, self::BASE_PATH => '',
             self::CACHE_NAMESPACE => 'Shlink',
+            // Deprecated. In Shlink 5.0.0, add default value for REDIRECT_EXTRA_PATH_MODE
+            self::REDIRECT_APPEND_EXTRA_PATH => false,
+            // self::REDIRECT_EXTRA_PATH_MODE => ExtraPathMode::DEFAULT->value,
 
             self::REDIS_PUB_SUB_ENABLED,
             self::MATOMO_ENABLED,
@@ -143,6 +148,7 @@ enum EnvVars: string
                 'mssql' => '1433',
                 default => '3306',
             },
+            self::DB_USE_ENCRYPTION => false,
 
             self::MERCURE_INTERNAL_HUB_URL => self::MERCURE_PUBLIC_HUB_URL->loadFromEnv(),
 

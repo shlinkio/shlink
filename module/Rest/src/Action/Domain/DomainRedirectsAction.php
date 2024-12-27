@@ -14,10 +14,10 @@ use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class DomainRedirectsAction extends AbstractRestAction
 {
-    protected const ROUTE_PATH = '/domains/redirects';
-    protected const ROUTE_ALLOWED_METHODS = [self::METHOD_PATCH];
+    protected const string ROUTE_PATH = '/domains/redirects';
+    protected const array ROUTE_ALLOWED_METHODS = [self::METHOD_PATCH];
 
-    public function __construct(private DomainServiceInterface $domainService)
+    public function __construct(private readonly DomainServiceInterface $domainService)
     {
     }
 

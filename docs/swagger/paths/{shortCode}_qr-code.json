@@ -85,6 +85,16 @@
                     "type": "string",
                     "default": "#ffffff"
                 }
+            },
+            {
+                "name": "logo",
+                "in": "query",
+                "description": "Currently used to disable the logo that was set via configuration options. It may be used in future to dynamically choose from multiple logos.",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "enum": ["disable"]
+                }
             }
         ],
         "responses": {

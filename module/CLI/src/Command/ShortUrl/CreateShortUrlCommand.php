@@ -20,7 +20,7 @@ use function sprintf;
 
 class CreateShortUrlCommand extends Command
 {
-    public const NAME = 'short-url:create';
+    public const string NAME = 'short-url:create';
 
     private SymfonyStyle $io;
     private readonly ShortUrlDataInput $shortUrlDataInput;

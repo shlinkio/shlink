@@ -16,8 +16,8 @@ class DeleteShortUrlException extends DomainException implements ProblemDetailsE
 {
     use CommonProblemDetailsExceptionTrait;
 
-    private const TITLE = 'Cannot delete short URL';
-    public const ERROR_CODE = 'invalid-short-url-deletion';
+    private const string TITLE = 'Cannot delete short URL';
+    public const string ERROR_CODE = 'invalid-short-url-deletion';
 
     public static function fromVisitsThreshold(int $threshold, ShortUrlIdentifier $identifier): self
     {

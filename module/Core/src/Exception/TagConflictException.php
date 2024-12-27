@@ -16,8 +16,8 @@ class TagConflictException extends RuntimeException implements ProblemDetailsExc
 {
     use CommonProblemDetailsExceptionTrait;
 
-    private const TITLE = 'Tag conflict';
-    public const ERROR_CODE = 'tag-conflict';
+    private const string TITLE = 'Tag conflict';
+    public const string ERROR_CODE = 'tag-conflict';
 
     public static function forExistingTag(Renaming $renaming): self
     {

@@ -16,7 +16,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class GetShortUrlVisitsCommand extends AbstractVisitsListCommand
 {
-    public const NAME = 'short-url:visits';
+    public const string NAME = 'short-url:visits';
 
     private ShortUrlIdentifierInput $shortUrlIdentifierInput;
 

@@ -11,7 +11,7 @@ use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 
 class Domain extends AbstractEntity implements JsonSerializable, NotFoundRedirectConfigInterface
 {
-    public const DEFAULT_AUTHORITY = 'DEFAULT';
+    public const string DEFAULT_AUTHORITY = 'DEFAULT';
 
     private function __construct(
         public readonly string $authority,

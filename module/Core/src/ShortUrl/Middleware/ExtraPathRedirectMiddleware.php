@@ -9,6 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Shlinkio\Shlink\Core\Config\Options\ExtraPathMode;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ErrorHandler\Model\NotFoundType;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
@@ -51,7 +52,7 @@ readonly class ExtraPathRedirectMiddleware implements MiddlewareInterface
 
     private function shouldApplyLogic(NotFoundType|null $notFoundType): bool
     {
-        if ($notFoundType === null || ! $this->urlShortenerOptions->appendExtraPath) {
+        if ($notFoundType === null || $this->urlShortenerOptions->extraPathMode === ExtraPathMode::DEFAULT) {
             return false;
         }
 
@@ -75,7 +76,11 @@ readonly class ExtraPathRedirectMiddleware implements MiddlewareInterface
 
         try {
             $shortUrl = $this->resolver->resolveEnabledShortUrl($identifier);
-            $longUrl = $this->redirectionBuilder->buildShortUrlRedirect($shortUrl, $request, $extraPath);
+            $longUrl = $this->redirectionBuilder->buildShortUrlRedirect(
+                $shortUrl,
+                $request,
+                $this->urlShortenerOptions->extraPathMode === ExtraPathMode::APPEND ? $extraPath : null,
+            );
             $this->requestTracker->trackIfApplicable(
                 $shortUrl,
                 $request->withAttribute(REDIRECT_URL_REQUEST_ATTRIBUTE, $longUrl),

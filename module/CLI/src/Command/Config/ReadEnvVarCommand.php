@@ -21,7 +21,7 @@ use function sprintf;
 
 class ReadEnvVarCommand extends Command
 {
-    public const NAME = 'env-var:read';
+    public const string NAME = 'env-var:read';
 
     /** @var Closure(string $envVar): mixed */
     private readonly Closure $loadEnvVar;

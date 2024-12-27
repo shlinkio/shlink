@@ -16,7 +16,7 @@ use Symfony\Component\Console\Input\InputInterface;
 
 class GetTagVisitsCommand extends AbstractVisitsListCommand
 {
-    public const NAME = 'tag:visits';
+    public const string NAME = 'tag:visits';
 
     public function __construct(
         VisitsStatsHelperInterface $visitsHelper,

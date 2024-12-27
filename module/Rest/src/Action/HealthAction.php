@@ -13,14 +13,14 @@ use Throwable;
 
 class HealthAction extends AbstractRestAction
 {
-    private const HEALTH_CONTENT_TYPE = 'application/health+json';
-    private const STATUS_PASS = 'pass';
-    private const STATUS_FAIL = 'fail';
+    private const string HEALTH_CONTENT_TYPE = 'application/health+json';
+    private const string STATUS_PASS = 'pass';
+    private const string STATUS_FAIL = 'fail';
 
-    public const ROUTE_PATH = '/health';
-    protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
+    public const string ROUTE_PATH = '/health';
+    protected const array ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
-    public function __construct(private EntityManagerInterface $em, private AppOptions $options)
+    public function __construct(private readonly EntityManagerInterface $em, private readonly AppOptions $options)
     {
     }
 

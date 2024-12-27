@@ -28,7 +28,7 @@ jobs:
     strategy:
       matrix:
         php-version: ['8.3']
-        command: ['cs', 'stan', 'swagger:validate']
+        command: ['cs', 'stan', 'openapi:validate']
     steps:
       - uses: actions/checkout@v4
       - uses: './.github/actions/ci-setup'

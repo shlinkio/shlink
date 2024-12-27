@@ -14,8 +14,8 @@ class MercureException extends RuntimeException implements ProblemDetailsExcepti
 {
     use CommonProblemDetailsExceptionTrait;
 
-    private const TITLE = 'Mercure integration not configured';
-    public const ERROR_CODE = 'mercure-not-configured';
+    private const string TITLE = 'Mercure integration not configured';
+    public const string ERROR_CODE = 'mercure-not-configured';
 
     public static function mercureNotConfigured(): self
     {

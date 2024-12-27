@@ -21,7 +21,7 @@ use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 
 class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterface, RequestMethodInterface
 {
-    public const API_KEY_HEADER = 'X-Api-Key';
+    public const string API_KEY_HEADER = 'X-Api-Key';
 
     public function __construct(
         private readonly ApiKeyServiceInterface $apiKeyService,

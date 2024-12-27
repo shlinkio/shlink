@@ -18,7 +18,7 @@ use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 abstract class AbstractListVisitsAction extends AbstractRestAction
 {
-    protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
+    protected const array ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
     public function __construct(protected readonly VisitsStatsHelperInterface $visitsHelper)
     {

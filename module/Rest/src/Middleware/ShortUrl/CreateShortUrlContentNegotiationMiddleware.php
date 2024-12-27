@@ -18,8 +18,8 @@ use function strtolower;
 
 class CreateShortUrlContentNegotiationMiddleware implements MiddlewareInterface
 {
-    private const PLAIN_TEXT = 'text';
-    private const JSON = 'json';
+    private const string PLAIN_TEXT = 'text';
+    private const string JSON = 'json';
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {

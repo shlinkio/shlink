@@ -16,8 +16,8 @@ use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class SetRedirectRulesAction extends AbstractRestAction
 {
-    protected const ROUTE_PATH = '/short-urls/{shortCode}/redirect-rules';
-    protected const ROUTE_ALLOWED_METHODS = [self::METHOD_POST, self::METHOD_PATCH];
+    protected const string ROUTE_PATH = '/short-urls/{shortCode}/redirect-rules';
+    protected const array ROUTE_ALLOWED_METHODS = [self::METHOD_POST, self::METHOD_PATCH];
 
     public function __construct(
         private readonly ShortUrlResolverInterface $urlResolver,

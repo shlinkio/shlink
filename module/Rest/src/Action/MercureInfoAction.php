@@ -15,11 +15,13 @@ use function sprintf;
 
 class MercureInfoAction extends AbstractRestAction
 {
-    protected const ROUTE_PATH = '/mercure-info';
-    protected const ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
+    protected const string ROUTE_PATH = '/mercure-info';
+    protected const array ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
-    public function __construct(private JwtProviderInterface $jwtProvider, private array $mercureConfig)
-    {
+    public function __construct(
+        private readonly JwtProviderInterface $jwtProvider,
+        private readonly array $mercureConfig,
+    ) {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface

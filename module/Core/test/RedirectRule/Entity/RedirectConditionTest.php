@@ -9,6 +9,8 @@ use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition;
+use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
+use Shlinkio\Shlink\Importer\Model\ImportedShlinkRedirectCondition;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
@@ -132,5 +134,23 @@ class RedirectConditionTest extends TestCase
         yield 'non-matching location' => [new Location(city: 'Los Angeles'), 'New York', false];
         yield 'matching location' => [new Location(city: 'Madrid'), 'Madrid', true];
         yield 'matching case-insensitive' => [new Location(city: 'Los Angeles'), 'los angeles', true];
+    }
+
+    #[Test]
+    #[TestWith(['invalid', null])]
+    #[TestWith([RedirectConditionType::DEVICE->value, RedirectConditionType::DEVICE])]
+    #[TestWith([RedirectConditionType::LANGUAGE->value, RedirectConditionType::LANGUAGE])]
+    #[TestWith([RedirectConditionType::QUERY_PARAM->value, RedirectConditionType::QUERY_PARAM])]
+    #[TestWith([RedirectConditionType::IP_ADDRESS->value, RedirectConditionType::IP_ADDRESS])]
+    #[TestWith(
+        [RedirectConditionType::GEOLOCATION_COUNTRY_CODE->value, RedirectConditionType::GEOLOCATION_COUNTRY_CODE],
+    )]
+    #[TestWith([RedirectConditionType::GEOLOCATION_CITY_NAME->value, RedirectConditionType::GEOLOCATION_CITY_NAME])]
+    public function canBeCreatedFromImport(string $type, RedirectConditionType|null $expectedType): void
+    {
+        $condition = RedirectCondition::fromImport(
+            new ImportedShlinkRedirectCondition($type, DeviceType::ANDROID->value, ''),
+        );
+        self::assertEquals($expectedType, $condition?->type);
     }
 }

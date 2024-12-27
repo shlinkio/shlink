@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class InitialApiKeyCommand extends Command
 {
-    public const NAME = 'api-key:initial';
+    public const string NAME = 'api-key:initial';
 
     public function __construct(private readonly ApiKeyServiceInterface $apiKeyService)
     {

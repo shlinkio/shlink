@@ -10,8 +10,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 abstract class AbstractRestAction implements RequestHandlerInterface, RequestMethodInterface, StatusCodeInterface
 {
-    protected const ROUTE_PATH = '';
-    protected const ROUTE_ALLOWED_METHODS = [];
+    protected const string ROUTE_PATH = '';
+    protected const array ROUTE_ALLOWED_METHODS = [];
 
     public static function getRouteDef(array $prevMiddleware = [], array $postMiddleware = []): array
     {

@@ -4,6 +4,42 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+# [4.4.0] - 2024-12-27
+### Added
+* [#2265](https://github.com/shlinkio/shlink/issues/2265) Add a new `REDIRECT_EXTRA_PATH_MODE` option that accepts three values:
+
+    * `default`: Short URLs only match if the path matches their short code or custom slug.
+    * `append`: Short URLs are matched as soon as the path starts with the short code or custom slug, and the extra path is appended to the long URL before redirecting.
+    * `ignore`: Short URLs are matched as soon as the path starts with the short code or custom slug, and the extra path is ignored.
+
+    This option effectively replaces the old `REDIRECT_APPEND_EXTRA_PATH` option, which is now deprecated and will be removed in Shlink 5.0.0
+
+* [#2156](https://github.com/shlinkio/shlink/issues/2156) Be less restrictive on what characters are disallowed in custom slugs.
+
+    All [URI-reserved characters](https://datatracker.ietf.org/doc/html/rfc3986#section-2.2) were disallowed up until now, but from now on, only the gen-delimiters are.
+
+* [#2229](https://github.com/shlinkio/shlink/issues/2229) Add `logo=disabled` query param to dynamically disable the default logo on QR codes.
+* [#2206](https://github.com/shlinkio/shlink/issues/2206) Add new `DB_USE_ENCRYPTION` config option to enable SSL database connections trusting any server certificate.
+* [#2209](https://github.com/shlinkio/shlink/issues/2209) Redirect rules are now imported when importing short URLs from a Shlink >=4.0 instance.
+
+### Changed
+* [#2281](https://github.com/shlinkio/shlink/issues/2281) Update docker image to PHP 8.4
+* [#2124](https://github.com/shlinkio/shlink/issues/2124) Improve how Shlink decides if a GeoLite db file needs to be downloaded, and reduces the chances for API limits to be reached.
+
+    Now Shlink tracks all download attempts, and knows which of them failed and succeeded. This lets it know when was the last error or success, how many consecutive errors have happened, etc.
+
+    It also tracks now the reason for a download to be attempted, and the error that happened when one fails.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* [#2247](https://github.com/shlinkio/shlink/issues/2247) Drop support for PHP 8.2
+
+### Fixed
+* *Nothing*
+
+
 # [4.3.1] - 2024-11-25
 ### Added
 * *Nothing*

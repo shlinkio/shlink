@@ -14,7 +14,7 @@ class VerifyAuthenticationException extends RuntimeException implements ProblemD
 {
     use CommonProblemDetailsExceptionTrait;
 
-    public const ERROR_CODE = 'invalid-api-key';
+    public const string ERROR_CODE = 'invalid-api-key';
 
     public static function forInvalidApiKey(): self
     {
