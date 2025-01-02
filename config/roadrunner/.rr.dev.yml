@@ -30,6 +30,7 @@ jobs:
         prefetch: 10
 
 logs:
+  encoding: json
   mode: development
   channels:
     http:

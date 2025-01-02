@@ -28,6 +28,7 @@ jobs:
         prefetch: 10
 
 logs:
+  encoding: json
   mode: production
   channels:
     http:
