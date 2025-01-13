@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+# [Unreleased]
+### Added
+* [#2331](https://github.com/shlinkio/shlink/issues/2331) Add `ADDRESS` env var which allows to customize the IP address to which RoadRunner binds, when using the official docker image.
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* *Nothing*
+
+
 # [4.4.0] - 2024-12-27
 ### Added
 * [#2265](https://github.com/shlinkio/shlink/issues/2265) Add a new `REDIRECT_EXTRA_PATH_MODE` option that accepts three values:
