@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* *Nothing*
+* [#2341](https://github.com/shlinkio/shlink/issues/2341) Ensure all asynchronous jobs that interact with the database do not leave idle connections open.
 
 
 # [4.4.0] - 2024-12-27

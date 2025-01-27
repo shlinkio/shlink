@@ -11,7 +11,7 @@ class CloseDbConnectionEventListener
     /** @var callable */
     private $wrapped;
 
-    public function __construct(private ReopeningEntityManagerInterface $em, callable $wrapped)
+    public function __construct(private readonly ReopeningEntityManagerInterface $em, callable $wrapped)
     {
         $this->wrapped = $wrapped;
     }
