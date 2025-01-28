@@ -11,10 +11,10 @@ jobs:
       matrix:
         include:
           - runtime: 'rr'
-            platforms: 'linux/arm64/v8,linux/amd64'
+            platforms: 'linux/amd64' # TODO Build on linux/arm64/v8 again. For some reason it is failing
           - runtime: 'rr'
             tag-suffix: 'roadrunner'
-            platforms: 'linux/arm64/v8,linux/amd64'
+            platforms: 'linux/amd64' # TODO Build on linux/arm64/v8 again. For some reason it is failing
     uses: shlinkio/github-actions/.github/workflows/docker-publish-image.yml@main
     secrets: inherit
     with:
@@ -24,4 +24,3 @@ jobs:
       tags-suffix: ${{ matrix.tag-suffix }}
       extra-build-args: |
         SHLINK_RUNTIME=${{ matrix.runtime }}
-      buildx-version: v0.19.2 # Using v0.20 there are errors when building ARM images
