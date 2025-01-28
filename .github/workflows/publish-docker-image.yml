@@ -24,3 +24,4 @@ jobs:
       tags-suffix: ${{ matrix.tag-suffix }}
       extra-build-args: |
         SHLINK_RUNTIME=${{ matrix.runtime }}
+      buildx-version: v0.19.2 # Using v0.20 there are errors when building ARM images
