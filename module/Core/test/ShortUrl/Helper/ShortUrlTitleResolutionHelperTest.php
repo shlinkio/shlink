@@ -16,6 +16,7 @@ use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\Builder\InvocationMocker;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelper;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
@@ -25,10 +26,12 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
     private const string LONG_URL = 'http://foobar.com/12345/hello?foo=bar';
 
     private MockObject & ClientInterface $httpClient;
+    private MockObject & LoggerInterface $logger;
 
     protected function setUp(): void
     {
         $this->httpClient = $this->createMock(ClientInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
     }
 
     #[Test]
@@ -90,14 +93,59 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
     }
 
     #[Test]
-    #[TestWith(['TEXT/html; charset=utf-8'], 'charset')]
-    #[TestWith(['TEXT/html'], 'no charset')]
-    public function titleIsUpdatedWhenItCanBeResolvedFromResponse(string $contentType): void
+    #[TestWith(['TEXT/html', false], 'no charset')]
+    #[TestWith(['TEXT/html; charset=utf-8', false], 'mbstring-supported charset')]
+    #[TestWith(['TEXT/html; charset=Windows-1255', true], 'mbstring-unsupported charset')]
+    public function titleIsUpdatedWhenItCanBeResolvedFromResponse(string $contentType, bool $expectsWarning): void
     {
-        $data = ShortUrlCreation::fromRawData(['longUrl' => self::LONG_URL]);
         $this->expectRequestToBeCalled()->willReturn($this->respWithTitle($contentType));
+        if ($expectsWarning) {
+            $this->logger->expects($this->once())->method('warning')->with(
+                'It was impossible to encode page title in UTF-8 with mb_convert_encoding. {e}',
+                $this->isArray(),
+            );
+        } else {
+            $this->logger->expects($this->never())->method('warning');
+        }
 
-        $result = $this->helper(autoResolveTitles: true)->processTitle($data);
+        $data = ShortUrlCreation::fromRawData(['longUrl' => self::LONG_URL]);
+        $result = $this->helper(autoResolveTitles: true, iconvEnabled: true)->processTitle($data);
+
+        self::assertNotSame($data, $result);
+        self::assertEquals('Resolved "title"', $result->title);
+    }
+
+    #[Test]
+    #[TestWith([
+        'contentType' => 'text/html; charset=Windows-1255',
+        'iconvEnabled' => false,
+        'expectedSecondMessage' => 'Missing iconv extension. Skipping title encoding',
+    ])]
+    #[TestWith([
+        'contentType' => 'text/html; charset=foo',
+        'iconvEnabled' => true,
+        'expectedSecondMessage' => 'It was impossible to encode page title in UTF-8 with iconv. {e}',
+    ])]
+    public function warningsLoggedWhenTitleCannotBeEncodedToUtf8(
+        string $contentType,
+        bool $iconvEnabled,
+        string $expectedSecondMessage,
+    ): void {
+        $this->expectRequestToBeCalled()->willReturn($this->respWithTitle($contentType));
+        $callCount = 0;
+        $this->logger->expects($this->exactly(2))->method('warning')->with($this->callback(
+            function (string $message) use (&$callCount, $expectedSecondMessage): bool {
+                $callCount++;
+                if ($callCount === 1) {
+                    return $message === 'It was impossible to encode page title in UTF-8 with mb_convert_encoding. {e}';
+                }
+
+                return $message === $expectedSecondMessage;
+            },
+        ));
+
+        $data = ShortUrlCreation::fromRawData(['longUrl' => self::LONG_URL]);
+        $result = $this->helper(autoResolveTitles: true, iconvEnabled: $iconvEnabled)->processTitle($data);
 
         self::assertNotSame($data, $result);
         self::assertEquals('Resolved "title"', $result->title);
@@ -143,11 +191,13 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
         return $body;
     }
 
-    private function helper(bool $autoResolveTitles = false): ShortUrlTitleResolutionHelper
+    private function helper(bool $autoResolveTitles = false, bool $iconvEnabled = false): ShortUrlTitleResolutionHelper
     {
         return new ShortUrlTitleResolutionHelper(
             $this->httpClient,
             new UrlShortenerOptions(autoResolveTitles: $autoResolveTitles),
+            $this->logger,
+            fn () => $iconvEnabled,
         );
     }
 }
