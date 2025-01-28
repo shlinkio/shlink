@@ -73,6 +73,9 @@ return (static function (): array {
             ],
 
             'delegators' => [
+                EventDispatcher\Matomo\SendVisitToMatomo::class => [
+                    EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
+                ],
                 EventDispatcher\Mercure\NotifyVisitToMercure::class => [
                     EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
                 ],
@@ -92,6 +95,9 @@ return (static function (): array {
                     EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
                 ],
                 EventDispatcher\LocateUnlocatedVisits::class => [
+                    EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
+                ],
+                EventDispatcher\UpdateGeoLiteDb::class => [
                     EventDispatcher\CloseDbConnectionEventListenerDelegator::class,
                 ],
             ],

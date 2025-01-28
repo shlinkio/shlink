@@ -7,7 +7,7 @@ server:
   command: 'php -dopcache.enable_cli=1 -dopcache.validate_timestamps=0 ../../bin/roadrunner-worker.php'
 
 http:
-  address: '0.0.0.0:${PORT:-8080}'
+  address: '${ADDRESS:-0.0.0.0}:${PORT:-8080}'
   middleware: ['static']
   static:
     dir: '../../public'

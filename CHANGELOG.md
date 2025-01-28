@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+# [4.4.1] - 2025-01-28
+### Added
+* [#2331](https://github.com/shlinkio/shlink/issues/2331) Add `ADDRESS` env var which allows to customize the IP address to which RoadRunner binds, when using the official docker image.
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#2341](https://github.com/shlinkio/shlink/issues/2341) Ensure all asynchronous jobs that interact with the database do not leave idle connections open.
+* [#2334](https://github.com/shlinkio/shlink/issues/2334) Improve how page titles are encoded to UTF-8, falling back from mbstring to iconv if available, and ultimately using the original title in case of error, but never causing the short URL creation to fail.
+
+
 # [4.4.0] - 2024-12-27
 ### Added
 * [#2265](https://github.com/shlinkio/shlink/issues/2265) Add a new `REDIRECT_EXTRA_PATH_MODE` option that accepts three values:

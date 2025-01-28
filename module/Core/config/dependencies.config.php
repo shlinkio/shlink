@@ -227,6 +227,7 @@ return [
         ShortUrl\Helper\ShortUrlTitleResolutionHelper::class => [
             'httpClient',
             Config\Options\UrlShortenerOptions::class,
+            'Logger_Shlink',
         ],
         ShortUrl\Helper\ShortUrlRedirectionBuilder::class => [
             Config\Options\TrackingOptions::class,
