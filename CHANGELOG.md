@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#2341](https://github.com/shlinkio/shlink/issues/2341) Ensure all asynchronous jobs that interact with the database do not leave idle connections open.
+* [#2334](https://github.com/shlinkio/shlink/issues/2334) Improve how page titles are encoded to UTF-8, falling back from mbstring to iconv if available, and ultimately using the original title in case of error, but never causing the short URL creation to fail.
 
 
 # [4.4.0] - 2024-12-27
