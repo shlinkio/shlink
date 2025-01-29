@@ -8,3 +8,5 @@ on:
 jobs:
   build-docker-image:
     uses: shlinkio/github-actions/.github/workflows/docker-image-build-ci.yml@main
+    with:
+      platforms: 'linux/arm64/v8,linux/amd64'
