@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [4.4.2] - 2025-01-29
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#2346](https://github.com/shlinkio/shlink/issues/2346) Get back docker images for ARM architectures.
+
+
 ## [4.4.1] - 2025-01-28
 ### Added
 * [#2331](https://github.com/shlinkio/shlink/issues/2331) Add `ADDRESS` env var which allows to customize the IP address to which RoadRunner binds, when using the official docker image.
