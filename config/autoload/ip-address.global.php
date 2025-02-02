@@ -5,6 +5,8 @@ declare(strict_types=1);
 use RKA\Middleware\IpAddress;
 use RKA\Middleware\Mezzio\IpAddressFactory;
 
+use Shlinkio\Shlink\Core\Config\EnvVars;
+use function Shlinkio\Shlink\Core\splitByComma;
 use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
 
 return [
@@ -14,7 +16,7 @@ return [
         'ip_address' => [
             'attribute_name' => IP_ADDRESS_REQUEST_ATTRIBUTE,
             'check_proxy_headers' => true,
-            'trusted_proxies' => [],
+            'trusted_proxies' => splitByComma(EnvVars::TRUSTED_PROXIES->loadFromEnv()),
             'headers_to_inspect' => [
                 'CF-Connecting-IP',
                 'X-Forwarded-For',

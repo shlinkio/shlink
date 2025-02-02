@@ -95,6 +95,7 @@ enum EnvVars: string
     case SKIP_INITIAL_GEOLITE_DOWNLOAD = 'SKIP_INITIAL_GEOLITE_DOWNLOAD';
     /** @deprecated Use REDIRECT_EXTRA_PATH */
     case REDIRECT_APPEND_EXTRA_PATH = 'REDIRECT_APPEND_EXTRA_PATH';
+    case TRUSTED_PROXIES = 'TRUSTED_PROXIES';
 
     public function loadFromEnv(): mixed
     {
