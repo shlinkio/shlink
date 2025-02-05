@@ -154,16 +154,8 @@
             "@test:cli",
             "phpcov merge build/coverage-cli --html build/coverage-cli/coverage-html && rm build/coverage-cli/*.cov"
         ],
-        "openapi:validate": "@php -d error_reporting=\"E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED\" vendor/bin/php-openapi validate docs/swagger/swagger.json",
-        "openapi:inline": "@php -d error_reporting=\"E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED\" vendor/bin/php-openapi inline docs/swagger/swagger.json docs/swagger/openapi-inlined.json",
-        "swagger:validate": [
-            "echo \"This command is deprecated. Use openapi:validate instead\"",
-            "@openapi:validate"
-        ],
-        "swagger:inline": [
-            "echo \"This command is deprecated. Use openapi:inline instead\"",
-            "@openapi:inline"
-        ],
+        "openapi:validate": "php-openapi validate docs/swagger/swagger.json",
+        "openapi:inline": "php-openapi inline docs/swagger/swagger.json docs/swagger/openapi-inlined.json",
         "clean:dev": "rm -f data/database.sqlite && rm -f config/params/generated_config.php"
     },
     "config": {
