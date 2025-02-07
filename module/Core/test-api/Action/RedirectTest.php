@@ -98,6 +98,18 @@ class RedirectTest extends ApiTestCase
                 'https://example.com/static-ip-address',
             ];
         }
+        yield 'rule: Reverse Proxy IP address in "REMOTE_ADDR" and Client IP in "X-Forwarded-For"' => [
+            [
+                RequestOptions::HEADERS => ['REMOTE_ADDR' => '172.12.0.8', 'X-Forwarded-For' => '1.2.3.4'],
+            ],
+            'https://example.com/static-ip-address',
+        ];
+        yield 'rule: Reverse Proxy IP address in "REMOTE_ADDR" and in "X-Forwarded-For" set as last' => [
+            [
+                RequestOptions::HEADERS => ['REMOTE_ADDR' => '172.12.0.8', 'X-Forwarded-For' => '1.2.3.4, 172.12.0.8'],
+            ],
+            'https://example.com/static-ip-address',
+        ];
     }
 
     /**
