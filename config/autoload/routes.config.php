@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink;
 
 use Fig\Http\Message\RequestMethodInterface;
+use Laminas\Diactoros\Response\TextResponse;
+use Psr\Http\Message\ServerRequestInterface;
 use RKA\Middleware\IpAddress;
 use Shlinkio\Shlink\Core\Action as CoreAction;
 use Shlinkio\Shlink\Core\Config\EnvVars;
@@ -15,6 +17,7 @@ use Shlinkio\Shlink\Rest\ConfigProvider;
 use Shlinkio\Shlink\Rest\Middleware;
 use Shlinkio\Shlink\Rest\Middleware\Mercure\NotConfiguredMercureErrorHandler;
 
+use function Shlinkio\Shlink\Core\ipAddressFromRequest;
 use function sprintf;
 
 return (static function (): array {
@@ -28,7 +31,24 @@ return (static function (): array {
         'routes' => [
             // Rest
             ...ConfigProvider::applyRoutesPrefix([
-                Action\HealthAction::getRouteDef(),
+                Action\HealthAction::getRouteDef([
+                    IpAddress::class,
+                    \Laminas\Stratigility\middleware(
+                        function (ServerRequestInterface $req) {
+                            $addr = ipAddressFromRequest($req);
+                            $right = $addr === '172.20.16.1' ? 'right' : 'wrong';
+                            $remoteAddr = $req->getServerParams()['REMOTE_ADDR'];
+                            return new TextResponse(<<<RESP
+                                    Resolved IP: {$addr} ({$right})
+                                    
+                                    REMOTE_ADDR: {$remoteAddr}
+                                    X-Real-IP: {$req->getHeaderLine('X-Real-Ip')}
+                                    X-Forwarded-For: {$req->getHeaderLine('X-Forwarded-For')}
+                                RESP
+                            );
+                        },
+                    ),
+                ]),
 
                 // Visits and rules routes must go first, as they have a more specific path, otherwise, when
                 // multi-segment slugs are enabled, routes with a less-specific path might match first

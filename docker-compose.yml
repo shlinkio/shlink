@@ -1,7 +1,7 @@
 services:
     shlink_nginx:
         container_name: shlink_nginx
-        image: nginx:1.25-alpine
+        image: nginx:1.27-alpine
         ports:
             - "8000:80"
         volumes:
@@ -65,6 +65,42 @@ services:
             LC_ALL: C
         extra_hosts:
             - 'host.docker.internal:host-gateway'
+
+    shlink_proxy_one:
+        container_name: shlink_proxy_one
+        image: nginx:1.27-alpine
+        ports:
+            - "8801:80"
+        volumes:
+            - ./data/infra/shlink_proxy_one.conf:/etc/nginx/conf.d/default.conf
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        links:
+            - shlink_roadrunner
+
+    shlink_proxy_two:
+        container_name: shlink_proxy_two
+        image: nginx:1.27-alpine
+        ports:
+            - "8802:80"
+        volumes:
+            - ./data/infra/shlink_proxy_two.conf:/etc/nginx/conf.d/default.conf
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        links:
+            - shlink_proxy_one
+
+    shlink_proxy_three:
+        container_name: shlink_proxy_three
+        image: nginx:1.27-alpine
+        ports:
+            - "8803:80"
+        volumes:
+            - ./data/infra/shlink_proxy_three.conf:/etc/nginx/conf.d/default.conf
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        links:
+            - shlink_proxy_two
 
     shlink_db_mysql:
         container_name: shlink_db_mysql
@@ -133,7 +169,7 @@ services:
 
     shlink_mercure_proxy:
         container_name: shlink_mercure_proxy
-        image: nginx:1.25-alpine
+        image: nginx:1.27-alpine
         ports:
             - "8002:80"
         volumes:
