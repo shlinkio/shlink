@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\ShortUrl;
 
 use Cake\Chronos\Chronos;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -24,7 +24,7 @@ use Shlinkio\Shlink\Core\ShortUrl\UrlShortener;
 class UrlShortenerTest extends TestCase
 {
     private UrlShortener $urlShortener;
-    private MockObject & EntityManager $em;
+    private MockObject & EntityManagerInterface $em;
     private MockObject & ShortUrlTitleResolutionHelperInterface $titleResolutionHelper;
     private MockObject & ShortCodeUniquenessHelperInterface $shortCodeHelper;
     private MockObject & EventDispatcherInterface $dispatcher;
@@ -35,12 +35,9 @@ class UrlShortenerTest extends TestCase
         $this->titleResolutionHelper = $this->createMock(ShortUrlTitleResolutionHelperInterface::class);
         $this->shortCodeHelper = $this->createMock(ShortCodeUniquenessHelperInterface::class);
 
-        // FIXME Should use the interface, but it doe snot define wrapInTransaction explicitly
-        $this->em = $this->createMock(EntityManager::class);
+        $this->em = $this->createMock(EntityManagerInterface::class);
         $this->em->method('persist')->willReturnCallback(fn (ShortUrl $shortUrl) => $shortUrl->setId('10'));
-        $this->em->method('wrapInTransaction')->with($this->isCallable())->willReturnCallback(
-            fn (callable $callback) => $callback(),
-        );
+        $this->em->method('wrapInTransaction')->willReturnCallback(fn (callable $callback) => $callback());
 
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->repo = $this->createMock(ShortUrlRepositoryInterface::class);

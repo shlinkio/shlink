@@ -79,9 +79,7 @@ class QrCodeActionTest extends TestCase
         string $expectedContentType,
     ): void {
         $code = 'abc123';
-        $this->urlResolver->method('resolveEnabledShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain($code, ''),
-        )->willReturn(ShortUrl::createFake());
+        $this->urlResolver->method('resolveEnabledShortUrl')->willReturn(ShortUrl::createFake());
         $handler = $this->createMock(RequestHandlerInterface::class);
         $req = (new ServerRequest())->withAttribute('shortCode', $code)->withQueryParams($query);
 
@@ -109,9 +107,7 @@ class QrCodeActionTest extends TestCase
         int $expectedSize,
     ): void {
         $code = 'abc123';
-        $this->urlResolver->method('resolveEnabledShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain($code, ''),
-        )->willReturn(ShortUrl::createFake());
+        $this->urlResolver->method('resolveEnabledShortUrl')->willReturn(ShortUrl::createFake());
         $handler = $this->createMock(RequestHandlerInterface::class);
 
         $resp = $this->action($defaultOptions)->process($req->withAttribute('shortCode', $code), $handler);
@@ -199,9 +195,7 @@ class QrCodeActionTest extends TestCase
             ->withQueryParams(['size' => 250, 'roundBlockSize' => $roundBlockSize])
             ->withAttribute('shortCode', $code);
 
-        $this->urlResolver->method('resolveEnabledShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain($code, ''),
-        )->willReturn(ShortUrl::withLongUrl('https://shlink.io'));
+        $this->urlResolver->method('resolveEnabledShortUrl')->willReturn(ShortUrl::withLongUrl('https://shlink.io'));
         $handler = $this->createMock(RequestHandlerInterface::class);
 
         $resp = $this->action($defaultOptions)->process($req, $handler);
@@ -242,9 +236,7 @@ class QrCodeActionTest extends TestCase
             ->withQueryParams(['color' => $queryColor])
             ->withAttribute('shortCode', $code);
 
-        $this->urlResolver->method('resolveEnabledShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain($code),
-        )->willReturn(ShortUrl::withLongUrl('https://shlink.io'));
+        $this->urlResolver->method('resolveEnabledShortUrl')->willReturn(ShortUrl::withLongUrl('https://shlink.io'));
         $handler = $this->createMock(RequestHandlerInterface::class);
 
         $resp = $this->action(
@@ -306,9 +298,7 @@ class QrCodeActionTest extends TestCase
             ->withAttribute('shortCode', $code)
             ->withQueryParams($query);
 
-        $this->urlResolver->method('resolveEnabledShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain($code),
-        )->willReturn(ShortUrl::withLongUrl('https://shlink.io'));
+        $this->urlResolver->method('resolveEnabledShortUrl')->willReturn(ShortUrl::withLongUrl('https://shlink.io'));
         $handler = $this->createMock(RequestHandlerInterface::class);
 
         $resp = $this->action(new QrCodeOptions(size: 250, logoUrl: $logoUrl))->process($req, $handler);

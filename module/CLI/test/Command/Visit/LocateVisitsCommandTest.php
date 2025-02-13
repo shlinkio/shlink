@@ -47,7 +47,7 @@ class LocateVisitsCommandTest extends TestCase
 
         $locker = $this->createMock(Lock\LockFactory::class);
         $this->lock = $this->createMock(Lock\SharedLockInterface::class);
-        $locker->method('createLock')->with($this->isString(), 600.0, false)->willReturn($this->lock);
+        $locker->method('createLock')->willReturn($this->lock);
 
         $command = new LocateVisitsCommand($this->visitService, $this->visitToLocation, $locker);
 
@@ -67,7 +67,7 @@ class LocateVisitsCommandTest extends TestCase
         $location = VisitLocation::fromGeolocation(Location::empty());
         $mockMethodBehavior = $this->invokeHelperMethods($visit, $location);
 
-        $this->lock->method('acquire')->with($this->isFalse())->willReturn(true);
+        $this->lock->method('acquire')->willReturn(true);
         $this->visitService->expects($this->exactly($expectedUnlocatedCalls))
                            ->method('locateUnlocatedVisits')
                            ->withAnyParameters()
@@ -83,7 +83,7 @@ class LocateVisitsCommandTest extends TestCase
         $this->visitToLocation->expects(
             $this->exactly($expectedUnlocatedCalls + $expectedEmptyCalls + $expectedAllCalls),
         )->method('resolveVisitLocation')->withAnyParameters()->willReturn(Location::emptyInstance());
-        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCode::EXIT_SUCCESS);
+        $this->downloadDbCommand->method('run')->willReturn(ExitCode::EXIT_SUCCESS);
 
         $this->commandTester->setInputs(['y']);
         $this->commandTester->execute($args);
@@ -108,15 +108,15 @@ class LocateVisitsCommandTest extends TestCase
     public function localhostAndEmptyAddressesAreIgnored(IpCannotBeLocatedException $e, string $message): void
     {
         $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::empty());
-        $location = VisitLocation::fromGeolocation(Location::emptyInstance());
+        $location = VisitLocation::fromGeolocation(Location::empty());
 
-        $this->lock->method('acquire')->with($this->isFalse())->willReturn(true);
+        $this->lock->method('acquire')->willReturn(true);
         $this->visitService->expects($this->once())
                            ->method('locateUnlocatedVisits')
                            ->withAnyParameters()
                            ->willReturnCallback($this->invokeHelperMethods($visit, $location));
         $this->visitToLocation->expects($this->once())->method('resolveVisitLocation')->willThrowException($e);
-        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCode::EXIT_SUCCESS);
+        $this->downloadDbCommand->method('run')->willReturn(ExitCode::EXIT_SUCCESS);
 
         $this->commandTester->execute([], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
 
@@ -137,7 +137,7 @@ class LocateVisitsCommandTest extends TestCase
         $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::fromParams(remoteAddress: '1.2.3.4'));
         $location = VisitLocation::fromGeolocation(Location::emptyInstance());
 
-        $this->lock->method('acquire')->with($this->isFalse())->willReturn(true);
+        $this->lock->method('acquire')->willReturn(true);
         $this->visitService->expects($this->once())
                            ->method('locateUnlocatedVisits')
                            ->withAnyParameters()
@@ -145,7 +145,7 @@ class LocateVisitsCommandTest extends TestCase
         $this->visitToLocation->expects($this->once())->method('resolveVisitLocation')->willThrowException(
             IpCannotBeLocatedException::forError(WrongIpException::fromIpAddress('1.2.3.4')),
         );
-        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCode::EXIT_SUCCESS);
+        $this->downloadDbCommand->method('run')->willReturn(ExitCode::EXIT_SUCCESS);
 
         $this->commandTester->execute([], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
 
@@ -165,11 +165,11 @@ class LocateVisitsCommandTest extends TestCase
     #[Test]
     public function noActionIsPerformedIfLockIsAcquired(): void
     {
-        $this->lock->method('acquire')->with($this->isFalse())->willReturn(false);
+        $this->lock->method('acquire')->willReturn(false);
 
         $this->visitService->expects($this->never())->method('locateUnlocatedVisits');
         $this->visitToLocation->expects($this->never())->method('resolveVisitLocation');
-        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCode::EXIT_SUCCESS);
+        $this->downloadDbCommand->method('run')->willReturn(ExitCode::EXIT_SUCCESS);
 
         $this->commandTester->execute([], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
         $output = $this->commandTester->getDisplay();
@@ -183,8 +183,8 @@ class LocateVisitsCommandTest extends TestCase
     #[Test]
     public function showsProperMessageWhenGeoLiteUpdateFails(): void
     {
-        $this->lock->method('acquire')->with($this->isFalse())->willReturn(true);
-        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCode::EXIT_FAILURE);
+        $this->lock->method('acquire')->willReturn(true);
+        $this->downloadDbCommand->method('run')->willReturn(ExitCode::EXIT_FAILURE);
         $this->visitService->expects($this->never())->method('locateUnlocatedVisits');
 
         $this->commandTester->execute([]);
@@ -196,8 +196,8 @@ class LocateVisitsCommandTest extends TestCase
     #[Test]
     public function providingAllFlagOnItsOwnDisplaysNotice(): void
     {
-        $this->lock->method('acquire')->with($this->isFalse())->willReturn(true);
-        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCode::EXIT_SUCCESS);
+        $this->lock->method('acquire')->willReturn(true);
+        $this->downloadDbCommand->method('run')->willReturn(ExitCode::EXIT_SUCCESS);
 
         $this->commandTester->execute(['--all' => true]);
         $output = $this->commandTester->getDisplay();
@@ -208,7 +208,7 @@ class LocateVisitsCommandTest extends TestCase
     #[Test, DataProvider('provideAbortInputs')]
     public function processingAllCancelsCommandIfUserDoesNotActivelyAgreeToConfirmation(array $inputs): void
     {
-        $this->downloadDbCommand->method('run')->withAnyParameters()->willReturn(ExitCode::EXIT_SUCCESS);
+        $this->downloadDbCommand->method('run')->willReturn(ExitCode::EXIT_SUCCESS);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Execution aborted');

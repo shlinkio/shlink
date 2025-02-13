@@ -108,14 +108,8 @@ class VisitsStatsHelperTest extends TestCase
             range(0, 1),
         );
         $repo2 = $this->createMock(VisitRepository::class);
-        $repo2->method('findVisitsByShortCode')->with(
-            $identifier,
-            $this->isInstanceOf(VisitsListFiltering::class),
-        )->willReturn($list);
-        $repo2->method('countVisitsByShortCode')->with(
-            $identifier,
-            $this->isInstanceOf(VisitsCountFiltering::class),
-        )->willReturn(1);
+        $repo2->method('findVisitsByShortCode')->willReturn($list);
+        $repo2->method('countVisitsByShortCode')->willReturn(1);
 
         $this->em->expects($this->exactly(2))->method('getRepository')->willReturnMap([
             [ShortUrl::class, $repo],
@@ -168,10 +162,8 @@ class VisitsStatsHelperTest extends TestCase
             range(0, 1),
         );
         $repo2 = $this->createMock(VisitRepository::class);
-        $repo2->method('findVisitsByTag')->with($tag, $this->isInstanceOf(VisitsListFiltering::class))->willReturn(
-            $list,
-        );
-        $repo2->method('countVisitsByTag')->with($tag, $this->isInstanceOf(VisitsCountFiltering::class))->willReturn(1);
+        $repo2->method('findVisitsByTag')->willReturn($list);
+        $repo2->method('countVisitsByTag')->willReturn(1);
 
         $this->em->expects($this->exactly(2))->method('getRepository')->willReturnMap([
             [Tag::class, $repo],
@@ -209,14 +201,8 @@ class VisitsStatsHelperTest extends TestCase
             range(0, 1),
         );
         $repo2 = $this->createMock(VisitRepository::class);
-        $repo2->method('findVisitsByDomain')->with(
-            $domain,
-            $this->isInstanceOf(VisitsListFiltering::class),
-        )->willReturn($list);
-        $repo2->method('countVisitsByDomain')->with(
-            $domain,
-            $this->isInstanceOf(VisitsCountFiltering::class),
-        )->willReturn(1);
+        $repo2->method('findVisitsByDomain')->willReturn($list);
+        $repo2->method('countVisitsByDomain')->willReturn(1);
 
         $this->em->expects($this->exactly(2))->method('getRepository')->willReturnMap([
             [Domain::class, $repo],
@@ -239,14 +225,8 @@ class VisitsStatsHelperTest extends TestCase
             range(0, 1),
         );
         $repo2 = $this->createMock(VisitRepository::class);
-        $repo2->method('findVisitsByDomain')->with(
-            Domain::DEFAULT_AUTHORITY,
-            $this->isInstanceOf(VisitsListFiltering::class),
-        )->willReturn($list);
-        $repo2->method('countVisitsByDomain')->with(
-            Domain::DEFAULT_AUTHORITY,
-            $this->isInstanceOf(VisitsCountFiltering::class),
-        )->willReturn(1);
+        $repo2->method('findVisitsByDomain')->willReturn($list);
+        $repo2->method('countVisitsByDomain')->willReturn(1);
 
         $this->em->expects($this->exactly(2))->method('getRepository')->willReturnMap([
             [Domain::class, $repo],

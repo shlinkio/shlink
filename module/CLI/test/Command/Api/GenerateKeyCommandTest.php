@@ -15,7 +15,6 @@ use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class GenerateKeyCommandTest extends TestCase
@@ -27,7 +26,7 @@ class GenerateKeyCommandTest extends TestCase
     {
         $this->apiKeyService = $this->createMock(ApiKeyServiceInterface::class);
         $roleResolver = $this->createMock(RoleResolverInterface::class);
-        $roleResolver->method('determineRoles')->with($this->isInstanceOf(InputInterface::class))->willReturn([]);
+        $roleResolver->method('determineRoles')->willReturn([]);
 
         $command = new GenerateKeyCommand($this->apiKeyService, $roleResolver);
         $this->commandTester = CliTestUtils::testerForCommand($command);

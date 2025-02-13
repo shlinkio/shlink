@@ -25,11 +25,11 @@ class MigrateDatabaseCommandTest extends TestCase
     {
         $locker = $this->createMock(LockFactory::class);
         $lock = $this->createMock(SharedLockInterface::class);
-        $lock->method('acquire')->withAnyParameters()->willReturn(true);
-        $locker->method('createLock')->withAnyParameters()->willReturn($lock);
+        $lock->method('acquire')->willReturn(true);
+        $locker->method('createLock')->willReturn($lock);
 
         $phpExecutableFinder = $this->createMock(PhpExecutableFinder::class);
-        $phpExecutableFinder->method('find')->with($this->isFalse())->willReturn('/usr/local/bin/php');
+        $phpExecutableFinder->method('find')->willReturn('/usr/local/bin/php');
 
         $this->processHelper = $this->createMock(ProcessRunnerInterface::class);
 

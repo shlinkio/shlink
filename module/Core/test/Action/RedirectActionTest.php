@@ -37,7 +37,7 @@ class RedirectActionTest extends TestCase
         $this->redirectRespHelper = $this->createMock(RedirectResponseHelperInterface::class);
 
         $redirectBuilder = $this->createMock(ShortUrlRedirectionBuilderInterface::class);
-        $redirectBuilder->method('buildShortUrlRedirect')->withAnyParameters()->willReturn(self::LONG_URL);
+        $redirectBuilder->method('buildShortUrlRedirect')->willReturn(self::LONG_URL);
 
         $this->action = new RedirectAction(
             $this->urlResolver,

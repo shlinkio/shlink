@@ -104,7 +104,7 @@ class ImportedLinksProcessorTest extends TestCase
         ];
         $expectedCalls = count($urls);
 
-        $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
+        $this->em->method('getRepository')->willReturn($this->repo);
         $this->repo->expects($this->exactly($expectedCalls))->method('findOneByImportedUrl')->willReturn(null);
         $this->shortCodeHelper->expects($this->exactly($expectedCalls))
                               ->method('ensureShortCodeUniqueness')
@@ -138,7 +138,7 @@ class ImportedLinksProcessorTest extends TestCase
             new ImportedShlinkUrl(ImportSource::BITLY, 'https://baz', [], Chronos::now(), null, 'baz', null),
         ];
 
-        $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
+        $this->em->method('getRepository')->willReturn($this->repo);
         $this->repo->expects($this->exactly(3))->method('findOneByImportedUrl')->willReturn(null);
         $this->shortCodeHelper->expects($this->exactly(3))->method('ensureShortCodeUniqueness')->willReturn(true);
         $this->em->expects($this->exactly(3))->method('persist')->with(
@@ -167,7 +167,7 @@ class ImportedLinksProcessorTest extends TestCase
             new ImportedShlinkUrl(ImportSource::BITLY, 'https://baz3', [], Chronos::now(), null, 'baz3', null),
         ];
 
-        $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
+        $this->em->method('getRepository')->willReturn($this->repo);
         $this->repo->expects($this->exactly(count($urls)))->method('findOneByImportedUrl')->willReturnCallback(
             fn (ImportedShlinkUrl $url): ShortUrl|null => contains(
                 $url->longUrl,
@@ -195,7 +195,7 @@ class ImportedLinksProcessorTest extends TestCase
             new ImportedShlinkUrl(ImportSource::BITLY, 'https://baz3', [], Chronos::now(), null, 'baz3', 'bar'),
         ];
 
-        $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
+        $this->em->method('getRepository')->willReturn($this->repo);
         $this->repo->expects($this->exactly(count($urls)))->method('findOneByImportedUrl')->willReturn(null);
         $this->shortCodeHelper->expects($this->exactly(7))->method('ensureShortCodeUniqueness')->willReturnCallback(
             fn ($_, bool $hasCustomSlug) => ! $hasCustomSlug,
@@ -219,7 +219,7 @@ class ImportedLinksProcessorTest extends TestCase
         int $amountOfPersistedVisits,
         ShortUrl|null $foundShortUrl,
     ): void {
-        $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
+        $this->em->method('getRepository')->willReturn($this->repo);
         $this->repo->expects($this->once())->method('findOneByImportedUrl')->willReturn($foundShortUrl);
         $this->shortCodeHelper->expects($this->exactly($foundShortUrl === null ? 1 : 0))
                               ->method('ensureShortCodeUniqueness')
@@ -276,7 +276,7 @@ class ImportedLinksProcessorTest extends TestCase
     #[Test, DataProvider('provideFoundShortUrls')]
     public function visitsArePersistedWithProperShortUrl(ShortUrl $originalShortUrl, ShortUrl|null $foundShortUrl): void
     {
-        $this->em->method('getRepository')->with(ShortUrl::class)->willReturn($this->repo);
+        $this->em->method('getRepository')->willReturn($this->repo);
         $this->repo->expects($this->once())->method('findOneByImportedUrl')->willReturn($originalShortUrl);
         if (!$originalShortUrl->getId()) {
             $this->em->expects($this->never())->method('find');
