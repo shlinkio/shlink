@@ -40,11 +40,11 @@ class CreateDatabaseCommandTest extends TestCase
     {
         $locker = $this->createMock(LockFactory::class);
         $lock = $this->createMock(SharedLockInterface::class);
-        $lock->method('acquire')->withAnyParameters()->willReturn(true);
-        $locker->method('createLock')->withAnyParameters()->willReturn($lock);
+        $lock->method('acquire')->willReturn(true);
+        $locker->method('createLock')->willReturn($lock);
 
         $phpExecutableFinder = $this->createMock(PhpExecutableFinder::class);
-        $phpExecutableFinder->method('find')->with($this->isFalse())->willReturn('/usr/local/bin/php');
+        $phpExecutableFinder->method('find')->willReturn('/usr/local/bin/php');
 
         $this->processHelper = $this->createMock(ProcessRunnerInterface::class);
         $this->schemaManager = $this->createMock(AbstractSchemaManager::class);
@@ -60,7 +60,7 @@ class CreateDatabaseCommandTest extends TestCase
         $em->method('getMetadataFactory')->willReturn($this->metadataFactory);
 
         $noDbNameConn = $this->createMock(Connection::class);
-        $noDbNameConn->method('createSchemaManager')->withAnyParameters()->willReturn($this->schemaManager);
+        $noDbNameConn->method('createSchemaManager')->willReturn($this->schemaManager);
 
         $command = new CreateDatabaseCommand($locker, $this->processHelper, $phpExecutableFinder, $em, $noDbNameConn);
         $this->commandTester = CliTestUtils::testerForCommand($command);

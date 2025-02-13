@@ -25,11 +25,8 @@ class CliTestUtils
         $command = $generator->testDouble(
             Command::class,
             mockObject: true,
-            markAsMockObject: true,
             callOriginalConstructor: false,
             callOriginalClone: false,
-            cloneArguments: false,
-            allowMockingUnknownTypes: false,
         );
         $command->method('getName')->willReturn($name);
         $command->method('isEnabled')->willReturn(true);
