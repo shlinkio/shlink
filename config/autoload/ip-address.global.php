@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
+use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use RKA\Middleware\IpAddress;
 use RKA\Middleware\Mezzio\IpAddressFactory;
+use Shlinkio\Shlink\Core\Middleware\ReverseForwardedAddressesMiddlewareDecorator;
 
 use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
 
@@ -30,8 +32,19 @@ return [
 
     'dependencies' => [
         'factories' => [
-            IpAddress::class => IpAddressFactory::class,
+//            IpAddress::class => IpAddressFactory::class,
+            'actual_ip_address_middleware' => IpAddressFactory::class,
+            ReverseForwardedAddressesMiddlewareDecorator::class => ConfigAbstractFactory::class,
         ],
+        'aliases' => [
+            // Make sure the decorated middleware is resolved when getting IpAddress::class, to make this decoration
+            // transparent for other parts of the code
+            IpAddress::class => ReverseForwardedAddressesMiddlewareDecorator::class,
+        ],
+    ],
+
+    ConfigAbstractFactory::class => [
+        ReverseForwardedAddressesMiddlewareDecorator::class => ['actual_ip_address_middleware'],
     ],
 
 ];

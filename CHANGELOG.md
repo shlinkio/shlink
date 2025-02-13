@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#2351](https://github.com/shlinkio/shlink/issues/2351) Fix visitor IP address resolution when Shlink is served behind more than one reverse proxy.
+
+  This regression was introduced due to a change in behavior in `akrabat/rka-ip-address-middleware`, that now picks the first address from the right after excluding all trusted proxies.
+
+  Since Shlink does not set trusted proxies, this means the first IP from the right is now picked instead of the first from the left, so we now reverse the list before trying to resolve the IP.
+
+  In the future, Shlink will allow you to define trusted proxies, to avoid other potential side effects because of this reversing of the list.
+
 ## [4.4.2] - 2025-01-29
 ### Added
 * *Nothing*

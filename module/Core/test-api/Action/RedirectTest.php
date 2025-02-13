@@ -90,7 +90,8 @@ class RedirectTest extends ApiTestCase
         ];
 
         $ipAddressConfig = require __DIR__ . '/../../../../config/autoload/ip-address.global.php';
-        foreach ($ipAddressConfig['rka']['ip_address']['headers_to_inspect'] as $header) {
+        $headers = $ipAddressConfig['rka']['ip_address']['headers_to_inspect'];
+        foreach ($headers as $header) {
             yield sprintf('rule: IP address in "%s" header', $header) => [
                 [
                     RequestOptions::HEADERS => [$header => $header !== 'Forwarded' ? '1.2.3.4' : 'for=1.2.3.4'],
@@ -98,6 +99,15 @@ class RedirectTest extends ApiTestCase
                 'https://example.com/static-ip-address',
             ];
         }
+
+        yield 'rule: IP address in "X-Forwarded-For" together with proxy addresses' => [
+            [
+                RequestOptions::HEADERS => [
+                    'X-Forwarded-For' => '1.2.3.4, 192.168.1.1, 192.168.1.2',
+                ],
+            ],
+            'https://example.com/static-ip-address',
+        ];
     }
 
     /**
