@@ -18,7 +18,7 @@
         "ext-json": "*",
         "ext-mbstring": "*",
         "ext-pdo": "*",
-        "akrabat/ip-address-middleware": "^2.5",
+        "akrabat/ip-address-middleware": "^2.6",
         "cakephp/chronos": "^3.1",
         "doctrine/dbal": "^4.2",
         "doctrine/migrations": "^3.8",
