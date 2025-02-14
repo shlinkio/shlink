@@ -26,6 +26,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
   In the future, Shlink will allow you to define trusted proxies, to avoid other potential side effects because of this reversing of the list.
 
+* [#2354](https://github.com/shlinkio/shlink/issues/2354) Fix error "NOSCRIPT No matching script. Please use EVAL" thrown when creating a lock in redis.
+
 ## [4.4.2] - 2025-01-29
 ### Added
 * *Nothing*
