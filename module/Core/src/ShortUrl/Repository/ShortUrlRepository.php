@@ -31,23 +31,32 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         $ordering = $dbPlatform instanceof PostgreSQLPlatform ? 'ASC' : 'DESC';
         $isStrict = $shortUrlMode === ShortUrlMode::STRICT;
 
-        $qb = $this->createQueryBuilder('s');
-        $qb->leftJoin('s.domain', 'd')
-           ->where($qb->expr()->eq($isStrict ? 's.shortCode' : 'LOWER(s.shortCode)', ':shortCode'))
-           ->setParameter('shortCode', $isStrict ? $identifier->shortCode : strtolower($identifier->shortCode))
-           ->andWhere($qb->expr()->orX(
-               $qb->expr()->isNull('s.domain'),
-               $qb->expr()->eq('d.authority', ':domain'),
-           ))
-           ->setParameter('domain', $identifier->domain);
+        // FIXME The `LOWER(s.shortCode)` condition in non-strict mode drops performance dramatically.
+        //       Investigate if the case-insensitive check can be done natively by the DB engine.
 
-        // Since we order by domain, we will have first the URL matching provided domain, followed by the one
-        // with no domain (if any), so it is safe to fetch 1 max result, and we will get:
-        //  * The short URL matching both the short code and the domain, or
-        //  * The short URL matching the short code but without any domain, or
-        //  * No short URL at all
-        $qb->orderBy('s.domain', $ordering)
+        $qb = $this->createQueryBuilder('s');
+        $qb->where($qb->expr()->eq($isStrict ? 's.shortCode' : 'LOWER(s.shortCode)', ':shortCode'))
+           ->setParameter('shortCode', $isStrict ? $identifier->shortCode : strtolower($identifier->shortCode))
            ->setMaxResults(1);
+
+        // If $domain is null, do not join with domains nor do $qb->expr()->eq('d.authority', ':domain')
+        $domain = $identifier->domain;
+        if ($domain === null) {
+            $qb->andWhere($qb->expr()->isNull('s.domain'));
+        } else {
+            $qb->leftJoin('s.domain', 'd')
+               ->andWhere($qb->expr()->orX(
+                   $qb->expr()->isNull('s.domain'),
+                   $qb->expr()->eq('d.authority', ':domain'),
+               ))
+               ->setParameter('domain', $domain)
+               // Since we order by domain, we will have first the URL matching provided domain, followed by the one
+               // with no domain (if any), so it is safe to fetch 1 max result, and we will get:
+               //  * The short URL matching both the short code and the domain, or
+               //  * The short URL matching the short code but without any domain, or
+               //  * No short URL at all
+               ->orderBy('s.domain', $ordering);
+        }
 
         return $qb->getQuery()->getOneOrNullResult();
     }
