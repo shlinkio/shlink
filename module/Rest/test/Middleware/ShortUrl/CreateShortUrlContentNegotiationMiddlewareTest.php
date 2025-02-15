@@ -30,9 +30,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
     public function whenNoJsonResponseIsReturnedNoFurtherOperationsArePerformed(): void
     {
         $expectedResp = new Response();
-        $this->requestHandler->method('handle')->with($this->isInstanceOf(ServerRequestInterface::class))->willReturn(
-            $expectedResp,
-        );
+        $this->requestHandler->method('handle')->willReturn($expectedResp);
 
         $resp = $this->middleware->process(new ServerRequest(), $this->requestHandler);
 
