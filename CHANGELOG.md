@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [4.4.3] - 2025-02-15
 ### Added
 * *Nothing*
 
@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
   In the future, Shlink will allow you to define trusted proxies, to avoid other potential side effects because of this reversing of the list.
 
 * [#2354](https://github.com/shlinkio/shlink/issues/2354) Fix error "NOSCRIPT No matching script. Please use EVAL" thrown when creating a lock in redis.
+* [#2319](https://github.com/shlinkio/shlink/issues/2319) Fix unique index for `short_code` and `domain_id` in `short_urls` table not being used in Microsoft SQL engines for rows where `domain_id` is `null`.
 
 ## [4.4.2] - 2025-01-29
 ### Added
