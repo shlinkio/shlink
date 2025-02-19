@@ -470,22 +470,18 @@ class VisitRepositoryTest extends DatabaseTestCase
     #[Test]
     public function findNonOrphanVisitsReturnsExpectedResult(): void
     {
-        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(['longUrl' => 'https://1']));
-        $this->getEntityManager()->persist($shortUrl);
-        $this->createVisitsForShortUrl($shortUrl, 7);
+        $authoredApiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
+        $this->getEntityManager()->persist($authoredApiKey);
 
-        $shortUrl2 = ShortUrl::create(ShortUrlCreation::fromRawData(['longUrl' => 'https://2']));
-        $this->getEntityManager()->persist($shortUrl2);
-        $this->createVisitsForShortUrl($shortUrl2, 4);
-
-        $shortUrl3 = ShortUrl::create(ShortUrlCreation::fromRawData(['longUrl' => 'https://3']));
-        $this->getEntityManager()->persist($shortUrl3);
-        $this->createVisitsForShortUrl($shortUrl3, 10);
+        $this->createShortUrlsAndVisits(withDomain: false, visitsAmount: 7);
+        $this->createShortUrlsAndVisits(withDomain: false, apiKey: $authoredApiKey, visitsAmount: 4);
+        $this->createShortUrlsAndVisits(withDomain: false, visitsAmount: 10);
 
         $this->getEntityManager()->flush();
 
         self::assertCount(21, $this->repo->findNonOrphanVisits(new VisitsListFiltering()));
         self::assertCount(21, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::allTime())));
+        self::assertCount(4, $this->repo->findNonOrphanVisits(new VisitsListFiltering(apiKey: $authoredApiKey)));
         self::assertCount(7, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::since(
             Chronos::parse('2016-01-05')->endOfDay(),
         ))));
@@ -503,11 +499,11 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertCount(3, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::between(
             Chronos::parse('2016-01-03')->startOfDay(),
             Chronos::parse('2016-01-08')->endOfDay(),
-        ), false, null, 10, 10)));
-        self::assertCount(15, $this->repo->findNonOrphanVisits(new VisitsListFiltering(null, true)));
-        self::assertCount(10, $this->repo->findNonOrphanVisits(new VisitsListFiltering(null, false, null, 10)));
-        self::assertCount(1, $this->repo->findNonOrphanVisits(new VisitsListFiltering(null, false, null, 10, 20)));
-        self::assertCount(5, $this->repo->findNonOrphanVisits(new VisitsListFiltering(null, false, null, 5, 5)));
+        ), limit: 10, offset: 10)));
+        self::assertCount(15, $this->repo->findNonOrphanVisits(new VisitsListFiltering(excludeBots: true)));
+        self::assertCount(10, $this->repo->findNonOrphanVisits(new VisitsListFiltering(limit: 10)));
+        self::assertCount(1, $this->repo->findNonOrphanVisits(new VisitsListFiltering(limit: 10, offset: 20)));
+        self::assertCount(5, $this->repo->findNonOrphanVisits(new VisitsListFiltering(limit: 5, offset: 5)));
     }
 
     #[Test]
@@ -535,6 +531,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         bool|string $withDomain = true,
         array $tags = [],
         ApiKey|null $apiKey = null,
+        int $visitsAmount = 6,
     ): array {
         $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
             ShortUrlInputFilter::LONG_URL => 'https://longUrl',
@@ -545,7 +542,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         $shortCode = $shortUrl->getShortCode();
         $this->getEntityManager()->persist($shortUrl);
 
-        $this->createVisitsForShortUrl($shortUrl);
+        $this->createVisitsForShortUrl($shortUrl, $visitsAmount);
 
         if ($withDomain !== false) {
             $shortUrlWithDomain = ShortUrl::create(ShortUrlCreation::fromRawData([
