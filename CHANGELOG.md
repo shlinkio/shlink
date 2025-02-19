@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#2366](https://github.com/shlinkio/shlink/issues/2366) Fix error "Cannot use 'SCRIPT' with redis-cluster" thrown when creating a lock while using a redis cluster.
+
 ## [4.4.3] - 2025-02-15
 ### Added
 * *Nothing*
