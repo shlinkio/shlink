@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [4.4.4] - 2025-02-19
 ### Added
 * *Nothing*
 
@@ -19,6 +19,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#2366](https://github.com/shlinkio/shlink/issues/2366) Fix error "Cannot use 'SCRIPT' with redis-cluster" thrown when creating a lock while using a redis cluster.
+* [#2368](https://github.com/shlinkio/shlink/issues/2368) Fix error when listing non-orphan visits using API key with `AUTHORED_SHORT_URLS` role.
+
 
 ## [4.4.3] - 2025-02-15
 ### Added

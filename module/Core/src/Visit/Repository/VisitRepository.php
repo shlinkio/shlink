@@ -21,6 +21,7 @@ use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Spec\CountOfNonOrphanVisits;
 use Shlinkio\Shlink\Core\Visit\Spec\CountOfOrphanVisits;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use const PHP_INT_MAX;
 
@@ -177,7 +178,12 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         $qb = $this->createAllVisitsQueryBuilder($filtering);
         $qb->andWhere($qb->expr()->isNotNull('v.shortUrl'));
 
-        $this->applySpecification($qb, $filtering->apiKey?->inlinedSpec());
+        $apiKey = $filtering->apiKey;
+        if (ApiKey::isShortUrlRestricted($apiKey)) {
+            $qb->join('v.shortUrl', 's');
+        }
+
+        $this->applySpecification($qb, $apiKey?->inlinedSpec(), 'v');
 
         return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit, $filtering->offset);
     }
