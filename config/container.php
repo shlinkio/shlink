@@ -11,6 +11,7 @@ use function Shlinkio\Shlink\Core\enumValues;
 
 use const Shlinkio\Shlink\LOCAL_LOCK_FACTORY;
 
+// Set current directory to the project's root directory
 chdir(dirname(__DIR__));
 
 require 'vendor/autoload.php';
@@ -21,7 +22,11 @@ loadEnvVarsFromConfig(
     enumValues(EnvVars::class),
 );
 
-// This is one of the first files loaded. Configure the timezone and memory limit here
+// This is one of the first files loaded. Set global configuration here
+error_reporting(
+    // Set a less strict error reporting for prod, where deprecation warnings should be ignored
+    EnvVars::isProdEnv() ? E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED : E_ALL,
+);
 ini_set('memory_limit', EnvVars::MEMORY_LIMIT->loadFromEnv());
 date_default_timezone_set(EnvVars::TIMEZONE->loadFromEnv());
 
