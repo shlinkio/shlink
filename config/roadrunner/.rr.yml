@@ -4,7 +4,7 @@ rpc:
   listen: tcp://127.0.0.1:6001
 
 server:
-  command: 'php -dopcache.enable_cli=1 -dopcache.validate_timestamps=0 ../../bin/roadrunner-worker.php'
+  command: 'php -dopcache.enable_cli=1 -dopcache.validate_timestamps=0 -derror_reporting="E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED" ../../bin/roadrunner-worker.php'
 
 http:
   address: '${ADDRESS:-0.0.0.0}:${PORT:-8080}'

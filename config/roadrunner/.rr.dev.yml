@@ -4,7 +4,7 @@ rpc:
   listen: tcp://127.0.0.1:6001
 
 server:
-  command: 'php ../../bin/roadrunner-worker.php'
+  command: 'php -derror_reporting="E_ALL" ../../bin/roadrunner-worker.php'
 
 http:
   address: '0.0.0.0:8080'
