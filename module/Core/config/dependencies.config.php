@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Common\Doctrine\EntityRepositoryFactory;
 use Shlinkio\Shlink\Config\Factory\ValinorConfigFactory;
 use Shlinkio\Shlink\Core\ErrorHandler;
 use Shlinkio\Shlink\Core\Options\NotFoundRedirectOptions;
+use Shlinkio\Shlink\Core\ShortUrl\Repository\CrawlableShortCodesQuery;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
 use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 
@@ -187,7 +188,7 @@ return [
             Util\DoctrineBatchHelper::class,
         ],
 
-        Crawling\CrawlingHelper::class => ['em'],
+        Crawling\CrawlingHelper::class => [CrawlableShortCodesQuery::class],
     ],
 
 ];
