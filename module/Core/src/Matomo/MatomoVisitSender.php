@@ -60,7 +60,7 @@ readonly class MatomoVisitSender implements MatomoVisitSenderInterface
         if ($location !== null) {
             $tracker
                 ->setCity($location->cityName)
-                ->setCountry($location->countryName)
+                ->setCountry(strtolower($location->countryCode))
                 ->setLatitude($location->latitude)
                 ->setLongitude($location->longitude);
         }
