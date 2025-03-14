@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#2391](https://github.com/shlinkio/shlink/issues/2391) When sending visits to Matomo, send the country code, not the country name.
+
+
 ## [4.4.5] - 2025-03-01
 ### Added
 * *Nothing*
