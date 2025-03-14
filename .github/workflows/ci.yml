@@ -96,7 +96,7 @@ jobs:
       - upload-coverage
     runs-on: ubuntu-24.04
     steps:
-      - uses: geekyeggo/delete-artifact@v2
+      - uses: geekyeggo/delete-artifact@v5
         with:
           name: |
             coverage-*
