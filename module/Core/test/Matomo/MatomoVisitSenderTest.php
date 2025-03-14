@@ -43,6 +43,9 @@ class MatomoVisitSenderTest extends TestCase
     }
 
     #[Test, DataProvider('provideTrackerMethods')]
+    /**
+     * @param array<string, string[]> $invokedMethods
+     */
     public function visitIsSentToMatomo(Visit $visit, string|null $originalIpAddress, array $invokedMethods): void
     {
         $tracker = $this->createMock(MatomoTracker::class);
@@ -66,8 +69,8 @@ class MatomoVisitSenderTest extends TestCase
             )->willReturn($tracker);
         }
 
-        foreach ($invokedMethods as $invokedMethod) {
-            $tracker->expects($this->once())->method($invokedMethod)->willReturn($tracker);
+        foreach ($invokedMethods as $invokedMethod => $args) {
+            $tracker->expects($this->once())->method($invokedMethod)->with(...$args)->willReturn($tracker);
         }
 
         $this->trackerBuilder->expects($this->once())->method('buildMatomoTracker')->willReturn($tracker);
@@ -81,18 +84,28 @@ class MatomoVisitSenderTest extends TestCase
         yield 'located regular visit' => [
             Visit::forValidShortUrl(ShortUrl::withLongUrl('https://shlink.io'), Visitor::empty())
                 ->locate(VisitLocation::fromGeolocation(new Location(
-                    countryCode: 'countryCode',
+                    countryCode: 'US',
                     countryName: 'countryName',
                     regionName: 'regionName',
                     city: 'city',
                     latitude: 123,
-                    longitude: 123,
+                    longitude: 456,
                     timeZone: 'timeZone',
                 ))),
             '1.2.3.4',
-            ['setCity', 'setCountry', 'setLatitude', 'setLongitude', 'setIp'],
+            [
+                'setCity' => ['city'],
+                'setCountry' => ['us'],
+                'setLatitude' => [123],
+                'setLongitude' => [456],
+                'setIp' => ['1.2.3.4'],
+            ],
         ];
-        yield 'fallback IP' => [Visit::forBasePath(Visitor::fromParams(remoteAddress: '1.2.3.4')), null, ['setIp']];
+        yield 'fallback IP' => [
+            Visit::forBasePath(Visitor::fromParams(remoteAddress: '5.6.7.8')),
+            null,
+            ['setIp' => ['5.6.7.0']],
+        ];
     }
 
     #[Test, DataProvider('provideUrlsToTrack')]
