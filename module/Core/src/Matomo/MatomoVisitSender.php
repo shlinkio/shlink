@@ -11,6 +11,8 @@ use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitIterationRepositoryInterface;
 use Throwable;
 
+use function strtolower;
+
 readonly class MatomoVisitSender implements MatomoVisitSenderInterface
 {
     public function __construct(
