@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [4.4.6] - 2025-03-20
 ### Added
 * *Nothing*
 
@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#2391](https://github.com/shlinkio/shlink/issues/2391) When sending visits to Matomo, send the country code, not the country name.
+* Fix error with new option introduced by `endroid/qr-code` 6.0.4.
 
 
 ## [4.4.5] - 2025-03-01

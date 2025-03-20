@@ -45,6 +45,7 @@ readonly class QrCodeAction implements MiddlewareInterface
         $params = QrCodeParams::fromRequest($request, $this->options);
         $qrCodeBuilder = new Builder(
             writer: $params->writer,
+            writerOptions: $params->writerOptions,
             data: $this->stringifier->stringify($shortUrl),
             errorCorrectionLevel: $params->errorCorrectionLevel,
             size: $params->size,
