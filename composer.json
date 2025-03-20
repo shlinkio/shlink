@@ -24,7 +24,7 @@
         "doctrine/migrations": "^3.8",
         "doctrine/orm": "^3.3",
         "donatj/phpuseragentparser": "^1.10",
-        "endroid/qr-code": "^6.0",
+        "endroid/qr-code": "^6.0.5",
         "friendsofphp/proxy-manager-lts": "^1.0",
         "geoip2/geoip2": "^3.1",
         "guzzlehttp/guzzle": "^7.9",
@@ -77,7 +77,8 @@
         "veewee/composer-run-parallel": "^1.4"
     },
     "conflict": {
-        "symfony/var-exporter": ">=6.3.9,<=6.4.0"
+        "symfony/var-exporter": ">=6.3.9,<=6.4.0",
+        "phpunit/phpunit": "12.0.9"
     },
     "autoload": {
         "psr-4": {

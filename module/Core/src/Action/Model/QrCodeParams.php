@@ -38,6 +38,7 @@ final readonly class QrCodeParams
         public int $size,
         public int $margin,
         public WriterInterface $writer,
+        public array $writerOptions,
         public ErrorCorrectionLevel $errorCorrectionLevel,
         public RoundBlockSizeMode $roundBlockSizeMode,
         public ColorInterface $color,
@@ -49,11 +50,13 @@ final readonly class QrCodeParams
     public static function fromRequest(ServerRequestInterface $request, QrCodeOptions $defaults): self
     {
         $query = $request->getQueryParams();
+        [$writer, $writerOptions] = self::resolveWriterAndWriterOptions($query, $defaults);
 
         return new self(
             size: self::resolveSize($query, $defaults),
             margin: self::resolveMargin($query, $defaults),
-            writer: self::resolveWriter($query, $defaults),
+            writer: $writer,
+            writerOptions: $writerOptions,
             errorCorrectionLevel: self::resolveErrorCorrection($query, $defaults),
             roundBlockSizeMode: self::resolveRoundBlockSize($query, $defaults),
             color: self::resolveColor($query, $defaults),
@@ -83,14 +86,17 @@ final readonly class QrCodeParams
         return max($intMargin, 0);
     }
 
-    private static function resolveWriter(array $query, QrCodeOptions $defaults): WriterInterface
+    /**
+     * @return array{WriterInterface, array}
+     */
+    private static function resolveWriterAndWriterOptions(array $query, QrCodeOptions $defaults): array
     {
         $qFormat = self::normalizeParam($query['format'] ?? '');
         $format = contains($qFormat, self::SUPPORTED_FORMATS) ? $qFormat : self::normalizeParam($defaults->format);
 
         return match ($format) {
-            'svg' => new SvgWriter(),
-            default => new PngWriter(),
+            'svg' => [new SvgWriter(), []],
+            default => [new PngWriter(), [PngWriter::WRITER_OPTION_NUMBER_OF_COLORS => null]],
         };
     }
 

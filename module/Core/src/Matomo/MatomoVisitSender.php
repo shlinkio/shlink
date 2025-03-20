@@ -11,6 +11,8 @@ use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitIterationRepositoryInterface;
 use Throwable;
 
+use function strtolower;
+
 readonly class MatomoVisitSender implements MatomoVisitSenderInterface
 {
     public function __construct(
@@ -60,7 +62,7 @@ readonly class MatomoVisitSender implements MatomoVisitSenderInterface
         if ($location !== null) {
             $tracker
                 ->setCity($location->cityName)
-                ->setCountry($location->countryName)
+                ->setCountry(strtolower($location->countryCode))
                 ->setLatitude($location->latitude)
                 ->setLongitude($location->longitude);
         }
