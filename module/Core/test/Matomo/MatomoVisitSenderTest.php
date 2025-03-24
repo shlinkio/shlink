@@ -24,6 +24,8 @@ use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitIterationRepositoryInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
+use function array_values;
+
 class MatomoVisitSenderTest extends TestCase
 {
     private MockObject & MatomoTrackerBuilderInterface $trackerBuilder;
@@ -42,10 +44,10 @@ class MatomoVisitSenderTest extends TestCase
         );
     }
 
-    #[Test, DataProvider('provideTrackerMethods')]
     /**
-     * @param array<string, string[]> $invokedMethods
+     * @param array<non-empty-string, string[]> $invokedMethods
      */
+    #[Test, DataProvider('provideTrackerMethods')]
     public function visitIsSentToMatomo(Visit $visit, string|null $originalIpAddress, array $invokedMethods): void
     {
         $tracker = $this->createMock(MatomoTracker::class);
@@ -70,7 +72,9 @@ class MatomoVisitSenderTest extends TestCase
         }
 
         foreach ($invokedMethods as $invokedMethod => $args) {
-            $tracker->expects($this->once())->method($invokedMethod)->with(...$args)->willReturn($tracker);
+            $tracker->expects($this->once())->method($invokedMethod)->with(...array_values($args))->willReturn(
+                $tracker,
+            );
         }
 
         $this->trackerBuilder->expects($this->once())->method('buildMatomoTracker')->willReturn($tracker);

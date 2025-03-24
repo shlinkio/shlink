@@ -70,6 +70,9 @@ class NotifyVisitToRabbitMqTest extends TestCase
         ($this->listener())(new UrlVisited($visitId));
     }
 
+    /**
+     * @param non-empty-string[] $expectedChannels
+     */
     #[Test, DataProvider('provideVisits')]
     public function expectedChannelsAreNotifiedBasedOnTheVisitType(Visit $visit, array $expectedChannels): void
     {

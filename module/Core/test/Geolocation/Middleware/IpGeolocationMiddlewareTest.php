@@ -118,6 +118,9 @@ class IpGeolocationMiddlewareTest extends TestCase
         $this->middleware()->process($request, $this->handler);
     }
 
+    /**
+     * @param non-empty-string $loggerMethod
+     */
     #[Test]
     #[TestWith([
         new WrongIpException(),
