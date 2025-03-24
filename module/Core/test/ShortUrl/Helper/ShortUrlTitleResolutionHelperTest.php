@@ -13,7 +13,7 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\Stream;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
-use PHPUnit\Framework\MockObject\Builder\InvocationMocker;
+use PHPUnit\Framework\MockObject\InvocationStubber;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -152,9 +152,8 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
     }
 
     /**
-     * @return InvocationMocker<ClientInterface>
      */
-    private function expectRequestToBeCalled(): InvocationMocker
+    private function expectRequestToBeCalled(): InvocationStubber
     {
         return $this->httpClient->expects($this->once())->method('request')->with(
             RequestMethodInterface::METHOD_GET,
