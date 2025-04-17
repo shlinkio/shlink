@@ -115,7 +115,7 @@ return [
             RedirectRule\ShortUrlRedirectRuleService::class,
         ],
 
-        Middleware\CrossDomainMiddleware::class => ['config.cors'],
+        Middleware\CrossDomainMiddleware::class,
         Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class => [
             Config\Options\UrlShortenerOptions::class,
         ],

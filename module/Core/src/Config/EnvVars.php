@@ -95,6 +95,10 @@ enum EnvVars: string
     case SKIP_INITIAL_GEOLITE_DOWNLOAD = 'SKIP_INITIAL_GEOLITE_DOWNLOAD';
     /** @deprecated Use REDIRECT_EXTRA_PATH */
     case REDIRECT_APPEND_EXTRA_PATH = 'REDIRECT_APPEND_EXTRA_PATH';
+    case CORS_ALLOW_CREDENTIALS = 'CORS_ALLOW_CREDENTIALS';
+    case CORS_ALLOW_HEADERS = 'CORS_ALLOW_HEADERS';
+    case CORS_ALLOW_ORIGIN = 'CORS_ALLOW_ORIGIN';
+    case CORS_MAX_AGE = 'CORS_MAX_AGE';
 
     public function loadFromEnv(): mixed
     {
@@ -173,6 +177,11 @@ enum EnvVars: string
             self::DISABLE_IP_TRACKING,
             self::DISABLE_REFERRER_TRACKING,
             self::DISABLE_UA_TRACKING => false,
+
+            self::CORS_ALLOW_CREDENTIALS => 'false',
+            self::CORS_ALLOW_HEADERS => null,
+            self::CORS_ALLOW_ORIGIN => '*',
+            self::CORS_MAX_AGE => '3600',
 
             default => null,
         };

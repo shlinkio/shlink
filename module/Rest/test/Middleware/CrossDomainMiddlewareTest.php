@@ -11,7 +11,10 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Server\RequestHandlerInterface;
+use Shlinkio\Shlink\Core\Config\EnvVars;
 use Shlinkio\Shlink\Rest\Middleware\CrossDomainMiddleware;
+
+use function putenv;
 
 class CrossDomainMiddlewareTest extends TestCase
 {
@@ -20,7 +23,7 @@ class CrossDomainMiddlewareTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->middleware = new CrossDomainMiddleware(['max_age' => 1000]);
+        $this->middleware = new CrossDomainMiddleware();
         $this->handler = $this->createMock(RequestHandlerInterface::class);
     }
 
@@ -75,10 +78,50 @@ class CrossDomainMiddlewareTest extends TestCase
 
         self::assertEquals('*', $response->getHeaderLine('Access-Control-Allow-Origin'));
         self::assertArrayHasKey('Access-Control-Allow-Methods', $headers);
-        self::assertEquals('1000', $response->getHeaderLine('Access-Control-Max-Age'));
+        self::assertEquals('3600', $response->getHeaderLine('Access-Control-Max-Age'));
         self::assertEquals('foo, bar, baz', $response->getHeaderLine('Access-Control-Allow-Headers'));
         self::assertEquals(204, $response->getStatusCode());
     }
+
+    #[Test]
+    public function optionsRequestIncludesCorsHeadersFromEnvironment(): void
+    {
+        putenv(EnvVars::CORS_ALLOW_CREDENTIALS->value . '=true');
+        putenv(EnvVars::CORS_ALLOW_ORIGIN->value . '=https://example.com');
+        putenv(EnvVars::CORS_ALLOW_HEADERS->value . '=Foo, Bar');
+        putenv(EnvVars::CORS_MAX_AGE->value . '=1000');
+
+        try {
+            $this->middleware = new CrossDomainMiddleware();
+
+            $originalResponse = new Response();
+            $request = (new ServerRequest())
+                ->withMethod('OPTIONS')
+                ->withHeader('Origin', 'local')
+                ->withHeader('Access-Control-Request-Headers', 'foo, bar, baz');
+            $this->handler->expects($this->once())->method('handle')->willReturn($originalResponse);
+
+            $response = $this->middleware->process($request, $this->handler);
+            self::assertNotSame($originalResponse, $response);
+
+            $headers = $response->getHeaders();
+
+            self::assertEquals('https://example.com', $response->getHeaderLine('Access-Control-Allow-Origin'));
+            self::assertArrayHasKey('Access-Control-Allow-Methods', $headers);
+            self::assertEquals('1000', $response->getHeaderLine('Access-Control-Max-Age'));
+            self::assertEquals('true', $response->getHeaderLine('Access-Control-Allow-Credentials'));
+            self::assertEquals('Foo, Bar', $response->getHeaderLine('Access-Control-Allow-Headers'));
+            self::assertEquals(204, $response->getStatusCode());
+        } finally {
+            putenv(EnvVars::CORS_ALLOW_CREDENTIALS->value);
+            putenv(EnvVars::CORS_ALLOW_ORIGIN->value);
+            putenv(EnvVars::CORS_ALLOW_HEADERS->value);
+            putenv(EnvVars::CORS_MAX_AGE->value);
+
+            $this->middleware = new CrossDomainMiddleware();
+        }
+    }
+
 
     #[Test, DataProvider('provideRouteResults')]
     public function optionsRequestParsesRouteMatchToDetermineAllowedMethods(
