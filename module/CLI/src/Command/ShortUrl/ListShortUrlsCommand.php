@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\CLI\Input\EndDateOption;
 use Shlinkio\Shlink\CLI\Input\StartDateOption;
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtils;
@@ -176,7 +175,7 @@ class ListShortUrlsCommand extends Command
         $io->newLine();
         $io->success('Short URLs properly listed');
 
-        return ExitCode::EXIT_SUCCESS;
+        return self::SUCCESS;
     }
 
     /**

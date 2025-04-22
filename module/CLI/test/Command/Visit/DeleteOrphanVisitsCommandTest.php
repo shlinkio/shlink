@@ -8,10 +8,10 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Visit\DeleteOrphanVisitsCommand;
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Model\BulkDeleteResult;
 use Shlinkio\Shlink\Core\Visit\VisitsDeleterInterface;
 use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class DeleteOrphanVisitsCommandTest extends TestCase
@@ -34,7 +34,7 @@ class DeleteOrphanVisitsCommandTest extends TestCase
         $exitCode = $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
-        self::assertEquals(ExitCode::EXIT_SUCCESS, $exitCode);
+        self::assertEquals(Command::SUCCESS, $exitCode);
         self::assertStringContainsString('You are about to delete all orphan visits.', $output);
         self::assertStringContainsString('Successfully deleted 5 visits', $output);
     }

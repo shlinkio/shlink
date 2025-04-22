@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\Integration;
 
 use Cake\Chronos\Chronos;
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Matomo\MatomoOptions;
 use Shlinkio\Shlink\Core\Matomo\MatomoVisitSenderInterface;
 use Shlinkio\Shlink\Core\Matomo\VisitSendingProgressTrackerInterface;
@@ -84,7 +83,7 @@ class MatomoSendVisitsCommand extends Command implements VisitSendingProgressTra
 
         if (! $this->matomoEnabled) {
             $this->io->warning('Matomo integration is not enabled in this Shlink instance');
-            return ExitCode::EXIT_WARNING;
+            return self::INVALID;
         }
 
         // TODO Validate provided date formats
@@ -103,7 +102,7 @@ class MatomoSendVisitsCommand extends Command implements VisitSendingProgressTra
                 . 'you have verified only visits in the right date range are going to be sent.',
             ]);
             if (! $this->io->confirm('Continue?', default: false)) {
-                return ExitCode::EXIT_WARNING;
+                return self::INVALID;
             }
         }
 
@@ -122,7 +121,7 @@ class MatomoSendVisitsCommand extends Command implements VisitSendingProgressTra
             default => $this->io->info('There was no visits matching provided date range.'),
         };
 
-        return ExitCode::EXIT_SUCCESS;
+        return self::SUCCESS;
     }
 
     public function success(int $index): void

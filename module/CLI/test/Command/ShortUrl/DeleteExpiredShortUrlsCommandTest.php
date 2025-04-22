@@ -9,10 +9,10 @@ use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\DeleteExpiredShortUrlsCommand;
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\ShortUrl\DeleteShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ExpiredShortUrlsConditions;
 use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class DeleteExpiredShortUrlsCommandTest extends TestCase
@@ -38,7 +38,7 @@ class DeleteExpiredShortUrlsCommandTest extends TestCase
         $status = $this->commandTester->getStatusCode();
 
         self::assertStringContainsString('Careful!', $output);
-        self::assertEquals(ExitCode::EXIT_WARNING, $status);
+        self::assertEquals(Command::INVALID, $status);
     }
 
     #[Test]
@@ -62,7 +62,7 @@ class DeleteExpiredShortUrlsCommandTest extends TestCase
             self::assertStringNotContainsString('Careful!', $output);
         }
         self::assertStringContainsString('5 expired short URLs have been deleted', $output);
-        self::assertEquals(ExitCode::EXIT_SUCCESS, $status);
+        self::assertEquals(Command::SUCCESS, $status);
     }
 
     #[Test]
@@ -77,7 +77,7 @@ class DeleteExpiredShortUrlsCommandTest extends TestCase
 
         self::assertStringNotContainsString('Careful!', $output);
         self::assertStringContainsString('There are 38 expired short URLs matching provided conditions', $output);
-        self::assertEquals(ExitCode::EXIT_SUCCESS, $status);
+        self::assertEquals(Command::SUCCESS, $status);
     }
 
     #[Test]

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Visit;
 
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Visit\VisitsDeleterInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -32,7 +31,7 @@ class DeleteOrphanVisitsCommand extends AbstractDeleteVisitsCommand
         $result = $this->deleter->deleteOrphanVisits();
         $io->success(sprintf('Successfully deleted %s visits', $result->affectedItems));
 
-        return ExitCode::EXIT_SUCCESS;
+        return self::SUCCESS;
     }
 
     protected function getWarningMessage(): string

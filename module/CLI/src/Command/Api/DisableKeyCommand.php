@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Api;
 
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
@@ -89,7 +88,7 @@ class DisableKeyCommand extends Command
 
         if (! $keyOrName) {
             $io->warning('An API key name was not provided.');
-            return ExitCode::EXIT_WARNING;
+            return Command::INVALID;
         }
 
         try {
@@ -99,10 +98,10 @@ class DisableKeyCommand extends Command
                 $this->apiKeyService->disableByKey($keyOrName);
             }
             $io->success(sprintf('API key "%s" properly disabled', $keyOrName));
-            return ExitCode::EXIT_SUCCESS;
+            return Command::SUCCESS;
         } catch (InvalidArgumentException $e) {
             $io->error($e->getMessage());
-            return ExitCode::EXIT_FAILURE;
+            return Command::FAILURE;
         }
     }
 }

@@ -8,12 +8,12 @@ use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Integration\MatomoSendVisitsCommand;
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Matomo\MatomoOptions;
 use Shlinkio\Shlink\Core\Matomo\MatomoVisitSenderInterface;
 use Shlinkio\Shlink\Core\Matomo\Model\SendVisitsResult;
 use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
+use Symfony\Component\Console\Command\Command;
 
 class MatomoSendVisitsCommandTest extends TestCase
 {
@@ -30,7 +30,7 @@ class MatomoSendVisitsCommandTest extends TestCase
         [$output, $exitCode] = $this->executeCommand(matomoEnabled: false);
 
         self::assertStringContainsString('Matomo integration is not enabled in this Shlink instance', $output);
-        self::assertEquals(ExitCode::EXIT_WARNING, $exitCode);
+        self::assertEquals(Command::INVALID, $exitCode);
     }
 
     #[Test]
@@ -74,7 +74,7 @@ class MatomoSendVisitsCommandTest extends TestCase
         [$output, $exitCode] = $this->executeCommand(['y']);
 
         self::assertStringContainsString($expectedResultMessage, $output);
-        self::assertEquals(ExitCode::EXIT_SUCCESS, $exitCode);
+        self::assertEquals(Command::SUCCESS, $exitCode);
     }
 
     #[Test]

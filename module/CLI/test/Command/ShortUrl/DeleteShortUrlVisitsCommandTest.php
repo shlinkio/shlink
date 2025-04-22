@@ -9,11 +9,11 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\DeleteShortUrlVisitsCommand;
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\Model\BulkDeleteResult;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlVisitsDeleterInterface;
 use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class DeleteShortUrlVisitsCommandTest extends TestCase
@@ -36,7 +36,7 @@ class DeleteShortUrlVisitsCommandTest extends TestCase
         $exitCode = $this->commandTester->execute(['shortCode' => 'foo']);
         $output = $this->commandTester->getDisplay();
 
-        self::assertEquals(ExitCode::EXIT_SUCCESS, $exitCode);
+        self::assertEquals(Command::SUCCESS, $exitCode);
         self::assertStringContainsString('Operation aborted', $output);
     }
 
@@ -58,7 +58,7 @@ class DeleteShortUrlVisitsCommandTest extends TestCase
         $exitCode = $this->commandTester->execute($args);
         $output = $this->commandTester->getDisplay();
 
-        self::assertEquals(ExitCode::EXIT_WARNING, $exitCode);
+        self::assertEquals(Command::INVALID, $exitCode);
         self::assertStringContainsString($expectedError, $output);
     }
 
@@ -77,7 +77,7 @@ class DeleteShortUrlVisitsCommandTest extends TestCase
         $exitCode = $this->commandTester->execute(['shortCode' => 'foo']);
         $output = $this->commandTester->getDisplay();
 
-        self::assertEquals(ExitCode::EXIT_SUCCESS, $exitCode);
+        self::assertEquals(Command::SUCCESS, $exitCode);
         self::assertStringContainsString('Successfully deleted 5 visits', $output);
     }
 }

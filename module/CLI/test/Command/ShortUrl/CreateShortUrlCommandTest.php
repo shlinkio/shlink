@@ -11,7 +11,6 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\CreateShortUrlCommand;
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -20,6 +19,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\UrlShorteningResult;
 use Shlinkio\Shlink\Core\ShortUrl\UrlShortenerInterface;
 use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -59,7 +59,7 @@ class CreateShortUrlCommandTest extends TestCase
         ], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
         $output = $this->commandTester->getDisplay();
 
-        self::assertEquals(ExitCode::EXIT_SUCCESS, $this->commandTester->getStatusCode());
+        self::assertEquals(Command::SUCCESS, $this->commandTester->getStatusCode());
         self::assertStringContainsString('stringified_short_url', $output);
         self::assertStringNotContainsString('but the real-time updates cannot', $output);
     }
@@ -75,7 +75,7 @@ class CreateShortUrlCommandTest extends TestCase
         $this->commandTester->execute(['longUrl' => 'http://domain.com/invalid', '--custom-slug' => 'my-slug']);
         $output = $this->commandTester->getDisplay();
 
-        self::assertEquals(ExitCode::EXIT_FAILURE, $this->commandTester->getStatusCode());
+        self::assertEquals(Command::FAILURE, $this->commandTester->getStatusCode());
         self::assertStringContainsString('Provided slug "my-slug" is already in use', $output);
     }
 
@@ -99,7 +99,7 @@ class CreateShortUrlCommandTest extends TestCase
         ]);
         $output = $this->commandTester->getDisplay();
 
-        self::assertEquals(ExitCode::EXIT_SUCCESS, $this->commandTester->getStatusCode());
+        self::assertEquals(Command::SUCCESS, $this->commandTester->getStatusCode());
         self::assertStringContainsString('stringified_short_url', $output);
     }
 
@@ -117,7 +117,7 @@ class CreateShortUrlCommandTest extends TestCase
         $input['longUrl'] = 'http://domain.com/foo/bar';
         $this->commandTester->execute($input);
 
-        self::assertEquals(ExitCode::EXIT_SUCCESS, $this->commandTester->getStatusCode());
+        self::assertEquals(Command::SUCCESS, $this->commandTester->getStatusCode());
     }
 
     public static function provideDomains(): iterable
