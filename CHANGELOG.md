@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Changed
-* *Nothing*
+* [#2406](https://github.com/shlinkio/shlink/issues/2406) Remove references to bootstrap from error templates, and instead inline the very minimum required styles.
 
 ### Deprecated
 * [#2408](https://github.com/shlinkio/shlink/issues/2408) Generating QR codes via `/{short-code}/qr-code` is now deprecated and will be removed in Shlink 5.0. Use the equivalent capability from web clients instead.
