@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* [#2408](https://github.com/shlinkio/shlink/issues/2408) Generating QR codes via `/{short-code}/qr-code` is now deprecated and will be removed in Shlink 5.0. Use the equivalent capability from web clients instead.
+
+### Removed
+* *Nothing*
+
+### Fixed
+* *Nothing*
+
+
 ## [4.4.6] - 2025-03-20
 ### Added
 * *Nothing*

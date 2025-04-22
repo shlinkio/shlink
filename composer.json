@@ -43,7 +43,7 @@
         "pagerfanta/core": "^3.8",
         "ramsey/uuid": "^4.7",
         "shlinkio/doctrine-specification": "^2.2",
-        "shlinkio/shlink-common": "^7.0",
+        "shlinkio/shlink-common": "dev-main#e601317 as 7.1",
         "shlinkio/shlink-config": "^4.0",
         "shlinkio/shlink-event-dispatcher": "^4.2",
         "shlinkio/shlink-importer": "^5.6",

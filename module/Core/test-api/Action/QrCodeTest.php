@@ -7,6 +7,7 @@ namespace ShlinkioApiTest\Shlink\Core\Action;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
 
+/** @deprecated */
 class QrCodeTest extends ApiTestCase
 {
     #[Test]
