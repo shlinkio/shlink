@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\CLI\Input\ShortUrlDataInput;
 use Shlinkio\Shlink\CLI\Input\ShortUrlIdentifierInput;
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlServiceInterface;
@@ -57,7 +56,7 @@ class EditShortUrlCommand extends Command
             );
 
             $io->success(sprintf('Short URL "%s" properly edited', $this->stringifier->stringify($shortUrl)));
-            return ExitCode::EXIT_SUCCESS;
+            return self::SUCCESS;
         } catch (ShortUrlNotFoundException $e) {
             $io->error(sprintf('Short URL not found for "%s"', $identifier->__toString()));
 
@@ -65,7 +64,7 @@ class EditShortUrlCommand extends Command
                 $this->getApplication()?->renderThrowable($e, $io);
             }
 
-            return ExitCode::EXIT_FAILURE;
+            return self::FAILURE;
         }
     }
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Api;
 
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Model\Renaming;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -72,6 +71,6 @@ class RenameApiKeyCommand extends Command
         $this->apiKeyService->renameApiKey(Renaming::fromNames($oldName, $newName));
         $io->success('API key properly renamed');
 
-        return ExitCode::EXIT_SUCCESS;
+        return Command::SUCCESS;
     }
 }

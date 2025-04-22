@@ -7,13 +7,13 @@ use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\EditShortUrlCommand;
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlServiceInterface;
 use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -45,7 +45,7 @@ class EditShortUrlCommandTest extends TestCase
         $exitCode = $this->commandTester->getStatusCode();
 
         self::assertStringContainsString('Short URL "https://s.test/foo" properly edited', $output);
-        self::assertEquals(ExitCode::EXIT_SUCCESS, $exitCode);
+        self::assertEquals(Command::SUCCESS, $exitCode);
     }
 
     #[Test]
@@ -69,6 +69,6 @@ class EditShortUrlCommandTest extends TestCase
         } else {
             self::assertStringNotContainsString('Exception trace:', $output);
         }
-        self::assertEquals(ExitCode::EXIT_FAILURE, $exitCode);
+        self::assertEquals(Command::FAILURE, $exitCode);
     }
 }

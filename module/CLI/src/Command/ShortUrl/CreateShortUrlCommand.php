@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\CLI\Input\ShortUrlDataInput;
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
@@ -114,10 +113,10 @@ class CreateShortUrlCommand extends Command
                 sprintf('Processed long URL: <info>%s</info>', $result->shortUrl->getLongUrl()),
                 sprintf('Generated short URL: <info>%s</info>', $this->stringifier->stringify($result->shortUrl)),
             ]);
-            return ExitCode::EXIT_SUCCESS;
+            return self::SUCCESS;
         } catch (NonUniqueSlugException $e) {
             $io->error($e->getMessage());
-            return ExitCode::EXIT_FAILURE;
+            return self::FAILURE;
         }
     }
 

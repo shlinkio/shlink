@@ -9,13 +9,13 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\RedirectRule\ManageRedirectRulesCommand;
 use Shlinkio\Shlink\CLI\RedirectRule\RedirectRuleHandlerInterface;
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectRuleServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolverInterface;
 use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class ManageRedirectRulesCommandTest extends TestCase
@@ -51,7 +51,7 @@ class ManageRedirectRulesCommandTest extends TestCase
         $exitCode = $this->commandTester->execute(['shortCode' => 'foo']);
         $output = $this->commandTester->getDisplay();
 
-        self::assertEquals(ExitCode::EXIT_FAILURE, $exitCode);
+        self::assertEquals(Command::FAILURE, $exitCode);
         self::assertStringContainsString('Short URL for foo not found', $output);
     }
 
@@ -70,7 +70,7 @@ class ManageRedirectRulesCommandTest extends TestCase
         $exitCode = $this->commandTester->execute(['shortCode' => 'foo']);
         $output = $this->commandTester->getDisplay();
 
-        self::assertEquals(ExitCode::EXIT_SUCCESS, $exitCode);
+        self::assertEquals(Command::SUCCESS, $exitCode);
         self::assertStringNotContainsString('Rules properly saved', $output);
     }
 
@@ -89,7 +89,7 @@ class ManageRedirectRulesCommandTest extends TestCase
         $exitCode = $this->commandTester->execute(['shortCode' => 'foo']);
         $output = $this->commandTester->getDisplay();
 
-        self::assertEquals(ExitCode::EXIT_SUCCESS, $exitCode);
+        self::assertEquals(Command::SUCCESS, $exitCode);
         self::assertStringContainsString('Rules properly saved', $output);
     }
 }

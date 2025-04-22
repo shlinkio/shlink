@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\CLI\Command\Visit\AbstractDeleteVisitsCommand;
 use Shlinkio\Shlink\CLI\Input\ShortUrlIdentifierInput;
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlVisitsDeleterInterface;
 use Symfony\Component\Console\Input\InputInterface;
@@ -44,10 +43,10 @@ class DeleteShortUrlVisitsCommand extends AbstractDeleteVisitsCommand
             $result = $this->deleter->deleteShortUrlVisits($identifier);
             $io->success(sprintf('Successfully deleted %s visits', $result->affectedItems));
 
-            return ExitCode::EXIT_SUCCESS;
+            return self::SUCCESS;
         } catch (ShortUrlNotFoundException) {
             $io->warning(sprintf('Short URL not found for "%s"', $identifier->__toString()));
-            return ExitCode::EXIT_WARNING;
+            return self::INVALID;
         }
     }
 
