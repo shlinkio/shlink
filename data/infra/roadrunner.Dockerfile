@@ -45,6 +45,8 @@ RUN apk add --update linux-headers && \
     apk del .phpize-deps && \
     rm msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk
 
+RUN docker-php-ext-install opcache
+
 # Install composer
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
