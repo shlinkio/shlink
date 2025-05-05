@@ -11,6 +11,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\RedirectRule\RedirectRuleHandler;
 use Shlinkio\Shlink\CLI\RedirectRule\RedirectRuleHandlerAction;
+use Shlinkio\Shlink\Core\Model\AgeMatch;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule;
@@ -119,6 +120,7 @@ class RedirectRuleHandlerTest extends TestCase
                 'IP address, CIDR block or wildcard-pattern (1.2.*.*)' => '1.2.3.4',
                 'Country code to match?' => 'FR',
                 'City name to match?' => 'Los angeles',
+                'Age threshold in seconds?' => '86400',
                 default => '',
             },
         );
@@ -130,6 +132,8 @@ class RedirectRuleHandlerTest extends TestCase
                     return $type->value;
                 } elseif ($message === 'Device to match?') {
                     return DeviceType::ANDROID->value;
+                } elseif ($message === 'Age direction?') {
+                    return AgeMatch::OLDER->value;
                 }
 
                 // First we select remove action to trigger code branch, then save to finish execution
@@ -175,6 +179,7 @@ class RedirectRuleHandlerTest extends TestCase
             RedirectConditionType::GEOLOCATION_CITY_NAME,
             [RedirectCondition::forGeolocationCityName('Los angeles')],
         ];
+        yield 'link age older' => [RedirectConditionType::AGE, [RedirectCondition::forAge(AgeMatch::OLDER, '86400')]];
     }
 
     #[Test]

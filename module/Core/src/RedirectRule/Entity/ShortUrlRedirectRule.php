@@ -38,11 +38,11 @@ class ShortUrlRedirectRule extends AbstractEntity implements JsonSerializable
     /**
      * Tells if this condition matches provided request
      */
-    public function matchesRequest(ServerRequestInterface $request): bool
+    public function matchesRequest(ServerRequestInterface $request, ShortUrl|null $shortUrl = null): bool
     {
         return $this->conditions->count() > 0 && every(
             $this->conditions,
-            static fn (RedirectCondition $condition) => $condition->matchesRequest($request),
+            static fn (RedirectCondition $condition) => $condition->matchesRequest($request, $shortUrl),
         );
     }
 

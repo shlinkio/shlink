@@ -7,6 +7,7 @@ use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Shlinkio\Shlink\Core\Model\AgeMatch;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule;
@@ -63,6 +64,7 @@ class ShortUrlRedirectRuleTest extends TestCase
             RedirectCondition::forQueryParam('foo', 'bar'),
             RedirectCondition::forDevice(DeviceType::ANDROID),
             RedirectCondition::forIpAddress('1.2.3.*'),
+            RedirectCondition::forAge(AgeMatch::YOUNGER, '3600'),
         ]);
         $rule = $this->createRule($conditions);
 
@@ -94,12 +96,18 @@ class ShortUrlRedirectRuleTest extends TestCase
                 'matchKey' => null,
                 'matchValue' => '1.2.3.*',
             ],
+            [
+                'type' => RedirectConditionType::AGE->value,
+                'matchKey' => AgeMatch::YOUNGER->value,
+                'matchValue' => '3600',
+            ],
         ]];
         yield 'human-friendly conditions' => [fn (RedirectCondition $cond) => $cond->toHumanFriendly(), [
             'en-UK language is accepted',
             'query string contains foo=bar',
             sprintf('device is %s', DeviceType::ANDROID->value),
             'IP address matches 1.2.3.*',
+            sprintf('link age %s 3600 seconds', AgeMatch::YOUNGER->value),
         ]];
     }
 

@@ -2,12 +2,15 @@
 
 namespace Shlinkio\Shlink\Core\RedirectRule\Entity;
 
+use Cake\Chronos\Chronos;
 use JsonSerializable;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
+use Shlinkio\Shlink\Core\Model\AgeMatch;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
 use Shlinkio\Shlink\Core\RedirectRule\Model\Validation\RedirectRulesInputFilter;
+use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Util\IpAddressUtils;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkRedirectCondition;
 
@@ -64,6 +67,11 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
         return new self(RedirectConditionType::GEOLOCATION_CITY_NAME, $cityName);
     }
 
+    public static function forAge(AgeMatch $ageMatch, string $ageSeconds): self
+    {
+        return new self(RedirectConditionType::AGE, $ageSeconds, $ageMatch->value);
+    }
+
     public static function fromRawData(array $rawData): self
     {
         $type = RedirectConditionType::from($rawData[RedirectRulesInputFilter::CONDITION_TYPE]);
@@ -87,13 +95,14 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
             RedirectConditionType::IP_ADDRESS => self::forIpAddress($cond->matchValue),
             RedirectConditionType::GEOLOCATION_COUNTRY_CODE => self::forGeolocationCountryCode($cond->matchValue),
             RedirectConditionType::GEOLOCATION_CITY_NAME => self::forGeolocationCityName($cond->matchValue),
+            RedirectConditionType::AGE => self::forAge(AgeMatch::from($cond->matchKey), $cond->matchValue),
         };
     }
 
     /**
      * Tells if this condition matches provided request
      */
-    public function matchesRequest(ServerRequestInterface $request): bool
+    public function matchesRequest(ServerRequestInterface $request, ShortUrl|null $shortUrl = null): bool
     {
         return match ($this->type) {
             RedirectConditionType::QUERY_PARAM => $this->matchesQueryParam($request),
@@ -102,6 +111,7 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
             RedirectConditionType::IP_ADDRESS => $this->matchesRemoteIpAddress($request),
             RedirectConditionType::GEOLOCATION_COUNTRY_CODE => $this->matchesGeolocationCountryCode($request),
             RedirectConditionType::GEOLOCATION_CITY_NAME => $this->matchesGeolocationCityName($request),
+            RedirectConditionType::AGE => $this->matchesAge($shortUrl),
         };
     }
 
@@ -169,6 +179,21 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
         return strcasecmp($geolocation->city, $this->matchValue) === 0;
     }
 
+    private function matchesAge(ShortUrl $shortUrl): bool
+    {
+        $ageSeconds = Chronos::now()->diffInSeconds($shortUrl->dateCreated());
+
+        if ($this->matchKey === AgeMatch::OLDER->value && $ageSeconds > $this->matchValue){
+            return true;
+        }
+
+        if ($this->matchKey === AgeMatch::YOUNGER->value && $ageSeconds < $this->matchValue){
+            return true;
+        }
+
+        return false;
+    }
+
     public function jsonSerialize(): array
     {
         return [
@@ -191,6 +216,11 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
             RedirectConditionType::IP_ADDRESS => sprintf('IP address matches %s', $this->matchValue),
             RedirectConditionType::GEOLOCATION_COUNTRY_CODE => sprintf('country code is %s', $this->matchValue),
             RedirectConditionType::GEOLOCATION_CITY_NAME => sprintf('city name is %s', $this->matchValue),
+            RedirectConditionType::AGE => sprintf(
+                'link age %s %s seconds',
+                $this->matchKey,
+                $this->matchValue,
+            ),
         };
     }
 }

@@ -16,6 +16,7 @@ enum RedirectConditionType: string
     case IP_ADDRESS = 'ip-address';
     case GEOLOCATION_COUNTRY_CODE = 'geolocation-country-code';
     case GEOLOCATION_CITY_NAME = 'geolocation-city-name';
+    case AGE = 'age';
 
     /**
      * Tells if a value is valid for the condition type
@@ -45,6 +46,7 @@ enum RedirectConditionType: string
                 'TO', 'TT', 'TN', 'TR', 'TM', 'TC', 'TV', 'UG', 'UA', 'AE', 'GB', 'US', 'UM', 'UY', 'UZ', 'VU',
                 'VE', 'VN', 'VG', 'VI', 'WF', 'EH', 'YE', 'ZM', 'ZW',
             ]),
+            RedirectConditionType::AGE => (int)$value > 0,
             default => true,
         };
     }

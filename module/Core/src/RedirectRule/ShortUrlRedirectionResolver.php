@@ -16,7 +16,7 @@ readonly class ShortUrlRedirectionResolver implements ShortUrlRedirectionResolve
         $rules = $this->ruleService->rulesForShortUrl($shortUrl);
         foreach ($rules as $rule) {
             // Return the long URL for the first rule found that matches
-            if ($rule->matchesRequest($request)) {
+            if ($rule->matchesRequest($request, $shortUrl)) {
                 return $rule->longUrl;
             }
         }

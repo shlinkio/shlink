@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\CLI\RedirectRule;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
+use Shlinkio\Shlink\Core\Model\AgeMatch;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule;
@@ -116,6 +117,10 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
                 ),
                 RedirectConditionType::GEOLOCATION_CITY_NAME => RedirectCondition::forGeolocationCityName(
                     $this->askMandatory('City name to match?', $io),
+                ),
+                RedirectConditionType::AGE => RedirectCondition::forAge(
+                    AgeMatch::from($io->choice('Age direction?', enumValues(AgeMatch::class))),
+                    $this->askMandatory('Age threshold in seconds?', $io),
                 )
             };
 
