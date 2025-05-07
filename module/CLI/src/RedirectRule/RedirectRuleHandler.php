@@ -116,6 +116,9 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
                 ),
                 RedirectConditionType::GEOLOCATION_CITY_NAME => RedirectCondition::forGeolocationCityName(
                     $this->askMandatory('City name to match?', $io),
+                ),
+                RedirectConditionType::BEFORE_DATE => RedirectCondition::forBeforeDate(
+                    $this->askMandatory('Date to match? (ISO 8601)', $io),
                 )
             };
 

@@ -7,7 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* *Nothing*
+* [#2431](https://github.com/shlinkio/shlink/issues/2431) Add new date-based condition for the dynamic rules redirections system.
+
+  * `before-date`: Allows to perform redirections based on an ISO 8601 date value, when the current date and time is earlier than the defined threshold.
 
 ### Changed
 * [#2406](https://github.com/shlinkio/shlink/issues/2406) Remove references to bootstrap from error templates, and instead inline the very minimum required styles.
