@@ -6,7 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* *Nothing*
+* [#2431](https://github.com/shlinkio/shlink/issues/2431) Add new date-based condition for the dynamic rules redirections system.
+
+  * `before-date`: Allows to perform redirections based on an ISO 8601 date value, when the current date and time is earlier than the defined threshold.
 
 ### Changed
 * [#2522](https://github.com/shlinkio/shlink/issues/2522) Shlink no longer tries to detect trusted proxies automatically, when resolving the visitor's IP address, as this is a potential security issue.
