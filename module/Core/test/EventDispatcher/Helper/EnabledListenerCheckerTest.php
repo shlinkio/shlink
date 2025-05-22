@@ -148,7 +148,7 @@ class EnabledListenerCheckerTest extends TestCase
         return new EnabledListenerChecker(
             new RabbitMqOptions(enabled: $rabbitMqEnabled),
             $redisPubSubEnabled,
-            new MercureOptions(publicHubUrl: $mercureEnabled ? 'the-url' : null),
+            new MercureOptions(enabled: $mercureEnabled),
             new GeoLite2Options(licenseKey: $geoLiteEnabled ? 'the-key' : null),
             new MatomoOptions(enabled: $matomoEnabled),
         );

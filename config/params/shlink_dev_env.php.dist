@@ -58,6 +58,7 @@ return [
 //    EnvVars::MATOMO_API_TOKEN->value => ,
 
     // Mercure
+    EnvVars::MERCURE_ENABLED->value => true,
     EnvVars::MERCURE_PUBLIC_HUB_URL->value => 'http://localhost:8002',
     EnvVars::MERCURE_INTERNAL_HUB_URL->value => 'http://shlink_mercure_proxy',
     EnvVars::MERCURE_JWT_SECRET->value => 'mercure_jwt_key_long_enough_to_avoid_error',

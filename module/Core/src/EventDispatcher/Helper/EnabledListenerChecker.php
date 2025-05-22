@@ -34,7 +34,7 @@ readonly class EnabledListenerChecker implements EnabledListenerCheckerInterface
             EventDispatcher\RedisPubSub\NotifyVisitToRedis::class,
             EventDispatcher\RedisPubSub\NotifyNewShortUrlToRedis::class => $this->redisPubSubEnabled,
             EventDispatcher\Mercure\NotifyVisitToMercure::class,
-            EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class => $this->mercureOptions->isEnabled(),
+            EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class => $this->mercureOptions->enabled,
             EventDispatcher\Matomo\SendVisitToMatomo::class => $this->matomoOptions->enabled,
             EventDispatcher\UpdateGeoLiteDb::class => $this->geoLiteOptions->hasLicenseKey(),
             default => false, // Any unknown async listener should not be enabled by default

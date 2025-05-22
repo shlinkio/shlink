@@ -123,7 +123,7 @@ readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionH
     private function encodeToUtf8WithMbString(string $titleInOriginalEncoding, string $pageCharset): string|null
     {
         try {
-            return mb_convert_encoding($titleInOriginalEncoding, 'utf-8', $pageCharset);
+            return mb_convert_encoding($titleInOriginalEncoding, 'utf-8', $pageCharset) ?: null;
         } catch (Throwable $e) {
             $this->logger->warning('It was impossible to encode page title in UTF-8 with mb_convert_encoding. {e}', [
                 'e' => $e,
