@@ -42,6 +42,7 @@ enum EnvVars: string
     case REDIS_SERVERS = 'REDIS_SERVERS';
     case REDIS_SENTINEL_SERVICE = 'REDIS_SENTINEL_SERVICE';
     case REDIS_PUB_SUB_ENABLED = 'REDIS_PUB_SUB_ENABLED';
+    case MERCURE_ENABLED = 'MERCURE_ENABLED';
     case MERCURE_PUBLIC_HUB_URL = 'MERCURE_PUBLIC_HUB_URL';
     case MERCURE_INTERNAL_HUB_URL = 'MERCURE_INTERNAL_HUB_URL';
     case MERCURE_JWT_SECRET = 'MERCURE_JWT_SECRET';
@@ -84,6 +85,7 @@ enum EnvVars: string
     case MEMORY_LIMIT = 'MEMORY_LIMIT';
     case INITIAL_API_KEY = 'INITIAL_API_KEY';
     case SKIP_INITIAL_GEOLITE_DOWNLOAD = 'SKIP_INITIAL_GEOLITE_DOWNLOAD';
+
     /** @deprecated Use REDIRECT_EXTRA_PATH */
     case REDIRECT_APPEND_EXTRA_PATH = 'REDIRECT_APPEND_EXTRA_PATH';
     /** @deprecated */
@@ -159,6 +161,7 @@ enum EnvVars: string
             },
             self::DB_USE_ENCRYPTION => false,
 
+            self::MERCURE_ENABLED => self::MERCURE_PUBLIC_HUB_URL->existsInEnv(),
             self::MERCURE_INTERNAL_HUB_URL => self::MERCURE_PUBLIC_HUB_URL->loadFromEnv(),
 
             self::DEFAULT_QR_CODE_SIZE, => DEFAULT_QR_CODE_SIZE,
