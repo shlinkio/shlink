@@ -71,6 +71,7 @@ class RedirectRuleHandlerTest extends TestCase
     #[Test, DataProvider('provideExitActions')]
     public function rulesAreDisplayedWhenRulesListIsEmpty(
         RedirectRuleHandlerAction $action,
+        array|null $_,
     ): void {
         $comment = fn (string $value) => sprintf('<comment>%s</comment>', $value);
 
