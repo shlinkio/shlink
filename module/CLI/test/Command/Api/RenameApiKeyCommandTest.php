@@ -43,7 +43,7 @@ class RenameApiKeyCommandTest extends TestCase
 
         $this->commandTester->setInputs([$oldName]);
         $this->commandTester->execute([
-            'newName' => $newName,
+            'new-name' => $newName,
         ]);
     }
 
@@ -60,7 +60,7 @@ class RenameApiKeyCommandTest extends TestCase
 
         $this->commandTester->setInputs([$newName]);
         $this->commandTester->execute([
-            'oldName' => $oldName,
+            'old-name' => $oldName,
         ]);
     }
 
@@ -76,8 +76,8 @@ class RenameApiKeyCommandTest extends TestCase
         );
 
         $this->commandTester->execute([
-            'oldName' => $oldName,
-            'newName' => $newName,
+            'old-name' => $oldName,
+            'new-name' => $newName,
         ]);
     }
 }

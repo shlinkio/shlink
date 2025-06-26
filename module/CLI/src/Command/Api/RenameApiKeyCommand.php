@@ -8,14 +8,19 @@ use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Model\Renaming;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
+use Symfony\Component\Console\Attribute\Argument;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function Shlinkio\Shlink\Core\ArrayUtils\map;
 
+#[AsCommand(
+    name: RenameApiKeyCommand::NAME,
+    description: 'Renames an API key by name',
+)]
 class RenameApiKeyCommand extends Command
 {
     public const string NAME = 'api-key:rename';
@@ -25,20 +30,11 @@ class RenameApiKeyCommand extends Command
         parent::__construct();
     }
 
-    protected function configure(): void
-    {
-        $this
-            ->setName(self::NAME)
-            ->setDescription('Renames an API key by name')
-            ->addArgument('oldName', InputArgument::REQUIRED, 'Current name of the API key to rename')
-            ->addArgument('newName', InputArgument::REQUIRED, 'New name to set to the API key');
-    }
-
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
         $io = new SymfonyStyle($input, $output);
-        $oldName = $input->getArgument('oldName');
-        $newName = $input->getArgument('newName');
+        $oldName = $input->getArgument('old-name');
+        $newName = $input->getArgument('new-name');
 
         if ($oldName === null) {
             $apiKeys = $this->apiKeyService->listKeys();
@@ -47,7 +43,7 @@ class RenameApiKeyCommand extends Command
                 map($apiKeys, static fn (ApiKey $apiKey) => $apiKey->name),
             );
 
-            $input->setArgument('oldName', $requestedOldName);
+            $input->setArgument('old-name', $requestedOldName);
         }
 
         if ($newName === null) {
@@ -58,16 +54,15 @@ class RenameApiKeyCommand extends Command
                     : throw new InvalidArgumentException('The new name cannot be empty'),
             );
 
-            $input->setArgument('newName', $requestedNewName);
+            $input->setArgument('new-name', $requestedNewName);
         }
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $io = new SymfonyStyle($input, $output);
-        $oldName = $input->getArgument('oldName');
-        $newName = $input->getArgument('newName');
-
+    public function __invoke(
+        SymfonyStyle $io,
+        #[Argument(description: 'Current name of the API key to rename')] string $oldName,
+        #[Argument(description: 'New name to set to the API key')] string $newName,
+    ): int {
         $this->apiKeyService->renameApiKey(Renaming::fromNames($oldName, $newName));
         $io->success('API key properly renamed');
 

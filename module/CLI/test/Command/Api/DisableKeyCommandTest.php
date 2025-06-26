@@ -35,7 +35,7 @@ class DisableKeyCommandTest extends TestCase
         $this->apiKeyService->expects($this->never())->method('disableByName');
 
         $exitCode = $this->commandTester->execute([
-            'keyOrName' => $apiKey,
+            'key-or-name' => $apiKey,
         ]);
         $output = $this->commandTester->getDisplay();
 
@@ -51,7 +51,7 @@ class DisableKeyCommandTest extends TestCase
         $this->apiKeyService->expects($this->never())->method('disableByKey');
 
         $exitCode = $this->commandTester->execute([
-            'keyOrName' => $name,
+            'key-or-name' => $name,
             '--by-name' => true,
         ]);
         $output = $this->commandTester->getDisplay();
@@ -71,7 +71,7 @@ class DisableKeyCommandTest extends TestCase
         $this->apiKeyService->expects($this->never())->method('disableByName');
 
         $exitCode = $this->commandTester->execute([
-            'keyOrName' => $apiKey,
+            'key-or-name' => $apiKey,
         ]);
         $output = $this->commandTester->getDisplay();
 
@@ -90,7 +90,7 @@ class DisableKeyCommandTest extends TestCase
         $this->apiKeyService->expects($this->never())->method('disableByKey');
 
         $exitCode = $this->commandTester->execute([
-            'keyOrName' => $name,
+            'key-or-name' => $name,
             '--by-name' => true,
         ]);
         $output = $this->commandTester->getDisplay();
