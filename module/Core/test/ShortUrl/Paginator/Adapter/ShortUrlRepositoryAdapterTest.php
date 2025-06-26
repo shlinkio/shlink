@@ -81,11 +81,11 @@ class ShortUrlRepositoryAdapterTest extends TestCase
         yield ['search'];
         yield ['search', []];
         yield ['search', ['foo', 'bar']];
-        yield ['search', ['foo', 'bar'], null, null, 'longUrl'];
-        yield ['search', ['foo', 'bar'], Chronos::now()->toAtomString(), null, 'longUrl'];
-        yield ['search', ['foo', 'bar'], null, Chronos::now()->toAtomString(), 'longUrl'];
-        yield ['search', ['foo', 'bar'], Chronos::now()->toAtomString(), Chronos::now()->toAtomString(), 'longUrl'];
-        yield [null, ['foo', 'bar'], Chronos::now()->toAtomString(), null, 'longUrl'];
+        yield ['search', ['foo', 'bar'], null, null];
+        yield ['search', ['foo', 'bar'], Chronos::now()->toAtomString(), null];
+        yield ['search', ['foo', 'bar'], null, Chronos::now()->toAtomString()];
+        yield ['search', ['foo', 'bar'], Chronos::now()->toAtomString(), Chronos::now()->toAtomString()];
+        yield [null, ['foo', 'bar'], Chronos::now()->toAtomString(), null];
         yield [null, ['foo', 'bar'], Chronos::now()->toAtomString()];
         yield [null, ['foo', 'bar'], Chronos::now()->toAtomString(), Chronos::now()->toAtomString()];
     }
