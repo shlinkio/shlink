@@ -6,13 +6,18 @@ namespace Shlinkio\Shlink\Core\Config\Options;
 
 use Shlinkio\Shlink\Core\Config\EnvVars;
 use Shlinkio\Shlink\Core\EventDispatcher\Topic;
+use Shlinkio\Shlink\Core\Exception\ValidationException;
 
 use function count;
+use function implode;
 use function Shlinkio\Shlink\Core\ArrayUtils\contains;
+use function Shlinkio\Shlink\Core\ArrayUtils\map;
 use function Shlinkio\Shlink\Core\splitByComma;
+use function sprintf;
 
 final readonly class RealTimeUpdatesOptions
 {
+    /** @var string[] */
     public array $enabledTopics;
 
     public function __construct(array|null $enabledTopics = null)
@@ -23,13 +28,33 @@ final readonly class RealTimeUpdatesOptions
     public static function fromEnv(): self
     {
         $enabledTopics = splitByComma(EnvVars::REAL_TIME_UPDATES_TOPICS->loadFromEnv());
+        $validTopics = Topic::allTopicNames();
 
         return new self(
-            enabledTopics: count($enabledTopics) === 0
-                ? Topic::allTopicNames()
-                // TODO Validate provided topics are in fact Topic names
-                : splitByComma(EnvVars::REAL_TIME_UPDATES_TOPICS->loadFromEnv()),
+            enabledTopics: count($enabledTopics) === 0 ? $validTopics : self::topicsFromEnv($validTopics),
         );
+    }
+
+    /**
+     * @param string[] $validTopics
+     * @return string[]
+     */
+    private static function topicsFromEnv(array $validTopics): array
+    {
+        $topics = splitByComma(EnvVars::REAL_TIME_UPDATES_TOPICS->loadFromEnv());
+        return map($topics, function (string $topic) use ($validTopics): string {
+            if (contains($topic, $validTopics)) {
+                return $topic;
+            }
+
+            throw ValidationException::fromArray([
+                'topic' => sprintf(
+                    'Real-time updates topic "%s" is not valid. Expected one of ["%s"].',
+                    $topic,
+                    implode('", "', $validTopics),
+                ),
+            ]);
+        });
     }
 
     public function isTopicEnabled(Topic $topic): bool
