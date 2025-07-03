@@ -268,6 +268,22 @@ function enumValues(string $enum): array
 
 /**
  * @param class-string<BackedEnum> $enum
+ * @return string[]
+ */
+function enumNames(string $enum): array
+{
+    static $cache;
+    if ($cache === null) {
+        $cache = [];
+    }
+
+    return $cache[$enum] ?? (
+        $cache[$enum] = array_map(static fn (BackedEnum $type) => (string) $type->name, $enum::cases())
+    );
+}
+
+/**
+ * @param class-string<BackedEnum> $enum
  */
 function enumToString(string $enum): string
 {

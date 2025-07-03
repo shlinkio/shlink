@@ -13,6 +13,7 @@ use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\Update;
+use Shlinkio\Shlink\Core\Config\Options\RealTimeUpdatesOptions;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\UrlVisited;
 use Shlinkio\Shlink\Core\EventDispatcher\Mercure\NotifyVisitToMercure;
 use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
@@ -36,7 +37,13 @@ class NotifyVisitToMercureTest extends TestCase
         $this->em = $this->createMock(EntityManagerInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
-        $this->listener = new NotifyVisitToMercure($this->helper, $this->updatesGenerator, $this->em, $this->logger);
+        $this->listener = new NotifyVisitToMercure(
+            $this->helper,
+            $this->updatesGenerator,
+            $this->em,
+            $this->logger,
+            new RealTimeUpdatesOptions(),
+        );
     }
 
     #[Test]
