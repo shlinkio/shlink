@@ -76,6 +76,7 @@ return [
             Option\Matomo\MatomoBaseUrlConfigOption::class,
             Option\Matomo\MatomoSiteIdConfigOption::class,
             Option\Matomo\MatomoApiTokenConfigOption::class,
+            Option\RealTimeUpdates\RealTimeUpdatesTopicsConfigOption::class,
         ],
 
         'installation_commands' => [
