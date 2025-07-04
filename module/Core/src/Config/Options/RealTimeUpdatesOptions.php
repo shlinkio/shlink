@@ -22,27 +22,26 @@ final readonly class RealTimeUpdatesOptions
 
     public function __construct(array|null $enabledTopics = null)
     {
-        $this->enabledTopics = $enabledTopics ?? Topic::allTopicNames();
+        $validTopics = Topic::allTopicNames();
+        $this->enabledTopics = $enabledTopics === null ? $validTopics : self::validateTopics(
+            $enabledTopics,
+            $validTopics,
+        );
     }
 
     public static function fromEnv(): self
     {
         $enabledTopics = splitByComma(EnvVars::REAL_TIME_UPDATES_TOPICS->loadFromEnv());
-        $validTopics = Topic::allTopicNames();
-
-        return new self(
-            enabledTopics: count($enabledTopics) === 0 ? $validTopics : self::topicsFromEnv($validTopics),
-        );
+        return new self(enabledTopics: count($enabledTopics) === 0 ? null : $enabledTopics);
     }
 
     /**
      * @param string[] $validTopics
      * @return string[]
      */
-    private static function topicsFromEnv(array $validTopics): array
+    private static function validateTopics(array $providedTopics, array $validTopics): array
     {
-        $topics = splitByComma(EnvVars::REAL_TIME_UPDATES_TOPICS->loadFromEnv());
-        return map($topics, function (string $topic) use ($validTopics): string {
+        return map($providedTopics, function (string $topic) use ($validTopics): string {
             if (contains($topic, $validTopics)) {
                 return $topic;
             }
