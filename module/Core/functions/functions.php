@@ -256,13 +256,35 @@ function toProblemDetailsType(string $errorCode): string
  */
 function enumValues(string $enum): array
 {
+    return enumSide($enum, 'value');
+}
+
+/**
+ * @param class-string<BackedEnum> $enum
+ * @return string[]
+ */
+function enumNames(string $enum): array
+{
+    return enumSide($enum, 'name');
+}
+
+/**
+ * @param class-string<BackedEnum> $enum
+ * @param 'name'|'value' $type
+ * @return string[]
+ */
+function enumSide(string $enum, string $type): array
+{
     static $cache;
     if ($cache === null) {
         $cache = [];
     }
 
-    return $cache[$enum] ?? (
-        $cache[$enum] = array_map(static fn (BackedEnum $type) => (string) $type->value, $enum::cases())
+    return $cache[$type][$enum] ?? (
+        $cache[$type][$enum] = array_map(
+            static fn (BackedEnum $entry) => (string) ($type === 'name' ? $entry->name : $entry->value),
+            $enum::cases(),
+        )
     );
 }
 

@@ -110,18 +110,21 @@ return (static function (): array {
                 EventDispatcher\PublishingUpdatesGenerator::class,
                 'em',
                 'Logger_Shlink',
+                Config\Options\RealTimeUpdatesOptions::class,
             ],
             EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class => [
                 MercureHubPublishingHelper::class,
                 EventDispatcher\PublishingUpdatesGenerator::class,
                 'em',
                 'Logger_Shlink',
+                Config\Options\RealTimeUpdatesOptions::class,
             ],
             EventDispatcher\RabbitMq\NotifyVisitToRabbitMq::class => [
                 RabbitMqPublishingHelper::class,
                 EventDispatcher\PublishingUpdatesGenerator::class,
                 'em',
                 'Logger_Shlink',
+                Config\Options\RealTimeUpdatesOptions::class,
                 Config\Options\RabbitMqOptions::class,
             ],
             EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq::class => [
@@ -129,6 +132,7 @@ return (static function (): array {
                 EventDispatcher\PublishingUpdatesGenerator::class,
                 'em',
                 'Logger_Shlink',
+                Config\Options\RealTimeUpdatesOptions::class,
                 Config\Options\RabbitMqOptions::class,
             ],
             EventDispatcher\RedisPubSub\NotifyVisitToRedis::class => [
@@ -136,6 +140,7 @@ return (static function (): array {
                 EventDispatcher\PublishingUpdatesGenerator::class,
                 'em',
                 'Logger_Shlink',
+                Config\Options\RealTimeUpdatesOptions::class,
                 'config.redis.pub_sub_enabled',
             ],
             EventDispatcher\RedisPubSub\NotifyNewShortUrlToRedis::class => [
@@ -143,6 +148,7 @@ return (static function (): array {
                 EventDispatcher\PublishingUpdatesGenerator::class,
                 'em',
                 'Logger_Shlink',
+                Config\Options\RealTimeUpdatesOptions::class,
                 'config.redis.pub_sub_enabled',
             ],
 

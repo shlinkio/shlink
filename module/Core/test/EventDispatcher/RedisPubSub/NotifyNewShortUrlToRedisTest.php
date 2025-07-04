@@ -15,6 +15,7 @@ use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\Update;
+use Shlinkio\Shlink\Core\Config\Options\RealTimeUpdatesOptions;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
 use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
 use Shlinkio\Shlink\Core\EventDispatcher\RedisPubSub\NotifyNewShortUrlToRedis;
@@ -77,6 +78,13 @@ class NotifyNewShortUrlToRedisTest extends TestCase
 
     private function createListener(bool $enabled = true): NotifyNewShortUrlToRedis
     {
-        return new NotifyNewShortUrlToRedis($this->helper, $this->updatesGenerator, $this->em, $this->logger, $enabled);
+        return new NotifyNewShortUrlToRedis(
+            $this->helper,
+            $this->updatesGenerator,
+            $this->em,
+            $this->logger,
+            new RealTimeUpdatesOptions(),
+            $enabled,
+        );
     }
 }
