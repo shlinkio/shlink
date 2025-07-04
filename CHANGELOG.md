@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     For BC, if this env vars is not present, we'll still consider the integration enabled if the `MERCURE_PUBLIC_HUB_URL` env var has a value. This is considered deprecated though, and next major version will rely only on `MERCURE_ENABLED`, so if you are using Mercure, make sure to set `MERCURE_ENABLED=true` to be ready.
 
+* [#2387](https://github.com/shlinkio/shlink/issues/2387) Add `REAL_TIME_UPDATES_TOPICS` env var and corresponding config option, to granularly decide which real-time updates topics should be enabled.
+
 ### Changed
 * [#2406](https://github.com/shlinkio/shlink/issues/2406) Remove references to bootstrap from error templates, and instead inline the very minimum required styles.
 
