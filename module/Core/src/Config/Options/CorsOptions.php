@@ -1,0 +1,58 @@
+<?php
+
+namespace Shlinkio\Shlink\Core\Config\Options;
+
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Shlinkio\Shlink\Core\Config\EnvVars;
+
+use function Shlinkio\Shlink\Core\ArrayUtils\contains;
+use function Shlinkio\Shlink\Core\splitByComma;
+
+final readonly class CorsOptions
+{
+    private const string ORIGIN_PATTERN = '<origin>';
+
+    /** @var string[]|'*'|'<origin>' */
+    public string|array $allowOrigins;
+
+    public function __construct(
+        string $allowOrigins = '*',
+        public bool $allowCredentials = false,
+        public int $maxAge = 3600,
+    ) {
+        $this->allowOrigins = $allowOrigins !== '*' && $allowOrigins !== self::ORIGIN_PATTERN
+            ? splitByComma($allowOrigins)
+            : $allowOrigins;
+    }
+
+    public static function fromEnv(): self
+    {
+        return new self(
+            allowOrigins: EnvVars::CORS_ALLOW_ORIGIN->loadFromEnv(),
+            allowCredentials: EnvVars::CORS_ALLOW_CREDENTIALS->loadFromEnv(),
+            maxAge: EnvVars::CORS_MAX_AGE->loadFromEnv(),
+        );
+    }
+
+    public function responseWithAllowOrigin(RequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        if ($this->allowOrigins === '*') {
+            return $response->withHeader('Access-Control-Allow-Origin', '*');
+        }
+
+        $requestOrigin = $request->getHeader('Origin');
+        if (
+            // The special <origin> value means we should allow requests from the origin set in the request's Origin
+            // header
+            $this->allowOrigins === self::ORIGIN_PATTERN
+            // If an array of allowed hosts was provided, set Access-Control-Allow-Origin header only if request's
+            // Origin header matches one of them
+            || contains($requestOrigin, $this->allowOrigins)
+        ) {
+            return $response->withHeader('Access-Control-Allow-Origin', $requestOrigin);
+        }
+
+        return $response;
+    }
+}

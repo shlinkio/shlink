@@ -11,6 +11,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Server\RequestHandlerInterface;
+use Shlinkio\Shlink\Core\Config\Options\CorsOptions;
 use Shlinkio\Shlink\Rest\Middleware\CrossDomainMiddleware;
 
 class CrossDomainMiddlewareTest extends TestCase
@@ -20,7 +21,7 @@ class CrossDomainMiddlewareTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->middleware = new CrossDomainMiddleware(['max_age' => 1000]);
+        $this->middleware = new CrossDomainMiddleware(new CorsOptions(maxAge: 1000));
         $this->handler = $this->createMock(RequestHandlerInterface::class);
     }
 

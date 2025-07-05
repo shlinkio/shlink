@@ -86,6 +86,9 @@ enum EnvVars: string
     case INITIAL_API_KEY = 'INITIAL_API_KEY';
     case SKIP_INITIAL_GEOLITE_DOWNLOAD = 'SKIP_INITIAL_GEOLITE_DOWNLOAD';
     case REAL_TIME_UPDATES_TOPICS = 'REAL_TIME_UPDATES_TOPICS';
+    case CORS_ALLOW_ORIGIN = 'CORS_ALLOW_ORIGIN';
+    case CORS_ALLOW_CREDENTIALS = 'CORS_ALLOW_CREDENTIALS';
+    case CORS_MAX_AGE = 'CORS_MAX_AGE';
 
     /** @deprecated Use REDIRECT_EXTRA_PATH */
     case REDIRECT_APPEND_EXTRA_PATH = 'REDIRECT_APPEND_EXTRA_PATH';
@@ -186,6 +189,10 @@ enum EnvVars: string
             self::DISABLE_IP_TRACKING,
             self::DISABLE_REFERRER_TRACKING,
             self::DISABLE_UA_TRACKING => false,
+
+            self::CORS_ALLOW_ORIGIN => '*',
+            self::CORS_ALLOW_CREDENTIALS => false,
+            self::CORS_MAX_AGE => 3600,
 
             default => null,
         };
