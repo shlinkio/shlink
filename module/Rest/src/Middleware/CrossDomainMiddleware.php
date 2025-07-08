@@ -44,6 +44,10 @@ readonly class CrossDomainMiddleware implements MiddlewareInterface, RequestMeth
             'Access-Control-Max-Age' => $this->options->maxAge,
         ];
 
+        if ($this->options->allowCredentials) {
+            $corsHeaders['Access-Control-Allow-Credentials'] = 'true';
+        }
+
         // Options requests should always be empty and have a 204 status code
         return EmptyResponse::withHeaders([...$response->getHeaders(), ...$corsHeaders]);
     }

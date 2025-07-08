@@ -8,6 +8,7 @@ use Shlinkio\Shlink\Core\Config\EnvVars;
 
 use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 use function Shlinkio\Shlink\Core\splitByComma;
+use function strtolower;
 
 final readonly class CorsOptions
 {
@@ -21,9 +22,10 @@ final readonly class CorsOptions
         public bool $allowCredentials = false,
         public int $maxAge = 3600,
     ) {
-        $this->allowOrigins = $allowOrigins !== '*' && $allowOrigins !== self::ORIGIN_PATTERN
-            ? splitByComma($allowOrigins)
-            : $allowOrigins;
+        $lowerCaseAllowOrigins = strtolower($allowOrigins);
+        $this->allowOrigins = contains($lowerCaseAllowOrigins, ['*', self::ORIGIN_PATTERN])
+            ? $lowerCaseAllowOrigins
+            : splitByComma($lowerCaseAllowOrigins);
     }
 
     public static function fromEnv(): self
