@@ -23,7 +23,7 @@ final readonly class CorsOptions
         public int $maxAge = 3600,
     ) {
         $lowerCaseAllowOrigins = strtolower($allowOrigins);
-        $this->allowOrigins = contains($lowerCaseAllowOrigins, ['*', self::ORIGIN_PATTERN])
+        $this->allowOrigins = $lowerCaseAllowOrigins === '*' || $lowerCaseAllowOrigins === self::ORIGIN_PATTERN
             ? $lowerCaseAllowOrigins
             : splitByComma($lowerCaseAllowOrigins);
     }

@@ -77,6 +77,9 @@ return [
             Option\Matomo\MatomoSiteIdConfigOption::class,
             Option\Matomo\MatomoApiTokenConfigOption::class,
             Option\RealTimeUpdates\RealTimeUpdatesTopicsConfigOption::class,
+            Option\Cors\CorsAllowOriginConfigOption::class,
+            Option\Cors\CorsAllowCredentialsConfigOption::class,
+            Option\Cors\CorsMaxAgeConfigOption::class,
         ],
 
         'installation_commands' => [
