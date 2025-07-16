@@ -10,12 +10,13 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Shlinkio\Shlink\Core\Config\Options\CorsOptions;
 
 use function implode;
 
-class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterface
+readonly class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterface
 {
-    public function __construct(private array $config)
+    public function __construct(private CorsOptions $options)
     {
     }
 
@@ -27,7 +28,7 @@ class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterfa
         }
 
         // Add Allow-Origin header
-        $response = $response->withHeader('Access-Control-Allow-Origin', '*');
+        $response = $this->options->responseWithAllowOrigin($request, $response);
         if ($request->getMethod() !== self::METHOD_OPTIONS) {
             return $response;
         }
@@ -40,8 +41,12 @@ class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterfa
         $corsHeaders = [
             'Access-Control-Allow-Methods' => $this->resolveCorsAllowedMethods($response),
             'Access-Control-Allow-Headers' => $request->getHeaderLine('Access-Control-Request-Headers'),
-            'Access-Control-Max-Age' => $this->config['max_age'],
+            'Access-Control-Max-Age' => $this->options->maxAge,
         ];
+
+        if ($this->options->allowCredentials) {
+            $corsHeaders['Access-Control-Allow-Credentials'] = 'true';
+        }
 
         // Options requests should always be empty and have a 204 status code
         return EmptyResponse::withHeaders([...$response->getHeaders(), ...$corsHeaders]);
