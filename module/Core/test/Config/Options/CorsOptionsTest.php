@@ -30,7 +30,7 @@ class CorsOptionsTest extends TestCase
             $expectedAllowOriginsHeader,
             $options->responseWithAllowOrigin(
                 ServerRequestFactory::fromGlobals()->withHeader('Origin', 'https://example.com'),
-                new Response()
+                new Response(),
             )->getHeaderLine('Access-Control-Allow-Origin'),
         );
     }
