@@ -43,7 +43,7 @@ final readonly class CorsOptions
             return $response->withHeader('Access-Control-Allow-Origin', '*');
         }
 
-        $requestOrigin = $request->getHeader('Origin');
+        $requestOrigin = $request->getHeaderLine('Origin');
         if (
             // The special <origin> value means we should allow requests from the origin set in the request's Origin
             // header
