@@ -11,6 +11,7 @@ use Shlinkio\Shlink\Core\RedirectRule\Model\Validation\RedirectRulesInputFilter;
 use Shlinkio\Shlink\Core\Util\IpAddressUtils;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkRedirectCondition;
 
+use function array_key_exists;
 use function Shlinkio\Shlink\Core\acceptLanguageToLocales;
 use function Shlinkio\Shlink\Core\ArrayUtils\some;
 use function Shlinkio\Shlink\Core\geolocationFromRequest;
@@ -33,6 +34,16 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
     public static function forQueryParam(string $param, string $value): self
     {
         return new self(RedirectConditionType::QUERY_PARAM, $value, $param);
+    }
+
+    public static function forAnyValueQueryParam(string $param): self
+    {
+        return new self(RedirectConditionType::ANY_VALUE_QUERY_PARAM, $param);
+    }
+
+    public static function forValuelessQueryParam(string $param): self
+    {
+        return new self(RedirectConditionType::VALUELESS_QUERY_PARAM, $param);
     }
 
     public static function forLanguage(string $language): self
@@ -82,6 +93,8 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
 
         return match ($type) {
             RedirectConditionType::QUERY_PARAM => self::forQueryParam($cond->matchKey ?? '', $cond->matchValue),
+            RedirectConditionType::ANY_VALUE_QUERY_PARAM => self::forAnyValueQueryParam($cond->matchValue),
+            RedirectConditionType::VALUELESS_QUERY_PARAM => self::forValuelessQueryParam($cond->matchValue),
             RedirectConditionType::LANGUAGE => self::forLanguage($cond->matchValue),
             RedirectConditionType::DEVICE => self::forDevice(DeviceType::from($cond->matchValue)),
             RedirectConditionType::IP_ADDRESS => self::forIpAddress($cond->matchValue),
@@ -97,6 +110,8 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
     {
         return match ($this->type) {
             RedirectConditionType::QUERY_PARAM => $this->matchesQueryParam($request),
+            RedirectConditionType::ANY_VALUE_QUERY_PARAM => $this->matchesAnyValueQueryParam($request),
+            RedirectConditionType::VALUELESS_QUERY_PARAM => $this->matchesValuelessQueryParam($request),
             RedirectConditionType::LANGUAGE => $this->matchesLanguage($request),
             RedirectConditionType::DEVICE => $this->matchesDevice($request),
             RedirectConditionType::IP_ADDRESS => $this->matchesRemoteIpAddress($request),
@@ -111,6 +126,18 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
         $queryValue = $query[$this->matchKey] ?? null;
 
         return $queryValue === $this->matchValue;
+    }
+
+    private function matchesValuelessQueryParam(ServerRequestInterface $request): bool
+    {
+        $query = $request->getQueryParams();
+        return array_key_exists($this->matchValue, $query) && empty($query[$this->matchValue]);
+    }
+
+    private function matchesAnyValueQueryParam(ServerRequestInterface $request): bool
+    {
+        $query = $request->getQueryParams();
+        return array_key_exists($this->matchValue, $query);
     }
 
     private function matchesLanguage(ServerRequestInterface $request): bool
@@ -186,6 +213,14 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
             RedirectConditionType::QUERY_PARAM => sprintf(
                 'query string contains %s=%s',
                 $this->matchKey,
+                $this->matchValue,
+            ),
+            RedirectConditionType::ANY_VALUE_QUERY_PARAM => sprintf(
+                'query string contains %s param',
+                $this->matchValue,
+            ),
+            RedirectConditionType::VALUELESS_QUERY_PARAM => sprintf(
+                'query string contains %s param without a value (https://example.com?foo)',
                 $this->matchValue,
             ),
             RedirectConditionType::IP_ADDRESS => sprintf('IP address matches %s', $this->matchValue),

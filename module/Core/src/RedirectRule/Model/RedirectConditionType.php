@@ -13,6 +13,8 @@ enum RedirectConditionType: string
     case DEVICE = 'device';
     case LANGUAGE = 'language';
     case QUERY_PARAM = 'query-param';
+    case ANY_VALUE_QUERY_PARAM = 'any-value-query-param';
+    case VALUELESS_QUERY_PARAM = 'valueless-query-param';
     case IP_ADDRESS = 'ip-address';
     case GEOLOCATION_COUNTRY_CODE = 'geolocation-country-code';
     case GEOLOCATION_CITY_NAME = 'geolocation-city-name';
@@ -45,6 +47,9 @@ enum RedirectConditionType: string
                 'TO', 'TT', 'TN', 'TR', 'TM', 'TC', 'TV', 'UG', 'UA', 'AE', 'GB', 'US', 'UM', 'UY', 'UZ', 'VU',
                 'VE', 'VN', 'VG', 'VI', 'WF', 'EH', 'YE', 'ZM', 'ZW',
             ]),
+            RedirectConditionType::ANY_VALUE_QUERY_PARAM, RedirectConditionType::VALUELESS_QUERY_PARAM => $value !== '',
+            // FIXME We should at least validate the value is not empty
+            //  default => $value !== '',
             default => true,
         };
     }
