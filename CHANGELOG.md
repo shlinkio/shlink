@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ### Added
 * [#2438](https://github.com/shlinkio/shlink/issues/2438) Add `MERCURE_ENABLED` env var and corresponding config option, to more easily allow the mercure integration to be toggled.
 
-    For BC, if this env vars is not present, we'll still consider the integration enabled if the `MERCURE_PUBLIC_HUB_URL` env var has a value. This is considered deprecated though, and next major version will rely only on `MERCURE_ENABLED`, so if you are using Mercure, make sure to set `MERCURE_ENABLED=true` to be ready.
+    For BC, if this env var is not present, we'll still consider the integration enabled if the `MERCURE_PUBLIC_HUB_URL` env var has a value. This is considered deprecated though, and next major version will rely only on `MERCURE_ENABLED`, so if you are using Mercure, make sure to set `MERCURE_ENABLED=true` to be ready.
 
 * [#2387](https://github.com/shlinkio/shlink/issues/2387) Add `REAL_TIME_UPDATES_TOPICS` env var and corresponding config option, to granularly decide which real-time updates topics should be enabled.
 * [#2418](https://github.com/shlinkio/shlink/issues/2418) Add more granular control over how Shlink handles CORS. It is now possible to customize the `Access-Control-Allow-Origin`, `Access-Control-Max-Age` and `Access-Control-Allow-Credentials` headers via env vars or config options.
