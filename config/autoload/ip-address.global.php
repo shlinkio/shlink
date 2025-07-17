@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
+use Psr\Container\ContainerInterface;
 use RKA\Middleware\IpAddress;
 use RKA\Middleware\Mezzio\IpAddressFactory;
 use Shlinkio\Shlink\Core\Middleware\ReverseForwardedAddressesMiddlewareDecorator;
@@ -32,19 +32,21 @@ return [
 
     'dependencies' => [
         'factories' => [
-//            IpAddress::class => IpAddressFactory::class,
-            'actual_ip_address_middleware' => IpAddressFactory::class,
-            ReverseForwardedAddressesMiddlewareDecorator::class => ConfigAbstractFactory::class,
+            IpAddress::class => IpAddressFactory::class,
         ],
-        'aliases' => [
-            // Make sure the decorated middleware is resolved when getting IpAddress::class, to make this decoration
-            // transparent for other parts of the code
-            IpAddress::class => ReverseForwardedAddressesMiddlewareDecorator::class,
+        'delegators' => [
+            // Make middleware decoration transparent to other parts of the code
+            IpAddress::class => [
+                function (
+                    ContainerInterface $container,
+                    string $name,
+                    callable $callback
+                ): ReverseForwardedAddressesMiddlewareDecorator {
+                    return new ReverseForwardedAddressesMiddlewareDecorator($callback());
+                },
+            ],
         ],
-    ],
 
-    ConfigAbstractFactory::class => [
-        ReverseForwardedAddressesMiddlewareDecorator::class => ['actual_ip_address_middleware'],
     ],
 
 ];
