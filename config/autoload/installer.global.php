@@ -80,6 +80,7 @@ return [
             Option\Cors\CorsAllowOriginConfigOption::class,
             Option\Cors\CorsAllowCredentialsConfigOption::class,
             Option\Cors\CorsMaxAgeConfigOption::class,
+            Option\TrustedProxiesConfigOption::class,
         ],
 
         'installation_commands' => [

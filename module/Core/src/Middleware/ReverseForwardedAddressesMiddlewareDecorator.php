@@ -26,6 +26,8 @@ use function implode;
  * if trusted proxies are not set.
  *
  * @see https://github.com/akrabat/ip-address-middleware/pull/51
+ * @deprecated Remove in future major version, and enforce users with multiple reverse proxies to provide the list via
+ *             TRUSTED_PROXIES
  */
 readonly class ReverseForwardedAddressesMiddlewareDecorator implements MiddlewareInterface
 {
