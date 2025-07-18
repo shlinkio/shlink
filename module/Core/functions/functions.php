@@ -143,6 +143,7 @@ function acceptLanguageToLocales(string $acceptLanguage, float $minQuality = 0):
  */
 function splitLocale(string $locale): array
 {
+    /** @var string $lang */
     [$lang, $countryCode] = array_pad(explode('-', $locale), length: 2, value: null);
     return [$lang, $countryCode];
 }
