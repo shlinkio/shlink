@@ -13,6 +13,7 @@ use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
 
 return (static function (): array {
     $trustedProxies = EnvVars::TRUSTED_PROXIES->loadFromEnv();
+    $proxiesIsHopCount = is_numeric($trustedProxies);
 
     return [
 
@@ -21,7 +22,10 @@ return (static function (): array {
             'ip_address' => [
                 'attribute_name' => IP_ADDRESS_REQUEST_ATTRIBUTE,
                 'check_proxy_headers' => true,
-                'trusted_proxies' => splitByComma($trustedProxies),
+                // List of trusted proxies
+                'trusted_proxies' => $proxiesIsHopCount ? [] : splitByComma($trustedProxies),
+                // Amount of addresses to skip from the right, before finding the visitor IP address
+                'hop_count' => $proxiesIsHopCount ? (int) $trustedProxies : 0,
                 'headers_to_inspect' => [
                     'CF-Connecting-IP',
                     'X-Forwarded-For',
