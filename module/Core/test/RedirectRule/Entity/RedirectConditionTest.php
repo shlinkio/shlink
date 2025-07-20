@@ -15,8 +15,11 @@ use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
 use const ShlinkioTest\Shlink\ANDROID_USER_AGENT;
-use const ShlinkioTest\Shlink\DESKTOP_USER_AGENT;
+use const ShlinkioTest\Shlink\CHROMEOS_USER_AGENT;
 use const ShlinkioTest\Shlink\IOS_USER_AGENT;
+use const ShlinkioTest\Shlink\LINUX_USER_AGENT;
+use const ShlinkioTest\Shlink\MACOS_USER_AGENT;
+use const ShlinkioTest\Shlink\WINDOWS_USER_AGENT;
 
 class RedirectConditionTest extends TestCase
 {
@@ -89,10 +92,20 @@ class RedirectConditionTest extends TestCase
     #[TestWith([null, DeviceType::ANDROID, false])]
     #[TestWith(['unknown', DeviceType::ANDROID, false])]
     #[TestWith([ANDROID_USER_AGENT, DeviceType::ANDROID, true])]
-    #[TestWith([DESKTOP_USER_AGENT, DeviceType::DESKTOP, true])]
+    #[TestWith([WINDOWS_USER_AGENT, DeviceType::DESKTOP, true])]
+    #[TestWith([LINUX_USER_AGENT, DeviceType::DESKTOP, true])]
+    #[TestWith([MACOS_USER_AGENT, DeviceType::DESKTOP, true])]
+    #[TestWith([CHROMEOS_USER_AGENT, DeviceType::DESKTOP, true])]
+    #[TestWith([WINDOWS_USER_AGENT, DeviceType::WINDOWS, true])]
+    #[TestWith([LINUX_USER_AGENT, DeviceType::LINUX, true])]
+    #[TestWith([MACOS_USER_AGENT, DeviceType::MACOS, true])]
+    #[TestWith([CHROMEOS_USER_AGENT, DeviceType::CHROMEOS, true])]
     #[TestWith([IOS_USER_AGENT, DeviceType::IOS, true])]
+    #[TestWith([IOS_USER_AGENT, DeviceType::MOBILE, true])]
+    #[TestWith([ANDROID_USER_AGENT, DeviceType::MOBILE, true])]
     #[TestWith([IOS_USER_AGENT, DeviceType::ANDROID, false])]
-    #[TestWith([DESKTOP_USER_AGENT, DeviceType::IOS, false])]
+    #[TestWith([WINDOWS_USER_AGENT, DeviceType::IOS, false])]
+    #[TestWith([LINUX_USER_AGENT, DeviceType::WINDOWS, false])]
     public function matchesDevice(string|null $userAgent, DeviceType $value, bool $expected): void
     {
         $request = ServerRequestFactory::fromGlobals();

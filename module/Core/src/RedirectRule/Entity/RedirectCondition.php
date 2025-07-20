@@ -166,8 +166,8 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
 
     private function matchesDevice(ServerRequestInterface $request): bool
     {
-        $device = DeviceType::matchFromUserAgent($request->getHeaderLine('User-Agent'));
-        return $device !== null && $device->value === $this->matchValue;
+        $devices = DeviceType::matchFromUserAgent($request->getHeaderLine('User-Agent'));
+        return some($devices, fn (DeviceType $device) => $device->value === $this->matchValue);
     }
 
     private function matchesRemoteIpAddress(ServerRequestInterface $request): bool
