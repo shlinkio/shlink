@@ -19,8 +19,8 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 
 use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
 use const ShlinkioTest\Shlink\ANDROID_USER_AGENT;
-use const ShlinkioTest\Shlink\DESKTOP_USER_AGENT;
 use const ShlinkioTest\Shlink\IOS_USER_AGENT;
+use const ShlinkioTest\Shlink\WINDOWS_USER_AGENT;
 
 class ShortUrlRedirectionResolverTest extends TestCase
 {
@@ -68,7 +68,7 @@ class ShortUrlRedirectionResolverTest extends TestCase
             RedirectCondition::forLanguage('es-ES'), // This condition won't match
             'https://example.com/foo/bar',
         ];
-        yield 'desktop user agent' => [$request(DESKTOP_USER_AGENT), null, 'https://example.com/foo/bar'];
+        yield 'desktop user agent' => [$request(WINDOWS_USER_AGENT), null, 'https://example.com/foo/bar'];
         yield 'matching android device' => [
             $request(ANDROID_USER_AGENT),
             RedirectCondition::forDevice(DeviceType::ANDROID),

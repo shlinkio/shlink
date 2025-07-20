@@ -98,6 +98,17 @@ class ListRedirectRulesTest extends ApiTestCase
                 ],
             ],
         ],
+        [
+            'longUrl' => 'https://example.com/linux',
+            'priority' => 7,
+            'conditions' => [
+                [
+                    'type' => 'device',
+                    'matchKey' => null,
+                    'matchValue' => 'linux',
+                ],
+            ],
+        ],
     ]])]
     public function returnsListOfRulesForShortUrl(string $shortCode, array $expectedRules): void
     {

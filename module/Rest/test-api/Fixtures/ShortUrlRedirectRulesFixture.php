@@ -78,6 +78,14 @@ class ShortUrlRedirectRulesFixture extends AbstractFixture implements DependentF
         );
         $manager->persist($ipAddressRule);
 
+        $linuxRule = new ShortUrlRedirectRule(
+            shortUrl: $defShortUrl,
+            priority: 7,
+            longUrl: 'https://example.com/linux',
+            conditions: new ArrayCollection([RedirectCondition::forDevice(DeviceType::LINUX)]),
+        );
+        $manager->persist($linuxRule);
+
         $manager->flush();
     }
 }

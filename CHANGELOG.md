@@ -19,9 +19,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     The new conditions match as soon as a query param exists with any or no value (in the case of `any-value-query-param`), or if a query param exists with no value at all (in the case of `valueless-query-param`).
 
-* [#2387](https://github.com/shlinkio/shlink/issues/2387) Add `TRUSTED_PROXIES` env var and corresponding config option, to configure a comma-separated list of all the proxies in front of Shlink, or simply the amount of trusted proxies in front of Shlink.
+* [#2360](https://github.com/shlinkio/shlink/issues/2360) Add `TRUSTED_PROXIES` env var and corresponding config option, to configure a comma-separated list of all the proxies in front of Shlink, or simply the amount of trusted proxies in front of Shlink.
 
     This is important to properly detect visitor's IP addresses instead of incorrectly matching one of the proxy's IP address, and if provided, it disables a workaround introduced in https://github.com/shlinkio/shlink/pull/2359.
+
+* [#2274](https://github.com/shlinkio/shlink/issues/2274) Add more supported device types for the `device` redirect condition:
+
+    * `linux`: Will match desktop devices with Linux.
+    * `windows`: Will match desktop devices with Windows.
+    * `macos`: Will match desktop devices with MacOS.
+    * `chromeos`: Will match desktop devices with ChromeOS.
+    * `mobile`: Will match any mobile devices with either Android or iOS.
 
 ### Changed
 * [#2406](https://github.com/shlinkio/shlink/issues/2406) Remove references to bootstrap from error templates, and instead inline the very minimum required styles.
