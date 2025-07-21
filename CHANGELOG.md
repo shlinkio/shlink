@@ -31,6 +31,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     * `chromeos`: Will match desktop devices with ChromeOS.
     * `mobile`: Will match any mobile devices with either Android or iOS.
 
+* [#2093](https://github.com/shlinkio/shlink/issues/2093) Add `REDIRECT_CACHE_LIFETIME` env var and corresponding config option, so that it is possible to set the `Cache-Control` visibility directive (`public` or `private`) when the `REDIRECT_STATUS_CODE` has been set to `301` or `308`.
+
 ### Changed
 * [#2406](https://github.com/shlinkio/shlink/issues/2406) Remove references to bootstrap from error templates, and instead inline the very minimum required styles.
 

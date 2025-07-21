@@ -20,7 +20,11 @@ readonly class RedirectResponseHelper implements RedirectResponseHelperInterface
     {
         $statusCode = $this->options->redirectStatusCode;
         $headers = ! $statusCode->allowsCache() ? [] : [
-            'Cache-Control' => sprintf('private,max-age=%s', $this->options->redirectCacheLifetime),
+            'Cache-Control' => sprintf(
+                '%s,max-age=%s',
+                $this->options->redirectCacheVisibility,
+                $this->options->redirectCacheLifetime,
+            ),
         ];
 
         return new RedirectResponse($location, $statusCode->value, $headers);
