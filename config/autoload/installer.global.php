@@ -41,6 +41,7 @@ return [
             Option\UrlShortener\GeoLiteLicenseKeyConfigOption::class,
             Option\UrlShortener\RedirectStatusCodeConfigOption::class,
             Option\UrlShortener\RedirectCacheLifeTimeConfigOption::class,
+            Option\UrlShortener\RedirectCacheVisibilityConfigOption::class,
             Option\UrlShortener\AutoResolveTitlesConfigOption::class,
             Option\UrlShortener\ExtraPathModeConfigOption::class,
             Option\UrlShortener\EnableMultiSegmentSlugsConfigOption::class,
