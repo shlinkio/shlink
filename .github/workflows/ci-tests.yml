@@ -13,7 +13,8 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        php-version: ['8.3', '8.4']
+        php-version: ['8.3', '8.4', '8.5']
+    continue-on-error: ${{ inputs.php-version == '8.5' }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # rr get-binary picks this env automatically
     steps:
