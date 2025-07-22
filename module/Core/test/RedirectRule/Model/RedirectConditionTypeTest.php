@@ -14,9 +14,9 @@ class RedirectConditionTypeTest extends TestCase
     #[Test]
     #[TestWith([RedirectConditionType::QUERY_PARAM, '', false])]
     #[TestWith([RedirectConditionType::QUERY_PARAM, 'foo', true])]
-    #[TestWith([RedirectConditionType::ANY_VALUE_QUERY_PARAM, '', false])]
+    #[TestWith([RedirectConditionType::ANY_VALUE_QUERY_PARAM, '', true])]
     #[TestWith([RedirectConditionType::ANY_VALUE_QUERY_PARAM, 'foo', true])]
-    #[TestWith([RedirectConditionType::VALUELESS_QUERY_PARAM, '', false])]
+    #[TestWith([RedirectConditionType::VALUELESS_QUERY_PARAM, '', true])]
     #[TestWith([RedirectConditionType::VALUELESS_QUERY_PARAM, 'foo', true])]
     public function isValidFailsForEmptyQueryParams(
         RedirectConditionType $conditionType,

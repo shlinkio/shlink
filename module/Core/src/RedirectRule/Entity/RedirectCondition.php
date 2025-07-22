@@ -26,7 +26,7 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
 {
     private function __construct(
         public readonly RedirectConditionType $type,
-        private readonly string $matchValue,
+        private readonly string|null $matchValue = null,
         private readonly string|null $matchKey = null,
     ) {
     }
@@ -38,12 +38,12 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
 
     public static function forAnyValueQueryParam(string $param): self
     {
-        return new self(RedirectConditionType::ANY_VALUE_QUERY_PARAM, $param);
+        return new self(RedirectConditionType::ANY_VALUE_QUERY_PARAM, matchKey: $param);
     }
 
     public static function forValuelessQueryParam(string $param): self
     {
-        return new self(RedirectConditionType::VALUELESS_QUERY_PARAM, $param);
+        return new self(RedirectConditionType::VALUELESS_QUERY_PARAM, matchKey: $param);
     }
 
     public static function forLanguage(string $language): self
@@ -131,19 +131,19 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
     private function matchesValuelessQueryParam(ServerRequestInterface $request): bool
     {
         $query = $request->getQueryParams();
-        return array_key_exists($this->matchValue, $query) && empty($query[$this->matchValue]);
+        return $this->matchKey !== null && array_key_exists($this->matchKey, $query) && empty($query[$this->matchKey]);
     }
 
     private function matchesAnyValueQueryParam(ServerRequestInterface $request): bool
     {
         $query = $request->getQueryParams();
-        return array_key_exists($this->matchValue, $query);
+        return $this->matchKey !== null && array_key_exists($this->matchKey, $query);
     }
 
     private function matchesLanguage(ServerRequestInterface $request): bool
     {
         $acceptLanguage = trim($request->getHeaderLine('Accept-Language'));
-        if ($acceptLanguage === '' || $acceptLanguage === '*') {
+        if ($acceptLanguage === '' || $acceptLanguage === '*' || $this->matchValue === null) {
             return false;
         }
 
@@ -173,13 +173,17 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
     private function matchesRemoteIpAddress(ServerRequestInterface $request): bool
     {
         $remoteAddress = ipAddressFromRequest($request);
-        return $remoteAddress !== null && IpAddressUtils::ipAddressMatchesGroups($remoteAddress, [$this->matchValue]);
+        return (
+            $this->matchValue !== null
+            && $remoteAddress !== null
+            && IpAddressUtils::ipAddressMatchesGroups($remoteAddress, [$this->matchValue])
+        );
     }
 
     private function matchesGeolocationCountryCode(ServerRequestInterface $request): bool
     {
         $geolocation = geolocationFromRequest($request);
-        if ($geolocation === null) {
+        if ($geolocation === null || $this->matchValue === null) {
             return false;
         }
 
@@ -189,7 +193,7 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
     private function matchesGeolocationCityName(ServerRequestInterface $request): bool
     {
         $geolocation = geolocationFromRequest($request);
-        if ($geolocation === null) {
+        if ($geolocation === null || $this->matchValue === null) {
             return false;
         }
 

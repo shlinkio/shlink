@@ -39,5 +39,6 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
     fieldWithUtf8Charset($builder->createField('matchValue', Types::STRING), $emConfig)
         ->columnName('match_value')
         ->length(512)
+        ->nullable()
         ->build();
 };
