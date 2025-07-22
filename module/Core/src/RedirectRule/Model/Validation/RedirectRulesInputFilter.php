@@ -75,7 +75,7 @@ class RedirectRulesInputFilter extends InputFilter
         ]));
         $redirectConditionInputFilter->add($type);
 
-        $value = InputFactory::basic(self::CONDITION_MATCH_VALUE, required: true);
+        $value = InputFactory::basic(self::CONDITION_MATCH_VALUE, required: true)->setAllowEmpty(true);
         $value->getValidatorChain()->attach(new Callback(
             function (string $value, array $context): bool {
                 $conditionType = RedirectConditionType::tryFrom($context[self::CONDITION_TYPE]);

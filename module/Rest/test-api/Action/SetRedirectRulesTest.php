@@ -18,11 +18,6 @@ class SetRedirectRulesTest extends ApiTestCase
         'matchKey' => null,
         'matchValue' => 'en',
     ];
-    private const array QUERY_FOO_BAR_CONDITION = [
-        'type' => 'query-param',
-        'matchKey' => 'foo',
-        'matchValue' => 'bar',
-    ];
 
     #[Test]
     public function errorIsReturnedWhenInvalidUrlIsProvided(): void
@@ -132,7 +127,11 @@ class SetRedirectRulesTest extends ApiTestCase
             'priority' => 1,
             'conditions' => [
                 self::LANGUAGE_EN_CONDITION,
-                self::QUERY_FOO_BAR_CONDITION,
+                [
+                    'type' => 'any-value-query-param',
+                    'matchKey' => 'foo',
+                    'matchValue' => null,
+                ],
             ],
         ],
         [
@@ -144,7 +143,11 @@ class SetRedirectRulesTest extends ApiTestCase
                     'matchKey' => 'hello',
                     'matchValue' => 'world',
                 ],
-                self::QUERY_FOO_BAR_CONDITION,
+                [
+                    'type' => 'query-param',
+                    'matchKey' => 'foo',
+                    'matchValue' => 'bar',
+                ],
             ],
         ],
     ]])]

@@ -41,7 +41,7 @@ class ShortUrlRedirectRulesFixture extends AbstractFixture implements DependentF
             priority: 1,
             longUrl: 'https://example.com/english-and-foo-query',
             conditions: new ArrayCollection(
-                [RedirectCondition::forLanguage('en'), RedirectCondition::forQueryParam('foo', 'bar')],
+                [RedirectCondition::forLanguage('en'), RedirectCondition::forAnyValueQueryParam('foo')],
             ),
         );
         $manager->persist($englishAndFooQueryRule);

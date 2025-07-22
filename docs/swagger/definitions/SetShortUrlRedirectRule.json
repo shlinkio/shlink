@@ -31,7 +31,7 @@
             "type": ["string", "null"]
           },
           "matchValue":  {
-            "type": "string"
+            "type": ["string", "null"]
           }
         }
       }
