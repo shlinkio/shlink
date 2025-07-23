@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace ShlinkioApiTest\Shlink\Rest\Utils;
 
+use PHPUnit\Event\Code\TestMethod;
 use PHPUnit\Event\Test\PreparationStarted;
 use PHPUnit\Event\Test\PreparationStartedSubscriber;
 use ReflectionMethod;
-use Symfony\Component\Process\Process;
 use Webimpress\SafeWriter\FileWriter;
 
 use function sprintf;
@@ -24,6 +24,10 @@ class EnvSpecificTestListener implements PreparationStartedSubscriber
     public function notify(PreparationStarted $event): void
     {
         $test = $event->test();
+        if (! ($test instanceof TestMethod)) {
+            return;
+        }
+
         $className = $test->className();
         $methodName = $test->methodName();
 
@@ -35,7 +39,7 @@ class EnvSpecificTestListener implements PreparationStartedSubscriber
             /** @var WithEnvVars $withEnvVars */
             $withEnvVars = $attributes[0]->newInstance();
             $this->createDynamicEnvVarsFile($withEnvVars->envVars);
-            $this->restartServer();
+            ApiTestsExtension::restartRRServer();
         }
     }
 
@@ -52,10 +56,5 @@ class EnvSpecificTestListener implements PreparationStartedSubscriber
         $content = sprintf($template, self::class, var_export($envVars, return: true));
 
         FileWriter::writeFile(DYNAMIC_ENV_VARS_FILE, $content);
-    }
-
-    private function restartServer(): void
-    {
-        (new Process(['bin/rr', 'reset', '-c=config/roadrunner/.rr.test.yml']))->mustRun();
     }
 }
