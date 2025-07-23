@@ -13,3 +13,4 @@ data/infra/matomo
 docs/mercure.html
 .phpunit.result.cache
 docs/swagger/openapi-inlined.json
+config/test/dynamic_test_env.php

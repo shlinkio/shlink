@@ -20,4 +20,8 @@
             <directory>./module/Rest/src</directory>
         </include>
     </source>
+
+    <extensions>
+        <bootstrap class="ShlinkioApiTest\Shlink\Rest\Utils\ApiTestsExtension" />
+    </extensions>
 </phpunit>
