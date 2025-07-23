@@ -72,7 +72,8 @@
         "shlinkio/shlink-mago-config": "^1.0",
         "shlinkio/shlink-test-utils": "^4.5",
         "symfony/var-dumper": "^8.1",
-        "veewee/composer-run-parallel": "^1.5"
+        "veewee/composer-run-parallel": "^1.5",
+        "webimpress/safe-writer": "^2.2"
     },
     "autoload": {
         "psr-4": {
