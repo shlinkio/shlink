@@ -19,3 +19,5 @@ const MACOS_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 15_5) AppleWebK
     . 'Version/18.4 Safari/605.1.15';
 const CHROMEOS_USER_AGENT = 'Mozilla/5.0 (X11; CrOS x86_64 16181.61.0) AppleWebKit/537.36 (KHTML, like Gecko) '
     . 'Chrome/134.0.6998.198 Safari/537.36';
+
+const DYNAMIC_ENV_VARS_FILE = __DIR__ . '/../../config/test/dynamic_test_env.php';
