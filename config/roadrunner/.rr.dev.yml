@@ -30,13 +30,17 @@ jobs:
         prefetch: 10
 
 logs:
+  encoding: console
   mode: development
   channels:
     http:
       mode: 'off' # Disable logging as Shlink handles it internally
     server:
+      encoding: console
       level: info
     metrics:
+      encoding: console
       level: debug
     jobs:
+      encoding: console
       level: debug

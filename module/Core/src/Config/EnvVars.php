@@ -91,6 +91,7 @@ enum EnvVars: string
     case CORS_ALLOW_CREDENTIALS = 'CORS_ALLOW_CREDENTIALS';
     case CORS_MAX_AGE = 'CORS_MAX_AGE';
     case TRUSTED_PROXIES = 'TRUSTED_PROXIES';
+    case LOGS_FORMAT = 'LOGS_FORMAT';
 
     /** @deprecated Use REDIRECT_EXTRA_PATH */
     case REDIRECT_APPEND_EXTRA_PATH = 'REDIRECT_APPEND_EXTRA_PATH';
@@ -195,6 +196,8 @@ enum EnvVars: string
             self::CORS_ALLOW_ORIGIN => '*',
             self::CORS_ALLOW_CREDENTIALS => false,
             self::CORS_MAX_AGE => 3600,
+
+            self::LOGS_FORMAT => 'console',
 
             default => null,
         };
