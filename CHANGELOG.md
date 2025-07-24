@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
 
-## [Unreleased]
+## [4.5.0] - 2025-07-24
 ### Added
 * [#2438](https://github.com/shlinkio/shlink/issues/2438) Add `MERCURE_ENABLED` env var and corresponding config option, to more easily allow the mercure integration to be toggled.
 
