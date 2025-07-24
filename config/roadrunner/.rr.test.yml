@@ -35,15 +35,16 @@ jobs:
                 prefetch: 10
 
 logs:
-    encoding: json
+    encoding: console
     mode: development
     channels:
         http:
             mode: 'off' # Disable logging as Shlink handles it internally
         server:
-            encoding: json
+            encoding: console
             level: info
         metrics:
             level: panic
         jobs:
+            encoding: console
             level: panic
