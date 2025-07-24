@@ -71,6 +71,7 @@ class RedirectRuleHandlerTest extends TestCase
     #[Test, DataProvider('provideExitActions')]
     public function rulesAreDisplayedWhenRulesListIsEmpty(
         RedirectRuleHandlerAction $action,
+        array|null $_,
     ): void {
         $comment = fn (string $value) => sprintf('<comment>%s</comment>', $value);
 
@@ -161,6 +162,14 @@ class RedirectRuleHandlerTest extends TestCase
         yield 'device' => [RedirectConditionType::DEVICE, [RedirectCondition::forDevice(DeviceType::ANDROID)]];
         yield 'language' => [RedirectConditionType::LANGUAGE, [RedirectCondition::forLanguage('en-US')]];
         yield 'query param' => [RedirectConditionType::QUERY_PARAM, [RedirectCondition::forQueryParam('foo', 'bar')]];
+        yield 'any value query param' => [
+            RedirectConditionType::ANY_VALUE_QUERY_PARAM,
+            [RedirectCondition::forAnyValueQueryParam('foo')],
+        ];
+        yield 'valueless query param' => [
+            RedirectConditionType::VALUELESS_QUERY_PARAM,
+            [RedirectCondition::forValuelessQueryParam('foo')],
+        ];
         yield 'multiple query params' => [
             RedirectConditionType::QUERY_PARAM,
             [RedirectCondition::forQueryParam('foo', 'bar'), RedirectCondition::forQueryParam('foo', 'bar')],

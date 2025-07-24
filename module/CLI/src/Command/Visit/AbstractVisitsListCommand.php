@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink\CLI\Command\Visit;
 
 use Shlinkio\Shlink\CLI\Input\EndDateOption;
 use Shlinkio\Shlink\CLI\Input\StartDateOption;
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Util\DateRange;
@@ -43,7 +42,7 @@ abstract class AbstractVisitsListCommand extends Command
 
         ShlinkTable::default($output)->render($headers, $rows);
 
-        return ExitCode::EXIT_SUCCESS;
+        return self::SUCCESS;
     }
 
     /**

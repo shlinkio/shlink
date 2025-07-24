@@ -16,6 +16,7 @@ use RuntimeException;
 use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\Config\Options\RabbitMqOptions;
+use Shlinkio\Shlink\Core\Config\Options\RealTimeUpdatesOptions;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
 use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
 use Shlinkio\Shlink\Core\EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq;
@@ -115,6 +116,7 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
             $this->updatesGenerator,
             $this->em,
             $this->logger,
+            new RealTimeUpdatesOptions(),
             new RabbitMqOptions($enabled),
         );
     }

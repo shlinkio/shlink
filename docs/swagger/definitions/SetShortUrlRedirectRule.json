@@ -19,6 +19,8 @@
               "device",
               "language",
               "query-param",
+              "any-value-query-param",
+              "valueless-query-param",
               "ip-address",
               "geolocation-country-code",
               "geolocation-city-name"
@@ -29,7 +31,7 @@
             "type": ["string", "null"]
           },
           "matchValue":  {
-            "type": "string"
+            "type": ["string", "null"]
           }
         }
       }

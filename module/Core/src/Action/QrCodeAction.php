@@ -19,6 +19,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolverInterface;
 
+/** @deprecated */
 readonly class QrCodeAction implements MiddlewareInterface
 {
     public function __construct(

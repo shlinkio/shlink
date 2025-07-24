@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\EventDispatcher\RedisPubSub;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
+use Shlinkio\Shlink\Core\Config\Options\RealTimeUpdatesOptions;
 use Shlinkio\Shlink\Core\EventDispatcher\Async\AbstractNotifyNewShortUrlListener;
 use Shlinkio\Shlink\Core\EventDispatcher\Async\RemoteSystem;
 use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
@@ -18,9 +19,10 @@ class NotifyNewShortUrlToRedis extends AbstractNotifyNewShortUrlListener
         PublishingUpdatesGeneratorInterface $updatesGenerator,
         EntityManagerInterface $em,
         LoggerInterface $logger,
+        RealTimeUpdatesOptions $realTimeUpdatesOptions,
         private readonly bool $enabled,
     ) {
-        parent::__construct($redisHelper, $updatesGenerator, $em, $logger);
+        parent::__construct($redisHelper, $updatesGenerator, $em, $logger, $realTimeUpdatesOptions);
     }
 
     protected function isEnabled(): bool

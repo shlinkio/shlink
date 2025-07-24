@@ -17,11 +17,6 @@ class ListRedirectRulesTest extends ApiTestCase
         'matchKey' => null,
         'matchValue' => 'en',
     ];
-    private const array QUERY_FOO_BAR_CONDITION = [
-        'type' => 'query-param',
-        'matchKey' => 'foo',
-        'matchValue' => 'bar',
-    ];
 
     #[Test]
     public function errorIsReturnedWhenInvalidUrlIsFetched(): void
@@ -45,7 +40,11 @@ class ListRedirectRulesTest extends ApiTestCase
             'priority' => 1,
             'conditions' => [
                 self::LANGUAGE_EN_CONDITION,
-                self::QUERY_FOO_BAR_CONDITION,
+                [
+                    'type' => 'any-value-query-param',
+                    'matchKey' => 'foo',
+                    'matchValue' => null,
+                ],
             ],
         ],
         [
@@ -57,7 +56,11 @@ class ListRedirectRulesTest extends ApiTestCase
                     'matchKey' => 'hello',
                     'matchValue' => 'world',
                 ],
-                self::QUERY_FOO_BAR_CONDITION,
+                [
+                    'type' => 'query-param',
+                    'matchKey' => 'foo',
+                    'matchValue' => 'bar',
+                ],
             ],
         ],
         [
@@ -95,6 +98,17 @@ class ListRedirectRulesTest extends ApiTestCase
                     'type' => 'ip-address',
                     'matchKey' => null,
                     'matchValue' => '1.2.3.4',
+                ],
+            ],
+        ],
+        [
+            'longUrl' => 'https://example.com/linux',
+            'priority' => 7,
+            'conditions' => [
+                [
+                    'type' => 'device',
+                    'matchKey' => null,
+                    'matchValue' => 'linux',
                 ],
             ],
         ],

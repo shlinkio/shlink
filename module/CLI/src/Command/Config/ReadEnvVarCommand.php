@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\Config;
 
 use Closure;
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Config\EnvVars;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
@@ -63,6 +62,6 @@ class ReadEnvVarCommand extends Command
         $envVar = $input->getArgument('envVar');
         $output->writeln(formatEnvVarValue(($this->loadEnvVar)($envVar)));
 
-        return ExitCode::EXIT_SUCCESS;
+        return Command::SUCCESS;
     }
 }

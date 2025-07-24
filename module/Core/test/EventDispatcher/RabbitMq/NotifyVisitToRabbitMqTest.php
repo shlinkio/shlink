@@ -17,6 +17,7 @@ use RuntimeException;
 use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\Config\Options\RabbitMqOptions;
+use Shlinkio\Shlink\Core\Config\Options\RealTimeUpdatesOptions;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\UrlVisited;
 use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
 use Shlinkio\Shlink\Core\EventDispatcher\RabbitMq\NotifyVisitToRabbitMq;
@@ -70,6 +71,9 @@ class NotifyVisitToRabbitMqTest extends TestCase
         ($this->listener())(new UrlVisited($visitId));
     }
 
+    /**
+     * @param non-empty-string[] $expectedChannels
+     */
     #[Test, DataProvider('provideVisits')]
     public function expectedChannelsAreNotifiedBasedOnTheVisitType(Visit $visit, array $expectedChannels): void
     {
@@ -186,6 +190,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
             $this->updatesGenerator,
             $this->em,
             $this->logger,
+            new RealTimeUpdatesOptions(),
             $options ?? new RabbitMqOptions(enabled: true),
         );
     }

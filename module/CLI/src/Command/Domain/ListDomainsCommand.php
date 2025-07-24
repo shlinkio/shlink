@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Domain;
 
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirectConfigInterface;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
@@ -59,7 +58,7 @@ class ListDomainsCommand extends Command
             }, $domains),
         );
 
-        return ExitCode::EXIT_SUCCESS;
+        return self::SUCCESS;
     }
 
     private function notFoundRedirectsToString(NotFoundRedirectConfigInterface $config): string

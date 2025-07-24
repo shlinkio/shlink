@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Api;
 
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -38,6 +37,6 @@ class InitialApiKeyCommand extends Command
             $output->writeln('<comment>Other API keys already exist. Initial API key creation skipped.</comment>');
         }
 
-        return ExitCode::EXIT_SUCCESS;
+        return Command::SUCCESS;
     }
 }

@@ -1,21 +1,22 @@
 FROM php:8.4-alpine3.21 AS base
 
 ARG SHLINK_VERSION=latest
-ENV SHLINK_VERSION ${SHLINK_VERSION}
+ENV SHLINK_VERSION=${SHLINK_VERSION}
 ARG SHLINK_RUNTIME=rr
-ENV SHLINK_RUNTIME ${SHLINK_RUNTIME}
+ENV SHLINK_RUNTIME=${SHLINK_RUNTIME}
 
-ENV USER_ID '1001'
-ENV PDO_SQLSRV_VERSION 5.12.0
-ENV MS_ODBC_DOWNLOAD '7/6/d/76de322a-d860-4894-9945-f0cc5d6a45f8'
-ENV MS_ODBC_SQL_VERSION 18_18.4.1.1
-ENV LC_ALL 'C'
+ENV USER_ID='1001'
+ENV PDO_SQLSRV_VERSION='5.12.0'
+ENV MS_ODBC_DOWNLOAD='7/6/d/76de322a-d860-4894-9945-f0cc5d6a45f8'
+ENV MS_ODBC_SQL_VERSION='18_18.4.1.1'
+ENV LC_ALL='C'
 
 WORKDIR /etc/shlink
 
 # Install required PHP extensions
 RUN \
     # Temp install dev dependencies needed to compile the extensions
+    # FIXME Deprecated image-related extensions. They can be removed with QR-code support
     apk add --no-cache --virtual .dev-deps sqlite-dev postgresql-dev icu-dev libzip-dev zlib-dev libpng-dev linux-headers && \
     docker-php-ext-install -j"$(nproc)" pdo_mysql pdo_pgsql intl calendar sockets bcmath zip gd && \
     apk add --no-cache sqlite-libs && \

@@ -8,12 +8,12 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Api\DisableKeyCommand;
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class DisableKeyCommandTest extends TestCase
@@ -35,12 +35,12 @@ class DisableKeyCommandTest extends TestCase
         $this->apiKeyService->expects($this->never())->method('disableByName');
 
         $exitCode = $this->commandTester->execute([
-            'keyOrName' => $apiKey,
+            'key-or-name' => $apiKey,
         ]);
         $output = $this->commandTester->getDisplay();
 
         self::assertStringContainsString('API key "abcd1234" properly disabled', $output);
-        self::assertEquals(ExitCode::EXIT_SUCCESS, $exitCode);
+        self::assertEquals(Command::SUCCESS, $exitCode);
     }
 
     #[Test]
@@ -51,13 +51,13 @@ class DisableKeyCommandTest extends TestCase
         $this->apiKeyService->expects($this->never())->method('disableByKey');
 
         $exitCode = $this->commandTester->execute([
-            'keyOrName' => $name,
+            'key-or-name' => $name,
             '--by-name' => true,
         ]);
         $output = $this->commandTester->getDisplay();
 
         self::assertStringContainsString('API key "the key to delete" properly disabled', $output);
-        self::assertEquals(ExitCode::EXIT_SUCCESS, $exitCode);
+        self::assertEquals(Command::SUCCESS, $exitCode);
     }
 
     #[Test]
@@ -71,12 +71,12 @@ class DisableKeyCommandTest extends TestCase
         $this->apiKeyService->expects($this->never())->method('disableByName');
 
         $exitCode = $this->commandTester->execute([
-            'keyOrName' => $apiKey,
+            'key-or-name' => $apiKey,
         ]);
         $output = $this->commandTester->getDisplay();
 
         self::assertStringContainsString($expectedMessage, $output);
-        self::assertEquals(ExitCode::EXIT_FAILURE, $exitCode);
+        self::assertEquals(Command::FAILURE, $exitCode);
     }
 
     #[Test]
@@ -90,13 +90,13 @@ class DisableKeyCommandTest extends TestCase
         $this->apiKeyService->expects($this->never())->method('disableByKey');
 
         $exitCode = $this->commandTester->execute([
-            'keyOrName' => $name,
+            'key-or-name' => $name,
             '--by-name' => true,
         ]);
         $output = $this->commandTester->getDisplay();
 
         self::assertStringContainsString($expectedMessage, $output);
-        self::assertEquals(ExitCode::EXIT_FAILURE, $exitCode);
+        self::assertEquals(Command::FAILURE, $exitCode);
     }
 
     #[Test]
@@ -108,7 +108,7 @@ class DisableKeyCommandTest extends TestCase
 
         $exitCode = $this->commandTester->execute([], ['interactive' => false]);
 
-        self::assertEquals(ExitCode::EXIT_WARNING, $exitCode);
+        self::assertEquals(Command::INVALID, $exitCode);
     }
 
     #[Test]
@@ -128,6 +128,6 @@ class DisableKeyCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
 
         self::assertStringContainsString('API key "the key to delete" properly disabled', $output);
-        self::assertEquals(ExitCode::EXIT_SUCCESS, $exitCode);
+        self::assertEquals(Command::SUCCESS, $exitCode);
     }
 }

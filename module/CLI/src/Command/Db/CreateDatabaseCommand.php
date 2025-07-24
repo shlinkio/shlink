@@ -7,7 +7,6 @@ namespace Shlinkio\Shlink\CLI\Command\Db;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\CLI\Util\ProcessRunnerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -55,7 +54,7 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
 
         if ($this->databaseTablesExist()) {
             $io->success('Database already exists. Run "db:migrate" command to make sure it is up to date.');
-            return ExitCode::EXIT_SUCCESS;
+            return self::SUCCESS;
         }
 
         // Create database
@@ -63,7 +62,7 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
         $this->runPhpCommand($output, [self::DOCTRINE_SCRIPT, self::DOCTRINE_CREATE_SCHEMA_COMMAND]);
         $io->success('Database properly created!');
 
-        return ExitCode::EXIT_SUCCESS;
+        return self::SUCCESS;
     }
 
     private function databaseTablesExist(): bool

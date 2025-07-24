@@ -41,7 +41,7 @@ class ShortUrlRedirectRulesFixture extends AbstractFixture implements DependentF
             priority: 1,
             longUrl: 'https://example.com/english-and-foo-query',
             conditions: new ArrayCollection(
-                [RedirectCondition::forLanguage('en'), RedirectCondition::forQueryParam('foo', 'bar')],
+                [RedirectCondition::forLanguage('en'), RedirectCondition::forAnyValueQueryParam('foo')],
             ),
         );
         $manager->persist($englishAndFooQueryRule);
@@ -77,6 +77,14 @@ class ShortUrlRedirectRulesFixture extends AbstractFixture implements DependentF
             conditions: new ArrayCollection([RedirectCondition::forIpAddress('1.2.3.4')]),
         );
         $manager->persist($ipAddressRule);
+
+        $linuxRule = new ShortUrlRedirectRule(
+            shortUrl: $defShortUrl,
+            priority: 7,
+            longUrl: 'https://example.com/linux',
+            conditions: new ArrayCollection([RedirectCondition::forDevice(DeviceType::LINUX)]),
+        );
+        $manager->persist($linuxRule);
 
         $manager->flush();
     }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Visit;
 
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\Core\Geolocation\GeolocationDbUpdaterInterface;
 use Shlinkio\Shlink\Core\Geolocation\GeolocationDownloadProgressHandlerInterface;
@@ -48,17 +47,17 @@ class DownloadGeoLiteDbCommand extends Command implements GeolocationDownloadPro
 
             if ($result === GeolocationResult::LICENSE_MISSING) {
                 $this->io->warning('It was not possible to download GeoLite2 db, because a license was not provided.');
-                return ExitCode::EXIT_WARNING;
+                return self::INVALID;
             }
 
             if ($result === GeolocationResult::MAX_ERRORS_REACHED) {
                 $this->io->warning('Max consecutive errors reached. Cannot retry for a couple of days.');
-                return ExitCode::EXIT_WARNING;
+                return self::INVALID;
             }
 
             if ($result === GeolocationResult::UPDATE_IN_PROGRESS) {
                 $this->io->warning('A geolocation db is already being downloaded by another process.');
-                return ExitCode::EXIT_WARNING;
+                return self::INVALID;
             }
 
             if ($this->progressBar === null) {
@@ -68,7 +67,7 @@ class DownloadGeoLiteDbCommand extends Command implements GeolocationDownloadPro
                 $this->io->success('GeoLite2 db file properly downloaded.');
             }
 
-            return ExitCode::EXIT_SUCCESS;
+            return self::SUCCESS;
         } catch (GeolocationDbUpdateFailedException $e) {
             return $this->processGeoLiteUpdateError($e, $this->io);
         }
@@ -90,7 +89,7 @@ class DownloadGeoLiteDbCommand extends Command implements GeolocationDownloadPro
             $this->getApplication()?->renderThrowable($e, $io);
         }
 
-        return $olderDbExists ? ExitCode::EXIT_WARNING : ExitCode::EXIT_FAILURE;
+        return $olderDbExists ? self::INVALID : self::FAILURE;
     }
 
     public function beforeDownload(bool $olderDbExists): void

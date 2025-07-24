@@ -2,4 +2,4 @@ blank_issues_enabled: true
 contact_links:
   - name: Question - Support
     about: Do you need help setting up or using Shlink?
-    url: https://github.com/shlinkio/shlink/discussions/new?category=help-wanted
+    url: https://github.com/orgs/shlinkio/discussions/new?category=help-wanted

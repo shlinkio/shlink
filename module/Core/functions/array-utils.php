@@ -10,6 +10,11 @@ use function in_array;
 
 use const ARRAY_FILTER_USE_KEY;
 
+/**
+ * @template T
+ * @param T $value
+ * @param T[] $array
+ */
 function contains(mixed $value, array $array): bool
 {
     return in_array($value, $array, strict: true);

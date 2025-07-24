@@ -36,6 +36,8 @@ return [
             Config\Options\QrCodeOptions::class => [Config\Options\QrCodeOptions::class, 'fromEnv'],
             Config\Options\RabbitMqOptions::class => [Config\Options\RabbitMqOptions::class, 'fromEnv'],
             Config\Options\RobotsOptions::class => [Config\Options\RobotsOptions::class, 'fromEnv'],
+            Config\Options\RealTimeUpdatesOptions::class => [Config\Options\RealTimeUpdatesOptions::class, 'fromEnv'],
+            Config\Options\CorsOptions::class => [Config\Options\CorsOptions::class, 'fromEnv'],
 
             RedirectRule\ShortUrlRedirectRuleService::class => ConfigAbstractFactory::class,
             RedirectRule\ShortUrlRedirectionResolver::class => ConfigAbstractFactory::class,

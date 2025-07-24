@@ -108,6 +108,12 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
                     $this->askMandatory('Query param name?', $io),
                     $this->askOptional('Query param value?', $io),
                 ),
+                RedirectConditionType::ANY_VALUE_QUERY_PARAM => RedirectCondition::forAnyValueQueryParam(
+                    $this->askMandatory('Query param name?', $io),
+                ),
+                RedirectConditionType::VALUELESS_QUERY_PARAM => RedirectCondition::forValuelessQueryParam(
+                    $this->askMandatory('Query param name?', $io),
+                ),
                 RedirectConditionType::IP_ADDRESS => RedirectCondition::forIpAddress(
                     $this->askMandatory('IP address, CIDR block or wildcard-pattern (1.2.*.*)', $io),
                 ),

@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink\CLI\Command\RedirectRule;
 
 use Shlinkio\Shlink\CLI\Input\ShortUrlIdentifierInput;
 use Shlinkio\Shlink\CLI\RedirectRule\RedirectRuleHandlerInterface;
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectRuleServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlResolverInterface;
@@ -52,7 +51,7 @@ class ManageRedirectRulesCommand extends Command
             $shortUrl = $this->shortUrlResolver->resolveShortUrl($identifier);
         } catch (ShortUrlNotFoundException) {
             $io->error(sprintf('Short URL for %s not found', $identifier->__toString()));
-            return ExitCode::EXIT_FAILURE;
+            return self::FAILURE;
         }
 
         $rulesToSave = $this->ruleHandler->manageRules($io, $shortUrl, $this->ruleService->rulesForShortUrl($shortUrl));
@@ -61,6 +60,6 @@ class ManageRedirectRulesCommand extends Command
             $io->success('Rules properly saved');
         }
 
-        return ExitCode::EXIT_SUCCESS;
+        return self::SUCCESS;
     }
 }

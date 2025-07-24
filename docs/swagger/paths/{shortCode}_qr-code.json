@@ -1,11 +1,12 @@
 {
     "get": {
+        "deprecated": true,
         "operationId": "shortUrlQrCode",
         "tags": [
             "URL Shortener"
         ],
-        "summary": "Short URL QR code",
-        "description": "Generates a QR code image pointing to a short URL.<br />Since this is not an API endpoint but an image one, when an invalid value is provided for any of the query params, they will fall to their default values instead of throwing an error.",
+        "summary": "[Deprecated] Short URL QR code",
+        "description": "**[Deprecated]** Use an external mechanism to generate QR codes. Shlink dashboard and shlink-web-client provide their own.",
         "parameters": [
             {
                 "$ref": "../parameters/shortCode.json"

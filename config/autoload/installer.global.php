@@ -13,6 +13,7 @@ return [
         'enabled_options' => [
             Option\Server\RuntimeConfigOption::class,
             Option\Server\MemoryLimitConfigOption::class,
+            Option\Server\LogsFormatConfigOption::class,
             Option\Database\DatabaseDriverConfigOption::class,
             Option\Database\DatabaseNameConfigOption::class,
             Option\Database\DatabaseHostConfigOption::class,
@@ -41,6 +42,7 @@ return [
             Option\UrlShortener\GeoLiteLicenseKeyConfigOption::class,
             Option\UrlShortener\RedirectStatusCodeConfigOption::class,
             Option\UrlShortener\RedirectCacheLifeTimeConfigOption::class,
+            Option\UrlShortener\RedirectCacheVisibilityConfigOption::class,
             Option\UrlShortener\AutoResolveTitlesConfigOption::class,
             Option\UrlShortener\ExtraPathModeConfigOption::class,
             Option\UrlShortener\EnableMultiSegmentSlugsConfigOption::class,
@@ -76,6 +78,11 @@ return [
             Option\Matomo\MatomoBaseUrlConfigOption::class,
             Option\Matomo\MatomoSiteIdConfigOption::class,
             Option\Matomo\MatomoApiTokenConfigOption::class,
+            Option\RealTimeUpdates\RealTimeUpdatesTopicsConfigOption::class,
+            Option\Cors\CorsAllowOriginConfigOption::class,
+            Option\Cors\CorsAllowCredentialsConfigOption::class,
+            Option\Cors\CorsMaxAgeConfigOption::class,
+            Option\TrustedProxiesConfigOption::class,
         ],
 
         'installation_commands' => [

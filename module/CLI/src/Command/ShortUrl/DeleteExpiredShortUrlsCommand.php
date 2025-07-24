@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\ShortUrl\DeleteShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ExpiredShortUrlsConditions;
 use Symfony\Component\Console\Command\Command;
@@ -58,18 +57,18 @@ class DeleteExpiredShortUrlsCommand extends Command
                 'This action cannot be undone. Proceed at your own risk',
             ]);
             if (! $io->confirm('Continue?', default: false)) {
-                return ExitCode::EXIT_WARNING;
+                return self::INVALID;
             }
         }
 
         if ($dryRun) {
             $result = $this->deleteShortUrlService->countExpiredShortUrls($conditions);
             $io->success(sprintf('There are %s expired short URLs matching provided conditions', $result));
-            return ExitCode::EXIT_SUCCESS;
+            return self::SUCCESS;
         }
 
         $result = $this->deleteShortUrlService->deleteExpiredShortUrls($conditions);
         $io->success(sprintf('%s expired short URLs have been deleted', $result));
-        return ExitCode::EXIT_SUCCESS;
+        return self::SUCCESS;
     }
 }

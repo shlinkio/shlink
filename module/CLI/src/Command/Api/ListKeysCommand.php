@@ -4,21 +4,24 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Api;
 
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function array_filter;
 use function array_map;
 use function implode;
 use function sprintf;
 
+#[AsCommand(
+    name: ListKeysCommand::NAME,
+    description: 'Lists all the available API keys.',
+)]
 class ListKeysCommand extends Command
 {
     private const string ERROR_STRING_PATTERN = '<fg=red>%s</>';
@@ -32,23 +35,14 @@ class ListKeysCommand extends Command
         parent::__construct();
     }
 
-    protected function configure(): void
-    {
-        $this
-            ->setName(self::NAME)
-            ->setDescription('Lists all the available API keys.')
-            ->addOption(
-                'enabled-only',
-                'e',
-                InputOption::VALUE_NONE,
-                'Tells if only enabled API keys should be returned.',
-            );
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $enabledOnly = $input->getOption('enabled-only');
-
+    public function __invoke(
+        SymfonyStyle $io,
+        #[Option(
+            description: 'Tells if only enabled API keys should be returned.',
+            shortcut: 'e',
+        )]
+        bool $enabledOnly = false,
+    ): int {
         $rows = array_map(function (ApiKey $apiKey) use ($enabledOnly) {
             $expiration = $apiKey->expirationDate;
             $messagePattern = $this->determineMessagePattern($apiKey);
@@ -66,14 +60,14 @@ class ListKeysCommand extends Command
             return $rowData;
         }, $this->apiKeyService->listKeys($enabledOnly));
 
-        ShlinkTable::withRowSeparators($output)->render(array_filter([
+        ShlinkTable::withRowSeparators($io)->render(array_filter([
             'Name',
             ! $enabledOnly ? 'Is enabled' : null,
             'Expiration date',
             'Roles',
         ]), $rows);
 
-        return ExitCode::EXIT_SUCCESS;
+        return Command::SUCCESS;
     }
 
     private function determineMessagePattern(ApiKey $apiKey): string

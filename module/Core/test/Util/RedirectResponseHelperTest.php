@@ -15,13 +15,10 @@ class RedirectResponseHelperTest extends TestCase
 {
     #[Test, DataProvider('provideRedirectConfigs')]
     public function expectedStatusCodeAndCacheIsReturnedBasedOnConfig(
-        int $configuredStatus,
-        int $configuredLifetime,
+        RedirectOptions $options,
         int $expectedStatus,
         string|null $expectedCacheControl,
     ): void {
-        $options = new RedirectOptions($configuredStatus, $configuredLifetime);
-
         $response = $this->helper($options)->buildRedirectResponse('destination');
 
         self::assertInstanceOf(RedirectResponse::class, $response);
@@ -34,16 +31,36 @@ class RedirectResponseHelperTest extends TestCase
 
     public static function provideRedirectConfigs(): iterable
     {
-        yield 'status 302' => [302, 20, 302, null];
-        yield 'status 307' => [307, 20, 307, null];
-        yield 'status over 308' => [400, 20, 302, null];
-        yield 'status below 301' => [201, 20, 302, null];
-        yield 'status 301 with valid expiration' => [301, 20, 301, 'private,max-age=20'];
-        yield 'status 301 with zero expiration' => [301, 0, 301, 'private,max-age=30'];
-        yield 'status 301 with negative expiration' => [301, -20, 301, 'private,max-age=30'];
-        yield 'status 308 with valid expiration' => [308, 20, 308, 'private,max-age=20'];
-        yield 'status 308 with zero expiration' => [308, 0, 308, 'private,max-age=30'];
-        yield 'status 308 with negative expiration' => [308, -20, 308, 'private,max-age=30'];
+        yield 'status 302' => [new RedirectOptions(302, 20), 302, null];
+        yield 'status 307' => [new RedirectOptions(307, 20), 307, null];
+        yield 'status over 308' => [new RedirectOptions(400, 20), 302, null];
+        yield 'status below 301' => [new RedirectOptions(201, 20), 302, null];
+        yield 'status 301 with valid expiration' => [new RedirectOptions(301, 20), 301, 'private,max-age=20'];
+        yield 'status 301 with zero expiration' => [new RedirectOptions(301, 0), 301, 'private,max-age=30'];
+        yield 'status 301 with negative expiration' => [new RedirectOptions(301, -20), 301, 'private,max-age=30'];
+        yield 'status 308 with valid expiration' => [new RedirectOptions(308, 20), 308, 'private,max-age=20'];
+        yield 'status 308 with zero expiration' => [new RedirectOptions(308, 0), 308, 'private,max-age=30'];
+        yield 'status 308 with negative expiration' => [new RedirectOptions(308, -20), 308, 'private,max-age=30'];
+        yield 'status 301 with public cache' => [
+            new RedirectOptions(301, redirectCacheVisibility: 'public'),
+            301,
+            'public,max-age=30',
+        ];
+        yield 'status 308 with public cache' => [
+            new RedirectOptions(308, redirectCacheVisibility: 'public'),
+            308,
+            'public,max-age=30',
+        ];
+        yield 'status 301 with private cache' => [
+            new RedirectOptions(301, redirectCacheVisibility: 'private'),
+            301,
+            'private,max-age=30',
+        ];
+        yield 'status 301 with invalid cache' => [
+            new RedirectOptions(301, redirectCacheVisibility: 'something-else'),
+            301,
+            'private,max-age=30',
+        ];
     }
 
     private function helper(RedirectOptions|null $options = null): RedirectResponseHelper

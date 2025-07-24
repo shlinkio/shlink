@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink\CLI\Command\Api;
 
 use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\CLI\ApiKey\RoleResolverInterface;
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
@@ -123,6 +122,6 @@ class GenerateKeyCommand extends Command
             );
         }
 
-        return ExitCode::EXIT_SUCCESS;
+        return Command::SUCCESS;
     }
 }

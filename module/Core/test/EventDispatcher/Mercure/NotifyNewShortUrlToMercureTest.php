@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\Update;
+use Shlinkio\Shlink\Core\Config\Options\RealTimeUpdatesOptions;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
 use Shlinkio\Shlink\Core\EventDispatcher\Mercure\NotifyNewShortUrlToMercure;
 use Shlinkio\Shlink\Core\EventDispatcher\PublishingUpdatesGeneratorInterface;
@@ -19,7 +20,6 @@ use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 
 class NotifyNewShortUrlToMercureTest extends TestCase
 {
-    private NotifyNewShortUrlToMercure $listener;
     private MockObject & PublishingHelperInterface $helper;
     private MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator;
     private MockObject & EntityManagerInterface $em;
@@ -31,13 +31,6 @@ class NotifyNewShortUrlToMercureTest extends TestCase
         $this->updatesGenerator = $this->createMock(PublishingUpdatesGeneratorInterface::class);
         $this->em = $this->createMock(EntityManagerInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-
-        $this->listener = new NotifyNewShortUrlToMercure(
-            $this->helper,
-            $this->updatesGenerator,
-            $this->em,
-            $this->logger,
-        );
     }
 
     #[Test]
@@ -52,7 +45,7 @@ class NotifyNewShortUrlToMercureTest extends TestCase
         );
         $this->logger->expects($this->never())->method('debug');
 
-        ($this->listener)(new ShortUrlCreated('123'));
+        $this->listener()(new ShortUrlCreated('123'));
     }
 
     #[Test]
@@ -69,7 +62,7 @@ class NotifyNewShortUrlToMercureTest extends TestCase
         $this->logger->expects($this->never())->method('warning');
         $this->logger->expects($this->never())->method('debug');
 
-        ($this->listener)(new ShortUrlCreated('123'));
+        $this->listener()(new ShortUrlCreated('123'));
     }
 
     #[Test]
@@ -93,6 +86,30 @@ class NotifyNewShortUrlToMercureTest extends TestCase
             ['e' => $e, 'name' => 'Mercure'],
         );
 
-        ($this->listener)(new ShortUrlCreated('123'));
+        $this->listener()(new ShortUrlCreated('123'));
+    }
+
+    #[Test]
+    public function publishingIsSkippedIfNewShortUrlTopicIsNotEnabled(): void
+    {
+        $shortUrl = ShortUrl::withLongUrl('https://longUrl');
+        $update = Update::forTopicAndPayload('', []);
+
+        $this->em->expects($this->once())->method('find')->with(ShortUrl::class, '123')->willReturn($shortUrl);
+        $this->updatesGenerator->expects($this->never())->method('newShortUrlUpdate');
+        $this->helper->expects($this->never())->method('publishUpdate');
+
+        $this->listener(enableShortUrlTopic: false)(new ShortUrlCreated('123'));
+    }
+
+    private function listener(bool $enableShortUrlTopic = true): NotifyNewShortUrlToMercure
+    {
+        return new NotifyNewShortUrlToMercure(
+            $this->helper,
+            $this->updatesGenerator,
+            $this->em,
+            $this->logger,
+            new RealTimeUpdatesOptions(enabledTopics: $enableShortUrlTopic ? null : []),
+        );
     }
 }

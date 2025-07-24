@@ -10,12 +10,12 @@ use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Visit\DownloadGeoLiteDbCommand;
-use Shlinkio\Shlink\CLI\Util\ExitCode;
 use Shlinkio\Shlink\Core\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\Core\Geolocation\GeolocationDbUpdaterInterface;
 use Shlinkio\Shlink\Core\Geolocation\GeolocationDownloadProgressHandlerInterface;
 use Shlinkio\Shlink\Core\Geolocation\GeolocationResult;
 use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
 use function sprintf;
@@ -65,12 +65,12 @@ class DownloadGeoLiteDbCommandTest extends TestCase
         yield 'existing db' => [
             true,
             '[WARNING] GeoLite2 db file update failed. Visits will continue to be located',
-            ExitCode::EXIT_WARNING,
+            Command::INVALID,
         ];
         yield 'not existing db' => [
             false,
             '[ERROR] GeoLite2 db file download failed. It will not be possible to locate',
-            ExitCode::EXIT_FAILURE,
+            Command::FAILURE,
         ];
     }
 
@@ -87,7 +87,7 @@ class DownloadGeoLiteDbCommandTest extends TestCase
         $exitCode = $this->commandTester->getStatusCode();
 
         self::assertStringContainsString('[WARNING] ' . $expectedWarningMessage, $output);
-        self::assertSame(ExitCode::EXIT_WARNING, $exitCode);
+        self::assertSame(Command::INVALID, $exitCode);
     }
 
     #[Test, DataProvider('provideSuccessParams')]
@@ -102,7 +102,7 @@ class DownloadGeoLiteDbCommandTest extends TestCase
         $exitCode = $this->commandTester->getStatusCode();
 
         self::assertStringContainsString($expectedMessage, $output);
-        self::assertSame(ExitCode::EXIT_SUCCESS, $exitCode);
+        self::assertSame(Command::SUCCESS, $exitCode);
     }
 
     public static function provideSuccessParams(): iterable

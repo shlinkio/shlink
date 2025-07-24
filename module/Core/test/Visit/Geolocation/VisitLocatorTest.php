@@ -40,6 +40,9 @@ class VisitLocatorTest extends TestCase
         $this->visitService = new VisitLocator($this->em, $this->repo);
     }
 
+    /**
+     * @param non-empty-string $expectedRepoMethodName
+     */
     #[Test, DataProvider('provideMethodNames')]
     public function locateVisitsIteratesAndLocatesExpectedVisits(
         string $serviceMethodName,
@@ -80,6 +83,9 @@ class VisitLocatorTest extends TestCase
         yield 'locateAllVisits' => ['locateAllVisits', 'findAllVisits'];
     }
 
+    /**
+     * @param non-empty-string $expectedRepoMethodName
+     */
     #[Test, DataProvider('provideIsNonLocatableAddress')]
     public function visitsWhichCannotBeLocatedAreIgnoredOrLocatedAsEmpty(
         string $serviceMethodName,

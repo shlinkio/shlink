@@ -15,6 +15,7 @@ use const Shlinkio\Shlink\DEFAULT_QR_CODE_MARGIN;
 use const Shlinkio\Shlink\DEFAULT_QR_CODE_ROUND_BLOCK_SIZE;
 use const Shlinkio\Shlink\DEFAULT_QR_CODE_SIZE;
 
+/** @deprecated */
 final readonly class QrCodeOptions
 {
     public function __construct(

@@ -28,6 +28,7 @@ use function trim;
 use const Shlinkio\Shlink\DEFAULT_QR_CODE_BG_COLOR;
 use const Shlinkio\Shlink\DEFAULT_QR_CODE_COLOR;
 
+/** @deprecated */
 final readonly class QrCodeParams
 {
     private const int MIN_SIZE = 50;
