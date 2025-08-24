@@ -56,7 +56,7 @@
         "spiral/roadrunner-jobs": "^4.6",
         "symfony/console": "^7.3",
         "symfony/filesystem": "^7.3",
-        "symfony/lock": "7.1.6",
+        "symfony/lock": "^7.3.2",
         "symfony/process": "^7.3",
         "symfony/string": "^7.3"
     },

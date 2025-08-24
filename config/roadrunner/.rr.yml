@@ -14,11 +14,13 @@ http:
     forbid: ['.php', '.htaccess']
   pool:
     num_workers: ${WEB_WORKER_NUM:-0}
+    max_jobs: 250 # Restart worker after processing this amount of requests to mitigate memory leaks
 
 jobs:
   timeout: 300 # 5 minutes
   pool:
     num_workers: ${TASK_WORKER_NUM:-0}
+    max_jobs: 250 # Restart worker after processing this amount of jobs to mitigate memory leaks
   consume: ['shlink']
   pipelines:
     shlink:
