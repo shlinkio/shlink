@@ -2,18 +2,22 @@
 
 declare(strict_types=1);
 
+namespace Shlinkio\Shlink;
+
 use Mezzio\Application;
 use Psr\Container\ContainerInterface;
 use Shlinkio\Shlink\Common\Middleware\RequestIdMiddleware;
 use Shlinkio\Shlink\EventDispatcher\RoadRunner\RoadRunnerTaskConsumerToListener;
 use Spiral\RoadRunner\Http\PSR7Worker;
 
+use function gc_collect_cycles;
 use function Shlinkio\Shlink\Config\env;
 
 (static function (): void {
     /** @var ContainerInterface $container */
     $container = include __DIR__ . '/../config/container.php';
     $rrMode = env('RR_MODE');
+    $gcCollectCycles = env('GC_COLLECT_CYCLES', default: false);
 
     if ($rrMode === 'http') {
         // This was spin-up as a web worker
@@ -25,6 +29,10 @@ use function Shlinkio\Shlink\Config\env;
                 $worker->respond($app->handle($req));
             } catch (Throwable $e) {
                 $worker->getWorker()->error((string) $e);
+            } finally {
+                if ($gcCollectCycles) {
+                    gc_collect_cycles();
+                }
             }
         }
     } else {
