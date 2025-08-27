@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [4.5.2] - 2025-08-27
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#2433](https://github.com/shlinkio/shlink/issues/2433) Try to mitigate memory leaks allowing RoadRunner to garbage collect memory after every request and every job, by setting `GC_COLLECT_CYCLES=true`.
+
+
 ## [4.5.1] - 2025-08-24
 ### Added
 * *Nothing*
