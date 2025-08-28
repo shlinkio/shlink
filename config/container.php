@@ -16,6 +16,8 @@ chdir(dirname(__DIR__));
 
 require 'vendor/autoload.php';
 
+// Promote env vars from dynamic test config
+loadEnvVarsFromConfig('config/test/dynamic_test_env.php', enumValues(EnvVars::class));
 // Promote env vars from installer, dev config or test config
 loadEnvVarsFromConfig(
     EnvVars::isTestEnv() ? 'config/test/shlink_test_env.php' : 'config/params/*.php',
