@@ -56,7 +56,7 @@
         "symfony/console": "^6.1",
         "symfony/filesystem": "^6.1",
         "symfony/lock": "^6.1",
-        "symfony/process": "^6.1",
+        "symfony/process": "^6.4.14",
         "symfony/string": "^6.1"
     },
     "require-dev": {
