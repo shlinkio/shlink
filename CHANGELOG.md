@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#2488](https://github.com/shlinkio/shlink/issues/2488) Ensure `Access-Control-Allow-Credentials` is set in all cross-origin responses when `CORS_ALLOW_ORIGIN=true`.
+
+
 ## [4.5.2] - 2025-08-27
 ### Added
 * *Nothing*
