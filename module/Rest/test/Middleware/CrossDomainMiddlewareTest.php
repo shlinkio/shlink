@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Middleware;
 
+use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -142,13 +143,17 @@ class CrossDomainMiddlewareTest extends TestCase
     }
 
     #[Test]
-    #[TestWith([true])]
-    #[TestWith([false])]
-    public function credentialsAreAllowedIfConfiguredSo(bool $allowCredentials): void
+    #[TestWith([true, RequestMethodInterface::METHOD_OPTIONS])]
+    #[TestWith([false, RequestMethodInterface::METHOD_OPTIONS])]
+    #[TestWith([true, RequestMethodInterface::METHOD_GET])]
+    #[TestWith([false, RequestMethodInterface::METHOD_GET])]
+    #[TestWith([true, RequestMethodInterface::METHOD_POST])]
+    #[TestWith([false, RequestMethodInterface::METHOD_POST])]
+    public function credentialsAreAllowedIfConfiguredSo(bool $allowCredentials, string $method): void
     {
         $originalResponse = new Response();
         $request = (new ServerRequest())
-            ->withMethod('OPTIONS')
+            ->withMethod($method)
             ->withHeader('Origin', 'local');
         $this->handler->method('handle')->willReturn($originalResponse);
 

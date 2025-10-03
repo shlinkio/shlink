@@ -9,6 +9,7 @@ use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
 use Shlinkio\Shlink\Core\Config\Options\CorsOptions;
 
 class CorsOptionsTest extends TestCase
@@ -28,10 +29,30 @@ class CorsOptionsTest extends TestCase
         self::assertEquals($expectedAllowOrigins, $options->allowOrigins);
         self::assertEquals(
             $expectedAllowOriginsHeader,
-            $options->responseWithAllowOrigin(
-                ServerRequestFactory::fromGlobals()->withHeader('Origin', 'https://example.com'),
-                new Response(),
-            )->getHeaderLine('Access-Control-Allow-Origin'),
+            $this->responseFromOptions($options)->getHeaderLine('Access-Control-Allow-Origin'),
+        );
+    }
+
+    #[Test]
+    #[TestWith([true])]
+    #[TestWith([false])]
+    public function expectedAccessControlAllowCredentialsIsSet(bool $allowCredentials): void
+    {
+        $options = new CorsOptions(allowCredentials: $allowCredentials);
+        $resp = $this->responseFromOptions($options);
+
+        if ($allowCredentials) {
+            self::assertEquals('true', $resp->getHeaderLine('Access-Control-Allow-Credentials'));
+        } else {
+            self::assertFalse($resp->hasHeader('Access-Control-Allow-Credentials'));
+        }
+    }
+
+    private function responseFromOptions(CorsOptions $options): ResponseInterface
+    {
+        return $options->responseWithCorsHeaders(
+            ServerRequestFactory::fromGlobals()->withHeader('Origin', 'https://example.com'),
+            new Response(),
         );
     }
 }
