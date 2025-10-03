@@ -21,6 +21,7 @@ class CorsTest extends ApiTestCase
         self::assertFalse($resp->hasHeader('Access-Control-Allow-Methods'));
         self::assertFalse($resp->hasHeader('Access-Control-Max-Age'));
         self::assertFalse($resp->hasHeader('Access-Control-Allow-Headers'));
+        self::assertFalse($resp->hasHeader('Access-Control-Allow-Credentials'));
     }
 
     #[Test, DataProvider('provideOrigins')]
@@ -38,6 +39,7 @@ class CorsTest extends ApiTestCase
         self::assertFalse($resp->hasHeader('Access-Control-Allow-Methods'));
         self::assertFalse($resp->hasHeader('Access-Control-Max-Age'));
         self::assertFalse($resp->hasHeader('Access-Control-Allow-Headers'));
+        self::assertFalse($resp->hasHeader('Access-Control-Allow-Credentials'));
     }
 
     public static function provideOrigins(): iterable

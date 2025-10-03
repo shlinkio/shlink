@@ -37,7 +37,19 @@ final readonly class CorsOptions
         );
     }
 
-    public function responseWithAllowOrigin(RequestInterface $request, ResponseInterface $response): ResponseInterface
+    /**
+     * Creates a new response which contains the CORS headers that apply to provided request
+     */
+    public function responseWithCorsHeaders(RequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $response = $this->responseWithAllowOrigin($request, $response);
+        return $this->allowCredentials ? $response->withHeader('Access-Control-Allow-Credentials', 'true') : $response;
+    }
+
+    /**
+     * If applicable, a new response with the appropriate Access-Control-Allow-Origin header is returned
+     */
+    private function responseWithAllowOrigin(RequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         if ($this->allowOrigins === '*') {
             return $response->withHeader('Access-Control-Allow-Origin', '*');

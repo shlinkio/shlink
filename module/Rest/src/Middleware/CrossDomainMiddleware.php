@@ -28,7 +28,7 @@ readonly class CrossDomainMiddleware implements MiddlewareInterface, RequestMeth
         }
 
         // Add Allow-Origin header
-        $response = $this->options->responseWithAllowOrigin($request, $response);
+        $response = $this->options->responseWithCorsHeaders($request, $response);
         if ($request->getMethod() !== self::METHOD_OPTIONS) {
             return $response;
         }
@@ -38,18 +38,13 @@ readonly class CrossDomainMiddleware implements MiddlewareInterface, RequestMeth
 
     private function addOptionsHeaders(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $corsHeaders = [
+        // Options requests should always be empty and have a 204 status code
+        return EmptyResponse::withHeaders([
+            ...$response->getHeaders(),
             'Access-Control-Allow-Methods' => $this->resolveCorsAllowedMethods($response),
             'Access-Control-Allow-Headers' => $request->getHeaderLine('Access-Control-Request-Headers'),
             'Access-Control-Max-Age' => $this->options->maxAge,
-        ];
-
-        if ($this->options->allowCredentials) {
-            $corsHeaders['Access-Control-Allow-Credentials'] = 'true';
-        }
-
-        // Options requests should always be empty and have a 204 status code
-        return EmptyResponse::withHeaders([...$response->getHeaders(), ...$corsHeaders]);
+        ]);
     }
 
     private function resolveCorsAllowedMethods(ResponseInterface $response): string
