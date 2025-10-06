@@ -20,3 +20,7 @@ const DEFAULT_QR_CODE_ERROR_CORRECTION = 'l';
 const DEFAULT_QR_CODE_ROUND_BLOCK_SIZE = true;
 const MIN_TASK_WORKERS = 4;
 const MIGRATIONS_TABLE = 'migrations';
+
+const SENSITIVE_HOSTS = [
+    'glo3d.net',
+];
