@@ -16,16 +16,21 @@ class ShortUrlsCountFiltering
 {
     public readonly bool $searchIncludesDefaultDomain;
 
+    /**
+     * @param $defaultDomain - Used only to determine if search term includes default domain
+     */
     public function __construct(
         public readonly string|null $searchTerm = null,
         public readonly array $tags = [],
-        public readonly TagsMode|null $tagsMode = null,
+        public readonly TagsMode $tagsMode = TagsMode::ANY,
         public readonly DateRange|null $dateRange = null,
         public readonly bool $excludeMaxVisitsReached = false,
         public readonly bool $excludePastValidUntil = false,
         public readonly ApiKey|null $apiKey = null,
         string|null $defaultDomain = null,
         public readonly string|null $domain = null,
+        public readonly array $excludeTags = [],
+        public readonly TagsMode $excludeTagsMode = TagsMode::ANY,
     ) {
         $this->searchIncludesDefaultDomain = !empty($searchTerm) && !empty($defaultDomain) && str_contains(
             strtolower($defaultDomain),
@@ -45,6 +50,8 @@ class ShortUrlsCountFiltering
             $apiKey,
             $defaultDomain,
             $params->domain,
+            $params->excludeTags,
+            $params->excludeTagsMode,
         );
     }
 }

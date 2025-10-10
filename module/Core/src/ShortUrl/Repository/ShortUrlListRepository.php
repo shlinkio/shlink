@@ -125,7 +125,7 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
             }
 
             // Apply tag conditions, only when not filtering by all provided tags
-            $tagsMode = $filtering->tagsMode ?? TagsMode::ANY;
+            $tagsMode = $filtering->tagsMode;
             if (empty($tags) || $tagsMode === TagsMode::ANY) {
                 $conditions[] = $qb->expr()->like('t.name', ':searchPattern');
             }
@@ -136,7 +136,7 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
 
         // Filter by tags if provided
         if (! empty($tags)) {
-            $tagsMode = $filtering->tagsMode ?? TagsMode::ANY;
+            $tagsMode = $filtering->tagsMode;
             $tagsMode === TagsMode::ANY
                 ? $qb->join('s.tags', 't')->andWhere($qb->expr()->in('t.name', $tags))
                 : $this->joinAllTags($qb, $tags);
