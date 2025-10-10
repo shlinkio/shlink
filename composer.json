@@ -48,7 +48,7 @@
         "shlinkio/shlink-event-dispatcher": "^4.3",
         "shlinkio/shlink-importer": "^5.6",
         "shlinkio/shlink-installer": "^9.6",
-        "shlinkio/shlink-ip-geolocation": "^4.3",
+        "shlinkio/shlink-ip-geolocation": "^4.4",
         "shlinkio/shlink-json": "^1.2",
         "spiral/roadrunner": "^2025.1",
         "spiral/roadrunner-cli": "^2.7",
@@ -71,7 +71,7 @@
         "phpunit/phpcov": "^11.0",
         "phpunit/phpunit": "^12.0.10",
         "roave/security-advisories": "dev-master",
-        "shlinkio/php-coding-standard": "~2.4.2",
+        "shlinkio/php-coding-standard": "~2.5.0",
         "shlinkio/shlink-test-utils": "^4.3.1",
         "symfony/var-dumper": "^7.3",
         "veewee/composer-run-parallel": "^1.4"

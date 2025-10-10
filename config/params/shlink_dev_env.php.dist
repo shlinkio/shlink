@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 use Shlinkio\Shlink\Core\Config\EnvVars;
 
+use function Shlinkio\Shlink\Config\runningInRoadRunner;
+
 return [
 
     EnvVars::APP_ENV->value => 'dev',
 //    EnvVars::GEOLITE_LICENSE_KEY->value => '',
 
     // URL shortener
-    EnvVars::DEFAULT_DOMAIN->value => 'localhost:8800',
+    EnvVars::DEFAULT_DOMAIN->value => runningInRoadRunner() ? 'localhost:8800' : 'localhost:8008',
     EnvVars::IS_HTTPS_ENABLED->value => false,
 
     // Database - MySQL

@@ -4,7 +4,7 @@ set -e
 cd /etc/shlink
 
 # Create data directories if they do not exist. This allows data dir to be mounted as an empty dir if needed
-mkdir -p data/cache data/locks data/log data/proxies
+mkdir -p data/cache data/locks data/log data/proxies data/temp-geolite
 
 flags="--no-interaction --clear-db-cache"
 

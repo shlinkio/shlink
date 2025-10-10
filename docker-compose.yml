@@ -66,6 +66,37 @@ services:
         extra_hosts:
             - 'host.docker.internal:host-gateway'
 
+    shlink_frankenphp:
+      container_name: shlink_frankenphp
+      user: 1000:1000
+      build:
+        context: .
+        dockerfile: ./data/infra/frankenphp.Dockerfile
+      ports:
+        - "8008:8008"
+      volumes:
+        - ./:/home/shlink
+        - ./data/infra/php.ini:/usr/local/etc/php/php.ini
+        - ./data/infra/frankenphp_caddy_data:/data
+        - ./data/infra/frankenphp_caddy_config:/config
+      links:
+        - shlink_db_mysql
+        - shlink_db_postgres
+        - shlink_db_maria
+        - shlink_db_ms
+        - shlink_redis
+        - shlink_redis_acl
+        - shlink_mercure
+        - shlink_mercure_proxy
+        - shlink_rabbitmq
+        - shlink_matomo
+      environment:
+        FRANKENPHP_CONFIG: 'worker /home/shlink/bin/frankenphp-worker.php'
+        SERVER_NAME: ':8008 https:8009'
+      extra_hosts:
+        - 'host.docker.internal:host-gateway'
+      tty: true
+
     shlink_db_mysql:
         container_name: shlink_db_mysql
         user: 1000:1000
