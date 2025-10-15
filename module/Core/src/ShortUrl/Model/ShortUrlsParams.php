@@ -63,6 +63,10 @@ final class ShortUrlsParams
             excludePastValidUntil: $inputFilter->getValue(ShortUrlsParamsInputFilter::EXCLUDE_PAST_VALID_UNTIL),
             tagsMode: self::resolveTagsMode($inputFilter->getValue(ShortUrlsParamsInputFilter::TAGS_MODE)),
             domain: $inputFilter->getValue(ShortUrlsParamsInputFilter::DOMAIN),
+            excludeTags: (array) $inputFilter->getValue(ShortUrlsParamsInputFilter::EXCLUDE_TAGS),
+            excludeTagsMode: self::resolveTagsMode(
+                $inputFilter->getValue(ShortUrlsParamsInputFilter::EXCLUDE_TAGS_MODE),
+            ),
         );
     }
 

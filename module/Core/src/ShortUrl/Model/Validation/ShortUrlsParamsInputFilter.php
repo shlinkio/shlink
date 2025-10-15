@@ -48,9 +48,9 @@ class ShortUrlsParamsInputFilter extends InputFilter
         $this->add(InputFactory::numeric(self::ITEMS_PER_PAGE, Paginator::ALL_ITEMS));
 
         $this->add(InputFactory::tags(self::TAGS));
-        $this->add(InputFactory::tags(self::EXCLUDE_TAGS));
-
         $this->add($this->createTagsModeInput(self::TAGS_MODE));
+
+        $this->add(InputFactory::tags(self::EXCLUDE_TAGS));
         $this->add($this->createTagsModeInput(self::EXCLUDE_TAGS_MODE));
 
         $this->add(InputFactory::orderBy(self::ORDER_BY, enumValues(OrderableField::class)));
