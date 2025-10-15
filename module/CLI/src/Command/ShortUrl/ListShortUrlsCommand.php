@@ -27,6 +27,7 @@ use function array_keys;
 use function array_pad;
 use function explode;
 use function implode;
+use function Shlinkio\Shlink\Core\ArrayUtils\flatten;
 use function Shlinkio\Shlink\Core\ArrayUtils\map;
 use function sprintf;
 
@@ -73,8 +74,8 @@ class ListShortUrlsCommand extends Command
             ->addOption(
                 'tags',
                 't',
-                InputOption::VALUE_REQUIRED, // TODO Should be InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY
-                'A comma-separated list of tags that short URLs need to include.',
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                'A list of tags that short URLs need to include.',
             )
             ->addOption('including-all-tags', 'i', InputOption::VALUE_NONE, '[DEPRECATED] Use --tags-all instead')
             ->addOption(
@@ -86,7 +87,7 @@ class ListShortUrlsCommand extends Command
                 'exclude-tags',
                 'et',
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                'A comma-separated list of tags that short URLs should not have.',
+                'A list of tags that short URLs should not have.',
             )
             ->addOption(
                 'exclude-tags-all',
@@ -148,8 +149,9 @@ class ListShortUrlsCommand extends Command
         $searchTerm = $input->getOption('search-term');
         $domain = $input->getOption('domain');
 
+        // FIXME DEPRECATED Remove support for comma-separated tags in next major release
         $tags = $input->getOption('tags');
-        $tags = ! empty($tags) ? explode(',', $tags) : [];
+        $tags = flatten(map($tags, static fn (string $tag) => explode(',', $tag)));
         $tagsMode = $input->getOption('tags-all') === true || $input->getOption('including-all-tags') === true
             ? TagsMode::ALL->value
             : TagsMode::ANY->value;
