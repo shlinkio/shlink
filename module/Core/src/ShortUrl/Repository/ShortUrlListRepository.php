@@ -16,6 +16,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithDeps;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
+use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 use Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount;
 
 use function Shlinkio\Shlink\Core\ArrayUtils\map;
@@ -105,6 +106,10 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
 
         $searchTerm = $filtering->searchTerm;
         $tags = $filtering->tags;
+        $tagsMode = $filtering->tagsMode;
+        $excludeTags = $filtering->excludeTags;
+        $excludeTagsMode = $filtering->excludeTagsMode;
+
         if (! empty($searchTerm)) {
             // Left join with tags only if no tags were provided. In case of tags, an inner join will be done later
             if (empty($tags)) {
@@ -125,7 +130,6 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
             }
 
             // Apply tag conditions, only when not filtering by all provided tags
-            $tagsMode = $filtering->tagsMode;
             if (empty($tags) || $tagsMode === TagsMode::ANY) {
                 $conditions[] = $qb->expr()->like('t.name', ':searchPattern');
             }
@@ -136,10 +140,26 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
 
         // Filter by tags if provided
         if (! empty($tags)) {
-            $tagsMode = $filtering->tagsMode;
-            $tagsMode === TagsMode::ANY
-                ? $qb->join('s.tags', 't')->andWhere($qb->expr()->in('t.name', $tags))
-                : $this->joinAllTags($qb, $tags);
+            if ($tagsMode === TagsMode::ANY) {
+                $qb->join('s.tags', 't')->andWhere($qb->expr()->in('t.name', $tags));
+            } else {
+                $this->joinAllTags($qb, $tags);
+            }
+        }
+
+        // Filter by excludeTags if provided
+        if (! empty($excludeTags)) {
+            $subQb = $this->getEntityManager()->createQueryBuilder();
+            $subQb->select('s2.id')
+                  ->from(ShortUrl::class, 's2');
+
+            if ($excludeTagsMode === TagsMode::ANY) {
+                $subQb->join('s2.tags', 't2')->andWhere($qb->expr()->in('t2.name', $excludeTags));
+            } else {
+                $this->joinAllTags($subQb, $excludeTags, shortUrlsAlias: 's2', boundParamsQb: $qb);
+            }
+
+            $qb->andWhere($qb->expr()->notIn('s.id', $subQb->getDQL()));
         }
 
         if ($filtering->domain !== null) {
@@ -178,12 +198,22 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
         return $qb;
     }
 
-    private function joinAllTags(QueryBuilder $qb, array $tags): void
-    {
+    /**
+     * @param $boundParamsQb - The query builder in which params should be bound, in case the main provided QB is going
+     *                         to be used as a sub query, since params need to be bound in the parent query.
+     *                         Defaults to the main $qb
+     */
+    private function joinAllTags(
+        QueryBuilder $qb,
+        array $tags,
+        string $shortUrlsAlias = 's',
+        QueryBuilder|null $boundParamsQb = null
+    ): void {
+        $boundParamsQb ??= $qb;
         foreach ($tags as $index => $tag) {
-            $alias = 't_' . $index;
-            $qb->join('s.tags', $alias, Join::WITH, $alias . '.name = :tag' . $index)
-               ->setParameter('tag' . $index, $tag);
+            $alias = 't_' . $index . $shortUrlsAlias;
+            $qb->join($shortUrlsAlias . '.tags', $alias, Join::WITH, $alias . '.name = :tag' . $index . $shortUrlsAlias);
+            $boundParamsQb->setParameter('tag' . $index . $shortUrlsAlias, $tag);
         }
     }
 }
