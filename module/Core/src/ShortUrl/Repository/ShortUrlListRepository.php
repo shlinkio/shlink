@@ -16,7 +16,6 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithDeps;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsCountFiltering;
 use Shlinkio\Shlink\Core\ShortUrl\Persistence\ShortUrlsListFiltering;
-use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 use Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount;
 
 use function Shlinkio\Shlink\Core\ArrayUtils\map;
@@ -207,12 +206,17 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
         QueryBuilder $qb,
         array $tags,
         string $shortUrlsAlias = 's',
-        QueryBuilder|null $boundParamsQb = null
+        QueryBuilder|null $boundParamsQb = null,
     ): void {
         $boundParamsQb ??= $qb;
         foreach ($tags as $index => $tag) {
             $alias = 't_' . $index . $shortUrlsAlias;
-            $qb->join($shortUrlsAlias . '.tags', $alias, Join::WITH, $alias . '.name = :tag' . $index . $shortUrlsAlias);
+            $qb->join(
+                $shortUrlsAlias . '.tags',
+                $alias,
+                Join::WITH,
+                $alias . '.name = :tag' . $index . $shortUrlsAlias,
+            );
             $boundParamsQb->setParameter('tag' . $index . $shortUrlsAlias, $tag);
         }
     }
