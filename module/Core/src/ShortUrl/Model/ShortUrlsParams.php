@@ -14,7 +14,7 @@ use function Shlinkio\Shlink\Core\normalizeOptionalDate;
 
 final class ShortUrlsParams
 {
-    public const DEFAULT_ITEMS_PER_PAGE = 10;
+    public const int DEFAULT_ITEMS_PER_PAGE = 10;
 
     private function __construct(
         public readonly int $page,
@@ -27,6 +27,8 @@ final class ShortUrlsParams
         public readonly bool $excludePastValidUntil,
         public readonly TagsMode $tagsMode = TagsMode::ANY,
         public readonly string|null $domain = null,
+        public readonly array $excludeTags = [],
+        public readonly TagsMode $excludeTagsMode = TagsMode::ANY,
     ) {
     }
 
@@ -61,6 +63,10 @@ final class ShortUrlsParams
             excludePastValidUntil: $inputFilter->getValue(ShortUrlsParamsInputFilter::EXCLUDE_PAST_VALID_UNTIL),
             tagsMode: self::resolveTagsMode($inputFilter->getValue(ShortUrlsParamsInputFilter::TAGS_MODE)),
             domain: $inputFilter->getValue(ShortUrlsParamsInputFilter::DOMAIN),
+            excludeTags: (array) $inputFilter->getValue(ShortUrlsParamsInputFilter::EXCLUDE_TAGS),
+            excludeTagsMode: self::resolveTagsMode(
+                $inputFilter->getValue(ShortUrlsParamsInputFilter::EXCLUDE_TAGS_MODE),
+            ),
         );
     }
 

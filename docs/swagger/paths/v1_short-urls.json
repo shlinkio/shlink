@@ -31,7 +31,7 @@
             {
                 "name": "searchTerm",
                 "in": "query",
-                "description": "A query used to filter results by searching for it on the longUrl and shortCode fields. (Since v1.3.0)",
+                "description": "A query used to filter results by searching for it on the longUrl and shortCode fields.",
                 "required": false,
                 "schema": {
                     "type": "string"
@@ -40,7 +40,7 @@
             {
                 "name": "tags[]",
                 "in": "query",
-                "description": "A list of tags used to filter the result set. Only short URLs tagged with at least one of the provided tags will be returned. (Since v1.3.0)",
+                "description": "A list of tags used to filter the result set. Only short URLs **with** these tags will be returned.",
                 "required": false,
                 "schema": {
                     "type": "array",
@@ -52,7 +52,29 @@
             {
                 "name": "tagsMode",
                 "in": "query",
-                "description": "Tells how the filtering by tags should work, returning short URLs containing \"any\" of the tags, or \"all\" the tags. It's ignored if no tags are provided, and defaults to \"any\" if not provided.",
+                "description": "Tells how the filtering by `tags` should work, returning short URLs containing \"any\" of the tags, or \"all\" the tags. Defaults to \"any\".<br />It's ignored if `tags` is not provided.",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "enum": ["any", "all"]
+                }
+            },
+            {
+                "name": "excludeTags[]",
+                "in": "query",
+                "description": "A list of tags used to filter the result set. Only short URLs **without** these tags will be returned.",
+                "required": false,
+                "schema": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            {
+                "name": "excludeTagsMode",
+                "in": "query",
+                "description": "Tells how the filtering by `excludeTags` should work, returning short URLs not containing \"any\" of the tags, or not containing \"all\" the tags. Defaults to \"any\".<br />It's ignored if `excludeTags` is not provided.",
                 "required": false,
                 "schema": {
                     "type": "string",

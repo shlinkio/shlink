@@ -27,6 +27,7 @@ use function array_keys;
 use function array_pad;
 use function explode;
 use function implode;
+use function Shlinkio\Shlink\Core\ArrayUtils\flatten;
 use function Shlinkio\Shlink\Core\ArrayUtils\map;
 use function sprintf;
 
@@ -72,15 +73,31 @@ class ListShortUrlsCommand extends Command
             )
             ->addOption(
                 'tags',
-                't',
-                InputOption::VALUE_REQUIRED,
-                'A comma-separated list of tags to filter results.',
+                mode: InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                description: '[DEPRECATED] Use --tag instead',
             )
             ->addOption(
-                'including-all-tags',
-                'i',
-                InputOption::VALUE_NONE,
-                'If tags is provided, returns only short URLs having ALL tags.',
+                'tag',
+                't',
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                'A list of tags that short URLs need to include.',
+            )
+            ->addOption('including-all-tags', 'i', InputOption::VALUE_NONE, '[DEPRECATED] Use --tags-all instead')
+            ->addOption(
+                'tags-all',
+                mode: InputOption::VALUE_NONE,
+                description: 'If --tags is provided, returns only short URLs including ALL of them',
+            )
+            ->addOption(
+                'exclude-tag',
+                'et',
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                'A list of tags that short URLs should not have.',
+            )
+            ->addOption(
+                'exclude-tags-all',
+                mode: InputOption::VALUE_NONE,
+                description: 'If --exclude-tag is provided, returns only short URLs not including ANY of them',
             )
             ->addOption(
                 'exclude-max-visits-reached',
@@ -136,9 +153,17 @@ class ListShortUrlsCommand extends Command
         $page = (int) $input->getOption('page');
         $searchTerm = $input->getOption('search-term');
         $domain = $input->getOption('domain');
-        $tags = $input->getOption('tags');
-        $tagsMode = $input->getOption('including-all-tags') === true ? TagsMode::ALL->value : TagsMode::ANY->value;
-        $tags = ! empty($tags) ? explode(',', $tags) : [];
+
+        // FIXME DEPRECATED Remove support for comma-separated tags in next major release
+        $tags = [...$input->getOption('tag'), ...$input->getOption('tags')];
+        $tags = flatten(map($tags, static fn (string $tag) => explode(',', $tag)));
+        $tagsMode = $input->getOption('tags-all') === true || $input->getOption('including-all-tags') === true
+            ? TagsMode::ALL->value
+            : TagsMode::ANY->value;
+
+        $excludeTags = $input->getOption('exclude-tag');
+        $excludeTagsMode = $input->getOption('exclude-tags-all') === true ? TagsMode::ALL->value : TagsMode::ANY->value;
+
         $all = $input->getOption('all');
         $startDate = $this->startDateOption->get($input, $output);
         $endDate = $this->endDateOption->get($input, $output);
@@ -150,6 +175,8 @@ class ListShortUrlsCommand extends Command
             ShortUrlsParamsInputFilter::DOMAIN => $domain,
             ShortUrlsParamsInputFilter::TAGS => $tags,
             ShortUrlsParamsInputFilter::TAGS_MODE => $tagsMode,
+            ShortUrlsParamsInputFilter::EXCLUDE_TAGS => $excludeTags,
+            ShortUrlsParamsInputFilter::EXCLUDE_TAGS_MODE => $excludeTagsMode,
             ShortUrlsParamsInputFilter::ORDER_BY => $orderBy,
             ShortUrlsParamsInputFilter::START_DATE => $startDate?->toAtomString(),
             ShortUrlsParamsInputFilter::END_DATE => $endDate?->toAtomString(),

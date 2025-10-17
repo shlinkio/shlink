@@ -239,6 +239,24 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         self::assertEquals(0, $this->repo->countList(
             new ShortUrlsCountFiltering(tags: ['foo', 'bar', 'baz'], tagsMode: TagsMode::ALL),
         ));
+
+        self::assertEquals(2, $this->repo->countList(new ShortUrlsCountFiltering(excludeTags: ['foo'])));
+        self::assertEquals(0, $this->repo->countList(new ShortUrlsCountFiltering(excludeTags: ['foo', 'bar'])));
+        self::assertEquals(4, $this->repo->countList(new ShortUrlsCountFiltering(
+            excludeTags: ['foo', 'bar'],
+            excludeTagsMode: TagsMode::ALL,
+        )));
+
+        self::assertEquals(2, $this->repo->countList(new ShortUrlsCountFiltering(tags: ['foo'], excludeTags: ['bar'])));
+        self::assertEquals(1, $this->repo->countList(new ShortUrlsCountFiltering(
+            tags: ['foo'],
+            excludeTags: ['bar', 'baz'],
+        )));
+        self::assertEquals(3, $this->repo->countList(new ShortUrlsCountFiltering(
+            tags: ['foo'],
+            excludeTags: ['bar', 'baz'],
+            excludeTagsMode: TagsMode::ALL,
+        )));
     }
 
     #[Test]
