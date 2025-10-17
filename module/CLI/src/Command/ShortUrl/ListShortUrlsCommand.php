@@ -73,6 +73,11 @@ class ListShortUrlsCommand extends Command
             )
             ->addOption(
                 'tags',
+                mode: InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                description: '[DEPRECATED] Use --tag instead',
+            )
+            ->addOption(
+                'tag',
                 't',
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                 'A list of tags that short URLs need to include.',
@@ -84,7 +89,7 @@ class ListShortUrlsCommand extends Command
                 description: 'If --tags is provided, returns only short URLs including ALL of them',
             )
             ->addOption(
-                'exclude-tags',
+                'exclude-tag',
                 'et',
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                 'A list of tags that short URLs should not have.',
@@ -92,7 +97,7 @@ class ListShortUrlsCommand extends Command
             ->addOption(
                 'exclude-tags-all',
                 mode: InputOption::VALUE_NONE,
-                description: 'If --exclude-tags is provided, returns only short URLs not including ANY of them',
+                description: 'If --exclude-tag is provided, returns only short URLs not including ANY of them',
             )
             ->addOption(
                 'exclude-max-visits-reached',
@@ -150,13 +155,13 @@ class ListShortUrlsCommand extends Command
         $domain = $input->getOption('domain');
 
         // FIXME DEPRECATED Remove support for comma-separated tags in next major release
-        $tags = $input->getOption('tags');
+        $tags = [...$input->getOption('tag'), ...$input->getOption('tags')];
         $tags = flatten(map($tags, static fn (string $tag) => explode(',', $tag)));
         $tagsMode = $input->getOption('tags-all') === true || $input->getOption('including-all-tags') === true
             ? TagsMode::ALL->value
             : TagsMode::ANY->value;
 
-        $excludeTags = $input->getOption('exclude-tags');
+        $excludeTags = $input->getOption('exclude-tag');
         $excludeTagsMode = $input->getOption('exclude-tags-all') === true ? TagsMode::ALL->value : TagsMode::ANY->value;
 
         $all = $input->getOption('all');
