@@ -26,6 +26,7 @@ return [
 
             Command\Api\GenerateKeyCommand::NAME => Command\Api\GenerateKeyCommand::class,
             Command\Api\DisableKeyCommand::NAME => Command\Api\DisableKeyCommand::class,
+            Command\Api\DeleteKeyCommand::NAME => Command\Api\DeleteKeyCommand::class,
             Command\Api\ListKeysCommand::NAME => Command\Api\ListKeysCommand::class,
             Command\Api\InitialApiKeyCommand::NAME => Command\Api\InitialApiKeyCommand::class,
             Command\Api\RenameApiKeyCommand::NAME => Command\Api\RenameApiKeyCommand::class,

@@ -40,4 +40,18 @@ class ApiKeyRepositoryTest extends DatabaseTestCase
         self::assertTrue($this->repo->nameExists('foo'));
         self::assertFalse($this->repo->nameExists('bar'));
     }
+
+    #[Test]
+    public function deleteByNameReturnsExpectedValue(): void
+    {
+        $this->getEntityManager()->persist(ApiKey::fromMeta(ApiKeyMeta::fromParams(name: 'foo')));
+        $this->getEntityManager()->flush();
+        $this->getEntityManager()->clear();
+
+        self::assertEquals(0, $this->repo->deleteByName('invalid'));
+        self::assertEquals(1, $this->repo->deleteByName('foo'));
+
+        // Verify the API key has been deleted
+        self::assertNull($this->repo->findOneBy(['name' => 'foo']));
+    }
 }
