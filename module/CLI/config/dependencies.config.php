@@ -52,6 +52,7 @@ return [
 
             Command\Api\GenerateKeyCommand::class => ConfigAbstractFactory::class,
             Command\Api\DisableKeyCommand::class => ConfigAbstractFactory::class,
+            Command\Api\DeleteKeyCommand::class => ConfigAbstractFactory::class,
             Command\Api\ListKeysCommand::class => ConfigAbstractFactory::class,
             Command\Api\InitialApiKeyCommand::class => ConfigAbstractFactory::class,
             Command\Api\RenameApiKeyCommand::class => ConfigAbstractFactory::class,
@@ -108,6 +109,7 @@ return [
 
         Command\Api\GenerateKeyCommand::class => [ApiKeyService::class, ApiKey\RoleResolver::class],
         Command\Api\DisableKeyCommand::class => [ApiKeyService::class],
+        Command\Api\DeleteKeyCommand::class => [ApiKeyService::class],
         Command\Api\ListKeysCommand::class => [ApiKeyService::class],
         Command\Api\InitialApiKeyCommand::class => [ApiKeyService::class],
         Command\Api\RenameApiKeyCommand::class => [ApiKeyService::class],

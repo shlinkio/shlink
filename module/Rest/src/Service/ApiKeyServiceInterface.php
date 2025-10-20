@@ -25,6 +25,11 @@ interface ApiKeyServiceInterface
     /**
      * @throws ApiKeyNotFoundException
      */
+    public function deleteByName(string $apiKeyName): void;
+
+    /**
+     * @throws ApiKeyNotFoundException
+     */
     public function disableByName(string $apiKeyName): ApiKey;
 
     /**

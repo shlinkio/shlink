@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
@@ -267,5 +268,20 @@ class ApiKeyServiceTest extends TestCase
 
         self::assertSame($apiKey, $result);
         self::assertEquals('new', $apiKey->name);
+    }
+
+    #[Test]
+    #[TestWith([0, true])]
+    #[TestWith([1, false])]
+    public function deleteByNameThrowsIfNoResultsAreAffected(int $affectedResults, bool $shouldThrow): void
+    {
+        $name = 'some_name';
+        $this->repo->expects($this->once())->method('deleteByName')->with($name)->willReturn($affectedResults);
+
+        if ($shouldThrow) {
+            $this->expectException(ApiKeyNotFoundException::class);
+        }
+
+        $this->service->deleteByName($name);
     }
 }
