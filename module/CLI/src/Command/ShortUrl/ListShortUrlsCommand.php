@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\CLI\Input\EndDateOption;
 use Shlinkio\Shlink\CLI\Input\StartDateOption;
+use Shlinkio\Shlink\CLI\Input\TagsOption;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtils;
@@ -27,7 +28,6 @@ use function array_keys;
 use function array_pad;
 use function explode;
 use function implode;
-use function Shlinkio\Shlink\Core\ArrayUtils\flatten;
 use function Shlinkio\Shlink\Core\ArrayUtils\map;
 use function sprintf;
 
@@ -37,6 +37,7 @@ class ListShortUrlsCommand extends Command
 
     private readonly StartDateOption $startDateOption;
     private readonly EndDateOption $endDateOption;
+    private readonly TagsOption $tagsOption;
 
     public function __construct(
         private readonly ShortUrlListServiceInterface $shortUrlService,
@@ -45,6 +46,7 @@ class ListShortUrlsCommand extends Command
         parent::__construct();
         $this->startDateOption = new StartDateOption($this, 'short URLs');
         $this->endDateOption = new EndDateOption($this, 'short URLs');
+        $this->tagsOption = new TagsOption($this, 'A list of tags that short URLs need to include.');
     }
 
     protected function configure(): void
@@ -70,17 +72,6 @@ class ListShortUrlsCommand extends Command
                 'd',
                 InputOption::VALUE_REQUIRED,
                 'Used to filter results by domain. Use DEFAULT keyword to filter by default domain',
-            )
-            ->addOption(
-                'tags',
-                mode: InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                description: '[DEPRECATED] Use --tag instead',
-            )
-            ->addOption(
-                'tag',
-                't',
-                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                'A list of tags that short URLs need to include.',
             )
             ->addOption('including-all-tags', 'i', InputOption::VALUE_NONE, '[DEPRECATED] Use --tags-all instead')
             ->addOption(
@@ -154,9 +145,7 @@ class ListShortUrlsCommand extends Command
         $searchTerm = $input->getOption('search-term');
         $domain = $input->getOption('domain');
 
-        // FIXME DEPRECATED Remove support for comma-separated tags in next major release
-        $tags = [...$input->getOption('tag'), ...$input->getOption('tags')];
-        $tags = flatten(map($tags, static fn (string $tag) => explode(',', $tag)));
+        $tags = $this->tagsOption->get($input);
         $tagsMode = $input->getOption('tags-all') === true || $input->getOption('including-all-tags') === true
             ? TagsMode::ALL->value
             : TagsMode::ANY->value;

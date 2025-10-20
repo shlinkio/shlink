@@ -13,13 +13,10 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
-use function array_map;
-use function array_unique;
-use function Shlinkio\Shlink\Core\ArrayUtils\flatten;
-use function Shlinkio\Shlink\Core\splitByComma;
-
 final readonly class ShortUrlDataInput
 {
+    private readonly TagsOption $tagsOption;
+
     public function __construct(Command $command, private bool $longUrlAsOption = false)
     {
         if ($longUrlAsOption) {
@@ -28,13 +25,9 @@ final readonly class ShortUrlDataInput
             $command->addArgument('longUrl', InputArgument::REQUIRED, 'The long URL to set');
         }
 
+        $this->tagsOption = new TagsOption($command, 'Tags to apply to the short URL');
+
         $command
-            ->addOption(
-                ShortUrlDataOption::TAGS->value,
-                ShortUrlDataOption::TAGS->shortcut(),
-                InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
-                'Tags to apply to the short URL',
-            )
             ->addOption(
                 ShortUrlDataOption::VALID_SINCE->value,
                 ShortUrlDataOption::VALID_SINCE->shortcut(),
@@ -117,9 +110,8 @@ final readonly class ShortUrlDataInput
             $maxVisits = $input->getOption('max-visits');
             $data[ShortUrlInputFilter::MAX_VISITS] = $maxVisits !== null ? (int) $maxVisits : null;
         }
-        if (ShortUrlDataOption::TAGS->wasProvided($input)) {
-            $tags = array_unique(flatten(array_map(splitByComma(...), $input->getOption('tags'))));
-            $data[ShortUrlInputFilter::TAGS] = $tags;
+        if ($this->tagsOption->exists($input)) {
+            $data[ShortUrlInputFilter::TAGS] = $this->tagsOption->get($input);
         }
         if (ShortUrlDataOption::TITLE->wasProvided($input)) {
             $data[ShortUrlInputFilter::TITLE] = $input->getOption('title');

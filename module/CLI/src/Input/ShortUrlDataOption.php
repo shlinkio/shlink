@@ -10,7 +10,6 @@ use function sprintf;
 
 enum ShortUrlDataOption: string
 {
-    case TAGS = 'tags';
     case VALID_SINCE = 'valid-since';
     case VALID_UNTIL = 'valid-until';
     case MAX_VISITS = 'max-visits';
@@ -21,7 +20,6 @@ enum ShortUrlDataOption: string
     public function shortcut(): string|null
     {
         return match ($this) {
-            self::TAGS => 't',
             self::VALID_SINCE => 's',
             self::VALID_UNTIL => 'u',
             self::MAX_VISITS => 'm',
