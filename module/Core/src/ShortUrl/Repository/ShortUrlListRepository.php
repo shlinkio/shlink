@@ -137,7 +137,6 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
                ->setParameter('searchPattern', '%' . $searchTerm . '%');
         }
 
-        // Filter by tags if provided
         if (! empty($tags)) {
             if ($tagsMode === TagsMode::ANY) {
                 $qb->join('s.tags', 't')->andWhere($qb->expr()->in('t.name', $tags));
@@ -146,7 +145,6 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
             }
         }
 
-        // Filter by excludeTags if provided
         if (! empty($excludeTags)) {
             $subQb = $this->getEntityManager()->createQueryBuilder();
             $subQb->select('s2.id')
@@ -190,6 +188,14 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
                     $qb->expr()->gte('s.validUntil', ':minValidUntil'),
                 ))
                 ->setParameter('minValidUntil', Chronos::now()->toDateTimeString());
+        }
+
+        $apiKeyName = $filtering->apiKeyName;
+        if ($apiKeyName !== null) {
+            $qb
+                ->join('s.authorApiKey', 'a')
+                ->andWhere($qb->expr()->eq('a.name', ':apiKeyName'))
+                ->setParameter('apiKeyName', $apiKeyName);
         }
 
         $this->applySpecification($qb, $filtering->apiKey?->spec(), 's');

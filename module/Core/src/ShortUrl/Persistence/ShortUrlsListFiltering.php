@@ -30,6 +30,7 @@ class ShortUrlsListFiltering extends ShortUrlsCountFiltering
         string|null $domain = null,
         array $excludeTags = [],
         TagsMode $excludeTagsMode = TagsMode::ANY,
+        string|null $apiKeyName = null,
     ) {
         parent::__construct(
             $searchTerm,
@@ -43,6 +44,7 @@ class ShortUrlsListFiltering extends ShortUrlsCountFiltering
             $domain,
             $excludeTags,
             $excludeTagsMode,
+            $apiKeyName,
         );
     }
 
@@ -68,6 +70,7 @@ class ShortUrlsListFiltering extends ShortUrlsCountFiltering
             $params->domain,
             $params->excludeTags,
             $params->excludeTagsMode,
+            $params->apiKeyName,
         );
     }
 }
