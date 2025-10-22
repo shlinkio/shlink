@@ -209,6 +209,7 @@ class ListShortUrlsCommandTest extends TestCase
         string|null $endDate = null,
         array $excludeTags = [],
         string $excludeTagsMode = TagsMode::ANY->value,
+        string|null $apiKeyName = null,
     ): void {
         $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(ShortUrlsParams::fromRawData([
             'page' => $page,
@@ -219,6 +220,7 @@ class ListShortUrlsCommandTest extends TestCase
             'endDate' => $endDate !== null ? Chronos::parse($endDate)->toAtomString() : null,
             'excludeTags' => $excludeTags,
             'excludeTagsMode' => $excludeTagsMode,
+            'apiKeyName' => $apiKeyName,
         ]))->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->setInputs(['n']);
@@ -274,6 +276,18 @@ class ListShortUrlsCommandTest extends TestCase
             null,
             ['foo', 'bar'],
             TagsMode::ALL->value,
+        ];
+        yield [
+            ['--api-key-name' => 'foo'],
+            1,
+            null,
+            [],
+            TagsMode::ANY->value,
+            null,
+            null,
+            [],
+            TagsMode::ANY->value,
+            'foo',
         ];
     }
 

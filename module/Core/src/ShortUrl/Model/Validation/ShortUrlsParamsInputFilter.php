@@ -30,6 +30,7 @@ class ShortUrlsParamsInputFilter extends InputFilter
     public const string EXCLUDE_MAX_VISITS_REACHED = 'excludeMaxVisitsReached';
     public const string EXCLUDE_PAST_VALID_UNTIL = 'excludePastValidUntil';
     public const string DOMAIN = 'domain';
+    public const string API_KEY_NAME = 'apiKeyName';
 
     public function __construct(array $data)
     {
@@ -59,6 +60,7 @@ class ShortUrlsParamsInputFilter extends InputFilter
         $this->add(InputFactory::boolean(self::EXCLUDE_PAST_VALID_UNTIL));
 
         $this->add(InputFactory::basic(self::DOMAIN));
+        $this->add(InputFactory::basic(self::API_KEY_NAME));
     }
 
     private function createTagsModeInput(string $name): Input

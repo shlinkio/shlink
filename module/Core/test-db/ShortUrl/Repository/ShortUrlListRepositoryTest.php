@@ -22,6 +22,9 @@ use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlListRepository;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
+use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
+use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
+use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase;
 
 use function array_map;
@@ -365,6 +368,72 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         self::assertEquals(2, $this->repo->countList($filtering(
             excludeMaxVisitsReached: true,
             excludePastValidUntil: true,
+        )));
+    }
+
+    #[Test]
+    public function filteringByApiKeyNameIsPossible(): void
+    {
+        $apiKey1 = ApiKey::create();
+        $this->getEntityManager()->persist($apiKey1);
+        $apiKey2 = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
+        $this->getEntityManager()->persist($apiKey2);
+        $apiKey3 = ApiKey::create();
+        $this->getEntityManager()->persist($apiKey3);
+
+        $shortUrl1 = ShortUrl::create(ShortUrlCreation::fromRawData([
+            'longUrl' => 'https://foo1',
+            'apiKey' => $apiKey1,
+        ]), $this->relationResolver);
+        $this->getEntityManager()->persist($shortUrl1);
+        $shortUrl2 = ShortUrl::create(ShortUrlCreation::fromRawData([
+            'longUrl' => 'https://foo2',
+            'apiKey' => $apiKey1,
+        ]), $this->relationResolver);
+        $this->getEntityManager()->persist($shortUrl2);
+        $shortUrl3 = ShortUrl::create(ShortUrlCreation::fromRawData([
+            'longUrl' => 'https://foo3',
+            'apiKey' => $apiKey2,
+        ]), $this->relationResolver);
+        $this->getEntityManager()->persist($shortUrl3);
+        $shortUrl4 = ShortUrl::create(ShortUrlCreation::fromRawData([
+            'longUrl' => 'https://foo4',
+            'apiKey' => $apiKey1,
+        ]), $this->relationResolver);
+        $this->getEntityManager()->persist($shortUrl4);
+
+        $this->getEntityManager()->flush();
+
+        // It is possible to filter by API key name when no API key or ADMIN API key is provided
+        self::assertCount(3, $this->repo->findList(new ShortUrlsListFiltering(apiKeyName: $apiKey1->name)));
+        self::assertCount(1, $this->repo->findList(new ShortUrlsListFiltering(apiKeyName: $apiKey2->name)));
+        self::assertCount(0, $this->repo->findList(new ShortUrlsListFiltering(apiKeyName: $apiKey3->name)));
+
+        self::assertCount(3, $this->repo->findList(new ShortUrlsListFiltering(
+            apiKey: $apiKey1,
+            apiKeyName: $apiKey1->name,
+        )));
+        self::assertCount(1, $this->repo->findList(new ShortUrlsListFiltering(
+            apiKey: $apiKey1,
+            apiKeyName: $apiKey2->name,
+        )));
+        self::assertCount(0, $this->repo->findList(new ShortUrlsListFiltering(
+            apiKey: $apiKey1,
+            apiKeyName: $apiKey3->name,
+        )));
+
+        // When a non-admin API key is passed, it allows to filter by itself only
+        self::assertCount(1, $this->repo->findList(new ShortUrlsListFiltering(
+            apiKey: $apiKey2,
+            apiKeyName: $apiKey1->name, // Ignored. Only API key 2 results are returned
+        )));
+        self::assertCount(1, $this->repo->findList(new ShortUrlsListFiltering(
+            apiKey: $apiKey2,
+            apiKeyName: $apiKey2->name,
+        )));
+        self::assertCount(1, $this->repo->findList(new ShortUrlsListFiltering(
+            apiKey: $apiKey2,
+            apiKeyName: $apiKey3->name, // Ignored. Only API key 2 results are returned
         )));
     }
 }
