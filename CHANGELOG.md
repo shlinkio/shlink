@@ -6,11 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## [Unreleased]
 ### Added
-* [#2327](https://github.com/shlinkio/shlink/issues/2327) Allow filtering short URLs lists by those not including certain tags.
+* [#2327](https://github.com/shlinkio/shlink/issues/2327) Allow filtering short URL lists by those not including certain tags.
 
     Now, the `GET /short-urls` endpoint accepts two new params: `excludeTags`, which is an array of strings with the tags that should not be included, and `excludeTagsMode`, which accepts the values `any` and `all`, and determines if short URLs should be filtered out if they contain any of the excluded tags, or all the excluded tags.
 
     Additionally, the `short-url:list` command also supports the same feature via `--exclude-tag` option, which requires a value and can be provided multiple times, and `--exclude-tags-all`, which does not expect a value and determines if the mode should be `all`, or `any`.
+
+* [#2192](https://github.com/shlinkio/shlink/issues/2192) Allow filtering short URL lists by the API key that was used to create them.
+
+  Now, the `GET /short-urls` endpoint accepts a new `apiKeyName` param, which is ignored if the request is performed with a non-admin API key which name does not match the one provided here.
+
+  Additionally, the `short-url:list` command also supports the same feature via the `--api-key-name` option.
 
 ### Changed
 * *Nothing*
