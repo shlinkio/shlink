@@ -297,6 +297,24 @@ class ListShortUrlsTest extends ApiTestCase
             self::SHORT_URL_DOCS,
         ]];
 
+        // Filter by API key name
+        yield [['apiKeyName' => 'author_api_key'], [
+            self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_META,
+            self::SHORT_URL_SHLINK_WITH_TITLE,
+        ]];
+        yield [['apiKeyName' => 'invalid'], []];
+        yield [['apiKeyName' => 'valid_api_key'], [
+            // If the author_api_key is used, the `apiKeyName` param is ignored
+            self::SHORT_URL_CUSTOM_SLUG,
+            self::SHORT_URL_META,
+            self::SHORT_URL_SHLINK_WITH_TITLE,
+        ], 'author_api_key'];
+        yield [['apiKeyName' => 'valid_api_key'], [
+            // If the domain_api_key is used, the `apiKeyName` param is ignored
+            self::SHORT_URL_CUSTOM_DOMAIN,
+        ], 'domain_api_key'];
+
         // Different API keys
         yield [[], [
             self::SHORT_URL_CUSTOM_SLUG,

@@ -156,6 +156,15 @@
                 "schema": {
                     "type": "string"
                 }
+            },
+            {
+                "name": "apiKeyName",
+                "in": "query",
+                "description": "Only get short URLs created with this API key.<br />This value is **ignored** if the request is performed with a non-admin API key that does not match this name.",
+                "required": false,
+                "schema": {
+                    "type": "string"
+                }
             }
         ],
         "security": [
