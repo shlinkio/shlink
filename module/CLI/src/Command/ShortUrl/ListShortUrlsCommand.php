@@ -110,6 +110,12 @@ class ListShortUrlsCommand extends Command
                     . 'Define ordering dir by passing ASC or DESC after "-" or ",".',
             )
             ->addOption(
+                'api-key-name',
+                'kn',
+                InputOption::VALUE_REQUIRED,
+                'List only short URLs created by the API key matching provided name.',
+            )
+            ->addOption(
                 'show-tags',
                 null,
                 InputOption::VALUE_NONE,
@@ -142,41 +148,32 @@ class ListShortUrlsCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $page = (int) $input->getOption('page');
-        $searchTerm = $input->getOption('search-term');
-        $domain = $input->getOption('domain');
-
-        $tags = $this->tagsOption->get($input);
         $tagsMode = $input->getOption('tags-all') === true || $input->getOption('including-all-tags') === true
             ? TagsMode::ALL->value
             : TagsMode::ANY->value;
-
-        $excludeTags = $input->getOption('exclude-tag');
         $excludeTagsMode = $input->getOption('exclude-tags-all') === true ? TagsMode::ALL->value : TagsMode::ANY->value;
 
-        $all = $input->getOption('all');
-        $startDate = $this->startDateOption->get($input, $output);
-        $endDate = $this->endDateOption->get($input, $output);
-        $orderBy = $this->processOrderBy($input);
-        $columnsMap = $this->resolveColumnsMap($input);
-
         $data = [
-            ShortUrlsParamsInputFilter::SEARCH_TERM => $searchTerm,
-            ShortUrlsParamsInputFilter::DOMAIN => $domain,
-            ShortUrlsParamsInputFilter::TAGS => $tags,
+            ShortUrlsParamsInputFilter::SEARCH_TERM => $input->getOption('search-term'),
+            ShortUrlsParamsInputFilter::DOMAIN => $input->getOption('domain'),
+            ShortUrlsParamsInputFilter::TAGS => $this->tagsOption->get($input),
             ShortUrlsParamsInputFilter::TAGS_MODE => $tagsMode,
-            ShortUrlsParamsInputFilter::EXCLUDE_TAGS => $excludeTags,
+            ShortUrlsParamsInputFilter::EXCLUDE_TAGS => $input->getOption('exclude-tag'),
             ShortUrlsParamsInputFilter::EXCLUDE_TAGS_MODE => $excludeTagsMode,
-            ShortUrlsParamsInputFilter::ORDER_BY => $orderBy,
-            ShortUrlsParamsInputFilter::START_DATE => $startDate?->toAtomString(),
-            ShortUrlsParamsInputFilter::END_DATE => $endDate?->toAtomString(),
+            ShortUrlsParamsInputFilter::ORDER_BY => $this->processOrderBy($input),
+            ShortUrlsParamsInputFilter::START_DATE => $this->startDateOption->get($input, $output)?->toAtomString(),
+            ShortUrlsParamsInputFilter::END_DATE => $this->endDateOption->get($input, $output)?->toAtomString(),
             ShortUrlsParamsInputFilter::EXCLUDE_MAX_VISITS_REACHED => $input->getOption('exclude-max-visits-reached'),
             ShortUrlsParamsInputFilter::EXCLUDE_PAST_VALID_UNTIL => $input->getOption('exclude-past-valid-until'),
+            ShortUrlsParamsInputFilter::API_KEY_NAME => $input->getOption('api-key-name'),
         ];
 
+        $all = $input->getOption('all');
         if ($all) {
             $data[ShortUrlsParamsInputFilter::ITEMS_PER_PAGE] = Paginator::ALL_ITEMS;
         }
 
+        $columnsMap = $this->resolveColumnsMap($input);
         do {
             $data[ShortUrlsParamsInputFilter::PAGE] = $page;
             $result = $this->renderPage($output, $columnsMap, ShortUrlsParams::fromRawData($data), $all);
@@ -184,7 +181,7 @@ class ListShortUrlsCommand extends Command
 
             $continue = $result->hasNextPage() && $io->confirm(
                 sprintf('Continue with page <options=bold>%s</>?', $page),
-                false,
+                default: false,
             );
         } while ($continue);
 
