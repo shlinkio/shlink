@@ -18,6 +18,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
   Additionally, the `short-url:list` command also supports the same feature via the `--api-key-name` option.
 
+* [#2330](https://github.com/shlinkio/shlink/issues/2330) Add support to serve Shlink with FrankenPHP, by providing a worker script in `bin/frankenphp-worker.php`.
+
 ### Changed
 * *Nothing*
 
