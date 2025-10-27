@@ -20,6 +20,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 * [#2330](https://github.com/shlinkio/shlink/issues/2330) Add support to serve Shlink with FrankenPHP, by providing a worker script in `bin/frankenphp-worker.php`.
 
+* [#2449](https://github.com/shlinkio/shlink/issues/2449) Add support to provide redis credentials separately when using redis sentinels, where provided servers are the sentinels and not the redis instances.
+
+    For this, Shlink supports two new env ras / config options, as `REDIS_SERVERS_USER` and `REDIS_SERVERS_PASSWORD`.
+
 ### Changed
 * *Nothing*
 
