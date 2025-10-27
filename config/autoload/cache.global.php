@@ -11,6 +11,8 @@ return (static function (): array {
         'redis' => [
             'servers' => $redisServers,
             'sentinel_service' => EnvVars::REDIS_SENTINEL_SERVICE->loadFromEnv(),
+            'username' => EnvVars::REDIS_SERVERS_USER->loadFromEnv(),
+            'password' => EnvVars::REDIS_SERVERS_PASSWORD->loadFromEnv(),
         ],
     ];
 
