@@ -9,7 +9,7 @@ use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
-use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
+use Shlinkio\Shlink\Core\Visit\Model\WithDomainVisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -39,7 +39,7 @@ class GetTagVisitsCommand extends AbstractVisitsListCommand
     protected function getVisitsPaginator(InputInterface $input, DateRange $dateRange): Paginator
     {
         $tag = $input->getArgument('tag');
-        return $this->visitsHelper->visitsForTag($tag, new VisitsParams($dateRange));
+        return $this->visitsHelper->visitsForTag($tag, new WithDomainVisitsParams($dateRange));
     }
 
     /**

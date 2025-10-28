@@ -18,6 +18,7 @@ use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\WithDomainVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Spec\CountOfNonOrphanVisits;
 use Shlinkio\Shlink\Core\Visit\Spec\CountOfOrphanVisits;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
@@ -69,7 +70,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         return $qb;
     }
 
-    public function findVisitsByTag(string $tag, VisitsListFiltering $filtering): array
+    public function findVisitsByTag(string $tag, WithDomainVisitsListFiltering $filtering): array
     {
         $qb = $this->createVisitsByTagQueryBuilder($tag, $filtering);
         return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit, $filtering->offset);
@@ -173,7 +174,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
     /**
      * @return Visit[]
      */
-    public function findNonOrphanVisits(VisitsListFiltering $filtering): array
+    public function findNonOrphanVisits(WithDomainVisitsListFiltering $filtering): array
     {
         $qb = $this->createAllVisitsQueryBuilder($filtering);
         $qb->andWhere($qb->expr()->isNotNull('v.shortUrl'));
@@ -193,8 +194,9 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         return (int) $this->matchSingleScalarResult(new CountOfNonOrphanVisits($filtering));
     }
 
-    private function createAllVisitsQueryBuilder(VisitsListFiltering|OrphanVisitsListFiltering $filtering): QueryBuilder
-    {
+    private function createAllVisitsQueryBuilder(
+        VisitsListFiltering|OrphanVisitsListFiltering|WithDomainVisitsListFiltering $filtering,
+    ): QueryBuilder {
         // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later
         // Since they are not provided by the caller, it's reasonably safe
         $qb = $this->getEntityManager()->createQueryBuilder();

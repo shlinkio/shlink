@@ -23,8 +23,9 @@ class DomainVisitsAction extends AbstractListVisitsAction
         parent::__construct($visitsHelper);
     }
 
-    protected function getVisitsPaginator(Request $request, VisitsParams $params, ApiKey $apiKey): Pagerfanta
+    protected function getVisitsPaginator(Request $request, ApiKey $apiKey): Pagerfanta
     {
+        $params = VisitsParams::fromRawData($request->getQueryParams());
         $domain = $this->resolveDomainParam($request);
         return $this->visitsHelper->visitsForDomain($domain, $params, $apiKey);
     }

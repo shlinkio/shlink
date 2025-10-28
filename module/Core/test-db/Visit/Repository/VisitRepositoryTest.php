@@ -22,6 +22,7 @@ use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\WithDomainVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Repository\OrphanVisitsCountRepository;
 use Shlinkio\Shlink\Core\Visit\Repository\ShortUrlVisitsCountRepository;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepository;
@@ -187,13 +188,13 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->createShortUrlsAndVisits(false, [$foo]);
         $this->getEntityManager()->flush();
 
-        self::assertCount(0, $this->repo->findVisitsByTag('invalid', new VisitsListFiltering()));
-        self::assertCount(18, $this->repo->findVisitsByTag($foo, new VisitsListFiltering()));
-        self::assertCount(12, $this->repo->findVisitsByTag($foo, new VisitsListFiltering(null, true)));
-        self::assertCount(6, $this->repo->findVisitsByTag($foo, new VisitsListFiltering(
+        self::assertCount(0, $this->repo->findVisitsByTag('invalid', new WithDomainVisitsListFiltering()));
+        self::assertCount(18, $this->repo->findVisitsByTag($foo, new WithDomainVisitsListFiltering()));
+        self::assertCount(12, $this->repo->findVisitsByTag($foo, new WithDomainVisitsListFiltering(null, true)));
+        self::assertCount(6, $this->repo->findVisitsByTag($foo, new WithDomainVisitsListFiltering(
             DateRange::between(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
         )));
-        self::assertCount(12, $this->repo->findVisitsByTag($foo, new VisitsListFiltering(
+        self::assertCount(12, $this->repo->findVisitsByTag($foo, new WithDomainVisitsListFiltering(
             DateRange::since(Chronos::parse('2016-01-03')),
         )));
     }
@@ -479,31 +480,38 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        self::assertCount(21, $this->repo->findNonOrphanVisits(new VisitsListFiltering()));
-        self::assertCount(21, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::allTime())));
-        self::assertCount(4, $this->repo->findNonOrphanVisits(new VisitsListFiltering(apiKey: $authoredApiKey)));
-        self::assertCount(7, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::since(
+        self::assertCount(21, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering()));
+        self::assertCount(21, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(
+            DateRange::allTime(),
+        )));
+        self::assertCount(4, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(
+            apiKey: $authoredApiKey,
+        )));
+        self::assertCount(7, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(DateRange::since(
             Chronos::parse('2016-01-05')->endOfDay(),
         ))));
-        self::assertCount(12, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::until(
+        self::assertCount(12, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(DateRange::until(
             Chronos::parse('2016-01-04')->endOfDay(),
         ))));
-        self::assertCount(6, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::between(
+        self::assertCount(6, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(DateRange::between(
             Chronos::parse('2016-01-03')->startOfDay(),
             Chronos::parse('2016-01-04')->endOfDay(),
         ))));
-        self::assertCount(13, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::between(
+        self::assertCount(13, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(DateRange::between(
             Chronos::parse('2016-01-03')->startOfDay(),
             Chronos::parse('2016-01-08')->endOfDay(),
         ))));
-        self::assertCount(3, $this->repo->findNonOrphanVisits(new VisitsListFiltering(DateRange::between(
+        self::assertCount(3, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(DateRange::between(
             Chronos::parse('2016-01-03')->startOfDay(),
             Chronos::parse('2016-01-08')->endOfDay(),
         ), limit: 10, offset: 10)));
-        self::assertCount(15, $this->repo->findNonOrphanVisits(new VisitsListFiltering(excludeBots: true)));
-        self::assertCount(10, $this->repo->findNonOrphanVisits(new VisitsListFiltering(limit: 10)));
-        self::assertCount(1, $this->repo->findNonOrphanVisits(new VisitsListFiltering(limit: 10, offset: 20)));
-        self::assertCount(5, $this->repo->findNonOrphanVisits(new VisitsListFiltering(limit: 5, offset: 5)));
+        self::assertCount(15, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(excludeBots: true)));
+        self::assertCount(10, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(limit: 10)));
+        self::assertCount(1, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(
+            limit: 10,
+            offset: 20,
+        )));
+        self::assertCount(5, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(limit: 5, offset: 5)));
     }
 
     #[Test]

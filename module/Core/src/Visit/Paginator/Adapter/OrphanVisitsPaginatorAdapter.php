@@ -28,6 +28,7 @@ class OrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
             dateRange: $this->params->dateRange,
             excludeBots: $this->params->excludeBots,
             apiKey: $this->apiKey,
+            domain: $this->params->domain,
             type: $this->params->type,
         ));
     }
@@ -38,6 +39,7 @@ class OrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
             dateRange: $this->params->dateRange,
             excludeBots: $this->params->excludeBots,
             apiKey: $this->apiKey,
+            domain: $this->params->domain,
             type: $this->params->type,
             limit: $length,
             offset: $offset,

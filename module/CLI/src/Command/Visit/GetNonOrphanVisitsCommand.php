@@ -8,7 +8,7 @@ use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
-use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
+use Shlinkio\Shlink\Core\Visit\Model\WithDomainVisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Symfony\Component\Console\Input\InputInterface;
 
@@ -35,7 +35,7 @@ class GetNonOrphanVisitsCommand extends AbstractVisitsListCommand
      */
     protected function getVisitsPaginator(InputInterface $input, DateRange $dateRange): Paginator
     {
-        return $this->visitsHelper->nonOrphanVisits(new VisitsParams($dateRange));
+        return $this->visitsHelper->nonOrphanVisits(new WithDomainVisitsParams($dateRange));
     }
 
     /**
