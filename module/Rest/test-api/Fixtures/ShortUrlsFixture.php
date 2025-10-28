@@ -98,7 +98,6 @@ class ShortUrlsFixture extends AbstractFixture implements DependentFixtureInterf
     {
         $ref = new ReflectionObject($shortUrl);
         $dateProp = $ref->getProperty('dateCreated');
-        $dateProp->setAccessible(true);
         $dateProp->setValue($shortUrl, Chronos::parse($date));
 
         return $shortUrl;

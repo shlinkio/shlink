@@ -51,7 +51,6 @@ class ShlinkTableTest extends TestCase
 
         $ref = new ReflectionObject($instance);
         $baseTable = $ref->getProperty('baseTable');
-        $baseTable->setAccessible(true);
 
         self::assertInstanceOf(Table::class, $baseTable->getValue($instance));
     }

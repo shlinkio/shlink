@@ -85,7 +85,6 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         $foo2->setVisits(new ArrayCollection($visits2));
         $ref = new ReflectionObject($foo2);
         $dateProp = $ref->getProperty('dateCreated');
-        $dateProp->setAccessible(true);
         $dateProp->setValue($foo2, Chronos::now()->subDays(5));
         $this->getEntityManager()->persist($foo2);
 
