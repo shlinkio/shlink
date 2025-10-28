@@ -1,0 +1,30 @@
+name: Build and publish docker image
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - develop
+
+jobs:
+  build-image:
+    if: github.event.pull_request.merged == true
+    strategy:
+      matrix:
+        include:
+          - runtime: "rr"
+            platforms: "linux/arm64/v8,linux/amd64"
+            tag-suffix: "nightly"
+          - runtime: "rr"
+            tag-suffix: "roadrunner-nightly"
+            platforms: "linux/arm64/v8,linux/amd64"
+    uses: shlinkio/github-actions/.github/workflows/docker-publish-image.yml@main
+    secrets: inherit
+    with:
+      image-name: shlinkio/shlink
+      version-arg-name: SHLINK_VERSION
+      platforms: ${{ matrix.platforms }}
+      tags-suffix: ${{ matrix.tag-suffix }}
+      extra-build-args: |
+        SHLINK_RUNTIME=${{ matrix.runtime }}
+        SHLINK_VERSION=nightly
