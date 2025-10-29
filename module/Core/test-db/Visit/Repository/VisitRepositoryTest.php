@@ -22,6 +22,7 @@ use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\WithDomainVisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\WithDomainVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Repository\OrphanVisitsCountRepository;
 use Shlinkio\Shlink\Core\Visit\Repository\ShortUrlVisitsCountRepository;
@@ -204,20 +205,39 @@ class VisitRepositoryTest extends DatabaseTestCase
     {
         $foo = 'foo';
 
-        $this->createShortUrlsAndVisits(false, [$foo]);
+        $shortUrl1 = ShortUrl::create(ShortUrlCreation::fromRawData([
+            ShortUrlInputFilter::LONG_URL => 'https://longUrl',
+            ShortUrlInputFilter::TAGS => [$foo],
+            ShortUrlInputFilter::DOMAIN => 'foo.com',
+        ]), $this->relationResolver);
+        $this->getEntityManager()->persist($shortUrl1);
+        $this->createVisitsForShortUrl($shortUrl1, 6);
+
+        $shortUrl2 = ShortUrl::create(ShortUrlCreation::fromRawData([
+            ShortUrlInputFilter::LONG_URL => 'https://longUrl',
+            ShortUrlInputFilter::TAGS => [$foo],
+        ]), $this->relationResolver);
+        $this->getEntityManager()->persist($shortUrl2);
+        $this->createVisitsForShortUrl($shortUrl2, 6);
+
         $this->getEntityManager()->flush();
 
-        $this->createShortUrlsAndVisits(false, [$foo]);
-        $this->getEntityManager()->flush();
-
-        self::assertEquals(0, $this->repo->countVisitsByTag('invalid', new VisitsCountFiltering()));
-        self::assertEquals(12, $this->repo->countVisitsByTag($foo, new VisitsCountFiltering()));
-        self::assertEquals(8, $this->repo->countVisitsByTag($foo, new VisitsCountFiltering(null, true)));
-        self::assertEquals(4, $this->repo->countVisitsByTag($foo, new VisitsCountFiltering(
+        self::assertEquals(0, $this->repo->countVisitsByTag('invalid', new WithDomainVisitsCountFiltering()));
+        self::assertEquals(12, $this->repo->countVisitsByTag($foo, new WithDomainVisitsCountFiltering()));
+        self::assertEquals(8, $this->repo->countVisitsByTag($foo, new WithDomainVisitsCountFiltering(
+            excludeBots: true,
+        )));
+        self::assertEquals(4, $this->repo->countVisitsByTag($foo, new WithDomainVisitsCountFiltering(
             DateRange::between(Chronos::parse('2016-01-02'), Chronos::parse('2016-01-03')),
         )));
-        self::assertEquals(8, $this->repo->countVisitsByTag($foo, new VisitsCountFiltering(
+        self::assertEquals(8, $this->repo->countVisitsByTag($foo, new WithDomainVisitsCountFiltering(
             DateRange::since(Chronos::parse('2016-01-03')),
+        )));
+        self::assertEquals(6, $this->repo->countVisitsByTag($foo, new WithDomainVisitsCountFiltering(
+            domain: 'foo.com',
+        )));
+        self::assertEquals(6, $this->repo->countVisitsByTag($foo, new WithDomainVisitsCountFiltering(
+            domain: Domain::DEFAULT_AUTHORITY,
         )));
     }
 
@@ -534,6 +554,7 @@ class VisitRepositoryTest extends DatabaseTestCase
 
     /**
      * @return array{string, string, ShortUrl}
+     * @fixme This method does too many things and is not intuitive. It should be removed or simplified
      */
     private function createShortUrlsAndVisits(
         bool|string $withDomain = true,
@@ -566,6 +587,10 @@ class VisitRepositoryTest extends DatabaseTestCase
         return [$shortCode, $domain, $shortUrl];
     }
 
+    /**
+     * @param int $amount - How many visits in total. Defaults to 6
+     * @param int $botsAmount - How many of the visits should be bots. Defaults to 2
+     */
     private function createVisitsForShortUrl(ShortUrl $shortUrl, int $amount = 6, int $botsAmount = 2): void
     {
         for ($i = 0; $i < $amount; $i++) {

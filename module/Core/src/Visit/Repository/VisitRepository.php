@@ -18,6 +18,7 @@ use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\WithDomainVisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\WithDomainVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Spec\CountOfNonOrphanVisits;
 use Shlinkio\Shlink\Core\Visit\Spec\CountOfOrphanVisits;
@@ -76,7 +77,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit, $filtering->offset);
     }
 
-    public function countVisitsByTag(string $tag, VisitsCountFiltering $filtering): int
+    public function countVisitsByTag(string $tag, WithDomainVisitsCountFiltering $filtering): int
     {
         $qb = $this->createVisitsByTagQueryBuilder($tag, $filtering);
         $qb->select('COUNT(v.id)');
@@ -84,17 +85,27 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
-    private function createVisitsByTagQueryBuilder(string $tag, VisitsCountFiltering $filtering): QueryBuilder
+    private function createVisitsByTagQueryBuilder(string $tag, WithDomainVisitsCountFiltering $filtering): QueryBuilder
     {
+        $conn = $this->getEntityManager()->getConnection();
+
         // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later.
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(Visit::class, 'v')
            ->join('v.shortUrl', 's')
            ->join('s.tags', 't')
-           ->where($qb->expr()->eq('t.name', $this->getEntityManager()->getConnection()->quote($tag)));
+           ->where($qb->expr()->eq('t.name', $conn->quote($tag)));
 
         if ($filtering->excludeBots) {
             $qb->andWhere($qb->expr()->eq('v.potentialBot', 'false'));
+        }
+
+        $domain = $filtering->domain;
+        if ($domain === Domain::DEFAULT_AUTHORITY) {
+            $qb->andWhere($qb->expr()->isNull('s.domain'));
+        } elseif ($domain !== null) {
+            $qb->join('s.domain', 'd')
+               ->andWhere($qb->expr()->eq('d.authority', $conn->quote($domain)));
         }
 
         $this->applyDatesInline($qb, $filtering->dateRange);
@@ -194,11 +205,10 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         return (int) $this->matchSingleScalarResult(new CountOfNonOrphanVisits($filtering));
     }
 
-    private function createAllVisitsQueryBuilder(
-        VisitsListFiltering|OrphanVisitsListFiltering|WithDomainVisitsListFiltering $filtering,
-    ): QueryBuilder {
-        // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later
-        // Since they are not provided by the caller, it's reasonably safe
+    private function createAllVisitsQueryBuilder(VisitsCountFiltering $filtering): QueryBuilder
+    {
+        // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later.
+        // Since they are not provided by the caller, it's reasonably safe.
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(Visit::class, 'v');
 
