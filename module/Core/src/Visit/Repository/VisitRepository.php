@@ -21,7 +21,6 @@ use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\WithDomainVisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\WithDomainVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Spec\CountOfNonOrphanVisits;
-use Shlinkio\Shlink\Core\Visit\Spec\CountOfOrphanVisits;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -161,15 +160,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
             return [];
         }
 
-        $qb = $this->createAllVisitsQueryBuilder($filtering);
-        $qb->andWhere($qb->expr()->isNull('v.shortUrl'));
-
-        // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later
-        if ($filtering->type) {
-            $conn = $this->getEntityManager()->getConnection();
-            $qb->andWhere($qb->expr()->eq('v.type', $conn->quote($filtering->type->value)));
-        }
-
+        $qb = $this->createOrphanVisitsQueryBuilder($filtering);
         return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit, $filtering->offset);
     }
 
@@ -179,7 +170,32 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
             return 0;
         }
 
-        return (int) $this->matchSingleScalarResult(new CountOfOrphanVisits($filtering));
+        $qb = $this->createOrphanVisitsQueryBuilder($filtering);
+        $qb->select('COUNT(v.id)');
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    private function createOrphanVisitsQueryBuilder(OrphanVisitsCountFiltering $filtering): QueryBuilder
+    {
+        $qb = $this->createAllVisitsQueryBuilder($filtering);
+        $qb->andWhere($qb->expr()->isNull('v.shortUrl'));
+
+        // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later
+        $conn = $this->getEntityManager()->getConnection();
+
+        if ($filtering->type) {
+            $qb->andWhere($qb->expr()->eq('v.type', $conn->quote($filtering->type->value)));
+        }
+
+        $domain = $filtering->domain;
+        if ($domain === Domain::DEFAULT_AUTHORITY) {
+            // TODO
+        } elseif ($domain !== null) {
+            $qb->andWhere($qb->expr()->like('v.visitedUrl', $conn->quote('%' . $domain . '%')));
+        }
+
+        return $qb;
     }
 
     /**

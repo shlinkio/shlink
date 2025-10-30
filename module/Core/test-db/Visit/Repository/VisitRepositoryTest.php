@@ -399,7 +399,7 @@ class VisitRepositoryTest extends DatabaseTestCase
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
             $this->getEntityManager()->persist($this->setDateOnVisit(
-                fn () => Visit::forRegularNotFound(Visitor::empty()),
+                fn () => Visit::forRegularNotFound(Visitor::fromParams(visitedUrl: 'https://example.com/foo?1=2')),
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
 
@@ -438,6 +438,7 @@ class VisitRepositoryTest extends DatabaseTestCase
             type: OrphanVisitType::BASE_URL,
             limit: 4,
         )));
+        self::assertCount(6, $this->repo->findOrphanVisits(new OrphanVisitsListFiltering(domain: 'example.com')));
     }
 
     #[Test]
@@ -457,7 +458,7 @@ class VisitRepositoryTest extends DatabaseTestCase
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
             $this->getEntityManager()->persist($this->setDateOnVisit(
-                fn () => Visit::forRegularNotFound(Visitor::empty()),
+                fn () => Visit::forRegularNotFound(Visitor::fromParams(visitedUrl: 'https://example.com/foo/bar')),
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
         }
@@ -485,6 +486,9 @@ class VisitRepositoryTest extends DatabaseTestCase
         )));
         self::assertEquals(6, $this->repo->countOrphanVisits(new OrphanVisitsCountFiltering(
             type: OrphanVisitType::REGULAR_404,
+        )));
+        self::assertEquals(6, $this->repo->countOrphanVisits(new OrphanVisitsCountFiltering(
+            domain: 'example.com',
         )));
     }
 
