@@ -20,7 +20,6 @@ use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\WithDomainVisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\WithDomainVisitsListFiltering;
-use Shlinkio\Shlink\Core\Visit\Spec\CountOfNonOrphanVisits;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -203,22 +202,40 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
      */
     public function findNonOrphanVisits(WithDomainVisitsListFiltering $filtering): array
     {
+        $qb = $this->createNonOrphanVisitsQueryBuilder($filtering);
+        return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit, $filtering->offset);
+    }
+
+    public function countNonOrphanVisits(WithDomainVisitsCountFiltering $filtering): int
+    {
+        $qb = $this->createNonOrphanVisitsQueryBuilder($filtering);
+        $qb->select('COUNT(v.id)');
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    private function createNonOrphanVisitsQueryBuilder(WithDomainVisitsCountFiltering $filtering): QueryBuilder
+    {
+        $conn = $this->getEntityManager()->getConnection();
         $qb = $this->createAllVisitsQueryBuilder($filtering);
         $qb->andWhere($qb->expr()->isNotNull('v.shortUrl'));
 
         $apiKey = $filtering->apiKey;
-        if (ApiKey::isShortUrlRestricted($apiKey)) {
+        $domain = $filtering->domain;
+        if (ApiKey::isShortUrlRestricted($apiKey) || $domain !== null) {
             $qb->join('v.shortUrl', 's');
+        }
+
+        if ($domain === Domain::DEFAULT_AUTHORITY) {
+            $qb->andWhere($qb->expr()->isNull('s.domain'));
+        } elseif ($domain !== null) {
+            $qb->join('s.domain', 'd')
+               ->andWhere($qb->expr()->eq('d.authority', $conn->quote($domain)));
         }
 
         $this->applySpecification($qb, $apiKey?->inlinedSpec(), 'v');
 
-        return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit, $filtering->offset);
-    }
-
-    public function countNonOrphanVisits(VisitsCountFiltering $filtering): int
-    {
-        return (int) $this->matchSingleScalarResult(new CountOfNonOrphanVisits($filtering));
+        return $qb;
     }
 
     private function createAllVisitsQueryBuilder(VisitsCountFiltering $filtering): QueryBuilder
