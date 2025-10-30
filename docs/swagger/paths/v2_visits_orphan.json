@@ -65,6 +65,10 @@
                     "type": "string",
                     "enum": ["invalid_short_url", "base_url", "regular_404"]
                 }
+            },
+            {
+                "$ref": "../parameters/domain.json",
+                "description": "Return only visits for this domain. Use **DEFAULT** keyword to return visits from default domain."
             }
         ],
         "security": [
