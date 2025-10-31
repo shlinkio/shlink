@@ -188,9 +188,8 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         }
 
         $domain = $filtering->domain;
-        if ($domain === Domain::DEFAULT_AUTHORITY) {
-            // TODO
-        } elseif ($domain !== null) {
+        $domain = $domain === Domain::DEFAULT_AUTHORITY ? $filtering->defaultDomain : $domain;
+        if ($domain !== null) {
             $qb->andWhere($qb->expr()->like('v.visitedUrl', $conn->quote('%' . $domain . '%')));
         }
 

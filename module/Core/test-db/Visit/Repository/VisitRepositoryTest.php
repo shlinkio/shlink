@@ -405,7 +405,7 @@ class VisitRepositoryTest extends DatabaseTestCase
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
             $this->getEntityManager()->persist($this->setDateOnVisit(
-                fn () => Visit::forInvalidShortUrl(Visitor::empty()),
+                fn () => Visit::forInvalidShortUrl(Visitor::fromParams(visitedUrl: 'https://s.test/bar')),
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
             $this->getEntityManager()->persist($this->setDateOnVisit(
@@ -449,6 +449,10 @@ class VisitRepositoryTest extends DatabaseTestCase
             limit: 4,
         )));
         self::assertCount(6, $this->repo->findOrphanVisits(new OrphanVisitsListFiltering(domain: 'example.com')));
+        self::assertCount(6, $this->repo->findOrphanVisits(new OrphanVisitsListFiltering(
+            domain: Domain::DEFAULT_AUTHORITY,
+            defaultDomain: 's.test',
+        )));
     }
 
     #[Test]
@@ -464,7 +468,7 @@ class VisitRepositoryTest extends DatabaseTestCase
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
             $this->getEntityManager()->persist($this->setDateOnVisit(
-                fn () => Visit::forInvalidShortUrl(Visitor::empty()),
+                fn () => Visit::forInvalidShortUrl(Visitor::fromParams(visitedUrl: 'https://s.test/foo/bar')),
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
             $this->getEntityManager()->persist($this->setDateOnVisit(
@@ -497,8 +501,10 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertEquals(6, $this->repo->countOrphanVisits(new OrphanVisitsCountFiltering(
             type: OrphanVisitType::REGULAR_404,
         )));
+        self::assertEquals(6, $this->repo->countOrphanVisits(new OrphanVisitsCountFiltering(domain: 'example.com')));
         self::assertEquals(6, $this->repo->countOrphanVisits(new OrphanVisitsCountFiltering(
-            domain: 'example.com',
+            domain: Domain::DEFAULT_AUTHORITY,
+            defaultDomain: 's.test',
         )));
     }
 

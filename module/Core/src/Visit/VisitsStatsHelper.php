@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Visit;
 use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\Adapter\AdapterInterface;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
+use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepository;
 use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
@@ -38,7 +39,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
 {
-    public function __construct(private EntityManagerInterface $em)
+    public function __construct(private EntityManagerInterface $em, private UrlShortenerOptions $options)
     {
     }
 
@@ -128,7 +129,10 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
         /** @var VisitRepository $repo */
         $repo = $this->em->getRepository(Visit::class);
 
-        return $this->createPaginator(new OrphanVisitsPaginatorAdapter($repo, $params, $apiKey), $params);
+        return $this->createPaginator(
+            new OrphanVisitsPaginatorAdapter($repo, $params, $apiKey, $this->options),
+            $params,
+        );
     }
 
     public function nonOrphanVisits(WithDomainVisitsParams $params, ApiKey|null $apiKey = null): Paginator

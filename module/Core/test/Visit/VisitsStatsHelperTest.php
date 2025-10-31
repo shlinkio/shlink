@@ -12,6 +12,7 @@ use PHPUnit\Framework\Attributes\DataProviderExternal;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepository;
 use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
@@ -54,7 +55,7 @@ class VisitsStatsHelperTest extends TestCase
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManagerInterface::class);
-        $this->helper = new VisitsStatsHelper($this->em);
+        $this->helper = new VisitsStatsHelper($this->em, new UrlShortenerOptions());
     }
 
     #[Test, DataProvider('provideCounts')]

@@ -16,6 +16,7 @@ class OrphanVisitsCountFiltering extends WithDomainVisitsCountFiltering
         ApiKey|null $apiKey = null,
         string|null $domain = null,
         public readonly OrphanVisitType|null $type = null,
+        public readonly string $defaultDomain = '',
     ) {
         parent::__construct($dateRange, $excludeBots, $apiKey, $domain);
     }

@@ -16,9 +16,10 @@ final class OrphanVisitsListFiltering extends OrphanVisitsCountFiltering
         ApiKey|null $apiKey = null,
         string|null $domain = null,
         OrphanVisitType|null $type = null,
+        string $defaultDomain = '',
         public readonly int|null $limit = null,
         public readonly int|null $offset = null,
     ) {
-        parent::__construct($dateRange, $excludeBots, $apiKey, $domain, $type);
+        parent::__construct($dateRange, $excludeBots, $apiKey, $domain, $type, $defaultDomain);
     }
 }

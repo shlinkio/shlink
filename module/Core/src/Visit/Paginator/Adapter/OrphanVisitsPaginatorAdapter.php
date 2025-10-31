@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Visit\Paginator\Adapter;
 
+use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Paginator\Adapter\AbstractCacheableCountPaginatorAdapter;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams;
@@ -19,6 +20,7 @@ class OrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
         private readonly VisitRepositoryInterface $repo,
         private readonly OrphanVisitsParams $params,
         private readonly ApiKey|null $apiKey,
+        private readonly UrlShortenerOptions $options,
     ) {
     }
 
@@ -30,6 +32,7 @@ class OrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
             apiKey: $this->apiKey,
             domain: $this->params->domain,
             type: $this->params->type,
+            defaultDomain: $this->options->defaultDomain,
         ));
     }
 
@@ -41,6 +44,7 @@ class OrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
             apiKey: $this->apiKey,
             domain: $this->params->domain,
             type: $this->params->type,
+            defaultDomain: $this->options->defaultDomain,
             limit: $length,
             offset: $offset,
         ));
