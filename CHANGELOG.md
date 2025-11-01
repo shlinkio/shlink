@@ -28,6 +28,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     This is done via the `domain` query parameter in API endpoints, and via the `--domain` option in console commands.
 
+* [#2472](https://github.com/shlinkio/shlink/issues/2472) Add support for PHP 8.5
+
 ### Changed
 * *Nothing*
 
