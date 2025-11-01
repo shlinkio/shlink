@@ -24,6 +24,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     For this, Shlink supports two new env ras / config options, as `REDIS_SERVERS_USER` and `REDIS_SERVERS_PASSWORD`.
 
+* [#2498](https://github.com/shlinkio/shlink/issues/2498) Allow orphan visits, non-orphan visits and tag visits lists to be filtered by domain.
+
+    This is done via the `domain` query parameter in API endpoints, and via the `--domain` option in console commands.
+
 ### Changed
 * *Nothing*
 
