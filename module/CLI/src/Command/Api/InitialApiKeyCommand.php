@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\Api;
 
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
+use Symfony\Component\Console\Attribute\Argument;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand(
+    name: InitialApiKeyCommand::NAME,
+    description: 'Tries to create initial API key'
+)]
 class InitialApiKeyCommand extends Command
 {
     public const string NAME = 'api-key:initial';
@@ -19,22 +23,14 @@ class InitialApiKeyCommand extends Command
         parent::__construct();
     }
 
-    protected function configure(): void
-    {
-        $this
-            ->setHidden()
-            ->setName(self::NAME)
-            ->setDescription('Tries to create initial API key')
-            ->addArgument('apiKey', InputArgument::REQUIRED, 'The initial API to create');
-    }
+    public function __invoke(
+        SymfonyStyle $io,
+        #[Argument('The initial API to create')] string $apiKey
+    ): int {
+        $result = $this->apiKeyService->createInitial($apiKey);
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $key = $input->getArgument('apiKey');
-        $result = $this->apiKeyService->createInitial($key);
-
-        if ($result === null && $output->isVerbose()) {
-            $output->writeln('<comment>Other API keys already exist. Initial API key creation skipped.</comment>');
+        if ($result === null && $io->isVerbose()) {
+            $io->writeln('<comment>Other API keys already exist. Initial API key creation skipped.</comment>');
         }
 
         return Command::SUCCESS;
