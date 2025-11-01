@@ -41,7 +41,7 @@ use function sprintf;
 
         Send all visits created during 2022:
             <info>%command.name% --since 2022-01-01 --until 2022-12-31</info>
-        HELP
+        HELP,
 )]
 class MatomoSendVisitsCommand extends Command implements VisitSendingProgressTrackerInterface
 {

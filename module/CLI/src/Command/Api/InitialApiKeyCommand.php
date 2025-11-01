@@ -12,7 +12,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: InitialApiKeyCommand::NAME,
-    description: 'Tries to create initial API key'
+    description: 'Tries to create initial API key',
 )]
 class InitialApiKeyCommand extends Command
 {
@@ -25,7 +25,7 @@ class InitialApiKeyCommand extends Command
 
     public function __invoke(
         SymfonyStyle $io,
-        #[Argument('The initial API to create')] string $apiKey
+        #[Argument('The initial API to create')] string $apiKey,
     ): int {
         $result = $this->apiKeyService->createInitial($apiKey);
 

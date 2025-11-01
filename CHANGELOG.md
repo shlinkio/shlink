@@ -31,7 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#2472](https://github.com/shlinkio/shlink/issues/2472) Add support for PHP 8.5
 
 ### Changed
-* *Nothing*
+* [#2424](https://github.com/shlinkio/shlink/issues/2424) Make simple console commands invokable.
 
 ### Deprecated
 * *Nothing*

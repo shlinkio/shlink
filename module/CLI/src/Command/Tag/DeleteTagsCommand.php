@@ -21,11 +21,11 @@ class DeleteTagsCommand extends Command
     }
 
     /**
-     * @param string[] $tags
+     * @param string[] $tagNames
      */
     public function __invoke(
         SymfonyStyle $io,
-        #[Option('The name of the tags to delete', name: 'name', shortcut: 't')] array $tagNames = []
+        #[Option('The name of the tags to delete', name: 'name', shortcut: 't')] array $tagNames = [],
     ): int {
         if (empty($tagNames)) {
             $io->warning('You have to provide at least one tag name');
