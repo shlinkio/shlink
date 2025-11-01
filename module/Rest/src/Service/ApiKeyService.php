@@ -71,6 +71,17 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
     /**
      * @inheritDoc
      */
+    public function deleteByName(string $apiKeyName): void
+    {
+        $affectedResults = $this->repo->deleteByName($apiKeyName);
+        if ($affectedResults === 0) {
+            throw ApiKeyNotFoundException::forName($apiKeyName);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function disableByName(string $apiKeyName): ApiKey
     {
         $apiKey = $this->repo->findOneBy(['name' => $apiKeyName]);

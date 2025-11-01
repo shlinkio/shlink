@@ -36,8 +36,8 @@ class RenameTagCommandTest extends TestCase
         )->willThrowException(TagNotFoundException::fromTag('foo'));
 
         $this->commandTester->execute([
-            'oldName' => $oldName,
-            'newName' => $newName,
+            'old-name' => $oldName,
+            'new-name' => $newName,
         ]);
         $output = $this->commandTester->getDisplay();
 
@@ -54,8 +54,8 @@ class RenameTagCommandTest extends TestCase
         )->willReturn(new Tag($newName));
 
         $this->commandTester->execute([
-            'oldName' => $oldName,
-            'newName' => $newName,
+            'old-name' => $oldName,
+            'new-name' => $newName,
         ]);
         $output = $this->commandTester->getDisplay();
 

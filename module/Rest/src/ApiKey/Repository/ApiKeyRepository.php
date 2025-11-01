@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\ApiKey\Repository;
 
 use Doctrine\DBAL\LockMode;
+use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -48,15 +49,37 @@ class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRe
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('a.id')
-           ->from(ApiKey::class, 'a')
-           ->where($qb->expr()->eq('a.name', ':name'))
-           ->setParameter('name', $name)
-           ->setMaxResults(1);
+           ->from(ApiKey::class, 'a');
+
+        $this->queryBuilderByName($qb, $name);
 
         // Lock for update, to avoid a race condition that inserts a duplicate name after we have checked if one existed
         $query = $qb->getQuery();
         $query->setLockMode(LockMode::PESSIMISTIC_WRITE);
 
         return $query->getOneOrNullResult() !== null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function deleteByName(string $name): int
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->delete(ApiKey::class, 'a');
+
+        $this->queryBuilderByName($qb, $name);
+
+        return $qb->getQuery()->execute();
+    }
+
+    /**
+     * Apply a condition by name to a query builder, and ensure only one result is returned
+     */
+    private function queryBuilderByName(QueryBuilder $qb, string $name): void
+    {
+        $qb->where($qb->expr()->eq('a.name', ':name'))
+           ->setParameter('name', $name)
+           ->setMaxResults(1);
     }
 }

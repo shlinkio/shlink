@@ -14,8 +14,9 @@ class ShortUrlVisitsAction extends AbstractListVisitsAction
 {
     protected const string ROUTE_PATH = '/short-urls/{shortCode}/visits';
 
-    protected function getVisitsPaginator(Request $request, VisitsParams $params, ApiKey $apiKey): Pagerfanta
+    protected function getVisitsPaginator(Request $request, ApiKey $apiKey): Pagerfanta
     {
+        $params = VisitsParams::fromRawData($request->getQueryParams());
         $identifier = ShortUrlIdentifier::fromApiRequest($request);
         return $this->visitsHelper->visitsForShortUrl($identifier, $params, $apiKey);
     }

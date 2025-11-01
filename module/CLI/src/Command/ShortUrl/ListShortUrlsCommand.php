@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\CLI\Input\EndDateOption;
 use Shlinkio\Shlink\CLI\Input\StartDateOption;
+use Shlinkio\Shlink\CLI\Input\TagsOption;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtils;
@@ -36,6 +37,7 @@ class ListShortUrlsCommand extends Command
 
     private readonly StartDateOption $startDateOption;
     private readonly EndDateOption $endDateOption;
+    private readonly TagsOption $tagsOption;
 
     public function __construct(
         private readonly ShortUrlListServiceInterface $shortUrlService,
@@ -44,6 +46,7 @@ class ListShortUrlsCommand extends Command
         parent::__construct();
         $this->startDateOption = new StartDateOption($this, 'short URLs');
         $this->endDateOption = new EndDateOption($this, 'short URLs');
+        $this->tagsOption = new TagsOption($this, 'A list of tags that short URLs need to include.');
     }
 
     protected function configure(): void
@@ -70,17 +73,22 @@ class ListShortUrlsCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'Used to filter results by domain. Use DEFAULT keyword to filter by default domain',
             )
+            ->addOption('including-all-tags', 'i', InputOption::VALUE_NONE, '[DEPRECATED] Use --tags-all instead')
             ->addOption(
-                'tags',
-                't',
-                InputOption::VALUE_REQUIRED,
-                'A comma-separated list of tags to filter results.',
+                'tags-all',
+                mode: InputOption::VALUE_NONE,
+                description: 'If --tags is provided, returns only short URLs including ALL of them',
             )
             ->addOption(
-                'including-all-tags',
-                'i',
-                InputOption::VALUE_NONE,
-                'If tags is provided, returns only short URLs having ALL tags.',
+                'exclude-tag',
+                'et',
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                'A list of tags that short URLs should not have.',
+            )
+            ->addOption(
+                'exclude-tags-all',
+                mode: InputOption::VALUE_NONE,
+                description: 'If --exclude-tag is provided, returns only short URLs not including ANY of them',
             )
             ->addOption(
                 'exclude-max-visits-reached',
@@ -100,6 +108,12 @@ class ListShortUrlsCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'The field from which you want to order by. '
                     . 'Define ordering dir by passing ASC or DESC after "-" or ",".',
+            )
+            ->addOption(
+                'api-key-name',
+                'kn',
+                InputOption::VALUE_REQUIRED,
+                'List only short URLs created by the API key matching provided name.',
             )
             ->addOption(
                 'show-tags',
@@ -134,33 +148,32 @@ class ListShortUrlsCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $page = (int) $input->getOption('page');
-        $searchTerm = $input->getOption('search-term');
-        $domain = $input->getOption('domain');
-        $tags = $input->getOption('tags');
-        $tagsMode = $input->getOption('including-all-tags') === true ? TagsMode::ALL->value : TagsMode::ANY->value;
-        $tags = ! empty($tags) ? explode(',', $tags) : [];
-        $all = $input->getOption('all');
-        $startDate = $this->startDateOption->get($input, $output);
-        $endDate = $this->endDateOption->get($input, $output);
-        $orderBy = $this->processOrderBy($input);
-        $columnsMap = $this->resolveColumnsMap($input);
+        $tagsMode = $input->getOption('tags-all') === true || $input->getOption('including-all-tags') === true
+            ? TagsMode::ALL->value
+            : TagsMode::ANY->value;
+        $excludeTagsMode = $input->getOption('exclude-tags-all') === true ? TagsMode::ALL->value : TagsMode::ANY->value;
 
         $data = [
-            ShortUrlsParamsInputFilter::SEARCH_TERM => $searchTerm,
-            ShortUrlsParamsInputFilter::DOMAIN => $domain,
-            ShortUrlsParamsInputFilter::TAGS => $tags,
+            ShortUrlsParamsInputFilter::SEARCH_TERM => $input->getOption('search-term'),
+            ShortUrlsParamsInputFilter::DOMAIN => $input->getOption('domain'),
+            ShortUrlsParamsInputFilter::TAGS => $this->tagsOption->get($input),
             ShortUrlsParamsInputFilter::TAGS_MODE => $tagsMode,
-            ShortUrlsParamsInputFilter::ORDER_BY => $orderBy,
-            ShortUrlsParamsInputFilter::START_DATE => $startDate?->toAtomString(),
-            ShortUrlsParamsInputFilter::END_DATE => $endDate?->toAtomString(),
+            ShortUrlsParamsInputFilter::EXCLUDE_TAGS => $input->getOption('exclude-tag'),
+            ShortUrlsParamsInputFilter::EXCLUDE_TAGS_MODE => $excludeTagsMode,
+            ShortUrlsParamsInputFilter::ORDER_BY => $this->processOrderBy($input),
+            ShortUrlsParamsInputFilter::START_DATE => $this->startDateOption->get($input, $output)?->toAtomString(),
+            ShortUrlsParamsInputFilter::END_DATE => $this->endDateOption->get($input, $output)?->toAtomString(),
             ShortUrlsParamsInputFilter::EXCLUDE_MAX_VISITS_REACHED => $input->getOption('exclude-max-visits-reached'),
             ShortUrlsParamsInputFilter::EXCLUDE_PAST_VALID_UNTIL => $input->getOption('exclude-past-valid-until'),
+            ShortUrlsParamsInputFilter::API_KEY_NAME => $input->getOption('api-key-name'),
         ];
 
+        $all = $input->getOption('all');
         if ($all) {
             $data[ShortUrlsParamsInputFilter::ITEMS_PER_PAGE] = Paginator::ALL_ITEMS;
         }
 
+        $columnsMap = $this->resolveColumnsMap($input);
         do {
             $data[ShortUrlsParamsInputFilter::PAGE] = $page;
             $result = $this->renderPage($output, $columnsMap, ShortUrlsParams::fromRawData($data), $all);
@@ -168,7 +181,7 @@ class ListShortUrlsCommand extends Command
 
             $continue = $result->hasNextPage() && $io->confirm(
                 sprintf('Continue with page <options=bold>%s</>?', $page),
-                false,
+                default: false,
             );
         } while ($continue);
 

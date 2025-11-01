@@ -28,13 +28,13 @@ class ReadEnvVarCommandTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('foo is not a valid Shlink environment variable');
 
-        $this->commandTester->execute(['envVar' => 'foo']);
+        $this->commandTester->execute(['env-var' => 'foo']);
     }
 
     #[Test]
     public function valueIsPrintedIfProvidedEnvVarIsValid(): void
     {
-        $this->commandTester->execute(['envVar' => EnvVars::BASE_PATH->value]);
+        $this->commandTester->execute(['env-var' => EnvVars::BASE_PATH->value]);
         $output = $this->commandTester->getDisplay();
 
         self::assertStringNotContainsString('Select the env var to read', $output);

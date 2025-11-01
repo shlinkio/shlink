@@ -12,6 +12,8 @@ use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\WithDomainVisitsCountFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\WithDomainVisitsListFiltering;
 
 /**
  * @extends ObjectRepository<Visit>
@@ -28,9 +30,9 @@ interface VisitRepositoryInterface extends ObjectRepository, EntitySpecification
     /**
      * @return Visit[]
      */
-    public function findVisitsByTag(string $tag, VisitsListFiltering $filtering): array;
+    public function findVisitsByTag(string $tag, WithDomainVisitsListFiltering $filtering): array;
 
-    public function countVisitsByTag(string $tag, VisitsCountFiltering $filtering): int;
+    public function countVisitsByTag(string $tag, WithDomainVisitsCountFiltering $filtering): int;
 
     /**
      * @return Visit[]
@@ -49,9 +51,9 @@ interface VisitRepositoryInterface extends ObjectRepository, EntitySpecification
     /**
      * @return Visit[]
      */
-    public function findNonOrphanVisits(VisitsListFiltering $filtering): array;
+    public function findNonOrphanVisits(WithDomainVisitsListFiltering $filtering): array;
 
-    public function countNonOrphanVisits(VisitsCountFiltering $filtering): int;
+    public function countNonOrphanVisits(WithDomainVisitsCountFiltering $filtering): int;
 
     public function findMostRecentOrphanVisit(): Visit|null;
 }

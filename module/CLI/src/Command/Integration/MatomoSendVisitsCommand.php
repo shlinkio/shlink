@@ -8,10 +8,10 @@ use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Matomo\MatomoOptions;
 use Shlinkio\Shlink\Core\Matomo\MatomoVisitSenderInterface;
 use Shlinkio\Shlink\Core\Matomo\VisitSendingProgressTrackerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
 
@@ -19,22 +19,9 @@ use function Shlinkio\Shlink\Common\buildDateRange;
 use function Shlinkio\Shlink\Core\dateRangeToHumanFriendly;
 use function sprintf;
 
-class MatomoSendVisitsCommand extends Command implements VisitSendingProgressTrackerInterface
-{
-    public const string NAME = 'integration:matomo:send-visits';
-
-    private readonly bool $matomoEnabled;
-    private SymfonyStyle $io;
-
-    public function __construct(MatomoOptions $matomoOptions, private readonly MatomoVisitSenderInterface $visitSender)
-    {
-        $this->matomoEnabled = $matomoOptions->enabled;
-        parent::__construct();
-    }
-
-    protected function configure(): void
-    {
-        $help = <<<HELP
+#[AsCommand(
+    name: MatomoSendVisitsCommand::NAME,
+    help: <<<HELP
         This command allows you to send existing visits from this Shlink instance to the configured Matomo server.
         
         Its intention is to allow you to configure Matomo at some point in time, and still have your whole visits 
@@ -54,32 +41,38 @@ class MatomoSendVisitsCommand extends Command implements VisitSendingProgressTra
 
         Send all visits created during 2022:
             <info>%command.name% --since 2022-01-01 --until 2022-12-31</info>
-        HELP;
+        HELP,
+)]
+class MatomoSendVisitsCommand extends Command implements VisitSendingProgressTrackerInterface
+{
+    public const string NAME = 'integration:matomo:send-visits';
 
-        $this
-            ->setName(self::NAME)
-            ->setDescription(sprintf(
-                '%sSend existing visits to the configured matomo instance',
-                $this->matomoEnabled ? '' : '[MATOMO INTEGRATION DISABLED] ',
-            ))
-            ->setHelp($help)
-            ->addOption(
-                'since',
-                's',
-                InputOption::VALUE_REQUIRED,
-                'Only visits created since this date, inclusively, will be sent to Matomo',
-            )
-            ->addOption(
-                'until',
-                'u',
-                InputOption::VALUE_REQUIRED,
-                'Only visits created until this date, inclusively, will be sent to Matomo',
-            );
+    private readonly bool $matomoEnabled;
+    private SymfonyStyle $io;
+
+    public function __construct(MatomoOptions $matomoOptions, private readonly MatomoVisitSenderInterface $visitSender)
+    {
+        $this->matomoEnabled = $matomoOptions->enabled;
+        parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function configure(): void
     {
-        $this->io = new SymfonyStyle($input, $output);
+        $this->setDescription(sprintf(
+            '%sSend existing visits to the configured matomo instance',
+            $this->matomoEnabled ? '' : '<comment>[MATOMO INTEGRATION DISABLED]</comment> ',
+        ));
+    }
+
+    public function __invoke(
+        SymfonyStyle $io,
+        InputInterface $input,
+        #[Option('Only visits created since this date, inclusively, will be sent to Matomo', shortcut: 's')]
+        string|null $since = null,
+        #[Option('Only visits created until this date, inclusively, will be sent to Matomo', shortcut: 'u')]
+        string|null $until = null,
+    ): int {
+        $this->io = $io;
 
         if (! $this->matomoEnabled) {
             $this->io->warning('Matomo integration is not enabled in this Shlink instance');
@@ -87,8 +80,6 @@ class MatomoSendVisitsCommand extends Command implements VisitSendingProgressTra
         }
 
         // TODO Validate provided date formats
-        $since = $input->getOption('since');
-        $until = $input->getOption('until');
         $dateRange = buildDateRange(
             startDate: $since !== null ? Chronos::parse($since) : null,
             endDate: $until !== null ? Chronos::parse($until) : null,

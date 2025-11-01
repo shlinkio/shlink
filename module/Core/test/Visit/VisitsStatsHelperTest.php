@@ -12,6 +12,7 @@ use PHPUnit\Framework\Attributes\DataProviderExternal;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Domain\Repository\DomainRepository;
 use Shlinkio\Shlink\Core\Exception\DomainNotFoundException;
@@ -29,10 +30,12 @@ use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsStats;
+use Shlinkio\Shlink\Core\Visit\Model\WithDomainVisitsParams;
 use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsCountFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\OrphanVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
-use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\WithDomainVisitsCountFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\WithDomainVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Repository\OrphanVisitsCountRepository;
 use Shlinkio\Shlink\Core\Visit\Repository\ShortUrlVisitsCountRepository;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepository;
@@ -52,7 +55,7 @@ class VisitsStatsHelperTest extends TestCase
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManagerInterface::class);
-        $this->helper = new VisitsStatsHelper($this->em);
+        $this->helper = new VisitsStatsHelper($this->em, new UrlShortenerOptions());
     }
 
     #[Test, DataProvider('provideCounts')]
@@ -147,7 +150,7 @@ class VisitsStatsHelperTest extends TestCase
 
         $this->expectException(TagNotFoundException::class);
 
-        $this->helper->visitsForTag($tag, new VisitsParams(), $apiKey);
+        $this->helper->visitsForTag($tag, new WithDomainVisitsParams(), $apiKey);
     }
 
     #[Test, DataProviderExternal(ApiKeyDataProviders::class, 'adminApiKeysProvider')]
@@ -170,7 +173,7 @@ class VisitsStatsHelperTest extends TestCase
             [Visit::class, $repo2],
         ]);
 
-        $paginator = $this->helper->visitsForTag($tag, new VisitsParams(), $apiKey);
+        $paginator = $this->helper->visitsForTag($tag, new WithDomainVisitsParams(), $apiKey);
 
         self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentPageResults()));
     }
@@ -265,14 +268,14 @@ class VisitsStatsHelperTest extends TestCase
         );
         $repo = $this->createMock(VisitRepository::class);
         $repo->expects($this->once())->method('countNonOrphanVisits')->with(
-            $this->isInstanceOf(VisitsCountFiltering::class),
+            $this->isInstanceOf(WithDOmainVisitsCountFiltering::class),
         )->willReturn(count($list));
         $repo->expects($this->once())->method('findNonOrphanVisits')->with(
-            $this->isInstanceOf(VisitsListFiltering::class),
+            $this->isInstanceOf(WithDOmainVisitsListFiltering::class),
         )->willReturn($list);
         $this->em->expects($this->once())->method('getRepository')->with(Visit::class)->willReturn($repo);
 
-        $paginator = $this->helper->nonOrphanVisits(new VisitsParams());
+        $paginator = $this->helper->nonOrphanVisits(new WithDomainVisitsParams());
 
         self::assertEquals($list, ArrayUtils::iteratorToArray($paginator->getCurrentPageResults()));
     }

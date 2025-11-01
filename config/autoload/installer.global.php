@@ -33,6 +33,8 @@ return [
             Option\Cache\CacheNamespaceConfigOption::class,
             Option\Redis\RedisServersConfigOption::class,
             Option\Redis\RedisSentinelServiceConfigOption::class,
+            Option\Redis\RedisServersUserConfigOption::class,
+            Option\Redis\RedisServersPasswordConfigOption::class,
             Option\Redis\RedisPubSubConfigOption::class,
             Option\UrlShortener\ShortCodeLengthOption::class,
             Option\Mercure\EnableMercureConfigOption::class,

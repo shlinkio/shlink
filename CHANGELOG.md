@@ -4,6 +4,45 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [4.6.0] - 2025-11-01
+### Added
+* [#2327](https://github.com/shlinkio/shlink/issues/2327) Allow filtering short URL lists by those not including certain tags.
+
+    Now, the `GET /short-urls` endpoint accepts two new params: `excludeTags`, which is an array of strings with the tags that should not be included, and `excludeTagsMode`, which accepts the values `any` and `all`, and determines if short URLs should be filtered out if they contain any of the excluded tags, or all the excluded tags.
+
+    Additionally, the `short-url:list` command also supports the same feature via `--exclude-tag` option, which requires a value and can be provided multiple times, and `--exclude-tags-all`, which does not expect a value and determines if the mode should be `all`, or `any`.
+
+* [#2192](https://github.com/shlinkio/shlink/issues/2192) Allow filtering short URL lists by the API key that was used to create them.
+
+  Now, the `GET /short-urls` endpoint accepts a new `apiKeyName` param, which is ignored if the request is performed with a non-admin API key which name does not match the one provided here.
+
+  Additionally, the `short-url:list` command also supports the same feature via the `--api-key-name` option.
+
+* [#2330](https://github.com/shlinkio/shlink/issues/2330) Add support to serve Shlink with FrankenPHP, by providing a worker script in `bin/frankenphp-worker.php`.
+
+* [#2449](https://github.com/shlinkio/shlink/issues/2449) Add support to provide redis credentials separately when using redis sentinels, where provided servers are the sentinels and not the redis instances.
+
+    For this, Shlink supports two new env ras / config options, as `REDIS_SERVERS_USER` and `REDIS_SERVERS_PASSWORD`.
+
+* [#2498](https://github.com/shlinkio/shlink/issues/2498) Allow orphan visits, non-orphan visits and tag visits lists to be filtered by domain.
+
+    This is done via the `domain` query parameter in API endpoints, and via the `--domain` option in console commands.
+
+* [#2472](https://github.com/shlinkio/shlink/issues/2472) Add support for PHP 8.5
+
+### Changed
+* [#2424](https://github.com/shlinkio/shlink/issues/2424) Make simple console commands invokable.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* *Nothing*
+
+
 ## [4.5.3] - 2025-10-10
 ### Added
 * *Nothing*

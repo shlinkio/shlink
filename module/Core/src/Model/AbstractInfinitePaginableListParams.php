@@ -8,7 +8,7 @@ use Shlinkio\Shlink\Common\Paginator\Paginator;
 
 abstract class AbstractInfinitePaginableListParams
 {
-    private const FIRST_PAGE = 1;
+    private const int FIRST_PAGE = 1;
 
     public readonly int $page;
     public readonly int $itemsPerPage;

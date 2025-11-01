@@ -6,9 +6,9 @@ namespace Shlinkio\Shlink\Core\Visit\Paginator\Adapter;
 
 use Shlinkio\Shlink\Core\Paginator\Adapter\AbstractCacheableCountPaginatorAdapter;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
-use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
-use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
-use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
+use Shlinkio\Shlink\Core\Visit\Model\WithDomainVisitsParams;
+use Shlinkio\Shlink\Core\Visit\Persistence\WithDomainVisitsCountFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\WithDomainVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -17,26 +17,28 @@ class NonOrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAda
 {
     public function __construct(
         private readonly VisitRepositoryInterface $repo,
-        private readonly VisitsParams $params,
+        private readonly WithDomainVisitsParams $params,
         private readonly ApiKey|null $apiKey,
     ) {
     }
 
     protected function doCount(): int
     {
-        return $this->repo->countNonOrphanVisits(new VisitsCountFiltering(
+        return $this->repo->countNonOrphanVisits(new WithDomainVisitsCountFiltering(
             $this->params->dateRange,
             $this->params->excludeBots,
             $this->apiKey,
+            $this->params->domain,
         ));
     }
 
     public function getSlice(int $offset, int $length): iterable
     {
-        return $this->repo->findNonOrphanVisits(new VisitsListFiltering(
+        return $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(
             $this->params->dateRange,
             $this->params->excludeBots,
             $this->apiKey,
+            $this->params->domain,
             $length,
             $offset,
         ));

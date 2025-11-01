@@ -12,21 +12,27 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlsParamsInputFilter;
 use function Shlinkio\Shlink\Common\buildDateRange;
 use function Shlinkio\Shlink\Core\normalizeOptionalDate;
 
-final class ShortUrlsParams
+/**
+ * Represents all the params that can be used to filter a list of short URLs
+ */
+final readonly class ShortUrlsParams
 {
-    public const DEFAULT_ITEMS_PER_PAGE = 10;
+    public const int DEFAULT_ITEMS_PER_PAGE = 10;
 
     private function __construct(
-        public readonly int $page,
-        public readonly int $itemsPerPage,
-        public readonly string|null $searchTerm,
-        public readonly array $tags,
-        public readonly Ordering $orderBy,
-        public readonly DateRange|null $dateRange,
-        public readonly bool $excludeMaxVisitsReached,
-        public readonly bool $excludePastValidUntil,
-        public readonly TagsMode $tagsMode = TagsMode::ANY,
-        public readonly string|null $domain = null,
+        public int $page,
+        public int $itemsPerPage,
+        public string|null $searchTerm,
+        public array $tags,
+        public Ordering $orderBy,
+        public DateRange|null $dateRange,
+        public bool $excludeMaxVisitsReached,
+        public bool $excludePastValidUntil,
+        public TagsMode $tagsMode = TagsMode::ANY,
+        public string|null $domain = null,
+        public array $excludeTags = [],
+        public TagsMode $excludeTagsMode = TagsMode::ANY,
+        public string|null $apiKeyName = null,
     ) {
     }
 
@@ -61,6 +67,11 @@ final class ShortUrlsParams
             excludePastValidUntil: $inputFilter->getValue(ShortUrlsParamsInputFilter::EXCLUDE_PAST_VALID_UNTIL),
             tagsMode: self::resolveTagsMode($inputFilter->getValue(ShortUrlsParamsInputFilter::TAGS_MODE)),
             domain: $inputFilter->getValue(ShortUrlsParamsInputFilter::DOMAIN),
+            excludeTags: (array) $inputFilter->getValue(ShortUrlsParamsInputFilter::EXCLUDE_TAGS),
+            excludeTagsMode: self::resolveTagsMode(
+                $inputFilter->getValue(ShortUrlsParamsInputFilter::EXCLUDE_TAGS_MODE),
+            ),
+            apiKeyName: $inputFilter->getValue(ShortUrlsParamsInputFilter::API_KEY_NAME),
         );
     }
 

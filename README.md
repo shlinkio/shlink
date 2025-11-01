@@ -99,6 +99,12 @@ Both the API and CLI allow you to do mostly the same operations, except for API 
 
 If you are trying to find out how to run the project in development mode or how to provide contributions, read the [CONTRIBUTING](CONTRIBUTING.md) doc.
 
+## Powered by
+
+Thanks to [JetBrains](https://www.jetbrains.com/) for their continuous support to this project in the form of IDE licenses.
+
+![JetBrains logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.svg)
+
 ---
 
 > This product includes GeoLite2 data created by MaxMind, available from [https://www.maxmind.com](https://www.maxmind.com)

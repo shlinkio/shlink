@@ -8,13 +8,17 @@ use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirectConfigInterface;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function array_map;
 
+#[AsCommand(
+    name: ListDomainsCommand::NAME,
+    description: 'List all domains that have been ever used for some short URL',
+)]
 class ListDomainsCommand extends Command
 {
     public const string NAME = 'domain:list';
@@ -24,25 +28,17 @@ class ListDomainsCommand extends Command
         parent::__construct();
     }
 
-    protected function configure(): void
-    {
-        $this
-            ->setName(self::NAME)
-            ->setDescription('List all domains that have been ever used for some short URL')
-            ->addOption(
-                'show-redirects',
-                'r',
-                InputOption::VALUE_NONE,
-                'Will display an extra column with the information of the "not found" redirects for every domain.',
-            );
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
+    public function __invoke(
+        SymfonyStyle $io,
+        #[Option(
+            'Will display an extra column with the information of the "not found" redirects for every domain.',
+            shortcut: 'r',
+        )]
+        bool $showRedirects = false,
+    ): int {
         $domains = $this->domainService->listDomains();
-        $showRedirects = $input->getOption('show-redirects');
         $commonFields = ['Domain', 'Is default'];
-        $table = $showRedirects ? ShlinkTable::withRowSeparators($output) : ShlinkTable::default($output);
+        $table = $showRedirects ? ShlinkTable::withRowSeparators($io) : ShlinkTable::default($io);
 
         $table->render(
             $showRedirects ? [...$commonFields, '"Not found" redirects'] : $commonFields,
@@ -53,7 +49,7 @@ class ListDomainsCommand extends Command
                     ? [
                         ...$commonValues,
                         $this->notFoundRedirectsToString($domain->notFoundRedirectConfig),
-                      ]
+                    ]
                     : $commonValues;
             }, $domains),
         );

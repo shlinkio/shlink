@@ -25,8 +25,6 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Tester\CommandTester;
 
-use function explode;
-
 class ListShortUrlsCommandTest extends TestCase
 {
     private CommandTester $commandTester;
@@ -209,6 +207,9 @@ class ListShortUrlsCommandTest extends TestCase
         string $tagsMode,
         string|null $startDate = null,
         string|null $endDate = null,
+        array $excludeTags = [],
+        string $excludeTagsMode = TagsMode::ANY->value,
+        string|null $apiKeyName = null,
     ): void {
         $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(ShortUrlsParams::fromRawData([
             'page' => $page,
@@ -217,6 +218,9 @@ class ListShortUrlsCommandTest extends TestCase
             'tagsMode' => $tagsMode,
             'startDate' => $startDate !== null ? Chronos::parse($startDate)->toAtomString() : null,
             'endDate' => $endDate !== null ? Chronos::parse($endDate)->toAtomString() : null,
+            'excludeTags' => $excludeTags,
+            'excludeTagsMode' => $excludeTagsMode,
+            'apiKeyName' => $apiKeyName,
         ]))->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->setInputs(['n']);
@@ -230,10 +234,10 @@ class ListShortUrlsCommandTest extends TestCase
         yield [['--including-all-tags' => true], 1, null, [], TagsMode::ALL->value];
         yield [['--search-term' => $searchTerm = 'search this'], 1, $searchTerm, [], TagsMode::ANY->value];
         yield [
-            ['--page' => $page = 3, '--search-term' => $searchTerm = 'search this', '--tags' => $tags = 'foo,bar'],
+            ['--page' => $page = 3, '--search-term' => $searchTerm = 'search this', '--tag' => $tags = ['foo', 'bar']],
             $page,
             $searchTerm,
-            explode(',', $tags),
+            $tags,
             TagsMode::ANY->value,
         ];
         yield [
@@ -261,6 +265,29 @@ class ListShortUrlsCommandTest extends TestCase
             TagsMode::ANY->value,
             $startDate,
             $endDate,
+        ];
+        yield [
+            ['--exclude-tag' => ['foo', 'bar'], '--exclude-tags-all' => true],
+            1,
+            null,
+            [],
+            TagsMode::ANY->value,
+            null,
+            null,
+            ['foo', 'bar'],
+            TagsMode::ALL->value,
+        ];
+        yield [
+            ['--api-key-name' => 'foo'],
+            1,
+            null,
+            [],
+            TagsMode::ANY->value,
+            null,
+            null,
+            [],
+            TagsMode::ANY->value,
+            'foo',
         ];
     }
 

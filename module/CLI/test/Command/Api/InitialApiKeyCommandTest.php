@@ -35,7 +35,7 @@ class InitialApiKeyCommandTest extends TestCase
         $this->apiKeyService->expects($this->once())->method('createInitial')->with('the_key')->willReturn($result);
 
         $this->commandTester->execute(
-            ['apiKey' => 'the_key'],
+            ['api-key' => 'the_key'],
             ['verbosity' => $verbose ? OutputInterface::VERBOSITY_VERBOSE : OutputInterface::VERBOSITY_NORMAL],
         );
         $output = $this->commandTester->getDisplay();

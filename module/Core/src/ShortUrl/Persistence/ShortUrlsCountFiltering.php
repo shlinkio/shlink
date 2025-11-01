@@ -15,22 +15,33 @@ use function strtolower;
 class ShortUrlsCountFiltering
 {
     public readonly bool $searchIncludesDefaultDomain;
+    public readonly string|null $apiKeyName;
 
+    /**
+     * @param $defaultDomain - Used only to determine if search term includes default domain
+     */
     public function __construct(
         public readonly string|null $searchTerm = null,
         public readonly array $tags = [],
-        public readonly TagsMode|null $tagsMode = null,
+        public readonly TagsMode $tagsMode = TagsMode::ANY,
         public readonly DateRange|null $dateRange = null,
         public readonly bool $excludeMaxVisitsReached = false,
         public readonly bool $excludePastValidUntil = false,
         public readonly ApiKey|null $apiKey = null,
         string|null $defaultDomain = null,
         public readonly string|null $domain = null,
+        public readonly array $excludeTags = [],
+        public readonly TagsMode $excludeTagsMode = TagsMode::ANY,
+        string|null $apiKeyName = null,
     ) {
         $this->searchIncludesDefaultDomain = !empty($searchTerm) && !empty($defaultDomain) && str_contains(
             strtolower($defaultDomain),
             strtolower($searchTerm),
         );
+
+        // Filtering by API key name is only allowed if the API key used in the request is an admin one, or it matches
+        // the API key name
+        $this->apiKeyName = $apiKey?->name === $apiKeyName || ApiKey::isAdmin($apiKey) ? $apiKeyName : null;
     }
 
     public static function fromParams(ShortUrlsParams $params, ApiKey|null $apiKey, string $defaultDomain): self
@@ -45,6 +56,9 @@ class ShortUrlsCountFiltering
             $apiKey,
             $defaultDomain,
             $params->domain,
+            $params->excludeTags,
+            $params->excludeTagsMode,
+            $params->apiKeyName,
         );
     }
 }

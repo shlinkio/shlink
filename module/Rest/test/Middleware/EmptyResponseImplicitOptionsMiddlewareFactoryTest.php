@@ -27,7 +27,6 @@ class EmptyResponseImplicitOptionsMiddlewareFactoryTest extends TestCase
 
         $ref = new ReflectionObject($instance);
         $prop = $ref->getProperty('responseFactory');
-        $prop->setAccessible(true);
 
         /** @var ResponseFactoryInterface $value */
         $value = $prop->getValue($instance);
