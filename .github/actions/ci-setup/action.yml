@@ -43,5 +43,5 @@ runs:
         coverage: xdebug
     - name: Install dependencies
       if: ${{ inputs.install-deps == 'yes' }}
-      run: composer install --no-interaction --prefer-dist ${{ inputs.php-version == '8.5' && '--ignore-platform-req=php' || '' }}
+      run: composer install --no-interaction --prefer-dist
       shell: bash
