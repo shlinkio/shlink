@@ -7,8 +7,9 @@ namespace Shlinkio\Shlink\CLI\Command\Domain;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
+use Symfony\Component\Console\Attribute\Argument;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -18,6 +19,10 @@ use function array_map;
 use function sprintf;
 use function str_contains;
 
+#[AsCommand(
+    name: DomainRedirectsCommand::NAME,
+    description: 'Set specific "not found" redirects for individual domains.',
+)]
 class DomainRedirectsCommand extends Command
 {
     public const string NAME = 'domain:redirects';
@@ -25,18 +30,6 @@ class DomainRedirectsCommand extends Command
     public function __construct(private readonly DomainServiceInterface $domainService)
     {
         parent::__construct();
-    }
-
-    protected function configure(): void
-    {
-        $this
-            ->setName(self::NAME)
-            ->setDescription('Set specific "not found" redirects for individual domains.')
-            ->addArgument(
-                'domain',
-                InputArgument::REQUIRED,
-                'The domain authority to which you want to set the specific redirects',
-            );
     }
 
     protected function interact(InputInterface $input, OutputInterface $output): void
@@ -67,10 +60,11 @@ class DomainRedirectsCommand extends Command
         $input->setArgument('domain', str_contains($selectedOption, 'New domain') ? $askNewDomain() : $selectedOption);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $io = new SymfonyStyle($input, $output);
-        $domainAuthority = $input->getArgument('domain');
+    public function __invoke(
+        SymfonyStyle $io,
+        #[Argument('The domain authority to which you want to set the specific redirects', name: 'domain')]
+        string $domainAuthority,
+    ): int {
         $domain = $this->domainService->findByAuthority($domainAuthority);
 
         $ask = static function (string $message, string|null $current) use ($io): string|null {
