@@ -6,14 +6,18 @@ namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\Core\ShortUrl\DeleteShortUrlServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ExpiredShortUrlsConditions;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function sprintf;
 
+#[AsCommand(
+    name: DeleteExpiredShortUrlsCommand::NAME,
+    description: 'Deletes all short URLs that are considered expired, because they have a validUntil date in the past',
+)]
 class DeleteExpiredShortUrlsCommand extends Command
 {
     public const string NAME = 'short-url:delete-expired';
@@ -23,32 +27,17 @@ class DeleteExpiredShortUrlsCommand extends Command
         parent::__construct();
     }
 
-    protected function configure(): void
-    {
-        $this
-            ->setName(self::NAME)
-            ->setDescription(
-                'Deletes all short URLs that are considered expired, because they have a validUntil date in the past',
-            )
-            ->addOption(
-                'evaluate-max-visits',
-                mode: InputOption::VALUE_NONE,
-                description: 'Also take into consideration short URLs which have reached their max amount of visits.',
-            )
-            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Delete short URLs with no confirmation')
-            ->addOption(
-                'dry-run',
-                mode: InputOption::VALUE_NONE,
-                description: 'Delete short URLs with no confirmation',
-            );
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $io = new SymfonyStyle($input, $output);
-        $force = $input->getOption('force') || ! $input->isInteractive();
-        $dryRun = $input->getOption('dry-run');
-        $conditions = new ExpiredShortUrlsConditions(maxVisitsReached: $input->getOption('evaluate-max-visits'));
+    public function __invoke(
+        SymfonyStyle $io,
+        InputInterface $input,
+        #[Option('Also take into consideration short URLs which have reached their max amount of visits.')]
+        bool $evaluateMaxVisits = false,
+        #[Option('Delete short URLs with no confirmation', shortcut: 'f')] bool $force = false,
+        #[Option('Only check how many short URLs would be affected, without actually deleting them')]
+        bool $dryRun = false,
+    ): int {
+        $conditions = new ExpiredShortUrlsConditions(maxVisitsReached: $evaluateMaxVisits);
+        $force = $force || ! $input->isInteractive();
 
         if (! $force && ! $dryRun) {
             $io->warning([
@@ -69,6 +58,7 @@ class DeleteExpiredShortUrlsCommand extends Command
 
         $result = $this->deleteShortUrlService->deleteExpiredShortUrls($conditions);
         $io->success(sprintf('%s expired short URLs have been deleted', $result));
+
         return self::SUCCESS;
     }
 }

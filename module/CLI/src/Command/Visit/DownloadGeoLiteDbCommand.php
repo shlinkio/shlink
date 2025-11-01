@@ -8,14 +8,17 @@ use Shlinkio\Shlink\Core\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\Core\Geolocation\GeolocationDbUpdaterInterface;
 use Shlinkio\Shlink\Core\Geolocation\GeolocationDownloadProgressHandlerInterface;
 use Shlinkio\Shlink\Core\Geolocation\GeolocationResult;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function sprintf;
 
+#[AsCommand(
+    DownloadGeoLiteDbCommand::NAME,
+    'Checks if the GeoLite2 db file is too old or it does not exist, and tries to download an up-to-date copy if so.',
+)]
 class DownloadGeoLiteDbCommand extends Command implements GeolocationDownloadProgressHandlerInterface
 {
     public const string NAME = 'visit:download-db';
@@ -28,19 +31,9 @@ class DownloadGeoLiteDbCommand extends Command implements GeolocationDownloadPro
         parent::__construct();
     }
 
-    protected function configure(): void
+    public function __invoke(SymfonyStyle $io): int
     {
-        $this
-            ->setName(self::NAME)
-            ->setDescription(
-                'Checks if the GeoLite2 db file is too old or it does not exist, and tries to download an up-to-date '
-                . 'copy if so.',
-            );
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $this->io = new SymfonyStyle($input, $output);
+        $this->io = $io;
 
         try {
             $result = $this->dbUpdater->checkDbUpdate($this);

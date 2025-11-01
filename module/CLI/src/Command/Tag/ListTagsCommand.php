@@ -8,12 +8,13 @@ use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
 use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
 use Shlinkio\Shlink\Core\Tag\TagServiceInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function array_map;
 
+#[AsCommand(ListTagsCommand::NAME, 'Lists existing tags.')]
 class ListTagsCommand extends Command
 {
     public const string NAME = 'tag:list';
@@ -23,16 +24,9 @@ class ListTagsCommand extends Command
         parent::__construct();
     }
 
-    protected function configure(): void
+    public function __invoke(SymfonyStyle $io): int
     {
-        $this
-            ->setName(self::NAME)
-            ->setDescription('Lists existing tags.');
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        ShlinkTable::default($output)->render(['Name', 'URLs amount', 'Visits amount'], $this->getTagsRows());
+        ShlinkTable::default($io)->render(['Name', 'URLs amount', 'Visits amount'], $this->getTagsRows());
         return self::SUCCESS;
     }
 
