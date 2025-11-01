@@ -9,20 +9,22 @@ use ValueError;
 use function Shlinkio\Shlink\Core\enumToString;
 use function sprintf;
 
-final class OrphanVisitsParams extends VisitsParams
+final class OrphanVisitsParams extends WithDomainVisitsParams
 {
     public function __construct(
         DateRange|null $dateRange = null,
         int|null $page = null,
         int|null $itemsPerPage = null,
         bool $excludeBots = false,
+        string|null $domain = null,
         public readonly OrphanVisitType|null $type = null,
     ) {
-        parent::__construct($dateRange, $page, $itemsPerPage, $excludeBots);
+        parent::__construct($dateRange, $page, $itemsPerPage, $excludeBots, $domain);
     }
 
-    public static function fromVisitsParamsAndRawData(VisitsParams $visitsParams, array $query): self
+    public static function fromRawData(array $query): self
     {
+        $visitsParams = WithDomainVisitsParams::fromRawData($query);
         $type = $query['type'] ?? null;
 
         return new self(
@@ -30,6 +32,7 @@ final class OrphanVisitsParams extends VisitsParams
             page: $visitsParams->page,
             itemsPerPage: $visitsParams->itemsPerPage,
             excludeBots: $visitsParams->excludeBots,
+            domain: $visitsParams->domain,
             type: $type !== null ? self::parseType($type) : null,
         );
     }

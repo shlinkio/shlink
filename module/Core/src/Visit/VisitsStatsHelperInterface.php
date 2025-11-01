@@ -13,6 +13,7 @@ use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsStats;
+use Shlinkio\Shlink\Core\Visit\Model\WithDomainVisitsParams;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 interface VisitsStatsHelperInterface
@@ -33,7 +34,7 @@ interface VisitsStatsHelperInterface
      * @return Paginator<Visit>
      * @throws TagNotFoundException
      */
-    public function visitsForTag(string $tag, VisitsParams $params, ApiKey|null $apiKey = null): Paginator;
+    public function visitsForTag(string $tag, WithDomainVisitsParams $params, ApiKey|null $apiKey = null): Paginator;
 
     /**
      * @return Paginator<Visit>
@@ -49,5 +50,5 @@ interface VisitsStatsHelperInterface
     /**
      * @return Paginator<Visit>
      */
-    public function nonOrphanVisits(VisitsParams $params, ApiKey|null $apiKey = null): Paginator;
+    public function nonOrphanVisits(WithDomainVisitsParams $params, ApiKey|null $apiKey = null): Paginator;
 }

@@ -159,13 +159,11 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
             $qb->andWhere($qb->expr()->notIn('s.id', $subQb->getDQL()));
         }
 
-        if ($filtering->domain !== null) {
-            if ($filtering->domain === Domain::DEFAULT_AUTHORITY) {
-                $qb->andWhere($qb->expr()->isNull('s.domain'));
-            } else {
-                $qb->andWhere($qb->expr()->eq('d.authority', ':domain'))
-                   ->setParameter('domain', $filtering->domain);
-            }
+        if ($filtering->domain === Domain::DEFAULT_AUTHORITY) {
+            $qb->andWhere($qb->expr()->isNull('s.domain'));
+        } elseif ($filtering->domain !== null) {
+            $qb->andWhere($qb->expr()->eq('d.authority', ':domain'))
+               ->setParameter('domain', $filtering->domain);
         }
 
         if ($filtering->excludeMaxVisitsReached) {

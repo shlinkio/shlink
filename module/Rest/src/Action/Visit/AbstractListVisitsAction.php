@@ -10,7 +10,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtils;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
-use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
@@ -26,9 +25,8 @@ abstract class AbstractListVisitsAction extends AbstractRestAction
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $params = VisitsParams::fromRawData($request->getQueryParams());
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
-        $visits = $this->getVisitsPaginator($request, $params, $apiKey);
+        $visits = $this->getVisitsPaginator($request, $apiKey);
 
         return new JsonResponse(['visits' => PagerfantaUtils::serializePaginator($visits)]);
     }
@@ -36,9 +34,5 @@ abstract class AbstractListVisitsAction extends AbstractRestAction
     /**
      * @return Pagerfanta<Visit>
      */
-    abstract protected function getVisitsPaginator(
-        ServerRequestInterface $request,
-        VisitsParams $params,
-        ApiKey $apiKey,
-    ): Pagerfanta;
+    abstract protected function getVisitsPaginator(ServerRequestInterface $request, ApiKey $apiKey): Pagerfanta;
 }

@@ -17,11 +17,11 @@ class TagVisitsTest extends ApiTestCase
     public function expectedVisitsAreReturned(
         string $apiKey,
         string $tag,
-        bool $excludeBots,
+        array $query,
         int $expectedVisitsAmount,
     ): void {
         $resp = $this->callApiWithKey(self::METHOD_GET, sprintf('/tags/%s/visits', $tag), [
-            RequestOptions::QUERY => $excludeBots ? ['excludeBots' => true] : [],
+            RequestOptions::QUERY => $query,
         ], $apiKey);
         $payload = $this->getJsonResponsePayload($resp);
 
@@ -33,16 +33,18 @@ class TagVisitsTest extends ApiTestCase
 
     public static function provideTags(): iterable
     {
-        yield 'foo with admin API key' => ['valid_api_key', 'foo', false, 5];
-        yield 'foo with admin API key and no bots' => ['valid_api_key', 'foo', true, 4];
-        yield 'bar with admin API key' => ['valid_api_key', 'bar', false, 2];
-        yield 'bar with admin API key and no bots' => ['valid_api_key', 'bar', true, 1];
-        yield 'baz with admin API key' => ['valid_api_key', 'baz', false, 0];
-        yield 'foo with author API key' => ['author_api_key', 'foo', false, 5];
-        yield 'foo with author API key and no bots' => ['author_api_key', 'foo', true, 4];
-        yield 'bar with author API key' => ['author_api_key', 'bar', false, 2];
-        yield 'bar with author API key and no bots' => ['author_api_key', 'bar', true, 1];
-        yield 'foo with domain API key' => ['domain_api_key', 'foo', false, 0];
+        yield 'foo with admin API key' => ['valid_api_key', 'foo', [], 5];
+        yield 'foo with admin API key and no bots' => ['valid_api_key', 'foo', ['excludeBots' => true], 4];
+        yield 'bar with admin API key' => ['valid_api_key', 'bar', [], 2];
+        yield 'bar with admin API key and no bots' => ['valid_api_key', 'bar', ['excludeBots' => true], 1];
+        yield 'baz with admin API key' => ['valid_api_key', 'baz', [], 0];
+        yield 'foo with author API key' => ['author_api_key', 'foo', [], 5];
+        yield 'foo with author API key and no bots' => ['author_api_key', 'foo', ['excludeBots' => true], 4];
+        yield 'bar with author API key' => ['author_api_key', 'bar', [], 2];
+        yield 'bar with author API key and no bots' => ['author_api_key', 'bar', ['excludeBots' => true], 1];
+        yield 'foo with domain API key' => ['domain_api_key', 'foo', [], 0];
+        yield 'foo with specific domain' => ['valid_api_key', 'foo', ['domain' => 'example.com'], 0];
+        yield 'foo with default domain' => ['valid_api_key', 'foo', ['domain' => 'DEFAULT'], 5];
     }
 
     #[Test, DataProvider('provideApiKeysAndTags')]

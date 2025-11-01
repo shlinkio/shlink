@@ -31,5 +31,7 @@ class NonOrphanVisitsTest extends ApiTestCase
         yield 'bots excluded' => [['excludeBots' => 'true'], 6, 6];
         yield 'bots excluded and pagination' => [['excludeBots' => 'true', 'page' => 1, 'itemsPerPage' => 4], 6, 4];
         yield 'date filter' => [['startDate' => Chronos::now()->addDays(1)->toAtomString()], 0, 0];
+        yield 'domain filter' => [['domain' => 'example.com'], 0, 0];
+        yield 'default domain filter' => [['domain' => 'DEFAULT'], 7, 7];
     }
 }

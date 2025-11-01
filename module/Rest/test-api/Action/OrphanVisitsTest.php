@@ -19,7 +19,7 @@ class OrphanVisitsTest extends ApiTestCase
         'userAgent' => 'cf-facebook',
         'visitLocation' => null,
         'potentialBot' => true,
-        'visitedUrl' => 'foo.com',
+        'visitedUrl' => 'https://example.com/short',
         'type' => 'invalid_short_url',
         'redirectUrl' => null,
     ];
@@ -29,7 +29,7 @@ class OrphanVisitsTest extends ApiTestCase
         'userAgent' => 'shlink-tests-agent',
         'visitLocation' => null,
         'potentialBot' => false,
-        'visitedUrl' => '',
+        'visitedUrl' => 'https://s.test/bar',
         'type' => 'regular_404',
         'redirectUrl' => null,
     ];
@@ -39,7 +39,7 @@ class OrphanVisitsTest extends ApiTestCase
         'userAgent' => 'shlink-tests-agent',
         'visitLocation' => null,
         'potentialBot' => false,
-        'visitedUrl' => '',
+        'visitedUrl' => 'https://s.test/foo',
         'type' => 'base_url',
         'redirectUrl' => null,
     ];
@@ -79,6 +79,14 @@ class OrphanVisitsTest extends ApiTestCase
             1,
             1,
             [self::INVALID_SHORT_URL],
+        ];
+        yield 'example domain only' => [['domain' => 'example.com'], 1, 1, [self::INVALID_SHORT_URL]];
+        yield 'default domain only' => [['domain' => 's.test'], 2, 2, [self::REGULAR_NOT_FOUND, self::BASE_URL]];
+        yield 'default domain only with DEFAULT keyword' => [
+            ['domain' => 'DEFAULT'],
+            2,
+            2,
+            [self::REGULAR_NOT_FOUND, self::BASE_URL],
         ];
     }
 

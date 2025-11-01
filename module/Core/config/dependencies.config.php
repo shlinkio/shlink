@@ -168,7 +168,7 @@ return [
         ],
         Visit\Geolocation\VisitLocator::class => ['em', Visit\Repository\VisitIterationRepository::class],
         Visit\Geolocation\VisitToLocationHelper::class => [IpLocationResolverInterface::class],
-        Visit\VisitsStatsHelper::class => ['em'],
+        Visit\VisitsStatsHelper::class => ['em', Config\Options\UrlShortenerOptions::class],
         Tag\TagService::class => ['em', Tag\Repository\TagRepository::class],
         ShortUrl\DeleteShortUrlService::class => [
             'em',

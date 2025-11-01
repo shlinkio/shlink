@@ -58,20 +58,32 @@ class VisitsFixture extends AbstractFixture implements DependentFixtureInterface
             Visitor::fromParams('shlink-tests-agent', 'https://app.shlink.io', ''),
         ));
 
+        // Orphan visits (s.test is the default domain in tests env)
         $manager->persist($this->setVisitDate(
-            fn () => Visit::forBasePath(Visitor::fromParams('shlink-tests-agent', 'https://s.test', '1.2.3.4')),
+            fn () => Visit::forBasePath(Visitor::fromParams(
+                'shlink-tests-agent',
+                'https://s.test',
+                '1.2.3.4',
+                visitedUrl: 'https://s.test/foo',
+            )),
             '2020-01-01',
         ));
         $manager->persist($this->setVisitDate(
-            fn () => Visit::forRegularNotFound(
-                Visitor::fromParams('shlink-tests-agent', 'https://s.test/foo/bar', '1.2.3.4'),
-            ),
+            fn () => Visit::forRegularNotFound(Visitor::fromParams(
+                'shlink-tests-agent',
+                'https://s.test/foo/bar',
+                '1.2.3.4',
+                visitedUrl: 'https://s.test/bar',
+            )),
             '2020-02-01',
         ));
         $manager->persist($this->setVisitDate(
-            fn () => Visit::forInvalidShortUrl(
-                Visitor::fromParams('cf-facebook', 'https://s.test/foo', '1.2.3.4', 'foo.com'),
-            ),
+            fn () => Visit::forInvalidShortUrl(Visitor::fromParams(
+                'cf-facebook',
+                'https://s.test/foo',
+                '1.2.3.4',
+                visitedUrl: 'https://example.com/short',
+            )),
             '2020-03-01',
         ));
 

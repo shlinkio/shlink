@@ -10,10 +10,10 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
-use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
+use Shlinkio\Shlink\Core\Visit\Model\WithDomainVisitsParams;
 use Shlinkio\Shlink\Core\Visit\Paginator\Adapter\NonOrphanVisitsPaginatorAdapter;
-use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
-use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\WithDomainVisitsCountFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\WithDomainVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -21,13 +21,13 @@ class NonOrphanVisitsPaginatorAdapterTest extends TestCase
 {
     private NonOrphanVisitsPaginatorAdapter $adapter;
     private MockObject & VisitRepositoryInterface $repo;
-    private VisitsParams $params;
+    private WithDomainVisitsParams $params;
     private ApiKey $apiKey;
 
     protected function setUp(): void
     {
         $this->repo = $this->createMock(VisitRepositoryInterface::class);
-        $this->params = VisitsParams::fromRawData([]);
+        $this->params = WithDomainVisitsParams::fromRawData([]);
         $this->apiKey = ApiKey::create();
 
         $this->adapter = new NonOrphanVisitsPaginatorAdapter($this->repo, $this->params, $this->apiKey);
@@ -38,7 +38,7 @@ class NonOrphanVisitsPaginatorAdapterTest extends TestCase
     {
         $expectedCount = 5;
         $this->repo->expects($this->once())->method('countNonOrphanVisits')->with(
-            new VisitsCountFiltering($this->params->dateRange, $this->params->excludeBots, $this->apiKey),
+            new WithDomainVisitsCountFiltering($this->params->dateRange, $this->params->excludeBots, $this->apiKey),
         )->willReturn($expectedCount);
 
         $result = $this->adapter->getNbResults();
@@ -55,12 +55,12 @@ class NonOrphanVisitsPaginatorAdapterTest extends TestCase
     {
         $visitor = Visitor::empty();
         $list = [Visit::forRegularNotFound($visitor), Visit::forInvalidShortUrl($visitor)];
-        $this->repo->expects($this->once())->method('findNonOrphanVisits')->with(new VisitsListFiltering(
+        $this->repo->expects($this->once())->method('findNonOrphanVisits')->with(new WithDomainVisitsListFiltering(
             $this->params->dateRange,
             $this->params->excludeBots,
             $this->apiKey,
-            $limit,
-            $offset,
+            limit: $limit,
+            offset: $offset,
         ))->willReturn($list);
 
         $result = $this->adapter->getSlice($offset, $limit);

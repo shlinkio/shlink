@@ -6,9 +6,9 @@ namespace Shlinkio\Shlink\Core\Visit\Paginator\Adapter;
 
 use Shlinkio\Shlink\Core\Paginator\Adapter\AbstractCacheableCountPaginatorAdapter;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
-use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
-use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
-use Shlinkio\Shlink\Core\Visit\Persistence\VisitsListFiltering;
+use Shlinkio\Shlink\Core\Visit\Model\WithDomainVisitsParams;
+use Shlinkio\Shlink\Core\Visit\Persistence\WithDomainVisitsCountFiltering;
+use Shlinkio\Shlink\Core\Visit\Persistence\WithDomainVisitsListFiltering;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitRepositoryInterface;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -18,7 +18,7 @@ class TagVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
     public function __construct(
         private readonly VisitRepositoryInterface $visitRepository,
         private readonly string $tag,
-        private readonly VisitsParams $params,
+        private readonly WithDomainVisitsParams $params,
         private readonly ApiKey|null $apiKey,
     ) {
     }
@@ -27,10 +27,11 @@ class TagVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
     {
         return $this->visitRepository->findVisitsByTag(
             $this->tag,
-            new VisitsListFiltering(
+            new WithDomainVisitsListFiltering(
                 $this->params->dateRange,
                 $this->params->excludeBots,
                 $this->apiKey,
+                $this->params->domain,
                 $length,
                 $offset,
             ),
@@ -41,10 +42,11 @@ class TagVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
     {
         return $this->visitRepository->countVisitsByTag(
             $this->tag,
-            new VisitsCountFiltering(
+            new WithDomainVisitsCountFiltering(
                 $this->params->dateRange,
                 $this->params->excludeBots,
                 $this->apiKey,
+                $this->params->domain,
             ),
         );
     }

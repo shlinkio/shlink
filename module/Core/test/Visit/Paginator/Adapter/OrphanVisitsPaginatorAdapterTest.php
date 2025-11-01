@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
@@ -30,7 +31,12 @@ class OrphanVisitsPaginatorAdapterTest extends TestCase
         $this->params = new OrphanVisitsParams();
         $this->apiKey = ApiKey::create();
 
-        $this->adapter = new OrphanVisitsPaginatorAdapter($this->repo, $this->params, $this->apiKey);
+        $this->adapter = new OrphanVisitsPaginatorAdapter(
+            $this->repo,
+            $this->params,
+            $this->apiKey,
+            new UrlShortenerOptions(),
+        );
     }
 
     #[Test]

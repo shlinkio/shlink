@@ -55,6 +55,10 @@
                     "type": "string",
                     "enum": ["true"]
                 }
+            },
+            {
+                "$ref": "../parameters/domain.json",
+                "description": "Return visits for short URLs that belong to this domain. Use **DEFAULT** keyword to return visits from default domain."
             }
         ],
         "security": [
