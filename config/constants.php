@@ -38,20 +38,3 @@ const ISO_COUNTRY_CODES = [
     'TO', 'TT', 'TN', 'TR', 'TM', 'TC', 'TV', 'UG', 'UA', 'AE', 'GB', 'US', 'UM', 'UY', 'UZ', 'VU',
     'VE', 'VN', 'VG', 'VI', 'WF', 'EH', 'YE', 'ZM', 'ZW',
 ];
-
-/** @deprecated */
-const DEFAULT_QR_CODE_SIZE = 300;
-/** @deprecated */
-const DEFAULT_QR_CODE_MARGIN = 0;
-/** @deprecated */
-const DEFAULT_QR_CODE_FORMAT = 'png';
-/** @deprecated */
-const DEFAULT_QR_CODE_ERROR_CORRECTION = 'l';
-/** @deprecated */
-const DEFAULT_QR_CODE_ROUND_BLOCK_SIZE = true;
-/** @deprecated */
-const DEFAULT_QR_CODE_ENABLED_FOR_DISABLED_SHORT_URLS = true;
-/** @deprecated */
-const DEFAULT_QR_CODE_COLOR = '#000000'; // Black
-/** @deprecated */
-const DEFAULT_QR_CODE_BG_COLOR = '#ffffff'; // White

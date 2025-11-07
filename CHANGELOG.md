@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* [#2514](https://github.com/shlinkio/shlink/issues/2514) Remove support to generate QR codes. This functionality is now handled by Shlink Web Client and Shlink Dashboard.
+
+### Fixed
+* *Nothing*
+
+
 ## [4.6.0] - 2025-11-01
 ### Added
 * [#2327](https://github.com/shlinkio/shlink/issues/2327) Allow filtering short URL lists by those not including certain tags.

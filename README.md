@@ -36,10 +36,9 @@ The idea is that you can just generate a container using the image and provide t
 
 First, make sure the host where you are going to run shlink fulfills these requirements:
 
-* PHP 8.3 or 8.4
+* PHP 8.4 or 8.5
 * The next PHP extensions: json, curl, pdo, intl, gd and gmp/bcmath.
     * apcu extension is recommended if you don't plan to use RoadRunner.
-    * xml extension is required if you want to generate QR codes in svg format.
     * sockets and bcmath extensions are required if you want to integrate with a RabbitMQ instance.
 * MySQL, MariaDB, PostgreSQL, MicrosoftSQL or SQLite.
     * You will also need the corresponding pdo variation for the database you are planning to use: `pdo_mysql`, `pdo_pgsql`, `pdo_sqlsrv` or `pdo_sqlite`.
