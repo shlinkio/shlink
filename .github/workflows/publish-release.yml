@@ -10,16 +10,16 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        php-version: ['8.3', '8.4', '8.5']
+        php-version: ['8.4', '8.4', '8.5']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: './.github/actions/ci-setup'
         with:
           php-version: ${{ matrix.php-version }}
           extensions-cache-key: publish-swagger-spec-extensions-${{ matrix.php-version }}
           install-deps: 'no'
       - run: ./build.sh ${GITHUB_REF#refs/tags/v}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: dist-files-${{ matrix.php-version }}
           path: build
@@ -28,8 +28,8 @@ jobs:
     needs: ['build']
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v6
         with:
           path: build
       - name: Publish release with assets
