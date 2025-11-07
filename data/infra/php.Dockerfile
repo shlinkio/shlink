@@ -25,9 +25,6 @@ RUN docker-php-ext-install intl
 RUN apk add --no-cache libzip-dev zlib-dev
 RUN docker-php-ext-install zip
 
-RUN apk add --no-cache libpng-dev
-RUN docker-php-ext-install gd
-
 RUN apk add --no-cache postgresql-dev
 RUN docker-php-ext-install pdo_pgsql
 
