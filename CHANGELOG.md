@@ -9,7 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Changed
-* *Nothing*
+* [#2522](https://github.com/shlinkio/shlink/issues/2522) Shlink no longer tries to detect trusted proxies automatically, when resolving the visitor's IP address, as this is a potential security issue.
+
+    Instead, if you have more than 1 proxy in front of Shlink, you should provide `TRUSTED_PROXIES` env var, with either a comma-separated list of the IP addresses of your proxies, or a number indicating how many proxies are there in front of Shlink.
 
 ### Deprecated
 * *Nothing*
