@@ -88,15 +88,15 @@ class DomainRedirectsCommand extends Command
         $this->domainService->configureNotFoundRedirects($domainAuthority, NotFoundRedirects::withRedirects(
             $ask(
                 'URL to redirect to when a user hits this domain\'s base URL',
-                $domain?->baseUrlRedirect(),
+                $domain?->baseUrlRedirect,
             ),
             $ask(
                 'URL to redirect to when a user hits a not found URL other than an invalid short URL',
-                $domain?->regular404Redirect(),
+                $domain?->regular404Redirect,
             ),
             $ask(
                 'URL to redirect to when a user hits an invalid short URL',
-                $domain?->invalidShortUrlRedirect(),
+                $domain?->invalidShortUrlRedirect,
             ),
         ));
 

@@ -51,7 +51,7 @@ class DomainRedirectsRequestTest extends TestCase
         yield 'some values' => [['domain' => 'foo', 'regular404Redirect' => 'bar'], null, 'foo', null, 'bar', null];
         yield 'fallbacks' => [
             ['domain' => 'domain', 'baseUrlRedirect' => 'bar'],
-            new NotFoundRedirectOptions(invalidShortUrl: 'fallback2', regular404: 'fallback'),
+            new NotFoundRedirectOptions(invalidShortUrlRedirect: 'fallback2', regular404Redirect: 'fallback'),
             'domain',
             'bar',
             'fallback',
@@ -59,7 +59,7 @@ class DomainRedirectsRequestTest extends TestCase
         ];
         yield 'fallback ignored' => [
             ['domain' => 'domain', 'regular404Redirect' => 'bar', 'invalidShortUrlRedirect' => null],
-            new NotFoundRedirectOptions(invalidShortUrl: 'fallback2', regular404: 'fallback'),
+            new NotFoundRedirectOptions(invalidShortUrlRedirect: 'fallback2', regular404Redirect: 'fallback'),
             'domain',
             null,
             'bar',
