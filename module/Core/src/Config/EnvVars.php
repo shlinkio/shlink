@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Config;
 
+use Shlinkio\Shlink\Core\Config\Options\ExtraPathMode;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 
 use function date_default_timezone_get;
@@ -87,9 +88,6 @@ enum EnvVars: string
     case TRUSTED_PROXIES = 'TRUSTED_PROXIES';
     case LOGS_FORMAT = 'LOGS_FORMAT';
 
-    /** @deprecated Use REDIRECT_EXTRA_PATH */
-    case REDIRECT_APPEND_EXTRA_PATH = 'REDIRECT_APPEND_EXTRA_PATH';
-
     public function loadFromEnv(): mixed
     {
         return env($this->value) ?? $this->loadFromFileEnv() ?? $this->defaultValue();
@@ -126,9 +124,7 @@ enum EnvVars: string
             self::SHORT_URL_TRAILING_SLASH => false,
             self::DEFAULT_DOMAIN, self::BASE_PATH => '',
             self::CACHE_NAMESPACE => 'Shlink',
-            // Deprecated. In Shlink 5.0.0, add default value for REDIRECT_EXTRA_PATH_MODE
-            self::REDIRECT_APPEND_EXTRA_PATH => false,
-            // self::REDIRECT_EXTRA_PATH_MODE => ExtraPathMode::DEFAULT->value,
+            self::REDIRECT_EXTRA_PATH_MODE => ExtraPathMode::DEFAULT->value,
 
             self::REDIS_PUB_SUB_ENABLED,
             self::MATOMO_ENABLED,

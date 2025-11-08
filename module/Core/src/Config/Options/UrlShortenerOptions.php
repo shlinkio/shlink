@@ -36,15 +36,8 @@ final readonly class UrlShortenerOptions
             MIN_SHORT_CODES_LENGTH,
         );
 
-        // Deprecated. Initialize extra path from REDIRECT_APPEND_EXTRA_PATH.
-        $appendExtraPath = EnvVars::REDIRECT_APPEND_EXTRA_PATH->loadFromEnv();
-        $extraPathMode = $appendExtraPath ? ExtraPathMode::APPEND : ExtraPathMode::DEFAULT;
-
-        // If REDIRECT_EXTRA_PATH_MODE was explicitly provided, it has precedence
         $extraPathModeFromEnv = EnvVars::REDIRECT_EXTRA_PATH_MODE->loadFromEnv();
-        if ($extraPathModeFromEnv !== null) {
-            $extraPathMode = ExtraPathMode::tryFrom($extraPathModeFromEnv) ?? ExtraPathMode::DEFAULT;
-        }
+        $extraPathMode = ExtraPathMode::tryFrom($extraPathModeFromEnv) ?? ExtraPathMode::DEFAULT;
 
         return new self(
             defaultDomain: EnvVars::DEFAULT_DOMAIN->loadFromEnv(),
