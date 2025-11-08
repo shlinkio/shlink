@@ -15,8 +15,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Removed
-* [#2514](https://github.com/shlinkio/shlink/issues/2514) Remove support to generate QR codes. This functionality is now handled by Shlink Web Client and Shlink Dashboard.
 * [#2507](https://github.com/shlinkio/shlink/issues/2507) Drop support for PHP 8.3.
+* [#2514](https://github.com/shlinkio/shlink/issues/2514) Remove support to generate QR codes. This functionality is now handled by Shlink Web Client and Shlink Dashboard.
+* [#2517](https://github.com/shlinkio/shlink/issues/2517) Remove `REDIRECT_APPEND_EXTRA_PATH` env var. Use `REDIRECT_EXTRA_PATH_MODE=append` instead.
 
 ### Fixed
 * *Nothing*
