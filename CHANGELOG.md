@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Removed
 * [#2514](https://github.com/shlinkio/shlink/issues/2514) Remove support to generate QR codes. This functionality is now handled by Shlink Web Client and Shlink Dashboard.
+* [#2507](https://github.com/shlinkio/shlink/issues/2507) Drop support for PHP 8.3.
 
 ### Fixed
 * *Nothing*
