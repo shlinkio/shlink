@@ -76,7 +76,7 @@ class ListShortUrlsCommand extends Command
             ->addOption(
                 'tags-all',
                 mode: InputOption::VALUE_NONE,
-                description: 'If --tags is provided, returns only short URLs including ALL of them',
+                description: 'If --tag is provided, returns only short URLs including ALL of them',
             )
             ->addOption(
                 'exclude-tag',
