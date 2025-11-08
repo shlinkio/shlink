@@ -88,7 +88,7 @@ jobs:
       - name: Publish coverage
         uses: codecov/codecov-action@v5
         with:
-          file: ./build/clover.xml
+          files: ./build/clover.xml
 
   delete-artifacts:
     needs:
