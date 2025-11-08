@@ -73,7 +73,6 @@ class ListShortUrlsCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'Used to filter results by domain. Use DEFAULT keyword to filter by default domain',
             )
-            ->addOption('including-all-tags', 'i', InputOption::VALUE_NONE, '[DEPRECATED] Use --tags-all instead')
             ->addOption(
                 'tags-all',
                 mode: InputOption::VALUE_NONE,
@@ -133,7 +132,6 @@ class ListShortUrlsCommand extends Command
                 InputOption::VALUE_NONE,
                 'Whether to display the API key name from which the URL was generated or not.',
             )
-            ->addOption('show-api-key-name', 'm', InputOption::VALUE_NONE, '[DEPRECATED] Use show-api-key')
             ->addOption(
                 'all',
                 'a',
@@ -148,9 +146,7 @@ class ListShortUrlsCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $page = (int) $input->getOption('page');
-        $tagsMode = $input->getOption('tags-all') === true || $input->getOption('including-all-tags') === true
-            ? TagsMode::ALL->value
-            : TagsMode::ANY->value;
+        $tagsMode = $input->getOption('tags-all') === true ? TagsMode::ALL->value : TagsMode::ANY->value;
         $excludeTagsMode = $input->getOption('exclude-tags-all') === true ? TagsMode::ALL->value : TagsMode::ANY->value;
 
         $data = [
@@ -249,7 +245,7 @@ class ListShortUrlsCommand extends Command
             $columnsMap['Domain'] = static fn (array $_, ShortUrl $shortUrl): string =>
                 $shortUrl->getDomain()->authority ?? Domain::DEFAULT_AUTHORITY;
         }
-        if ($input->getOption('show-api-key') || $input->getOption('show-api-key-name')) {
+        if ($input->getOption('show-api-key')) {
             $columnsMap['API Key Name'] = static fn (array $_, ShortUrl $shortUrl): string|null =>
                 $shortUrl->authorApiKey?->name;
         }

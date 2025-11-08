@@ -48,7 +48,7 @@ class DeleteKeyCommand extends Command
 
         if ($apiKeyName === null) {
             $apiKeys = $this->apiKeyService->listKeys();
-            $name = (new SymfonyStyle($input, $output))->choice(
+            $name = new SymfonyStyle($input, $output)->choice(
                 'What API key do you want to delete?',
                 map($apiKeys, static fn (ApiKey $apiKey) => $apiKey->name),
             );

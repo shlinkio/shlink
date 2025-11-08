@@ -10,7 +10,7 @@ use Mezzio;
 use Mezzio\ProblemDetails;
 use Shlinkio\Shlink\Core\Config\EnvVars;
 
-return (new ConfigAggregator\ConfigAggregator(
+return new ConfigAggregator\ConfigAggregator(
     providers: [
         Mezzio\ConfigProvider::class,
         Mezzio\Router\ConfigProvider::class,
@@ -39,4 +39,4 @@ return (new ConfigAggregator\ConfigAggregator(
         Core\Config\PostProcessor\MultiSegmentSlugProcessor::class,
         Core\Config\PostProcessor\ShortUrlMethodsProcessor::class,
     ],
-))->getMergedConfig();
+)->getMergedConfig();
