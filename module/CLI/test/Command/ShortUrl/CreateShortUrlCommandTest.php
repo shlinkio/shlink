@@ -95,7 +95,7 @@ class CreateShortUrlCommandTest extends TestCase
 
         $this->commandTester->execute([
             'longUrl' => 'http://domain.com/foo/bar',
-            '--tags' => ['foo,bar', 'baz', 'boo,zar,baz'],
+            '--tag' => ['foo', 'bar', 'baz', 'boo', 'zar', 'baz'],
         ]);
         $output = $this->commandTester->getDisplay();
 
