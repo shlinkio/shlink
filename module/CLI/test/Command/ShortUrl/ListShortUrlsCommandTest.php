@@ -231,7 +231,7 @@ class ListShortUrlsCommandTest extends TestCase
     {
         yield [[], 1, null, [], TagsMode::ANY->value];
         yield [['--page' => $page = 3], $page, null, [], TagsMode::ANY->value];
-        yield [['--including-all-tags' => true], 1, null, [], TagsMode::ALL->value];
+        yield [['--tags-all' => true], 1, null, [], TagsMode::ALL->value];
         yield [['--search-term' => $searchTerm = 'search this'], 1, $searchTerm, [], TagsMode::ANY->value];
         yield [
             ['--page' => $page = 3, '--search-term' => $searchTerm = 'search this', '--tag' => $tags = ['foo', 'bar']],

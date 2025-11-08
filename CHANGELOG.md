@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#2514](https://github.com/shlinkio/shlink/issues/2514) Remove support to generate QR codes. This functionality is now handled by Shlink Web Client and Shlink Dashboard.
 * [#2517](https://github.com/shlinkio/shlink/issues/2517) Remove `REDIRECT_APPEND_EXTRA_PATH` env var. Use `REDIRECT_EXTRA_PATH_MODE=append` instead.
 * [#2519](https://github.com/shlinkio/shlink/issues/2519) Disabling API keys by their plain-text key is no longer supported. When calling `api-key:disable`, the first argument is now always assumed to be the name.
+* [#2520](https://github.com/shlinkio/shlink/issues/2520) Remove deprecated `--including-all-tags` and `--show-api-key-name` deprecated options from `short-url:list` command. Use `--tags-all` and `--show-api-key` instead.
 
 ### Fixed
 * *Nothing*
