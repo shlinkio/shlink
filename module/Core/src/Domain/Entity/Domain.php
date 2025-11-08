@@ -15,9 +15,9 @@ class Domain extends AbstractEntity implements JsonSerializable, NotFoundRedirec
 
     private function __construct(
         public readonly string $authority,
-        private string|null $baseUrlRedirect = null,
-        private string|null $regular404Redirect = null,
-        private string|null $invalidShortUrlRedirect = null,
+        private(set) string|null $baseUrlRedirect = null,
+        private(set) string|null $regular404Redirect = null,
+        private(set) string|null $invalidShortUrlRedirect = null,
     ) {
     }
 
@@ -29,36 +29,6 @@ class Domain extends AbstractEntity implements JsonSerializable, NotFoundRedirec
     public function jsonSerialize(): string
     {
         return $this->authority;
-    }
-
-    public function invalidShortUrlRedirect(): string|null
-    {
-        return $this->invalidShortUrlRedirect;
-    }
-
-    public function hasInvalidShortUrlRedirect(): bool
-    {
-        return $this->invalidShortUrlRedirect !== null;
-    }
-
-    public function regular404Redirect(): string|null
-    {
-        return $this->regular404Redirect;
-    }
-
-    public function hasRegular404Redirect(): bool
-    {
-        return $this->regular404Redirect !== null;
-    }
-
-    public function baseUrlRedirect(): string|null
-    {
-        return $this->baseUrlRedirect;
-    }
-
-    public function hasBaseUrlRedirect(): bool
-    {
-        return $this->baseUrlRedirect !== null;
     }
 
     public function configureNotFoundRedirects(NotFoundRedirects $redirects): void

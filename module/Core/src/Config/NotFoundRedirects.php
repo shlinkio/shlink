@@ -6,12 +6,12 @@ namespace Shlinkio\Shlink\Core\Config;
 
 use JsonSerializable;
 
-final class NotFoundRedirects implements JsonSerializable
+final readonly class NotFoundRedirects implements JsonSerializable
 {
     private function __construct(
-        public readonly string|null $baseUrlRedirect,
-        public readonly string|null $regular404Redirect,
-        public readonly string|null $invalidShortUrlRedirect,
+        public string|null $baseUrlRedirect,
+        public string|null $regular404Redirect,
+        public string|null $invalidShortUrlRedirect,
     ) {
     }
 
@@ -30,7 +30,7 @@ final class NotFoundRedirects implements JsonSerializable
 
     public static function fromConfig(NotFoundRedirectConfigInterface $config): self
     {
-        return new self($config->baseUrlRedirect(), $config->regular404Redirect(), $config->invalidShortUrlRedirect());
+        return new self($config->baseUrlRedirect, $config->regular404Redirect, $config->invalidShortUrlRedirect);
     }
 
     public function jsonSerialize(): array

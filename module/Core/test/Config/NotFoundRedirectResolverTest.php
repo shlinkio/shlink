@@ -57,57 +57,57 @@ class NotFoundRedirectResolverTest extends TestCase
         yield 'base URL with trailing slash' => [
             $uri = new Uri('/'),
             self::notFoundType(ServerRequestFactory::fromGlobals()->withUri($uri)),
-            new NotFoundRedirectOptions(baseUrl: 'https://example.com/baseUrl'),
+            new NotFoundRedirectOptions(baseUrlRedirect: 'https://example.com/baseUrl'),
             'https://example.com/baseUrl',
         ];
         yield 'base URL without trailing slash' => [
             $uri = new Uri(''),
             self::notFoundType(ServerRequestFactory::fromGlobals()->withUri($uri)),
-            new NotFoundRedirectOptions(baseUrl: 'https://example.com/baseUrl'),
+            new NotFoundRedirectOptions(baseUrlRedirect: 'https://example.com/baseUrl'),
             'https://example.com/baseUrl',
         ];
         yield 'base URL with domain placeholder' => [
             $uri = new Uri('https://s.test'),
             self::notFoundType(ServerRequestFactory::fromGlobals()->withUri($uri)),
-            new NotFoundRedirectOptions(baseUrl: 'https://redirect-here.com/{DOMAIN}'),
+            new NotFoundRedirectOptions(baseUrlRedirect: 'https://redirect-here.com/{DOMAIN}'),
             'https://redirect-here.com/s.test',
         ];
         yield 'base URL with domain placeholder in query' => [
             $uri = new Uri('https://s.test'),
             self::notFoundType(ServerRequestFactory::fromGlobals()->withUri($uri)),
-            new NotFoundRedirectOptions(baseUrl: 'https://redirect-here.com/?domain={DOMAIN}'),
+            new NotFoundRedirectOptions(baseUrlRedirect: 'https://redirect-here.com/?domain={DOMAIN}'),
             'https://redirect-here.com/?domain=s.test',
         ];
         yield 'regular 404' => [
             $uri = new Uri('/foo/bar'),
             self::notFoundType(ServerRequestFactory::fromGlobals()->withUri($uri)),
-            new NotFoundRedirectOptions(regular404: 'https://example.com/regular404'),
+            new NotFoundRedirectOptions(regular404Redirect: 'https://example.com/regular404'),
             'https://example.com/regular404',
         ];
         yield 'regular 404 with path placeholder in query' => [
             $uri = new Uri('/foo/bar'),
             self::notFoundType(ServerRequestFactory::fromGlobals()->withUri($uri)),
-            new NotFoundRedirectOptions(regular404: 'https://redirect-here.com/?path={ORIGINAL_PATH}'),
+            new NotFoundRedirectOptions(regular404Redirect: 'https://redirect-here.com/?path={ORIGINAL_PATH}'),
             'https://redirect-here.com/?path=%2Ffoo%2Fbar',
         ];
         yield 'regular 404 with multiple placeholders' => [
             $uri = new Uri('https://s.test/foo/bar'),
             self::notFoundType(ServerRequestFactory::fromGlobals()->withUri($uri)),
             new NotFoundRedirectOptions(
-                regular404: 'https://redirect-here.com/{ORIGINAL_PATH}/{DOMAIN}/?d={DOMAIN}&p={ORIGINAL_PATH}',
+                regular404Redirect: 'https://redirect-here.com/{ORIGINAL_PATH}/{DOMAIN}/?d={DOMAIN}&p={ORIGINAL_PATH}',
             ),
             'https://redirect-here.com/foo/bar/s.test/?d=s.test&p=%2Ffoo%2Fbar',
         ];
         yield 'invalid short URL' => [
             new Uri('/foo'),
             self::notFoundType(self::requestForRoute(RedirectAction::class)),
-            new NotFoundRedirectOptions(invalidShortUrl: 'https://example.com/invalidShortUrl'),
+            new NotFoundRedirectOptions(invalidShortUrlRedirect: 'https://example.com/invalidShortUrl'),
             'https://example.com/invalidShortUrl',
         ];
         yield 'invalid short URL with path placeholder' => [
             new Uri('/foo'),
             self::notFoundType(self::requestForRoute(RedirectAction::class)),
-            new NotFoundRedirectOptions(invalidShortUrl: 'https://redirect-here.com/{ORIGINAL_PATH}'),
+            new NotFoundRedirectOptions(invalidShortUrlRedirect: 'https://redirect-here.com/{ORIGINAL_PATH}'),
             'https://redirect-here.com/foo',
         ];
     }

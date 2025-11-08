@@ -68,13 +68,13 @@ class DomainRedirectsActionTest extends TestCase
             NotFoundRedirects::withRedirects(
                 array_key_exists(DomainRedirectsInputFilter::BASE_URL_REDIRECT, $redirects)
                     ? $redirects[DomainRedirectsInputFilter::BASE_URL_REDIRECT]
-                    : $domain->baseUrlRedirect(),
+                    : $domain->baseUrlRedirect,
                 array_key_exists(DomainRedirectsInputFilter::REGULAR_404_REDIRECT, $redirects)
                     ? $redirects[DomainRedirectsInputFilter::REGULAR_404_REDIRECT]
-                    : $domain->regular404Redirect(),
+                    : $domain->regular404Redirect,
                 array_key_exists(DomainRedirectsInputFilter::INVALID_SHORT_URL_REDIRECT, $redirects)
                     ? $redirects[DomainRedirectsInputFilter::INVALID_SHORT_URL_REDIRECT]
-                    : $domain->invalidShortUrlRedirect(),
+                    : $domain->invalidShortUrlRedirect,
             ),
             $apiKey,
         );
