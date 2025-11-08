@@ -92,19 +92,6 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
         return $this->disableApiKey($apiKey);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function disableByKey(string $key): ApiKey
-    {
-        $apiKey = $this->findByKey($key);
-        if ($apiKey === null) {
-            throw ApiKeyNotFoundException::forKey($key);
-        }
-
-        return $this->disableApiKey($apiKey);
-    }
-
     private function disableApiKey(ApiKey $apiKey): ApiKey
     {
         $apiKey->disable();
