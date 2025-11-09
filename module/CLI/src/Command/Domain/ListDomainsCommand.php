@@ -59,9 +59,9 @@ class ListDomainsCommand extends Command
 
     private function notFoundRedirectsToString(NotFoundRedirectConfigInterface $config): string
     {
-        $baseUrl = $config->baseUrlRedirect() ?? 'N/A';
-        $regular404 = $config->regular404Redirect() ?? 'N/A';
-        $invalidShortUrl = $config->invalidShortUrlRedirect() ?? 'N/A';
+        $baseUrl = $config->baseUrlRedirect ?? 'N/A';
+        $regular404 = $config->regular404Redirect ?? 'N/A';
+        $invalidShortUrl = $config->invalidShortUrlRedirect ?? 'N/A';
 
         return <<<EOL
         * Base URL: {$baseUrl}

@@ -32,12 +32,10 @@ class NotFoundRedirectResolver implements NotFoundRedirectResolverInterface
         UriInterface $currentUri,
     ): ResponseInterface|null {
         $urlToRedirectTo = match (true) {
-            $notFoundType->isBaseUrl() && $config->hasBaseUrlRedirect() => $config->baseUrlRedirect(),
-            $notFoundType->isRegularNotFound() && $config->hasRegular404Redirect() => $config->regular404Redirect(),
-            $notFoundType->isInvalidShortUrl() && $config->hasInvalidShortUrlRedirect() =>
-                $config->invalidShortUrlRedirect(),
-            $notFoundType->isExpiredShortUrl() && $config->hasExpiredShortUrlRedirect() =>
-                $config->expiredShortUrlRedirect(),
+            $notFoundType->isBaseUrl() => $config->baseUrlRedirect,
+            $notFoundType->isRegularNotFound() => $config->regular404Redirect,
+            $notFoundType->isInvalidShortUrl() => $config->invalidShortUrlRedirect,
+            $notFoundType->isExpiredShortUrl() => $config->expiredShortUrlRedirect,
             default => null,
         };
 

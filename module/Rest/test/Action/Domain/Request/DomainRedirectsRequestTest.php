@@ -62,9 +62,9 @@ class DomainRedirectsRequestTest extends TestCase
         yield 'fallbacks' => [
             ['domain' => 'domain', 'baseUrlRedirect' => 'bar'],
             new NotFoundRedirectOptions(
-                invalidShortUrl: 'fallback2',
-                regular404: 'fallback',
-                expiredShortUrl: 'fallback3',
+                invalidShortUrlRedirect: 'fallback2',
+                regular404Redirect: 'fallback',
+                expiredShortUrlRedirect: 'fallback3',
             ),
             'domain',
             'bar',
@@ -80,9 +80,9 @@ class DomainRedirectsRequestTest extends TestCase
                 'expiredShortUrlRedirect' => null,
             ],
             new NotFoundRedirectOptions(
-                invalidShortUrl: 'fallback2',
-                regular404: 'fallback',
-                expiredShortUrl: 'fallback3',
+                invalidShortUrlRedirect: 'fallback2',
+                regular404Redirect: 'fallback',
+                expiredShortUrlRedirect: 'fallback3',
             ),
             'domain',
             null,

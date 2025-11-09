@@ -181,9 +181,9 @@ class DomainServiceTest extends TestCase
         if ($foundDomain !== null) {
             self::assertSame($result, $foundDomain);
         }
-        self::assertEquals('foo.com', $result->baseUrlRedirect());
-        self::assertEquals('bar.com', $result->regular404Redirect());
-        self::assertEquals('baz.com', $result->invalidShortUrlRedirect());
+        self::assertEquals('foo.com', $result->baseUrlRedirect);
+        self::assertEquals('bar.com', $result->regular404Redirect);
+        self::assertEquals('baz.com', $result->invalidShortUrlRedirect);
     }
 
     public static function provideFoundDomains(): iterable
