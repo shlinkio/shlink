@@ -25,7 +25,8 @@ return [
             ErrorHandler\NotFoundTypeResolverMiddleware::class => ConfigAbstractFactory::class,
             ErrorHandler\NotFoundTrackerMiddleware::class => ConfigAbstractFactory::class,
             ErrorHandler\NotFoundRedirectHandler::class => ConfigAbstractFactory::class,
-            ErrorHandler\NotFoundTemplateHandler::class => InvokableFactory::class,
+            ErrorHandler\ErrorTemplateHandler::class => InvokableFactory::class,
+            ErrorHandler\NotFoundTemplateHandler::class => ConfigAbstractFactory::class,
 
             Config\Options\AppOptions::class => [Config\Options\AppOptions::class, 'fromEnv'],
             Config\Options\DeleteShortUrlsOptions::class => [Config\Options\DeleteShortUrlsOptions::class, 'fromEnv'],
@@ -137,6 +138,9 @@ return [
             NotFoundRedirectOptions::class,
             Config\NotFoundRedirectResolver::class,
             Domain\DomainService::class,
+        ],
+        ErrorHandler\NotFoundTemplateHandler::class => [
+            ErrorHandler\ErrorTemplateHandler::class,
         ],
 
         ShortUrl\UrlShortener::class => [

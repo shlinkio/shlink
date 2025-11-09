@@ -75,6 +75,9 @@ class DomainRedirectsActionTest extends TestCase
                 array_key_exists(DomainRedirectsInputFilter::INVALID_SHORT_URL_REDIRECT, $redirects)
                     ? $redirects[DomainRedirectsInputFilter::INVALID_SHORT_URL_REDIRECT]
                     : $domain->invalidShortUrlRedirect(),
+                array_key_exists(DomainRedirectsInputFilter::EXPIRED_SHORT_URL_REDIRECT, $redirects)
+                    ? $redirects[DomainRedirectsInputFilter::EXPIRED_SHORT_URL_REDIRECT]
+                    : $domain->expiredShortUrlRedirect(),
             ),
             $apiKey,
         );
@@ -93,10 +96,12 @@ class DomainRedirectsActionTest extends TestCase
             DomainRedirectsInputFilter::BASE_URL_REDIRECT => 'foo',
             DomainRedirectsInputFilter::REGULAR_404_REDIRECT => 'bar',
             DomainRedirectsInputFilter::INVALID_SHORT_URL_REDIRECT => 'baz',
+            DomainRedirectsInputFilter::EXPIRED_SHORT_URL_REDIRECT => 'qux',
         ], [
             DomainRedirectsInputFilter::BASE_URL_REDIRECT => 'foo',
             DomainRedirectsInputFilter::REGULAR_404_REDIRECT => 'bar',
             DomainRedirectsInputFilter::INVALID_SHORT_URL_REDIRECT => 'baz',
+            DomainRedirectsInputFilter::EXPIRED_SHORT_URL_REDIRECT => 'qux',
         ]];
         yield 'partial overwrite' => [Domain::withAuthority(''), [
             DomainRedirectsInputFilter::BASE_URL_REDIRECT => 'foo',
@@ -105,6 +110,7 @@ class DomainRedirectsActionTest extends TestCase
             DomainRedirectsInputFilter::BASE_URL_REDIRECT => 'foo',
             DomainRedirectsInputFilter::REGULAR_404_REDIRECT => null,
             DomainRedirectsInputFilter::INVALID_SHORT_URL_REDIRECT => 'baz',
+            DomainRedirectsInputFilter::EXPIRED_SHORT_URL_REDIRECT => null,
         ]];
         yield 'no override' => [
             (static function (): Domain {
@@ -113,6 +119,7 @@ class DomainRedirectsActionTest extends TestCase
                     'baz',
                     'bar',
                     'foo',
+                    'qux',
                 ));
 
                 return $domain;
@@ -122,6 +129,7 @@ class DomainRedirectsActionTest extends TestCase
                 DomainRedirectsInputFilter::BASE_URL_REDIRECT => 'baz',
                 DomainRedirectsInputFilter::REGULAR_404_REDIRECT => 'bar',
                 DomainRedirectsInputFilter::INVALID_SHORT_URL_REDIRECT => 'foo',
+                DomainRedirectsInputFilter::EXPIRED_SHORT_URL_REDIRECT => 'qux',
             ],
         ];
         yield 'reset' => [
@@ -131,6 +139,7 @@ class DomainRedirectsActionTest extends TestCase
                     'foo',
                     'bar',
                     'baz',
+                    'qux',
                 ));
 
                 return $domain;
@@ -139,11 +148,13 @@ class DomainRedirectsActionTest extends TestCase
                 DomainRedirectsInputFilter::BASE_URL_REDIRECT => null,
                 DomainRedirectsInputFilter::REGULAR_404_REDIRECT => null,
                 DomainRedirectsInputFilter::INVALID_SHORT_URL_REDIRECT => null,
+                DomainRedirectsInputFilter::EXPIRED_SHORT_URL_REDIRECT => null,
             ],
             [
                 DomainRedirectsInputFilter::BASE_URL_REDIRECT => null,
                 DomainRedirectsInputFilter::REGULAR_404_REDIRECT => null,
                 DomainRedirectsInputFilter::INVALID_SHORT_URL_REDIRECT => null,
+                DomainRedirectsInputFilter::EXPIRED_SHORT_URL_REDIRECT => null,
             ],
         ];
     }

@@ -13,6 +13,7 @@ final readonly class NotFoundRedirectOptions implements NotFoundRedirectConfigIn
         public string|null $invalidShortUrl = null,
         public string|null $regular404 = null,
         public string|null $baseUrl = null,
+        public string|null $expiredShortUrl = null,
     ) {
     }
 
@@ -22,6 +23,7 @@ final readonly class NotFoundRedirectOptions implements NotFoundRedirectConfigIn
             invalidShortUrl: EnvVars::DEFAULT_INVALID_SHORT_URL_REDIRECT->loadFromEnv(),
             regular404: EnvVars::DEFAULT_REGULAR_404_REDIRECT->loadFromEnv(),
             baseUrl: EnvVars::DEFAULT_BASE_URL_REDIRECT->loadFromEnv(),
+            expiredShortUrl: EnvVars::DEFAULT_EXPIRED_SHORT_URL_REDIRECT->loadFromEnv(),
         );
     }
 
@@ -53,5 +55,15 @@ final readonly class NotFoundRedirectOptions implements NotFoundRedirectConfigIn
     public function hasBaseUrlRedirect(): bool
     {
         return $this->baseUrl !== null;
+    }
+
+    public function expiredShortUrlRedirect(): string|null
+    {
+        return $this->expiredShortUrl;
+    }
+
+    public function hasExpiredShortUrlRedirect(): bool
+    {
+        return $this->expiredShortUrl !== null;
     }
 }

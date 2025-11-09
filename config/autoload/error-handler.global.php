@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Laminas\Stratigility\Middleware\ErrorHandler;
 use Mezzio\ProblemDetails\ProblemDetailsMiddleware;
 use Shlinkio\Shlink\Common\Logger;
+use Shlinkio\Shlink\Core\ErrorHandler\ErrorTemplateResponseGeneratorDelegator;
 
 use function Shlinkio\Shlink\Core\toProblemDetailsType;
 
@@ -25,6 +26,7 @@ return [
         'delegators' => [
             ErrorHandler::class => [
                 Logger\ErrorHandlerListenerAttachingDelegator::class,
+                ErrorTemplateResponseGeneratorDelegator::class,
             ],
             ProblemDetailsMiddleware::class => [
                 Logger\ErrorHandlerListenerAttachingDelegator::class,

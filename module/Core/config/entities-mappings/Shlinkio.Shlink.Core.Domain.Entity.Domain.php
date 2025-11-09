@@ -42,4 +42,10 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
             ->nullable()
             ->length(2048)
             ->build();
+
+    fieldWithUtf8Charset($builder->createField('expiredShortUrlRedirect', Types::TEXT), $emConfig)
+            ->columnName('expired_short_url_redirect')
+            ->nullable()
+            ->length(2048)
+            ->build();
 };

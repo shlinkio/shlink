@@ -35,4 +35,14 @@ final class EmptyNotFoundRedirectConfig implements NotFoundRedirectConfigInterfa
     {
         return false;
     }
+
+    public function expiredShortUrlRedirect(): string|null
+    {
+        return null;
+    }
+
+    public function hasExpiredShortUrlRedirect(): bool
+    {
+        return false;
+    }
 }

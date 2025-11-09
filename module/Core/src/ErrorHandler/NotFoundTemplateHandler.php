@@ -4,28 +4,17 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\ErrorHandler;
 
-use Closure;
 use Fig\Http\Message\StatusCodeInterface;
-use Laminas\Diactoros\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use RuntimeException;
 use Shlinkio\Shlink\Core\ErrorHandler\Model\NotFoundType;
-
-use function file_get_contents;
-use function sprintf;
 
 class NotFoundTemplateHandler implements RequestHandlerInterface
 {
-    private const string TEMPLATES_BASE_DIR = __DIR__ . '/../../templates';
-    public const string NOT_FOUND_TEMPLATE = '404.html';
-    public const string INVALID_SHORT_CODE_TEMPLATE = 'invalid-short-code.html';
-
-    private Closure $readFile;
-
-    public function __construct(callable|null $readFile = null)
+    public function __construct(private ErrorTemplateHandler $errorTemplateHandler)
     {
-        $this->readFile = $readFile ? Closure::fromCallable($readFile) : fn (string $file) => file_get_contents($file);
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -34,8 +23,17 @@ class NotFoundTemplateHandler implements RequestHandlerInterface
         $notFoundType = $request->getAttribute(NotFoundType::class);
         $status = StatusCodeInterface::STATUS_NOT_FOUND;
 
-        $template = $notFoundType->isInvalidShortUrl() ? self::INVALID_SHORT_CODE_TEMPLATE : self::NOT_FOUND_TEMPLATE;
-        $templateContent = ($this->readFile)(sprintf('%s/%s', self::TEMPLATES_BASE_DIR, $template));
-        return new Response\HtmlResponse($templateContent, $status);
+        // Create a mock exception for the error template handler
+        $error = new RuntimeException('Not Found');
+
+        // Get specific description based on NotFoundType
+        $description = match (true) {
+            $notFoundType->isExpiredShortUrl() => '<div class="description-box"><strong>This link has expired</strong><p>The short link you are trying to access is no longer valid because it has passed its expiration date or reached its maximum number of visits.</p></div>',
+            $notFoundType->isInvalidShortUrl() => '<div class="description-box"><strong>Invalid short URL</strong><p>This short URL doesn\'t seem to be valid. Make sure you included all the characters, with no extra punctuation.</p></div>',
+            default => '',
+        };
+
+        // Create error response with custom description
+        return $this->errorTemplateHandler->createErrorResponse($error, $status, $description);
     }
 }

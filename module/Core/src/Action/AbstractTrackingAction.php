@@ -10,6 +10,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Shlinkio\Shlink\Core\ErrorHandler\Model\NotFoundType;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
@@ -40,6 +41,18 @@ abstract class AbstractTrackingAction implements MiddlewareInterface, RequestMet
 
             return $response;
         } catch (ShortUrlNotFoundException) {
+            try {
+                $shortUrl = $this->urlResolver->resolvePublicShortUrl($identifier);
+                if ($shortUrl->isExpired()) {
+                    $notFoundType = NotFoundType::forExpiredShortUrl();
+                    $request = $request->withAttribute(NotFoundType::class, $notFoundType);
+                    $this->requestTracker->trackNotFoundIfApplicable($request);
+
+                    return $this->createErrorResp($request, $handler);
+                }
+            } catch (ShortUrlNotFoundException) {
+            }
+
             return $this->createErrorResp($request, $handler);
         }
     }

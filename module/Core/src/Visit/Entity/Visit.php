@@ -54,6 +54,11 @@ class Visit extends AbstractEntity implements JsonSerializable
         return self::fromVisitor(null, VisitType::REGULAR_404, $visitor, $anonymize);
     }
 
+    public static function forExpiredShortUrl(Visitor $visitor, bool $anonymize = true): self
+    {
+        return self::fromVisitor(null, VisitType::EXPIRED_SHORT_URL, $visitor, $anonymize);
+    }
+
     private static function fromVisitor(
         ShortUrl|null $shortUrl,
         VisitType $type,

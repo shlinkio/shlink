@@ -46,6 +46,7 @@ readonly class RequestTracker implements RequestTrackerInterface, RequestMethodI
             $notFoundType?->isBaseUrl() => $this->visitsTracker->trackBaseUrlVisit($visitor),
             $notFoundType?->isRegularNotFound() => $this->visitsTracker->trackRegularNotFoundVisit($visitor),
             $notFoundType?->isInvalidShortUrl() => $this->visitsTracker->trackInvalidShortUrlVisit($visitor),
+            $notFoundType?->isExpiredShortUrl() => $this->visitsTracker->trackExpiredShortUrlVisit($visitor),
             default => null,
         };
     }

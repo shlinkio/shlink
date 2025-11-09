@@ -17,4 +17,8 @@ interface NotFoundRedirectConfigInterface
     public function baseUrlRedirect(): string|null;
 
     public function hasBaseUrlRedirect(): bool;
+
+    public function expiredShortUrlRedirect(): string|null;
+
+    public function hasExpiredShortUrlRedirect(): bool;
 }

@@ -15,6 +15,7 @@ class DomainRedirectsInputFilter extends InputFilter
     public const string BASE_URL_REDIRECT = 'baseUrlRedirect';
     public const string REGULAR_404_REDIRECT = 'regular404Redirect';
     public const string INVALID_SHORT_URL_REDIRECT = 'invalidShortUrlRedirect';
+    public const string EXPIRED_SHORT_URL_REDIRECT = 'expiredShortUrlRedirect';
 
     private function __construct()
     {
@@ -39,5 +40,6 @@ class DomainRedirectsInputFilter extends InputFilter
         $this->add(InputFactory::basic(self::BASE_URL_REDIRECT));
         $this->add(InputFactory::basic(self::REGULAR_404_REDIRECT));
         $this->add(InputFactory::basic(self::INVALID_SHORT_URL_REDIRECT));
+        $this->add(InputFactory::basic(self::EXPIRED_SHORT_URL_REDIRECT));
     }
 }

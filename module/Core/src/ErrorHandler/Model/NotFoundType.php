@@ -33,6 +33,11 @@ readonly class NotFoundType
         return new self($type);
     }
 
+    public static function forExpiredShortUrl(): self
+    {
+        return new self(VisitType::EXPIRED_SHORT_URL);
+    }
+
     public function isBaseUrl(): bool
     {
         return $this->type === VisitType::BASE_URL;
@@ -46,5 +51,10 @@ readonly class NotFoundType
     public function isInvalidShortUrl(): bool
     {
         return $this->type === VisitType::INVALID_SHORT_URL;
+    }
+
+    public function isExpiredShortUrl(): bool
+    {
+        return $this->type === VisitType::EXPIRED_SHORT_URL;
     }
 }

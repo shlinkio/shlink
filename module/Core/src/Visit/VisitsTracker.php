@@ -53,6 +53,14 @@ readonly class VisitsTracker implements VisitsTrackerInterface
         );
     }
 
+    public function trackExpiredShortUrlVisit(Visitor $visitor): Visit|null
+    {
+        return $this->trackOrphanVisit(
+            fn (Visitor $v) => Visit::forExpiredShortUrl($v, $this->options->anonymizeRemoteAddr),
+            $visitor,
+        );
+    }
+
     private function trackOrphanVisit(callable $createVisit, Visitor $visitor): Visit|null
     {
         if (! $this->options->trackOrphanVisits) {

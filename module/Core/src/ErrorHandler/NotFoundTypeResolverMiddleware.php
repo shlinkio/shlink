@@ -18,6 +18,12 @@ class NotFoundTypeResolverMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        // If NotFoundType is already set (e.g., by AbstractTrackingAction for expired URLs), don't override it
+        $existingNotFoundType = $request->getAttribute(NotFoundType::class);
+        if ($existingNotFoundType !== null) {
+            return $handler->handle($request);
+        }
+
         $notFoundType = NotFoundType::fromRequest($request, $this->shlinkBasePath);
         return $handler->handle($request->withAttribute(NotFoundType::class, $notFoundType));
     }

@@ -36,6 +36,8 @@ class NotFoundRedirectResolver implements NotFoundRedirectResolverInterface
             $notFoundType->isRegularNotFound() && $config->hasRegular404Redirect() => $config->regular404Redirect(),
             $notFoundType->isInvalidShortUrl() && $config->hasInvalidShortUrlRedirect() =>
                 $config->invalidShortUrlRedirect(),
+            $notFoundType->isExpiredShortUrl() && $config->hasExpiredShortUrlRedirect() =>
+                $config->expiredShortUrlRedirect(),
             default => null,
         };
 

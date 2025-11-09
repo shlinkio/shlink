@@ -20,6 +20,8 @@ class DomainRedirectsRequest
     private bool $regular404RedirectWasProvided = false;
     private string|null $invalidShortUrlRedirect = null;
     private bool $invalidShortUrlRedirectWasProvided = false;
+    private string|null $expiredShortUrlRedirect = null;
+    private bool $expiredShortUrlRedirectWasProvided = false;
 
     private function __construct()
     {
@@ -54,11 +56,16 @@ class DomainRedirectsRequest
             DomainRedirectsInputFilter::INVALID_SHORT_URL_REDIRECT,
             $payload,
         );
+        $this->expiredShortUrlRedirectWasProvided = array_key_exists(
+            DomainRedirectsInputFilter::EXPIRED_SHORT_URL_REDIRECT,
+            $payload,
+        );
 
         $this->authority = $inputFilter->getValue(DomainRedirectsInputFilter::DOMAIN);
         $this->baseUrlRedirect = $inputFilter->getValue(DomainRedirectsInputFilter::BASE_URL_REDIRECT);
         $this->regular404Redirect = $inputFilter->getValue(DomainRedirectsInputFilter::REGULAR_404_REDIRECT);
         $this->invalidShortUrlRedirect = $inputFilter->getValue(DomainRedirectsInputFilter::INVALID_SHORT_URL_REDIRECT);
+        $this->expiredShortUrlRedirect = $inputFilter->getValue(DomainRedirectsInputFilter::EXPIRED_SHORT_URL_REDIRECT);
     }
 
     public function authority(): string
@@ -74,6 +81,9 @@ class DomainRedirectsRequest
             $this->invalidShortUrlRedirectWasProvided
                 ? $this->invalidShortUrlRedirect
                 : $defaults?->invalidShortUrlRedirect(),
+            $this->expiredShortUrlRedirectWasProvided
+                ? $this->expiredShortUrlRedirect
+                : $defaults?->expiredShortUrlRedirect(),
         );
     }
 }

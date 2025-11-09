@@ -11,4 +11,5 @@ enum VisitType: string
     case INVALID_SHORT_URL = OrphanVisitType::INVALID_SHORT_URL->value;
     case BASE_URL = OrphanVisitType::BASE_URL->value;
     case REGULAR_404 = OrphanVisitType::REGULAR_404->value;
+    case EXPIRED_SHORT_URL = OrphanVisitType::EXPIRED_SHORT_URL->value;
 }

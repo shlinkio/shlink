@@ -14,6 +14,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
+use Shlinkio\Shlink\Core\ErrorHandler\ErrorTemplateHandler;
 use Shlinkio\Shlink\Core\ErrorHandler\Model\NotFoundType;
 use Shlinkio\Shlink\Core\ErrorHandler\NotFoundTemplateHandler;
 
@@ -31,7 +32,8 @@ class NotFoundTemplateHandlerTest extends TestCase
             $this->readFileCalled = true;
             return $fileName;
         };
-        $this->handler = new NotFoundTemplateHandler($readFile);
+        $errorTemplateHandler = new ErrorTemplateHandler($readFile);
+        $this->handler = new NotFoundTemplateHandler($errorTemplateHandler);
     }
 
     #[Test, DataProvider('provideTemplates')]
@@ -48,8 +50,8 @@ class NotFoundTemplateHandlerTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals()->withUri(new Uri('/foo'));
 
-        yield 'base url' => [self::withNotFoundType($request, '/foo'), NotFoundTemplateHandler::NOT_FOUND_TEMPLATE];
-        yield 'regular not found' => [self::withNotFoundType($request), NotFoundTemplateHandler::NOT_FOUND_TEMPLATE];
+        yield 'base url' => [self::withNotFoundType($request, '/foo'), ErrorTemplateHandler::ERROR_TEMPLATE];
+        yield 'regular not found' => [self::withNotFoundType($request), ErrorTemplateHandler::ERROR_TEMPLATE];
         yield 'invalid short code' => [
             self::withNotFoundType($request->withAttribute(
                 RouteResult::class,
@@ -63,7 +65,7 @@ class NotFoundTemplateHandlerTest extends TestCase
                     ),
                 ),
             )),
-            NotFoundTemplateHandler::INVALID_SHORT_CODE_TEMPLATE,
+            ErrorTemplateHandler::ERROR_TEMPLATE,
         ];
     }
 

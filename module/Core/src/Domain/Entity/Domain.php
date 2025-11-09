@@ -18,6 +18,7 @@ class Domain extends AbstractEntity implements JsonSerializable, NotFoundRedirec
         private string|null $baseUrlRedirect = null,
         private string|null $regular404Redirect = null,
         private string|null $invalidShortUrlRedirect = null,
+        private string|null $expiredShortUrlRedirect = null,
     ) {
     }
 
@@ -61,10 +62,21 @@ class Domain extends AbstractEntity implements JsonSerializable, NotFoundRedirec
         return $this->baseUrlRedirect !== null;
     }
 
+    public function expiredShortUrlRedirect(): string|null
+    {
+        return $this->expiredShortUrlRedirect;
+    }
+
+    public function hasExpiredShortUrlRedirect(): bool
+    {
+        return $this->expiredShortUrlRedirect !== null;
+    }
+
     public function configureNotFoundRedirects(NotFoundRedirects $redirects): void
     {
         $this->baseUrlRedirect = $redirects->baseUrlRedirect;
         $this->regular404Redirect = $redirects->regular404Redirect;
         $this->invalidShortUrlRedirect = $redirects->invalidShortUrlRedirect;
+        $this->expiredShortUrlRedirect = $redirects->expiredShortUrlRedirect;
     }
 }

@@ -268,6 +268,22 @@ class ShortUrl extends AbstractEntity
         return true;
     }
 
+    public function isExpired(): bool
+    {
+        $now = Chronos::now();
+        $afterValidUntil = $this->validUntil !== null && $this->validUntil->lessThan($now);
+        if ($afterValidUntil) {
+            return true;
+        }
+
+        $maxVisitsReached = $this->maxVisits !== null && $this->reachedVisits($this->maxVisits);
+        if ($maxVisitsReached) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * @param null|(callable(): ?string) $getAuthority -
      *  This is a callback so that we trust its return value if provided, even if it is null.

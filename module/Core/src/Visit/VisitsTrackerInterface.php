@@ -17,4 +17,6 @@ interface VisitsTrackerInterface
     public function trackBaseUrlVisit(Visitor $visitor): Visit|null;
 
     public function trackRegularNotFoundVisit(Visitor $visitor): Visit|null;
+
+    public function trackExpiredShortUrlVisit(Visitor $visitor): Visit|null;
 }

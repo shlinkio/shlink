@@ -12,6 +12,7 @@ final class NotFoundRedirects implements JsonSerializable
         public readonly string|null $baseUrlRedirect,
         public readonly string|null $regular404Redirect,
         public readonly string|null $invalidShortUrlRedirect,
+        public readonly string|null $expiredShortUrlRedirect,
     ) {
     }
 
@@ -19,18 +20,24 @@ final class NotFoundRedirects implements JsonSerializable
         string|null $baseUrlRedirect,
         string|null $regular404Redirect = null,
         string|null $invalidShortUrlRedirect = null,
+        string|null $expiredShortUrlRedirect = null,
     ): self {
-        return new self($baseUrlRedirect, $regular404Redirect, $invalidShortUrlRedirect);
+        return new self($baseUrlRedirect, $regular404Redirect, $invalidShortUrlRedirect, $expiredShortUrlRedirect);
     }
 
     public static function withoutRedirects(): self
     {
-        return new self(null, null, null);
+        return new self(null, null, null, null);
     }
 
     public static function fromConfig(NotFoundRedirectConfigInterface $config): self
     {
-        return new self($config->baseUrlRedirect(), $config->regular404Redirect(), $config->invalidShortUrlRedirect());
+        return new self(
+            $config->baseUrlRedirect(),
+            $config->regular404Redirect(),
+            $config->invalidShortUrlRedirect(),
+            $config->expiredShortUrlRedirect(),
+        );
     }
 
     public function jsonSerialize(): array
@@ -39,6 +46,7 @@ final class NotFoundRedirects implements JsonSerializable
             'baseUrlRedirect' => $this->baseUrlRedirect,
             'regular404Redirect' => $this->regular404Redirect,
             'invalidShortUrlRedirect' => $this->invalidShortUrlRedirect,
+            'expiredShortUrlRedirect' => $this->expiredShortUrlRedirect,
         ];
     }
 }
