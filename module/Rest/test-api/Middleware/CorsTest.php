@@ -7,7 +7,9 @@ namespace ShlinkioApiTest\Shlink\Rest\Middleware;
 use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Shlinkio\Shlink\Core\Config\EnvVars;
 use Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase;
+use ShlinkioApiTest\Shlink\Rest\Utils\WithEnvVars;
 
 class CorsTest extends ApiTestCase
 {
@@ -61,8 +63,8 @@ class CorsTest extends ApiTestCase
         ]);
 
         self::assertEquals(204, $resp->getStatusCode());
-        self::assertTrue($resp->hasHeader('Access-Control-Allow-Origin'));
-        self::assertTrue($resp->hasHeader('Access-Control-Max-Age'));
+        self::assertEquals('*', $resp->getHeaderLine('Access-Control-Allow-Origin'));
+        self::assertEquals('3600', $resp->getHeaderLine('Access-Control-Max-Age'));
         self::assertEquals($expectedAllowedMethods, $resp->getHeaderLine('Access-Control-Allow-Methods'));
         self::assertEquals($allowedHeaders, $resp->getHeaderLine('Access-Control-Allow-Headers'));
     }
@@ -73,5 +75,21 @@ class CorsTest extends ApiTestCase
         yield 'short URLs route' => ['/short-urls', 'GET,POST'];
         yield 'tags route' => ['/tags', 'GET,DELETE,PUT'];
         yield 'health route' => ['/health', 'GET'];
+    }
+
+    #[Test, WithEnvVars([
+        EnvVars::CORS_MAX_AGE->value => 5000,
+        EnvVars::CORS_ALLOW_CREDENTIALS->value => true,
+        EnvVars::CORS_ALLOW_ORIGIN->value => 'example.com,localhost:8000',
+    ])]
+    public function parametersCanBeCustomized(): void
+    {
+        $resp = $this->callApiWithKey(self::METHOD_OPTIONS, '/short-urls', [
+            RequestOptions::HEADERS => ['Origin' => 'example.com'],
+        ]);
+
+        self::assertEquals('5000', $resp->getHeaderLine('Access-Control-Max-Age'));
+        self::assertEquals('example.com', $resp->getHeaderLine('Access-Control-Allow-Origin'));
+        self::assertEquals('true', $resp->getHeaderLine('Access-Control-Allow-Credentials'));
     }
 }
