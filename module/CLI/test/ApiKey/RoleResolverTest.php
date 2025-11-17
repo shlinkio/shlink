@@ -91,11 +91,17 @@ class RoleResolverTest extends TestCase
             [RoleDefinition::forAuthoredShortUrls()],
             0,
         ];
-        yield 'both roles' => [
-            $buildInput(
-                [Role::DOMAIN_SPECIFIC->paramName() => 'example.com', Role::AUTHORED_SHORT_URLS->paramName() => true],
-            ),
-            [RoleDefinition::forAuthoredShortUrls(), RoleDefinition::forDomain($domain)],
+        yield 'all roles' => [
+            $buildInput([
+                Role::DOMAIN_SPECIFIC->paramName() => 'example.com',
+                Role::AUTHORED_SHORT_URLS->paramName() => true,
+                Role::NO_ORPHAN_VISITS->paramName() => true,
+            ]),
+            [
+                RoleDefinition::forAuthoredShortUrls(),
+                RoleDefinition::forDomain($domain),
+                RoleDefinition::forNoOrphanVisits(),
+            ],
             1,
         ];
     }
