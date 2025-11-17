@@ -63,7 +63,7 @@ class LocateVisitsCommandTest extends TestCase
         array $args,
     ): void {
         $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::fromParams('', '', '1.2.3.4'));
-        $location = VisitLocation::fromGeolocation(Location::empty());
+        $location = VisitLocation::fromLocation(Location::empty());
         $mockMethodBehavior = $this->invokeHelperMethods($visit, $location);
 
         $this->lock->method('acquire')->willReturn(true);
@@ -107,7 +107,7 @@ class LocateVisitsCommandTest extends TestCase
     public function localhostAndEmptyAddressesAreIgnored(IpCannotBeLocatedException $e, string $message): void
     {
         $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::empty());
-        $location = VisitLocation::fromGeolocation(Location::empty());
+        $location = VisitLocation::fromLocation(Location::empty());
 
         $this->lock->method('acquire')->willReturn(true);
         $this->visitService->expects($this->once())
@@ -134,7 +134,7 @@ class LocateVisitsCommandTest extends TestCase
     public function errorWhileLocatingIpIsDisplayed(): void
     {
         $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::fromParams(remoteAddress: '1.2.3.4'));
-        $location = VisitLocation::fromGeolocation(Location::emptyInstance());
+        $location = VisitLocation::fromLocation(Location::empty());
 
         $this->lock->method('acquire')->willReturn(true);
         $this->visitService->expects($this->once())

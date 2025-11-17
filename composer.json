@@ -145,12 +145,12 @@
         "test:cli:ci": [
             "@putenv GENERATE_COVERAGE=yes",
             "@test:cli",
-            "vendor/bin/phpcov merge build/coverage-cli --php build/coverage-cli.cov && rm build/coverage-cli/*.cov"
+            "@php -d memory_limit=-1 vendor/bin/phpcov merge build/coverage-cli --php build/coverage-cli.cov && rm build/coverage-cli/*.cov"
         ],
         "test:cli:pretty": [
             "@putenv GENERATE_COVERAGE=yes",
             "@test:cli",
-            "phpcov merge build/coverage-cli --html build/coverage-cli/coverage-html && rm build/coverage-cli/*.cov"
+            "@php -d memory_limit=-1 phpcov merge build/coverage-cli --html build/coverage-cli/coverage-html && rm build/coverage-cli/*.cov"
         ],
         "openapi:validate": "php-openapi validate docs/swagger/swagger.json",
         "openapi:inline": "php-openapi inline docs/swagger/swagger.json docs/swagger/openapi-inlined.json",

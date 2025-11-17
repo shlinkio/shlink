@@ -87,7 +87,7 @@ class MatomoVisitSenderTest extends TestCase
         yield 'unlocated orphan visit' => [Visit::forBasePath(Visitor::empty()), null, []];
         yield 'located regular visit' => [
             Visit::forValidShortUrl(ShortUrl::withLongUrl('https://shlink.io'), Visitor::empty())
-                ->locate(VisitLocation::fromGeolocation(new Location(
+                ->locate(VisitLocation::fromLocation(new Location(
                     countryCode: 'US',
                     countryName: 'countryName',
                     regionName: 'regionName',

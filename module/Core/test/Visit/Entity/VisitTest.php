@@ -95,7 +95,7 @@ class VisitTest extends TestCase
                         ->withHeader('Referer', 'referer')
                         ->withUri(new Uri('https://s.test/foo/bar')),
                 ),
-            )->locate($location = VisitLocation::fromGeolocation(Location::emptyInstance())),
+            )->locate($location = VisitLocation::fromLocation(Location::empty())),
             [
                 'referer' => 'referer',
                 'date' => $visit->date->toAtomString(),
