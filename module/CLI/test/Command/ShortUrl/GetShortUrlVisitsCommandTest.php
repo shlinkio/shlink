@@ -94,7 +94,7 @@ class GetShortUrlVisitsCommandTest extends TestCase
     public function outputIsProperlyGenerated(): void
     {
         $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::fromParams('bar', 'foo', ''))->locate(
-            VisitLocation::fromGeolocation(new Location('', 'Spain', '', 'Madrid', 0, 0, '')),
+            VisitLocation::fromLocation(new Location('', 'Spain', '', 'Madrid', 0, 0, '')),
         );
         $shortCode = 'abc123';
         $this->visitsHelper->expects($this->once())->method('visitsForShortUrl')->with(

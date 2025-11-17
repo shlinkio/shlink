@@ -41,7 +41,7 @@ class GetNonOrphanVisitsCommandTest extends TestCase
     {
         $shortUrl = ShortUrl::createFake();
         $visit = Visit::forValidShortUrl($shortUrl, Visitor::fromParams('bar', 'foo', ''))->locate(
-            VisitLocation::fromGeolocation(new Location('', 'Spain', '', 'Madrid', 0, 0, '')),
+            VisitLocation::fromLocation(new Location('', 'Spain', '', 'Madrid', 0, 0, '')),
         );
         $this->visitsHelper->expects($this->once())->method('nonOrphanVisits')->withAnyParameters()->willReturn(
             new Paginator(new ArrayAdapter([$visit])),
