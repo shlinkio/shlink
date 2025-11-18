@@ -15,9 +15,7 @@ final readonly class ShortUrlCreated implements JsonSerializable, JsonUnserializ
 
     public function jsonSerialize(): array
     {
-        return [
-            'shortUrlId' => $this->shortUrlId,
-        ];
+        return ['shortUrlId' => $this->shortUrlId];
     }
 
     public static function fromPayload(array $payload): self
