@@ -46,6 +46,19 @@ class ResolveUrlCommandTest extends TestCase
     }
 
     #[Test]
+    public function shortCodeIsAskedIfNotProvided(): void
+    {
+        $shortCode = 'abc123';
+        $shortUrl = ShortUrl::createFake();
+        $this->urlResolver->expects($this->once())->method('resolveShortUrl')->with(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+        )->willReturn($shortUrl);
+
+        $this->commandTester->setInputs([$shortCode]);
+        $this->commandTester->execute([]);
+    }
+
+    #[Test]
     public function incorrectShortCodeOutputsErrorMessage(): void
     {
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain('abc123');
