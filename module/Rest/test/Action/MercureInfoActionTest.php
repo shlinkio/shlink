@@ -77,4 +77,15 @@ class MercureInfoActionTest extends TestCase
         yield 'days not defined' => [null];
         yield 'days defined' => [10];
     }
+
+    #[Test]
+    public function getRouteDefReturnsExpectedData(): void
+    {
+        self::assertEquals([
+            'name' => MercureInfoAction::class,
+            'middleware' => [MercureInfoAction::class],
+            'path' => '/mercure-info',
+            'allowed_methods' => ['GET'],
+        ], MercureInfoAction::getRouteDef());
+    }
 }
