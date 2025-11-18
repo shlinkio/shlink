@@ -65,6 +65,21 @@ class CreateShortUrlCommandTest extends TestCase
     }
 
     #[Test]
+    public function longUrlIsAskedIfNotProvided(): void
+    {
+        $shortUrl = ShortUrl::createFake();
+        $this->urlShortener->expects($this->once())->method('shorten')->withAnyParameters()->willReturn(
+            UrlShorteningResult::withoutErrorOnEventDispatching($shortUrl),
+        );
+        $this->stringifier->expects($this->once())->method('stringify')->with($shortUrl)->willReturn(
+            'stringified_short_url',
+        );
+
+        $this->commandTester->setInputs([$shortUrl->getLongUrl()]);
+        $this->commandTester->execute([]);
+    }
+
+    #[Test]
     public function providingNonUniqueSlugOutputsError(): void
     {
         $this->urlShortener->expects($this->once())->method('shorten')->withAnyParameters()->willThrowException(

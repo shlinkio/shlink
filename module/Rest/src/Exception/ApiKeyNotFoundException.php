@@ -12,10 +12,4 @@ class ApiKeyNotFoundException extends RuntimeException implements ExceptionInter
     {
         return new self(sprintf('API key with name "%s" not found', $name));
     }
-
-    /** @deprecated */
-    public static function forKey(string $key): self
-    {
-        return new self(sprintf('API key with key "%s" not found', $key));
-    }
 }

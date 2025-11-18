@@ -51,6 +51,19 @@ class GetShortUrlVisitsCommandTest extends TestCase
     }
 
     #[Test]
+    public function shortCodeIsAskedIfNotProvided(): void
+    {
+        $shortCode = 'abc123';
+        $this->visitsHelper->expects($this->once())->method('visitsForShortUrl')->with(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            $this->anything(),
+        )->willReturn(new Paginator(new ArrayAdapter([])));
+
+        $this->commandTester->setInputs([$shortCode]);
+        $this->commandTester->execute([]);
+    }
+
+    #[Test]
     public function providingDateFlagsTheListGetsFiltered(): void
     {
         $shortCode = 'abc123';

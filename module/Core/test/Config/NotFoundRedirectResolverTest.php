@@ -15,7 +15,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
-use Psr\Log\NullLogger;
+use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Action\RedirectAction;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirectResolver;
 use Shlinkio\Shlink\Core\Config\Options\NotFoundRedirectOptions;
@@ -28,11 +28,14 @@ class NotFoundRedirectResolverTest extends TestCase
 {
     private NotFoundRedirectResolver $resolver;
     private MockObject & RedirectResponseHelperInterface $helper;
+    private MockObject & LoggerInterface $logger;
 
     protected function setUp(): void
     {
         $this->helper = $this->createMock(RedirectResponseHelperInterface::class);
-        $this->resolver = new NotFoundRedirectResolver($this->helper, new NullLogger());
+        $this->logger = $this->createMock(LoggerInterface::class);
+
+        $this->resolver = new NotFoundRedirectResolver($this->helper, $this->logger);
     }
 
     #[Test, DataProvider('provideRedirects')]
@@ -121,6 +124,22 @@ class NotFoundRedirectResolverTest extends TestCase
         $result = $this->resolver->resolveRedirectResponse($notFoundType, new NotFoundRedirectOptions(), new Uri());
 
         self::assertNull($result);
+    }
+
+    #[Test]
+    public function warningMessageIsLoggedIfRedirectUrlIsMalformed(): void
+    {
+        $this->logger->expects($this->once())->method('warning')->with(
+            'It was not possible to parse "{url}" as a valid URL: {e}',
+            $this->isArray(),
+        );
+
+        $uri = new Uri('/');
+        $this->resolver->resolveRedirectResponse(
+            self::notFoundType(ServerRequestFactory::fromGlobals()->withUri($uri)),
+            new NotFoundRedirectOptions(baseUrlRedirect: 'http:///example.com'),
+            $uri,
+        );
     }
 
     private static function notFoundType(ServerRequestInterface $req): NotFoundType
