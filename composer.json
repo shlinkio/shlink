@@ -72,7 +72,8 @@
         "shlinkio/php-coding-standard": "~2.5.0",
         "shlinkio/shlink-test-utils": "^4.3.1",
         "symfony/var-dumper": "^7.3",
-        "veewee/composer-run-parallel": "^1.4"
+        "veewee/composer-run-parallel": "^1.4",
+        "webimpress/safe-writer": "^2.2"
     },
     "conflict": {
         "symfony/var-exporter": ">=6.3.9,<=6.4.0"
