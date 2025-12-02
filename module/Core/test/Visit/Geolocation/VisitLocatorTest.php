@@ -67,7 +67,7 @@ class VisitLocatorTest extends TestCase
         $this->visitService->{$serviceMethodName}(new class implements VisitGeolocationHelperInterface {
             public function geolocateVisit(Visit $visit): Location
             {
-                return Location::emptyInstance();
+                return Location::empty();
             }
 
             public function onVisitLocated(VisitLocation $visitLocation, Visit $visit): void

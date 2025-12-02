@@ -40,7 +40,7 @@ class LocateUnlocatedVisitsTest extends TestCase
     public function visitToLocationHelperIsCalledToGeolocateVisits(): void
     {
         $visit = Visit::forBasePath(Visitor::empty());
-        $location = Location::emptyInstance();
+        $location = Location::empty();
 
         $this->visitToLocation->expects($this->once())->method('resolveVisitLocation')->with($visit)->willReturn(
             $location,

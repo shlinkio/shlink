@@ -27,6 +27,9 @@ class DeleteShortUrlVisitsCommandTest extends TestCase
         $this->commandTester = CliTestUtils::testerForCommand(new DeleteShortUrlVisitsCommand($this->deleter));
     }
 
+    /**
+     * @param list<string> $input
+     */
     #[Test, DataProvider('provideCancellingInputs')]
     public function executionIsAbortedIfManuallyCancelled(array $input): void
     {

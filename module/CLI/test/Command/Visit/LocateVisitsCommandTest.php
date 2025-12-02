@@ -81,7 +81,7 @@ class LocateVisitsCommandTest extends TestCase
                            ->willReturnCallback($mockMethodBehavior);
         $this->visitToLocation->expects(
             $this->exactly($expectedUnlocatedCalls + $expectedEmptyCalls + $expectedAllCalls),
-        )->method('resolveVisitLocation')->withAnyParameters()->willReturn(Location::emptyInstance());
+        )->method('resolveVisitLocation')->withAnyParameters()->willReturn(Location::empty());
         $this->downloadDbCommand->method('run')->willReturn(Command::SUCCESS);
 
         $this->commandTester->setInputs(['y']);
@@ -204,6 +204,9 @@ class LocateVisitsCommandTest extends TestCase
         self::assertStringContainsString('The --all flag has no effect on its own', $output);
     }
 
+    /**
+     * @param list<string> $inputs
+     */
     #[Test, DataProvider('provideAbortInputs')]
     public function processingAllCancelsCommandIfUserDoesNotActivelyAgreeToConfirmation(array $inputs): void
     {
