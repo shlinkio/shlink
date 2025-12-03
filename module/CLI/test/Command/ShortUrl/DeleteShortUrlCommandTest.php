@@ -64,6 +64,9 @@ class DeleteShortUrlCommandTest extends TestCase
         self::assertStringContainsString(sprintf('No URL found with short code "%s"', $shortCode), $output);
     }
 
+    /**
+     * @param list<string> $retryAnswer
+     */
     #[Test, DataProvider('provideRetryDeleteAnswers')]
     public function deleteIsRetriedWhenThresholdIsReachedAndQuestionIsAccepted(
         array $retryAnswer,

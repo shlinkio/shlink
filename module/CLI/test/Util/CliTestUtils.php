@@ -40,9 +40,9 @@ class CliTestUtils
     public static function testerForCommand(Command $mainCommand, Command ...$extraCommands): CommandTester
     {
         $app = new Application();
-        $app->add($mainCommand);
+        $app->addCommand($mainCommand);
         foreach ($extraCommands as $command) {
-            $app->add($command);
+            $app->addCommand($command);
         }
 
         return new CommandTester($mainCommand);

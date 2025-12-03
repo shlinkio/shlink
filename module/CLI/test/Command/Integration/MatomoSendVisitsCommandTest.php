@@ -114,6 +114,7 @@ class MatomoSendVisitsCommandTest extends TestCase
     }
 
     /**
+     * @param list<string> $input
      * @return array{string, int, MatomoSendVisitsCommand}
      */
     private function executeCommand(
