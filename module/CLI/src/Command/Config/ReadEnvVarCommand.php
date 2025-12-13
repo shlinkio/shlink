@@ -8,10 +8,10 @@ use Closure;
 use Shlinkio\Shlink\Core\Config\EnvVars;
 use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Interact;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function Shlinkio\Shlink\Config\formatEnvVarValue;
@@ -37,9 +37,9 @@ class ReadEnvVarCommand extends Command
         parent::__construct();
     }
 
-    protected function interact(InputInterface $input, OutputInterface $output): void
+    #[Interact]
+    public function askMissing(InputInterface $input, SymfonyStyle $io): void
     {
-        $io = new SymfonyStyle($input, $output);
         $envVar = $input->getArgument('env-var');
         $validEnvVars = enumValues(EnvVars::class);
 
