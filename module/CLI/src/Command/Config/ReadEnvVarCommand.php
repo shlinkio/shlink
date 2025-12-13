@@ -40,6 +40,7 @@ class ReadEnvVarCommand extends Command
     #[Interact]
     public function askMissing(InputInterface $input, SymfonyStyle $io): void
     {
+        /** @var string|null $envVar */
         $envVar = $input->getArgument('env-var');
         $validEnvVars = enumValues(EnvVars::class);
 
