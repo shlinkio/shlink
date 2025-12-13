@@ -9,8 +9,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Api\RenameApiKeyCommand;
 use Shlinkio\Shlink\Core\Model\Renaming;
-use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
-use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -32,11 +30,6 @@ class RenameApiKeyCommandTest extends TestCase
         $oldName = 'old name';
         $newName = 'new name';
 
-        $this->apiKeyService->expects($this->once())->method('listKeys')->willReturn([
-            ApiKey::fromMeta(ApiKeyMeta::fromParams(name: 'foo')),
-            ApiKey::fromMeta(ApiKeyMeta::fromParams(name: $oldName)),
-            ApiKey::fromMeta(ApiKeyMeta::fromParams(name: 'bar')),
-        ]);
         $this->apiKeyService->expects($this->once())->method('renameApiKey')->with(
             Renaming::fromNames($oldName, $newName),
         );
@@ -53,7 +46,6 @@ class RenameApiKeyCommandTest extends TestCase
         $oldName = 'old name';
         $newName = 'new name';
 
-        $this->apiKeyService->expects($this->never())->method('listKeys');
         $this->apiKeyService->expects($this->once())->method('renameApiKey')->with(
             Renaming::fromNames($oldName, $newName),
         );
@@ -70,7 +62,6 @@ class RenameApiKeyCommandTest extends TestCase
         $oldName = 'old name';
         $newName = 'new name';
 
-        $this->apiKeyService->expects($this->never())->method('listKeys');
         $this->apiKeyService->expects($this->once())->method('renameApiKey')->with(
             Renaming::fromNames($oldName, $newName),
         );
