@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\ApiKey;
 
+use Shlinkio\Shlink\CLI\Command\Api\Input\ApiKeyInput;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
-use Symfony\Component\Console\Input\InputInterface;
 
+/** @deprecated API key roles are deprecated */
 interface RoleResolverInterface
 {
     /**
      * @return iterable<RoleDefinition>
      */
-    public function determineRoles(InputInterface $input): iterable;
+    public function determineRoles(ApiKeyInput $input): iterable;
 }

@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\ApiKey;
 
+use Shlinkio\Shlink\CLI\Command\Api\Input\ApiKeyInput;
 use Shlinkio\Shlink\CLI\Exception\InvalidRoleConfigException;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
-use Shlinkio\Shlink\Rest\ApiKey\Role;
-use Symfony\Component\Console\Input\InputInterface;
 
-use function is_string;
-
+/** @deprecated API key roles are deprecated */
 readonly class RoleResolver implements RoleResolverInterface
 {
     public function __construct(
@@ -21,16 +19,16 @@ readonly class RoleResolver implements RoleResolverInterface
     ) {
     }
 
-    public function determineRoles(InputInterface $input): iterable
+    public function determineRoles(ApiKeyInput $input): iterable
     {
-        $domainAuthority = $input->getOption(Role::DOMAIN_SPECIFIC->paramName());
-        $author = $input->getOption(Role::AUTHORED_SHORT_URLS->paramName());
-        $noOrphanVisits = $input->getOption(Role::NO_ORPHAN_VISITS->paramName());
+        $domainAuthority = $input->domain;
+        $author = $input->authorOnly;
+        $noOrphanVisits = $input->noOrphanVisits;
 
         if ($author) {
             yield RoleDefinition::forAuthoredShortUrls();
         }
-        if (is_string($domainAuthority)) {
+        if ($domainAuthority !== null) {
             yield $this->resolveRoleForAuthority($domainAuthority);
         }
         if ($noOrphanVisits) {
