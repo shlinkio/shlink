@@ -12,6 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
 use function is_string;
+use function Shlinkio\Shlink\Core\normalizeOptionalDate;
 use function sprintf;
 
 readonly class DateOption
@@ -29,7 +30,7 @@ readonly class DateOption
         }
 
         try {
-            return Chronos::parse($value);
+            return normalizeOptionalDate($value);
         } catch (Throwable $e) {
             $output->writeln(sprintf(
                 '<comment>> Ignored provided "%s" since its value "%s" is not a valid date. <</comment>',
