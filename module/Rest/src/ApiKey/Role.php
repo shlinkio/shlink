@@ -14,6 +14,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKeyRole;
 
 use function sprintf;
 
+/** @deprecated API key roles are deprecated */
 enum Role: string
 {
     case AUTHORED_SHORT_URLS = 'AUTHORED_SHORT_URLS';
@@ -26,15 +27,6 @@ enum Role: string
             self::AUTHORED_SHORT_URLS => 'Author only',
             self::DOMAIN_SPECIFIC => sprintf('Domain only: %s', Role::domainAuthorityFromMeta($meta)),
             self::NO_ORPHAN_VISITS => 'No orphan visits',
-        };
-    }
-
-    public function paramName(): string
-    {
-        return match ($this) {
-            self::AUTHORED_SHORT_URLS => 'author-only',
-            self::DOMAIN_SPECIFIC => 'domain-only',
-            self::NO_ORPHAN_VISITS => 'no-orphan-visits',
         };
     }
 
