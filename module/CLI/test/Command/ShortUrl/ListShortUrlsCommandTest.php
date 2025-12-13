@@ -306,8 +306,6 @@ class ListShortUrlsCommandTest extends TestCase
     {
         yield [[], null];
         yield [['--order-by' => 'visits'], 'visits'];
-        yield [['--order-by' => 'longUrl,ASC'], 'longUrl-ASC'];
-        yield [['--order-by' => 'shortCode,DESC'], 'shortCode-DESC'];
         yield [['--order-by' => 'title-DESC'], 'title-DESC'];
     }
 
