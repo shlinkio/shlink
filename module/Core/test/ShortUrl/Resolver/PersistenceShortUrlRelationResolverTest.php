@@ -116,7 +116,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
     {
         $repo = $this->createMock(DomainRepository::class);
         $repo->expects($this->exactly(3))->method('findOneBy')->with($this->isArray())->willReturn(null);
-        $this->em->method('getRepository')->willReturn($repo);
+        $this->em->expects($this->atLeastOnce())->method('getRepository')->willReturn($repo);
 
         $authority = 'foo.com';
         $domain1 = $this->resolver->resolveDomain($authority);
@@ -135,7 +135,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
     {
         $tagRepo = $this->createMock(TagRepository::class);
         $tagRepo->expects($this->exactly(6))->method('findOneBy')->with($this->isArray())->willReturn(null);
-        $this->em->method('getRepository')->willReturn($tagRepo);
+        $this->em->expects($this->atLeastOnce())->method('getRepository')->willReturn($tagRepo);
 
         $tags = ['foo', 'bar'];
         [$foo1, $bar1] = $this->resolver->resolveTags($tags);

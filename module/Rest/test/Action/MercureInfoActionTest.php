@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Rest\Action;
 use Cake\Chronos\Chronos;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -78,7 +79,7 @@ class MercureInfoActionTest extends TestCase
         yield 'days defined' => [10];
     }
 
-    #[Test]
+    #[Test, AllowMockObjectsWithoutExpectations]
     public function getRouteDefReturnsExpectedData(): void
     {
         self::assertEquals([

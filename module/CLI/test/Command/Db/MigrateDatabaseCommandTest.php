@@ -23,12 +23,12 @@ class MigrateDatabaseCommandTest extends TestCase
 
     protected function setUp(): void
     {
-        $locker = $this->createMock(LockFactory::class);
-        $lock = $this->createMock(SharedLockInterface::class);
+        $locker = $this->createStub(LockFactory::class);
+        $lock = $this->createStub(SharedLockInterface::class);
         $lock->method('acquire')->willReturn(true);
         $locker->method('createLock')->willReturn($lock);
 
-        $phpExecutableFinder = $this->createMock(PhpExecutableFinder::class);
+        $phpExecutableFinder = $this->createStub(PhpExecutableFinder::class);
         $phpExecutableFinder->method('find')->willReturn('/usr/local/bin/php');
 
         $this->processHelper = $this->createMock(ProcessRunnerInterface::class);

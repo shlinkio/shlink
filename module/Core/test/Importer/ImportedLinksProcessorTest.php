@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -43,6 +44,7 @@ use function Shlinkio\Shlink\Core\ArrayUtils\some;
 use function sprintf;
 use function str_contains;
 
+#[AllowMockObjectsWithoutExpectations]
 class ImportedLinksProcessorTest extends TestCase
 {
     private ImportedLinksProcessor $processor;

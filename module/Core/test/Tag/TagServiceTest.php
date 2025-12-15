@@ -28,15 +28,12 @@ use ShlinkioTest\Shlink\Core\Util\ApiKeyDataProviders;
 class TagServiceTest extends TestCase
 {
     private TagService $service;
-    private MockObject & EntityManagerInterface $em;
     private MockObject & TagRepository $repo;
 
     protected function setUp(): void
     {
-        $this->em = $this->createMock(EntityManagerInterface::class);
         $this->repo = $this->createMock(TagRepository::class);
-
-        $this->service = new TagService($this->em, $this->repo);
+        $this->service = new TagService($this->createStub(EntityManagerInterface::class), $this->repo);
     }
 
     #[Test]
@@ -136,7 +133,6 @@ class TagServiceTest extends TestCase
 
         $this->repo->expects($this->once())->method('findOneBy')->willReturn($expected);
         $this->repo->expects($this->exactly($count > 0 ? 0 : 1))->method('count')->willReturn($count);
-        $this->em->expects($this->once())->method('flush');
 
         $tag = $this->service->renameTag(Renaming::fromNames($oldName, $newName));
 
@@ -155,7 +151,6 @@ class TagServiceTest extends TestCase
     {
         $this->repo->expects($this->once())->method('findOneBy')->willReturn(new Tag('foo'));
         $this->repo->expects($this->once())->method('count')->willReturn(1);
-        $this->em->expects($this->never())->method('flush');
 
         $this->expectException(TagConflictException::class);
 

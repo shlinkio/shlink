@@ -25,7 +25,7 @@ class GenerateKeyCommandTest extends TestCase
     protected function setUp(): void
     {
         $this->apiKeyService = $this->createMock(ApiKeyServiceInterface::class);
-        $roleResolver = $this->createMock(RoleResolverInterface::class);
+        $roleResolver = $this->createStub(RoleResolverInterface::class);
         $roleResolver->method('determineRoles')->willReturn([]);
 
         $command = new GenerateKeyCommand($this->apiKeyService, $roleResolver);

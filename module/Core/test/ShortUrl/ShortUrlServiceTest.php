@@ -29,15 +29,11 @@ class ShortUrlServiceTest extends TestCase
 
     protected function setUp(): void
     {
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->method('persist')->willReturn(null);
-        $em->method('flush')->willReturn(null);
-
         $this->urlResolver = $this->createMock(ShortUrlResolverInterface::class);
         $this->titleResolutionHelper = $this->createMock(ShortUrlTitleResolutionHelperInterface::class);
 
         $this->service = new ShortUrlService(
-            $em,
+            $this->createStub(EntityManagerInterface::class),
             $this->urlResolver,
             $this->titleResolutionHelper,
             new SimpleShortUrlRelationResolver(),

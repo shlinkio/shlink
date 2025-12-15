@@ -93,11 +93,12 @@ class NotifyNewShortUrlToMercureTest extends TestCase
     public function publishingIsSkippedIfNewShortUrlTopicIsNotEnabled(): void
     {
         $shortUrl = ShortUrl::withLongUrl('https://longUrl');
-        $update = Update::forTopicAndPayload('', []);
 
         $this->em->expects($this->once())->method('find')->with(ShortUrl::class, '123')->willReturn($shortUrl);
         $this->updatesGenerator->expects($this->never())->method('newShortUrlUpdate');
         $this->helper->expects($this->never())->method('publishUpdate');
+        $this->logger->expects($this->never())->method('warning');
+        $this->logger->expects($this->never())->method('debug');
 
         $this->listener(enableShortUrlTopic: false)(new ShortUrlCreated('123'));
     }

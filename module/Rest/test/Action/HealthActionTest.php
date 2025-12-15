@@ -25,11 +25,11 @@ class HealthActionTest extends TestCase
     protected function setUp(): void
     {
         $this->conn = $this->createMock(Connection::class);
-        $dbPlatform = $this->createMock(AbstractPlatform::class);
+        $dbPlatform = $this->createStub(AbstractPlatform::class);
         $dbPlatform->method('getDummySelectSQL')->willReturn('');
         $this->conn->method('getDatabasePlatform')->willReturn($dbPlatform);
 
-        $em = $this->createMock(EntityManagerInterface::class);
+        $em = $this->createStub(EntityManagerInterface::class);
         $em->method('getConnection')->willReturn($this->conn);
 
         $this->action = new HealthAction($em, new AppOptions(version: '1.2.3'));
@@ -38,7 +38,7 @@ class HealthActionTest extends TestCase
     #[Test]
     public function passResponseIsReturnedWhenDummyQuerySucceeds(): void
     {
-        $this->conn->expects($this->once())->method('executeQuery')->willReturn($this->createMock(Result::class));
+        $this->conn->expects($this->once())->method('executeQuery')->willReturn($this->createStub(Result::class));
 
         /** @var JsonResponse $resp */
         $resp = $this->action->handle(new ServerRequest());

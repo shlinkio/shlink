@@ -39,6 +39,7 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
     {
         $data = ShortUrlCreation::fromRawData(['longUrl' => self::LONG_URL]);
         $this->httpClient->expects($this->never())->method('request');
+        $this->logger->expects($this->never())->method('warning');
 
         $result = $this->helper()->processTitle($data);
 
@@ -53,6 +54,7 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
             'title' => 'foo',
         ]);
         $this->httpClient->expects($this->never())->method('request');
+        $this->logger->expects($this->never())->method('warning');
 
         $result = $this->helper(autoResolveTitles: true)->processTitle($data);
 
@@ -64,6 +66,7 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
     {
         $data = ShortUrlCreation::fromRawData(['longUrl' => self::LONG_URL]);
         $this->expectRequestToBeCalled()->willThrowException(new Exception('Error'));
+        $this->logger->expects($this->never())->method('warning');
 
         $result = $this->helper(autoResolveTitles: true)->processTitle($data);
 
@@ -75,6 +78,7 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
     {
         $data = ShortUrlCreation::fromRawData(['longUrl' => self::LONG_URL]);
         $this->expectRequestToBeCalled()->willReturn(new JsonResponse(['foo' => 'bar']));
+        $this->logger->expects($this->never())->method('warning');
 
         $result = $this->helper(autoResolveTitles: true)->processTitle($data);
 
@@ -86,6 +90,7 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
     {
         $data = ShortUrlCreation::fromRawData(['longUrl' => self::LONG_URL]);
         $this->expectRequestToBeCalled()->willReturn($this->respWithoutTitle());
+        $this->logger->expects($this->never())->method('warning');
 
         $result = $this->helper(autoResolveTitles: true)->processTitle($data);
 
@@ -151,8 +156,6 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
         self::assertEquals('Resolved "title"', $result->title);
     }
 
-    /**
-     */
     private function expectRequestToBeCalled(): InvocationStubber
     {
         return $this->httpClient->expects($this->once())->method('request')->with(

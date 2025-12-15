@@ -9,6 +9,7 @@ use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Uri;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -24,6 +25,7 @@ use Shlinkio\Shlink\Core\Util\RedirectResponseHelperInterface;
 
 use function Laminas\Stratigility\middleware;
 
+#[AllowMockObjectsWithoutExpectations]
 class NotFoundRedirectResolverTest extends TestCase
 {
     private NotFoundRedirectResolver $resolver;

@@ -33,7 +33,7 @@ class NotFoundTrackerMiddlewareTest extends TestCase
 
         $this->request = ServerRequestFactory::fromGlobals()->withAttribute(
             NotFoundType::class,
-            $this->createMock(NotFoundType::class),
+            $this->createStub(NotFoundType::class),
         );
     }
 
