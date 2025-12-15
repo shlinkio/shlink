@@ -15,7 +15,7 @@ use Symfony\Component\Console\Input\InputOption;
 
 final readonly class ShortUrlDataInput
 {
-    private readonly TagsOption $tagsOption;
+    private TagsOption $tagsOption;
 
     public function __construct(Command $command, private bool $longUrlAsOption = false)
     {

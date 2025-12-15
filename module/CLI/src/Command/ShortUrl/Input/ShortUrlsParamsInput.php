@@ -45,16 +45,16 @@ final class ShortUrlsParamsInput
     )]
     public string|null $domain = null;
 
-    /** @var string[] */
+    /** @var string[]|null */
     #[Option('A list of tags that short URLs need to include', name: 'tag', shortcut: 't')]
-    public array $tags = [];
+    public array|null $tags = null;
 
     #[Option('If --tag is provided, returns only short URLs including ALL of them')]
     public bool $tagsAll = false;
 
-    /** @var string[] */
+    /** @var string[]|null */
     #[Option('A list of tags that short URLs should NOT include', name: 'exclude-tag', shortcut: 'et')]
-    public array $excludeTags = [];
+    public array|null $excludeTags = null;
 
     #[Option('If --exclude-tag is provided, returns only short URLs not including ANY of them')]
     public bool $excludeTagsAll = false;
@@ -88,17 +88,10 @@ final class ShortUrlsParamsInput
 
     public function toArray(OutputInterface $output): array
     {
-        $tagsMode = $this->tagsAll ? TagsMode::ALL->value : TagsMode::ANY->value;
-        $excludeTagsMode = $this->excludeTagsAll ? TagsMode::ALL->value : TagsMode::ANY->value;
-
         $data = [
             ShortUrlsParamsInputFilter::PAGE => $this->page,
             ShortUrlsParamsInputFilter::SEARCH_TERM => $this->searchTerm,
             ShortUrlsParamsInputFilter::DOMAIN => $this->domain,
-            ShortUrlsParamsInputFilter::TAGS => array_unique($this->tags),
-            ShortUrlsParamsInputFilter::TAGS_MODE => $tagsMode,
-            ShortUrlsParamsInputFilter::EXCLUDE_TAGS => array_unique($this->excludeTags),
-            ShortUrlsParamsInputFilter::EXCLUDE_TAGS_MODE => $excludeTagsMode,
             ShortUrlsParamsInputFilter::ORDER_BY => $this->orderBy,
             ShortUrlsParamsInputFilter::START_DATE => InputUtils::processDate('start-date', $this->startDate, $output),
             ShortUrlsParamsInputFilter::END_DATE => InputUtils::processDate('end-date', $this->endDate, $output),
@@ -106,6 +99,18 @@ final class ShortUrlsParamsInput
             ShortUrlsParamsInputFilter::EXCLUDE_PAST_VALID_UNTIL => $this->excludePastValidUntil,
             ShortUrlsParamsInputFilter::API_KEY_NAME => $this->apiKeyName,
         ];
+
+        if ($this->tags !== null) {
+            $tagsMode = $this->tagsAll ? TagsMode::ALL : TagsMode::ANY;
+            $data[ShortUrlsParamsInputFilter::TAGS_MODE] = $tagsMode->value;
+            $data[ShortUrlsParamsInputFilter::TAGS] = array_unique($this->tags);
+        }
+
+        if ($this->excludeTags !== null) {
+            $excludeTagsMode = $this->excludeTagsAll ? TagsMode::ALL : TagsMode::ANY;
+            $data[ShortUrlsParamsInputFilter::EXCLUDE_TAGS_MODE] = $excludeTagsMode->value;
+            $data[ShortUrlsParamsInputFilter::EXCLUDE_TAGS] = array_unique($this->excludeTags);
+        }
 
         if ($this->all) {
             $data[ShortUrlsParamsInputFilter::ITEMS_PER_PAGE] = Paginator::ALL_ITEMS;
