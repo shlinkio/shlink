@@ -26,6 +26,7 @@ class InputUtilsTest extends TestCase
     #[TestWith([''], 'empty string')]
     public function processDateReturnsNullForEmptyDates(string|null $date): void
     {
+        $this->input->expects($this->never())->method('writeln');
         self::assertNull(InputUtils::processDate('name', $date, $this->input));
     }
 
@@ -33,6 +34,7 @@ class InputUtilsTest extends TestCase
     public function processDateReturnsAtomFormatedForValidDates(): void
     {
         $date = '2025-01-20';
+        $this->input->expects($this->never())->method('writeln');
         self::assertEquals(Chronos::parse($date)->toAtomString(), InputUtils::processDate('name', $date, $this->input));
     }
 

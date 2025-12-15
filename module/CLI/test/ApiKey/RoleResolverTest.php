@@ -15,7 +15,6 @@ use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
-use Symfony\Component\Console\Input\InputInterface;
 
 class RoleResolverTest extends TestCase
 {
@@ -46,17 +45,6 @@ class RoleResolverTest extends TestCase
     public static function provideRoles(): iterable
     {
         $domain = self::domainWithId(Domain::withAuthority('example.com'));
-        $buildInput = static fn (array $definition) => function (TestCase $test) use ($definition): InputInterface {
-            $returnMap = [];
-            foreach ($definition as $param => $returnValue) {
-                $returnMap[] = [$param, $returnValue];
-            }
-
-            $input = $test->createStub(InputInterface::class);
-            $input->method('getOption')->willReturnMap($returnMap);
-
-            return $input;
-        };
 
         yield 'no roles' => [
             new ApiKeyInput(),
@@ -106,6 +94,8 @@ class RoleResolverTest extends TestCase
     {
         $input = new ApiKeyInput();
         $input->domain = 'default.com';
+
+        $this->domainService->expects($this->never())->method('getOrCreate');
 
         $this->expectException(InvalidRoleConfigException::class);
 

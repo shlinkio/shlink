@@ -110,7 +110,7 @@ class VisitsStatsHelperTest extends TestCase
             static fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::empty()),
             range(0, 1),
         );
-        $repo2 = $this->createMock(VisitRepository::class);
+        $repo2 = $this->createStub(VisitRepository::class);
         $repo2->method('findVisitsByShortCode')->willReturn($list);
         $repo2->method('countVisitsByShortCode')->willReturn(1);
 
@@ -164,7 +164,7 @@ class VisitsStatsHelperTest extends TestCase
             static fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::empty()),
             range(0, 1),
         );
-        $repo2 = $this->createMock(VisitRepository::class);
+        $repo2 = $this->createStub(VisitRepository::class);
         $repo2->method('findVisitsByTag')->willReturn($list);
         $repo2->method('countVisitsByTag')->willReturn(1);
 
@@ -203,7 +203,7 @@ class VisitsStatsHelperTest extends TestCase
             static fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::empty()),
             range(0, 1),
         );
-        $repo2 = $this->createMock(VisitRepository::class);
+        $repo2 = $this->createStub(VisitRepository::class);
         $repo2->method('findVisitsByDomain')->willReturn($list);
         $repo2->method('countVisitsByDomain')->willReturn(1);
 
@@ -227,7 +227,7 @@ class VisitsStatsHelperTest extends TestCase
             static fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::empty()),
             range(0, 1),
         );
-        $repo2 = $this->createMock(VisitRepository::class);
+        $repo2 = $this->createStub(VisitRepository::class);
         $repo2->method('findVisitsByDomain')->willReturn($list);
         $repo2->method('countVisitsByDomain')->willReturn(1);
 

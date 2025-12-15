@@ -45,6 +45,7 @@ class NotifyVisitToRedisTest extends TestCase
         $this->em->expects($this->never())->method('find');
         $this->logger->expects($this->never())->method('warning');
         $this->logger->expects($this->never())->method('debug');
+        $this->updatesGenerator->expects($this->never())->method('newOrphanVisitUpdate');
 
         $this->createListener(false)(new UrlVisited('123'));
     }

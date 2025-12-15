@@ -26,6 +26,8 @@ class DeleteTagsCommandTest extends TestCase
     #[Test]
     public function errorIsReturnedWhenNoTagsAreProvided(): void
     {
+        $this->tagService->expects($this->never())->method('deleteTags');
+
         $this->commandTester->execute([]);
 
         $output = $this->commandTester->getDisplay();

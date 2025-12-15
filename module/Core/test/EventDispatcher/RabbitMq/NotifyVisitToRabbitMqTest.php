@@ -52,6 +52,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         $this->em->expects($this->never())->method('find');
         $this->logger->expects($this->never())->method('warning');
         $this->logger->expects($this->never())->method('debug');
+        $this->updatesGenerator->expects($this->never())->method('newVisitUpdate');
 
         ($this->listener(new RabbitMqOptions(enabled: false)))(new UrlVisited('123'));
     }
@@ -67,6 +68,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
         );
         $this->logger->expects($this->never())->method('debug');
         $this->helper->expects($this->never())->method('publishUpdate');
+        $this->updatesGenerator->expects($this->never())->method('newVisitUpdate');
 
         ($this->listener())(new UrlVisited($visitId));
     }
@@ -145,6 +147,8 @@ class NotifyVisitToRabbitMqTest extends TestCase
         $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn($visit);
         $setup($this->updatesGenerator);
         $expect($this->helper, $this->updatesGenerator);
+        $this->logger->expects($this->never())->method('warning');
+        $this->logger->expects($this->never())->method('debug');
 
         ($this->listener())(new UrlVisited($visitId));
     }

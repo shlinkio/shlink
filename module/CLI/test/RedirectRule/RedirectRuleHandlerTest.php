@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\RedirectRule;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,6 +21,7 @@ use Symfony\Component\Console\Style\StyleInterface;
 
 use function sprintf;
 
+#[AllowMockObjectsWithoutExpectations]
 class RedirectRuleHandlerTest extends TestCase
 {
     private RedirectRuleHandler $handler;

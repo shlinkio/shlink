@@ -48,7 +48,7 @@ class CrossDomainMiddlewareTest extends TestCase
         $originalResponse = new Response();
         $this->handler->expects($this->once())->method('handle')->willReturn($originalResponse);
 
-        $response = $this->middleware()->process((new ServerRequest())->withHeader('Origin', 'local'), $this->handler);
+        $response = $this->middleware()->process(new ServerRequest()->withHeader('Origin', 'local'), $this->handler);
         self::assertNotSame($originalResponse, $response);
 
         $headers = $response->getHeaders();
@@ -63,7 +63,7 @@ class CrossDomainMiddlewareTest extends TestCase
     public function optionsRequestIncludesMoreHeaders(): void
     {
         $originalResponse = new Response();
-        $request = (new ServerRequest())
+        $request = new ServerRequest()
             ->withMethod('OPTIONS')
             ->withHeader('Origin', 'local')
             ->withHeader('Access-Control-Request-Headers', 'foo, bar, baz');
@@ -90,8 +90,8 @@ class CrossDomainMiddlewareTest extends TestCase
         if ($allowHeader !== null) {
             $originalResponse = $originalResponse->withHeader('Allow', $allowHeader);
         }
-        $request = (new ServerRequest())->withHeader('Origin', 'local')
-                                        ->withMethod('OPTIONS');
+        $request = new ServerRequest()->withHeader('Origin', 'local')
+                                      ->withMethod('OPTIONS');
         $this->handler->expects($this->once())->method('handle')->willReturn($originalResponse);
 
         $response = $this->middleware()->process($request, $this->handler);
@@ -113,9 +113,9 @@ class CrossDomainMiddlewareTest extends TestCase
         int $status,
         int $expectedStatus,
     ): void {
-        $originalResponse = (new Response())->withStatus($status);
-        $request = (new ServerRequest())->withMethod($method)
-                                        ->withHeader('Origin', 'local');
+        $originalResponse = new Response()->withStatus($status);
+        $request = new ServerRequest()->withMethod($method)
+                                      ->withHeader('Origin', 'local');
         $this->handler->expects($this->once())->method('handle')->willReturn($originalResponse);
 
         $response = $this->middleware()->process($request, $this->handler);
@@ -152,10 +152,10 @@ class CrossDomainMiddlewareTest extends TestCase
     public function credentialsAreAllowedIfConfiguredSo(bool $allowCredentials, string $method): void
     {
         $originalResponse = new Response();
-        $request = (new ServerRequest())
+        $request = new ServerRequest()
             ->withMethod($method)
             ->withHeader('Origin', 'local');
-        $this->handler->method('handle')->willReturn($originalResponse);
+        $this->handler->expects($this->once())->method('handle')->willReturn($originalResponse);
 
         $response = $this->middleware(allowCredentials: $allowCredentials)->process($request, $this->handler);
         $headers = $response->getHeaders();

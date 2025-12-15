@@ -46,6 +46,7 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
         $this->em->expects($this->never())->method('find');
         $this->logger->expects($this->never())->method('warning');
         $this->logger->expects($this->never())->method('debug');
+        $this->updatesGenerator->expects($this->never())->method('newShortUrlUpdate');
 
         ($this->listener(false))(new ShortUrlCreated('123'));
     }
@@ -61,6 +62,7 @@ class NotifyNewShortUrlToRabbitMqTest extends TestCase
         );
         $this->logger->expects($this->never())->method('debug');
         $this->helper->expects($this->never())->method('publishUpdate');
+        $this->updatesGenerator->expects($this->never())->method('newShortUrlUpdate');
 
         ($this->listener())(new ShortUrlCreated($shortUrlId));
     }

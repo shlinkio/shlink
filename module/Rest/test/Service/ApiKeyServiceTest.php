@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Service;
 
 use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
@@ -24,6 +25,7 @@ use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 
 use function substr;
 
+#[AllowMockObjectsWithoutExpectations]
 class ApiKeyServiceTest extends TestCase
 {
     private ApiKeyService $service;

@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Visit;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Visit\DownloadGeoLiteDbCommand;
 use Shlinkio\Shlink\CLI\Command\Visit\LocateVisitsCommand;
@@ -31,26 +33,27 @@ use function sprintf;
 
 use const PHP_EOL;
 
+#[AllowMockObjectsWithoutExpectations]
 class LocateVisitsCommandTest extends TestCase
 {
     private CommandTester $commandTester;
     private MockObject & VisitLocatorInterface $visitService;
     private MockObject & VisitToLocationHelperInterface $visitToLocation;
-    private MockObject & Lock\LockInterface $lock;
-    private MockObject & Command $downloadDbCommand;
+    private Stub & Lock\LockInterface $lock;
+    private Stub & Command $downloadDbCommand;
 
     protected function setUp(): void
     {
         $this->visitService = $this->createMock(VisitLocatorInterface::class);
         $this->visitToLocation = $this->createMock(VisitToLocationHelperInterface::class);
 
-        $locker = $this->createMock(Lock\LockFactory::class);
-        $this->lock = $this->createMock(Lock\SharedLockInterface::class);
+        $locker = $this->createStub(Lock\LockFactory::class);
+        $this->lock = $this->createStub(Lock\SharedLockInterface::class);
         $locker->method('createLock')->willReturn($this->lock);
 
         $command = new LocateVisitsCommand($this->visitService, $this->visitToLocation, $locker);
 
-        $this->downloadDbCommand = CliTestUtils::createCommandMock(DownloadGeoLiteDbCommand::NAME);
+        $this->downloadDbCommand = CliTestUtils::createCommandStub(DownloadGeoLiteDbCommand::NAME);
         $this->commandTester = CliTestUtils::testerForCommand($command, $this->downloadDbCommand);
     }
 

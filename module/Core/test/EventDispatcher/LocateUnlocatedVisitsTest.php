@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -15,6 +16,7 @@ use Shlinkio\Shlink\Core\Visit\Geolocation\VisitToLocationHelperInterface;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
+#[AllowMockObjectsWithoutExpectations]
 class LocateUnlocatedVisitsTest extends TestCase
 {
     private LocateUnlocatedVisits $listener;

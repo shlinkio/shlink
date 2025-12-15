@@ -9,6 +9,7 @@ use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\CreateShortUrlCommand;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
@@ -27,12 +28,12 @@ class CreateShortUrlCommandTest extends TestCase
 {
     private CommandTester $commandTester;
     private MockObject & UrlShortenerInterface $urlShortener;
-    private MockObject & ShortUrlStringifierInterface $stringifier;
+    private Stub & ShortUrlStringifierInterface $stringifier;
 
     protected function setUp(): void
     {
         $this->urlShortener = $this->createMock(UrlShortenerInterface::class);
-        $this->stringifier = $this->createMock(ShortUrlStringifierInterface::class);
+        $this->stringifier = $this->createStub(ShortUrlStringifierInterface::class);
 
         $command = new CreateShortUrlCommand(
             $this->urlShortener,
@@ -49,9 +50,7 @@ class CreateShortUrlCommandTest extends TestCase
         $this->urlShortener->expects($this->once())->method('shorten')->withAnyParameters()->willReturn(
             UrlShorteningResult::withoutErrorOnEventDispatching($shortUrl),
         );
-        $this->stringifier->expects($this->once())->method('stringify')->with($shortUrl)->willReturn(
-            'stringified_short_url',
-        );
+        $this->stringifier->method('stringify')->with($shortUrl)->willReturn('stringified_short_url');
 
         $this->commandTester->execute([
             'long-url' => 'http://domain.com/foo/bar',
@@ -71,9 +70,7 @@ class CreateShortUrlCommandTest extends TestCase
         $this->urlShortener->expects($this->once())->method('shorten')->withAnyParameters()->willReturn(
             UrlShorteningResult::withoutErrorOnEventDispatching($shortUrl),
         );
-        $this->stringifier->expects($this->once())->method('stringify')->with($shortUrl)->willReturn(
-            'stringified_short_url',
-        );
+        $this->stringifier->method('stringify')->with($shortUrl)->willReturn('stringified_short_url');
 
         $this->commandTester->setInputs([$shortUrl->getLongUrl()]);
         $this->commandTester->execute([]);
@@ -104,9 +101,7 @@ class CreateShortUrlCommandTest extends TestCase
                 return true;
             }),
         )->willReturn(UrlShorteningResult::withoutErrorOnEventDispatching($shortUrl));
-        $this->stringifier->expects($this->once())->method('stringify')->with($shortUrl)->willReturn(
-            'stringified_short_url',
-        );
+        $this->stringifier->method('stringify')->with($shortUrl)->willReturn('stringified_short_url');
 
         $this->commandTester->execute([
             'long-url' => 'http://domain.com/foo/bar',

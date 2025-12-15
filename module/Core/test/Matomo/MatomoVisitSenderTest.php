@@ -9,6 +9,7 @@ use MatomoTracker;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
@@ -29,13 +30,13 @@ use function array_values;
 class MatomoVisitSenderTest extends TestCase
 {
     private MockObject & MatomoTrackerBuilderInterface $trackerBuilder;
-    private MockObject & VisitIterationRepositoryInterface $visitIterationRepository;
+    private Stub & VisitIterationRepositoryInterface $visitIterationRepository;
     private MatomoVisitSender $visitSender;
 
     protected function setUp(): void
     {
         $this->trackerBuilder = $this->createMock(MatomoTrackerBuilderInterface::class);
-        $this->visitIterationRepository = $this->createMock(VisitIterationRepositoryInterface::class);
+        $this->visitIterationRepository = $this->createStub(VisitIterationRepositoryInterface::class);
 
         $this->visitSender = new MatomoVisitSender(
             $this->trackerBuilder,
@@ -155,13 +156,13 @@ class MatomoVisitSenderTest extends TestCase
         $visitor = Visitor::empty();
         $bot = Visitor::botInstance();
 
-        $this->visitIterationRepository->expects($this->once())->method('findAllVisits')->with($dateRange)->willReturn([
+        $this->visitIterationRepository->method('findAllVisits')->with($dateRange)->willReturn([
             Visit::forBasePath($bot),
             Visit::forValidShortUrl(ShortUrl::createFake(), $visitor),
             Visit::forInvalidShortUrl($visitor),
         ]);
 
-        $tracker = $this->createMock(MatomoTracker::class);
+        $tracker = $this->createStub(MatomoTracker::class);
         $tracker->method('setUrl')->willReturn($tracker);
         $tracker->method('setUserAgent')->willReturn($tracker);
         $tracker->method('setUrlReferrer')->willReturn($tracker);

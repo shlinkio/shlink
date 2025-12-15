@@ -29,7 +29,7 @@ class RequestIdProviderTest extends TestCase
         $initialId = $this->middleware->currentRequestId();
         self::assertEquals($initialId, $this->provider->currentRequestId());
 
-        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler = $this->createStub(RequestHandlerInterface::class);
         $handler->method('handle')->willReturn(new Response());
         $this->middleware->process(ServerRequestFactory::fromGlobals(), $handler);
         $idAfterProcessingRequest = $this->middleware->currentRequestId();

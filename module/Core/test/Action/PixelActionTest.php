@@ -47,7 +47,7 @@ class PixelActionTest extends TestCase
             $request->withAttribute(REDIRECT_URL_REQUEST_ATTRIBUTE, null),
         );
 
-        $response = $this->action->process($request, $this->createMock(RequestHandlerInterface::class));
+        $response = $this->action->process($request, $this->createStub(RequestHandlerInterface::class));
 
         self::assertInstanceOf(PixelResponse::class, $response);
         self::assertEquals(200, $response->getStatusCode());

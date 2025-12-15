@@ -55,7 +55,9 @@ class OrphanVisitsActionTest extends TestCase
     #[Test]
     public function exceptionIsThrownIfInvalidDataIsProvided(): void
     {
+        $this->visitsHelper->expects($this->never())->method('orphanVisits');
         $this->expectException(ValidationException::class);
+
         $this->action->handle(
             ServerRequestFactory::fromGlobals()
                 ->withAttribute(ApiKey::class, ApiKey::create())
