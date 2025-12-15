@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Util;
 
 use Closure;
-use Shlinkio\Shlink\CLI\Command\Util\LockedCommandConfig;
+use Shlinkio\Shlink\CLI\Command\Util\LockConfig;
 use Symfony\Component\Console\Helper\DebugFormatterHelper;
 use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
@@ -24,7 +24,7 @@ class ProcessRunner implements ProcessRunnerInterface
     {
         $this->createProcess = $createProcess !== null
             ? $createProcess(...)
-            : static fn (array $cmd) => new Process($cmd, timeout: LockedCommandConfig::DEFAULT_TTL);
+            : static fn (array $cmd) => new Process($cmd, timeout: LockConfig::DEFAULT_TTL);
     }
 
     public function run(OutputInterface $output, array $cmd): void

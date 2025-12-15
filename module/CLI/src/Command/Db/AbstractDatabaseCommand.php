@@ -4,23 +4,26 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Db;
 
-use Shlinkio\Shlink\CLI\Command\Util\AbstractLockedCommand;
-use Shlinkio\Shlink\CLI\Command\Util\LockedCommandConfig;
+use Shlinkio\Shlink\CLI\Command\Util\CommandUtils;
+use Shlinkio\Shlink\CLI\Command\Util\LockConfig;
 use Shlinkio\Shlink\CLI\Util\ProcessRunnerInterface;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Process\PhpExecutableFinder;
 
-abstract class AbstractDatabaseCommand extends AbstractLockedCommand
+abstract class AbstractDatabaseCommand extends Command
 {
     private string $phpBinary;
 
     public function __construct(
-        LockFactory $locker,
+        private readonly LockFactory $locker,
         private readonly ProcessRunnerInterface $processRunner,
         PhpExecutableFinder $phpFinder,
     ) {
-        parent::__construct($locker);
+        parent::__construct();
         $this->phpBinary = $phpFinder->find(false) ?: 'php';
     }
 
@@ -30,8 +33,15 @@ abstract class AbstractDatabaseCommand extends AbstractLockedCommand
         $this->processRunner->run($output, $command);
     }
 
-    protected function getLockConfig(): LockedCommandConfig
+    final protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        return LockedCommandConfig::blocking($this->getName() ?? static::class);
+        return CommandUtils::executeWithLock(
+            $this->locker,
+            LockConfig::blocking($this->getName() ?? static::class),
+            new SymfonyStyle($input, $output),
+            fn () => $this->lockedExecute($input, $output),
+        );
     }
+
+    abstract protected function lockedExecute(InputInterface $input, OutputInterface $output): int;
 }

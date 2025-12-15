@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Visit;
 
-use Shlinkio\Shlink\CLI\Command\Util\AbstractLockedCommand;
-use Shlinkio\Shlink\CLI\Command\Util\LockedCommandConfig;
+use Shlinkio\Shlink\CLI\Command\Util\CommandUtils;
+use Shlinkio\Shlink\CLI\Command\Util\LockConfig;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
@@ -15,6 +15,7 @@ use Shlinkio\Shlink\Core\Visit\Geolocation\VisitLocatorInterface;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitToLocationHelperInterface;
 use Shlinkio\Shlink\Core\Visit\Model\UnlocatableIpType;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,7 +27,7 @@ use Throwable;
 
 use function sprintf;
 
-class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocationHelperInterface
+class LocateVisitsCommand extends Command implements VisitGeolocationHelperInterface
 {
     public const string NAME = 'visit:locate';
 
@@ -35,9 +36,9 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
     public function __construct(
         private readonly VisitLocatorInterface $visitLocator,
         private readonly VisitToLocationHelperInterface $visitToLocation,
-        LockFactory $locker,
+        private readonly LockFactory $locker,
     ) {
-        parent::__construct($locker);
+        parent::__construct();
     }
 
     protected function configure(): void
@@ -97,7 +98,17 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
         return $this->io->confirm('Do you want to proceed?', false);
     }
 
-    protected function lockedExecute(InputInterface $input, OutputInterface $output): int
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        return CommandUtils::executeWithLock(
+            $this->locker,
+            LockConfig::nonBlocking(self::NAME),
+            new SymfonyStyle($input, $output),
+            fn () => $this->locateVisits($input),
+        );
+    }
+
+    private function locateVisits(InputInterface $input): int
     {
         $retry = $input->getOption('retry');
         $all = $retry && $input->getOption('all');
@@ -173,10 +184,5 @@ class LocateVisitsCommand extends AbstractLockedCommand implements VisitGeolocat
         if ($exitCode === self::FAILURE) {
             throw new RuntimeException('It is not possible to locate visits without a GeoLite2 db file.');
         }
-    }
-
-    protected function getLockConfig(): LockedCommandConfig
-    {
-        return LockedCommandConfig::nonBlocking(self::NAME);
     }
 }
