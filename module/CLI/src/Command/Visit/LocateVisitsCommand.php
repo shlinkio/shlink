@@ -15,18 +15,21 @@ use Shlinkio\Shlink\Core\Visit\Geolocation\VisitLocatorInterface;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitToLocationHelperInterface;
 use Shlinkio\Shlink\Core\Visit\Model\UnlocatableIpType;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Lock\LockFactory;
 use Throwable;
 
 use function sprintf;
 
+#[AsCommand(
+    name: LocateVisitsCommand::NAME,
+    description: 'Resolves visits origin locations. It implicitly downloads/updates the GeoLite2 db file if needed',
+)]
 class LocateVisitsCommand extends Command implements VisitGeolocationHelperInterface
 {
     public const string NAME = 'visit:locate';
@@ -41,41 +44,25 @@ class LocateVisitsCommand extends Command implements VisitGeolocationHelperInter
         parent::__construct();
     }
 
-    protected function configure(): void
-    {
-        $this
-            ->setName(self::NAME)
-            ->setDescription(
-                'Resolves visits origin locations. It implicitly downloads/updates the GeoLite2 db file if needed.',
-            )
-            ->addOption(
-                'retry',
-                'r',
-                InputOption::VALUE_NONE,
-                'Will retry the location of visits that were located with a not-found location, in case it was due to '
-                . 'a temporal issue.',
-            )
-            ->addOption(
-                'all',
-                'a',
-                InputOption::VALUE_NONE,
-                'When provided together with --retry, will locate all existing visits, regardless the fact that they '
-                . 'have already been located.',
-            );
-    }
-
-    protected function initialize(InputInterface $input, OutputInterface $output): void
-    {
-        $this->io = new SymfonyStyle($input, $output);
-    }
-
-    protected function interact(InputInterface $input, OutputInterface $output): void
-    {
-        $retry = $input->getOption('retry');
-        $all = $input->getOption('all');
+    public function __invoke(
+        SymfonyStyle $io,
+        #[Option(
+            'Will retry the location of visits that were located with a not-found location, in case it was due to '
+            . 'a temporal issue.',
+            shortcut: 'r',
+        )]
+        bool $retry = false,
+        #[Option(
+            'When provided together with --retry, will locate all existing visits, regardless the fact that they '
+            . 'have already been located.',
+            shortcut: 'a',
+        )]
+        bool $all = false,
+    ): int {
+        $this->io = $io;
 
         if ($all && !$retry) {
-            $this->io->writeln(
+            $io->writeln(
                 '<comment>The <fg=yellow;options=bold>--all</> flag has no effect on its own. You have to provide it '
                 . 'together with <fg=yellow;options=bold>--retry</>.</comment>',
             );
@@ -84,6 +71,13 @@ class LocateVisitsCommand extends Command implements VisitGeolocationHelperInter
         if ($all && $retry && ! $this->warnAndVerifyContinue()) {
             throw new RuntimeException('Execution aborted');
         }
+
+        return CommandUtils::executeWithLock(
+            $this->locker,
+            LockConfig::nonBlocking(self::NAME),
+            $io,
+            fn () => $this->locateVisits($retry, $all),
+        );
     }
 
     private function warnAndVerifyContinue(): bool
@@ -98,21 +92,8 @@ class LocateVisitsCommand extends Command implements VisitGeolocationHelperInter
         return $this->io->confirm('Do you want to proceed?', false);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    private function locateVisits(bool $retry, bool $all): int
     {
-        return CommandUtils::executeWithLock(
-            $this->locker,
-            LockConfig::nonBlocking(self::NAME),
-            new SymfonyStyle($input, $output),
-            fn () => $this->locateVisits($input),
-        );
-    }
-
-    private function locateVisits(InputInterface $input): int
-    {
-        $retry = $input->getOption('retry');
-        $all = $retry && $input->getOption('all');
-
         try {
             $this->checkDbUpdate();
 
