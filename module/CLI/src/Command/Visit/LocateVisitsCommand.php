@@ -104,11 +104,11 @@ class LocateVisitsCommand extends Command implements VisitGeolocationHelperInter
             $this->locker,
             LockConfig::nonBlocking(self::NAME),
             new SymfonyStyle($input, $output),
-            fn () => $this->runStuff($input),
+            fn () => $this->locateVisits($input),
         );
     }
 
-    private function runStuff(InputInterface $input): int
+    private function locateVisits(InputInterface $input): int
     {
         $retry = $input->getOption('retry');
         $all = $retry && $input->getOption('all');
