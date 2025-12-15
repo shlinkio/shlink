@@ -203,25 +203,34 @@ class ListShortUrlsCommandTest extends TestCase
         array $commandArgs,
         int|null $page,
         string|null $searchTerm,
-        array $tags,
+        array|null $tags,
         string $tagsMode,
         string|null $startDate = null,
         string|null $endDate = null,
-        array $excludeTags = [],
+        array|null $excludeTags = null,
         string $excludeTagsMode = TagsMode::ANY->value,
         string|null $apiKeyName = null,
     ): void {
-        $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(ShortUrlsParams::fromRawData([
+        $expectedData = [
             'page' => $page,
             'searchTerm' => $searchTerm,
-            'tags' => $tags,
             'tagsMode' => $tagsMode,
             'startDate' => $startDate !== null ? Chronos::parse($startDate)->toAtomString() : null,
             'endDate' => $endDate !== null ? Chronos::parse($endDate)->toAtomString() : null,
-            'excludeTags' => $excludeTags,
             'excludeTagsMode' => $excludeTagsMode,
             'apiKeyName' => $apiKeyName,
-        ]))->willReturn(new Paginator(new ArrayAdapter([])));
+        ];
+
+        if ($tags !== null) {
+            $expectedData['tags'] = $tags;
+        }
+        if ($excludeTags !== null) {
+            $expectedData['excludeTags'] = $excludeTags;
+        }
+
+        $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(ShortUrlsParams::fromRawData(
+            $expectedData,
+        ))->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->setInputs(['n']);
         $this->commandTester->execute($commandArgs);
@@ -231,7 +240,7 @@ class ListShortUrlsCommandTest extends TestCase
     {
         yield [[], 1, null, [], TagsMode::ANY->value];
         yield [['--page' => $page = 3], $page, null, [], TagsMode::ANY->value];
-        yield [['--tags-all' => true], 1, null, [], TagsMode::ALL->value];
+        yield [['--tags-all' => true, '--tag' => ['foo']], 1, null, ['foo'], TagsMode::ALL->value];
         yield [['--search-term' => $searchTerm = 'search this'], 1, $searchTerm, [], TagsMode::ANY->value];
         yield [
             ['--page' => $page = 3, '--search-term' => $searchTerm = 'search this', '--tag' => $tags = ['foo', 'bar']],
@@ -270,7 +279,7 @@ class ListShortUrlsCommandTest extends TestCase
             ['--exclude-tag' => ['foo', 'bar'], '--exclude-tags-all' => true],
             1,
             null,
-            [],
+            null,
             TagsMode::ANY->value,
             null,
             null,

@@ -54,7 +54,7 @@ class CreateShortUrlCommandTest extends TestCase
         );
 
         $this->commandTester->execute([
-            'longUrl' => 'http://domain.com/foo/bar',
+            'long-url' => 'http://domain.com/foo/bar',
             '--max-visits' => '3',
         ], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
         $output = $this->commandTester->getDisplay();
@@ -87,7 +87,7 @@ class CreateShortUrlCommandTest extends TestCase
         );
         $this->stringifier->method('stringify')->willReturn('');
 
-        $this->commandTester->execute(['longUrl' => 'http://domain.com/invalid', '--custom-slug' => 'my-slug']);
+        $this->commandTester->execute(['long-url' => 'http://domain.com/invalid', '--custom-slug' => 'my-slug']);
         $output = $this->commandTester->getDisplay();
 
         self::assertEquals(Command::FAILURE, $this->commandTester->getStatusCode());
@@ -109,7 +109,7 @@ class CreateShortUrlCommandTest extends TestCase
         );
 
         $this->commandTester->execute([
-            'longUrl' => 'http://domain.com/foo/bar',
+            'long-url' => 'http://domain.com/foo/bar',
             '--tag' => ['foo', 'bar', 'baz', 'boo', 'zar', 'baz'],
         ]);
         $output = $this->commandTester->getDisplay();
@@ -129,7 +129,7 @@ class CreateShortUrlCommandTest extends TestCase
         )->willReturn(UrlShorteningResult::withoutErrorOnEventDispatching(ShortUrl::createFake()));
         $this->stringifier->method('stringify')->willReturn('');
 
-        $input['longUrl'] = 'http://domain.com/foo/bar';
+        $input['long-url'] = 'http://domain.com/foo/bar';
         $this->commandTester->execute($input);
 
         self::assertEquals(Command::SUCCESS, $this->commandTester->getStatusCode());
@@ -156,7 +156,7 @@ class CreateShortUrlCommandTest extends TestCase
         )->willReturn(UrlShorteningResult::withoutErrorOnEventDispatching($shortUrl));
         $this->stringifier->method('stringify')->willReturn('');
 
-        $options['longUrl'] = 'http://domain.com/foo/bar';
+        $options['long-url'] = 'http://domain.com/foo/bar';
         $this->commandTester->execute($options);
     }
 
@@ -178,7 +178,7 @@ class CreateShortUrlCommandTest extends TestCase
         );
         $this->stringifier->method('stringify')->willReturn('stringified_short_url');
 
-        $this->commandTester->execute(['longUrl' => 'http://domain.com/foo/bar'], ['verbosity' => $verbosity]);
+        $this->commandTester->execute(['long-url' => 'http://domain.com/foo/bar'], ['verbosity' => $verbosity]);
         $output = $this->commandTester->getDisplay();
 
         $assert($output);
