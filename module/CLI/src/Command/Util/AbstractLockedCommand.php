@@ -39,5 +39,5 @@ abstract class AbstractLockedCommand extends Command
 
     abstract protected function lockedExecute(InputInterface $input, OutputInterface $output): int;
 
-    abstract protected function getLockConfig(): LockedCommandConfig;
+    abstract protected function getLockConfig(): LockConfig;
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\Db;
 
 use Shlinkio\Shlink\CLI\Command\Util\AbstractLockedCommand;
-use Shlinkio\Shlink\CLI\Command\Util\LockedCommandConfig;
+use Shlinkio\Shlink\CLI\Command\Util\LockConfig;
 use Shlinkio\Shlink\CLI\Util\ProcessRunnerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Lock\LockFactory;
@@ -30,8 +30,8 @@ abstract class AbstractDatabaseCommand extends AbstractLockedCommand
         $this->processRunner->run($output, $command);
     }
 
-    protected function getLockConfig(): LockedCommandConfig
+    protected function getLockConfig(): LockConfig
     {
-        return LockedCommandConfig::blocking($this->getName() ?? static::class);
+        return LockConfig::blocking($this->getName() ?? static::class);
     }
 }
