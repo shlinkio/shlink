@@ -28,7 +28,7 @@ class DeleteShortUrlCommand extends Command
     public function __invoke(
         SymfonyStyle $io,
         #[Argument('The short code for the short URL to be deleted')] string $shortCode,
-        #[Option('TThe domain if the short code does not belong to the default one', shortcut: 'd')]
+        #[Option('The domain if the short code does not belong to the default one', shortcut: 'd')]
         string|null $domain = null,
         #[Option(
             'Ignores the safety visits threshold check, which could make short URLs with many visits to be '
