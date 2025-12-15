@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Integration;
 
-use Cake\Chronos\Chronos;
 use Shlinkio\Shlink\Core\Matomo\MatomoOptions;
 use Shlinkio\Shlink\Core\Matomo\MatomoVisitSenderInterface;
 use Shlinkio\Shlink\Core\Matomo\VisitSendingProgressTrackerInterface;
@@ -17,10 +16,12 @@ use Throwable;
 
 use function Shlinkio\Shlink\Common\buildDateRange;
 use function Shlinkio\Shlink\Core\dateRangeToHumanFriendly;
+use function Shlinkio\Shlink\Core\normalizeOptionalDate;
 use function sprintf;
 
 #[AsCommand(
     name: MatomoSendVisitsCommand::NAME,
+    description: 'Send existing visits to the configured matomo instance',
     help: <<<HELP
         This command allows you to send existing visits from this Shlink instance to the configured Matomo server.
         
@@ -56,14 +57,6 @@ class MatomoSendVisitsCommand extends Command implements VisitSendingProgressTra
         parent::__construct();
     }
 
-    protected function configure(): void
-    {
-        $this->setDescription(sprintf(
-            '%sSend existing visits to the configured matomo instance',
-            $this->matomoEnabled ? '' : '<comment>[MATOMO INTEGRATION DISABLED]</comment> ',
-        ));
-    }
-
     public function __invoke(
         SymfonyStyle $io,
         InputInterface $input,
@@ -81,8 +74,8 @@ class MatomoSendVisitsCommand extends Command implements VisitSendingProgressTra
 
         // TODO Validate provided date formats
         $dateRange = buildDateRange(
-            startDate: $since !== null ? Chronos::parse($since) : null,
-            endDate: $until !== null ? Chronos::parse($until) : null,
+            startDate: normalizeOptionalDate($since),
+            endDate: normalizeOptionalDate($until),
         );
 
         if ($input->isInteractive()) {

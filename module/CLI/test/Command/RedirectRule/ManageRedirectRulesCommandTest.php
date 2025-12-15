@@ -48,7 +48,7 @@ class ManageRedirectRulesCommandTest extends TestCase
         $this->ruleService->expects($this->never())->method('saveRulesForShortUrl');
         $this->ruleHandler->expects($this->never())->method('manageRules');
 
-        $exitCode = $this->commandTester->execute(['shortCode' => 'foo']);
+        $exitCode = $this->commandTester->execute(['short-code' => 'foo']);
         $output = $this->commandTester->getDisplay();
 
         self::assertEquals(Command::FAILURE, $exitCode);
@@ -67,7 +67,7 @@ class ManageRedirectRulesCommandTest extends TestCase
         $this->ruleHandler->expects($this->once())->method('manageRules')->willReturn(null);
         $this->ruleService->expects($this->never())->method('saveRulesForShortUrl');
 
-        $exitCode = $this->commandTester->execute(['shortCode' => 'foo']);
+        $exitCode = $this->commandTester->execute(['short-code' => 'foo']);
         $output = $this->commandTester->getDisplay();
 
         self::assertEquals(Command::SUCCESS, $exitCode);
@@ -86,7 +86,7 @@ class ManageRedirectRulesCommandTest extends TestCase
         $this->ruleHandler->expects($this->once())->method('manageRules')->willReturn([]);
         $this->ruleService->expects($this->once())->method('saveRulesForShortUrl')->with($shortUrl, []);
 
-        $exitCode = $this->commandTester->execute(['shortCode' => 'foo']);
+        $exitCode = $this->commandTester->execute(['short-code' => 'foo']);
         $output = $this->commandTester->getDisplay();
 
         self::assertEquals(Command::SUCCESS, $exitCode);
