@@ -36,8 +36,8 @@ class EditShortUrlCommand extends Command
 
     public function __invoke(
         SymfonyStyle $io,
-        #[Argument('The short code to edit')] string $shortCode,
         #[MapInput] ShortUrlDataInput $data,
+        #[Argument('The short code to edit')] string $shortCode,
         #[Option('The domain to which the short URL is attached', shortcut: 'd')] string|null $domain = null,
         #[Option('The long URL to set', shortcut: 'l')] string|null $longUrl = null,
     ): int {
