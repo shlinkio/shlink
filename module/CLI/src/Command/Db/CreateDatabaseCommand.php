@@ -10,9 +10,8 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Shlinkio\Shlink\CLI\Command\Util\CommandUtils;
 use Shlinkio\Shlink\CLI\Command\Util\LockConfig;
 use Shlinkio\Shlink\CLI\Util\ProcessRunnerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Lock\LockFactory;
 use Throwable;
@@ -21,6 +20,11 @@ use function array_map;
 use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 use function Shlinkio\Shlink\Core\ArrayUtils\some;
 
+#[AsCommand(
+    name: CreateDatabaseCommand::NAME,
+    description: 'Creates the database needed for shlink to work. It will do nothing if the database already exists',
+    hidden: true,
+)]
 class CreateDatabaseCommand extends Command
 {
     private readonly Connection $regularConn;
@@ -39,19 +43,8 @@ class CreateDatabaseCommand extends Command
         parent::__construct();
     }
 
-    protected function configure(): void
+    public function __invoke(SymfonyStyle $io): int
     {
-        $this
-            ->setName(self::NAME)
-            ->setHidden()
-            ->setDescription(
-                'Creates the database needed for shlink to work. It will do nothing if the database already exists',
-            );
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $io = new SymfonyStyle($input, $output);
         return CommandUtils::executeWithLock(
             $this->locker,
             LockConfig::blocking(self::NAME),

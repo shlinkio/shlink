@@ -7,12 +7,16 @@ namespace Shlinkio\Shlink\CLI\Command\Db;
 use Shlinkio\Shlink\CLI\Command\Util\CommandUtils;
 use Shlinkio\Shlink\CLI\Command\Util\LockConfig;
 use Shlinkio\Shlink\CLI\Util\ProcessRunnerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Lock\LockFactory;
 
+#[AsCommand(
+    name: MigrateDatabaseCommand::NAME,
+    description: 'Runs database migrations, which will ensure the shlink database is up to date',
+    hidden: true,
+)]
 class MigrateDatabaseCommand extends Command
 {
     public const string NAME = 'db:migrate';
@@ -26,17 +30,8 @@ class MigrateDatabaseCommand extends Command
         parent::__construct();
     }
 
-    protected function configure(): void
+    public function __invoke(SymfonyStyle $io): int
     {
-        $this
-            ->setName(self::NAME)
-            ->setHidden()
-            ->setDescription('Runs database migrations, which will ensure the shlink database is up to date.');
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $io = new SymfonyStyle($input, $output);
         return CommandUtils::executeWithLock(
             $this->locker,
             LockConfig::blocking(self::NAME),
