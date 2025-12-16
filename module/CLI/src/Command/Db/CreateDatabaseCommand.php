@@ -12,7 +12,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Lock\LockFactory;
-use Symfony\Component\Process\PhpExecutableFinder;
 use Throwable;
 
 use function array_map;
@@ -24,18 +23,17 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
     private readonly Connection $regularConn;
 
     public const string NAME = 'db:create';
-    public const string DOCTRINE_SCRIPT = 'bin/doctrine';
-    public const string DOCTRINE_CREATE_SCHEMA_COMMAND = 'orm:schema-tool:create';
+    public const string SCRIPT = 'bin/doctrine';
+    public const string COMMAND = 'orm:schema-tool:create';
 
     public function __construct(
         LockFactory $locker,
-        ProcessRunnerInterface $processRunner,
-        PhpExecutableFinder $phpFinder,
+        private readonly ProcessRunnerInterface $processRunner,
         private readonly EntityManagerInterface $em,
         private readonly Connection $noDbNameConn,
     ) {
         $this->regularConn = $this->em->getConnection();
-        parent::__construct($locker, $processRunner, $phpFinder);
+        parent::__construct($locker);
     }
 
     protected function configure(): void
@@ -59,7 +57,7 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
 
         // Create database
         $io->writeln('<fg=blue>Creating database tables...</>');
-        $this->runPhpCommand($output, [self::DOCTRINE_SCRIPT, self::DOCTRINE_CREATE_SCHEMA_COMMAND]);
+        $this->processRunner->run($output, [self::SCRIPT, self::COMMAND, '--no-interaction']);
         $io->success('Database properly created!');
 
         return self::SUCCESS;
