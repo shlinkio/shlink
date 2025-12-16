@@ -32,6 +32,7 @@ return [
 
             RedirectRule\RedirectRuleHandler::class => InvokableFactory::class,
             Util\ProcessRunner::class => ConfigAbstractFactory::class,
+            Util\PhpProcessRunner::class => ConfigAbstractFactory::class,
 
             ApiKey\RoleResolver::class => ConfigAbstractFactory::class,
 
@@ -79,6 +80,7 @@ return [
 
     ConfigAbstractFactory::class => [
         Util\ProcessRunner::class => [SymfonyCli\Helper\ProcessHelper::class],
+        Util\PhpProcessRunner::class => [Util\ProcessRunner::class, PhpExecutableFinder::class],
         ApiKey\RoleResolver::class => [DomainService::class, UrlShortenerOptions::class],
 
         Command\ShortUrl\CreateShortUrlCommand::class => [
@@ -136,16 +138,11 @@ return [
 
         Command\Db\CreateDatabaseCommand::class => [
             LockFactory::class,
-            Util\ProcessRunner::class,
-            PhpExecutableFinder::class,
+            Util\PhpProcessRunner::class,
             'em',
             NoDbNameConnectionFactory::SERVICE_NAME,
         ],
-        Command\Db\MigrateDatabaseCommand::class => [
-            LockFactory::class,
-            Util\ProcessRunner::class,
-            PhpExecutableFinder::class,
-        ],
+        Command\Db\MigrateDatabaseCommand::class => [LockFactory::class, Util\PhpProcessRunner::class],
     ],
 
 ];

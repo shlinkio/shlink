@@ -25,7 +25,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\SharedLockInterface;
-use Symfony\Component\Process\PhpExecutableFinder;
 
 class CreateDatabaseCommandTest extends TestCase
 {
@@ -44,9 +43,6 @@ class CreateDatabaseCommandTest extends TestCase
         $lock->method('acquire')->willReturn(true);
         $locker->method('createLock')->willReturn($lock);
 
-        $phpExecutableFinder = $this->createStub(PhpExecutableFinder::class);
-        $phpExecutableFinder->method('find')->willReturn('/usr/local/bin/php');
-
         $this->processHelper = $this->createMock(ProcessRunnerInterface::class);
         $this->schemaManager = $this->createMock(AbstractSchemaManager::class);
 
@@ -63,7 +59,7 @@ class CreateDatabaseCommandTest extends TestCase
         $noDbNameConn = $this->createStub(Connection::class);
         $noDbNameConn->method('createSchemaManager')->willReturn($this->schemaManager);
 
-        $command = new CreateDatabaseCommand($locker, $this->processHelper, $phpExecutableFinder, $em, $noDbNameConn);
+        $command = new CreateDatabaseCommand($locker, $this->processHelper, $em, $noDbNameConn);
         $this->commandTester = CliTestUtils::testerForCommand($command);
     }
 
@@ -112,9 +108,8 @@ class CreateDatabaseCommandTest extends TestCase
         $this->schemaManager->expects($this->never())->method('createDatabase');
         $this->schemaManager->expects($this->once())->method('listTableNames')->willReturn($tables);
         $this->processHelper->expects($this->once())->method('run')->with($this->isInstanceOf(OutputInterface::class), [
-            '/usr/local/bin/php',
-            CreateDatabaseCommand::DOCTRINE_SCRIPT,
-            CreateDatabaseCommand::DOCTRINE_CREATE_SCHEMA_COMMAND,
+            CreateDatabaseCommand::SCRIPT,
+            CreateDatabaseCommand::COMMAND,
             '--no-interaction',
         ]);
 

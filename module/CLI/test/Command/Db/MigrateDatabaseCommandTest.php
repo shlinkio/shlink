@@ -14,7 +14,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\SharedLockInterface;
-use Symfony\Component\Process\PhpExecutableFinder;
 
 class MigrateDatabaseCommandTest extends TestCase
 {
@@ -28,12 +27,9 @@ class MigrateDatabaseCommandTest extends TestCase
         $lock->method('acquire')->willReturn(true);
         $locker->method('createLock')->willReturn($lock);
 
-        $phpExecutableFinder = $this->createStub(PhpExecutableFinder::class);
-        $phpExecutableFinder->method('find')->willReturn('/usr/local/bin/php');
-
         $this->processHelper = $this->createMock(ProcessRunnerInterface::class);
 
-        $command = new MigrateDatabaseCommand($locker, $this->processHelper, $phpExecutableFinder);
+        $command = new MigrateDatabaseCommand($locker, $this->processHelper);
         $this->commandTester = CliTestUtils::testerForCommand($command);
     }
 
@@ -41,9 +37,8 @@ class MigrateDatabaseCommandTest extends TestCase
     public function migrationsCommandIsRunWithProperVerbosity(): void
     {
         $this->processHelper->expects($this->once())->method('run')->with($this->isInstanceOf(OutputInterface::class), [
-            '/usr/local/bin/php',
-            MigrateDatabaseCommand::DOCTRINE_MIGRATIONS_SCRIPT,
-            MigrateDatabaseCommand::DOCTRINE_MIGRATE_COMMAND,
+            MigrateDatabaseCommand::SCRIPT,
+            MigrateDatabaseCommand::COMMAND,
             '--no-interaction',
         ]);
 
