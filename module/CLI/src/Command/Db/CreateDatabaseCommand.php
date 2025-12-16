@@ -7,7 +7,10 @@ namespace Shlinkio\Shlink\CLI\Command\Db;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Shlinkio\Shlink\CLI\Command\Util\CommandUtils;
+use Shlinkio\Shlink\CLI\Command\Util\LockConfig;
 use Shlinkio\Shlink\CLI\Util\ProcessRunnerInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -18,7 +21,7 @@ use function array_map;
 use function Shlinkio\Shlink\Core\ArrayUtils\contains;
 use function Shlinkio\Shlink\Core\ArrayUtils\some;
 
-class CreateDatabaseCommand extends AbstractDatabaseCommand
+class CreateDatabaseCommand extends Command
 {
     private readonly Connection $regularConn;
 
@@ -27,13 +30,13 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
     public const string COMMAND = 'orm:schema-tool:create';
 
     public function __construct(
-        LockFactory $locker,
+        private readonly LockFactory $locker,
         private readonly ProcessRunnerInterface $processRunner,
         private readonly EntityManagerInterface $em,
         private readonly Connection $noDbNameConn,
     ) {
         $this->regularConn = $this->em->getConnection();
-        parent::__construct($locker);
+        parent::__construct();
     }
 
     protected function configure(): void
@@ -46,10 +49,19 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
             );
     }
 
-    protected function lockedExecute(InputInterface $input, OutputInterface $output): int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        return CommandUtils::executeWithLock(
+            $this->locker,
+            LockConfig::blocking(self::NAME),
+            $io,
+            fn () => $this->executeCommand($io),
+        );
+    }
 
+    private function executeCommand(SymfonyStyle $io): int
+    {
         if ($this->databaseTablesExist()) {
             $io->success('Database already exists. Run "db:migrate" command to make sure it is up to date.');
             return self::SUCCESS;
@@ -57,7 +69,7 @@ class CreateDatabaseCommand extends AbstractDatabaseCommand
 
         // Create database
         $io->writeln('<fg=blue>Creating database tables...</>');
-        $this->processRunner->run($output, [self::SCRIPT, self::COMMAND, '--no-interaction']);
+        $this->processRunner->run($io, [self::SCRIPT, self::COMMAND, '--no-interaction']);
         $io->success('Database properly created!');
 
         return self::SUCCESS;
