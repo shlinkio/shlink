@@ -17,7 +17,7 @@ use function sprintf;
 
 #[AsCommand(
     DownloadGeoLiteDbCommand::NAME,
-    'Checks if the GeoLite2 db file is too old or it does not exist, and tries to download an up-to-date copy if so.',
+    'Checks if the GeoLite2 db file is too old or it does not exist, and tries to download an up-to-date copy if so',
 )]
 class DownloadGeoLiteDbCommand extends Command implements GeolocationDownloadProgressHandlerInterface
 {

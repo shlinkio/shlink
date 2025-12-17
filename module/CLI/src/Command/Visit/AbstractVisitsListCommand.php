@@ -15,11 +15,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function array_keys;
-use function array_map;
 use function Shlinkio\Shlink\Common\buildDateRange;
-use function Shlinkio\Shlink\Core\ArrayUtils\select_keys;
-use function Shlinkio\Shlink\Core\camelCaseToHumanFriendly;
 
 abstract class AbstractVisitsListCommand extends Command
 {
@@ -38,42 +34,11 @@ abstract class AbstractVisitsListCommand extends Command
         $startDate = $this->startDateOption->get($input, $output);
         $endDate = $this->endDateOption->get($input, $output);
         $paginator = $this->getVisitsPaginator($input, buildDateRange($startDate, $endDate));
-        [$rows, $headers] = $this->resolveRowsAndHeaders($paginator);
+        [$rows, $headers] = VisitsCommandUtils::resolveRowsAndHeaders($paginator, $this->mapExtraFields(...));
 
         ShlinkTable::default($output)->render($headers, $rows);
 
         return self::SUCCESS;
-    }
-
-    /**
-     * @param Paginator<Visit> $paginator
-     */
-    private function resolveRowsAndHeaders(Paginator $paginator): array
-    {
-        $extraKeys = [];
-        $rows = array_map(function (Visit $visit) use (&$extraKeys) {
-            $extraFields = $this->mapExtraFields($visit);
-            $extraKeys = array_keys($extraFields);
-
-            $rowData = [
-                'referer' => $visit->referer,
-                'date' => $visit->date->toAtomString(),
-                'userAgent' => $visit->userAgent,
-                'potentialBot' => $visit->potentialBot,
-                'country' => $visit->getVisitLocation()->countryName ?? 'Unknown',
-                'city' => $visit->getVisitLocation()->cityName ?? 'Unknown',
-                ...$extraFields,
-            ];
-
-            // Filter out unknown keys
-            return select_keys($rowData, ['referer', 'date', 'userAgent', 'country', 'city', ...$extraKeys]);
-        }, [...$paginator->getCurrentPageResults()]);
-        $extra = array_map(camelCaseToHumanFriendly(...), $extraKeys);
-
-        return [
-            $rows,
-            ['Referer', 'Date', 'User agent', 'Country', 'City', ...$extra],
-        ];
     }
 
     /**
