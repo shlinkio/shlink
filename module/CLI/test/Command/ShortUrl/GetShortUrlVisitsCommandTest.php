@@ -24,7 +24,6 @@ use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Tester\CommandTester;
 
 use function Shlinkio\Shlink\Common\buildDateRange;
-use function sprintf;
 
 class GetShortUrlVisitsCommandTest extends TestCase
 {
@@ -47,7 +46,7 @@ class GetShortUrlVisitsCommandTest extends TestCase
             new VisitsParams(DateRange::allTime()),
         )->willReturn(new Paginator(new ArrayAdapter([])));
 
-        $this->commandTester->execute(['shortCode' => $shortCode]);
+        $this->commandTester->execute(['short-code' => $shortCode]);
     }
 
     #[Test]
@@ -75,32 +74,10 @@ class GetShortUrlVisitsCommandTest extends TestCase
         )->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->execute([
-            'shortCode' => $shortCode,
+            'short-code' => $shortCode,
             '--start-date' => $startDate,
             '--end-date' => $endDate,
         ]);
-    }
-
-    #[Test]
-    public function providingInvalidDatesPrintsWarning(): void
-    {
-        $shortCode = 'abc123';
-        $startDate = 'foo';
-        $this->visitsHelper->expects($this->once())->method('visitsForShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
-            new VisitsParams(DateRange::allTime()),
-        )->willReturn(new Paginator(new ArrayAdapter([])));
-
-        $this->commandTester->execute([
-            'shortCode' => $shortCode,
-            '--start-date' => $startDate,
-        ]);
-        $output = $this->commandTester->getDisplay();
-
-        self::assertStringContainsString(
-            sprintf('Ignored provided "start-date" since its value "%s" is not a valid date', $startDate),
-            $output,
-        );
     }
 
     #[Test]
@@ -115,7 +92,7 @@ class GetShortUrlVisitsCommandTest extends TestCase
             $this->anything(),
         )->willReturn(new Paginator(new ArrayAdapter([$visit])));
 
-        $this->commandTester->execute(['shortCode' => $shortCode]);
+        $this->commandTester->execute(['short-code' => $shortCode]);
         $output = $this->commandTester->getDisplay();
 
         self::assertEquals(

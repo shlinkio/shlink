@@ -4,62 +4,45 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
-use Shlinkio\Shlink\CLI\Command\Visit\AbstractVisitsListCommand;
-use Shlinkio\Shlink\CLI\Input\ShortUrlIdentifierInput;
-use Shlinkio\Shlink\Common\Paginator\Paginator;
-use Shlinkio\Shlink\Common\Util\DateRange;
-use Shlinkio\Shlink\Core\Visit\Entity\Visit;
+use Shlinkio\Shlink\CLI\Command\Visit\VisitsCommandUtils;
+use Shlinkio\Shlink\CLI\Input\VisitsDateRangeInput;
+use Shlinkio\Shlink\CLI\Util\ShlinkTable;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
+use Symfony\Component\Console\Attribute\Argument;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Ask;
+use Symfony\Component\Console\Attribute\MapInput;
+use Symfony\Component\Console\Attribute\Option;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class GetShortUrlVisitsCommand extends AbstractVisitsListCommand
+#[AsCommand(GetShortUrlVisitsCommand::NAME, 'Returns the detailed visits information for provided short code')]
+class GetShortUrlVisitsCommand extends Command
 {
     public const string NAME = 'short-url:visits';
 
-    private ShortUrlIdentifierInput $shortUrlIdentifierInput;
-
-    protected function configure(): void
+    public function __construct(protected readonly VisitsStatsHelperInterface $visitsHelper)
     {
-        $this
-            ->setName(self::NAME)
-            ->setDescription('Returns the detailed visits information for provided short code');
-        $this->shortUrlIdentifierInput = new ShortUrlIdentifierInput(
-            $this,
-            shortCodeDesc: 'The short code which visits we want to get.',
-            domainDesc: 'The domain for the short code.',
-        );
+        parent::__construct();
     }
 
-    protected function interact(InputInterface $input, OutputInterface $output): void
-    {
-        $shortCode = $this->shortUrlIdentifierInput->shortCode($input);
-        if (! empty($shortCode)) {
-            return;
-        }
+    public function __invoke(
+        SymfonyStyle $io,
+        #[Argument('The short code which visits we want to get'), Ask('Which short code do you want to use?')]
+        string $shortCode,
+        #[MapInput] VisitsDateRangeInput $dateRangeInput,
+        #[Option('The domain for the short code', shortcut: 'd')]
+        string|null $domain = null,
+    ): int {
+        $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, $domain);
+        $dateRange = $dateRangeInput->toDateRange();
+        $paginator = $this->visitsHelper->visitsForShortUrl($identifier, new VisitsParams($dateRange));
+        [$rows, $headers] = VisitsCommandUtils::resolveRowsAndHeaders($paginator, static fn () => []);
 
-        $io = new SymfonyStyle($input, $output);
-        $shortCode = $io->ask('A short code was not provided. Which short code do you want to use?');
-        if (! empty($shortCode)) {
-            $input->setArgument('shortCode', $shortCode);
-        }
-    }
+        ShlinkTable::default($io)->render($headers, $rows);
 
-    /**
-     * @return Paginator<Visit>
-     */
-    protected function getVisitsPaginator(InputInterface $input, DateRange $dateRange): Paginator
-    {
-        $identifier = $this->shortUrlIdentifierInput->toShortUrlIdentifier($input);
-        return $this->visitsHelper->visitsForShortUrl($identifier, new VisitsParams($dateRange));
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    protected function mapExtraFields(Visit $visit): array
-    {
-        return [];
+        return self::SUCCESS;
     }
 }
