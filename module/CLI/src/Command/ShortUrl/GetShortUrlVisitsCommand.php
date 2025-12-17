@@ -8,7 +8,6 @@ use Shlinkio\Shlink\CLI\Command\Visit\VisitsCommandUtils;
 use Shlinkio\Shlink\CLI\Input\VisitsDateRangeInput;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
-use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Symfony\Component\Console\Attribute\Argument;
@@ -40,18 +39,10 @@ class GetShortUrlVisitsCommand extends Command
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, $domain);
         $dateRange = $dateRangeInput->toDateRange();
         $paginator = $this->visitsHelper->visitsForShortUrl($identifier, new VisitsParams($dateRange));
-        [$rows, $headers] = VisitsCommandUtils::resolveRowsAndHeaders($paginator, $this->mapExtraFields(...));
+        [$rows, $headers] = VisitsCommandUtils::resolveRowsAndHeaders($paginator, static fn () => []);
 
         ShlinkTable::default($io)->render($headers, $rows);
 
         return self::SUCCESS;
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    private function mapExtraFields(Visit $visit): array
-    {
-        return [];
     }
 }
