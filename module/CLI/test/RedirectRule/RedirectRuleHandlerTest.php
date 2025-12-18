@@ -192,6 +192,10 @@ class RedirectRuleHandlerTest extends TestCase
             RedirectConditionType::BEFORE_DATE,
             [RedirectCondition::forBeforeDate(normalizeDate('2016-05-01T20:34:16+02:00'))],
         ];
+        yield 'After date' => [
+            RedirectConditionType::AFTER_DATE,
+            [RedirectCondition::forAfterDate(normalizeDate('2016-05-01T20:34:16+02:00'))],
+        ];
     }
 
     #[Test]

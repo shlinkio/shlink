@@ -211,4 +211,19 @@ class RedirectConditionTest extends TestCase
         yield 'date later than current' => [Chronos::now()->addHours(1), true];
         yield 'date earlier than current' => [Chronos::now()->subHours(1), false];
     }
+
+    #[Test, DataProvider('provideVisitsWithAfterDateCondition')]
+    public function matchesAfterDate(Chronos $date, bool $expectedResult): void
+    {
+        $request = ServerRequestFactory::fromGlobals();
+        $result = RedirectCondition::forAfterDate($date)->matchesRequest($request);
+
+        self::assertEquals($expectedResult, $result);
+    }
+
+    public static function provideVisitsWithAfterDateCondition(): iterable
+    {
+        yield 'date later than current' => [Chronos::now()->addHours(1), false];
+        yield 'date earlier than current' => [Chronos::now()->subHours(1), true];
+    }
 }
