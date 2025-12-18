@@ -123,7 +123,7 @@ class RedirectRuleHandlerTest extends TestCase
                 'IP address, CIDR block or wildcard-pattern (1.2.*.*)' => '1.2.3.4',
                 'Country code to match?' => 'FR',
                 'City name to match?' => 'Los angeles',
-                'Date to match? (ISO 8601)' => '2016-05-01T20:34:16+02:00',
+                'Date to match?' => '2016-05-01T20:34:16+02:00',
                 default => '',
             },
         );

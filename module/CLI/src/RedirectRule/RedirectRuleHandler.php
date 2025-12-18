@@ -125,7 +125,7 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
                     $this->askMandatory('City name to match?', $io),
                 ),
                 RedirectConditionType::BEFORE_DATE => RedirectCondition::forBeforeDate(
-                    normalizeDate($this->askMandatory('Date to match? (ISO 8601)', $io)),
+                    normalizeDate($this->askMandatory('Date to match?', $io)),
                 ),
             };
 
