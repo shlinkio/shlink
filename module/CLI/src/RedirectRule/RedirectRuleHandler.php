@@ -127,6 +127,9 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
                 RedirectConditionType::BEFORE_DATE => RedirectCondition::forBeforeDate(
                     normalizeDate($this->askMandatory('Date to match?', $io)),
                 ),
+                RedirectConditionType::AFTER_DATE => RedirectCondition::forAfterDate(
+                    normalizeDate($this->askMandatory('Date to match?', $io)),
+                ),
             };
 
             $continue = $io->confirm('Do you want to add another condition?');

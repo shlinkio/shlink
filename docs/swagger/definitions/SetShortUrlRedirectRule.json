@@ -24,7 +24,8 @@
               "ip-address",
               "geolocation-country-code",
               "geolocation-city-name",
-              "before-date"
+              "before-date",
+              "after-date"
             ],
             "description": "The type of the condition, which will determine the logic used to match it"
           },

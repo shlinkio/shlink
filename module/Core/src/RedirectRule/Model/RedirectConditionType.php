@@ -21,6 +21,7 @@ enum RedirectConditionType: string
     case GEOLOCATION_COUNTRY_CODE = 'geolocation-country-code';
     case GEOLOCATION_CITY_NAME = 'geolocation-city-name';
     case BEFORE_DATE = 'before-date';
+    case AFTER_DATE = 'after-date';
 
     /**
      * Tells if a value is valid for the condition type
