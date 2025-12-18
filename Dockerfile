@@ -25,15 +25,15 @@ RUN \
     apk add --no-cache postgresql icu libzip libpng
 
 # Install sqlsrv driver for x86_64 builds
-RUN apk add --no-cache --virtual .phpize-deps ${PHPIZE_DEPS} unixodbc-dev && \
-    if [ $(uname -m) == "x86_64" ]; then \
+RUN if [ $(uname -m) == "x86_64" ]; then \
+      apk add --no-cache --virtual .phpize-deps ${PHPIZE_DEPS} unixodbc-dev && \
       wget https://download.microsoft.com/download/${MS_ODBC_DOWNLOAD}/msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
       apk add --allow-untrusted msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
       pecl install pdo_sqlsrv-${PDO_SQLSRV_VERSION} && \
       docker-php-ext-enable pdo_sqlsrv && \
-      rm msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk ; \
-    fi; \
-    apk del .phpize-deps
+      rm msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
+      apk del .phpize-deps; \
+    fi
 
 # Install shlink
 FROM base AS builder
