@@ -19,6 +19,7 @@ use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Symfony\Component\Console\Style\StyleInterface;
 
+use function Shlinkio\Shlink\Core\normalizeDate;
 use function sprintf;
 
 #[AllowMockObjectsWithoutExpectations]
@@ -189,7 +190,7 @@ class RedirectRuleHandlerTest extends TestCase
         ];
         yield 'Before date' => [
             RedirectConditionType::BEFORE_DATE,
-            [RedirectCondition::forBeforeDate('2016-05-01T20:34:16+02:00')],
+            [RedirectCondition::forBeforeDate(normalizeDate('2016-05-01T20:34:16+02:00'))],
         ];
     }
 

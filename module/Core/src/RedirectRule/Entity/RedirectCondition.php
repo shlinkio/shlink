@@ -17,6 +17,7 @@ use function Shlinkio\Shlink\Core\acceptLanguageToLocales;
 use function Shlinkio\Shlink\Core\ArrayUtils\some;
 use function Shlinkio\Shlink\Core\geolocationFromRequest;
 use function Shlinkio\Shlink\Core\ipAddressFromRequest;
+use function Shlinkio\Shlink\Core\normalizeDate;
 use function Shlinkio\Shlink\Core\normalizeLocale;
 use function Shlinkio\Shlink\Core\splitLocale;
 use function sprintf;
@@ -76,9 +77,9 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
         return new self(RedirectConditionType::GEOLOCATION_CITY_NAME, $cityName);
     }
 
-    public static function forBeforeDate(string $date): self
+    public static function forBeforeDate(Chronos $date): self
     {
-        return new self(RedirectConditionType::BEFORE_DATE, $date);
+        return new self(RedirectConditionType::BEFORE_DATE, $date->toAtomString());
     }
 
     public static function fromRawData(array $rawData): self
@@ -106,7 +107,7 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
             RedirectConditionType::IP_ADDRESS => self::forIpAddress($cond->matchValue),
             RedirectConditionType::GEOLOCATION_COUNTRY_CODE => self::forGeolocationCountryCode($cond->matchValue),
             RedirectConditionType::GEOLOCATION_CITY_NAME => self::forGeolocationCityName($cond->matchValue),
-            RedirectConditionType::BEFORE_DATE => self::forBeforeDate($cond->matchValue),
+            RedirectConditionType::BEFORE_DATE => self::forBeforeDate(normalizeDate($cond->matchValue)),
         };
     }
 

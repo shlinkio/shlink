@@ -24,6 +24,7 @@ use function max;
 use function min;
 use function Shlinkio\Shlink\Core\ArrayUtils\map;
 use function Shlinkio\Shlink\Core\enumValues;
+use function Shlinkio\Shlink\Core\normalizeDate;
 use function sprintf;
 use function str_pad;
 use function strlen;
@@ -124,8 +125,8 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
                     $this->askMandatory('City name to match?', $io),
                 ),
                 RedirectConditionType::BEFORE_DATE => RedirectCondition::forBeforeDate(
-                    $this->askMandatory('Date to match? (ISO 8601)', $io),
-                )
+                    normalizeDate($this->askMandatory('Date to match? (ISO 8601)', $io)),
+                ),
             };
 
             $continue = $io->confirm('Do you want to add another condition?');

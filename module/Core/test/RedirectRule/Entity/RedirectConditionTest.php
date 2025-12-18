@@ -198,7 +198,7 @@ class RedirectConditionTest extends TestCase
     }
 
     #[Test, DataProvider('provideVisitsWithBeforeDateCondition')]
-    public function matchesBeforeDate(string $date, bool $expectedResult): void
+    public function matchesBeforeDate(Chronos $date, bool $expectedResult): void
     {
         $request = ServerRequestFactory::fromGlobals();
         $result = RedirectCondition::forBeforeDate($date)->matchesRequest($request);
@@ -208,7 +208,7 @@ class RedirectConditionTest extends TestCase
 
     public static function provideVisitsWithBeforeDateCondition(): iterable
     {
-        yield 'date later than current' => [Chronos::now()->addHours(1)->toIso8601String(), true];
-        yield 'date earlier than current' => [Chronos::now()->subHours(1)->toIso8601String(), false];
+        yield 'date later than current' => [Chronos::now()->addHours(1), true];
+        yield 'date earlier than current' => [Chronos::now()->subHours(1), false];
     }
 }
