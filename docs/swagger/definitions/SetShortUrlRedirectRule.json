@@ -23,7 +23,8 @@
               "valueless-query-param",
               "ip-address",
               "geolocation-country-code",
-              "geolocation-city-name"
+              "geolocation-city-name",
+              "before-date"
             ],
             "description": "The type of the condition, which will determine the logic used to match it"
           },

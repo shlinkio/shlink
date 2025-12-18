@@ -2,6 +2,7 @@
 
 namespace Shlinkio\Shlink\Core\RedirectRule\Entity;
 
+use Cake\Chronos\Chronos;
 use JsonSerializable;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
@@ -16,6 +17,7 @@ use function Shlinkio\Shlink\Core\acceptLanguageToLocales;
 use function Shlinkio\Shlink\Core\ArrayUtils\some;
 use function Shlinkio\Shlink\Core\geolocationFromRequest;
 use function Shlinkio\Shlink\Core\ipAddressFromRequest;
+use function Shlinkio\Shlink\Core\normalizeDate;
 use function Shlinkio\Shlink\Core\normalizeLocale;
 use function Shlinkio\Shlink\Core\splitLocale;
 use function sprintf;
@@ -75,6 +77,11 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
         return new self(RedirectConditionType::GEOLOCATION_CITY_NAME, $cityName);
     }
 
+    public static function forBeforeDate(Chronos $date): self
+    {
+        return new self(RedirectConditionType::BEFORE_DATE, $date->toAtomString());
+    }
+
     public static function fromRawData(array $rawData): self
     {
         $type = RedirectConditionType::from($rawData[RedirectRulesInputFilter::CONDITION_TYPE]);
@@ -100,6 +107,7 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
             RedirectConditionType::IP_ADDRESS => self::forIpAddress($cond->matchValue),
             RedirectConditionType::GEOLOCATION_COUNTRY_CODE => self::forGeolocationCountryCode($cond->matchValue),
             RedirectConditionType::GEOLOCATION_CITY_NAME => self::forGeolocationCityName($cond->matchValue),
+            RedirectConditionType::BEFORE_DATE => self::forBeforeDate(normalizeDate($cond->matchValue)),
         };
     }
 
@@ -117,6 +125,7 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
             RedirectConditionType::IP_ADDRESS => $this->matchesRemoteIpAddress($request),
             RedirectConditionType::GEOLOCATION_COUNTRY_CODE => $this->matchesGeolocationCountryCode($request),
             RedirectConditionType::GEOLOCATION_CITY_NAME => $this->matchesGeolocationCityName($request),
+            RedirectConditionType::BEFORE_DATE => $this->matchesBeforeDate(),
         };
     }
 
@@ -200,6 +209,11 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
         return strcasecmp($geolocation->city, $this->matchValue) === 0;
     }
 
+    private function matchesBeforeDate(): bool
+    {
+        return Chronos::now()->lessThan(Chronos::parse($this->matchValue));
+    }
+
     public function jsonSerialize(): array
     {
         return [
@@ -230,6 +244,7 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
             RedirectConditionType::IP_ADDRESS => sprintf('IP address matches %s', $this->matchValue),
             RedirectConditionType::GEOLOCATION_COUNTRY_CODE => sprintf('country code is %s', $this->matchValue),
             RedirectConditionType::GEOLOCATION_CITY_NAME => sprintf('city name is %s', $this->matchValue),
+            RedirectConditionType::BEFORE_DATE => sprintf('date before %s', $this->matchValue),
         };
     }
 }

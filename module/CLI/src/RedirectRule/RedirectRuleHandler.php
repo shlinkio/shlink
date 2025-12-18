@@ -24,6 +24,7 @@ use function max;
 use function min;
 use function Shlinkio\Shlink\Core\ArrayUtils\map;
 use function Shlinkio\Shlink\Core\enumValues;
+use function Shlinkio\Shlink\Core\normalizeDate;
 use function sprintf;
 use function str_pad;
 use function strlen;
@@ -122,7 +123,10 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
                 ),
                 RedirectConditionType::GEOLOCATION_CITY_NAME => RedirectCondition::forGeolocationCityName(
                     $this->askMandatory('City name to match?', $io),
-                )
+                ),
+                RedirectConditionType::BEFORE_DATE => RedirectCondition::forBeforeDate(
+                    normalizeDate($this->askMandatory('Date to match?', $io)),
+                ),
             };
 
             $continue = $io->confirm('Do you want to add another condition?');
