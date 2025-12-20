@@ -24,17 +24,13 @@ readonly class TagService implements TagServiceInterface
     {
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function listTags(TagsParams $params, ApiKey|null $apiKey = null): Paginator
     {
         return $this->createPaginator(new TagsPaginatorAdapter($this->repo, $params, $apiKey), $params);
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function tagsInfo(TagsParams $params, ApiKey|null $apiKey = null): Paginator
     {
         return $this->createPaginator(new TagsInfoPaginatorAdapter($this->repo, $params, $apiKey), $params);
@@ -54,9 +50,7 @@ readonly class TagService implements TagServiceInterface
         return $paginator;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function deleteTags(array $tagNames, ApiKey|null $apiKey = null): void
     {
         if (ApiKey::isShortUrlRestricted($apiKey)) {
@@ -66,9 +60,7 @@ readonly class TagService implements TagServiceInterface
         $this->repo->deleteByName($tagNames);
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function renameTag(Renaming $renaming, ApiKey|null $apiKey = null): Tag
     {
         if (ApiKey::isShortUrlRestricted($apiKey)) {

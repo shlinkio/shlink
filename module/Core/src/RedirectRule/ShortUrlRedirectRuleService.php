@@ -19,9 +19,7 @@ readonly class ShortUrlRedirectRuleService implements ShortUrlRedirectRuleServic
     {
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function rulesForShortUrl(ShortUrl $shortUrl): array
     {
         return $this->em->getRepository(ShortUrlRedirectRule::class)->findBy(
@@ -30,9 +28,7 @@ readonly class ShortUrlRedirectRuleService implements ShortUrlRedirectRuleServic
         );
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function setRulesForShortUrl(ShortUrl $shortUrl, RedirectRulesData $data): array
     {
         $rules = [];
@@ -54,9 +50,7 @@ readonly class ShortUrlRedirectRuleService implements ShortUrlRedirectRuleServic
         return $rules;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function saveRulesForShortUrl(ShortUrl $shortUrl, array $rules): void
     {
         $normalizedAndDetachedRules = map($rules, function (ShortUrlRedirectRule $rule, int|string|float $priority) {

@@ -16,9 +16,7 @@ use function sprintf;
 /** @extends EntitySpecificationRepository<ShortUrl> */
 class ExpiredShortUrlsRepository extends EntitySpecificationRepository implements ExpiredShortUrlsRepositoryInterface
 {
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function delete(ExpiredShortUrlsConditions $conditions): int
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
@@ -27,9 +25,7 @@ class ExpiredShortUrlsRepository extends EntitySpecificationRepository implement
         return $this->applyConditions($qb, $conditions, fn () => (int) $qb->getQuery()->execute());
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function dryCount(ExpiredShortUrlsConditions $conditions): int
     {
         $qb = $this->getEntityManager()->createQueryBuilder();

@@ -15,9 +15,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
  */
 class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRepositoryInterface
 {
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function createInitialApiKey(string $apiKey): ApiKey|null
     {
         $em = $this->getEntityManager();
@@ -42,14 +40,13 @@ class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRe
         });
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function nameExists(string $name): bool
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('a.id')
-           ->from(ApiKey::class, 'a');
+           ->from(ApiKey::class, 'a')
+           ->setMaxResults(1);
 
         $this->queryBuilderByName($qb, $name);
 
@@ -60,9 +57,7 @@ class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRe
         return $query->getOneOrNullResult() !== null;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function deleteByName(string $name): int
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
@@ -79,7 +74,6 @@ class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRe
     private function queryBuilderByName(QueryBuilder $qb, string $name): void
     {
         $qb->where($qb->expr()->eq('a.name', ':name'))
-           ->setParameter('name', $name)
-           ->setMaxResults(1);
+           ->setParameter('name', $name);
     }
 }
