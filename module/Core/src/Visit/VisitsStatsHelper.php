@@ -64,9 +64,7 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
         );
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function visitsForShortUrl(
         ShortUrlIdentifier $identifier,
         VisitsParams $params,
@@ -87,9 +85,7 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
         );
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function visitsForTag(string $tag, WithDomainVisitsParams $params, ApiKey|null $apiKey = null): Paginator
     {
         /** @var TagRepository $tagRepo */
@@ -104,9 +100,7 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
         return $this->createPaginator(new TagVisitsPaginatorAdapter($repo, $tag, $params, $apiKey), $params);
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function visitsForDomain(string $domain, VisitsParams $params, ApiKey|null $apiKey = null): Paginator
     {
         /** @var DomainRepository $domainRepo */
@@ -121,9 +115,7 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
         return $this->createPaginator(new DomainVisitsPaginatorAdapter($repo, $domain, $params, $apiKey), $params);
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function orphanVisits(OrphanVisitsParams $params, ApiKey|null $apiKey = null): Paginator
     {
         /** @var VisitRepository $repo */

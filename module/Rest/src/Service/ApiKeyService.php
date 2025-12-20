@@ -21,9 +21,7 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
     {
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function create(ApiKeyMeta $apiKeyMeta): ApiKey
     {
         return $this->em->wrapInTransaction(function () use ($apiKeyMeta) {
@@ -68,9 +66,7 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
         return new ApiKeyCheckResult($apiKey);
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function deleteByName(string $apiKeyName): void
     {
         $affectedResults = $this->repo->deleteByName($apiKeyName);
@@ -79,9 +75,7 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
         }
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function disableByName(string $apiKeyName): ApiKey
     {
         $apiKey = $this->repo->findOneBy(['name' => $apiKeyName]);
@@ -109,9 +103,7 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
         return $this->repo->findBy($conditions);
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function renameApiKey(Renaming $apiKeyRenaming): ApiKey
     {
         $apiKey = $this->repo->findOneBy(['name' => $apiKeyRenaming->oldName]);

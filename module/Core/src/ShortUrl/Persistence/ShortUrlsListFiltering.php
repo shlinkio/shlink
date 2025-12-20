@@ -12,9 +12,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ShortUrlsListFiltering extends ShortUrlsCountFiltering
 {
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function __construct(
         public readonly int|null $limit = null,
         public readonly int|null $offset = null,
