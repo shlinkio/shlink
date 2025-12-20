@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
   * `before-date`: matches when current date and time is earlier than the defined threshold.
   * `after-date`: matches when current date and time is later than the defined threshold.
 
+* [#2513](https://github.com/shlinkio/shlink/issues/2513) Add support for redis connections via unix socket (e.g. `REDIS_SERVERS=unix:/path/to/redis.sock`).
+
 ### Changed
 * [#2522](https://github.com/shlinkio/shlink/issues/2522) Shlink no longer tries to detect trusted proxies automatically, when resolving the visitor's IP address, as this is a potential security issue.
 
@@ -30,6 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#2520](https://github.com/shlinkio/shlink/issues/2520) Remove deprecated `--including-all-tags` and `--show-api-key-name` deprecated options from `short-url:list` command. Use `--tags-all` and `--show-api-key` instead.
 * [#2521](https://github.com/shlinkio/shlink/issues/2521) Remove deprecated `--tags` option in all commands using it. Use `--tag` multiple times instead, one per tag.
 * [#2543](https://github.com/shlinkio/shlink/issues/2543) Remove support for `--order-by=field,dir` option `short-url:list` command. Use `--order-by=field-dir` instead.
+* Remove support to provide redis database index via URI path. Use `?database=3` query instead.
 
 ### Fixed
 * *Nothing*
