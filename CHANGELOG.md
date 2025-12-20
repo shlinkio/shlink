@@ -32,6 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#2520](https://github.com/shlinkio/shlink/issues/2520) Remove deprecated `--including-all-tags` and `--show-api-key-name` deprecated options from `short-url:list` command. Use `--tags-all` and `--show-api-key` instead.
 * [#2521](https://github.com/shlinkio/shlink/issues/2521) Remove deprecated `--tags` option in all commands using it. Use `--tag` multiple times instead, one per tag.
 * [#2543](https://github.com/shlinkio/shlink/issues/2543) Remove support for `--order-by=field,dir` option `short-url:list` command. Use `--order-by=field-dir` instead.
+* Remove support to provide redis database index via URI path. Use `?database=3` query instead.
 
 ### Fixed
 * *Nothing*
