@@ -22,34 +22,26 @@ RUN docker-php-ext-install pdo_sqlite
 RUN apk add --no-cache icu-dev
 RUN docker-php-ext-install intl
 
-RUN apk add --no-cache libzip-dev zlib-dev
-RUN docker-php-ext-install zip
-
 RUN apk add --no-cache postgresql-dev
 RUN docker-php-ext-install pdo_pgsql
 
-RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS linux-headers && \
+COPY --from=ghcr.io/php/pie:bin /pie /usr/bin/pie
+RUN apk add --no-cache libzip-dev zlib-dev && \
+    apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS linux-headers && \
     docker-php-ext-install sockets && \
+    pie install xdebug/xdebug && \
+    pie install pecl/zip && \
+    pie install apcu/apcu && \
     apk del .phpize-deps
 RUN docker-php-ext-install bcmath
 
-# Install APCu extension
-ADD https://pecl.php.net/get/apcu-$APCU_VERSION.tgz /tmp/apcu.tar.gz
-RUN mkdir -p /usr/src/php/ext/apcu \
-  && tar xf /tmp/apcu.tar.gz -C /usr/src/php/ext/apcu --strip-components=1 \
-  && docker-php-ext-configure apcu \
-  && docker-php-ext-install apcu \
-  && rm /tmp/apcu.tar.gz \
-  && rm /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini \
-  && echo extension=apcu.so > /usr/local/etc/php/conf.d/20-php-ext-apcu.ini
-
-# Install xdebug and sqlsrv driver
+# Install sqlsrv driver
 RUN apk add --update linux-headers && \
     wget https://download.microsoft.com/download/${MS_ODBC_DOWNLOAD}/msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
     apk add --allow-untrusted msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
     apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS unixodbc-dev && \
-    pecl install pdo_sqlsrv-${PDO_SQLSRV_VERSION} xdebug && \
-    docker-php-ext-enable pdo_sqlsrv xdebug && \
+    pecl install pdo_sqlsrv-${PDO_SQLSRV_VERSION} && \
+    docker-php-ext-enable pdo_sqlsrv && \
     apk del .phpize-deps && \
     rm msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk
 
