@@ -27,18 +27,20 @@ RUN docker-php-ext-install zip
 RUN apk add --no-cache postgresql-dev
 RUN docker-php-ext-install pdo_pgsql
 
+COPY --from=ghcr.io/php/pie:bin /pie /usr/bin/pie
 RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS linux-headers && \
     docker-php-ext-install sockets && \
+    pie install xdebug/xdebug && \
     apk del .phpize-deps
 RUN docker-php-ext-install bcmath
 
-# Install xdebug and sqlsrv driver
+# Install sqlsrv driver
 RUN apk add --update linux-headers && \
     wget https://download.microsoft.com/download/${MS_ODBC_DOWNLOAD}/msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
     apk add --allow-untrusted msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
     apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS unixodbc-dev && \
-    pecl install pdo_sqlsrv-${PDO_SQLSRV_VERSION} xdebug && \
-    docker-php-ext-enable pdo_sqlsrv xdebug && \
+    pecl install pdo_sqlsrv-${PDO_SQLSRV_VERSION} && \
+    docker-php-ext-enable pdo_sqlsrv && \
     apk del .phpize-deps && \
     rm msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk
 
