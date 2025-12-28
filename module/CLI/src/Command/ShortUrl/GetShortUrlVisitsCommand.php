@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\CLI\Command\Visit\VisitsCommandUtils;
-use Shlinkio\Shlink\CLI\Input\VisitsDateRangeInput;
+use Shlinkio\Shlink\CLI\Input\VisitsListInput;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
@@ -32,14 +32,14 @@ class GetShortUrlVisitsCommand extends Command
         SymfonyStyle $io,
         #[Argument('The short code which visits we want to get'), Ask('Which short code do you want to use?')]
         string $shortCode,
-        #[MapInput] VisitsDateRangeInput $dateRangeInput,
+        #[MapInput] VisitsListInput $input,
         #[Option('The domain for the short code', shortcut: 'd')]
         string|null $domain = null,
     ): int {
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, $domain);
-        $dateRange = $dateRangeInput->toDateRange();
+        $dateRange = $input->dateRange();
         $paginator = $this->visitsHelper->visitsForShortUrl($identifier, new VisitsParams($dateRange));
-        [$rows, $headers] = VisitsCommandUtils::resolveRowsAndHeaders($paginator, static fn () => []);
+        [$rows, $headers] = VisitsCommandUtils::resolveRowsAndHeaders($paginator);
 
         ShlinkTable::default($io)->render($headers, $rows);
 

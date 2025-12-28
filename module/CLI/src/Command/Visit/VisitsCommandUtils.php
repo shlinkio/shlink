@@ -16,11 +16,13 @@ class VisitsCommandUtils
 {
     /**
      * @param Paginator<Visit> $paginator
-     * @param callable(Visit $visits): array<string, string> $mapExtraFields
+     * @param null|callable(Visit $visits): array<string, string> $mapExtraFields
      */
-    public static function resolveRowsAndHeaders(Paginator $paginator, callable $mapExtraFields): array
+    public static function resolveRowsAndHeaders(Paginator $paginator, callable|null $mapExtraFields = null): array
     {
         $extraKeys = [];
+        $mapExtraFields ??= static fn (Visit $_) => [];
+
         $rows = array_map(function (Visit $visit) use (&$extraKeys, $mapExtraFields) {
             $extraFields = $mapExtraFields($visit);
             $extraKeys = array_keys($extraFields);

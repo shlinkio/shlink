@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Visit;
 
-use Shlinkio\Shlink\CLI\Input\VisitsDateRangeInput;
+use Shlinkio\Shlink\CLI\Input\VisitsListInput;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
@@ -29,7 +29,7 @@ class GetOrphanVisitsCommand extends Command
 
     public function __invoke(
         SymfonyStyle $io,
-        #[MapInput] VisitsDateRangeInput $dateRangeInput,
+        #[MapInput] VisitsListInput $input,
         #[Option(
             'Return visits that belong to this domain only. Use ' . Domain::DEFAULT_AUTHORITY . ' keyword for visits '
             . 'in default domain',
@@ -39,7 +39,7 @@ class GetOrphanVisitsCommand extends Command
         #[Option('Return visits only with this type', shortcut: 't')] OrphanVisitType|null $type = null,
     ): int {
         $paginator = $this->visitsHelper->orphanVisits(new OrphanVisitsParams(
-            dateRange: $dateRangeInput->toDateRange(),
+            dateRange: $input->dateRange(),
             domain: $domain,
             type: $type,
         ));
