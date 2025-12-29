@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Visit;
 
+use League\Csv\Writer;
 use Shlinkio\Shlink\CLI\Input\VisitsListFormat;
 use Shlinkio\Shlink\CLI\Input\VisitsListInput;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
@@ -49,7 +50,21 @@ class VisitsCommandUtils
         Paginator $paginator,
         callable|null $mapExtraFields,
     ): void {
-        // TODO
+        $page = 1;
+        do {
+            $paginator->setCurrentPage($page);
+
+            [$rows, $headers] = self::resolveRowsAndHeaders($paginator, $mapExtraFields);
+            $csv = Writer::fromString();
+            if ($page === 1) {
+                $csv->insertOne($headers);
+            }
+
+            $csv->insertAll($rows);
+            $output->write($csv->toString());
+
+            $page++;
+        } while ($paginator->hasNextPage());
     }
 
     /**

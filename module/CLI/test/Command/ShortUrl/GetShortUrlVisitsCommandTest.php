@@ -6,10 +6,12 @@ namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use Cake\Chronos\Chronos;
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\GetShortUrlVisitsCommand;
+use Shlinkio\Shlink\CLI\Input\VisitsListFormat;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -80,8 +82,11 @@ class GetShortUrlVisitsCommandTest extends TestCase
         ]);
     }
 
-    #[Test]
-    public function outputIsProperlyGenerated(): void
+    /**
+     * @param callable(Chronos $date): string $getExpectedOutput
+     */
+    #[Test, DataProvider('provideOutput')]
+    public function outputIsProperlyGenerated(VisitsListFormat $format, callable $getExpectedOutput): void
     {
         $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::fromParams('bar', 'foo', ''))->locate(
             VisitLocation::fromLocation(new Location('', 'Spain', '', 'Madrid', 0, 0, '')),
@@ -92,19 +97,32 @@ class GetShortUrlVisitsCommandTest extends TestCase
             $this->anything(),
         )->willReturn(new Paginator(new ArrayAdapter([$visit])));
 
-        $this->commandTester->execute(['short-code' => $shortCode]);
+        $this->commandTester->execute(['short-code' => $shortCode, '--format' => $format->value]);
         $output = $this->commandTester->getDisplay();
 
-        self::assertEquals(
-            <<<OUTPUT
-            +---------+---------------------------+------------+---------+--------+
-            | Referer | Date                      | User agent | Country | City   |
-            +---------+---------------------------+------------+---------+--------+
-            | foo     | {$visit->date->toAtomString()} | bar        | Spain   | Madrid |
-            +---------+------------------ Page 1 of 1 ---------+---------+--------+
+        self::assertEquals($getExpectedOutput($visit->date), $output);
+    }
 
-            OUTPUT,
-            $output,
-        );
+    public static function provideOutput(): iterable
+    {
+        yield 'regular' => [
+            VisitsListFormat::FULL,
+            static fn (Chronos $date) => <<<OUTPUT
+                +---------+---------------------------+------------+---------+--------+
+                | Referer | Date                      | User agent | Country | City   |
+                +---------+---------------------------+------------+---------+--------+
+                | foo     | {$date->toAtomString()} | bar        | Spain   | Madrid |
+                +---------+------------------ Page 1 of 1 ---------+---------+--------+
+
+                OUTPUT,
+        ];
+        yield 'CSV' => [
+            VisitsListFormat::CSV,
+            static fn (Chronos $date) => <<<OUTPUT
+                Referer,Date,"User agent",Country,City
+                foo,{$date->toAtomString()},bar,Spain,Madrid
+
+                OUTPUT,
+        ];
     }
 }
