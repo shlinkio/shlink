@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink\CLI\Command\Tag;
 
 use Shlinkio\Shlink\CLI\Command\Visit\VisitsCommandUtils;
 use Shlinkio\Shlink\CLI\Input\VisitsListInput;
-use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
@@ -47,9 +46,8 @@ class GetTagVisitsCommand extends Command
             dateRange: $input->dateRange(),
             domain: $domain,
         ));
-        [$rows, $headers] = VisitsCommandUtils::resolveRowsAndHeaders($paginator, $this->mapExtraFields(...));
 
-        ShlinkTable::default($io)->render($headers, $rows);
+        VisitsCommandUtils::renderOutput($io, $input, $paginator, $this->mapExtraFields(...));
 
         return self::SUCCESS;
     }

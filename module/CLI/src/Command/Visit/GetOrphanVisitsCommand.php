@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\Visit;
 
 use Shlinkio\Shlink\CLI\Input\VisitsListInput;
-use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams;
@@ -43,9 +42,7 @@ class GetOrphanVisitsCommand extends Command
             domain: $domain,
             type: $type,
         ));
-        [$rows, $headers] = VisitsCommandUtils::resolveRowsAndHeaders($paginator, $this->mapExtraFields(...));
-
-        ShlinkTable::default($io)->render($headers, $rows);
+        VisitsCommandUtils::renderOutput($io, $input, $paginator, $this->mapExtraFields(...));
 
         return self::SUCCESS;
     }

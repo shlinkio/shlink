@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
 use Shlinkio\Shlink\CLI\Command\Visit\VisitsCommandUtils;
 use Shlinkio\Shlink\CLI\Input\VisitsListInput;
-use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
@@ -39,9 +38,8 @@ class GetShortUrlVisitsCommand extends Command
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, $domain);
         $dateRange = $input->dateRange();
         $paginator = $this->visitsHelper->visitsForShortUrl($identifier, new VisitsParams($dateRange));
-        [$rows, $headers] = VisitsCommandUtils::resolveRowsAndHeaders($paginator);
 
-        ShlinkTable::default($io)->render($headers, $rows);
+        VisitsCommandUtils::renderOutput($io, $input, $paginator);
 
         return self::SUCCESS;
     }

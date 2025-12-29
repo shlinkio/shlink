@@ -101,7 +101,7 @@ class GetShortUrlVisitsCommandTest extends TestCase
             | Referer | Date                      | User agent | Country | City   |
             +---------+---------------------------+------------+---------+--------+
             | foo     | {$visit->date->toAtomString()} | bar        | Spain   | Madrid |
-            +---------+---------------------------+------------+---------+--------+
+            +---------+------------------ Page 1 of 1 ---------+---------+--------+
 
             OUTPUT,
             $output,

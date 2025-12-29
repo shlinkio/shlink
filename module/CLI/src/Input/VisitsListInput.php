@@ -18,6 +18,13 @@ class VisitsListInput
     #[Option('Only return visits newer than this date', shortcut: 'e')]
     public string|null $endDate = null;
 
+    #[Option(
+        'Output format ("' . VisitsListFormat::FULL->value . '", "' . VisitsListFormat::PAGINATED->value . '" or "'
+        . VisitsListFormat::CSV->value . '")',
+        shortcut: 'f',
+    )]
+    public VisitsListFormat $format = VisitsListFormat::FULL;
+
     public function dateRange(): DateRange
     {
         return buildDateRange(

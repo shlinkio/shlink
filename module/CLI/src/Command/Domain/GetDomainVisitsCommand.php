@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink\CLI\Command\Domain;
 
 use Shlinkio\Shlink\CLI\Command\Visit\VisitsCommandUtils;
 use Shlinkio\Shlink\CLI\Input\VisitsListInput;
-use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
@@ -37,9 +36,7 @@ class GetDomainVisitsCommand extends Command
         #[MapInput] VisitsListInput $input,
     ): int {
         $paginator = $this->visitsHelper->visitsForDomain($domain, new VisitsParams($input->dateRange()));
-        [$rows, $headers] = VisitsCommandUtils::resolveRowsAndHeaders($paginator, $this->mapExtraFields(...));
-
-        ShlinkTable::default($io)->render($headers, $rows);
+        VisitsCommandUtils::renderOutput($io, $input, $paginator, $this->mapExtraFields(...));
 
         return self::SUCCESS;
     }
