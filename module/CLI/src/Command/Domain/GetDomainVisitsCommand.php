@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\Domain;
 
 use Shlinkio\Shlink\CLI\Command\Visit\VisitsCommandUtils;
-use Shlinkio\Shlink\CLI\Input\VisitsDateRangeInput;
-use Shlinkio\Shlink\CLI\Util\ShlinkTable;
+use Shlinkio\Shlink\CLI\Input\VisitsListInput;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
@@ -34,12 +33,10 @@ class GetDomainVisitsCommand extends Command
         SymfonyStyle $io,
         #[Argument('The domain which visits we want to get'), Ask('For what domain do you want to get visits?')]
         string $domain,
-        #[MapInput] VisitsDateRangeInput $dateRangeInput,
+        #[MapInput] VisitsListInput $input,
     ): int {
-        $paginator = $this->visitsHelper->visitsForDomain($domain, new VisitsParams($dateRangeInput->toDateRange()));
-        [$rows, $headers] = VisitsCommandUtils::resolveRowsAndHeaders($paginator, $this->mapExtraFields(...));
-
-        ShlinkTable::default($io)->render($headers, $rows);
+        $paginator = $this->visitsHelper->visitsForDomain($domain, new VisitsParams($input->dateRange()));
+        VisitsCommandUtils::renderOutput($io, $input, $paginator, $this->mapExtraFields(...));
 
         return self::SUCCESS;
     }

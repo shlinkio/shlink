@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
   * `after-date`: matches when current date and time is later than the defined threshold.
 
 * [#2513](https://github.com/shlinkio/shlink/issues/2513) Add support for redis connections via unix socket (e.g. `REDIS_SERVERS=unix:/path/to/redis.sock`).
+* Visits generated in the command line can now be formatted in CSV, via `--format=csv`.
 
 ### Changed
 * [#2522](https://github.com/shlinkio/shlink/issues/2522) Shlink no longer tries to detect trusted proxies automatically, when resolving the visitor's IP address, as this is a potential security issue.

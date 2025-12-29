@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\Tag;
 
 use Shlinkio\Shlink\CLI\Command\Visit\VisitsCommandUtils;
-use Shlinkio\Shlink\CLI\Input\VisitsDateRangeInput;
-use Shlinkio\Shlink\CLI\Util\ShlinkTable;
+use Shlinkio\Shlink\CLI\Input\VisitsListInput;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
@@ -35,7 +34,7 @@ class GetTagVisitsCommand extends Command
     public function __invoke(
         SymfonyStyle $io,
         #[Argument('The tag which visits we want to get'), Ask('For what tag do you want to get visits')] string $tag,
-        #[MapInput] VisitsDateRangeInput $dateRangeInput,
+        #[MapInput] VisitsListInput $input,
         #[Option(
             'Return visits that belong to this domain only. Use ' . Domain::DEFAULT_AUTHORITY . ' keyword for visits '
             . 'in default domain',
@@ -44,12 +43,11 @@ class GetTagVisitsCommand extends Command
         string|null $domain = null,
     ): int {
         $paginator = $this->visitsHelper->visitsForTag($tag, new WithDomainVisitsParams(
-            dateRange: $dateRangeInput->toDateRange(),
+            dateRange: $input->dateRange(),
             domain: $domain,
         ));
-        [$rows, $headers] = VisitsCommandUtils::resolveRowsAndHeaders($paginator, $this->mapExtraFields(...));
 
-        ShlinkTable::default($io)->render($headers, $rows);
+        VisitsCommandUtils::renderOutput($io, $input, $paginator, $this->mapExtraFields(...));
 
         return self::SUCCESS;
     }

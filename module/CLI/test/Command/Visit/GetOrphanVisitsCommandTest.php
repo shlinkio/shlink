@@ -55,7 +55,7 @@ class GetOrphanVisitsCommandTest extends TestCase
             | Referer | Date                      | User agent | Country | City   | Type     |
             +---------+---------------------------+------------+---------+--------+----------+
             | foo     | {$visit->date->toAtomString()} | bar        | Spain   | Madrid | base_url |
-            +---------+---------------------------+------------+---------+--------+----------+
+            +---------+----------------------- Page 1 of 1 ----+---------+--------+----------+
 
             OUTPUT,
             $output,

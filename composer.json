@@ -33,6 +33,7 @@
         "laminas/laminas-inputfilter": "^2.31",
         "laminas/laminas-servicemanager": "^3.23",
         "laminas/laminas-stdlib": "^3.20",
+        "league/csv": "^9.28",
         "matomo/matomo-php-tracker": "^3.3",
         "mezzio/mezzio": "^3.20",
         "mezzio/mezzio-fastroute": "^3.12",

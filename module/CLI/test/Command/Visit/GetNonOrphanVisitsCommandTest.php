@@ -57,7 +57,7 @@ class GetNonOrphanVisitsCommandTest extends TestCase
             | Referer | Date                      | User agent | Country | City   | Short Url     |
             +---------+---------------------------+------------+---------+--------+---------------+
             | foo     | {$visit->date->toAtomString()} | bar        | Spain   | Madrid | the_short_url |
-            +---------+---------------------------+------------+---------+--------+---------------+
+            +---------+-------------------------- Page 1 of 1 -+---------+--------+---------------+
 
             OUTPUT,
             $output,
