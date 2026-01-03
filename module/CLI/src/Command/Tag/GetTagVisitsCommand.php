@@ -7,8 +7,6 @@ namespace Shlinkio\Shlink\CLI\Command\Tag;
 use Shlinkio\Shlink\CLI\Command\Visit\VisitsCommandUtils;
 use Shlinkio\Shlink\CLI\Input\VisitsListInput;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
-use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
-use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\WithDomainVisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Symfony\Component\Console\Attribute\Argument;
@@ -24,10 +22,8 @@ class GetTagVisitsCommand extends Command
 {
     public const string NAME = 'tag:visits';
 
-    public function __construct(
-        private readonly VisitsStatsHelperInterface $visitsHelper,
-        private readonly ShortUrlStringifierInterface $shortUrlStringifier,
-    ) {
+    public function __construct(private readonly VisitsStatsHelperInterface $visitsHelper)
+    {
         parent::__construct();
     }
 
@@ -47,17 +43,8 @@ class GetTagVisitsCommand extends Command
             domain: $domain,
         ));
 
-        VisitsCommandUtils::renderOutput($io, $input, $paginator, $this->mapExtraFields(...));
+        VisitsCommandUtils::renderOutput($io, $input, $paginator);
 
         return self::SUCCESS;
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    private function mapExtraFields(Visit $visit): array
-    {
-        $shortUrl = $visit->shortUrl;
-        return $shortUrl === null ? [] : ['shortUrl' => $this->shortUrlStringifier->stringify($shortUrl)];
     }
 }

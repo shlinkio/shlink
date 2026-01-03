@@ -19,6 +19,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
     Instead, if you have more than 1 proxy in front of Shlink, you should provide `TRUSTED_PROXIES` env var, with either a comma-separated list of the IP addresses of your proxies, or a number indicating how many proxies are there in front of Shlink.
 
+* [#2311](https://github.com/shlinkio/shlink/issues/2311) All visits-related commands now return more information, and columns are arranged slightly differently.
+
+    Among other things, they now always return the type of the visit, region, visited URL, redirected URL and whether the visit comes from a potential bot or not.
+
 * [#2540](https://github.com/shlinkio/shlink/issues/2540) Update Symfony packages to 8.0.
 * [#2512](https://github.com/shlinkio/shlink/issues/2512) Make all remaining console commands invokable.
 

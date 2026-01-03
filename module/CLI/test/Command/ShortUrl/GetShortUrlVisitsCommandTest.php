@@ -107,20 +107,22 @@ class GetShortUrlVisitsCommandTest extends TestCase
     {
         yield 'regular' => [
             VisitsListFormat::FULL,
+            // phpcs:disable Generic.Files.LineLength
             static fn (Chronos $date) => <<<OUTPUT
-                +---------+---------------------------+------------+---------+--------+
-                | Referer | Date                      | User agent | Country | City   |
-                +---------+---------------------------+------------+---------+--------+
-                | foo     | {$date->toAtomString()} | bar        | Spain   | Madrid |
-                +---------+------------------ Page 1 of 1 ---------+---------+--------+
+                +---------------------------+---------------+------------+---------+---------+--------+--------+-------------+--------------+-----------------+
+                | Date                      | Potential bot | User agent | Referer | Country | Region | City   | Visited URL | Redirect URL | Type            |
+                +---------------------------+---------------+------------+---------+---------+--------+--------+-------------+--------------+-----------------+
+                | {$date->toAtomString()} |               | bar        | foo     | Spain   |        | Madrid |             | Unknown      | valid_short_url |
+                +---------------------------+---------------+------------+------- Page 1 of 1 --------+--------+-------------+--------------+-----------------+
 
                 OUTPUT,
+            // phpcs:enable
         ];
         yield 'CSV' => [
             VisitsListFormat::CSV,
             static fn (Chronos $date) => <<<OUTPUT
-                Referer,Date,"User agent",Country,City
-                foo,{$date->toAtomString()},bar,Spain,Madrid
+                Date,"Potential bot","User agent",Referer,Country,Region,City,"Visited URL","Redirect URL",Type
+                {$date->toAtomString()},,bar,foo,Spain,,Madrid,,Unknown,valid_short_url
 
                 OUTPUT,
         ];

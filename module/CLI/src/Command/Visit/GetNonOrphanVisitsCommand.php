@@ -6,8 +6,6 @@ namespace Shlinkio\Shlink\CLI\Command\Visit;
 
 use Shlinkio\Shlink\CLI\Input\VisitsListInput;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
-use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
-use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\WithDomainVisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -21,10 +19,8 @@ class GetNonOrphanVisitsCommand extends Command
 {
     public const string NAME = 'visit:non-orphan';
 
-    public function __construct(
-        private readonly VisitsStatsHelperInterface $visitsHelper,
-        private readonly ShortUrlStringifierInterface $shortUrlStringifier,
-    ) {
+    public function __construct(private readonly VisitsStatsHelperInterface $visitsHelper)
+    {
         parent::__construct();
     }
 
@@ -42,17 +38,8 @@ class GetNonOrphanVisitsCommand extends Command
             dateRange: $input->dateRange(),
             domain: $domain,
         ));
-        VisitsCommandUtils::renderOutput($io, $input, $paginator, $this->mapExtraFields(...));
+        VisitsCommandUtils::renderOutput($io, $input, $paginator);
 
         return self::SUCCESS;
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    private function mapExtraFields(Visit $visit): array
-    {
-        $shortUrl = $visit->shortUrl;
-        return $shortUrl === null ? [] : ['shortUrl' => $this->shortUrlStringifier->stringify($shortUrl)];
     }
 }

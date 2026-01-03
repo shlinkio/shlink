@@ -13,16 +13,12 @@ use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtils;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function array_keys;
 use function array_map;
-use function Shlinkio\Shlink\Core\ArrayUtils\select_keys;
-use function Shlinkio\Shlink\Core\camelCaseToHumanFriendly;
 
 class VisitsCommandUtils
 {
     /**
      * @param Paginator<Visit> $paginator
-     * @param null|callable(Visit $visits): array<string, string> $mapExtraFields
      */
     public static function renderOutput(
         OutputInterface $output,
@@ -36,25 +32,21 @@ class VisitsCommandUtils
         }
 
         match ($inputData->format) {
-            VisitsListFormat::CSV => self::renderCSVOutput($output, $paginator, $mapExtraFields),
-            default => self::renderHumanFriendlyOutput($output, $paginator, $mapExtraFields),
+            VisitsListFormat::CSV => self::renderCSVOutput($output, $paginator),
+            default => self::renderHumanFriendlyOutput($output, $paginator),
         };
     }
 
     /**
      * @param Paginator<Visit> $paginator
-     * @param null|callable(Visit $visits): array<string, string> $mapExtraFields
      */
-    private static function renderCSVOutput(
-        OutputInterface $output,
-        Paginator $paginator,
-        callable|null $mapExtraFields,
-    ): void {
+    private static function renderCSVOutput(OutputInterface $output, Paginator $paginator): void
+    {
         $page = 1;
         do {
             $paginator->setCurrentPage($page);
 
-            [$rows, $headers] = self::resolveRowsAndHeaders($paginator, $mapExtraFields);
+            [$rows, $headers] = self::resolveRowsAndHeaders($paginator);
             $csv = Writer::fromString();
             if ($page === 1) {
                 $csv->insertOne($headers);
@@ -69,19 +61,15 @@ class VisitsCommandUtils
 
     /**
      * @param Paginator<Visit> $paginator
-     * @param null|callable(Visit $visits): array<string, string> $mapExtraFields
      */
-    private static function renderHumanFriendlyOutput(
-        OutputInterface $output,
-        Paginator $paginator,
-        callable|null $mapExtraFields,
-    ): void {
+    private static function renderHumanFriendlyOutput(OutputInterface $output, Paginator $paginator): void
+    {
         $page = 1;
         do {
             $paginator->setCurrentPage($page);
             $page++;
 
-            [$rows, $headers] = self::resolveRowsAndHeaders($paginator, $mapExtraFields);
+            [$rows, $headers] = self::resolveRowsAndHeaders($paginator);
             ShlinkTable::default($output)->render(
                 $headers,
                 $rows,
@@ -92,35 +80,38 @@ class VisitsCommandUtils
 
     /**
      * @param Paginator<Visit> $paginator
-     * @param null|callable(Visit $visits): array<string, string> $mapExtraFields
      */
-    private static function resolveRowsAndHeaders(Paginator $paginator, callable|null $mapExtraFields): array
+    private static function resolveRowsAndHeaders(Paginator $paginator): array
     {
-        $extraKeys = null;
-        $mapExtraFields ??= static fn (Visit $_) => [];
-
-        $rows = array_map(function (Visit $visit) use (&$extraKeys, $mapExtraFields) {
-            $extraFields = $mapExtraFields($visit);
-            $extraKeys ??= array_keys($extraFields);
-
-            $rowData = [
-                'referer' => $visit->referer,
-                'date' => $visit->date->toAtomString(),
-                'userAgent' => $visit->userAgent,
-                'potentialBot' => $visit->potentialBot,
-                'country' => $visit->getVisitLocation()->countryName ?? 'Unknown',
-                'city' => $visit->getVisitLocation()->cityName ?? 'Unknown',
-                ...$extraFields,
-            ];
-
-            // Filter out unknown keys
-            return select_keys($rowData, ['referer', 'date', 'userAgent', 'country', 'city', ...$extraKeys]);
-        }, [...$paginator->getCurrentPageResults()]);
-        $extra = array_map(camelCaseToHumanFriendly(...), $extraKeys ?? []);
-
-        return [
-            $rows,
-            ['Referer', 'Date', 'User agent', 'Country', 'City', ...$extra],
+        $headers = [
+            'Date',
+            'Potential bot',
+            'User agent',
+            'Referer',
+            'Country',
+            'Region',
+            'City',
+            'Visited URL',
+            'Redirect URL',
+            'Type',
         ];
+        $rows = array_map(function (Visit $visit) {
+            $visitLocation = $visit->visitLocation;
+
+            return [
+                'date' => $visit->date->toAtomString(),
+                'potentialBot' => $visit->potentialBot ? 'Potential bot' : '',
+                'userAgent' => $visit->userAgent,
+                'referer' => $visit->referer,
+                'country' => $visitLocation->countryName ?? 'Unknown',
+                'region' => $visitLocation->regionName ?? 'Unknown',
+                'city' => $visitLocation->cityName ?? 'Unknown',
+                'visitedUrl' => $visit->visitedUrl ?? 'Unknown',
+                'redirectUrl' => $visit->redirectUrl ?? 'Unknown',
+                'type' => $visit->type->value,
+            ];
+        }, [...$paginator->getCurrentPageResults()]);
+
+        return [$rows, $headers];
     }
 }

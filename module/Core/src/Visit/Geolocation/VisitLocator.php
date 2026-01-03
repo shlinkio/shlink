@@ -72,7 +72,7 @@ readonly class VisitLocator implements VisitLocatorInterface
 
     private function locateVisit(Visit $visit, VisitLocation $location, VisitGeolocationHelperInterface $helper): void
     {
-        $prevLocation = $visit->getVisitLocation();
+        $prevLocation = $visit->visitLocation;
 
         $visit->locate($location);
         $this->em->persist($visit);

@@ -48,16 +48,19 @@ class GetOrphanVisitsCommandTest extends TestCase
 
         $this->commandTester->execute($args);
         $output = $this->commandTester->getDisplay();
+        $type = OrphanVisitType::BASE_URL->value;
 
         self::assertEquals(
+            // phpcs:disable Generic.Files.LineLength
             <<<OUTPUT
-            +---------+---------------------------+------------+---------+--------+----------+
-            | Referer | Date                      | User agent | Country | City   | Type     |
-            +---------+---------------------------+------------+---------+--------+----------+
-            | foo     | {$visit->date->toAtomString()} | bar        | Spain   | Madrid | base_url |
-            +---------+----------------------- Page 1 of 1 ----+---------+--------+----------+
+            +---------------------------+---------------+------------+---------+---------+--------+--------+-------------+--------------+----------+
+            | Date                      | Potential bot | User agent | Referer | Country | Region | City   | Visited URL | Redirect URL | Type     |
+            +---------------------------+---------------+------------+---------+---------+--------+--------+-------------+--------------+----------+
+            | {$visit->date->toAtomString()} |               | bar        | foo     | Spain   |        | Madrid |             | Unknown      | {$type} |
+            +---------------------------+---------------+------------+--- Page 1 of 1 ---+--------+--------+-------------+--------------+----------+
 
             OUTPUT,
+            // phpcs:enable
             $output,
         );
     }
