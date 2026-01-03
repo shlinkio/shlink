@@ -6,8 +6,6 @@ namespace Shlinkio\Shlink\CLI\Command\Domain;
 
 use Shlinkio\Shlink\CLI\Command\Visit\VisitsCommandUtils;
 use Shlinkio\Shlink\CLI\Input\VisitsListInput;
-use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
-use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsParams;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Symfony\Component\Console\Attribute\Argument;
@@ -22,10 +20,8 @@ class GetDomainVisitsCommand extends Command
 {
     public const string NAME = 'domain:visits';
 
-    public function __construct(
-        private readonly VisitsStatsHelperInterface $visitsHelper,
-        private readonly ShortUrlStringifierInterface $shortUrlStringifier,
-    ) {
+    public function __construct(private readonly VisitsStatsHelperInterface $visitsHelper)
+    {
         parent::__construct();
     }
 
@@ -36,17 +32,8 @@ class GetDomainVisitsCommand extends Command
         #[MapInput] VisitsListInput $input,
     ): int {
         $paginator = $this->visitsHelper->visitsForDomain($domain, new VisitsParams($input->dateRange()));
-        VisitsCommandUtils::renderOutput($io, $input, $paginator, $this->mapExtraFields(...));
+        VisitsCommandUtils::renderOutput($io, $input, $paginator);
 
         return self::SUCCESS;
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    protected function mapExtraFields(Visit $visit): array
-    {
-        $shortUrl = $visit->shortUrl;
-        return $shortUrl === null ? [] : ['shortUrl' => $this->shortUrlStringifier->stringify($shortUrl)];
     }
 }

@@ -11,10 +11,10 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\Tag\GetTagVisitsCommand;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
+use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
 use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
@@ -24,16 +24,11 @@ class GetTagVisitsCommandTest extends TestCase
 {
     private CommandTester $commandTester;
     private MockObject & VisitsStatsHelperInterface $visitsHelper;
-    private MockObject & ShortUrlStringifierInterface $stringifier;
 
     protected function setUp(): void
     {
         $this->visitsHelper = $this->createMock(VisitsStatsHelperInterface::class);
-        $this->stringifier = $this->createMock(ShortUrlStringifierInterface::class);
-
-        $this->commandTester = CliTestUtils::testerForCommand(
-            new GetTagVisitsCommand($this->visitsHelper, $this->stringifier),
-        );
+        $this->commandTester = CliTestUtils::testerForCommand(new GetTagVisitsCommand($this->visitsHelper));
     }
 
     #[Test]
@@ -47,20 +42,22 @@ class GetTagVisitsCommandTest extends TestCase
         $this->visitsHelper->expects($this->once())->method('visitsForTag')->with($tag, $this->anything())->willReturn(
             new Paginator(new ArrayAdapter([$visit])),
         );
-        $this->stringifier->expects($this->once())->method('stringify')->with($shortUrl)->willReturn('the_short_url');
 
         $this->commandTester->execute(['tag' => $tag]);
         $output = $this->commandTester->getDisplay();
+        $type = VisitType::VALID_SHORT_URL->value;
 
         self::assertEquals(
+            // phpcs:disable Generic.Files.LineLength
             <<<OUTPUT
-            +---------+---------------------------+------------+---------+--------+---------------+
-            | Referer | Date                      | User agent | Country | City   | Short Url     |
-            +---------+---------------------------+------------+---------+--------+---------------+
-            | foo     | {$visit->date->toAtomString()} | bar        | Spain   | Madrid | the_short_url |
-            +---------+-------------------------- Page 1 of 1 -+---------+--------+---------------+
+            +---------------------------+---------------+------------+---------+---------+--------+--------+-------------+--------------+-----------------+
+            | Date                      | Potential bot | User agent | Referer | Country | Region | City   | Visited URL | Redirect URL | Type            |
+            +---------------------------+---------------+------------+---------+---------+--------+--------+-------------+--------------+-----------------+
+            | {$visit->date->toAtomString()} |               | bar        | foo     | Spain   |        | Madrid |             | Unknown      | {$type} |
+            +---------------------------+---------------+------------+------- Page 1 of 1 --------+--------+-------------+--------------+-----------------+
 
             OUTPUT,
+            // phpcs:enable
             $output,
         );
     }

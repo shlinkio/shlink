@@ -58,7 +58,7 @@ readonly class MatomoVisitSender implements MatomoVisitSenderInterface
             ->setUrlReferrer($visit->referer)
             ->setForceVisitDateTime($visit->date->setTimezone('UTC')->toDateTimeString());
 
-        $location = $visit->getVisitLocation();
+        $location = $visit->visitLocation;
         if ($location !== null) {
             $tracker
                 ->setCity($location->cityName)

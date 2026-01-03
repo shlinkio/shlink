@@ -6,7 +6,6 @@ namespace Shlinkio\Shlink\CLI\Command\Visit;
 
 use Shlinkio\Shlink\CLI\Input\VisitsListInput;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
-use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams;
 use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitType;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
@@ -42,16 +41,8 @@ class GetOrphanVisitsCommand extends Command
             domain: $domain,
             type: $type,
         ));
-        VisitsCommandUtils::renderOutput($io, $input, $paginator, $this->mapExtraFields(...));
+        VisitsCommandUtils::renderOutput($io, $input, $paginator);
 
         return self::SUCCESS;
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    private function mapExtraFields(Visit $visit): array
-    {
-        return ['type' => $visit->type->value];
     }
 }
