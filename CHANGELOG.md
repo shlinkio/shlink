@@ -38,6 +38,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#2521](https://github.com/shlinkio/shlink/issues/2521) Remove deprecated `--tags` option in all commands using it. Use `--tag` multiple times instead, one per tag.
 * [#2543](https://github.com/shlinkio/shlink/issues/2543) Remove support for `--order-by=field,dir` option `short-url:list` command. Use `--order-by=field-dir` instead.
 * Remove support to provide redis database index via URI path. Use `?database=3` query instead.
+* [#2565](https://github.com/shlinkio/shlink/issues/2565) Remove explicit dependency in ext-json, since it's part of PHP since v8.0
 
 ### Fixed
 * *Nothing*
