@@ -10,6 +10,7 @@ use GuzzleHttp\ClientInterface;
 use GuzzleHttp\RequestOptions;
 use Laminas\Stdlib\ErrorHandler;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Throwable;
@@ -30,10 +31,12 @@ readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionH
     public const string CHROME_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) '
         . 'Chrome/121.0.0.0 Safari/537.36';
 
-    // Matches the value inside a html title tag
+    /** Matches the value inside a html title tag */
     private const string TITLE_TAG_VALUE = '/<title[^>]*>(.*?)<\/title>/i';
-    // Matches the charset inside a Content-Type header
+    /** Matches the charset inside a Content-Type header */
     private const string CHARSET_VALUE = '/charset=([^;]+)/i';
+    /** Matches the charset from charset-related <meta /> tags */
+    private const string CHARSET_FROM_META = '/<meta\b[^>]*\bcharset\s*=\s*(?:["\']?)([^"\'\s>;]+)/i';
 
     /**
      * @param (Closure(): bool)|null $isIconvInstalled
@@ -83,7 +86,8 @@ readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionH
                 RequestOptions::IDN_CONVERSION => true,
                 // Making the request with a browser's user agent results in responses closer to a real user
                 RequestOptions::HEADERS => ['User-Agent' => self::CHROME_USER_AGENT],
-                RequestOptions::STREAM => true, // This ensures large files are not fully downloaded if not needed
+                // This ensures large files are not fully downloaded if not needed
+                RequestOptions::STREAM => true,
             ]);
         } catch (Throwable) {
             return null;
@@ -102,22 +106,54 @@ readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionH
 
         // Try to match the title from the <title /> tag
         preg_match(self::TITLE_TAG_VALUE, $collectedBody, $titleMatches);
-        if (! isset($titleMatches[1])) {
+        $titleInOriginalEncoding = $titleMatches[1] ?? null;
+        if ($titleInOriginalEncoding === null) {
+            return null;
+        }
+        ;
+        $pageCharset = $this->resolvePageCharset($contentType, $body, $collectedBody);
+        if ($pageCharset === null) {
+            // If it was not possible to determine the page's charset, ignore the title to avoid the risk of encoding
+            // errors when the value is persisted
             return null;
         }
 
-        $titleInOriginalEncoding = $titleMatches[1];
-
-        // Get the page's charset from Content-Type header, or return title as is if not found
-        preg_match(self::CHARSET_VALUE, $contentType, $charsetMatches);
-        if (! isset($charsetMatches[1])) {
-            return $titleInOriginalEncoding;
-        }
-
-        $pageCharset = $charsetMatches[1];
         return $this->encodeToUtf8WithMbString($titleInOriginalEncoding, $pageCharset)
             ?? $this->encodeToUtf8WithIconv($titleInOriginalEncoding, $pageCharset)
             ?? $titleInOriginalEncoding;
+    }
+
+    /**
+     * Tries to resolve the page's charset by looking into the:
+     * 1. Content-Type header
+     * 2. <meta charset="???"> tag
+     * 3. <meta http-equiv="Content-Type" content="text/html; charset=???"> tag
+     *
+     * @param StreamInterface $body - The body stream, in case we need to continue reading from it
+     * @param string $collectedBody - The part of the body that has already been read while looking for the title
+     */
+    private function resolvePageCharset(string $contentType, StreamInterface $body, string $collectedBody): string|null
+    {
+        // First try to resolve the charset from the `Content-Type` header
+        preg_match(self::CHARSET_VALUE, $contentType, $charsetMatches);
+        $pageCharset = $charsetMatches[1] ?? null;
+        if ($pageCharset !== null) {
+            return $pageCharset;
+        }
+
+        $readCharsetFromMeta = static function (string $collectedBody): string|null {
+            preg_match(self::CHARSET_FROM_META, $collectedBody, $charsetFromMetaMatches);
+            return $charsetFromMetaMatches[1] ?? null;
+        };
+
+        // Continue reading the body, looking for any of the charset meta tags
+        $charsetFromMeta = $readCharsetFromMeta($collectedBody);
+        while ($charsetFromMeta === null && ! $body->eof()) {
+            $collectedBody .= $body->read(1024);
+            $charsetFromMeta = $readCharsetFromMeta($collectedBody);
+        }
+
+        return $charsetFromMeta;
     }
 
     private function encodeToUtf8WithMbString(string $titleInOriginalEncoding, string $pageCharset): string|null
