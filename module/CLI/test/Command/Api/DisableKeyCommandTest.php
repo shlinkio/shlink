@@ -31,12 +31,9 @@ class DisableKeyCommandTest extends TestCase
     public function providedApiKeyIsDisabled(): void
     {
         $apiKey = 'abcd1234';
-        $this->apiKeyService->expects($this->once())->method('disableByKey')->with($apiKey);
-        $this->apiKeyService->expects($this->never())->method('disableByName');
+        $this->apiKeyService->expects($this->once())->method('disableByName')->with($apiKey);
 
-        $exitCode = $this->commandTester->execute([
-            'key-or-name' => $apiKey,
-        ]);
+        $exitCode = $this->commandTester->execute(['name' => $apiKey]);
         $output = $this->commandTester->getDisplay();
 
         self::assertStringContainsString('API key "abcd1234" properly disabled', $output);
@@ -44,55 +41,15 @@ class DisableKeyCommandTest extends TestCase
     }
 
     #[Test]
-    public function providedApiKeyIsDisabledByName(): void
-    {
-        $name = 'the key to delete';
-        $this->apiKeyService->expects($this->once())->method('disableByName')->with($name);
-        $this->apiKeyService->expects($this->never())->method('disableByKey');
-
-        $exitCode = $this->commandTester->execute([
-            'key-or-name' => $name,
-            '--by-name' => true,
-        ]);
-        $output = $this->commandTester->getDisplay();
-
-        self::assertStringContainsString('API key "the key to delete" properly disabled', $output);
-        self::assertEquals(Command::SUCCESS, $exitCode);
-    }
-
-    #[Test]
-    public function errorIsReturnedIfDisableByKeyThrowsException(): void
+    public function errorIsReturnedIfDisableByNameThrowsException(): void
     {
         $apiKey = 'abcd1234';
         $expectedMessage = 'API key "abcd1234" does not exist.';
-        $this->apiKeyService->expects($this->once())->method('disableByKey')->with($apiKey)->willThrowException(
+        $this->apiKeyService->expects($this->once())->method('disableByName')->with($apiKey)->willThrowException(
             new InvalidArgumentException($expectedMessage),
         );
-        $this->apiKeyService->expects($this->never())->method('disableByName');
 
-        $exitCode = $this->commandTester->execute([
-            'key-or-name' => $apiKey,
-        ]);
-        $output = $this->commandTester->getDisplay();
-
-        self::assertStringContainsString($expectedMessage, $output);
-        self::assertEquals(Command::FAILURE, $exitCode);
-    }
-
-    #[Test]
-    public function errorIsReturnedIfDisableByNameThrowsException(): void
-    {
-        $name = 'the key to delete';
-        $expectedMessage = 'API key "the key to delete" does not exist.';
-        $this->apiKeyService->expects($this->once())->method('disableByName')->with($name)->willThrowException(
-            new InvalidArgumentException($expectedMessage),
-        );
-        $this->apiKeyService->expects($this->never())->method('disableByKey');
-
-        $exitCode = $this->commandTester->execute([
-            'key-or-name' => $name,
-            '--by-name' => true,
-        ]);
+        $exitCode = $this->commandTester->execute(['name' => $apiKey]);
         $output = $this->commandTester->getDisplay();
 
         self::assertStringContainsString($expectedMessage, $output);
@@ -103,7 +60,6 @@ class DisableKeyCommandTest extends TestCase
     public function warningIsReturnedIfNoArgumentIsProvidedInNonInteractiveMode(): void
     {
         $this->apiKeyService->expects($this->never())->method('disableByName');
-        $this->apiKeyService->expects($this->never())->method('disableByKey');
         $this->apiKeyService->expects($this->never())->method('listKeys');
 
         $exitCode = $this->commandTester->execute([], ['interactive' => false]);
@@ -121,7 +77,6 @@ class DisableKeyCommandTest extends TestCase
             ApiKey::fromMeta(ApiKeyMeta::fromParams(name: $name)),
             ApiKey::fromMeta(ApiKeyMeta::fromParams(name: 'bar')),
         ]);
-        $this->apiKeyService->expects($this->never())->method('disableByKey');
 
         $this->commandTester->setInputs([$name]);
         $exitCode = $this->commandTester->execute([]);

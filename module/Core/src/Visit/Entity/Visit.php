@@ -29,7 +29,7 @@ class Visit extends AbstractEntity implements JsonSerializable
         public readonly string|null $remoteAddr = null,
         public readonly string|null $visitedUrl = null,
         public readonly string|null $redirectUrl = null,
-        private VisitLocation|null $visitLocation = null,
+        private(set) VisitLocation|null $visitLocation = null,
         public readonly Chronos $date = new Chronos(),
     ) {
     }
@@ -70,7 +70,7 @@ class Visit extends AbstractEntity implements JsonSerializable
             remoteAddr: self::processAddress($visitor->remoteAddress, $anonymize),
             visitedUrl: $visitor->visitedUrl,
             redirectUrl: $visitor->redirectUrl,
-            visitLocation: $geolocation !== null ? VisitLocation::fromGeolocation($geolocation) : null,
+            visitLocation: $geolocation !== null ? VisitLocation::fromLocation($geolocation) : null,
         );
     }
 
@@ -114,7 +114,7 @@ class Visit extends AbstractEntity implements JsonSerializable
             referer: $importedVisit->referer,
             potentialBot: isCrawler($importedVisit->userAgent),
             visitedUrl: $importedVisit instanceof ImportedShlinkOrphanVisit ? $importedVisit->visitedUrl : null,
-            visitLocation: $importedLocation !== null ? VisitLocation::fromImport($importedLocation) : null,
+            visitLocation: $importedLocation !== null ? VisitLocation::fromLocation($importedLocation) : null,
             date: normalizeDate($importedVisit->date),
         );
     }
@@ -122,11 +122,6 @@ class Visit extends AbstractEntity implements JsonSerializable
     public function hasRemoteAddr(): bool
     {
         return ! empty($this->remoteAddr);
-    }
-
-    public function getVisitLocation(): VisitLocation|null
-    {
-        return $this->visitLocation;
     }
 
     public function locate(VisitLocation $visitLocation): self

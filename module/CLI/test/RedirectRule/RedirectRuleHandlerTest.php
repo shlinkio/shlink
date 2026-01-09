@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\RedirectRule;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -18,8 +19,10 @@ use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Symfony\Component\Console\Style\StyleInterface;
 
+use function Shlinkio\Shlink\Core\normalizeDate;
 use function sprintf;
 
+#[AllowMockObjectsWithoutExpectations]
 class RedirectRuleHandlerTest extends TestCase
 {
     private RedirectRuleHandler $handler;
@@ -120,6 +123,7 @@ class RedirectRuleHandlerTest extends TestCase
                 'IP address, CIDR block or wildcard-pattern (1.2.*.*)' => '1.2.3.4',
                 'Country code to match?' => 'FR',
                 'City name to match?' => 'Los angeles',
+                'Date to match?' => '2016-05-01T20:34:16+02:00',
                 default => '',
             },
         );
@@ -183,6 +187,14 @@ class RedirectRuleHandlerTest extends TestCase
         yield 'Geolocation city name' => [
             RedirectConditionType::GEOLOCATION_CITY_NAME,
             [RedirectCondition::forGeolocationCityName('Los angeles')],
+        ];
+        yield 'Before date' => [
+            RedirectConditionType::BEFORE_DATE,
+            [RedirectCondition::forBeforeDate(normalizeDate('2016-05-01T20:34:16+02:00'))],
+        ];
+        yield 'After date' => [
+            RedirectConditionType::AFTER_DATE,
+            [RedirectCondition::forAfterDate(normalizeDate('2016-05-01T20:34:16+02:00'))],
         ];
     }
 

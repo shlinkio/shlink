@@ -25,7 +25,7 @@ class SingleStepCreateShortUrlActionTest extends TestCase
     protected function setUp(): void
     {
         $this->urlShortener = $this->createMock(UrlShortenerInterface::class);
-        $transformer = $this->createMock(ShortUrlDataTransformerInterface::class);
+        $transformer = $this->createStub(ShortUrlDataTransformerInterface::class);
         $transformer->method('transform')->willReturn([]);
 
         $this->action = new SingleStepCreateShortUrlAction(

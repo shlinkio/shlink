@@ -33,6 +33,7 @@ class UpdateTagActionTest extends TestCase
     {
         $request = $this->requestWithApiKey()->withParsedBody($bodyParams);
 
+        $this->tagService->expects($this->never())->method('renameTag');
         $this->expectException(ValidationException::class);
 
         $this->action->handle($request);

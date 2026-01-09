@@ -27,13 +27,16 @@ class DeleteShortUrlVisitsCommandTest extends TestCase
         $this->commandTester = CliTestUtils::testerForCommand(new DeleteShortUrlVisitsCommand($this->deleter));
     }
 
+    /**
+     * @param list<string> $input
+     */
     #[Test, DataProvider('provideCancellingInputs')]
     public function executionIsAbortedIfManuallyCancelled(array $input): void
     {
         $this->deleter->expects($this->never())->method('deleteShortUrlVisits');
         $this->commandTester->setInputs($input);
 
-        $exitCode = $this->commandTester->execute(['shortCode' => 'foo']);
+        $exitCode = $this->commandTester->execute(['short-code' => 'foo']);
         $output = $this->commandTester->getDisplay();
 
         self::assertEquals(Command::SUCCESS, $exitCode);
@@ -64,8 +67,8 @@ class DeleteShortUrlVisitsCommandTest extends TestCase
 
     public static function provideErrorArgs(): iterable
     {
-        yield 'domain' => [['shortCode' => 'foo'], 'Short URL not found for "foo"'];
-        yield 'no domain' => [['shortCode' => 'foo', '--domain' => 's.test'], 'Short URL not found for "s.test/foo"'];
+        yield 'domain' => [['short-code' => 'foo'], 'Short URL not found for "foo"'];
+        yield 'no domain' => [['short-code' => 'foo', '--domain' => 's.test'], 'Short URL not found for "s.test/foo"'];
     }
 
     #[Test]
@@ -74,7 +77,7 @@ class DeleteShortUrlVisitsCommandTest extends TestCase
         $this->deleter->expects($this->once())->method('deleteShortUrlVisits')->willReturn(new BulkDeleteResult(5));
         $this->commandTester->setInputs(['yes']);
 
-        $exitCode = $this->commandTester->execute(['shortCode' => 'foo']);
+        $exitCode = $this->commandTester->execute(['short-code' => 'foo']);
         $output = $this->commandTester->getDisplay();
 
         self::assertEquals(Command::SUCCESS, $exitCode);

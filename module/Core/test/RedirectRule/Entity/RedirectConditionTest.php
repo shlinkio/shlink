@@ -2,6 +2,7 @@
 
 namespace ShlinkioTest\Shlink\Core\RedirectRule\Entity;
 
+use Cake\Chronos\Chronos;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -194,5 +195,35 @@ class RedirectConditionTest extends TestCase
             new ImportedShlinkRedirectCondition($type, DeviceType::ANDROID->value, ''),
         );
         self::assertEquals($expectedType, $condition?->type);
+    }
+
+    #[Test, DataProvider('provideVisitsWithBeforeDateCondition')]
+    public function matchesBeforeDate(Chronos $date, bool $expectedResult): void
+    {
+        $request = ServerRequestFactory::fromGlobals();
+        $result = RedirectCondition::forBeforeDate($date)->matchesRequest($request);
+
+        self::assertEquals($expectedResult, $result);
+    }
+
+    public static function provideVisitsWithBeforeDateCondition(): iterable
+    {
+        yield 'date later than current' => [Chronos::now()->addHours(1), true];
+        yield 'date earlier than current' => [Chronos::now()->subHours(1), false];
+    }
+
+    #[Test, DataProvider('provideVisitsWithAfterDateCondition')]
+    public function matchesAfterDate(Chronos $date, bool $expectedResult): void
+    {
+        $request = ServerRequestFactory::fromGlobals();
+        $result = RedirectCondition::forAfterDate($date)->matchesRequest($request);
+
+        self::assertEquals($expectedResult, $result);
+    }
+
+    public static function provideVisitsWithAfterDateCondition(): iterable
+    {
+        yield 'date later than current' => [Chronos::now()->addHours(1), false];
+        yield 'date earlier than current' => [Chronos::now()->subHours(1), true];
     }
 }

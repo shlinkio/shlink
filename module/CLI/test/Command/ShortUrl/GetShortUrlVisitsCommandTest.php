@@ -6,10 +6,12 @@ namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use Cake\Chronos\Chronos;
 use Pagerfanta\Adapter\ArrayAdapter;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\GetShortUrlVisitsCommand;
+use Shlinkio\Shlink\CLI\Input\VisitsListFormat;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -24,7 +26,6 @@ use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Tester\CommandTester;
 
 use function Shlinkio\Shlink\Common\buildDateRange;
-use function sprintf;
 
 class GetShortUrlVisitsCommandTest extends TestCase
 {
@@ -47,7 +48,20 @@ class GetShortUrlVisitsCommandTest extends TestCase
             new VisitsParams(DateRange::allTime()),
         )->willReturn(new Paginator(new ArrayAdapter([])));
 
-        $this->commandTester->execute(['shortCode' => $shortCode]);
+        $this->commandTester->execute(['short-code' => $shortCode]);
+    }
+
+    #[Test]
+    public function shortCodeIsAskedIfNotProvided(): void
+    {
+        $shortCode = 'abc123';
+        $this->visitsHelper->expects($this->once())->method('visitsForShortUrl')->with(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            $this->anything(),
+        )->willReturn(new Paginator(new ArrayAdapter([])));
+
+        $this->commandTester->setInputs([$shortCode]);
+        $this->commandTester->execute([]);
     }
 
     #[Test]
@@ -62,39 +76,20 @@ class GetShortUrlVisitsCommandTest extends TestCase
         )->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->execute([
-            'shortCode' => $shortCode,
+            'short-code' => $shortCode,
             '--start-date' => $startDate,
             '--end-date' => $endDate,
         ]);
     }
 
-    #[Test]
-    public function providingInvalidDatesPrintsWarning(): void
-    {
-        $shortCode = 'abc123';
-        $startDate = 'foo';
-        $this->visitsHelper->expects($this->once())->method('visitsForShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
-            new VisitsParams(DateRange::allTime()),
-        )->willReturn(new Paginator(new ArrayAdapter([])));
-
-        $this->commandTester->execute([
-            'shortCode' => $shortCode,
-            '--start-date' => $startDate,
-        ]);
-        $output = $this->commandTester->getDisplay();
-
-        self::assertStringContainsString(
-            sprintf('Ignored provided "start-date" since its value "%s" is not a valid date', $startDate),
-            $output,
-        );
-    }
-
-    #[Test]
-    public function outputIsProperlyGenerated(): void
+    /**
+     * @param callable(Chronos $date): string $getExpectedOutput
+     */
+    #[Test, DataProvider('provideOutput')]
+    public function outputIsProperlyGenerated(VisitsListFormat $format, callable $getExpectedOutput): void
     {
         $visit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::fromParams('bar', 'foo', ''))->locate(
-            VisitLocation::fromGeolocation(new Location('', 'Spain', '', 'Madrid', 0, 0, '')),
+            VisitLocation::fromLocation(new Location('', 'Spain', '', 'Madrid', 0, 0, '')),
         );
         $shortCode = 'abc123';
         $this->visitsHelper->expects($this->once())->method('visitsForShortUrl')->with(
@@ -102,19 +97,34 @@ class GetShortUrlVisitsCommandTest extends TestCase
             $this->anything(),
         )->willReturn(new Paginator(new ArrayAdapter([$visit])));
 
-        $this->commandTester->execute(['shortCode' => $shortCode]);
+        $this->commandTester->execute(['short-code' => $shortCode, '--format' => $format->value]);
         $output = $this->commandTester->getDisplay();
 
-        self::assertEquals(
-            <<<OUTPUT
-            +---------+---------------------------+------------+---------+--------+
-            | Referer | Date                      | User agent | Country | City   |
-            +---------+---------------------------+------------+---------+--------+
-            | foo     | {$visit->date->toAtomString()} | bar        | Spain   | Madrid |
-            +---------+---------------------------+------------+---------+--------+
+        self::assertEquals($getExpectedOutput($visit->date), $output);
+    }
 
-            OUTPUT,
-            $output,
-        );
+    public static function provideOutput(): iterable
+    {
+        yield 'regular' => [
+            VisitsListFormat::FULL,
+            // phpcs:disable Generic.Files.LineLength
+            static fn (Chronos $date) => <<<OUTPUT
+                +---------------------------+---------------+------------+---------+---------+--------+--------+-------------+--------------+-----------------+
+                | Date                      | Potential bot | User agent | Referer | Country | Region | City   | Visited URL | Redirect URL | Type            |
+                +---------------------------+---------------+------------+---------+---------+--------+--------+-------------+--------------+-----------------+
+                | {$date->toAtomString()} |               | bar        | foo     | Spain   |        | Madrid |             | Unknown      | valid_short_url |
+                +---------------------------+---------------+------------+------- Page 1 of 1 --------+--------+-------------+--------------+-----------------+
+
+                OUTPUT,
+            // phpcs:enable
+        ];
+        yield 'CSV' => [
+            VisitsListFormat::CSV,
+            static fn (Chronos $date) => <<<OUTPUT
+                Date,"Potential bot","User agent",Referer,Country,Region,City,"Visited URL","Redirect URL",Type
+                {$date->toAtomString()},,bar,foo,Spain,,Madrid,,Unknown,valid_short_url
+
+                OUTPUT,
+        ];
     }
 }

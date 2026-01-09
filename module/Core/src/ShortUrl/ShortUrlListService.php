@@ -19,9 +19,7 @@ readonly class ShortUrlListService implements ShortUrlListServiceInterface
     ) {
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function listShortUrls(ShortUrlsParams $params, ApiKey|null $apiKey = null): Paginator
     {
         $defaultDomain = $this->urlShortenerOptions->defaultDomain;

@@ -69,11 +69,11 @@ class DomainRedirectsRequest
     public function toNotFoundRedirects(NotFoundRedirectConfigInterface|null $defaults = null): NotFoundRedirects
     {
         return NotFoundRedirects::withRedirects(
-            $this->baseUrlRedirectWasProvided ? $this->baseUrlRedirect : $defaults?->baseUrlRedirect(),
-            $this->regular404RedirectWasProvided ? $this->regular404Redirect : $defaults?->regular404Redirect(),
+            $this->baseUrlRedirectWasProvided ? $this->baseUrlRedirect : $defaults?->baseUrlRedirect,
+            $this->regular404RedirectWasProvided ? $this->regular404Redirect : $defaults?->regular404Redirect,
             $this->invalidShortUrlRedirectWasProvided
                 ? $this->invalidShortUrlRedirect
-                : $defaults?->invalidShortUrlRedirect(),
+                : $defaults?->invalidShortUrlRedirect,
         );
     }
 }

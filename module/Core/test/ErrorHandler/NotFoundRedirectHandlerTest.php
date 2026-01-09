@@ -42,7 +42,7 @@ class NotFoundRedirectHandlerTest extends TestCase
         $this->next = $this->createMock(RequestHandlerInterface::class);
         $this->req = ServerRequestFactory::fromGlobals()->withAttribute(
             NotFoundType::class,
-            $this->createMock(NotFoundType::class),
+            $this->createStub(NotFoundType::class),
         );
     }
 

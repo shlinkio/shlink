@@ -39,7 +39,7 @@ class DeleteShortUrlCommandTest extends TestCase
             $this->isFalse(),
         );
 
-        $this->commandTester->execute(['shortCode' => $shortCode]);
+        $this->commandTester->execute(['short-code' => $shortCode]);
         $output = $this->commandTester->getDisplay();
 
         self::assertStringContainsString(
@@ -58,12 +58,15 @@ class DeleteShortUrlCommandTest extends TestCase
             $this->isFalse(),
         )->willThrowException(Exception\ShortUrlNotFoundException::fromNotFound($identifier));
 
-        $this->commandTester->execute(['shortCode' => $shortCode]);
+        $this->commandTester->execute(['short-code' => $shortCode]);
         $output = $this->commandTester->getDisplay();
 
         self::assertStringContainsString(sprintf('No URL found with short code "%s"', $shortCode), $output);
     }
 
+    /**
+     * @param list<string> $retryAnswer
+     */
     #[Test, DataProvider('provideRetryDeleteAnswers')]
     public function deleteIsRetriedWhenThresholdIsReachedAndQuestionIsAccepted(
         array $retryAnswer,
@@ -85,7 +88,7 @@ class DeleteShortUrlCommandTest extends TestCase
         });
         $this->commandTester->setInputs($retryAnswer);
 
-        $this->commandTester->execute(['shortCode' => $shortCode]);
+        $this->commandTester->execute(['short-code' => $shortCode]);
         $output = $this->commandTester->getDisplay();
 
         self::assertStringContainsString(sprintf(
@@ -115,7 +118,7 @@ class DeleteShortUrlCommandTest extends TestCase
         ));
         $this->commandTester->setInputs(['no']);
 
-        $this->commandTester->execute(['shortCode' => $shortCode]);
+        $this->commandTester->execute(['short-code' => $shortCode]);
         $output = $this->commandTester->getDisplay();
 
         self::assertStringContainsString(sprintf(

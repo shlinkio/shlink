@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Config;
 
+use Shlinkio\Shlink\Core\Config\Options\ExtraPathMode;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 
 use function date_default_timezone_get;
@@ -13,14 +14,6 @@ use function Shlinkio\Shlink\Config\env;
 use function Shlinkio\Shlink\Config\parseEnvVar;
 use function sprintf;
 
-use const Shlinkio\Shlink\DEFAULT_QR_CODE_BG_COLOR;
-use const Shlinkio\Shlink\DEFAULT_QR_CODE_COLOR;
-use const Shlinkio\Shlink\DEFAULT_QR_CODE_ENABLED_FOR_DISABLED_SHORT_URLS;
-use const Shlinkio\Shlink\DEFAULT_QR_CODE_ERROR_CORRECTION;
-use const Shlinkio\Shlink\DEFAULT_QR_CODE_FORMAT;
-use const Shlinkio\Shlink\DEFAULT_QR_CODE_MARGIN;
-use const Shlinkio\Shlink\DEFAULT_QR_CODE_ROUND_BLOCK_SIZE;
-use const Shlinkio\Shlink\DEFAULT_QR_CODE_SIZE;
 use const Shlinkio\Shlink\DEFAULT_REDIRECT_CACHE_LIFETIME;
 use const Shlinkio\Shlink\DEFAULT_REDIRECT_STATUS_CODE;
 use const Shlinkio\Shlink\DEFAULT_SHORT_CODES_LENGTH;
@@ -95,27 +88,6 @@ enum EnvVars: string
     case TRUSTED_PROXIES = 'TRUSTED_PROXIES';
     case LOGS_FORMAT = 'LOGS_FORMAT';
 
-    /** @deprecated Use REDIRECT_EXTRA_PATH */
-    case REDIRECT_APPEND_EXTRA_PATH = 'REDIRECT_APPEND_EXTRA_PATH';
-    /** @deprecated */
-    case DEFAULT_QR_CODE_SIZE = 'DEFAULT_QR_CODE_SIZE';
-    /** @deprecated */
-    case DEFAULT_QR_CODE_MARGIN = 'DEFAULT_QR_CODE_MARGIN';
-    /** @deprecated */
-    case DEFAULT_QR_CODE_FORMAT = 'DEFAULT_QR_CODE_FORMAT';
-    /** @deprecated */
-    case DEFAULT_QR_CODE_ERROR_CORRECTION = 'DEFAULT_QR_CODE_ERROR_CORRECTION';
-    /** @deprecated */
-    case DEFAULT_QR_CODE_ROUND_BLOCK_SIZE = 'DEFAULT_QR_CODE_ROUND_BLOCK_SIZE';
-    /** @deprecated */
-    case QR_CODE_FOR_DISABLED_SHORT_URLS = 'QR_CODE_FOR_DISABLED_SHORT_URLS';
-    /** @deprecated */
-    case DEFAULT_QR_CODE_COLOR = 'DEFAULT_QR_CODE_COLOR';
-    /** @deprecated */
-    case DEFAULT_QR_CODE_BG_COLOR = 'DEFAULT_QR_CODE_BG_COLOR';
-    /** @deprecated */
-    case DEFAULT_QR_CODE_LOGO_URL = 'DEFAULT_QR_CODE_LOGO_URL';
-
     public function loadFromEnv(): mixed
     {
         return env($this->value) ?? $this->loadFromFileEnv() ?? $this->defaultValue();
@@ -152,9 +124,7 @@ enum EnvVars: string
             self::SHORT_URL_TRAILING_SLASH => false,
             self::DEFAULT_DOMAIN, self::BASE_PATH => '',
             self::CACHE_NAMESPACE => 'Shlink',
-            // Deprecated. In Shlink 5.0.0, add default value for REDIRECT_EXTRA_PATH_MODE
-            self::REDIRECT_APPEND_EXTRA_PATH => false,
-            // self::REDIRECT_EXTRA_PATH_MODE => ExtraPathMode::DEFAULT->value,
+            self::REDIRECT_EXTRA_PATH_MODE => ExtraPathMode::DEFAULT->value,
 
             self::REDIS_PUB_SUB_ENABLED,
             self::MATOMO_ENABLED,
@@ -172,15 +142,6 @@ enum EnvVars: string
 
             self::MERCURE_ENABLED => self::MERCURE_PUBLIC_HUB_URL->existsInEnv(),
             self::MERCURE_INTERNAL_HUB_URL => self::MERCURE_PUBLIC_HUB_URL->loadFromEnv(),
-
-            self::DEFAULT_QR_CODE_SIZE, => DEFAULT_QR_CODE_SIZE,
-            self::DEFAULT_QR_CODE_MARGIN, => DEFAULT_QR_CODE_MARGIN,
-            self::DEFAULT_QR_CODE_FORMAT, => DEFAULT_QR_CODE_FORMAT,
-            self::DEFAULT_QR_CODE_ERROR_CORRECTION, => DEFAULT_QR_CODE_ERROR_CORRECTION,
-            self::DEFAULT_QR_CODE_ROUND_BLOCK_SIZE, => DEFAULT_QR_CODE_ROUND_BLOCK_SIZE,
-            self::QR_CODE_FOR_DISABLED_SHORT_URLS, => DEFAULT_QR_CODE_ENABLED_FOR_DISABLED_SHORT_URLS,
-            self::DEFAULT_QR_CODE_COLOR, => DEFAULT_QR_CODE_COLOR,
-            self::DEFAULT_QR_CODE_BG_COLOR, => DEFAULT_QR_CODE_BG_COLOR,
 
             self::RABBITMQ_ENABLED, self::RABBITMQ_USE_SSL => false,
             self::RABBITMQ_PORT => 5672,

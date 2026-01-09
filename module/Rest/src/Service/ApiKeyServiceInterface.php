@@ -33,12 +33,6 @@ interface ApiKeyServiceInterface
     public function disableByName(string $apiKeyName): ApiKey;
 
     /**
-     * @deprecated Use `self::disableByName($name)` instead
-     * @throws ApiKeyNotFoundException
-     */
-    public function disableByKey(string $key): ApiKey;
-
-    /**
      * @return ApiKey[]
      */
     public function listKeys(bool $enabledOnly = false): array;

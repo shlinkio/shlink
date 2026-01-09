@@ -9,9 +9,9 @@ use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\Domain\Model\DomainItem;
 use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Interact;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function array_filter;
@@ -32,7 +32,8 @@ class DomainRedirectsCommand extends Command
         parent::__construct();
     }
 
-    protected function interact(InputInterface $input, OutputInterface $output): void
+    #[Interact]
+    public function askDomain(InputInterface $input, SymfonyStyle $io): void
     {
         /** @var string|null $domain */
         $domain = $input->getArgument('domain');
@@ -40,7 +41,6 @@ class DomainRedirectsCommand extends Command
             return;
         }
 
-        $io = new SymfonyStyle($input, $output);
         $askNewDomain = static fn () => $io->ask('Domain authority for which you want to set specific redirects');
 
         /** @var string[] $availableDomains */
@@ -88,15 +88,15 @@ class DomainRedirectsCommand extends Command
         $this->domainService->configureNotFoundRedirects($domainAuthority, NotFoundRedirects::withRedirects(
             $ask(
                 'URL to redirect to when a user hits this domain\'s base URL',
-                $domain?->baseUrlRedirect(),
+                $domain?->baseUrlRedirect,
             ),
             $ask(
                 'URL to redirect to when a user hits a not found URL other than an invalid short URL',
-                $domain?->regular404Redirect(),
+                $domain?->regular404Redirect,
             ),
             $ask(
                 'URL to redirect to when a user hits an invalid short URL',
-                $domain?->invalidShortUrlRedirect(),
+                $domain?->invalidShortUrlRedirect,
             ),
         ));
 

@@ -57,7 +57,7 @@ readonly class VisitLocator implements VisitLocatorInterface
                 $location = Location::empty();
             }
 
-            $this->locateVisit($visit, VisitLocation::fromGeolocation($location), $helper);
+            $this->locateVisit($visit, VisitLocation::fromLocation($location), $helper);
 
             // Flush and clear after X iterations
             if ($count % $persistBlock === 0) {
@@ -72,7 +72,7 @@ readonly class VisitLocator implements VisitLocatorInterface
 
     private function locateVisit(Visit $visit, VisitLocation $location, VisitGeolocationHelperInterface $helper): void
     {
-        $prevLocation = $visit->getVisitLocation();
+        $prevLocation = $visit->visitLocation;
 
         $visit->locate($location);
         $this->em->persist($visit);

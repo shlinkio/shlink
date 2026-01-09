@@ -83,7 +83,7 @@ class SendVisitToMatomoTest extends TestCase
         $e = new Exception('Error!');
 
         $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn(
-            $this->createMock(Visit::class),
+            $this->createStub(Visit::class),
         );
         $this->visitSender->expects($this->once())->method('sendVisit')->willThrowException($e);
         $this->logger->expects($this->never())->method('warning');

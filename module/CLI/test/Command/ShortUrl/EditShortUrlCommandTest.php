@@ -40,7 +40,7 @@ class EditShortUrlCommandTest extends TestCase
         );
         $this->stringifier->expects($this->once())->method('stringify')->willReturn('https://s.test/foo');
 
-        $this->commandTester->execute(['shortCode' => 'foobar']);
+        $this->commandTester->execute(['short-code' => 'foobar']);
         $output = $this->commandTester->getDisplay();
         $exitCode = $this->commandTester->getStatusCode();
 
@@ -59,7 +59,7 @@ class EditShortUrlCommandTest extends TestCase
         $this->shortUrlService->expects($this->once())->method('updateShortUrl')->willThrowException($e);
         $this->stringifier->expects($this->never())->method('stringify');
 
-        $this->commandTester->execute(['shortCode' => 'foo'], ['verbosity' => $verbosity]);
+        $this->commandTester->execute(['short-code' => 'foo'], ['verbosity' => $verbosity]);
         $output = $this->commandTester->getDisplay();
         $exitCode = $this->commandTester->getStatusCode();
 

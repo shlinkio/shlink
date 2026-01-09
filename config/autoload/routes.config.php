@@ -95,14 +95,6 @@ return (static function (): array {
                 'allowed_methods' => [RequestMethodInterface::METHOD_GET],
             ],
             [
-                'name' => CoreAction\QrCodeAction::class,
-                'path' => '/{shortCode}/qr-code',
-                'middleware' => [
-                    CoreAction\QrCodeAction::class,
-                ],
-                'allowed_methods' => [RequestMethodInterface::METHOD_GET],
-            ],
-            [
                 'name' => CoreAction\RedirectAction::class,
                 'path' => sprintf('/{shortCode}%s', $shortUrlRouteSuffix),
                 'middleware' => [

@@ -30,7 +30,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
     public function whenNoJsonResponseIsReturnedNoFurtherOperationsArePerformed(): void
     {
         $expectedResp = new Response();
-        $this->requestHandler->method('handle')->willReturn($expectedResp);
+        $this->requestHandler->expects($this->once())->method('handle')->willReturn($expectedResp);
 
         $resp = $this->middleware->process(new ServerRequest(), $this->requestHandler);
 
@@ -40,7 +40,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
     #[Test, DataProvider('provideData')]
     public function properResponseIsReturned(string|null $accept, array $query, string $expectedContentType): void
     {
-        $request = (new ServerRequest())->withQueryParams($query);
+        $request = new ServerRequest()->withQueryParams($query);
         if ($accept !== null) {
             $request = $request->withHeader('Accept', $accept);
         }

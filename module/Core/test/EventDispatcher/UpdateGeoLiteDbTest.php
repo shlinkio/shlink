@@ -125,6 +125,7 @@ class UpdateGeoLiteDbTest extends TestCase
         $this->eventDispatcher->expects($this->exactly($expectedDispatches))->method('dispatch')->with(
             new GeoLiteDbCreated(),
         );
+        $this->logger->expects($this->never())->method('warning');
 
         ($this->listener)();
     }

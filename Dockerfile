@@ -15,13 +15,12 @@ WORKDIR /etc/shlink
 
 # Install required PHP extensions
 RUN \
-    # Temp install dev dependencies needed to compile the extensions
-    # FIXME Deprecated image-related extensions. They can be removed with QR-code support
-    apk add --no-cache --virtual .dev-deps sqlite-dev postgresql-dev icu-dev libzip-dev zlib-dev libpng-dev linux-headers && \
-    docker-php-ext-install -j"$(nproc)" pdo_mysql pdo_pgsql intl calendar sockets bcmath zip gd && \
+    # Temp install dev dependencies needed to compile the extensions \
+    apk add --no-cache --virtual .dev-deps sqlite-dev postgresql-dev icu-dev libzip-dev zlib-dev linux-headers && \
+    docker-php-ext-install -j"$(nproc)" pdo_mysql pdo_pgsql intl calendar sockets bcmath zip && \
     apk add --no-cache sqlite-libs && \
     docker-php-ext-install -j"$(nproc)" pdo_sqlite && \
-    # Remove temp dev extensions, and install prod equivalents that are required at runtime
+    # Remove temp dev extensions, and install prod equivalents that are required at runtime \
     apk del .dev-deps && \
     apk add --no-cache postgresql icu libzip libpng
 

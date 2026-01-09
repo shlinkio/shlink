@@ -32,6 +32,7 @@ return [
 
             RedirectRule\RedirectRuleHandler::class => InvokableFactory::class,
             Util\ProcessRunner::class => ConfigAbstractFactory::class,
+            Util\PhpProcessRunner::class => ConfigAbstractFactory::class,
 
             ApiKey\RoleResolver::class => ConfigAbstractFactory::class,
 
@@ -79,6 +80,7 @@ return [
 
     ConfigAbstractFactory::class => [
         Util\ProcessRunner::class => [SymfonyCli\Helper\ProcessHelper::class],
+        Util\PhpProcessRunner::class => [Util\ProcessRunner::class, PhpExecutableFinder::class],
         ApiKey\RoleResolver::class => [DomainService::class, UrlShortenerOptions::class],
 
         Command\ShortUrl\CreateShortUrlCommand::class => [
@@ -105,7 +107,7 @@ return [
         ],
         Command\Visit\GetOrphanVisitsCommand::class => [Visit\VisitsStatsHelper::class],
         Command\Visit\DeleteOrphanVisitsCommand::class => [Visit\VisitsDeleter::class],
-        Command\Visit\GetNonOrphanVisitsCommand::class => [Visit\VisitsStatsHelper::class, ShortUrlStringifier::class],
+        Command\Visit\GetNonOrphanVisitsCommand::class => [Visit\VisitsStatsHelper::class],
 
         Command\Api\GenerateKeyCommand::class => [ApiKeyService::class, ApiKey\RoleResolver::class],
         Command\Api\DisableKeyCommand::class => [ApiKeyService::class],
@@ -117,11 +119,11 @@ return [
         Command\Tag\ListTagsCommand::class => [TagService::class],
         Command\Tag\RenameTagCommand::class => [TagService::class],
         Command\Tag\DeleteTagsCommand::class => [TagService::class],
-        Command\Tag\GetTagVisitsCommand::class => [Visit\VisitsStatsHelper::class, ShortUrlStringifier::class],
+        Command\Tag\GetTagVisitsCommand::class => [Visit\VisitsStatsHelper::class],
 
         Command\Domain\ListDomainsCommand::class => [DomainService::class],
         Command\Domain\DomainRedirectsCommand::class => [DomainService::class],
-        Command\Domain\GetDomainVisitsCommand::class => [Visit\VisitsStatsHelper::class, ShortUrlStringifier::class],
+        Command\Domain\GetDomainVisitsCommand::class => [Visit\VisitsStatsHelper::class],
 
         Command\RedirectRule\ManageRedirectRulesCommand::class => [
             ShortUrl\ShortUrlResolver::class,
@@ -136,16 +138,11 @@ return [
 
         Command\Db\CreateDatabaseCommand::class => [
             LockFactory::class,
-            Util\ProcessRunner::class,
-            PhpExecutableFinder::class,
+            Util\PhpProcessRunner::class,
             'em',
             NoDbNameConnectionFactory::SERVICE_NAME,
         ],
-        Command\Db\MigrateDatabaseCommand::class => [
-            LockFactory::class,
-            Util\ProcessRunner::class,
-            PhpExecutableFinder::class,
-        ],
+        Command\Db\MigrateDatabaseCommand::class => [LockFactory::class, Util\PhpProcessRunner::class],
     ],
 
 ];

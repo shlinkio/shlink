@@ -133,9 +133,6 @@
         },
         "/{shortCode}/track": {
             "$ref": "paths/{shortCode}_track.json"
-        },
-        "/{shortCode}/qr-code": {
-            "$ref": "paths/{shortCode}_qr-code.json"
         }
     }
 }

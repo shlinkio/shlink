@@ -26,7 +26,7 @@ class ProcessRunnerTest extends TestCase
     {
         $this->helper = $this->createMock(ProcessHelper::class);
         $this->formatter = $this->createMock(DebugFormatterHelper::class);
-        $helperSet = $this->createMock(HelperSet::class);
+        $helperSet = $this->createStub(HelperSet::class);
         $helperSet->method('get')->willReturn($this->formatter);
         $this->helper->method('getHelperSet')->willReturn($helperSet);
         $this->process = $this->createMock(Process::class);

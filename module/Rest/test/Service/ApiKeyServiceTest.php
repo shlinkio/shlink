@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Service;
 
 use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
@@ -24,6 +25,7 @@ use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 
 use function substr;
 
+#[AllowMockObjectsWithoutExpectations]
 class ApiKeyServiceTest extends TestCase
 {
     private ApiKeyService $service;
@@ -143,33 +145,27 @@ class ApiKeyServiceTest extends TestCase
         self::assertSame($apiKey, $result->apiKey);
     }
 
-    #[Test, DataProvider('provideDisableArgs')]
-    public function disableThrowsExceptionWhenNoApiKeyIsFound(string $disableMethod, array $findOneByArg): void
+    #[Test]
+    public function disableThrowsExceptionWhenNoApiKeyIsFound(): void
     {
-        $this->repo->expects($this->once())->method('findOneBy')->with($findOneByArg)->willReturn(null);
+        $this->repo->expects($this->once())->method('findOneBy')->with(['name' => '12345'])->willReturn(null);
 
         $this->expectException(ApiKeyNotFoundException::class);
 
-        $this->service->{$disableMethod}('12345');
+        $this->service->disableByName('12345');
     }
 
-    #[Test, DataProvider('provideDisableArgs')]
-    public function disableReturnsDisabledApiKeyWhenFound(string $disableMethod, array $findOneByArg): void
+    #[Test]
+    public function disableReturnsDisabledApiKeyWhenFound(): void
     {
         $key = ApiKey::create();
-        $this->repo->expects($this->once())->method('findOneBy')->with($findOneByArg)->willReturn($key);
+        $this->repo->expects($this->once())->method('findOneBy')->with(['name' => '12345'])->willReturn($key);
         $this->em->expects($this->once())->method('flush');
 
         self::assertTrue($key->isEnabled());
-        $returnedKey = $this->service->{$disableMethod}('12345');
+        $returnedKey = $this->service->disableByName('12345');
         self::assertFalse($key->isEnabled());
         self::assertSame($key, $returnedKey);
-    }
-
-    public static function provideDisableArgs(): iterable
-    {
-        yield 'disableByKey' => ['disableByKey', ['key' => ApiKey::hashKey('12345')]];
-        yield 'disableByName' => ['disableByName', ['name' => '12345']];
     }
 
     #[Test]

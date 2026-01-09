@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl;
 use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManagerInterface;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -21,10 +22,10 @@ use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\ShortUrl\UrlShortener;
 
+#[AllowMockObjectsWithoutExpectations]
 class UrlShortenerTest extends TestCase
 {
     private UrlShortener $urlShortener;
-    private MockObject & EntityManagerInterface $em;
     private MockObject & ShortUrlTitleResolutionHelperInterface $titleResolutionHelper;
     private MockObject & ShortCodeUniquenessHelperInterface $shortCodeHelper;
     private MockObject & EventDispatcherInterface $dispatcher;
@@ -35,16 +36,16 @@ class UrlShortenerTest extends TestCase
         $this->titleResolutionHelper = $this->createMock(ShortUrlTitleResolutionHelperInterface::class);
         $this->shortCodeHelper = $this->createMock(ShortCodeUniquenessHelperInterface::class);
 
-        $this->em = $this->createMock(EntityManagerInterface::class);
-        $this->em->method('persist')->willReturnCallback(fn (ShortUrl $shortUrl) => $shortUrl->setId('10'));
-        $this->em->method('wrapInTransaction')->willReturnCallback(fn (callable $callback) => $callback());
+        $em = $this->createStub(EntityManagerInterface::class);
+        $em->method('persist')->willReturnCallback(fn (ShortUrl $shortUrl) => $shortUrl->setId('10'));
+        $em->method('wrapInTransaction')->willReturnCallback(fn (callable $callback) => $callback());
 
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->repo = $this->createMock(ShortUrlRepositoryInterface::class);
 
         $this->urlShortener = new UrlShortener(
             $this->titleResolutionHelper,
-            $this->em,
+            $em,
             new SimpleShortUrlRelationResolver(),
             $this->shortCodeHelper,
             $this->dispatcher,

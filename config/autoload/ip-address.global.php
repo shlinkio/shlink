@@ -5,7 +5,6 @@ declare(strict_types=1);
 use RKA\Middleware\IpAddress;
 use RKA\Middleware\Mezzio\IpAddressFactory;
 use Shlinkio\Shlink\Core\Config\EnvVars;
-use Shlinkio\Shlink\Core\Middleware\ReverseForwardedAddressesMiddlewareDecorator;
 
 use function Shlinkio\Shlink\Core\splitByComma;
 
@@ -43,18 +42,6 @@ return (static function (): array {
             'factories' => [
                 IpAddress::class => IpAddressFactory::class,
             ],
-            'delegators' => [
-                // Make middleware decoration transparent to other parts of the code
-                IpAddress::class => [
-                    fn ($c, $n, callable $callback) =>
-                        // If trusted proxies have been provided, use original middleware verbatim, otherwise decorate
-                        // with workaround
-                        $trustedProxies !== null
-                            ? $callback()
-                            : new ReverseForwardedAddressesMiddlewareDecorator($callback()),
-                ],
-            ],
-
         ],
 
     ];

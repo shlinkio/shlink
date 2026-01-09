@@ -38,7 +38,7 @@ class GetOrphanVisitsCommandTest extends TestCase
     public function outputIsProperlyGenerated(array $args, bool $includesType): void
     {
         $visit = Visit::forBasePath(Visitor::fromParams('bar', 'foo', ''))->locate(
-            VisitLocation::fromGeolocation(new Location('', 'Spain', '', 'Madrid', 0, 0, '')),
+            VisitLocation::fromLocation(new Location('', 'Spain', '', 'Madrid', 0, 0, '')),
         );
         $this->visitsHelper->expects($this->once())->method('orphanVisits')->with($this->callback(
             fn (OrphanVisitsParams $param) => (
@@ -48,16 +48,19 @@ class GetOrphanVisitsCommandTest extends TestCase
 
         $this->commandTester->execute($args);
         $output = $this->commandTester->getDisplay();
+        $type = OrphanVisitType::BASE_URL->value;
 
         self::assertEquals(
+            // phpcs:disable Generic.Files.LineLength
             <<<OUTPUT
-            +---------+---------------------------+------------+---------+--------+----------+
-            | Referer | Date                      | User agent | Country | City   | Type     |
-            +---------+---------------------------+------------+---------+--------+----------+
-            | foo     | {$visit->date->toAtomString()} | bar        | Spain   | Madrid | base_url |
-            +---------+---------------------------+------------+---------+--------+----------+
+            +---------------------------+---------------+------------+---------+---------+--------+--------+-------------+--------------+----------+
+            | Date                      | Potential bot | User agent | Referer | Country | Region | City   | Visited URL | Redirect URL | Type     |
+            +---------------------------+---------------+------------+---------+---------+--------+--------+-------------+--------------+----------+
+            | {$visit->date->toAtomString()} |               | bar        | foo     | Spain   |        | Madrid |             | Unknown      | {$type} |
+            +---------------------------+---------------+------------+--- Page 1 of 1 ---+--------+--------+-------------+--------------+----------+
 
             OUTPUT,
+            // phpcs:enable
             $output,
         );
     }

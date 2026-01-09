@@ -4,6 +4,51 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [5.0.0] - 2026-01-09
+### Added
+* [#2431](https://github.com/shlinkio/shlink/issues/2431) Add new date-based conditions for the dynamic rules redirections system, that allow to perform redirections based on an ISO-8601 date value.
+
+  * `before-date`: matches when current date and time is earlier than the defined threshold.
+  * `after-date`: matches when current date and time is later than the defined threshold.
+
+* [#2513](https://github.com/shlinkio/shlink/issues/2513) Add support for redis connections via unix socket (e.g. `REDIS_SERVERS=unix:/path/to/redis.sock`).
+* Visits generated in the command line can now be formatted in CSV, via `--format=csv`.
+
+### Changed
+* [#2522](https://github.com/shlinkio/shlink/issues/2522) Shlink no longer tries to detect trusted proxies automatically, when resolving the visitor's IP address, as this is a potential security issue.
+
+    Instead, if you have more than 1 proxy in front of Shlink, you should provide `TRUSTED_PROXIES` env var, with either a comma-separated list of the IP addresses of your proxies, or a number indicating how many proxies are there in front of Shlink.
+
+* [#2311](https://github.com/shlinkio/shlink/issues/2311) All visits-related commands now return more information, and columns are arranged slightly differently.
+
+    Among other things, they now always return the type of the visit, region, visited URL, redirected URL and whether the visit comes from a potential bot or not.
+
+* [#2540](https://github.com/shlinkio/shlink/issues/2540) Update Symfony packages to 8.0.
+* [#2512](https://github.com/shlinkio/shlink/issues/2512) Make all remaining console commands invokable.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* [#2507](https://github.com/shlinkio/shlink/issues/2507) Drop support for PHP 8.3.
+* [#2514](https://github.com/shlinkio/shlink/issues/2514) Remove support to generate QR codes. This functionality is now handled by Shlink Web Client and Shlink Dashboard.
+* [#2517](https://github.com/shlinkio/shlink/issues/2517) Remove `REDIRECT_APPEND_EXTRA_PATH` env var. Use `REDIRECT_EXTRA_PATH_MODE=append` instead.
+* [#2519](https://github.com/shlinkio/shlink/issues/2519) Disabling API keys by their plain-text key is no longer supported. When calling `api-key:disable`, the first argument is now always assumed to be the name.
+* [#2520](https://github.com/shlinkio/shlink/issues/2520) Remove deprecated `--including-all-tags` and `--show-api-key-name` options from `short-url:list` command. Use `--tags-all` and `--show-api-key` instead.
+* [#2521](https://github.com/shlinkio/shlink/issues/2521) Remove deprecated `--tags` option in all commands using it. Use `--tag` multiple times instead, one per tag.
+* [#2543](https://github.com/shlinkio/shlink/issues/2543) Remove support for `--order-by=field,dir` option `short-url:list` command. Use `--order-by=field-dir` instead.
+* Remove support to provide redis database index via URI path. Use `?database=3` query instead.
+* [#2565](https://github.com/shlinkio/shlink/issues/2565) Remove explicit dependency in ext-json, since it's part of PHP since v8.0
+
+### Fixed
+* [#2564](https://github.com/shlinkio/shlink/issues/2564) Fix error when trying to persist non-utf-8 title without being able to determine its original charset for parsing.
+
+  Now, when resolving a website's charset, two improvements have been introduced:
+
+  1. If the `Content-Type` header does not define the charset, we fall back to `<meta charset>` or `<meta http-equiv="Content-Type">`.
+  2. If it's still not possible to determine the charset, we ignore the auto-resolved title, to avoid other encoding errors further down the line.
+
+
 ## [4.6.0] - 2025-11-01
 ### Added
 * [#2327](https://github.com/shlinkio/shlink/issues/2327) Allow filtering short URL lists by those not including certain tags.
@@ -29,6 +74,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
     This is done via the `domain` query parameter in API endpoints, and via the `--domain` option in console commands.
 
 * [#2472](https://github.com/shlinkio/shlink/issues/2472) Add support for PHP 8.5
+* [#2291](https://github.com/shlinkio/shlink/issues/2291) Add `api-key:delete` console command to delete API keys.
 
 ### Changed
 * [#2424](https://github.com/shlinkio/shlink/issues/2424) Make simple console commands invokable.

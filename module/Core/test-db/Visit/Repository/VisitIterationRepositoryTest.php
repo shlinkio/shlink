@@ -40,7 +40,7 @@ class VisitIterationRepositoryTest extends DatabaseTestCase
             $visit = Visit::forValidShortUrl($shortUrl, Visitor::empty());
 
             if ($i >= 2) {
-                $location = VisitLocation::fromGeolocation(Location::emptyInstance());
+                $location = VisitLocation::fromLocation(Location::empty());
                 $this->getEntityManager()->persist($location);
                 $visit->locate($location);
             }

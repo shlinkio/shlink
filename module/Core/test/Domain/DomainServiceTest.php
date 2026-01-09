@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Domain;
 
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Config\EmptyNotFoundRedirectConfig;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
@@ -24,12 +26,12 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class DomainServiceTest extends TestCase
 {
     private DomainService $domainService;
-    private MockObject & EntityManagerInterface $em;
+    private Stub & EntityManagerInterface $em;
     private MockObject & DomainRepositoryInterface $repo;
 
     protected function setUp(): void
     {
-        $this->em = $this->createMock(EntityManagerInterface::class);
+        $this->em = $this->createStub(EntityManagerInterface::class);
         $this->repo = $this->createMock(DomainRepositoryInterface::class);
         $this->domainService = new DomainService(
             $this->em,
@@ -106,21 +108,21 @@ class DomainServiceTest extends TestCase
         ];
     }
 
-    #[Test]
+    #[Test, AllowMockObjectsWithoutExpectations]
     public function getDomainThrowsExceptionWhenDomainIsNotFound(): void
     {
-        $this->em->expects($this->once())->method('find')->with(Domain::class, '123')->willReturn(null);
+        $this->em->method('find')->with(Domain::class, '123')->willReturn(null);
 
         $this->expectException(DomainNotFoundException::class);
 
         $this->domainService->getDomain('123');
     }
 
-    #[Test]
+    #[Test, AllowMockObjectsWithoutExpectations]
     public function getDomainReturnsEntityWhenFound(): void
     {
         $domain = Domain::withAuthority('');
-        $this->em->expects($this->once())->method('find')->with(Domain::class, '123')->willReturn($domain);
+        $this->em->method('find')->with(Domain::class, '123')->willReturn($domain);
 
         $result = $this->domainService->getDomain('123');
 
@@ -134,8 +136,7 @@ class DomainServiceTest extends TestCase
         $this->repo->expects($this->once())->method('findOneByAuthority')->with($authority, $apiKey)->willReturn(
             $foundDomain,
         );
-        $this->em->expects($this->once())->method('persist')->with($foundDomain ?? $this->isInstanceOf(Domain::class));
-        $this->em->expects($this->once())->method('flush');
+        $this->em->method('persist')->with($foundDomain ?? $this->isInstanceOf(Domain::class));
 
         $result = $this->domainService->getOrCreate($authority, $apiKey);
 
@@ -152,8 +153,6 @@ class DomainServiceTest extends TestCase
         $domain->setId('1');
         $apiKey = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forDomain($domain)));
         $this->repo->expects($this->once())->method('findOneByAuthority')->with($authority, $apiKey)->willReturn(null);
-        $this->em->expects($this->never())->method('persist');
-        $this->em->expects($this->never())->method('flush');
 
         $this->expectException(DomainNotFoundException::class);
 
@@ -169,8 +168,7 @@ class DomainServiceTest extends TestCase
         $this->repo->expects($this->once())->method('findOneByAuthority')->with($authority, $apiKey)->willReturn(
             $foundDomain,
         );
-        $this->em->expects($this->once())->method('persist')->with($foundDomain ?? $this->isInstanceOf(Domain::class));
-        $this->em->expects($this->once())->method('flush');
+        $this->em->method('persist')->with($foundDomain ?? $this->isInstanceOf(Domain::class));
 
         $result = $this->domainService->configureNotFoundRedirects($authority, NotFoundRedirects::withRedirects(
             'foo.com',
@@ -181,9 +179,9 @@ class DomainServiceTest extends TestCase
         if ($foundDomain !== null) {
             self::assertSame($result, $foundDomain);
         }
-        self::assertEquals('foo.com', $result->baseUrlRedirect());
-        self::assertEquals('bar.com', $result->regular404Redirect());
-        self::assertEquals('baz.com', $result->invalidShortUrlRedirect());
+        self::assertEquals('foo.com', $result->baseUrlRedirect);
+        self::assertEquals('bar.com', $result->regular404Redirect);
+        self::assertEquals('baz.com', $result->invalidShortUrlRedirect);
     }
 
     public static function provideFoundDomains(): iterable

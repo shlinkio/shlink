@@ -13,11 +13,11 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        php-version: ['8.3', '8.4', '8.5']
+        php-version: ['8.4', '8.5']
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # rr get-binary picks this env automatically
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Start postgres database server
         if: ${{ inputs.test-group == 'api' }}
         run: docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d shlink_db_postgres
@@ -32,8 +32,8 @@ jobs:
         if: ${{ inputs.test-group == 'api' }}
         run: ./vendor/bin/rr get --no-interaction --no-config --location bin/ && chmod +x bin/rr
       - run: composer test:${{ inputs.test-group }}:ci
-      - uses: actions/upload-artifact@v4
-        if: ${{ matrix.php-version == '8.3' }}
+      - uses: actions/upload-artifact@v5
+        if: ${{ matrix.php-version == '8.4' }}
         with:
           name: coverage-${{ inputs.test-group }}
           path: |

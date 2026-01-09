@@ -9,7 +9,6 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
 use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -20,24 +19,17 @@ use function sprintf;
 
 #[AsCommand(
     name: DisableKeyCommand::NAME,
-    description: 'Disables an API key by name or plain-text key (providing a plain-text key is DEPRECATED)',
+    description: 'Disables an API key by name',
     help: <<<HELP
-    The <info>%command.name%</info> command allows you to disable an existing API key, via its name or the
-    plain-text key.
+    The <info>%command.name%</info> command allows you to disable an existing API key.
 
     If no arguments are provided, you will be prompted to select one of the existing non-disabled API keys.
 
         <info>%command.full_name%</info>
 
-    You can optionally pass the API key name to be disabled. In that case <comment>--by-name</comment> is also
-    required, to indicate the first argument is the API key name and not the plain-text key:
+    You can optionally pass the API key name to be disabled:
 
-        <info>%command.full_name% the_key_name --by-name</info>
-
-    You can pass the plain-text key to be disabled, but that is <options=bold>DEPRECATED</>. In next major version,
-    the argument will always be assumed to be the name:
-
-        <info>%command.full_name% d6b6c60e-edcd-4e43-96ad-fa6b7014c143</info>
+        <info>%command.full_name% the_key_name</info>
 
     HELP,
 )]
@@ -52,41 +44,31 @@ class DisableKeyCommand extends Command
 
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
-        $keyOrName = $input->getArgument('key-or-name');
+        $name = $input->getArgument('name');
 
-        if ($keyOrName === null) {
+        if ($name === null) {
             $apiKeys = $this->apiKeyService->listKeys(enabledOnly: true);
-            $name = (new SymfonyStyle($input, $output))->choice(
+            $name = new SymfonyStyle($input, $output)->choice(
                 'What API key do you want to disable?',
                 map($apiKeys, static fn (ApiKey $apiKey) => $apiKey->name),
             );
 
-            $input->setArgument('key-or-name', $name);
-            $input->setOption('by-name', true);
+            $input->setArgument('name', $name);
         }
     }
 
     public function __invoke(
         SymfonyStyle $io,
-        #[Argument(
-            description: 'The API key to disable. Pass `--by-name` to indicate this value is the name and not the key.',
-        )]
-        string|null $keyOrName = null,
-        #[Option(description: 'Indicates the first argument is the API key name, not the plain-text key.')]
-        bool $byName = false,
+        #[Argument('The name of the API key to disable.')] string|null $name = null,
     ): int {
-        if ($keyOrName === null) {
+        if ($name === null) {
             $io->warning('An API key name was not provided.');
             return Command::INVALID;
         }
 
         try {
-            if ($byName) {
-                $this->apiKeyService->disableByName($keyOrName);
-            } else {
-                $this->apiKeyService->disableByKey($keyOrName);
-            }
-            $io->success(sprintf('API key "%s" properly disabled', $keyOrName));
+            $this->apiKeyService->disableByName($name);
+            $io->success(sprintf('API key "%s" properly disabled', $name));
             return Command::SUCCESS;
         } catch (InvalidArgumentException $e) {
             $io->error($e->getMessage());

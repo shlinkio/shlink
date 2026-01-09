@@ -33,7 +33,6 @@ return [
             Config\Options\RedirectOptions::class => [Config\Options\RedirectOptions::class, 'fromEnv'],
             Config\Options\UrlShortenerOptions::class => [Config\Options\UrlShortenerOptions::class, 'fromEnv'],
             Config\Options\TrackingOptions::class => [Config\Options\TrackingOptions::class, 'fromEnv'],
-            Config\Options\QrCodeOptions::class => [Config\Options\QrCodeOptions::class, 'fromEnv'],
             Config\Options\RabbitMqOptions::class => [Config\Options\RabbitMqOptions::class, 'fromEnv'],
             Config\Options\RobotsOptions::class => [Config\Options\RobotsOptions::class, 'fromEnv'],
             Config\Options\RealTimeUpdatesOptions::class => [Config\Options\RealTimeUpdatesOptions::class, 'fromEnv'],
@@ -103,7 +102,6 @@ return [
 
             Action\RedirectAction::class => ConfigAbstractFactory::class,
             Action\PixelAction::class => ConfigAbstractFactory::class,
-            Action\QrCodeAction::class => ConfigAbstractFactory::class,
             Action\RobotsAction::class => ConfigAbstractFactory::class,
 
             EventDispatcher\PublishingUpdatesGenerator::class => ConfigAbstractFactory::class,
@@ -209,12 +207,6 @@ return [
             Util\RedirectResponseHelper::class,
         ],
         Action\PixelAction::class => [ShortUrl\ShortUrlResolver::class, Visit\RequestTracker::class],
-        Action\QrCodeAction::class => [
-            ShortUrl\ShortUrlResolver::class,
-            ShortUrl\Helper\ShortUrlStringifier::class,
-            'Logger_Shlink',
-            Config\Options\QrCodeOptions::class,
-        ],
         Action\RobotsAction::class => [Crawling\CrawlingHelper::class, Config\Options\RobotsOptions::class],
 
         ShortUrl\Resolver\PersistenceShortUrlRelationResolver::class => [

@@ -45,6 +45,7 @@ class NotifyNewShortUrlToRedisTest extends TestCase
         $this->em->expects($this->never())->method('find');
         $this->logger->expects($this->never())->method('warning');
         $this->logger->expects($this->never())->method('debug');
+        $this->updatesGenerator->expects($this->never())->method('newShortUrlUpdate');
 
         $this->createListener(false)(new ShortUrlCreated('123'));
     }

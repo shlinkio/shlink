@@ -9,13 +9,12 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\CLI\ApiKey\RoleResolver;
+use Shlinkio\Shlink\CLI\Command\Api\Input\ApiKeyInput;
 use Shlinkio\Shlink\CLI\Exception\InvalidRoleConfigException;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
-use Shlinkio\Shlink\Rest\ApiKey\Role;
-use Symfony\Component\Console\Input\InputInterface;
 
 class RoleResolverTest extends TestCase
 {
@@ -30,11 +29,10 @@ class RoleResolverTest extends TestCase
 
     #[Test, DataProvider('provideRoles')]
     public function properRolesAreResolvedBasedOnInput(
-        callable $createInput,
+        ApiKeyInput $input,
         array $expectedRoles,
         int $expectedDomainCalls,
     ): void {
-        $input = $createInput($this);
         $this->domainService->expects($this->exactly($expectedDomainCalls))->method('getOrCreate')->with(
             'example.com',
         )->willReturn(self::domainWithId(Domain::withAuthority('example.com')));
@@ -47,55 +45,46 @@ class RoleResolverTest extends TestCase
     public static function provideRoles(): iterable
     {
         $domain = self::domainWithId(Domain::withAuthority('example.com'));
-        $buildInput = static fn (array $definition) => function (TestCase $test) use ($definition): InputInterface {
-            $returnMap = [];
-            foreach ($definition as $param => $returnValue) {
-                $returnMap[] = [$param, $returnValue];
-            }
-
-            $input = $test->createStub(InputInterface::class);
-            $input->method('getOption')->willReturnMap($returnMap);
-
-            return $input;
-        };
 
         yield 'no roles' => [
-            $buildInput([Role::DOMAIN_SPECIFIC->paramName() => null, Role::AUTHORED_SHORT_URLS->paramName() => false]),
+            new ApiKeyInput(),
             [],
             0,
         ];
         yield 'domain role only' => [
-            $buildInput(
-                [Role::DOMAIN_SPECIFIC->paramName() => 'example.com', Role::AUTHORED_SHORT_URLS->paramName() => false],
-            ),
+            (function (): ApiKeyInput {
+                $input = new ApiKeyInput();
+                $input->domain = 'example.com';
+
+                return $input;
+            })(),
             [RoleDefinition::forDomain($domain)],
             1,
         ];
-        yield 'false domain role' => [
-            $buildInput([Role::DOMAIN_SPECIFIC->paramName() => false]),
-            [],
-            0,
-        ];
-        yield 'true domain role' => [
-            $buildInput([Role::DOMAIN_SPECIFIC->paramName() => true]),
-            [],
-            0,
-        ];
-        yield 'string array domain role' => [
-            $buildInput([Role::DOMAIN_SPECIFIC->paramName() => ['foo', 'bar']]),
-            [],
-            0,
-        ];
         yield 'author role only' => [
-            $buildInput([Role::DOMAIN_SPECIFIC->paramName() => null, Role::AUTHORED_SHORT_URLS->paramName() => true]),
+            (function (): ApiKeyInput {
+                $input = new ApiKeyInput();
+                $input->authorOnly = true;
+
+                return $input;
+            })(),
             [RoleDefinition::forAuthoredShortUrls()],
             0,
         ];
-        yield 'both roles' => [
-            $buildInput(
-                [Role::DOMAIN_SPECIFIC->paramName() => 'example.com', Role::AUTHORED_SHORT_URLS->paramName() => true],
-            ),
-            [RoleDefinition::forAuthoredShortUrls(), RoleDefinition::forDomain($domain)],
+        yield 'all roles' => [
+            (function (): ApiKeyInput {
+                $input = new ApiKeyInput();
+                $input->domain = 'example.com';
+                $input->authorOnly = true;
+                $input->noOrphanVisits = true;
+
+                return $input;
+            })(),
+            [
+                RoleDefinition::forAuthoredShortUrls(),
+                RoleDefinition::forDomain($domain),
+                RoleDefinition::forNoOrphanVisits(),
+            ],
             1,
         ];
     }
@@ -103,13 +92,10 @@ class RoleResolverTest extends TestCase
     #[Test]
     public function exceptionIsThrownWhenTryingToAddDomainOnlyLinkedToDefaultDomain(): void
     {
-        $input = $this->createStub(InputInterface::class);
-        $input
-            ->method('getOption')
-            ->willReturnMap([
-                [Role::DOMAIN_SPECIFIC->paramName(), 'default.com'],
-                [Role::AUTHORED_SHORT_URLS->paramName(), null],
-            ]);
+        $input = new ApiKeyInput();
+        $input->domain = 'default.com';
+
+        $this->domainService->expects($this->never())->method('getOrCreate');
 
         $this->expectException(InvalidRoleConfigException::class);
 

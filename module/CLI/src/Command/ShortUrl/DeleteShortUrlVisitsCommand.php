@@ -4,41 +4,44 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
-use Shlinkio\Shlink\CLI\Command\Visit\AbstractDeleteVisitsCommand;
-use Shlinkio\Shlink\CLI\Input\ShortUrlIdentifierInput;
+use Shlinkio\Shlink\CLI\Command\Util\CommandUtils;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlVisitsDeleterInterface;
-use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Attribute\Argument;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function sprintf;
 
-class DeleteShortUrlVisitsCommand extends AbstractDeleteVisitsCommand
+#[AsCommand(DeleteShortUrlVisitsCommand::NAME, 'Deletes visits from a short URL')]
+class DeleteShortUrlVisitsCommand extends Command
 {
     public const string NAME = 'short-url:visits-delete';
-
-    private readonly ShortUrlIdentifierInput $shortUrlIdentifierInput;
 
     public function __construct(private readonly ShortUrlVisitsDeleterInterface $deleter)
     {
         parent::__construct();
-        $this->shortUrlIdentifierInput = new ShortUrlIdentifierInput(
-            $this,
-            shortCodeDesc: 'The short code for the short URL which visits will be deleted',
-            domainDesc: 'The domain if the short code does not belong to the default one',
+    }
+
+    public function __invoke(
+        SymfonyStyle $io,
+        #[Argument('The short code for the short URL which visits will be deleted')] string $shortCode,
+        #[Option('The domain if the short code does not belong to the default one', shortcut: 'd')]
+        string|null $domain = null,
+    ): int {
+        $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, $domain);
+        return CommandUtils::executeWithWarning(
+            'You are about to delete all visits for a short URL. This operation cannot be undone',
+            $io,
+            fn () => $this->deleteVisits($io, $identifier),
         );
     }
 
-    protected function configure(): void
+    private function deleteVisits(SymfonyStyle $io, ShortUrlIdentifier $identifier): int
     {
-        $this
-            ->setName(self::NAME)
-            ->setDescription('Deletes visits from a short URL');
-    }
-
-    protected function doExecute(InputInterface $input, SymfonyStyle $io): int
-    {
-        $identifier = $this->shortUrlIdentifierInput->toShortUrlIdentifier($input);
         try {
             $result = $this->deleter->deleteShortUrlVisits($identifier);
             $io->success(sprintf('Successfully deleted %s visits', $result->affectedItems));
@@ -48,10 +51,5 @@ class DeleteShortUrlVisitsCommand extends AbstractDeleteVisitsCommand
             $io->warning(sprintf('Short URL not found for "%s"', $identifier->__toString()));
             return self::INVALID;
         }
-    }
-
-    protected function getWarningMessage(): string
-    {
-        return 'You are about to delete all visits for a short URL. This operation cannot be undone.';
     }
 }

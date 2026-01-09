@@ -20,11 +20,8 @@ class EmptyNotFoundRedirectConfigTest extends TestCase
     #[Test]
     public function allMethodsReturnHardcodedValues(): void
     {
-        self::assertNull($this->redirectsConfig->invalidShortUrlRedirect());
-        self::assertFalse($this->redirectsConfig->hasInvalidShortUrlRedirect());
-        self::assertNull($this->redirectsConfig->regular404Redirect());
-        self::assertFalse($this->redirectsConfig->hasRegular404Redirect());
-        self::assertNull($this->redirectsConfig->baseUrlRedirect());
-        self::assertFalse($this->redirectsConfig->hasBaseUrlRedirect());
+        self::assertNull($this->redirectsConfig->invalidShortUrlRedirect);
+        self::assertNull($this->redirectsConfig->regular404Redirect);
+        self::assertNull($this->redirectsConfig->baseUrlRedirect);
     }
 }

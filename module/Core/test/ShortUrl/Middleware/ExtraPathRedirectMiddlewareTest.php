@@ -13,6 +13,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -40,7 +41,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
     private MockObject & RequestTrackerInterface $requestTracker;
     private MockObject & ShortUrlRedirectionBuilderInterface $redirectionBuilder;
     private MockObject & RedirectResponseHelperInterface $redirectResponseHelper;
-    private MockObject & RequestHandlerInterface $handler;
+    private Stub & RequestHandlerInterface $handler;
 
     protected function setUp(): void
     {
@@ -48,7 +49,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         $this->requestTracker = $this->createMock(RequestTrackerInterface::class);
         $this->redirectionBuilder = $this->createMock(ShortUrlRedirectionBuilderInterface::class);
         $this->redirectResponseHelper = $this->createMock(RedirectResponseHelperInterface::class);
-        $this->handler = $this->createMock(RequestHandlerInterface::class);
+        $this->handler = $this->createStub(RequestHandlerInterface::class);
         $this->handler->method('handle')->willReturn(new RedirectResponse(''));
     }
 
@@ -66,7 +67,6 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
         $this->requestTracker->expects($this->never())->method('trackIfApplicable');
         $this->redirectionBuilder->expects($this->never())->method('buildShortUrlRedirect');
         $this->redirectResponseHelper->expects($this->never())->method('buildRedirectResponse');
-        $this->handler->expects($this->once())->method('handle');
 
         $this->middleware($options)->process($request, $this->handler);
     }
@@ -116,7 +116,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
             extraPathMode: ExtraPathMode::APPEND,
         );
 
-        $type = $this->createMock(NotFoundType::class);
+        $type = $this->createStub(NotFoundType::class);
         $type->method('isRegularNotFound')->willReturn(true);
         $type->method('isInvalidShortUrl')->willReturn(true);
         $request = ServerRequestFactory::fromGlobals()->withAttribute(NotFoundType::class, $type)
@@ -144,7 +144,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
             extraPathMode: $extraPathMode,
         );
 
-        $type = $this->createMock(NotFoundType::class);
+        $type = $this->createStub(NotFoundType::class);
         $type->method('isRegularNotFound')->willReturn(true);
         $type->method('isInvalidShortUrl')->willReturn(true);
         $request = ServerRequestFactory::fromGlobals()->withAttribute(NotFoundType::class, $type)

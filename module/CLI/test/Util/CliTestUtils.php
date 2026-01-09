@@ -6,7 +6,7 @@ namespace ShlinkioTest\Shlink\CLI\Util;
 
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\Generator\Generator;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -14,7 +14,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class CliTestUtils
 {
-    public static function createCommandMock(string $name): MockObject & Command
+    public static function createCommandStub(string $name): Stub & Command
     {
         static $generator = null;
 
@@ -24,7 +24,7 @@ class CliTestUtils
 
         $command = $generator->testDouble(
             Command::class,
-            mockObject: true,
+            mockObject: false,
             callOriginalConstructor: false,
             callOriginalClone: false,
         );
@@ -40,9 +40,9 @@ class CliTestUtils
     public static function testerForCommand(Command $mainCommand, Command ...$extraCommands): CommandTester
     {
         $app = new Application();
-        $app->add($mainCommand);
+        $app->addCommand($mainCommand);
         foreach ($extraCommands as $command) {
-            $app->add($command);
+            $app->addCommand($command);
         }
 
         return new CommandTester($mainCommand);

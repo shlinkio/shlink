@@ -3,6 +3,7 @@
 namespace ShlinkioTest\Shlink\CLI\Command\Integration;
 
 use Exception;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -27,6 +28,8 @@ class MatomoSendVisitsCommandTest extends TestCase
     #[Test]
     public function warningDisplayedIfIntegrationIsNotEnabled(): void
     {
+        $this->visitSender->expects($this->never())->method('sendVisitsInDateRange');
+
         [$output, $exitCode] = $this->executeCommand(matomoEnabled: false);
 
         self::assertStringContainsString('Matomo integration is not enabled in this Shlink instance', $output);
@@ -38,7 +41,7 @@ class MatomoSendVisitsCommandTest extends TestCase
     #[TestWith([false], 'not interactive')]
     public function warningIsOnlyDisplayedInInteractiveMode(bool $interactive): void
     {
-        $this->visitSender->method('sendVisitsInDateRange')->willReturn(new SendVisitsResult());
+        $this->visitSender->expects($this->once())->method('sendVisitsInDateRange')->willReturn(new SendVisitsResult());
 
         [$output] = $this->executeCommand(['y'], ['interactive' => $interactive]);
 
@@ -80,7 +83,7 @@ class MatomoSendVisitsCommandTest extends TestCase
     #[Test]
     public function printsResultOfSendingVisits(): void
     {
-        $this->visitSender->method('sendVisitsInDateRange')->willReturnCallback(
+        $this->visitSender->expects($this->once())->method('sendVisitsInDateRange')->willReturnCallback(
             function (DateRange $_, MatomoSendVisitsCommand $command): SendVisitsResult {
                 // Call it a few times for an easier match of its result in the command putput
                 $command->success(0);
@@ -99,7 +102,7 @@ class MatomoSendVisitsCommandTest extends TestCase
         self::assertStringContainsString('...E.E', $output);
     }
 
-    #[Test]
+    #[Test, AllowMockObjectsWithoutExpectations]
     #[TestWith([[], 'All time'])]
     #[TestWith([['--since' => '2023-05-01'], 'Since 2023-05-01 00:00:00'])]
     #[TestWith([['--until' => '2023-05-01'], 'Until 2023-05-01 00:00:00'])]
@@ -114,6 +117,7 @@ class MatomoSendVisitsCommandTest extends TestCase
     }
 
     /**
+     * @param list<string> $input
      * @return array{string, int, MatomoSendVisitsCommand}
      */
     private function executeCommand(

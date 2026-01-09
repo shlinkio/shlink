@@ -40,9 +40,22 @@ class ResolveUrlCommandTest extends TestCase
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
         )->willReturn($shortUrl);
 
-        $this->commandTester->execute(['shortCode' => $shortCode]);
+        $this->commandTester->execute(['short-code' => $shortCode]);
         $output = $this->commandTester->getDisplay();
         self::assertEquals('Long URL: ' . $expectedUrl . PHP_EOL, $output);
+    }
+
+    #[Test]
+    public function shortCodeIsAskedIfNotProvided(): void
+    {
+        $shortCode = 'abc123';
+        $shortUrl = ShortUrl::createFake();
+        $this->urlResolver->expects($this->once())->method('resolveShortUrl')->with(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+        )->willReturn($shortUrl);
+
+        $this->commandTester->setInputs([$shortCode]);
+        $this->commandTester->execute([]);
     }
 
     #[Test]
@@ -55,7 +68,7 @@ class ResolveUrlCommandTest extends TestCase
             ShortUrlNotFoundException::fromNotFound($identifier),
         );
 
-        $this->commandTester->execute(['shortCode' => $shortCode]);
+        $this->commandTester->execute(['short-code' => $shortCode]);
         $output = $this->commandTester->getDisplay();
         self::assertStringContainsString(sprintf('No URL found with short code "%s"', $shortCode), $output);
     }

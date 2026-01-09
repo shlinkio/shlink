@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use Closure;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -28,6 +29,7 @@ use Throwable;
 use function array_map;
 use function range;
 
+#[AllowMockObjectsWithoutExpectations]
 class GeolocationDbUpdaterTest extends TestCase
 {
     private MockObject & DbUpdaterInterface $dbUpdater;

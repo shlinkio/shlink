@@ -36,7 +36,7 @@ class RedirectActionTest extends TestCase
         $this->requestTracker = $this->createMock(RequestTrackerInterface::class);
         $this->redirectRespHelper = $this->createMock(RedirectResponseHelperInterface::class);
 
-        $redirectBuilder = $this->createMock(ShortUrlRedirectionBuilderInterface::class);
+        $redirectBuilder = $this->createStub(ShortUrlRedirectionBuilderInterface::class);
         $redirectBuilder->method('buildShortUrlRedirect')->willReturn(self::LONG_URL);
 
         $this->action = new RedirectAction(
@@ -66,7 +66,7 @@ class RedirectActionTest extends TestCase
             self::LONG_URL,
         )->willReturn($expectedResp);
 
-        $response = $this->action->process($request, $this->createMock(RequestHandlerInterface::class));
+        $response = $this->action->process($request, $this->createStub(RequestHandlerInterface::class));
 
         self::assertSame($expectedResp, $response);
     }
@@ -79,11 +79,12 @@ class RedirectActionTest extends TestCase
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''),
         )->willThrowException(ShortUrlNotFoundException::fromNotFound(ShortUrlIdentifier::fromShortCodeAndDomain('')));
         $this->requestTracker->expects($this->never())->method('trackIfApplicable');
+        $this->redirectRespHelper->expects($this->never())->method('buildRedirectResponse');
 
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects($this->once())->method('handle')->withAnyParameters()->willReturn(new Response());
 
-        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
+        $request = new ServerRequest()->withAttribute('shortCode', $shortCode);
         $this->action->process($request, $handler);
     }
 }

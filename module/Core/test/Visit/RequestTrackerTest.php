@@ -52,6 +52,9 @@ class RequestTrackerTest extends TestCase
     public function trackingIsDisabledWhenRequestDoesNotMeetConditions(ServerRequestInterface $request): void
     {
         $this->visitsTracker->expects($this->never())->method('track');
+        $this->notFoundType->expects($this->never())->method('isBaseUrl');
+        $this->notFoundType->expects($this->never())->method('isRegularNotFound');
+        $this->notFoundType->expects($this->never())->method('isInvalidShortUrl');
 
         $shortUrl = ShortUrl::withLongUrl(self::LONG_URL);
         $this->requestTracker->trackIfApplicable($shortUrl, $request);
@@ -89,6 +92,9 @@ class RequestTrackerTest extends TestCase
             $shortUrl,
             $this->isInstanceOf(Visitor::class),
         );
+        $this->notFoundType->expects($this->never())->method('isBaseUrl');
+        $this->notFoundType->expects($this->never())->method('isRegularNotFound');
+        $this->notFoundType->expects($this->never())->method('isInvalidShortUrl');
 
         $this->requestTracker->trackIfApplicable($shortUrl, $this->request);
     }
@@ -101,6 +107,9 @@ class RequestTrackerTest extends TestCase
             $shortUrl,
             $this->isInstanceOf(Visitor::class),
         );
+        $this->notFoundType->expects($this->never())->method('isBaseUrl');
+        $this->notFoundType->expects($this->never())->method('isRegularNotFound');
+        $this->notFoundType->expects($this->never())->method('isInvalidShortUrl');
 
         $this->requestTracker->trackIfApplicable($shortUrl, ServerRequestFactory::fromGlobals()->withAttribute(
             IP_ADDRESS_REQUEST_ATTRIBUTE,
@@ -159,6 +168,9 @@ class RequestTrackerTest extends TestCase
         $this->visitsTracker->expects($this->never())->method('trackBaseUrlVisit');
         $this->visitsTracker->expects($this->never())->method('trackRegularNotFoundVisit');
         $this->visitsTracker->expects($this->never())->method('trackInvalidShortUrlVisit');
+        $this->notFoundType->expects($this->never())->method('isBaseUrl');
+        $this->notFoundType->expects($this->never())->method('isRegularNotFound');
+        $this->notFoundType->expects($this->never())->method('isInvalidShortUrl');
 
         $this->requestTracker->trackNotFoundIfApplicable($request);
     }
