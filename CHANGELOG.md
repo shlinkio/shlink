@@ -41,7 +41,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#2565](https://github.com/shlinkio/shlink/issues/2565) Remove explicit dependency in ext-json, since it's part of PHP since v8.0
 
 ### Fixed
-* *Nothing*
+* [#2564](https://github.com/shlinkio/shlink/issues/2564) Fix error when trying to persist non-utf-8 title without being able to determine its original charset for parsing.
+
+  Now, when resolving a website's charset, two improvements have been introduced:
+
+  1. If the `Content-Type` header does not define the charset, we fall back to `<meta charset>` or `<meta http-equiv="Content-Type">`.
+  2. If it's still not possible to determine the charset, we ignore the auto-resolved title, to avoid other encoding errors further down the line.
 
 
 ## [4.6.0] - 2025-11-01

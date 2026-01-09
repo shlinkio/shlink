@@ -11,6 +11,7 @@ use GuzzleHttp\RequestOptions;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\Stream;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\InvocationStubber;
@@ -23,7 +24,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 
 class ShortUrlTitleResolutionHelperTest extends TestCase
 {
-    private const string LONG_URL = 'http://foobar.com/12345/hello?foo=bar';
+    private const string LONG_URL = 'https://foobar.com/12345/hello?foo=bar';
 
     private MockObject & ClientInterface $httpClient;
     private MockObject & LoggerInterface $logger;
@@ -98,7 +99,6 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
     }
 
     #[Test]
-    #[TestWith(['TEXT/html', false], 'no charset')]
     #[TestWith(['TEXT/html; charset=utf-8', false], 'mbstring-supported charset')]
     #[TestWith(['TEXT/html; charset=Windows-1255', true], 'mbstring-unsupported charset')]
     public function titleIsUpdatedWhenItCanBeResolvedFromResponse(string $contentType, bool $expectsWarning): void
@@ -112,6 +112,37 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
         } else {
             $this->logger->expects($this->never())->method('warning');
         }
+
+        $data = ShortUrlCreation::fromRawData(['longUrl' => self::LONG_URL]);
+        $result = $this->helper(autoResolveTitles: true, iconvEnabled: true)->processTitle($data);
+
+        self::assertNotSame($data, $result);
+        self::assertEquals('Resolved "title"', $result->title);
+    }
+
+    #[Test, AllowMockObjectsWithoutExpectations]
+    public function resolvedTitleIsIgnoredWhenCharsetCannotBeResolved(): void
+    {
+        $this->expectRequestToBeCalled()->willReturn($this->respWithTitle('text/html'));
+
+        $data = ShortUrlCreation::fromRawData(['longUrl' => self::LONG_URL]);
+        $result = $this->helper(autoResolveTitles: true, iconvEnabled: true)->processTitle($data);
+
+        self::assertSame($data, $result);
+        self::assertNull($result->title);
+    }
+
+    #[Test, AllowMockObjectsWithoutExpectations]
+    #[TestWith(['<meta charset="utf-8">'])]
+    #[TestWith(['<meta charset="utf-8" />'])]
+    #[TestWith(['<meta http-equiv="Content-Type" content="text/html; charset=utf-8">'])]
+    #[TestWith(['<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'])]
+    public function pageCharsetCanBeReadFromMeta(string $extraContent): void
+    {
+        $this->expectRequestToBeCalled()->willReturn($this->respWithTitle(
+            contentType: 'text/html',
+            extraContent: $extraContent,
+        ));
 
         $data = ShortUrlCreation::fromRawData(['longUrl' => self::LONG_URL]);
         $result = $this->helper(autoResolveTitles: true, iconvEnabled: true)->processTitle($data);
@@ -178,9 +209,14 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
         return new Response($body, 200, ['Content-Type' => 'text/html']);
     }
 
-    private function respWithTitle(string $contentType): Response
+    private function respWithTitle(string $contentType, string|null $extraContent = null): Response
     {
-        $body = $this->createStreamWithContent('<title data-foo="bar">  Resolved &quot;title&quot; </title>');
+        $content = '<title data-foo="bar">  Resolved &quot;title&quot; </title>';
+        if ($extraContent !== null) {
+            $content .= $extraContent;
+        }
+
+        $body = $this->createStreamWithContent($content);
         return new Response($body, 200, ['Content-Type' => $contentType]);
     }
 
