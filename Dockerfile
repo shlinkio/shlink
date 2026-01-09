@@ -1,4 +1,4 @@
-FROM php:8.4-alpine3.21 AS base
+FROM php:8.5-alpine3.22 AS base
 
 ARG SHLINK_VERSION=latest
 ENV SHLINK_VERSION=${SHLINK_VERSION}
@@ -7,8 +7,8 @@ ENV SHLINK_RUNTIME=${SHLINK_RUNTIME}
 
 ENV USER_ID='1001'
 ENV PDO_SQLSRV_VERSION='5.12.0'
-ENV MS_ODBC_DOWNLOAD='7/6/d/76de322a-d860-4894-9945-f0cc5d6a45f8'
-ENV MS_ODBC_SQL_VERSION='18_18.4.1.1'
+ENV MS_ODBC_DOWNLOAD='fae28b9a-d880-42fd-9b98-d779f0fdd77f'
+ENV MS_ODBC_SQL_VERSION='18_18.5.1.1'
 ENV LC_ALL='C'
 
 WORKDIR /etc/shlink
@@ -25,15 +25,15 @@ RUN \
     apk add --no-cache postgresql icu libzip libpng
 
 # Install sqlsrv driver for x86_64 builds
-RUN apk add --no-cache --virtual .phpize-deps ${PHPIZE_DEPS} unixodbc-dev && \
-    if [ $(uname -m) == "x86_64" ]; then \
+RUN if [ $(uname -m) == "x86_64" ]; then \
+      apk add --no-cache --virtual .phpize-deps ${PHPIZE_DEPS} unixodbc-dev && \
       wget https://download.microsoft.com/download/${MS_ODBC_DOWNLOAD}/msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
       apk add --allow-untrusted msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
       pecl install pdo_sqlsrv-${PDO_SQLSRV_VERSION} && \
       docker-php-ext-enable pdo_sqlsrv && \
-      rm msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk ; \
-    fi; \
-    apk del .phpize-deps
+      rm msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
+      apk del .phpize-deps; \
+    fi
 
 # Install shlink
 FROM base AS builder
