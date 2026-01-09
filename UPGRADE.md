@@ -1,5 +1,26 @@
 # Upgrading
 
+## From v4.x to v5.x
+
+### General
+
+* Generating QR codes by appending `/qr-code` to a short URL is no longer possible. Use external services to generate QR codes from a short URL, or the logic embedded in Shlink Web Client and Shlink Dashboard.
+* Shlink no longer tries to detect trusted proxies automatically, when resolving the visitor's IP address.
+    Instead, if you have more than 1 proxy in front of Shlink, you should provide `TRUSTED_PROXIES` env var, with either a comma-separated list of the IP addresses of your proxies, or a number indicating how many proxies are there in front of Shlink.
+* PHP 8.3 is no longer supported. Only 8.4 and 8.5 are officially supported as of Shlink 5.0.0.
+
+### Changes in CLI
+
+* Disabling API keys by their plain-text key is no longer supported. When calling `api-key:disable`, the first argument is now always assumed to be the name.
+* All visits-related commands (`short-url:visits`, `tag:visits`, `domain:visits`, `visit:orphan` and `visit:non-orphan`) now return more information, and columns are arranged slightly differently.
+* The `short-url:list` command no longer accepts `--including-all-tags` and `--show-api-key-name` options. Use `--tags-all` and `--show-api-key` instead.
+* The `short-url:list` command no longer allows ordering using the `--order-by=field,dir` format. Use `--order-by=field-dir` instead.
+* All commands which used to accept the `--tags` flag, no longer accept it. Pass `--tag` multiple times instead, one per tag.
+
+### Changes in env vars
+
+* The `REDIRECT_APPEND_EXTRA_PATH` env var is no longer supported. Use `REDIRECT_EXTRA_PATH_MODE=append` to enable the same behavior.
+
 ## From v3.x to v4.x
 
 ### General
