@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        php-version: ['8.4', '8.4', '8.5']
+        php-version: ['8.4', '8.5']
     steps:
       - uses: actions/checkout@v5
       - uses: './.github/actions/ci-setup'
