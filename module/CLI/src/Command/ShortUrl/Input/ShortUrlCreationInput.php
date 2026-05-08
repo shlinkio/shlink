@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl\Input;
 
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
-use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\Ask;
 use Symfony\Component\Console\Attribute\MapInput;
 use Symfony\Component\Console\Attribute\Option;
 
+use function array_filter;
+use function get_object_vars;
 use function max;
+
+use const ARRAY_FILTER_USE_KEY;
+use const Shlinkio\Shlink\MIN_SHORT_CODES_LENGTH;
 
 /**
  * Data used for short URL creation
@@ -42,18 +46,22 @@ final class ShortUrlCreationInput
     )]
     public bool $findIfExists = false;
 
-    public function toShortUrlCreation(UrlShortenerOptions $options): ShortUrlCreation
+    public function toArray(UrlShortenerOptions $options): array
     {
-        // TODO Should create using a TreeMapper
-        $shortCodeLength = max(4, $this->shortCodeLength ?? $options->defaultShortCodesLength);
-        return new ShortUrlCreation(
-            $this->longUrl,
-            ...$this->commonData->toArray(),
-            customSlug: $this->customSlug,
-            pathPrefix: $this->pathPrefix,
-            findIfExists: $this->findIfExists,
-            domain: $this->domain,
-            shortCodeLength: $shortCodeLength,
+        $common = $this->commonData->toArray($this->longUrl);
+        $creation = array_filter(
+            get_object_vars($this),
+            static fn (string $key) => $key !== 'commonData',
+            ARRAY_FILTER_USE_KEY,
         );
+        $shortCodeLength = max(MIN_SHORT_CODES_LENGTH, $this->shortCodeLength ?? $options->defaultShortCodesLength);
+
+        return [
+            ...$common,
+            ...$creation,
+            'shortCodeLength' => $shortCodeLength,
+            'shortUrlMode' => $options->mode,
+            'multiSegmentSlugsEnabled' => $options->multiSegmentSlugsEnabled,
+        ];
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use Cake\Chronos\Chronos;
+use CuyZ\Valinor\MapperBuilder;
 use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -34,9 +35,11 @@ class ListShortUrlsCommandTest extends TestCase
     protected function setUp(): void
     {
         $this->shortUrlService = $this->createMock(ShortUrlListServiceInterface::class);
-        $command = new ListShortUrlsCommand($this->shortUrlService, new ShortUrlDataTransformer(
-            new ShortUrlStringifier(),
-        ));
+        $command = new ListShortUrlsCommand(
+            $this->shortUrlService,
+            new ShortUrlDataTransformer(new ShortUrlStringifier()),
+            new MapperBuilder()->allowSuperfluousKeys()->mapper(),
+        );
         $this->commandTester = CliTestUtils::testerForCommand($command);
     }
 
@@ -72,7 +75,7 @@ class ListShortUrlsCommandTest extends TestCase
         }
 
         $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(
-            ShortUrlsParams::empty(),
+            new ShortUrlsParams(),
         )->willReturn(new Paginator(new ArrayAdapter($data)));
 
         $this->commandTester->setInputs(['n']);
@@ -107,7 +110,7 @@ class ListShortUrlsCommandTest extends TestCase
         ShortUrl $shortUrl,
     ): void {
         $this->shortUrlService->expects($this->once())->method('listShortUrls')->with(
-            ShortUrlsParams::empty(),
+            new ShortUrlsParams(),
         )->willReturn(new Paginator(new ArrayAdapter([
             ShortUrlWithDeps::fromShortUrl($shortUrl),
         ])));

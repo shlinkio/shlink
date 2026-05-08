@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl\Input;
 
-use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlEdition;
 use Symfony\Component\Console\Attribute\Option;
 
+use function array_filter;
 use function array_unique;
+use function get_object_vars;
 
 /**
  * Common input used for short URL creation and edition
@@ -16,7 +17,11 @@ final class ShortUrlDataInput
 {
     /** @var string[]|null */
     #[Option('Tags to apply to the short URL', name: 'tag', shortcut: 't')]
-    public array|null $tags = null;
+    // phpcs:disable PSR2.Classes.PropertyDeclaration.Multiple
+    public array|null $tags = null {
+        // phpcs:disable PSR2.Classes.PropertyDeclaration.Multiple, PSR2.Classes.PropertyDeclaration.ScopeMissing
+        set(array | null $value) => $value !== null ? array_unique($value) : $value;
+    }
 
     #[Option(
         'The date from which this short URL will be valid. '
@@ -47,56 +52,19 @@ final class ShortUrlDataInput
     )]
     public bool|null $noForwardQuery = null;
 
-    public function toArray(): array
+    public function toArray(string|null $longUrl): array
     {
-        $data = [];
-
-        // Avoid setting arguments that were not explicitly provided.
-        // This is important when editing short URLs and should not make a difference when creating.
-        if ($this->validSince !== null) {
-            $data['validSince'] = $this->validSince;
-        }
-        if ($this->validUntil !== null) {
-            $data['validUntil'] = $this->validUntil;
-        }
-        if ($this->maxVisits !== null) {
-            $data['maxVisits'] = $this->maxVisits;
-        }
-        if ($this->tags !== null) {
-            $data['tags'] = array_unique($this->tags);
-        }
-        if ($this->title !== null) {
-            $data['title'] = $this->title;
-        }
-        if ($this->crawlable !== null) {
-            $data['crawlable'] = $this->crawlable;
-        }
-        if ($this->noForwardQuery !== null) {
-            $data['forwardQuery'] = !$this->noForwardQuery;
-        }
-
-        return $data;
-    }
-
-    public function toShortUrlEdition(string|null $longUrl): ShortUrlEdition
-    {
-        return new ShortUrlEdition(
-            longUrlWasProvided: $longUrl !== null,
-            longUrl: $longUrl,
-            validSinceWasProvided: $this->validSince !== null,
-            validSince: $this->validSince,
-            validUntilWasProvided: $this->validUntil !== null,
-            validUntil: $this->validUntil,
-            maxVisitsWasProvided: $this->maxVisits !== null,
-            maxVisits: $this->maxVisits,
-            tagsWereProvided: $this->tags !== null,
-            tags: $this->tags ?? [],
-            titleWasProvided: $this->title !== null,
-            title: $this->title,
-            crawlableWasProvided: $this->crawlable !== null,
-            crawlable: $this->crawlable ?? false,
-            forwardQueryWasProvided: $this->noForwardQuery !== null,
-            forwardQuery: $this->noForwardQuery !== null && ! $this->noForwardQuery,
-        );
+        return [
+            ...array_filter(get_object_vars($this), static fn (mixed $value) => $value !== null),
+            'longUrl' => $longUrl,
+            'longUrlWasProvided' => $longUrl !== null,
+            'validSinceWasProvided' => $this->validSince !== null,
+            'validUntilWasProvided' => $this->validUntil !== null,
+            'maxVisitsWasProvided' => $this->maxVisits !== null,
+            'tagsWereProvided' => $this->tags !== null,
+            'titleWasProvided' => $this->title !== null,
+            'crawlableWasProvided' => $this->crawlable !== null,
+            'forwardQueryWasProvided' => $this->noForwardQuery !== null,
+        ];
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
+use CuyZ\Valinor\MapperBuilder;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -39,6 +40,7 @@ class CreateShortUrlCommandTest extends TestCase
             $this->urlShortener,
             $this->stringifier,
             new UrlShortenerOptions(defaultDomain: 'example.com', defaultShortCodesLength: 5),
+            new MapperBuilder()->allowSuperfluousKeys()->mapper(),
         );
         $this->commandTester = CliTestUtils::testerForCommand($command);
     }

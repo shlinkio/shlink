@@ -54,12 +54,9 @@ final readonly class ShortUrlsParams
             normalizeOptionalDate($startDate),
             normalizeOptionalDate($endDate),
         );
+
+        // FIXME When using shlink-common, TagsConverter implicitly does an array_unique.
         $this->tags = array_unique($tags);
         $this->excludeTags = array_unique($excludeTags);
-    }
-
-    public static function empty(): self
-    {
-        return new self();
     }
 }
