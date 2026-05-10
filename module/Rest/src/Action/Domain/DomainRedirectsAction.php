@@ -13,8 +13,6 @@ use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Action\Domain\Request\DomainRedirectsRequest;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
-use function array_key_exists;
-
 class DomainRedirectsAction extends AbstractRestAction
 {
     protected const string ROUTE_PATH = '/domains/redirects';
@@ -30,12 +28,7 @@ class DomainRedirectsAction extends AbstractRestAction
     {
         /** @var array $body */
         $body = $request->getParsedBody();
-        $requestData = $this->mapper->map(DomainRedirectsRequest::class, [
-            ...$body,
-            'baseUrlRedirectWasProvided' => array_key_exists('baseUrlRedirect', $body),
-            'regular404RedirectWasProvided' => array_key_exists('regular404Redirect', $body),
-            'invalidShortUrlRedirectWasProvided' => array_key_exists('invalidShortUrlRedirect', $body),
-        ]);
+        $requestData = $this->mapper->map(DomainRedirectsRequest::class, $body);
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
 
         $authority = $requestData->authority;
