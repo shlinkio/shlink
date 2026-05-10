@@ -13,35 +13,40 @@ use Shlinkio\Shlink\Core\ShortUrl\Helper\TitleResolutionModelInterface;
 
 use function Shlinkio\Shlink\Common\normalizeOptionalDate;
 
-final readonly class ShortUrlEdition implements TitleResolutionModelInterface
+final class ShortUrlEdition implements TitleResolutionModelInterface
 {
     public Chronos|null $validSince;
     public Chronos|null $validUntil;
+
+    // phpcs:disable PSR2.Classes.PropertyDeclaration.Multiple
+    public bool $longUrlWasProvided {
+        // phpcs:disable PSR2.Classes.PropertyDeclaration.ScopeMissing
+        get => $this->longUrl !== null;
+    }
 
     /**
      * @param string[] $tags
      */
     public function __construct(
-        private bool $longUrlWasProvided = false,
         #[LooseUriConverter]
-        public string|null $longUrl = null,
-        public bool $validSinceWasProvided = false,
+        readonly public string|null $longUrl = null,
+        readonly public bool $validSinceWasProvided = false,
         DateTimeInterface|string|null $validSince = null,
-        public bool $validUntilWasProvided = false,
+        readonly public bool $validUntilWasProvided = false,
         DateTimeInterface|string|null $validUntil = null,
-        public bool $maxVisitsWasProvided = false,
-        public int|null $maxVisits = null,
-        public bool $tagsWereProvided = false,
+        readonly public bool $maxVisitsWasProvided = false,
+        readonly public int|null $maxVisits = null,
+        readonly public bool $tagsWereProvided = false,
         #[TagsConverter]
-        public array $tags = [],
-        public bool $titleWasProvided = false,
+        readonly public array $tags = [],
+        readonly public bool $titleWasProvided = false,
         #[SubstringConverter(512)]
-        public string|null $title = null,
-        public bool $titleWasAutoResolved = false,
-        public bool $crawlableWasProvided = false,
-        public bool $crawlable = false,
-        public bool $forwardQueryWasProvided = false,
-        public bool $forwardQuery = true,
+        readonly public string|null $title = null,
+        readonly public bool $titleWasAutoResolved = false,
+        readonly public bool $crawlableWasProvided = false,
+        readonly public bool $crawlable = false,
+        readonly public bool $forwardQueryWasProvided = false,
+        readonly public bool $forwardQuery = true,
     ) {
         $this->validSince = normalizeOptionalDate($validSince);
         $this->validUntil = normalizeOptionalDate($validUntil);
@@ -56,7 +61,6 @@ final readonly class ShortUrlEdition implements TitleResolutionModelInterface
         // ]);
 
         return new self(
-            longUrlWasProvided: $this->longUrlWasProvided,
             longUrl: $this->longUrl,
             validSinceWasProvided: $this->validSinceWasProvided,
             validSince: $this->validSince,
@@ -74,11 +78,6 @@ final readonly class ShortUrlEdition implements TitleResolutionModelInterface
             forwardQueryWasProvided: $this->forwardQueryWasProvided,
             forwardQuery: $this->forwardQuery,
         );
-    }
-
-    public function longUrlWasProvided(): bool
-    {
-        return $this->longUrlWasProvided && $this->longUrl !== null;
     }
 
     public function hasTitle(): bool

@@ -147,7 +147,7 @@ class ShortUrl extends AbstractEntity
         if ($shortUrlEdit->maxVisitsWasProvided) {
             $this->maxVisits = $shortUrlEdit->maxVisits;
         }
-        if ($shortUrlEdit->longUrlWasProvided()) {
+        if ($shortUrlEdit->longUrlWasProvided) {
             $this->longUrl = $shortUrlEdit->longUrl ?? $this->longUrl;
         }
         if ($shortUrlEdit->tagsWereProvided) {

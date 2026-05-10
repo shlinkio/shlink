@@ -85,7 +85,6 @@ class ShortUrlServiceTest extends TestCase
             maxVisits: 5,
         ), null];
         yield 'long URL and API key' => [new InvokedCount(1), new ShortUrlEdition(
-            longUrlWasProvided: true,
             longUrl: 'https://modifiedLongUrl',
             validSinceWasProvided: true,
             validSince: Chronos::parse('2017-01-01 00:00:00'),

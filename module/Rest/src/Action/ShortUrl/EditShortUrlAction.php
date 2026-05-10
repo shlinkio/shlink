@@ -34,7 +34,6 @@ class EditShortUrlAction extends AbstractRestAction
         $body = (array) $request->getParsedBody();
         $shortUrlEdit = $this->treeMapper->map(ShortUrlEdition::class, [
             ...$body,
-            'longUrlWasProvided' => array_key_exists('longUrl', $body),
             'validSinceWasProvided' => array_key_exists('validSince', $body),
             'validUntilWasProvided' => array_key_exists('validUntil', $body),
             'maxVisitsWasProvided' => array_key_exists('maxVisits', $body),
