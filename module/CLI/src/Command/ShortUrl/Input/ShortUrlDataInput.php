@@ -60,10 +60,7 @@ final class ShortUrlDataInput
             'validSinceWasProvided' => $this->validSince !== null,
             'validUntilWasProvided' => $this->validUntil !== null,
             'maxVisitsWasProvided' => $this->maxVisits !== null,
-            'tagsWereProvided' => $this->tags !== null,
             'titleWasProvided' => $this->title !== null,
-            'crawlableWasProvided' => $this->crawlable !== null,
-            'forwardQueryWasProvided' => $this->noForwardQuery !== null,
         ];
     }
 }

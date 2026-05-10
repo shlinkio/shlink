@@ -147,14 +147,14 @@ class ShortUrl extends AbstractEntity
         if ($shortUrlEdit->maxVisitsWasProvided) {
             $this->maxVisits = $shortUrlEdit->maxVisits;
         }
-        if ($shortUrlEdit->longUrlWasProvided) {
-            $this->longUrl = $shortUrlEdit->longUrl ?? $this->longUrl;
+        if ($shortUrlEdit->longUrl !== null) {
+            $this->longUrl = $shortUrlEdit->longUrl;
         }
-        if ($shortUrlEdit->tagsWereProvided) {
+        if ($shortUrlEdit->tags !== null) {
             $relationResolver = $relationResolver ?? new SimpleShortUrlRelationResolver();
             $this->tags = $relationResolver->resolveTags($shortUrlEdit->tags);
         }
-        if ($shortUrlEdit->crawlableWasProvided) {
+        if ($shortUrlEdit->crawlable !== null) {
             $this->crawlable = $shortUrlEdit->crawlable;
         }
         if (
@@ -165,7 +165,7 @@ class ShortUrl extends AbstractEntity
             $this->title = $shortUrlEdit->title;
             $this->titleWasAutoResolved = $shortUrlEdit->titleWasAutoResolved;
         }
-        if ($shortUrlEdit->forwardQueryWasProvided) {
+        if ($shortUrlEdit->forwardQuery !== null) {
             $this->forwardQuery = $shortUrlEdit->forwardQuery;
         }
     }

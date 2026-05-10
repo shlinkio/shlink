@@ -18,14 +18,8 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
     public Chronos|null $validSince;
     public Chronos|null $validUntil;
 
-    // phpcs:disable PSR2.Classes.PropertyDeclaration.Multiple
-    public bool $longUrlWasProvided {
-        // phpcs:disable PSR2.Classes.PropertyDeclaration.ScopeMissing
-        get => $this->longUrl !== null;
-    }
-
     /**
-     * @param string[] $tags
+     * @param string[]|null $tags
      */
     public function __construct(
         #[LooseUriConverter]
@@ -36,17 +30,14 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
         DateTimeInterface|string|null $validUntil = null,
         readonly public bool $maxVisitsWasProvided = false,
         readonly public int|null $maxVisits = null,
-        readonly public bool $tagsWereProvided = false,
         #[TagsConverter]
-        readonly public array $tags = [],
+        readonly public array|null $tags = null,
         readonly public bool $titleWasProvided = false,
         #[SubstringConverter(512)]
         readonly public string|null $title = null,
         readonly public bool $titleWasAutoResolved = false,
-        readonly public bool $crawlableWasProvided = false,
-        readonly public bool $crawlable = false,
-        readonly public bool $forwardQueryWasProvided = false,
-        readonly public bool $forwardQuery = true,
+        readonly public bool|null $crawlable = null,
+        readonly public bool|null $forwardQuery = null,
     ) {
         $this->validSince = normalizeOptionalDate($validSince);
         $this->validUntil = normalizeOptionalDate($validUntil);
@@ -68,14 +59,11 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
             validUntil: $this->validUntil,
             maxVisitsWasProvided: $this->maxVisitsWasProvided,
             maxVisits: $this->maxVisits,
-            tagsWereProvided: $this->tagsWereProvided,
             tags: $this->tags,
             titleWasProvided: $this->titleWasProvided,
             title: $title,
             titleWasAutoResolved: true,
-            crawlableWasProvided: $this->crawlableWasProvided,
             crawlable: $this->crawlable,
-            forwardQueryWasProvided: $this->forwardQueryWasProvided,
             forwardQuery: $this->forwardQuery,
         );
     }

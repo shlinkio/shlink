@@ -37,10 +37,7 @@ class EditShortUrlAction extends AbstractRestAction
             'validSinceWasProvided' => array_key_exists('validSince', $body),
             'validUntilWasProvided' => array_key_exists('validUntil', $body),
             'maxVisitsWasProvided' => array_key_exists('maxVisits', $body),
-            'tagsWereProvided' => array_key_exists('tags', $body),
             'titleWasProvided' => array_key_exists('title', $body),
-            'crawlableWasProvided' => array_key_exists('crawlable', $body),
-            'forwardQueryWasProvided' => array_key_exists('forwardQuery', $body),
         ]);
 
         $identifier = ShortUrlIdentifier::fromApiRequest($request);
