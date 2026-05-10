@@ -22,6 +22,8 @@ final readonly class ShortUrlEdition implements TitleResolutionModelInterface
     public bool $validUntilWasProvided;
     public int|null $maxVisits;
     public bool $maxVisitsWasProvided;
+    public string|null $title;
+    public bool $titleWasProvided;
 
     /**
      * @param positive-int|NoValue|null $maxVisits
@@ -32,12 +34,11 @@ final readonly class ShortUrlEdition implements TitleResolutionModelInterface
         public string|null $longUrl = null,
         DateTimeInterface|string|NoValue|null $validSince = NoValue::NO_VALUE,
         DateTimeInterface|string|NoValue|null $validUntil = NoValue::NO_VALUE,
-        int|NoValue|null $maxVisits = null,
+        int|NoValue|null $maxVisits = NoValue::NO_VALUE,
         #[TagsConverter]
         public array|null $tags = null,
-        public bool $titleWasProvided = false,
         #[SubstringConverter(512)]
-        public string|null $title = null,
+        string|NoValue|null $title = NoValue::NO_VALUE,
         public bool $titleWasAutoResolved = false,
         public bool|null $crawlable = null,
         public bool|null $forwardQuery = null,
@@ -50,6 +51,9 @@ final readonly class ShortUrlEdition implements TitleResolutionModelInterface
 
         $this->maxVisits = NoValue::resolve($maxVisits);
         $this->maxVisitsWasProvided = $maxVisits !== NoValue::NO_VALUE;
+
+        $this->title = NoValue::resolve($title);
+        $this->titleWasProvided = $title !== NoValue::NO_VALUE;
     }
 
     public function withResolvedTitle(string $title): static
@@ -66,7 +70,6 @@ final readonly class ShortUrlEdition implements TitleResolutionModelInterface
             validUntil: $this->validUntil,
             maxVisits: $this->maxVisits,
             tags: $this->tags,
-            titleWasProvided: $this->titleWasProvided,
             title: $title,
             titleWasAutoResolved: true,
             crawlable: $this->crawlable,

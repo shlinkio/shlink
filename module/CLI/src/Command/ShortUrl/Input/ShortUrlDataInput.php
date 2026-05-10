@@ -57,7 +57,6 @@ final class ShortUrlDataInput
         return [
             ...array_filter(get_object_vars($this), static fn (mixed $value) => $value !== null),
             'longUrl' => $longUrl,
-            'titleWasProvided' => $this->title !== null,
         ];
     }
 }

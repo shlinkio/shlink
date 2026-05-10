@@ -15,8 +15,6 @@ use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformerInterface;
 use Shlinkio\Shlink\Rest\Action\AbstractRestAction;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
-use function array_key_exists;
-
 class EditShortUrlAction extends AbstractRestAction
 {
     protected const string ROUTE_PATH = '/short-urls/{shortCode}';
@@ -32,10 +30,7 @@ class EditShortUrlAction extends AbstractRestAction
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $body = (array) $request->getParsedBody();
-        $shortUrlEdit = $this->treeMapper->map(ShortUrlEdition::class, [
-            ...$body,
-            'titleWasProvided' => array_key_exists('title', $body),
-        ]);
+        $shortUrlEdit = $this->treeMapper->map(ShortUrlEdition::class, $body);
 
         $identifier = ShortUrlIdentifier::fromApiRequest($request);
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
