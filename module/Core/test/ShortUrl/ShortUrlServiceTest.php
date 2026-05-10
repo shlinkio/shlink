@@ -68,8 +68,14 @@ class ShortUrlServiceTest extends TestCase
         self::assertSame($shortUrl, $result);
         ['validSince' => $since, 'validUntil' => $until, 'maxVisits' => $maxVisits] = $shortUrl->toArray()['meta'];
 
-        self::assertEquals($shortUrlEdit->validSince?->toAtomString(), $since);
-        self::assertEquals($shortUrlEdit->validUntil?->toAtomString(), $until);
+        self::assertEquals(
+            $shortUrlEdit->validSince instanceof Chronos ? $shortUrlEdit->validSince->toAtomString() : null,
+            $since,
+        );
+        self::assertEquals(
+            $shortUrlEdit->validUntil instanceof Chronos ? $shortUrlEdit->validUntil->toAtomString() : null,
+            $until,
+        );
         self::assertEquals($shortUrlEdit->maxVisits, $maxVisits);
         self::assertEquals($shortUrlEdit->longUrl ?? $originalLongUrl, $shortUrl->getLongUrl());
     }
@@ -77,18 +83,13 @@ class ShortUrlServiceTest extends TestCase
     public static function provideShortUrlEdits(): iterable
     {
         yield 'no long URL' => [new InvokedCount(0), new ShortUrlEdition(
-            validSinceWasProvided: true,
             validSince: Chronos::parse('2017-01-01 00:00:00'),
-            validUntilWasProvided: true,
             validUntil: Chronos::parse('2017-01-05 00:00:00'),
-            maxVisitsWasProvided: true,
             maxVisits: 5,
         ), null];
         yield 'long URL and API key' => [new InvokedCount(1), new ShortUrlEdition(
             longUrl: 'https://modifiedLongUrl',
-            validSinceWasProvided: true,
             validSince: Chronos::parse('2017-01-01 00:00:00'),
-            maxVisitsWasProvided: true,
             maxVisits: 10,
         ), ApiKey::create()];
     }

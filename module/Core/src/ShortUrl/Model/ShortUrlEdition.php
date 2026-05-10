@@ -10,37 +10,46 @@ use Shlinkio\Shlink\Common\ObjectMapper\LooseUriConverter;
 use Shlinkio\Shlink\Common\ObjectMapper\SubstringConverter;
 use Shlinkio\Shlink\Common\ObjectMapper\TagsConverter;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\TitleResolutionModelInterface;
+use Shlinkio\Shlink\Core\Util\NoValue;
 
 use function Shlinkio\Shlink\Common\normalizeOptionalDate;
 
-final class ShortUrlEdition implements TitleResolutionModelInterface
+final readonly class ShortUrlEdition implements TitleResolutionModelInterface
 {
     public Chronos|null $validSince;
+    public bool $validSinceWasProvided;
     public Chronos|null $validUntil;
+    public bool $validUntilWasProvided;
+    public int|null $maxVisits;
+    public bool $maxVisitsWasProvided;
 
     /**
+     * @param positive-int|NoValue|null $maxVisits
      * @param string[]|null $tags
      */
     public function __construct(
         #[LooseUriConverter]
-        readonly public string|null $longUrl = null,
-        readonly public bool $validSinceWasProvided = false,
-        DateTimeInterface|string|null $validSince = null,
-        readonly public bool $validUntilWasProvided = false,
-        DateTimeInterface|string|null $validUntil = null,
-        readonly public bool $maxVisitsWasProvided = false,
-        readonly public int|null $maxVisits = null,
+        public string|null $longUrl = null,
+        DateTimeInterface|string|NoValue|null $validSince = NoValue::NO_VALUE,
+        DateTimeInterface|string|NoValue|null $validUntil = NoValue::NO_VALUE,
+        int|NoValue|null $maxVisits = null,
         #[TagsConverter]
-        readonly public array|null $tags = null,
-        readonly public bool $titleWasProvided = false,
+        public array|null $tags = null,
+        public bool $titleWasProvided = false,
         #[SubstringConverter(512)]
-        readonly public string|null $title = null,
-        readonly public bool $titleWasAutoResolved = false,
-        readonly public bool|null $crawlable = null,
-        readonly public bool|null $forwardQuery = null,
+        public string|null $title = null,
+        public bool $titleWasAutoResolved = false,
+        public bool|null $crawlable = null,
+        public bool|null $forwardQuery = null,
     ) {
-        $this->validSince = normalizeOptionalDate($validSince);
-        $this->validUntil = normalizeOptionalDate($validUntil);
+        $this->validSince = normalizeOptionalDate(NoValue::resolve($validSince));
+        $this->validSinceWasProvided = $validSince !== NoValue::NO_VALUE;
+
+        $this->validUntil = normalizeOptionalDate(NoValue::resolve($validUntil));
+        $this->validUntilWasProvided = $validUntil !== NoValue::NO_VALUE;
+
+        $this->maxVisits = NoValue::resolve($maxVisits);
+        $this->maxVisitsWasProvided = $maxVisits !== NoValue::NO_VALUE;
     }
 
     public function withResolvedTitle(string $title): static
@@ -53,11 +62,8 @@ final class ShortUrlEdition implements TitleResolutionModelInterface
 
         return new self(
             longUrl: $this->longUrl,
-            validSinceWasProvided: $this->validSinceWasProvided,
             validSince: $this->validSince,
-            validUntilWasProvided: $this->validUntilWasProvided,
             validUntil: $this->validUntil,
-            maxVisitsWasProvided: $this->maxVisitsWasProvided,
             maxVisits: $this->maxVisits,
             tags: $this->tags,
             titleWasProvided: $this->titleWasProvided,
