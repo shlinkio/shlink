@@ -5,24 +5,31 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\ObjectMapper;
 
 use Attribute;
+use BackedEnum;
 use CuyZ\Valinor\Mapper\AsConverter;
 use Shlinkio\Shlink\Common\ObjectMapper\MappingError;
 use Shlinkio\Shlink\Core\Model\Ordering;
 
 use function implode;
+use function is_string;
 use function Shlinkio\Shlink\Common\parseOrderBy;
 use function Shlinkio\Shlink\Core\ArrayUtils\contains;
+use function Shlinkio\Shlink\Core\enumValues;
 use function sprintf;
 
 #[AsConverter]
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
 final readonly class OrderingConverter
 {
+    /** @var non-empty-list<string>|null */
+    private array|null $validFields;
+
     /**
-     * @param string[] $validFields
+     * @param non-empty-list<string>|class-string<BackedEnum>|null $validFieldsOrEnum An enum or list of valid fields
      */
-    public function __construct(private array|null $validFields = null)
+    public function __construct(array|string|null $validFieldsOrEnum = null)
     {
+        $this->validFields = is_string($validFieldsOrEnum) ? enumValues($validFieldsOrEnum) : $validFieldsOrEnum;
     }
 
     public function map(string|null $value): Ordering

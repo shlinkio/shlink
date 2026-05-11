@@ -199,7 +199,7 @@ function toProblemDetailsType(string $errorCode): string
 
 /**
  * @param class-string<BackedEnum> $enum
- * @return string[]
+ * @return non-empty-list<string>
  */
 function enumValues(string $enum): array
 {
@@ -208,7 +208,7 @@ function enumValues(string $enum): array
 
 /**
  * @param class-string<BackedEnum> $enum
- * @return string[]
+ * @return non-empty-list<string>
  */
 function enumNames(string $enum): array
 {
@@ -218,7 +218,7 @@ function enumNames(string $enum): array
 /**
  * @param class-string<BackedEnum> $enum
  * @param 'name'|'value' $type
- * @return string[]
+ * @return non-empty-list<string>
  */
 function enumSide(string $enum, string $type): array
 {

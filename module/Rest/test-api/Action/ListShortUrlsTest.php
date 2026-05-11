@@ -356,9 +356,7 @@ class ListShortUrlsTest extends ApiTestCase
     public static function provideInvalidFiltering(): iterable
     {
         yield [['tagsMode' => 'invalid'], ['tagsMode']];
-
-        // TODO Get order by field validation back
-//        yield [['orderBy' => 'invalid'], ['orderBy']];
-//        yield [['orderBy' => 'invalid', 'tagsMode' => 'invalid'], ['tagsMode', 'orderBy']];
+        yield [['orderBy' => 'invalid'], ['orderBy']];
+        yield [['orderBy' => 'invalid', 'tagsMode' => 'invalid'], ['orderBy', 'tagsMode']];
     }
 }

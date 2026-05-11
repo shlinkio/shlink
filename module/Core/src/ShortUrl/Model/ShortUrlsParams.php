@@ -37,7 +37,7 @@ final readonly class ShortUrlsParams
         public string|null $searchTerm = null,
         #[TagsConverter]
         array $tags = [],
-        #[OrderingConverter]
+        #[OrderingConverter(OrderableField::class)]
         public Ordering $orderBy = new Ordering(),
         DateTimeInterface|string|null $startDate = null,
         DateTimeInterface|string|null $endDate = null,
