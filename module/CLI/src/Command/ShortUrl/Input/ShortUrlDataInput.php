@@ -7,7 +7,6 @@ namespace Shlinkio\Shlink\CLI\Command\ShortUrl\Input;
 use Symfony\Component\Console\Attribute\Option;
 
 use function array_filter;
-use function array_unique;
 use function get_object_vars;
 
 /**
@@ -17,11 +16,7 @@ final class ShortUrlDataInput
 {
     /** @var string[]|null */
     #[Option('Tags to apply to the short URL', name: 'tag', shortcut: 't')]
-    // phpcs:disable PSR2.Classes.PropertyDeclaration.Multiple
-    public array|null $tags = null {
-        // phpcs:disable PSR2.Classes.PropertyDeclaration.Multiple, PSR2.Classes.PropertyDeclaration.ScopeMissing
-        set(array | null $value) => $value !== null ? array_unique($value) : $value;
-    }
+    public array|null $tags = null;
 
     #[Option(
         'The date from which this short URL will be valid. '
