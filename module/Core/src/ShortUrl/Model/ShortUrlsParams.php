@@ -10,7 +10,6 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Model\Ordering;
 use Shlinkio\Shlink\Core\ObjectMapper\OrderingConverter;
 
-use function array_unique;
 use function Shlinkio\Shlink\Common\buildDateRange;
 use function Shlinkio\Shlink\Common\normalizeOptionalDate;
 
@@ -22,10 +21,6 @@ final readonly class ShortUrlsParams
     public const int DEFAULT_ITEMS_PER_PAGE = 10;
 
     public DateRange|null $dateRange;
-    /** @var string[] */
-    public array $tags;
-    /** @var string[] */
-    public array $excludeTags;
 
     /**
      * @param string[] $tags
@@ -36,7 +31,7 @@ final readonly class ShortUrlsParams
         public int $itemsPerPage = self::DEFAULT_ITEMS_PER_PAGE,
         public string|null $searchTerm = null,
         #[TagsConverter]
-        array $tags = [],
+        public array $tags = [],
         #[OrderingConverter(OrderableField::class)]
         public Ordering $orderBy = new Ordering(),
         DateTimeInterface|string|null $startDate = null,
@@ -46,7 +41,7 @@ final readonly class ShortUrlsParams
         public TagsMode $tagsMode = TagsMode::ANY,
         public string|null $domain = null,
         #[TagsConverter]
-        array $excludeTags = [],
+        public array $excludeTags = [],
         public TagsMode $excludeTagsMode = TagsMode::ANY,
         public string|null $apiKeyName = null,
     ) {
@@ -54,9 +49,5 @@ final readonly class ShortUrlsParams
             normalizeOptionalDate($startDate),
             normalizeOptionalDate($endDate),
         );
-
-        // FIXME When using shlink-common, TagsConverter implicitly does an array_unique.
-        $this->tags = array_unique($tags);
-        $this->excludeTags = array_unique($excludeTags);
     }
 }
