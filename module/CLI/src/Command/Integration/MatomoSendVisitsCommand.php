@@ -15,8 +15,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
 
 use function Shlinkio\Shlink\Common\buildDateRange;
+use function Shlinkio\Shlink\Common\normalizeOptionalDate;
 use function Shlinkio\Shlink\Core\dateRangeToHumanFriendly;
-use function Shlinkio\Shlink\Core\normalizeOptionalDate;
 use function sprintf;
 
 #[AsCommand(

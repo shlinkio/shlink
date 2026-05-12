@@ -17,8 +17,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+use function Shlinkio\Shlink\Common\normalizeOptionalDate;
 use function Shlinkio\Shlink\Core\arrayToString;
-use function Shlinkio\Shlink\Core\normalizeOptionalDate;
 use function sprintf;
 
 #[AsCommand(

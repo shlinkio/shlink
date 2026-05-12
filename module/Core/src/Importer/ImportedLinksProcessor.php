@@ -23,7 +23,7 @@ use Symfony\Component\Console\Style\OutputStyle;
 use Symfony\Component\Console\Style\StyleInterface;
 use Throwable;
 
-use function Shlinkio\Shlink\Core\normalizeDate;
+use function Shlinkio\Shlink\Common\normalizeDate;
 use function sprintf;
 
 readonly class ImportedLinksProcessor implements ImportedLinksProcessorInterface

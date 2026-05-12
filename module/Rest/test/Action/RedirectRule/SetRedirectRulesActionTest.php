@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Action\RedirectRule;
 
+use CuyZ\Valinor\MapperBuilder;
 use Doctrine\Common\Collections\ArrayCollection;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
@@ -30,7 +31,11 @@ class SetRedirectRulesActionTest extends TestCase
         $this->urlResolver = $this->createMock(ShortUrlResolverInterface::class);
         $this->ruleService = $this->createMock(ShortUrlRedirectRuleServiceInterface::class);
 
-        $this->action = new SetRedirectRulesAction($this->urlResolver, $this->ruleService);
+        $this->action = new SetRedirectRulesAction(
+            $this->urlResolver,
+            $this->ruleService,
+            new MapperBuilder()->mapper(),
+        );
     }
 
     #[Test]

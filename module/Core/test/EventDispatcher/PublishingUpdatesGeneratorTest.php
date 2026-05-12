@@ -43,11 +43,11 @@ class PublishingUpdatesGeneratorTest extends TestCase
     #[Test, DataProvider('provideMethod')]
     public function visitIsProperlySerializedIntoUpdate(string $method, string $expectedTopic, string|null $title): void
     {
-        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'customSlug' => 'foo',
-            'longUrl' => 'https://longUrl',
-            'title' => $title,
-        ]));
+        $shortUrl = ShortUrl::create(new ShortUrlCreation(
+            longUrl: 'https://longUrl',
+            customSlug: 'foo',
+            title: $title,
+        ));
         $visit = Visit::forValidShortUrl($shortUrl, Visitor::empty());
 
         /** @var Update $update */
@@ -123,11 +123,11 @@ class PublishingUpdatesGeneratorTest extends TestCase
     #[Test]
     public function shortUrlIsProperlySerializedIntoUpdate(): void
     {
-        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'customSlug' => 'foo',
-            'longUrl' => 'https://longUrl',
-            'title' => 'The title',
-        ]));
+        $shortUrl = ShortUrl::create(new ShortUrlCreation(
+            longUrl: 'https://longUrl',
+            customSlug: 'foo',
+            title: 'The title',
+        ));
 
         $update = $this->generator->newShortUrlUpdate($shortUrl);
 

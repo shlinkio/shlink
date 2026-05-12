@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Model;
 
+use function Shlinkio\Shlink\Common\parseOrderBy;
+
 final readonly class Ordering
 {
     private const string DESC_DIR = 'DESC';
     private const string ASC_DIR = 'ASC';
+    public const array VALID_ORDER_DIRS = [self::ASC_DIR, self::DESC_DIR];
     private const string DEFAULT_DIR = self::ASC_DIR;
 
     public function __construct(public string|null $field = null, public string $direction = self::DEFAULT_DIR)
@@ -26,6 +29,11 @@ final readonly class Ordering
     {
         [$field, $dir] = $props;
         return new self($field, $dir ?? self::DEFAULT_DIR);
+    }
+
+    public static function fromOptionalString(string|null $value): self
+    {
+        return $value === null ? self::none() : self::fromTuple(parseOrderBy($value));
     }
 
     public static function fromFieldAsc(string $field): self

@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
+use CuyZ\Valinor\Mapper\TreeMapper;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\Input\ShortUrlDataInput;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlEdition;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlServiceInterface;
 use Symfony\Component\Console\Attribute\Argument;
@@ -29,6 +31,7 @@ class EditShortUrlCommand extends Command
     public function __construct(
         private readonly ShortUrlServiceInterface $shortUrlService,
         private readonly ShortUrlStringifierInterface $stringifier,
+        private readonly TreeMapper $treeMapper,
     ) {
         parent::__construct();
     }
@@ -45,7 +48,7 @@ class EditShortUrlCommand extends Command
         try {
             $shortUrl = $this->shortUrlService->updateShortUrl(
                 $identifier,
-                $data->toShortUrlEdition($longUrl),
+                $this->treeMapper->map(ShortUrlEdition::class, $data->toArray($longUrl)),
             );
 
             $io->success(sprintf('Short URL "%s" properly edited', $this->stringifier->stringify($shortUrl)));

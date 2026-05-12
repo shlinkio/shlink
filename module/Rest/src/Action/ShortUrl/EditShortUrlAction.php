@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
+use CuyZ\Valinor\Mapper\TreeMapper;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -22,12 +23,15 @@ class EditShortUrlAction extends AbstractRestAction
     public function __construct(
         private readonly ShortUrlServiceInterface $shortUrlService,
         private readonly ShortUrlDataTransformerInterface $transformer,
+        private readonly TreeMapper $treeMapper,
     ) {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $shortUrlEdit = ShortUrlEdition::fromRawData((array) $request->getParsedBody());
+        $body = (array) $request->getParsedBody();
+        $shortUrlEdit = $this->treeMapper->map(ShortUrlEdition::class, $body);
+
         $identifier = ShortUrlIdentifier::fromApiRequest($request);
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
 

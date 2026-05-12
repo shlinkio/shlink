@@ -29,61 +29,61 @@ class ShortUrlsFixture extends AbstractFixture implements DependentFixtureInterf
         $authorApiKey = $this->getReference('author_api_key');
 
         $abcShortUrl = $this->setShortUrlDate(
-            ShortUrl::create(ShortUrlCreation::fromRawData([
-                'customSlug' => 'abc123',
-                'apiKey' => $authorApiKey,
-                'longUrl' => 'https://shlink.io',
-                'tags' => ['foo'],
-                'title' => 'My cool title',
-                'crawlable' => true,
-                'maxVisits' => 2,
-            ]), $relationResolver),
+            ShortUrl::create(new ShortUrlCreation(
+                longUrl: 'https://shlink.io',
+                customSlug: 'abc123',
+                maxVisits: 2,
+                apiKey: $authorApiKey,
+                tags: ['foo'],
+                title: 'My cool title',
+                crawlable: true,
+            ), $relationResolver),
             '2018-05-01',
         );
         $manager->persist($abcShortUrl);
 
-        $defShortUrl = $this->setShortUrlDate(ShortUrl::create(ShortUrlCreation::fromRawData([
-            'validSince' => Chronos::parse('2020-05-01'),
-            'customSlug' => 'def456',
-            'apiKey' => $authorApiKey,
-            'longUrl' =>
+        $defShortUrl = $this->setShortUrlDate(ShortUrl::create(new ShortUrlCreation(
+            longUrl:
                 'https://blog.alejandrocelaya.com/2017/12/09/acmailer-7-0-the-most-important-release-in-a-long-time/',
-            'tags' => ['foo', 'bar'],
-        ]), $relationResolver), '2019-01-01 00:00:10');
+            validSince: Chronos::parse('2020-05-01'),
+            customSlug: 'def456',
+            apiKey: $authorApiKey,
+            tags: ['foo', 'bar'],
+        ), $relationResolver), '2019-01-01 00:00:10');
         $manager->persist($defShortUrl);
 
-        $customShortUrl = $this->setShortUrlDate(ShortUrl::create(ShortUrlCreation::fromRawData([
-            'customSlug' => 'custom',
-            'maxVisits' => 2,
-            'apiKey' => $authorApiKey,
-            'longUrl' => 'https://shlink.io',
-            'crawlable' => true,
-            'forwardQuery' => false,
-        ])), '2019-01-01 00:00:20');
+        $customShortUrl = $this->setShortUrlDate(ShortUrl::create(new ShortUrlCreation(
+            longUrl: 'https://shlink.io',
+            customSlug: 'custom',
+            maxVisits: 2,
+            apiKey: $authorApiKey,
+            crawlable: true,
+            forwardQuery: false,
+        )), '2019-01-01 00:00:20');
         $manager->persist($customShortUrl);
 
         $ghiShortUrl = $this->setShortUrlDate(
-            ShortUrl::create(ShortUrlCreation::fromRawData([
-                'customSlug' => 'ghi789',
-                'longUrl' => 'https://shlink.io/documentation/',
-                'validUntil' => Chronos::parse('2020-05-01'), // In the past
-            ])),
+            ShortUrl::create(new ShortUrlCreation(
+                longUrl: 'https://shlink.io/documentation/',
+                validUntil: Chronos::parse('2020-05-01'), // In the past
+                customSlug: 'ghi789',
+            )),
             '2018-05-01',
         );
         $manager->persist($ghiShortUrl);
 
-        $withDomainDuplicatingShortCode = $this->setShortUrlDate(ShortUrl::create(ShortUrlCreation::fromRawData([
-            'domain' => 'example.com',
-            'customSlug' => 'ghi789',
-            'longUrl' => 'https://blog.alejandrocelaya.com/2019/04/27/considerations-to-properly-use-open-'
+        $withDomainDuplicatingShortCode = $this->setShortUrlDate(ShortUrl::create(new ShortUrlCreation(
+            longUrl: 'https://blog.alejandrocelaya.com/2019/04/27/considerations-to-properly-use-open-'
                 . 'source-software-projects/',
-            'tags' => ['foo'],
-        ]), $relationResolver), '2019-01-01 00:00:30');
+            customSlug: 'ghi789',
+            domain: 'example.com',
+            tags: ['foo'],
+        ), $relationResolver), '2019-01-01 00:00:30');
         $manager->persist($withDomainDuplicatingShortCode);
 
-        $withDomainAndSlugShortUrl = $this->setShortUrlDate(ShortUrl::create(ShortUrlCreation::fromRawData(
-            ['domain' => 'some-domain.com', 'customSlug' => 'custom-with-domain', 'longUrl' => 'https://google.com'],
-        )), '2018-10-20');
+        $withDomainAndSlugShortUrl = $this->setShortUrlDate(ShortUrl::create(
+            new ShortUrlCreation('https://google.com', customSlug: 'custom-with-domain', domain: 'some-domain.com'),
+        ), '2018-10-20');
         $manager->persist($withDomainAndSlugShortUrl);
 
         $manager->flush();

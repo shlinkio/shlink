@@ -5,12 +5,17 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl\Input;
 
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
-use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
-use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\Ask;
 use Symfony\Component\Console\Attribute\MapInput;
 use Symfony\Component\Console\Attribute\Option;
+
+use function array_filter;
+use function get_object_vars;
+use function max;
+
+use const ARRAY_FILTER_USE_KEY;
+use const Shlinkio\Shlink\MIN_SHORT_CODES_LENGTH;
 
 /**
  * Data used for short URL creation
@@ -41,17 +46,22 @@ final class ShortUrlCreationInput
     )]
     public bool $findIfExists = false;
 
-    public function toShortUrlCreation(UrlShortenerOptions $options): ShortUrlCreation
+    public function toArray(UrlShortenerOptions $options): array
     {
-        $shortCodeLength = $this->shortCodeLength ?? $options->defaultShortCodesLength;
-        return ShortUrlCreation::fromRawData([
-            ShortUrlInputFilter::LONG_URL => $this->longUrl,
-            ShortUrlInputFilter::DOMAIN => $this->domain,
-            ShortUrlInputFilter::CUSTOM_SLUG => $this->customSlug,
-            ShortUrlInputFilter::SHORT_CODE_LENGTH => $shortCodeLength,
-            ShortUrlInputFilter::PATH_PREFIX => $this->pathPrefix,
-            ShortUrlInputFilter::FIND_IF_EXISTS => $this->findIfExists,
-            ...$this->commonData->toArray(),
-        ], $options);
+        $common = $this->commonData->toArray($this->longUrl);
+        $creation = array_filter(
+            get_object_vars($this),
+            static fn (string $key) => $key !== 'commonData',
+            ARRAY_FILTER_USE_KEY,
+        );
+        $shortCodeLength = max(MIN_SHORT_CODES_LENGTH, $this->shortCodeLength ?? $options->defaultShortCodesLength);
+
+        return [
+            ...$common,
+            ...$creation,
+            'shortCodeLength' => $shortCodeLength,
+            'shortUrlMode' => $options->mode,
+            'multiSegmentSlugsEnabled' => $options->multiSegmentSlugsEnabled,
+        ];
     }
 }

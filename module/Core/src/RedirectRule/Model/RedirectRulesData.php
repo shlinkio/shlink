@@ -4,31 +4,12 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\RedirectRule\Model;
 
-use Laminas\InputFilter\Exception\InvalidArgumentException;
-use Shlinkio\Shlink\Core\Exception\ValidationException;
-use Shlinkio\Shlink\Core\RedirectRule\Model\Validation\RedirectRulesInputFilter;
-
-use function array_values;
-
 readonly class RedirectRulesData
 {
-    private function __construct(public array $rules)
+    /**
+     * @param RedirectRuleData[] $redirectRules
+     */
+    public function __construct(public array $redirectRules)
     {
-    }
-
-    public static function fromRawData(array $rawData): self
-    {
-        try {
-            $inputFilter = RedirectRulesInputFilter::initialize($rawData);
-            if (! $inputFilter->isValid()) {
-                throw ValidationException::fromInputFilter($inputFilter);
-            }
-
-            return new self(array_values($inputFilter->getValue(RedirectRulesInputFilter::REDIRECT_RULES)));
-        } catch (InvalidArgumentException) {
-            throw ValidationException::fromArray(
-                [RedirectRulesInputFilter::REDIRECT_RULES => RedirectRulesInputFilter::REDIRECT_RULES],
-            );
-        }
     }
 }

@@ -34,6 +34,7 @@ return [
 
         'pre-routing' => [
             'middleware' => [
+                Core\ObjectMapper\MapValidationMiddleware::class,
                 Common\Middleware\CloseDbConnectionMiddleware::class,
             ],
         ],

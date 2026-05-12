@@ -5,83 +5,104 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\ShortUrl\Model;
 
 use Cake\Chronos\Chronos;
-use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
-use Shlinkio\Shlink\Core\Exception\ValidationException;
+use DateTimeInterface;
+use Shlinkio\Shlink\Common\ObjectMapper\HostAndPortConverter;
+use Shlinkio\Shlink\Common\ObjectMapper\LooseUriConverter;
+use Shlinkio\Shlink\Common\ObjectMapper\MappingError;
+use Shlinkio\Shlink\Common\ObjectMapper\SubstringConverter;
+use Shlinkio\Shlink\Common\ObjectMapper\TagsConverter;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\TitleResolutionModelInterface;
-use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
-use function Shlinkio\Shlink\Core\getNonEmptyOptionalValueFromInputFilter;
-use function Shlinkio\Shlink\Core\getOptionalBoolFromInputFilter;
-use function Shlinkio\Shlink\Core\getOptionalIntFromInputFilter;
-use function Shlinkio\Shlink\Core\normalizeOptionalDate;
+use function Shlinkio\Shlink\Common\normalizeOptionalDate;
+use function str_replace;
+use function strpbrk;
+use function strtolower;
+use function trim;
 
 use const Shlinkio\Shlink\DEFAULT_SHORT_CODES_LENGTH;
 
 final readonly class ShortUrlCreation implements TitleResolutionModelInterface
 {
+    public Chronos|null $validSince;
+    public Chronos|null $validUntil;
+    public string|null $customSlug;
+    public string|null $pathPrefix;
+
     /**
      * @param string[] $tags
+     * @param int<4, max> $shortCodeLength
      */
-    private function __construct(
+    public function __construct(
+        #[LooseUriConverter]
         public string $longUrl,
-        public ShortUrlMode $shortUrlMode,
-        public Chronos|null $validSince = null,
-        public Chronos|null $validUntil = null,
-        public string|null $customSlug = null,
-        public string|null $pathPrefix = null,
+        DateTimeInterface|string|null $validSince = null,
+        DateTimeInterface|string|null $validUntil = null,
+        public ShortUrlMode $shortUrlMode = ShortUrlMode::STRICT,
+        private bool $multiSegmentSlugsEnabled = false,
+        string|null $customSlug = null,
+        string|null $pathPrefix = null,
         public int|null $maxVisits = null,
         public bool $findIfExists = false,
+        #[HostAndPortConverter]
         public string|null $domain = null,
-        public int $shortCodeLength = 5,
+        public int $shortCodeLength = DEFAULT_SHORT_CODES_LENGTH,
         public ApiKey|null $apiKey = null,
+        #[TagsConverter]
         public array $tags = [],
+        #[SubstringConverter(512)]
         public string|null $title = null,
         public bool $titleWasAutoResolved = false,
         public bool $crawlable = false,
         public bool $forwardQuery = true,
     ) {
+        $this->validSince = normalizeOptionalDate($validSince);
+        $this->validUntil = normalizeOptionalDate($validUntil);
+
+        $this->customSlug = $this->filterAndValidateOptionsRelatedValue($customSlug);
+        $this->pathPrefix = $this->filterAndValidateOptionsRelatedValue($pathPrefix);
     }
 
-    /**
-     * @throws ValidationException
-     */
-    public static function fromRawData(array $data, UrlShortenerOptions $options = new UrlShortenerOptions()): self
+    private function filterAndValidateOptionsRelatedValue(string|null $value): string|null
     {
-        $inputFilter = ShortUrlInputFilter::forCreation($data, $options);
-        if (! $inputFilter->isValid()) {
-            throw ValidationException::fromInputFilter($inputFilter);
+        if ($value === null) {
+            return null;
         }
 
-        return new self(
-            longUrl: $inputFilter->getValue(ShortUrlInputFilter::LONG_URL),
-            shortUrlMode: $options->mode,
-            validSince: normalizeOptionalDate($inputFilter->getValue(ShortUrlInputFilter::VALID_SINCE)),
-            validUntil: normalizeOptionalDate($inputFilter->getValue(ShortUrlInputFilter::VALID_UNTIL)),
-            customSlug: $inputFilter->getValue(ShortUrlInputFilter::CUSTOM_SLUG),
-            pathPrefix: $inputFilter->getValue(ShortUrlInputFilter::PATH_PREFIX),
-            maxVisits: getOptionalIntFromInputFilter($inputFilter, ShortUrlInputFilter::MAX_VISITS),
-            findIfExists: $inputFilter->getValue(ShortUrlInputFilter::FIND_IF_EXISTS) ?? false,
-            domain: getNonEmptyOptionalValueFromInputFilter($inputFilter, ShortUrlInputFilter::DOMAIN),
-            shortCodeLength: getOptionalIntFromInputFilter(
-                $inputFilter,
-                ShortUrlInputFilter::SHORT_CODE_LENGTH,
-            ) ?? DEFAULT_SHORT_CODES_LENGTH,
-            apiKey: $inputFilter->getValue(ShortUrlInputFilter::API_KEY),
-            tags: $inputFilter->getValue(ShortUrlInputFilter::TAGS) ?? [],
-            title: $inputFilter->getValue(ShortUrlInputFilter::TITLE),
-            crawlable: $inputFilter->getValue(ShortUrlInputFilter::CRAWLABLE),
-            forwardQuery: getOptionalBoolFromInputFilter($inputFilter, ShortUrlInputFilter::FORWARD_QUERY) ?? true,
-        );
+        $isLooseMode = $this->shortUrlMode === ShortUrlMode::LOOSE;
+        $value = $isLooseMode ? strtolower($value) : $value;
+        $value = $this->multiSegmentSlugsEnabled
+            ? trim(str_replace(' ', '-', $value), '/')
+            : str_replace([' ', '/'], '-', $value);
+
+        // URL gen-delimiter reserved characters, except `/`: https://datatracker.ietf.org/doc/html/rfc3986#section-2.2
+        $reservedChars = ':?#[]@';
+        if (! $this->multiSegmentSlugsEnabled) {
+            // Slashes should only be allowed if multi-segment slugs are enabled
+            $reservedChars .= '/';
+        }
+
+        if (strpbrk($value, $reservedChars) !== false) {
+            throw MappingError::withBody('URL-reserved characters cannot be used in a custom slug or path prefix');
+        }
+
+        return $value;
     }
 
     public function withResolvedTitle(string $title): static
     {
+        // TODO Use clone with once PHP 8.4 is no longer supported
+        // return clone($this, [
+        //     'title' => $title,
+        //     'titleWasAutoResolved' => true,
+        // ]);
+
         return new self(
             longUrl: $this->longUrl,
-            shortUrlMode: $this->shortUrlMode,
             validSince: $this->validSince,
             validUntil: $this->validUntil,
+            shortUrlMode: $this->shortUrlMode,
+            multiSegmentSlugsEnabled: $this->multiSegmentSlugsEnabled,
             customSlug: $this->customSlug,
             pathPrefix: $this->pathPrefix,
             maxVisits: $this->maxVisits,

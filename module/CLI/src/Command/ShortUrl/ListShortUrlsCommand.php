@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
+use CuyZ\Valinor\Mapper\TreeMapper;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\Input\ShortUrlsParamsInput;
 use Shlinkio\Shlink\CLI\Util\ShlinkTable;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
@@ -12,13 +13,11 @@ use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithDeps;
-use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlsParamsInputFilter;
 use Shlinkio\Shlink\Core\ShortUrl\ShortUrlListServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Attribute\MapInput;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -35,26 +34,23 @@ class ListShortUrlsCommand extends Command
     public function __construct(
         private readonly ShortUrlListServiceInterface $shortUrlService,
         private readonly ShortUrlDataTransformerInterface $transformer,
+        private readonly TreeMapper $treeMapper,
     ) {
         parent::__construct();
     }
 
     public function __invoke(
         SymfonyStyle $io,
-        InputInterface $input,
         #[MapInput] ShortUrlsParamsInput $paramsInput,
     ): int {
-        $page = $paramsInput->page;
-        $data = $paramsInput->toArray($io);
-
-        $columnsMap = $this->resolveColumnsMap($input);
+        $columnsMap = $this->resolveColumnsMap($paramsInput);
         do {
-            $data[ShortUrlsParamsInputFilter::PAGE] = $page;
-            $result = $this->renderPage($io, $columnsMap, ShortUrlsParams::fromRawData($data), $paramsInput->all);
-            $page++;
+            $params = $this->treeMapper->map(ShortUrlsParams::class, $paramsInput->toArray());
+            $result = $this->renderPage($io, $columnsMap, $params, $paramsInput->all);
+            $paramsInput->page += 1;
 
             $continue = $result->hasNextPage() && $io->confirm(
-                sprintf('Continue with page <options=bold>%s</>?', $page),
+                sprintf('Continue with page <options=bold>%s</>?', $paramsInput->page),
                 default: false,
             );
         } while ($continue);
@@ -94,7 +90,7 @@ class ListShortUrlsCommand extends Command
     /**
      * @return array<string, callable(array $serializedShortUrl, ShortUrl $shortUrl): ?string>
      */
-    private function resolveColumnsMap(InputInterface $input): array
+    private function resolveColumnsMap(ShortUrlsParamsInput $params): array
     {
         $pickProp = static fn (string $prop): callable => static fn (array $shortUrl) => $shortUrl[$prop];
         $columnsMap = [
@@ -105,14 +101,14 @@ class ListShortUrlsCommand extends Command
             'Date created' => $pickProp('dateCreated'),
             'Visits count' => static fn (array $shortUrl) => $shortUrl['visitsSummary']->total,
         ];
-        if ($input->getOption('show-tags')) {
+        if ($params->showTags) {
             $columnsMap['Tags'] = static fn (array $shortUrl): string => implode(', ', $shortUrl['tags']);
         }
-        if ($input->getOption('show-domain')) {
+        if ($params->showDomain) {
             $columnsMap['Domain'] = static fn (array $_, ShortUrl $shortUrl): string =>
                 $shortUrl->getDomain()->authority ?? Domain::DEFAULT_AUTHORITY;
         }
-        if ($input->getOption('show-api-key')) {
+        if ($params->showApiKey) {
             $columnsMap['API Key Name'] = static fn (array $_, ShortUrl $shortUrl): string|null =>
                 $shortUrl->authorApiKey?->name;
         }

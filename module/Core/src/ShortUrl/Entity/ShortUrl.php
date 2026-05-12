@@ -16,7 +16,6 @@ use Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlEdition;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
-use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\ShortUrlRelationResolverInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
@@ -29,9 +28,8 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 use function array_map;
 use function count;
+use function Shlinkio\Shlink\Common\normalizeDate;
 use function Shlinkio\Shlink\Core\generateRandomShortCode;
-use function Shlinkio\Shlink\Core\normalizeDate;
-use function Shlinkio\Shlink\Core\normalizeOptionalDate;
 use function sprintf;
 
 class ShortUrl extends AbstractEntity
@@ -79,7 +77,7 @@ class ShortUrl extends AbstractEntity
      */
     public static function withLongUrl(string $longUrl): self
     {
-        return self::create(ShortUrlCreation::fromRawData([ShortUrlInputFilter::LONG_URL => $longUrl]));
+        return self::create(new ShortUrlCreation(longUrl: $longUrl));
     }
 
     public static function create(
@@ -94,6 +92,8 @@ class ShortUrl extends AbstractEntity
             shortCode: sprintf(
                 '%s%s',
                 $creation->pathPrefix ?? '',
+                // TODO Encapsulate Generating the random short code into ShortUrlCreation, when custom slug is not set,
+                //      then expose it as shortCode or something generic
                 $creation->customSlug ?? generateRandomShortCode($shortCodeLength, $creation->shortUrlMode),
             ),
             tags: $relationResolver->resolveTags($creation->tags),
@@ -116,21 +116,17 @@ class ShortUrl extends AbstractEntity
         bool $importShortCode,
         ShortUrlRelationResolverInterface|null $relationResolver = null,
     ): self {
-        $meta = [
-            ShortUrlInputFilter::LONG_URL => $url->longUrl,
-            ShortUrlInputFilter::DOMAIN => $url->domain,
-            ShortUrlInputFilter::TAGS => $url->tags,
-            ShortUrlInputFilter::TITLE => $url->title,
-            ShortUrlInputFilter::MAX_VISITS => $url->meta->maxVisits,
-        ];
-        if ($importShortCode) {
-            $meta[ShortUrlInputFilter::CUSTOM_SLUG] = $url->shortCode;
-        }
+        $instance = self::create(new ShortUrlCreation(
+            longUrl: $url->longUrl,
+            validSince: $url->meta->validSince,
+            validUntil: $url->meta->validUntil,
+            customSlug: $importShortCode ? $url->shortCode : null,
+            maxVisits: $url->meta->maxVisits,
+            domain: $url->domain,
+            tags: $url->tags,
+            title: $url->title,
+        ), $relationResolver);
 
-        $instance = self::create(ShortUrlCreation::fromRawData($meta), $relationResolver);
-
-        $instance->validSince = normalizeOptionalDate($url->meta->validSince);
-        $instance->validUntil = normalizeOptionalDate($url->meta->validUntil);
         $instance->dateCreated = normalizeDate($url->createdAt);
         $instance->importSource = $url->source->value;
         $instance->importOriginalShortCode = $url->shortCode;
@@ -142,34 +138,34 @@ class ShortUrl extends AbstractEntity
         ShortUrlEdition $shortUrlEdit,
         ShortUrlRelationResolverInterface|null $relationResolver = null,
     ): void {
-        if ($shortUrlEdit->validSinceWasProvided()) {
+        if ($shortUrlEdit->validSinceWasProvided) {
             $this->validSince = $shortUrlEdit->validSince;
         }
-        if ($shortUrlEdit->validUntilWasProvided()) {
+        if ($shortUrlEdit->validUntilWasProvided) {
             $this->validUntil = $shortUrlEdit->validUntil;
         }
-        if ($shortUrlEdit->maxVisitsWasProvided()) {
+        if ($shortUrlEdit->maxVisitsWasProvided) {
             $this->maxVisits = $shortUrlEdit->maxVisits;
         }
-        if ($shortUrlEdit->longUrlWasProvided()) {
-            $this->longUrl = $shortUrlEdit->longUrl ?? $this->longUrl;
+        if ($shortUrlEdit->longUrl !== null) {
+            $this->longUrl = $shortUrlEdit->longUrl;
         }
-        if ($shortUrlEdit->tagsWereProvided()) {
+        if ($shortUrlEdit->tags !== null) {
             $relationResolver = $relationResolver ?? new SimpleShortUrlRelationResolver();
             $this->tags = $relationResolver->resolveTags($shortUrlEdit->tags);
         }
-        if ($shortUrlEdit->crawlableWasProvided()) {
+        if ($shortUrlEdit->crawlable !== null) {
             $this->crawlable = $shortUrlEdit->crawlable;
         }
         if (
             $this->title === null
-            || $shortUrlEdit->titleWasProvided()
-            || ($this->titleWasAutoResolved && $shortUrlEdit->titleWasAutoResolved())
+            || $shortUrlEdit->titleWasProvided
+            || ($this->titleWasAutoResolved && $shortUrlEdit->titleWasAutoResolved)
         ) {
             $this->title = $shortUrlEdit->title;
-            $this->titleWasAutoResolved = $shortUrlEdit->titleWasAutoResolved();
+            $this->titleWasAutoResolved = $shortUrlEdit->titleWasAutoResolved;
         }
-        if ($shortUrlEdit->forwardQueryWasProvided()) {
+        if ($shortUrlEdit->forwardQuery !== null) {
             $this->forwardQuery = $shortUrlEdit->forwardQuery;
         }
     }

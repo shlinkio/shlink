@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
+use CuyZ\Valinor\Mapper\TreeMapper;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -22,13 +23,14 @@ class ListShortUrlsAction extends AbstractRestAction
     public function __construct(
         private readonly ShortUrlListServiceInterface $shortUrlService,
         private readonly ShortUrlDataTransformerInterface $transformer,
+        private readonly TreeMapper $mapper,
     ) {
     }
 
     public function handle(Request $request): Response
     {
         $shortUrls = $this->shortUrlService->listShortUrls(
-            ShortUrlsParams::fromRawData($request->getQueryParams()),
+            $this->mapper->map(ShortUrlsParams::class, $request->getQueryParams()),
             AuthenticationMiddleware::apiKeyFromRequest($request),
         );
         return new JsonResponse([

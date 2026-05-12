@@ -11,9 +11,10 @@ use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule;
+use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionData;
 use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
+use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectRuleData;
 use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectRulesData;
-use Shlinkio\Shlink\Core\RedirectRule\Model\Validation\RedirectRulesInputFilter;
 use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectRuleService;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 
@@ -60,34 +61,20 @@ class ShortUrlRedirectRuleServiceTest extends TestCase
     public function setRulesForShortUrlParsesProvidedData(): void
     {
         $shortUrl = ShortUrl::withLongUrl('https://example.com');
-        $data = RedirectRulesData::fromRawData([
-            RedirectRulesInputFilter::REDIRECT_RULES => [
-                [
-                    RedirectRulesInputFilter::RULE_LONG_URL => 'https://example.com/first',
-                    RedirectRulesInputFilter::RULE_CONDITIONS => [
-                        [
-                            RedirectRulesInputFilter::CONDITION_TYPE => RedirectConditionType::DEVICE->value,
-                            RedirectRulesInputFilter::CONDITION_MATCH_KEY => null,
-                            RedirectRulesInputFilter::CONDITION_MATCH_VALUE => DeviceType::ANDROID->value,
-                        ],
-                        [
-                            RedirectRulesInputFilter::CONDITION_TYPE => RedirectConditionType::QUERY_PARAM->value,
-                            RedirectRulesInputFilter::CONDITION_MATCH_KEY => 'foo',
-                            RedirectRulesInputFilter::CONDITION_MATCH_VALUE => 'bar',
-                        ],
-                    ],
+        $data = new RedirectRulesData([
+            new RedirectRuleData(
+                longUrl: 'https://example.com/first',
+                conditions: [
+                    new RedirectConditionData(RedirectConditionType::DEVICE, matchValue: DeviceType::ANDROID->value),
+                    new RedirectConditionData(RedirectConditionType::QUERY_PARAM, 'foo', 'bar'),
                 ],
-                [
-                    RedirectRulesInputFilter::RULE_LONG_URL => 'https://example.com/second',
-                    RedirectRulesInputFilter::RULE_CONDITIONS => [
-                        [
-                            RedirectRulesInputFilter::CONDITION_TYPE => RedirectConditionType::DEVICE->value,
-                            RedirectRulesInputFilter::CONDITION_MATCH_KEY => null,
-                            RedirectRulesInputFilter::CONDITION_MATCH_VALUE => DeviceType::IOS->value,
-                        ],
-                    ],
+            ),
+            new RedirectRuleData(
+                longUrl: 'https://example.com/second',
+                conditions: [
+                    new RedirectConditionData(RedirectConditionType::DEVICE, matchValue: DeviceType::IOS->value),
                 ],
-            ],
+            ),
         ]);
 
         $this->em->expects($this->once())->method('wrapInTransaction')->willReturnCallback(
@@ -105,9 +92,7 @@ class ShortUrlRedirectRuleServiceTest extends TestCase
     public function setRulesForShortUrlRemovesOldRules(): void
     {
         $shortUrl = ShortUrl::withLongUrl('https://example.com');
-        $data = RedirectRulesData::fromRawData([
-            RedirectRulesInputFilter::REDIRECT_RULES => [],
-        ]);
+        $data = new RedirectRulesData([]);
 
         $repo = $this->createMock(EntityRepository::class);
         $repo->expects($this->once())->method('findBy')->with(

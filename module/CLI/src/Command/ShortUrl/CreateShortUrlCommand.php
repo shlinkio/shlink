@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl;
 
+use CuyZ\Valinor\Mapper\TreeMapper;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\Input\ShortUrlCreationInput;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\UrlShortenerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Attribute\MapInput;
@@ -28,6 +30,7 @@ class CreateShortUrlCommand extends Command
         private readonly UrlShortenerInterface $urlShortener,
         private readonly ShortUrlStringifierInterface $stringifier,
         private readonly UrlShortenerOptions $options,
+        private readonly TreeMapper $treeMapper,
     ) {
         parent::__construct();
     }
@@ -35,7 +38,9 @@ class CreateShortUrlCommand extends Command
     public function __invoke(SymfonyStyle $io, #[MapInput] ShortUrlCreationInput $inputData): int
     {
         try {
-            $result = $this->urlShortener->shorten($inputData->toShortUrlCreation($this->options));
+            $result = $this->urlShortener->shorten(
+                $this->treeMapper->map(ShortUrlCreation::class, $inputData->toArray($this->options)),
+            );
 
             $result->onEventDispatchingError(static fn () => $io->isVerbose() && $io->warning(
                 'Short URL properly created, but the real-time updates cannot be notified when generating the '

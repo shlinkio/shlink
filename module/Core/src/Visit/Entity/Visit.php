@@ -15,8 +15,8 @@ use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkOrphanVisit;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
 
+use function Shlinkio\Shlink\Common\normalizeDate;
 use function Shlinkio\Shlink\Core\isCrawler;
-use function Shlinkio\Shlink\Core\normalizeDate;
 
 class Visit extends AbstractEntity implements JsonSerializable
 {

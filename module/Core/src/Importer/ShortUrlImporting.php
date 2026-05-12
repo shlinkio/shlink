@@ -15,8 +15,8 @@ use Shlinkio\Shlink\Importer\Model\ImportedShlinkRedirectRule;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit;
 
 use function count;
+use function Shlinkio\Shlink\Common\normalizeDate;
 use function Shlinkio\Shlink\Core\ArrayUtils\map;
-use function Shlinkio\Shlink\Core\normalizeDate;
 use function sprintf;
 
 final readonly class ShortUrlImporting

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
+use CuyZ\Valinor\MapperBuilder;
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\UrlShorteningResult;
@@ -27,12 +27,9 @@ class SingleStepCreateShortUrlActionTest extends TestCase
         $this->urlShortener = $this->createMock(UrlShortenerInterface::class);
         $transformer = $this->createStub(ShortUrlDataTransformerInterface::class);
         $transformer->method('transform')->willReturn([]);
+        $mapper = new MapperBuilder()->mapper();
 
-        $this->action = new SingleStepCreateShortUrlAction(
-            $this->urlShortener,
-            $transformer,
-            new UrlShortenerOptions(),
-        );
+        $this->action = new SingleStepCreateShortUrlAction($this->urlShortener, $transformer, $mapper);
     }
 
     #[Test]
@@ -40,11 +37,11 @@ class SingleStepCreateShortUrlActionTest extends TestCase
     {
         $apiKey = ApiKey::create();
 
-        $request = (new ServerRequest())->withQueryParams([
+        $request = new ServerRequest()->withQueryParams([
             'longUrl' => 'http://foobar.com',
         ])->withAttribute(ApiKey::class, $apiKey);
         $this->urlShortener->expects($this->once())->method('shorten')->with(
-            ShortUrlCreation::fromRawData(['apiKey' => $apiKey, 'longUrl' => 'http://foobar.com']),
+            new ShortUrlCreation('http://foobar.com', apiKey: $apiKey),
         )->willReturn(UrlShorteningResult::withoutErrorOnEventDispatching(ShortUrl::createFake()));
 
         $resp = $this->action->handle($request);

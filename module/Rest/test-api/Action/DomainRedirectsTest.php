@@ -31,7 +31,9 @@ class DomainRedirectsTest extends ApiTestCase
         yield 'no domain' => [[]];
         yield 'empty domain' => [['domain' => '']];
         yield 'null domain' => [['domain' => null]];
-        yield 'invalid domain' => [['domain' => '192.168.1.1']];
+        yield 'invalid domain' => [['domain' => 'not a domain']];
+        yield 'invalid IP' => [['domain' => '540.38.386.0']];
+        yield 'invalid port' => [['domain' => 'example.com:888888']];
     }
 
     #[Test, DataProvider('provideRequests')]

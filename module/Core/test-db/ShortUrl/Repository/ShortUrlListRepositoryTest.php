@@ -60,7 +60,7 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
     public function findListProperlyFiltersResult(): void
     {
         $foo = ShortUrl::create(
-            ShortUrlCreation::fromRawData(['longUrl' => 'https://foo', 'tags' => ['bar']]),
+            new ShortUrlCreation('https://foo', tags: ['bar']),
             $this->relationResolver,
         );
         $this->getEntityManager()->persist($foo);
@@ -163,30 +163,27 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
     #[Test]
     public function findListReturnsOnlyThoseWithMatchingTags(): void
     {
-        $shortUrl1 = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'longUrl' => 'https://foo1',
-            'tags' => ['foo', 'bar'],
-        ]), $this->relationResolver);
+        $shortUrl1 = ShortUrl::create(
+            new ShortUrlCreation('https://foo1', tags: ['foo', 'bar']),
+            $this->relationResolver,
+        );
         $this->getEntityManager()->persist($shortUrl1);
-        $shortUrl2 = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'longUrl' => 'https://foo2',
-            'tags' => ['foo', 'baz'],
-        ]), $this->relationResolver);
+        $shortUrl2 = ShortUrl::create(
+            new ShortUrlCreation('https://foo2', tags: ['foo', 'baz']),
+            $this->relationResolver,
+        );
         $this->getEntityManager()->persist($shortUrl2);
-        $shortUrl3 = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'longUrl' => 'https://foo3',
-            'tags' => ['foo'],
-        ]), $this->relationResolver);
+        $shortUrl3 = ShortUrl::create(new ShortUrlCreation('https://foo3', tags: ['foo']), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl3);
-        $shortUrl4 = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'longUrl' => 'https://foo4',
-            'tags' => ['bar', 'baz'],
-        ]), $this->relationResolver);
+        $shortUrl4 = ShortUrl::create(
+            new ShortUrlCreation('https://foo4', tags: ['bar', 'baz']),
+            $this->relationResolver,
+        );
         $this->getEntityManager()->persist($shortUrl4);
-        $shortUrl5 = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'longUrl' => 'https://foo5',
-            'tags' => ['bar', 'baz'],
-        ]), $this->relationResolver);
+        $shortUrl5 = ShortUrl::create(
+            new ShortUrlCreation('https://foo5', tags: ['bar', 'baz']),
+            $this->relationResolver,
+        );
         $this->getEntityManager()->persist($shortUrl5);
 
         $this->getEntityManager()->flush();
@@ -264,20 +261,14 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
     #[Test]
     public function findListReturnsOnlyThoseWithMatchingDomains(): void
     {
-        $shortUrl1 = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'longUrl' => 'https://foo1',
-            'domain' => null,
-        ]), $this->relationResolver);
+        $shortUrl1 = ShortUrl::create(new ShortUrlCreation('https://foo1', domain: null), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl1);
-        $shortUrl2 = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'longUrl' => 'https://foo2',
-            'domain' => null,
-        ]), $this->relationResolver);
+        $shortUrl2 = ShortUrl::create(new ShortUrlCreation('https://foo2', domain: null), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl2);
-        $shortUrl3 = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'longUrl' => 'https://foo3',
-            'domain' => 'another.com',
-        ]), $this->relationResolver);
+        $shortUrl3 = ShortUrl::create(
+            new ShortUrlCreation('https://foo3', domain: 'another.com'),
+            $this->relationResolver,
+        );
         $this->getEntityManager()->persist($shortUrl3);
 
         $this->getEntityManager()->flush();
@@ -304,25 +295,23 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
     #[Test]
     public function findListReturnsOnlyThoseWithoutExcludedUrls(): void
     {
-        $shortUrl1 = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'longUrl' => 'https://foo1',
-            'validUntil' => Chronos::now()->addDays(1)->toAtomString(),
-            'maxVisits' => 100,
-        ]), $this->relationResolver);
+        $shortUrl1 = ShortUrl::create(new ShortUrlCreation(
+            longUrl: 'https://foo1',
+            validUntil: Chronos::now()->addDays(1),
+            maxVisits: 100,
+        ), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl1);
-        $shortUrl2 = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'longUrl' => 'https://foo2',
-            'validUntil' => Chronos::now()->subDays(1)->toAtomString(),
-        ]), $this->relationResolver);
+        $shortUrl2 = ShortUrl::create(new ShortUrlCreation(
+            longUrl: 'https://foo2',
+            validUntil: Chronos::now()->subDays(1),
+        ), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl2);
-        $shortUrl3 = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'longUrl' => 'https://foo3',
-        ]), $this->relationResolver);
+        $shortUrl3 = ShortUrl::create(new ShortUrlCreation('https://foo3'), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl3);
-        $shortUrl4 = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'longUrl' => 'https://foo4',
-            'maxVisits' => 3,
-        ]), $this->relationResolver);
+        $shortUrl4 = ShortUrl::create(new ShortUrlCreation(
+            longUrl: 'https://foo4',
+            maxVisits: 3,
+        ), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl4);
         $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl4, Visitor::empty()));
         $this->getEntityManager()->persist(Visit::forValidShortUrl($shortUrl4, Visitor::empty()));
@@ -380,25 +369,13 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         $apiKey3 = ApiKey::create();
         $this->getEntityManager()->persist($apiKey3);
 
-        $shortUrl1 = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'longUrl' => 'https://foo1',
-            'apiKey' => $apiKey1,
-        ]), $this->relationResolver);
+        $shortUrl1 = ShortUrl::create(new ShortUrlCreation('https://foo1', apiKey: $apiKey1), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl1);
-        $shortUrl2 = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'longUrl' => 'https://foo2',
-            'apiKey' => $apiKey1,
-        ]), $this->relationResolver);
+        $shortUrl2 = ShortUrl::create(new ShortUrlCreation('https://foo2', apiKey: $apiKey1), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl2);
-        $shortUrl3 = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'longUrl' => 'https://foo3',
-            'apiKey' => $apiKey2,
-        ]), $this->relationResolver);
+        $shortUrl3 = ShortUrl::create(new ShortUrlCreation('https://foo3', apiKey: $apiKey2), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl3);
-        $shortUrl4 = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'longUrl' => 'https://foo4',
-            'apiKey' => $apiKey1,
-        ]), $this->relationResolver);
+        $shortUrl4 = ShortUrl::create(new ShortUrlCreation('https://foo4', apiKey: $apiKey1), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl4);
 
         $this->getEntityManager()->flush();

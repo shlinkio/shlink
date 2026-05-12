@@ -8,17 +8,17 @@ use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Model\Browser;
 use Shlinkio\Shlink\Core\Model\DeviceType;
+use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionData;
 use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
-use Shlinkio\Shlink\Core\RedirectRule\Model\Validation\RedirectRulesInputFilter;
 use Shlinkio\Shlink\Core\Util\IpAddressUtils;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkRedirectCondition;
 
 use function array_key_exists;
+use function Shlinkio\Shlink\Common\normalizeDate;
 use function Shlinkio\Shlink\Core\acceptLanguageToLocales;
 use function Shlinkio\Shlink\Core\ArrayUtils\some;
 use function Shlinkio\Shlink\Core\geolocationFromRequest;
 use function Shlinkio\Shlink\Core\ipAddressFromRequest;
-use function Shlinkio\Shlink\Core\normalizeDate;
 use function Shlinkio\Shlink\Core\normalizeLocale;
 use function Shlinkio\Shlink\Core\splitLocale;
 use function sprintf;
@@ -93,13 +93,9 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
         return new self(RedirectConditionType::BROWSER, $browser->value);
     }
 
-    public static function fromRawData(array $rawData): self
+    public static function fromData(RedirectConditionData $data): self
     {
-        $type = RedirectConditionType::from($rawData[RedirectRulesInputFilter::CONDITION_TYPE]);
-        $value = $rawData[RedirectRulesInputFilter::CONDITION_MATCH_VALUE];
-        $key = $rawData[RedirectRulesInputFilter::CONDITION_MATCH_KEY] ?? null;
-
-        return new self($type, $value, $key);
+        return new self($data->type, $data->matchValue, $data->matchKey);
     }
 
     public static function fromImport(ImportedShlinkRedirectCondition $cond): self|null

@@ -38,10 +38,10 @@ class ShortUrlRedirectionBuilderTest extends TestCase
         string|null $extraPath,
         bool|null $forwardQuery,
     ): void {
-        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'longUrl' => 'https://example.com/foo/bar?some=thing',
-            'forwardQuery' => $forwardQuery,
-        ]));
+        $shortUrl = ShortUrl::create(new ShortUrlCreation(
+            longUrl: 'https://example.com/foo/bar?some=thing',
+            forwardQuery: $forwardQuery ?? true,
+        ));
         $this->redirectionResolver->expects($this->once())->method('resolveLongUrl')->with(
             $shortUrl,
             $request,

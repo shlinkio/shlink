@@ -357,6 +357,6 @@ class ListShortUrlsTest extends ApiTestCase
     {
         yield [['tagsMode' => 'invalid'], ['tagsMode']];
         yield [['orderBy' => 'invalid'], ['orderBy']];
-        yield [['orderBy' => 'invalid', 'tagsMode' => 'invalid'], ['tagsMode', 'orderBy']];
+        yield [['orderBy' => 'invalid', 'tagsMode' => 'invalid'], ['orderBy', 'tagsMode']];
     }
 }

@@ -20,6 +20,7 @@ use function sprintf;
 return (static function (): array {
     $dropDomainMiddleware = Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class;
     $overrideDomainMiddleware = Middleware\ShortUrl\OverrideDomainMiddleware::class;
+    $shortUrlOptionsPayloadMiddleware = Middleware\ShortUrl\ShortUrlOptionsPayloadMiddleware::class;
     $shortUrlRouteSuffix = EnvVars::SHORT_URL_TRAILING_SLASH->loadFromEnv() ? '[/]' : '';
 
     return [
@@ -51,11 +52,12 @@ return (static function (): array {
                 Action\ShortUrl\CreateShortUrlAction::getRouteDef([
                     $dropDomainMiddleware,
                     $overrideDomainMiddleware,
-                    Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class,
+                    $shortUrlOptionsPayloadMiddleware,
                 ]),
                 Action\ShortUrl\SingleStepCreateShortUrlAction::getRouteDef([
                     Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class,
                     $overrideDomainMiddleware,
+                    $shortUrlOptionsPayloadMiddleware,
                 ]),
                 Action\ShortUrl\EditShortUrlAction::getRouteDef([$dropDomainMiddleware]),
                 Action\ShortUrl\DeleteShortUrlAction::getRouteDef([$dropDomainMiddleware]),

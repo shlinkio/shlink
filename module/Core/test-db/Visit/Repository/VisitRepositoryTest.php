@@ -11,7 +11,6 @@ use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
-use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver;
 use Shlinkio\Shlink\Core\Visit\Entity\OrphanVisitsCount;
 use Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount;
@@ -205,18 +204,18 @@ class VisitRepositoryTest extends DatabaseTestCase
     {
         $foo = 'foo';
 
-        $shortUrl1 = ShortUrl::create(ShortUrlCreation::fromRawData([
-            ShortUrlInputFilter::LONG_URL => 'https://longUrl',
-            ShortUrlInputFilter::TAGS => [$foo],
-            ShortUrlInputFilter::DOMAIN => 'foo.com',
-        ]), $this->relationResolver);
+        $shortUrl1 = ShortUrl::create(new ShortUrlCreation(
+            'https://longUrl',
+            domain: 'foo.com',
+            tags: [$foo],
+        ), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl1);
         $this->createVisitsForShortUrl($shortUrl1, 6);
 
-        $shortUrl2 = ShortUrl::create(ShortUrlCreation::fromRawData([
-            ShortUrlInputFilter::LONG_URL => 'https://longUrl',
-            ShortUrlInputFilter::TAGS => [$foo],
-        ]), $this->relationResolver);
+        $shortUrl2 = ShortUrl::create(new ShortUrlCreation(
+            'https://longUrl',
+            tags: [$foo],
+        ), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl2);
         $this->createVisitsForShortUrl($shortUrl2, 6);
 
@@ -303,9 +302,7 @@ class VisitRepositoryTest extends DatabaseTestCase
         $apiKey1 = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
         $this->getEntityManager()->persist($apiKey1);
         $shortUrl = ShortUrl::create(
-            ShortUrlCreation::fromRawData(
-                ['apiKey' => $apiKey1, 'domain' => $domain->authority, 'longUrl' => 'https://longUrl'],
-            ),
+            new ShortUrlCreation(longUrl: 'https://longUrl', domain: $domain->authority, apiKey: $apiKey1),
             $this->relationResolver,
         );
         $this->getEntityManager()->persist($shortUrl);
@@ -313,16 +310,12 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         $apiKey2 = ApiKey::fromMeta(ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()));
         $this->getEntityManager()->persist($apiKey2);
-        $shortUrl2 = ShortUrl::create(
-            ShortUrlCreation::fromRawData(['apiKey' => $apiKey2, 'longUrl' => 'https://longUrl']),
-        );
+        $shortUrl2 = ShortUrl::create(new ShortUrlCreation(longUrl: 'https://longUrl', apiKey: $apiKey2));
         $this->getEntityManager()->persist($shortUrl2);
         $this->createVisitsForShortUrl($shortUrl2, 5);
 
         $shortUrl3 = ShortUrl::create(
-            ShortUrlCreation::fromRawData(
-                ['apiKey' => $apiKey2, 'domain' => $domain->authority, 'longUrl' => 'https://longUrl'],
-            ),
+            new ShortUrlCreation('https://longUrl', domain: $domain->authority, apiKey: $apiKey2),
             $this->relationResolver,
         );
         $this->getEntityManager()->persist($shortUrl3);
@@ -391,7 +384,7 @@ class VisitRepositoryTest extends DatabaseTestCase
     #[Test]
     public function findOrphanVisitsReturnsExpectedResult(): void
     {
-        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(['longUrl' => 'https://longUrl']));
+        $shortUrl = ShortUrl::withLongUrl('https://longUrl');
         $this->getEntityManager()->persist($shortUrl);
         $this->createVisitsForShortUrl($shortUrl, 7);
 
@@ -458,7 +451,7 @@ class VisitRepositoryTest extends DatabaseTestCase
     #[Test]
     public function countOrphanVisitsReturnsExpectedResult(): void
     {
-        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(['longUrl' => 'https://longUrl']));
+        $shortUrl = ShortUrl::withLongUrl('https://longUrl');
         $this->getEntityManager()->persist($shortUrl);
         $this->createVisitsForShortUrl($shortUrl, 7);
 
@@ -582,11 +575,11 @@ class VisitRepositoryTest extends DatabaseTestCase
         ApiKey|null $apiKey = null,
         int $visitsAmount = 6,
     ): array {
-        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
-            ShortUrlInputFilter::LONG_URL => 'https://longUrl',
-            ShortUrlInputFilter::TAGS => $tags,
-            ShortUrlInputFilter::API_KEY => $apiKey,
-        ]), $this->relationResolver);
+        $shortUrl = ShortUrl::create(new ShortUrlCreation(
+            'https://longUrl',
+            apiKey: $apiKey,
+            tags: $tags,
+        ), $this->relationResolver);
         $domain = is_string($withDomain) ? $withDomain : 'example.com';
         $shortCode = $shortUrl->getShortCode();
         $this->getEntityManager()->persist($shortUrl);
@@ -594,11 +587,11 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->createVisitsForShortUrl($shortUrl, $visitsAmount);
 
         if ($withDomain !== false) {
-            $shortUrlWithDomain = ShortUrl::create(ShortUrlCreation::fromRawData([
-                'customSlug' => $shortCode,
-                'domain' => $domain,
-                'longUrl' => 'https://longUrl',
-            ]));
+            $shortUrlWithDomain = ShortUrl::create(new ShortUrlCreation(
+                longUrl: 'https://longUrl',
+                customSlug: $shortCode,
+                domain: $domain,
+            ));
             $this->getEntityManager()->persist($shortUrlWithDomain);
             $this->createVisitsForShortUrl($shortUrlWithDomain, 3);
             $this->getEntityManager()->flush();

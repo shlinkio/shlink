@@ -18,7 +18,6 @@ use Shlinkio\Shlink\Core\Matomo\MatomoVisitSender;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
-use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
@@ -137,10 +136,7 @@ class MatomoVisitSenderTest extends TestCase
         ];
         yield 'non-orphan visit' => [
             Visit::forValidShortUrl(ShortUrl::create(
-                ShortUrlCreation::fromRawData([
-                    ShortUrlInputFilter::LONG_URL => 'https://shlink.io',
-                    ShortUrlInputFilter::CUSTOM_SLUG => 'bar',
-                ]),
+                new ShortUrlCreation('https://shlink.io', customSlug: 'bar'),
             ), Visitor::empty()),
             'http://s2.test/bar',
         ];

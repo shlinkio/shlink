@@ -7,7 +7,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule;
 use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectRulesData;
-use Shlinkio\Shlink\Core\RedirectRule\Model\Validation\RedirectRulesInputFilter;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 
 use function array_map;
@@ -32,15 +31,12 @@ readonly class ShortUrlRedirectRuleService implements ShortUrlRedirectRuleServic
     public function setRulesForShortUrl(ShortUrl $shortUrl, RedirectRulesData $data): array
     {
         $rules = [];
-        foreach ($data->rules as $index => $rule) {
+        foreach ($data->redirectRules as $index => $rule) {
             $rule = new ShortUrlRedirectRule(
                 shortUrl: $shortUrl,
                 priority: $index + 1,
-                longUrl: $rule[RedirectRulesInputFilter::RULE_LONG_URL],
-                conditions: new ArrayCollection(array_map(
-                    RedirectCondition::fromRawData(...),
-                    $rule[RedirectRulesInputFilter::RULE_CONDITIONS],
-                )),
+                longUrl: $rule->longUrl,
+                conditions: new ArrayCollection(array_map(RedirectCondition::fromData(...), $rule->conditions)),
             );
 
             $rules[] = $rule;

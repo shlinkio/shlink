@@ -31,7 +31,7 @@ readonly class ShortUrlService implements ShortUrlServiceInterface
         ShortUrlEdition $shortUrlEdit,
         ApiKey|null $apiKey = null,
     ): ShortUrl {
-        if ($shortUrlEdit->longUrlWasProvided()) {
+        if ($shortUrlEdit->longUrl !== null) {
             $shortUrlEdit = $this->titleResolutionHelper->processTitle($shortUrlEdit);
         }
 

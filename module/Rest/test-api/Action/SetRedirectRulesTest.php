@@ -35,6 +35,9 @@ class SetRedirectRulesTest extends ApiTestCase
 
     #[Test]
     #[TestWith([[
+        'redirectRules' => ['foo'],
+    ]], 'invalid data')]
+    #[TestWith([[
         'redirectRules' => [
             [
                 'longUrl' => 'invalid',
@@ -151,6 +154,71 @@ class SetRedirectRulesTest extends ApiTestCase
             ],
         ],
     ]])]
+    #[TestWith(['abc123', [
+        [
+            'longUrl' => 'https://example.com',
+            'priority' => 1,
+            'conditions' => [
+                [
+                    'type' => 'ip-address',
+                    'matchKey' => null,
+                    'matchValue' => '1.2.3.4',
+                ],
+            ],
+        ],
+    ]], 'static IP')]
+    #[TestWith(['abc123', [
+        [
+            'longUrl' => 'https://example.com',
+            'priority' => 1,
+            'conditions' => [
+                [
+                    'type' => 'ip-address',
+                    'matchKey' => null,
+                    'matchValue' => '1.2.3.0/24',
+                ],
+            ],
+        ],
+    ]], 'CIDR block')]
+    #[TestWith(['abc123', [
+        [
+            'longUrl' => 'https://example.com',
+            'priority' => 1,
+            'conditions' => [
+                [
+                    'type' => 'ip-address',
+                    'matchKey' => null,
+                    'matchValue' => '1.2.3.*',
+                ],
+            ],
+        ],
+    ]], 'IP wildcard pattern')]
+    #[TestWith(['abc123', [
+        [
+            'longUrl' => 'https://example.com',
+            'priority' => 1,
+            'conditions' => [
+                [
+                    'type' => 'ip-address',
+                    'matchKey' => null,
+                    'matchValue' => '1.2.*.4',
+                ],
+            ],
+        ],
+    ]], 'in-between IP wildcard pattern')]
+    #[TestWith(['abc123', [
+        [
+            'longUrl' => 'https://example.com',
+            'priority' => 1,
+            'conditions' => [
+                [
+                    'type' => 'geolocation-country-code',
+                    'matchKey' => null,
+                    'matchValue' => 'US',
+                ],
+            ],
+        ],
+    ]], 'country code')]
     public function setsListOfRulesForShortUrl(string $shortCode, array $expectedRules): void
     {
         $response = $this->callApiWithKey(self::METHOD_POST, sprintf('/short-urls/%s/redirect-rules', $shortCode), [

@@ -38,7 +38,7 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
     #[Test]
     public function dataIsReturnedAsIsWhenResolvingTitlesIsDisabled(): void
     {
-        $data = ShortUrlCreation::fromRawData(['longUrl' => self::LONG_URL]);
+        $data = new ShortUrlCreation(self::LONG_URL);
         $this->httpClient->expects($this->never())->method('request');
         $this->logger->expects($this->never())->method('warning');
 
@@ -50,10 +50,7 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
     #[Test]
     public function dataIsReturnedAsIsWhenItAlreadyHasTitle(): void
     {
-        $data = ShortUrlCreation::fromRawData([
-            'longUrl' => self::LONG_URL,
-            'title' => 'foo',
-        ]);
+        $data = new ShortUrlCreation(self::LONG_URL, title: 'foo');
         $this->httpClient->expects($this->never())->method('request');
         $this->logger->expects($this->never())->method('warning');
 
@@ -65,7 +62,7 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
     #[Test]
     public function dataIsReturnedAsIsWhenFetchingFails(): void
     {
-        $data = ShortUrlCreation::fromRawData(['longUrl' => self::LONG_URL]);
+        $data = new ShortUrlCreation(self::LONG_URL);
         $this->expectRequestToBeCalled()->willThrowException(new Exception('Error'));
         $this->logger->expects($this->never())->method('warning');
 
@@ -77,7 +74,7 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
     #[Test]
     public function dataIsReturnedAsIsWhenResponseIsNotHtml(): void
     {
-        $data = ShortUrlCreation::fromRawData(['longUrl' => self::LONG_URL]);
+        $data = new ShortUrlCreation(self::LONG_URL);
         $this->expectRequestToBeCalled()->willReturn(new JsonResponse(['foo' => 'bar']));
         $this->logger->expects($this->never())->method('warning');
 
@@ -89,7 +86,7 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
     #[Test]
     public function dataIsReturnedAsIsWhenTitleCannotBeResolvedFromResponse(): void
     {
-        $data = ShortUrlCreation::fromRawData(['longUrl' => self::LONG_URL]);
+        $data = new ShortUrlCreation(self::LONG_URL);
         $this->expectRequestToBeCalled()->willReturn($this->respWithoutTitle());
         $this->logger->expects($this->never())->method('warning');
 
@@ -113,7 +110,7 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
             $this->logger->expects($this->never())->method('warning');
         }
 
-        $data = ShortUrlCreation::fromRawData(['longUrl' => self::LONG_URL]);
+        $data = new ShortUrlCreation(self::LONG_URL);
         $result = $this->helper(autoResolveTitles: true, iconvEnabled: true)->processTitle($data);
 
         self::assertNotSame($data, $result);
@@ -125,7 +122,7 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
     {
         $this->expectRequestToBeCalled()->willReturn($this->respWithTitle('text/html'));
 
-        $data = ShortUrlCreation::fromRawData(['longUrl' => self::LONG_URL]);
+        $data = new ShortUrlCreation(self::LONG_URL);
         $result = $this->helper(autoResolveTitles: true, iconvEnabled: true)->processTitle($data);
 
         self::assertSame($data, $result);
@@ -144,7 +141,7 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
             extraContent: $extraContent,
         ));
 
-        $data = ShortUrlCreation::fromRawData(['longUrl' => self::LONG_URL]);
+        $data = new ShortUrlCreation(self::LONG_URL);
         $result = $this->helper(autoResolveTitles: true, iconvEnabled: true)->processTitle($data);
 
         self::assertNotSame($data, $result);
@@ -180,7 +177,7 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
             },
         ));
 
-        $data = ShortUrlCreation::fromRawData(['longUrl' => self::LONG_URL]);
+        $data = new ShortUrlCreation(self::LONG_URL);
         $result = $this->helper(autoResolveTitles: true, iconvEnabled: $iconvEnabled)->processTitle($data);
 
         self::assertNotSame($data, $result);

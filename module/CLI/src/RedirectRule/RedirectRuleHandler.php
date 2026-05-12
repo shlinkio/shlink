@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\RedirectRule;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Shlinkio\Shlink\Common\ObjectMapper\LooseUriConverter;
+use Shlinkio\Shlink\Common\ObjectMapper\MappingError;
 use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Model\Browser;
 use Shlinkio\Shlink\Core\Model\DeviceType;
@@ -12,7 +14,6 @@ use Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule;
 use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Symfony\Component\Console\Style\StyleInterface;
 
 use function array_flip;
@@ -23,9 +24,9 @@ use function implode;
 use function is_numeric;
 use function max;
 use function min;
+use function Shlinkio\Shlink\Common\normalizeDate;
 use function Shlinkio\Shlink\Core\ArrayUtils\map;
 use function Shlinkio\Shlink\Core\enumValues;
-use function Shlinkio\Shlink\Core\normalizeDate;
 use function sprintf;
 use function str_pad;
 use function strlen;
@@ -223,13 +224,16 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
     {
         return $io->ask(
             'Long URL to redirect when the rule matches',
-            validator: function (string $answer): string {
-                $validator = ShortUrlInputFilter::longUrlValidators();
-                if (! $validator->isValid($answer)) {
-                    throw new InvalidArgumentException(implode(', ', $validator->getMessages()));
+            validator: function (string|null $answer): string {
+                if ($answer === null) {
+                    throw new InvalidArgumentException('The long URL is mandatory');
                 }
 
-                return $answer;
+                try {
+                    return new LooseUriConverter()->map($answer);
+                } catch (MappingError $e) {
+                    throw new InvalidArgumentException($e->body());
+                }
             },
         );
     }

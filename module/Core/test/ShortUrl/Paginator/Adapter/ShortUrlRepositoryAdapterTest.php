@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Shlinkio\Shlink\Core\Model\Ordering;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\ShortUrl\Model\TagsMode;
 use Shlinkio\Shlink\Core\ShortUrl\Paginator\Adapter\ShortUrlRepositoryAdapter;
@@ -34,13 +35,13 @@ class ShortUrlRepositoryAdapterTest extends TestCase
         string|null $endDate = null,
         string|null $orderBy = null,
     ): void {
-        $params = ShortUrlsParams::fromRawData([
-            'searchTerm' => $searchTerm,
-            'tags' => $tags,
-            'startDate' => $startDate,
-            'endDate' => $endDate,
-            'orderBy' => $orderBy,
-        ]);
+        $params = new ShortUrlsParams(
+            searchTerm: $searchTerm,
+            tags: $tags,
+            orderBy: Ordering::fromOptionalString($orderBy),
+            startDate: $startDate,
+            endDate: $endDate,
+        );
         $adapter = new ShortUrlRepositoryAdapter($this->repo, $params, null, '');
         $orderBy = $params->orderBy;
         $dateRange = $params->dateRange;
@@ -59,12 +60,12 @@ class ShortUrlRepositoryAdapterTest extends TestCase
         string|null $startDate = null,
         string|null $endDate = null,
     ): void {
-        $params = ShortUrlsParams::fromRawData([
-            'searchTerm' => $searchTerm,
-            'tags' => $tags,
-            'startDate' => $startDate,
-            'endDate' => $endDate,
-        ]);
+        $params = new ShortUrlsParams(
+            searchTerm: $searchTerm,
+            tags: $tags,
+            startDate: $startDate,
+            endDate: $endDate,
+        );
         $apiKey = ApiKey::create();
         $adapter = new ShortUrlRepositoryAdapter($this->repo, $params, $apiKey, '');
         $dateRange = $params->dateRange;

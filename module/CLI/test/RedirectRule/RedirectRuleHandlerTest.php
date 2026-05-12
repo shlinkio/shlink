@@ -20,7 +20,7 @@ use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Symfony\Component\Console\Style\StyleInterface;
 
-use function Shlinkio\Shlink\Core\normalizeDate;
+use function Shlinkio\Shlink\Common\normalizeDate;
 use function sprintf;
 
 #[AllowMockObjectsWithoutExpectations]

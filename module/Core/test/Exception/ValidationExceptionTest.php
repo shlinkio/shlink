@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Exception;
 
 use Fig\Http\Message\StatusCodeInterface;
-use Laminas\InputFilter\InputFilterInterface;
 use LogicException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -20,7 +19,7 @@ use function print_r;
 class ValidationExceptionTest extends TestCase
 {
     #[Test, DataProvider('provideExceptions')]
-    public function createsExceptionFromInputFilter(Throwable|null $prev): void
+    public function createsExceptionFromArray(Throwable|null $prev): void
     {
         $invalidData = [
             'foo' => 'bar',
@@ -32,12 +31,9 @@ class ValidationExceptionTest extends TestCase
             'something' => {$barValue}
         EOT;
 
-        $inputFilter = $this->createMock(InputFilterInterface::class);
-        $inputFilter->expects($this->once())->method('getMessages')->with()->willReturn($invalidData);
+        $e = ValidationException::fromArray($invalidData, $prev);
 
-        $e = ValidationException::fromInputFilter($inputFilter, $prev);
-
-        self::assertEquals($invalidData, $e->getInvalidElements());
+        self::assertEquals($invalidData, $e->invalidElements);
         self::assertEquals(['invalidElements' => array_keys($invalidData)], $e->getAdditionalData());
         self::assertEquals('Provided data is not valid', $e->getMessage());
         self::assertEquals(StatusCodeInterface::STATUS_BAD_REQUEST, $e->getCode());

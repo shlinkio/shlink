@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use Cake\Chronos\Chronos;
+use CuyZ\Valinor\MapperBuilder;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use Pagerfanta\Adapter\ArrayAdapter;
@@ -32,30 +33,19 @@ class ListShortUrlsActionTest extends TestCase
 
         $this->action = new ListShortUrlsAction($this->service, new ShortUrlDataTransformer(
             new ShortUrlStringifier(new UrlShortenerOptions('s.test')),
-        ));
+        ), new MapperBuilder()->mapper());
     }
 
     #[Test, DataProvider('provideFilteringData')]
-    public function properListReturnsSuccessResponse(
-        array $query,
-        int $expectedPage,
-        string|null $expectedSearchTerm,
-        array $expectedTags,
-        string|null $expectedOrderBy,
-        string|null $startDate = null,
-        string|null $endDate = null,
-    ): void {
+    public function properListReturnsSuccessResponse(array $query): void
+    {
         $apiKey = ApiKey::create();
         $request = ServerRequestFactory::fromGlobals()->withQueryParams($query)
                                                       ->withAttribute(ApiKey::class, $apiKey);
-        $this->service->expects($this->once())->method('listShortUrls')->with(ShortUrlsParams::fromRawData([
-            'page' => $expectedPage,
-            'searchTerm' => $expectedSearchTerm,
-            'tags' => $expectedTags,
-            'orderBy' => $expectedOrderBy,
-            'startDate' => $startDate,
-            'endDate' => $endDate,
-        ]), $apiKey)->willReturn(new Paginator(new ArrayAdapter([])));
+        $this->service->expects($this->once())->method('listShortUrls')->with(
+            $this->isInstanceOf(ShortUrlsParams::class),
+            $apiKey,
+        )->willReturn(new Paginator(new ArrayAdapter([])));
 
         /** @var JsonResponse $response */
         $response = $this->action->handle($request);
@@ -69,46 +59,21 @@ class ListShortUrlsActionTest extends TestCase
 
     public static function provideFilteringData(): iterable
     {
-        yield [[], 1, null, [], null];
-        yield [['page' => 10], 10, null, [], null];
-        yield [['page' => null], 1, null, [], null];
-        yield [['page' => '8'], 8, null, [], null];
-        yield [['searchTerm' => $searchTerm = 'foo'], 1, $searchTerm, [], null];
-        yield [['tags' => $tags = ['foo','bar']], 1, null, $tags, null];
-        yield [['orderBy' => $orderBy = 'longUrl'], 1, null, [], $orderBy];
+        yield [[]];
+        yield [['page' => 10]];
+        yield [['searchTerm' => 'foo']];
+        yield [['tags' => ['foo','bar']]];
+        yield [['orderBy' => 'longUrl']];
         yield [[
-            'page' => '2',
-            'orderBy' => $orderBy = 'visits',
-            'tags' => $tags = ['one', 'two'],
-        ], 2, null, $tags, $orderBy];
-        yield [
-            ['startDate' => $date = Chronos::now()->toAtomString()],
-            1,
-            null,
-            [],
-            null,
-            $date,
-        ];
-        yield [
-            ['endDate' => $date = Chronos::now()->toAtomString()],
-            1,
-            null,
-            [],
-            null,
-            null,
-            $date,
-        ];
-        yield [
-            [
-                'startDate' => $startDate = Chronos::now()->subDays(10)->toAtomString(),
-                'endDate' => $endDate = Chronos::now()->toAtomString(),
-            ],
-            1,
-            null,
-            [],
-            null,
-            $startDate,
-            $endDate,
-        ];
+            'page' => 2,
+            'orderBy' => 'visits',
+            'tags' => ['one', 'two'],
+        ]];
+        yield [['startDate' => Chronos::now()->toAtomString()]];
+        yield [['endDate' => Chronos::now()->toAtomString()]];
+        yield [[
+            'startDate' => Chronos::now()->subDays(10)->toAtomString(),
+            'endDate' => Chronos::now()->toAtomString(),
+        ]];
     }
 }

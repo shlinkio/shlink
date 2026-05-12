@@ -2,6 +2,7 @@
 
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
+use CuyZ\Valinor\MapperBuilder;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -29,7 +30,7 @@ class EditShortUrlCommandTest extends TestCase
         $this->shortUrlService = $this->createMock(ShortUrlServiceInterface::class);
         $this->stringifier = $this->createMock(ShortUrlStringifierInterface::class);
 
-        $command = new EditShortUrlCommand($this->shortUrlService, $this->stringifier);
+        $command = new EditShortUrlCommand($this->shortUrlService, $this->stringifier, new MapperBuilder()->mapper());
         $this->commandTester = CliTestUtils::testerForCommand($command);
     }
 

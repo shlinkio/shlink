@@ -8,7 +8,7 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 use Symfony\Component\Console\Attribute\Option;
 
 use function Shlinkio\Shlink\Common\buildDateRange;
-use function Shlinkio\Shlink\Core\normalizeOptionalDate;
+use function Shlinkio\Shlink\Common\normalizeOptionalDate;
 
 class VisitsListInput
 {

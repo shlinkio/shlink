@@ -124,9 +124,7 @@ class ShortUrlResolverTest extends TestCase
         $now = Chronos::now();
 
         yield 'maxVisits reached' => [(function () {
-            $shortUrl = ShortUrl::create(
-                ShortUrlCreation::fromRawData(['maxVisits' => 3, 'longUrl' => 'https://longUrl']),
-            );
+            $shortUrl = ShortUrl::create(new ShortUrlCreation('https://longUrl', maxVisits: 3));
             $shortUrl->setVisits(new ArrayCollection(array_map(
                 fn () => Visit::forValidShortUrl($shortUrl, Visitor::empty()),
                 range(0, 4),
@@ -134,18 +132,20 @@ class ShortUrlResolverTest extends TestCase
 
             return $shortUrl;
         })()];
-        yield 'future validSince' => [ShortUrl::create(ShortUrlCreation::fromRawData(
-            ['validSince' => $now->addMonths(1)->toAtomString(), 'longUrl' => 'https://longUrl'],
+        yield 'future validSince' => [ShortUrl::create(new ShortUrlCreation(
+            longUrl: 'https://longUrl',
+            validSince: $now->addMonths(1),
         ))];
-        yield 'past validUntil' => [ShortUrl::create(ShortUrlCreation::fromRawData(
-            ['validUntil' => $now->subMonths(1)->toAtomString(), 'longUrl' => 'https://longUrl'],
+        yield 'past validUntil' => [ShortUrl::create(new ShortUrlCreation(
+            longUrl: 'https://longUrl',
+            validUntil: $now->subMonths(1),
         ))];
         yield 'mixed' => [(function () use ($now) {
-            $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
-                'maxVisits' => 3,
-                'validUntil' => $now->subMonths(1)->toAtomString(),
-                'longUrl' => 'https://longUrl',
-            ]));
+            $shortUrl = ShortUrl::create(new ShortUrlCreation(
+                longUrl: 'https://longUrl',
+                validUntil: $now->subMonths(1),
+                maxVisits: 3,
+            ));
             $shortUrl->setVisits(new ArrayCollection(array_map(
                 fn () => Visit::forValidShortUrl($shortUrl, Visitor::empty()),
                 range(0, 4),

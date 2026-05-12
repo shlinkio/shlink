@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\Domain;
 
+use CuyZ\Valinor\Mapper\TreeMapper;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -17,15 +18,17 @@ class DomainRedirectsAction extends AbstractRestAction
     protected const string ROUTE_PATH = '/domains/redirects';
     protected const array ROUTE_ALLOWED_METHODS = [self::METHOD_PATCH];
 
-    public function __construct(private readonly DomainServiceInterface $domainService)
-    {
+    public function __construct(
+        private readonly DomainServiceInterface $domainService,
+        private readonly TreeMapper $mapper,
+    ) {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         /** @var array $body */
         $body = $request->getParsedBody();
-        $requestData = DomainRedirectsRequest::fromRawData($body);
+        $requestData = $this->mapper->map(DomainRedirectsRequest::class, $body);
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
 
         $authority = $requestData->authority;

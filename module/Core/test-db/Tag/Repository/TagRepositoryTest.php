@@ -73,9 +73,8 @@ class TagRepositoryTest extends DatabaseTestCase
 
         [$firstUrlTags] = array_chunk($names, 3);
         $secondUrlTags = [$names[0]];
-        $metaWithTags = static fn (array $tags, ApiKey|null $apiKey) => ShortUrlCreation::fromRawData(
-            ['longUrl' => 'https://longUrl', 'tags' => $tags, 'apiKey' => $apiKey],
-        );
+        $metaWithTags = static fn (array $tags, ApiKey|null $apiKey) =>
+            new ShortUrlCreation('https://longUrl', apiKey: $apiKey, tags: $tags);
 
         $shortUrl = ShortUrl::create($metaWithTags($firstUrlTags, $apiKey), $this->relationResolver);
         $this->getEntityManager()->persist($shortUrl);
@@ -227,15 +226,14 @@ class TagRepositoryTest extends DatabaseTestCase
 
         [$firstUrlTags, $secondUrlTags] = array_chunk($names, 3);
 
-        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(
-            ['apiKey' => $authorApiKey, 'longUrl' => 'https://longUrl', 'tags' => $firstUrlTags],
-        ), $this->relationResolver);
+        $shortUrl = ShortUrl::create(
+            new ShortUrlCreation(longUrl: 'https://longUrl', apiKey: $authorApiKey, tags: $firstUrlTags),
+            $this->relationResolver,
+        );
         $this->getEntityManager()->persist($shortUrl);
 
         $shortUrl2 = ShortUrl::create(
-            ShortUrlCreation::fromRawData(
-                ['domain' => $domain->authority, 'longUrl' => 'https://longUrl', 'tags' => $secondUrlTags],
-            ),
+            new ShortUrlCreation('https://longUrl', domain: $domain->authority, tags: $secondUrlTags),
             $this->relationResolver,
         );
         $this->getEntityManager()->persist($shortUrl2);

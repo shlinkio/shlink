@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI;
 
+use CuyZ\Valinor\Mapper\TreeMapper;
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Shlinkio\Shlink\Common\Doctrine\NoDbNameConnectionFactory;
@@ -87,12 +88,18 @@ return [
             ShortUrl\UrlShortener::class,
             ShortUrlStringifier::class,
             UrlShortenerOptions::class,
+            TreeMapper::class,
         ],
-        Command\ShortUrl\EditShortUrlCommand::class => [ShortUrl\ShortUrlService::class, ShortUrlStringifier::class],
+        Command\ShortUrl\EditShortUrlCommand::class => [
+            ShortUrl\ShortUrlService::class,
+            ShortUrlStringifier::class,
+            TreeMapper::class,
+        ],
         Command\ShortUrl\ResolveUrlCommand::class => [ShortUrl\ShortUrlResolver::class],
         Command\ShortUrl\ListShortUrlsCommand::class => [
             ShortUrl\ShortUrlListService::class,
             ShortUrl\Transformer\ShortUrlDataTransformer::class,
+            TreeMapper::class,
         ],
         Command\ShortUrl\GetShortUrlVisitsCommand::class => [Visit\VisitsStatsHelper::class],
         Command\ShortUrl\DeleteShortUrlCommand::class => [ShortUrl\DeleteShortUrlService::class],
