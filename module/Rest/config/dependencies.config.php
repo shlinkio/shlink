@@ -59,7 +59,7 @@ return [
             Middleware\CrossDomainMiddleware::class => ConfigAbstractFactory::class,
             Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class => InvokableFactory::class,
             Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class => ConfigAbstractFactory::class,
-            Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class => ConfigAbstractFactory::class,
+            Middleware\ShortUrl\ShortUrlOptionsPayloadMiddleware::class => ConfigAbstractFactory::class,
             Middleware\ShortUrl\OverrideDomainMiddleware::class => ConfigAbstractFactory::class,
             Middleware\Mercure\NotConfiguredMercureErrorHandler::class => ConfigAbstractFactory::class,
         ],
@@ -73,13 +73,11 @@ return [
         Action\ShortUrl\CreateShortUrlAction::class => [
             ShortUrl\UrlShortener::class,
             ShortUrlDataTransformer::class,
-            Config\Options\UrlShortenerOptions::class,
             TreeMapper::class,
         ],
         Action\ShortUrl\SingleStepCreateShortUrlAction::class => [
             ShortUrl\UrlShortener::class,
             ShortUrlDataTransformer::class,
-            Config\Options\UrlShortenerOptions::class,
             TreeMapper::class,
         ],
         Action\ShortUrl\EditShortUrlAction::class => [
@@ -128,7 +126,7 @@ return [
         Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class => [
             Config\Options\UrlShortenerOptions::class,
         ],
-        Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class => [Config\Options\UrlShortenerOptions::class],
+        Middleware\ShortUrl\ShortUrlOptionsPayloadMiddleware::class => [Config\Options\UrlShortenerOptions::class],
         Middleware\ShortUrl\OverrideDomainMiddleware::class => [DomainService::class],
         Middleware\Mercure\NotConfiguredMercureErrorHandler::class => [
             ProblemDetailsResponseFactory::class,

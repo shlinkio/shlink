@@ -14,17 +14,17 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
-use Shlinkio\Shlink\Rest\Middleware\ShortUrl\DefaultShortCodesLengthMiddleware;
+use Shlinkio\Shlink\Rest\Middleware\ShortUrl\ShortUrlOptionsPayloadMiddleware;
 
-class DefaultShortCodesLengthMiddlewareTest extends TestCase
+class ShortUrlOptionsPayloadMiddlewareTest extends TestCase
 {
-    private DefaultShortCodesLengthMiddleware $middleware;
+    private ShortUrlOptionsPayloadMiddleware $middleware;
     private MockObject & RequestHandlerInterface $handler;
 
     protected function setUp(): void
     {
         $this->handler = $this->createMock(RequestHandlerInterface::class);
-        $this->middleware = new DefaultShortCodesLengthMiddleware(new UrlShortenerOptions(defaultShortCodesLength: 8));
+        $this->middleware = new ShortUrlOptionsPayloadMiddleware(new UrlShortenerOptions(defaultShortCodesLength: 8));
     }
 
     #[Test, DataProvider('provideBodies')]
@@ -34,8 +34,12 @@ class DefaultShortCodesLengthMiddlewareTest extends TestCase
         $this->handler->expects($this->once())->method('handle')->with($this->callback(
             function (ServerRequestInterface $req) use ($expectedLength) {
                 $parsedBody = (array) $req->getParsedBody();
+
                 Assert::assertArrayHasKey('shortCodeLength', $parsedBody);
                 Assert::assertEquals($expectedLength, $parsedBody['shortCodeLength']);
+
+                Assert::assertArrayHasKey('shortUrlMode', $parsedBody);
+                Assert::assertArrayHasKey('multiSegmentSlugsEnabled', $parsedBody);
 
                 return true;
             },
