@@ -1,18 +1,18 @@
-# Contributing
+# Developing
 
-This file will guide you through the process of getting to project up and running, in case you want to provide coding contributions.
+This file will guide you through the process of getting to project up and running, in case you want to work on it locally.
 
-You will also see how to ensure the code fulfills the expected code checks, and how to create a pull request.
+You will also see how to ensure the code fulfills the expected code checks, and verify it meets expected quality.
 
 ## System dependencies
 
 The project provides all its dependencies as docker containers through a `docker compose` configuration.
 
-Because of this, the only actual dependencies are [docker](https://docs.docker.com/get-docker/) and [docker compose](https://docs.docker.com/compose/install/).
+Because of this, the only actual dependency is [docker](https://docs.docker.com/get-docker/).
 
 ## Setting up the project
 
-The first thing you need to do is fork the repository, and clone it in your local machine.
+The first thing you need to do is clone the repository in your local machine.
 
 Then you will have to follow these steps:
 
@@ -22,7 +22,7 @@ Then you will have to follow these steps:
     cp config/params/shlink_dev_env.php.dist config/params/shlink_dev_env.php
     ```
 
-    The `shlink_dev_env.php` file is gitignored, so you can customize it as you want. For example, by adding your own GeoLite license key.
+    The `shlink_dev_env.php` file is git-ignored, so you can customize it as you want. For example, by adding your own GeoLite license key.
 
 * Start-up the project by running `docker compose up`.
 
@@ -34,9 +34,9 @@ Then you will have to follow these steps:
 * Run `./indocker bin/cli db:migrate` to get database migrations up to date.
 * Run `./indocker bin/cli api-key:generate` to get your first API key generated.
 
-Once you finish this, you will have the project exposed in ports `8800` through RoadRunner and `8000` through nginx+php-fpm.
+Once you finish this, you will have the project exposed in ports `8800` through RoadRunner, `8008` through FrankenPHP and `8000` through nginx+php-fpm.
 
-> Note: The `indocker` shell script is a helper tool used to run commands inside the main docker container.
+> Note: The `indocker` shell script is a helper tool used to run commands inside the main RoadRunner docker container.
 
 ## Project structure
 
@@ -111,8 +111,6 @@ In order to ensure stability and no regressions are introduced while developing 
 
     They use Maria DB as the database engine, and include the same fixtures as the API tests, that ensure the same data exists at the beginning of the execution.
 
-Depending on the kind of contribution, maybe not all kinds of tests are needed, but the more you provide, the better.
-
 ## Running code checks
 
 * Run `./indocker composer cs` to check coding styles are fulfilled.
@@ -134,18 +132,6 @@ Depending on the kind of contribution, maybe not all kinds of tests are needed, 
 The project provides a Swagger UI container for dev envs, which can be accessed in http://localhost:8005.
 
 It will automatically load the contents of `docs/swagger`, so you can make any updates and they will get reflected.
-
-## Pull request process
-
-**Important!**: Before starting to work on a pull request, make sure you always [open an issue](https://github.com/shlinkio/shlink/issues/new/choose) first.
-
-This is important because any contribution needs to be discussed first. Maybe there's someone else already working on something similar, or there are other considerations to have in mind.
-
-Once everything is clear, to provide a pull request to this project, you should always start by creating a new branch, where you will make all desired changes.
-
-The base branch should always be `develop`, and the target branch for the pull request should also be `develop`.
-
-Before your branch can be merged, all the checks described in [Running code checks](#running-code-checks) have to be passing. You can verify that manually by running `./indocker composer ci`, or wait for the build to be run automatically after the pull request is created.
 
 ## Architectural Decision Records
 
