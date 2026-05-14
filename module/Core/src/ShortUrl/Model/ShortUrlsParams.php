@@ -23,6 +23,8 @@ final readonly class ShortUrlsParams
     public DateRange|null $dateRange;
 
     /**
+     * @param positive-int $page
+     * @param positive-int $itemsPerPage
      * @param string[] $tags
      * @param string[] $excludeTags
      */
