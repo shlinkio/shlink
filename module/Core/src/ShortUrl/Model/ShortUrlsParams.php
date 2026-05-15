@@ -24,7 +24,7 @@ final readonly class ShortUrlsParams
 
     /**
      * @param positive-int $page
-     * @param positive-int $itemsPerPage
+     * @param -1|positive-int $itemsPerPage
      * @param string[] $tags
      * @param string[] $excludeTags
      */
