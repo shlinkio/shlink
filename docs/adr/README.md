@@ -2,6 +2,7 @@
 
 Here listed you will find the different architectural decisions taken in the project, including all the reasoning behind it, options considered, and final outcome.
 
+* [2026-05-14 Map requests using Valinor](2026-05-14-map-requests-using-valinor.md)
 * [2024-10-24 Handle dev and tests config via env vars instead of local config files](2024-10-24-handle-dev-and-tests-config-via-env-vars-instead-of-local-config-files.md)
 * [2023-07-09 Build `latest` docker image only for actual releases](2023-07-09-build-latest-docker-image-only-for-actual-releases.md)
 * [2023-01-06 Support any HTTP method in short URLs](2023-01-06-support-any-http-method-in-short-urls.md)

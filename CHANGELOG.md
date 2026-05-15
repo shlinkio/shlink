@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Changed
 * [#2555](https://github.com/shlinkio/shlink/issues/2555) Update docker image to PHP 8.5.
+* [#2590](https://github.com/shlinkio/shlink/issues/2590) Migrate to `cuyz/valinor` for request input mapping, filtering and validation.
 
 ### Deprecated
 * *Nothing*

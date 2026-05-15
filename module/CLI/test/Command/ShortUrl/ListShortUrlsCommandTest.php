@@ -202,6 +202,9 @@ class ListShortUrlsCommandTest extends TestCase
         // phpcs:enable
     }
 
+    /**
+     * @param positive-int|null $page
+     */
     #[Test, DataProvider('provideArgs')]
     public function serviceIsInvokedWithProvidedArgs(
         array $commandArgs,
