@@ -19,7 +19,7 @@ class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRe
     public function createInitialApiKey(string $apiKey): ApiKey|null
     {
         $em = $this->getEntityManager();
-        return $em->wrapInTransaction(function () use ($apiKey, $em): ApiKey|null {
+        return $em->wrapInTransaction(static function () use ($apiKey, $em): ApiKey|null {
             $firstResult = $em->createQueryBuilder()
                 ->select('a.id')
                 ->from(ApiKey::class, 'a')

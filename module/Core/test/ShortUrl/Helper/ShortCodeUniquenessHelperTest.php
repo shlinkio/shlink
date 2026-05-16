@@ -37,7 +37,7 @@ class ShortCodeUniquenessHelperTest extends TestCase
         $expectedCalls = 3;
         $this->repo->expects($this->exactly($expectedCalls))->method('shortCodeIsInUseWithLock')->with(
             ShortUrlIdentifier::fromShortCodeAndDomain('abc123', $expectedAuthority),
-        )->willReturnCallback(function () use (&$callIndex, $expectedCalls) {
+        )->willReturnCallback(static function () use (&$callIndex, $expectedCalls) {
             $callIndex++;
             return $callIndex < $expectedCalls;
         });

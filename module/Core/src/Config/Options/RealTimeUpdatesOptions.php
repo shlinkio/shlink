@@ -41,7 +41,7 @@ final readonly class RealTimeUpdatesOptions
      */
     private static function validateTopics(array $providedTopics, array $validTopics): array
     {
-        return map($providedTopics, function (string $topic) use ($validTopics): string {
+        return map($providedTopics, static function (string $topic) use ($validTopics): string {
             if (contains($topic, $validTopics)) {
                 return $topic;
             }

@@ -68,7 +68,7 @@ class GenerateKeyCommand extends Command
         if (! ApiKey::isAdmin($apiKey)) {
             ShlinkTable::default($io)->render(
                 ['Role name', 'Role metadata'],
-                $apiKey->mapRoles(fn (Role $role, array $meta) => [$role->value, arrayToString($meta, indentSize: 0)]),
+                $apiKey->mapRoles(static fn (Role $role, array $meta) => [$role->value, arrayToString($meta, indentSize: 0)]),
                 headerTitle: 'Roles',
             );
         }

@@ -80,13 +80,13 @@ class ApiKey extends AbstractEntity
 
     public function spec(string|null $context = null): Specification
     {
-        $specs = $this->roles->map(fn (ApiKeyRole $role) => Role::toSpec($role, $context))->getValues();
+        $specs = $this->roles->map(static fn (ApiKeyRole $role) => Role::toSpec($role, $context))->getValues();
         return Spec::andX(...$specs);
     }
 
     public function inlinedSpec(): Specification
     {
-        $specs = $this->roles->map(fn (ApiKeyRole $role) => Role::toInlinedSpec($role))->getValues();
+        $specs = $this->roles->map(Role::toInlinedSpec(...))->getValues();
         return Spec::andX(...$specs);
     }
 
@@ -132,7 +132,7 @@ class ApiKey extends AbstractEntity
      */
     public function mapRoles(callable $fun): array
     {
-        return $this->roles->map(fn (ApiKeyRole $role) => $fun($role->role, $role->meta()))->getValues();
+        return $this->roles->map(static fn (ApiKeyRole $role) => $fun($role->role, $role->meta()))->getValues();
     }
 
     public function registerRole(RoleDefinition $roleDefinition): void

@@ -110,7 +110,7 @@ readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionH
         if ($titleInOriginalEncoding === null) {
             return null;
         }
-        ;
+
         $pageCharset = $this->resolvePageCharset($contentType, $body, $collectedBody);
         if ($pageCharset === null) {
             // If it was not possible to determine the page's charset, ignore the title to avoid the risk of encoding
@@ -170,7 +170,7 @@ readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionH
 
     private function encodeToUtf8WithIconv(string $titleInOriginalEncoding, string $pageCharset): string|null
     {
-        $isIconvInstalled = ($this->isIconvInstalled ?? fn () => function_exists('iconv'))();
+        $isIconvInstalled = ($this->isIconvInstalled ?? static fn () => function_exists('iconv'))();
         if (! $isIconvInstalled) {
             $this->logger->warning('Missing iconv extension. Skipping title encoding');
             return null;

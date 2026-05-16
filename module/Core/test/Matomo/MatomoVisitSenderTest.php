@@ -163,7 +163,7 @@ class MatomoVisitSenderTest extends TestCase
 
         $callCount = 0;
         $this->trackerBuilder->expects($this->exactly(3))->method('buildMatomoTracker')->willReturnCallback(
-            function () use (&$callCount, $tracker) {
+            static function () use (&$callCount, $tracker) {
                 $callCount++;
 
                 if ($callCount === 2) {

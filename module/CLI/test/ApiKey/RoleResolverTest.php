@@ -52,7 +52,7 @@ class RoleResolverTest extends TestCase
             0,
         ];
         yield 'domain role only' => [
-            (function (): ApiKeyInput {
+            (static function (): ApiKeyInput {
                 $input = new ApiKeyInput();
                 $input->domain = 'example.com';
 
@@ -62,7 +62,7 @@ class RoleResolverTest extends TestCase
             1,
         ];
         yield 'author role only' => [
-            (function (): ApiKeyInput {
+            (static function (): ApiKeyInput {
                 $input = new ApiKeyInput();
                 $input->authorOnly = true;
 
@@ -72,7 +72,7 @@ class RoleResolverTest extends TestCase
             0,
         ];
         yield 'all roles' => [
-            (function (): ApiKeyInput {
+            (static function (): ApiKeyInput {
                 $input = new ApiKeyInput();
                 $input->domain = 'example.com';
                 $input->authorOnly = true;

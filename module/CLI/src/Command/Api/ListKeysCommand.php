@@ -54,7 +54,7 @@ class ListKeysCommand extends Command
             }
             $rowData[] = $expiration?->toAtomString() ?? '-';
             $rowData[] = ApiKey::isAdmin($apiKey) ? 'Admin' : implode("\n", $apiKey->mapRoles(
-                fn (Role $role, array $meta) => $role->toFriendlyName($meta),
+                static fn (Role $role, array $meta) => $role->toFriendlyName($meta),
             ));
 
             return $rowData;

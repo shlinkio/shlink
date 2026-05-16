@@ -59,6 +59,7 @@
         "symfony/string": "^8.0"
     },
     "require-dev": {
+        "carthage-software/mago": "^1.27",
         "devizzent/cebe-php-openapi": "^1.1.2",
         "devster/ubench": "^2.1",
         "phpstan/phpstan": "^2.1",
@@ -105,8 +106,12 @@
             "@parallel cs stan openapi:validate test:unit:ci test:db:sqlite:ci test:db:postgres test:db:mysql test:db:maria test:db:ms",
             "@parallel test:api:ci test:cli:ci"
         ],
-        "cs": "phpcs -s",
-        "cs:fix": "phpcbf",
+        "lint": "mago lint",
+        "lint:fix": "mago lint --fix",
+        "format": "mago format",
+        "format:check": "mago format --check",
+        "cs": ["@lint", "@format:check"],
+        "cs:fix": ["@lint:fix", "@format"],
         "stan": ["@putenv APP_ENV=test", "phpstan analyse"],
         "test": [
             "@parallel test:unit test:db",

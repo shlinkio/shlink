@@ -87,7 +87,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
                 RouteResult::class,
                 RouteResult::fromRoute(new Route(
                     '/foo',
-                    middleware(function (): void {
+                    middleware(static function (): void {
                     }),
                     ['GET'],
                     RedirectAction::class,
@@ -123,7 +123,7 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
                                                       ->withUri(new Uri('/shortCode/bar/baz'));
 
         $this->resolver->expects($this->exactly($expectedResolveCalls))->method('resolveEnabledShortUrl')->with(
-            $this->callback(fn (ShortUrlIdentifier $id) => str_starts_with($id->shortCode, 'shortCode')),
+            $this->callback(static fn (ShortUrlIdentifier $id) => str_starts_with($id->shortCode, 'shortCode')),
         )->willThrowException(ShortUrlNotFoundException::fromNotFound(ShortUrlIdentifier::fromShortCodeAndDomain('')));
         $this->requestTracker->expects($this->never())->method('trackIfApplicable');
         $this->redirectionBuilder->expects($this->never())->method('buildShortUrlRedirect');
@@ -153,9 +153,9 @@ class ExtraPathRedirectMiddlewareTest extends TestCase
 
         $currentIteration = 1;
         $this->resolver->expects($this->exactly($expectedResolveCalls))->method('resolveEnabledShortUrl')->with(
-            $this->callback(fn (ShortUrlIdentifier $id) => str_starts_with($id->shortCode, 'shortCode')),
+            $this->callback(static fn (ShortUrlIdentifier $id) => str_starts_with($id->shortCode, 'shortCode')),
         )->willReturnCallback(
-            function () use ($shortUrl, &$currentIteration, $expectedResolveCalls): ShortUrl {
+            static function () use ($shortUrl, &$currentIteration, $expectedResolveCalls): ShortUrl {
                 if ($expectedResolveCalls === $currentIteration) {
                     return $shortUrl;
                 }

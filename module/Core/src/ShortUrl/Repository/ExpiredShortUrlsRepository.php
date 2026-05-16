@@ -22,7 +22,7 @@ class ExpiredShortUrlsRepository extends EntitySpecificationRepository implement
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->delete(ShortUrl::class, 's');
 
-        return $this->applyConditions($qb, $conditions, fn () => (int) $qb->getQuery()->execute());
+        return $this->applyConditions($qb, $conditions, static fn () => (int) $qb->getQuery()->execute());
     }
 
     /** @inheritDoc */
@@ -32,7 +32,7 @@ class ExpiredShortUrlsRepository extends EntitySpecificationRepository implement
         $qb->select('COUNT(s.id)')
            ->from(ShortUrl::class, 's');
 
-        return $this->applyConditions($qb, $conditions, fn () => (int) $qb->getQuery()->getSingleScalarResult());
+        return $this->applyConditions($qb, $conditions, static fn () => (int) $qb->getQuery()->getSingleScalarResult());
     }
 
     /**

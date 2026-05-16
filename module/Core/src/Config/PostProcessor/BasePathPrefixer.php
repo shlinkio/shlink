@@ -23,7 +23,7 @@ class BasePathPrefixer
 
     private function prefixPathsWithBasePath(string $configKey, array $config, string $basePath): array
     {
-        return array_map(function (array $element) use ($basePath) {
+        return array_map(static function (array $element) use ($basePath) {
             if (! isset($element['path'])) {
                 return $element;
             }

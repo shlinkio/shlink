@@ -55,7 +55,7 @@ class UpdateGeoLiteDbTest extends TestCase
     public function noticeMessageIsPrintedWhenDownloadIsStarted(bool $oldDbExists, string $expectedMessage): void
     {
         $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willReturnCallback(
-            function (GeolocationDownloadProgressHandlerInterface $handler) use ($oldDbExists): GeolocationResult {
+            static function (GeolocationDownloadProgressHandlerInterface $handler) use ($oldDbExists): GeolocationResult {
                 $handler->beforeDownload($oldDbExists);
                 return GeolocationResult::DB_IS_UP_TO_DATE;
             },
@@ -81,7 +81,7 @@ class UpdateGeoLiteDbTest extends TestCase
         string|null $expectedMessage,
     ): void {
         $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willReturnCallback(
-            function (
+            static function (
                 GeolocationDownloadProgressHandlerInterface $handler,
             ) use (
                 $total,

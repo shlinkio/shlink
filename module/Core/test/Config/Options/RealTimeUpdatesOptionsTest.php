@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
+
 namespace Config\Options;
 
 use PHPUnit\Framework\Attributes\Test;

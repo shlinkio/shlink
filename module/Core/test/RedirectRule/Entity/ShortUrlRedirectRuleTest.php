@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
+
 namespace ShlinkioTest\Shlink\Core\RedirectRule\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -73,7 +76,7 @@ class ShortUrlRedirectRuleTest extends TestCase
 
     public static function provideConditionMappingCallbacks(): iterable
     {
-        yield 'json-serialized conditions' => [fn (RedirectCondition $cond) => $cond->jsonSerialize(), [
+        yield 'json-serialized conditions' => [static fn (RedirectCondition $cond) => $cond->jsonSerialize(), [
             [
                 'type' => RedirectConditionType::LANGUAGE->value,
                 'matchKey' => null,
@@ -95,7 +98,7 @@ class ShortUrlRedirectRuleTest extends TestCase
                 'matchValue' => '1.2.3.*',
             ],
         ]];
-        yield 'human-friendly conditions' => [fn (RedirectCondition $cond) => $cond->toHumanFriendly(), [
+        yield 'human-friendly conditions' => [static fn (RedirectCondition $cond) => $cond->toHumanFriendly(), [
             'en-UK language is accepted',
             'query string contains foo=bar',
             sprintf('device is %s', DeviceType::ANDROID->value),

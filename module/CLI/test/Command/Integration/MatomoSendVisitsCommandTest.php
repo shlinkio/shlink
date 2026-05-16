@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
+
 namespace ShlinkioTest\Shlink\CLI\Command\Integration;
 
 use Exception;
@@ -84,7 +87,7 @@ class MatomoSendVisitsCommandTest extends TestCase
     public function printsResultOfSendingVisits(): void
     {
         $this->visitSender->expects($this->once())->method('sendVisitsInDateRange')->willReturnCallback(
-            function (DateRange $_, MatomoSendVisitsCommand $command): SendVisitsResult {
+            static function (DateRange $_, MatomoSendVisitsCommand $command): SendVisitsResult {
                 // Call it a few times for an easier match of its result in the command putput
                 $command->success(0);
                 $command->success(1);

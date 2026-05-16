@@ -49,7 +49,7 @@ class VisitLocatorTest extends TestCase
         string $expectedRepoMethodName,
     ): void {
         $unlocatedVisits = array_map(
-            fn (int $i) => Visit::forValidShortUrl(
+            static fn (int $i) => Visit::forValidShortUrl(
                 ShortUrl::withLongUrl(sprintf('https://short_code_%s', $i)),
                 Visitor::empty(),
             ),

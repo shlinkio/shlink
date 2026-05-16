@@ -138,8 +138,9 @@ function arrayToString(array $array, int $indentSize = 4): string
         $index++;
         $messages = $array[$name];
 
-        return $acc . sprintf(
-            "%s%s'%s' => %s",
+        return sprintf(
+            "%s%s%s'%s' => %s",
+            $acc,
             $index === 1 ? '' : "\n",
             $indent,
             $name,

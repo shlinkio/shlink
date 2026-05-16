@@ -167,7 +167,7 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
         $this->expectRequestToBeCalled()->willReturn($this->respWithTitle($contentType));
         $callCount = 0;
         $this->logger->expects($this->exactly(2))->method('warning')->with($this->callback(
-            function (string $message) use (&$callCount, $expectedSecondMessage): bool {
+            static function (string $message) use (&$callCount, $expectedSecondMessage): bool {
                 $callCount++;
                 if ($callCount === 1) {
                     return $message === 'It was impossible to encode page title in UTF-8 with mb_convert_encoding. {e}';
@@ -232,7 +232,7 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
             $this->httpClient,
             new UrlShortenerOptions(autoResolveTitles: $autoResolveTitles),
             $this->logger,
-            fn () => $iconvEnabled,
+            static fn () => $iconvEnabled,
         );
     }
 }

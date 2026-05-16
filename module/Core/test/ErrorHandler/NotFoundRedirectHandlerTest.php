@@ -64,7 +64,7 @@ class NotFoundRedirectHandlerTest extends TestCase
         $exactly = static fn (int $expectedCount) => new InvokedCountMatcher($expectedCount);
         $once = static fn () => $exactly(1);
 
-        yield 'no domain' => [function (
+        yield 'no domain' => [static function (
             MockObject&DomainServiceInterface $domainService,
             MockObject&NotFoundRedirectResolverInterface $resolver,
         ) use (
@@ -79,7 +79,7 @@ class NotFoundRedirectHandlerTest extends TestCase
                 self::isInstanceOf(UriInterface::class),
             )->willReturn(null);
         }];
-        yield 'non-redirecting domain' => [function (
+        yield 'non-redirecting domain' => [static function (
             MockObject&DomainServiceInterface $domainService,
             MockObject&NotFoundRedirectResolverInterface $resolver,
         ) use (
@@ -91,7 +91,7 @@ class NotFoundRedirectHandlerTest extends TestCase
             );
             $callCount = 0;
             $resolver->expects($exactly(2))->method('resolveRedirectResponse')->willReturnCallback(
-                function (mixed $arg1, mixed $arg2, mixed $arg3) use (&$callCount) {
+                static function (mixed $arg1, mixed $arg2, mixed $arg3) use (&$callCount) {
                     Assert::assertInstanceOf(NotFoundType::class, $arg1);
                     Assert::assertInstanceOf($callCount === 0 ? Domain::class : NotFoundRedirectOptions::class, $arg2);
                     Assert::assertInstanceOf(UriInterface::class, $arg3);

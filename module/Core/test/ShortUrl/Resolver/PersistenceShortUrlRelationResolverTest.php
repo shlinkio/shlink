@@ -79,7 +79,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
         $tagRepo = $this->createMock(TagRepository::class);
         $tagRepo->expects($this->exactly($expectedLookedOutTags))->method('findOneBy')->with(
             $this->isArray(),
-        )->willReturnCallback(function (array $criteria): Tag|null {
+        )->willReturnCallback(static function (array $criteria): Tag|null {
             ['name' => $name] = $criteria;
             return $name === 'foo' ? new Tag($name) : null;
         });

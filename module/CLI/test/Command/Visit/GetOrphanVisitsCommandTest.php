@@ -41,7 +41,7 @@ class GetOrphanVisitsCommandTest extends TestCase
             VisitLocation::fromLocation(new Location('', 'Spain', '', 'Madrid', 0, 0, '')),
         );
         $this->visitsHelper->expects($this->once())->method('orphanVisits')->with($this->callback(
-            fn (OrphanVisitsParams $param) => (
+            static fn (OrphanVisitsParams $param) => (
                 ($includesType && $param->type !== null) || (!$includesType && $param->type === null)
             ),
         ))->willReturn(new Paginator(new ArrayAdapter([$visit])));

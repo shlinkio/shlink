@@ -75,7 +75,7 @@ class ListShortUrlsCommand extends Command
 
         $rows = map([...$shortUrls], function (ShortUrlWithDeps $shortUrl) use ($columnsMap) {
             $serializedShortUrl = $this->transformer->transform($shortUrl);
-            return map($columnsMap, fn (callable $call) => $call($serializedShortUrl, $shortUrl->shortUrl));
+            return map($columnsMap, static fn (callable $call) => $call($serializedShortUrl, $shortUrl->shortUrl));
         });
 
         ShlinkTable::default($output)->render(

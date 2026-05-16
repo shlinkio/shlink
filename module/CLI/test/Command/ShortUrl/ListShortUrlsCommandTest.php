@@ -53,7 +53,7 @@ class ListShortUrlsCommandTest extends TestCase
         }
 
         $this->shortUrlService->expects($this->exactly(3))->method('listShortUrls')->withAnyParameters()
-            ->willReturnCallback(fn () => new Paginator(new ArrayAdapter($data)));
+            ->willReturnCallback(static fn () => new Paginator(new ArrayAdapter($data)));
 
         $this->commandTester->setInputs(['y', 'y', 'n']);
         $this->commandTester->execute([]);

@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
+
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use CuyZ\Valinor\MapperBuilder;

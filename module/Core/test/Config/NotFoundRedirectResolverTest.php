@@ -157,7 +157,7 @@ class NotFoundRedirectResolverTest extends TestCase
                 RouteResult::fromRoute(
                     new Route(
                         'foo',
-                        middleware(function (): void {
+                        middleware(static function (): void {
                         }),
                         ['GET'],
                         $routeName,

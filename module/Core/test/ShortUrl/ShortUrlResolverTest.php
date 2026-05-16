@@ -123,10 +123,10 @@ class ShortUrlResolverTest extends TestCase
     {
         $now = Chronos::now();
 
-        yield 'maxVisits reached' => [(function () {
+        yield 'maxVisits reached' => [(static function () {
             $shortUrl = ShortUrl::create(new ShortUrlCreation('https://longUrl', maxVisits: 3));
             $shortUrl->setVisits(new ArrayCollection(array_map(
-                fn () => Visit::forValidShortUrl($shortUrl, Visitor::empty()),
+                static fn () => Visit::forValidShortUrl($shortUrl, Visitor::empty()),
                 range(0, 4),
             )));
 
@@ -140,14 +140,14 @@ class ShortUrlResolverTest extends TestCase
             longUrl: 'https://longUrl',
             validUntil: $now->subMonths(1),
         ))];
-        yield 'mixed' => [(function () use ($now) {
+        yield 'mixed' => [(static function () use ($now) {
             $shortUrl = ShortUrl::create(new ShortUrlCreation(
                 longUrl: 'https://longUrl',
                 validUntil: $now->subMonths(1),
                 maxVisits: 3,
             ));
             $shortUrl->setVisits(new ArrayCollection(array_map(
-                fn () => Visit::forValidShortUrl($shortUrl, Visitor::empty()),
+                static fn () => Visit::forValidShortUrl($shortUrl, Visitor::empty()),
                 range(0, 4),
             )));
 

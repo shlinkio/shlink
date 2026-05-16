@@ -46,7 +46,7 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
         } else {
             $listing = map(
                 $rules,
-                function (ShortUrlRedirectRule $rule, string|int|float $index) use ($amountOfRules): array {
+                static function (ShortUrlRedirectRule $rule, string|int|float $index) use ($amountOfRules): array {
                     $priority = ((int) $index) + 1;
                     $conditions = $rule->mapConditions(static fn (RedirectCondition $condition): string => sprintf(
                         '<comment>%s</comment>',
@@ -209,7 +209,7 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
         return $io->ask(
             'Rule priority (the lower the value, the higher the priority)',
             (string) $max,
-            function (string $answer) use ($max): int {
+            static function (string $answer) use ($max): int {
                 if (! is_numeric($answer)) {
                     throw new InvalidArgumentException('The priority must be a numeric positive value');
                 }
@@ -224,7 +224,7 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
     {
         return $io->ask(
             'Long URL to redirect when the rule matches',
-            validator: function (string|null $answer): string {
+            validator: static function (string|null $answer): string {
                 if ($answer === null) {
                     throw new InvalidArgumentException('The long URL is mandatory');
                 }
@@ -240,7 +240,7 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
 
     private function askMandatory(string $message, StyleInterface $io): string
     {
-        return $io->ask($message, validator: function (string|null $answer): string {
+        return $io->ask($message, validator: static function (string|null $answer): string {
             if ($answer === null) {
                 throw new InvalidArgumentException('The value is mandatory');
             }
@@ -250,6 +250,6 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
 
     private function askOptional(string $message, StyleInterface $io): string
     {
-        return $io->ask($message, validator: fn (string|null $answer) => $answer === null ? '' : trim($answer));
+        return $io->ask($message, validator: static fn (string|null $answer) => $answer === null ? '' : trim($answer));
     }
 }

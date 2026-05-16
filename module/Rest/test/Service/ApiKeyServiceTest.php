@@ -35,7 +35,7 @@ class ApiKeyServiceTest extends TestCase
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManager::class);
-        $this->em->method('wrapInTransaction')->willReturnCallback(fn (callable $callback) => $callback());
+        $this->em->method('wrapInTransaction')->willReturnCallback(static fn (callable $callback) => $callback());
 
         $this->repo = $this->createMock(ApiKeyRepositoryInterface::class);
         $this->service = new ApiKeyService($this->em, $this->repo);
@@ -87,7 +87,7 @@ class ApiKeyServiceTest extends TestCase
         $callCount = 0;
         $this->repo->expects($this->exactly(3))->method('nameExists')->with(
             $this->isString(),
-        )->willReturnCallback(function () use (&$callCount): bool {
+        )->willReturnCallback(static function () use (&$callCount): bool {
             $callCount++;
             return $callCount < 3;
         });

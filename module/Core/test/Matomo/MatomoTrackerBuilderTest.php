@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
+
 namespace ShlinkioTest\Shlink\Core\Matomo;
 
 use PHPUnit\Framework\Attributes\DataProvider;

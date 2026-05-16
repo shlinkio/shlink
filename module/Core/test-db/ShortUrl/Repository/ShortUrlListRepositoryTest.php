@@ -99,7 +99,7 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         $result = $this->repo->findList(new ShortUrlsListFiltering(searchTerm: 'bar'));
         self::assertCount(2, $result);
         self::assertEquals(2, $this->repo->countList(new ShortUrlsCountFiltering('bar')));
-        self::assertContains($foo, map($result, fn (ShortUrlWithDeps $s) => $s->shortUrl));
+        self::assertContains($foo, map($result, static fn (ShortUrlWithDeps $s) => $s->shortUrl));
 
         $result = $this->repo->findList(new ShortUrlsListFiltering());
         self::assertCount(3, $result);

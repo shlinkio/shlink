@@ -26,10 +26,10 @@ class CloseDbConnectionEventListenerDelegatorTest extends TestCase
     public function properDependenciesArePassed(): void
     {
         $callbackInvoked = false;
-        $callback = function () use (&$callbackInvoked): callable {
+        $callback = static function () use (&$callbackInvoked): callable {
             $callbackInvoked = true;
 
-            return function (): void {
+            return static function (): void {
             };
         };
 

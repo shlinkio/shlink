@@ -78,7 +78,7 @@ class DeleteShortUrlCommandTest extends TestCase
         $this->service->expects($this->exactly($expectedDeleteCalls))->method('deleteByShortCode')->with(
             $identifier,
             $this->isBool(),
-        )->willReturnCallback(function ($_, bool $ignoreThreshold) use ($shortCode): void {
+        )->willReturnCallback(static function ($_, bool $ignoreThreshold) use ($shortCode): void {
             if (!$ignoreThreshold) {
                 throw Exception\DeleteShortUrlException::fromVisitsThreshold(
                     10,

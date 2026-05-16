@@ -89,7 +89,7 @@ class AuthenticationMiddlewareTest extends TestCase
 
     public static function provideRequestsWithoutApiKey(): iterable
     {
-        $baseRequest = fn (string $routeName) => ServerRequestFactory::fromGlobals()->withAttribute(
+        $baseRequest = static fn (string $routeName) => ServerRequestFactory::fromGlobals()->withAttribute(
             RouteResult::class,
             RouteResult::fromRoute(new Route($routeName, self::getDummyMiddleware())), // @phpstan-ignore-line
         );
@@ -149,6 +149,6 @@ class AuthenticationMiddlewareTest extends TestCase
 
     private static function getDummyMiddleware(): MiddlewareInterface
     {
-        return middleware(fn () => new Response\EmptyResponse());
+        return middleware(static fn () => new Response\EmptyResponse());
     }
 }

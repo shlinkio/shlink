@@ -77,7 +77,7 @@ class ProcessRunnerTest extends TestCase
         $this->process->expects($this->never())->method('isSuccessful');
         $this->process->expects($this->never())->method('getCommandLine');
         $this->helper->expects($this->once())->method('wrapCallback')->withAnyParameters()->willReturn(
-            function (): void {
+            static function (): void {
             },
         );
         $this->formatter->expects($this->never())->method('start');

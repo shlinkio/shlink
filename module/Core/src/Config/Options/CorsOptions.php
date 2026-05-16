@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
+
 namespace Shlinkio\Shlink\Core\Config\Options;
 
 use Psr\Http\Message\RequestInterface;

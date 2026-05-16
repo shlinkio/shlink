@@ -64,7 +64,7 @@ class VisitsStatsHelperTest extends TestCase
         $callCount = 0;
         $visitsCountRepo = $this->createMock(ShortUrlVisitsCountRepository::class);
         $visitsCountRepo->expects($this->exactly(2))->method('countNonOrphanVisits')->willReturnCallback(
-            function (VisitsCountFiltering $options) use ($expectedCount, $apiKey, &$callCount) {
+            static function (VisitsCountFiltering $options) use ($expectedCount, $apiKey, &$callCount) {
                 Assert::assertEquals($callCount !== 0, $options->excludeBots);
                 Assert::assertEquals($apiKey, $options->apiKey);
                 $callCount++;
@@ -91,8 +91,8 @@ class VisitsStatsHelperTest extends TestCase
     public static function provideCounts(): iterable
     {
         return [
-            ...array_map(fn (int $value) => [$value, null], range(0, 50, 5)),
-            ...array_map(fn (int $value) => [$value, ApiKey::create()], range(0, 18, 3)),
+            ...array_map(static fn (int $value) => [$value, null], range(0, 50, 5)),
+            ...array_map(static fn (int $value) => [$value, ApiKey::create()], range(0, 18, 3)),
         ];
     }
 

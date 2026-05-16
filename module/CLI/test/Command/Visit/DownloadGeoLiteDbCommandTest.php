@@ -38,7 +38,7 @@ class DownloadGeoLiteDbCommandTest extends TestCase
         int $expectedExitCode,
     ): void {
         $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willReturnCallback(
-            function (GeolocationDownloadProgressHandlerInterface $handler) use ($olderDbExists): void {
+            static function (GeolocationDownloadProgressHandlerInterface $handler) use ($olderDbExists): void {
                 $handler->beforeDownload($olderDbExists);
                 $handler->handleProgress(100, 50, $olderDbExists);
 
@@ -107,8 +107,8 @@ class DownloadGeoLiteDbCommandTest extends TestCase
 
     public static function provideSuccessParams(): iterable
     {
-        yield 'up to date db' => [fn () => GeolocationResult::CHECK_SKIPPED, '[INFO] GeoLite2 db file is up to date.'];
-        yield 'outdated db' => [function (GeolocationDownloadProgressHandlerInterface $handler): GeolocationResult {
+        yield 'up to date db' => [static fn () => GeolocationResult::CHECK_SKIPPED, '[INFO] GeoLite2 db file is up to date.'];
+        yield 'outdated db' => [static function (GeolocationDownloadProgressHandlerInterface $handler): GeolocationResult {
             $handler->beforeDownload(true);
             return GeolocationResult::DB_CREATED;
         }, '[OK] GeoLite2 db file properly downloaded.'];

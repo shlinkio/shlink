@@ -42,13 +42,11 @@ class DeleteShortUrlExceptionTest extends TestCase
 
     public static function provideThresholds(): array
     {
-        return array_map(function (int $number) {
-            return [$number, $shortCode = generateRandomShortCode(6), sprintf(
-                'Impossible to delete short URL with short code "%s", since it has more than "%s" visits.',
-                $shortCode,
-                $number,
-            )];
-        }, range(5, 50, 5));
+        return array_map(static fn (int $number) => [$number, $shortCode = generateRandomShortCode(6), sprintf(
+            'Impossible to delete short URL with short code "%s", since it has more than "%s" visits.',
+            $shortCode,
+            $number,
+        )], range(5, 50, 5));
     }
 
     #[Test]

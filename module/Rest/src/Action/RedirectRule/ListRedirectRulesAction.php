@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
+
 namespace Shlinkio\Shlink\Rest\Action\RedirectRule;
 
 use Laminas\Diactoros\Response\JsonResponse;

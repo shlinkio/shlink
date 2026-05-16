@@ -79,7 +79,7 @@ class IpGeolocationMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, $ipAddress);
         $this->handler->expects($this->once())->method('handle')->with($this->callback(
-            function (ServerRequestInterface $req): bool {
+            static function (ServerRequestInterface $req): bool {
                 $location = $req->getAttribute(Location::class);
                 if (! $location instanceof Location) {
                     return false;
@@ -104,7 +104,7 @@ class IpGeolocationMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, '1.2.3.4');
         $this->handler->expects($this->once())->method('handle')->with($this->callback(
-            function (ServerRequestInterface $req): bool {
+            static function (ServerRequestInterface $req): bool {
                 $location = $req->getAttribute(Location::class);
                 if (! $location instanceof Location) {
                     return false;
@@ -147,7 +147,7 @@ class IpGeolocationMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, '1.2.3.4');
         $this->handler->expects($this->once())->method('handle')->with($this->callback(
-            function (ServerRequestInterface $req): bool {
+            static function (ServerRequestInterface $req): bool {
                 $location = $req->getAttribute(Location::class);
                 if (! $location instanceof Location) {
                     return false;

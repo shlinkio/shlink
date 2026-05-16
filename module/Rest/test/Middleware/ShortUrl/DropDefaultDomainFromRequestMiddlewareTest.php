@@ -33,7 +33,7 @@ class DropDefaultDomainFromRequestMiddlewareTest extends TestCase
         $req = ServerRequestFactory::fromGlobals()->withQueryParams($providedPayload)->withParsedBody($providedPayload);
 
         $this->next->expects($this->once())->method('handle')->with($this->callback(
-            function (ServerRequestInterface $request) use ($expectedPayload) {
+            static function (ServerRequestInterface $request) use ($expectedPayload) {
                 Assert::assertEquals($expectedPayload, $request->getQueryParams());
                 Assert::assertEquals($expectedPayload, $request->getParsedBody());
                 return true;

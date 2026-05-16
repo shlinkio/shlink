@@ -32,7 +32,7 @@ class ShortUrlOptionsPayloadMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals()->withParsedBody($body);
         $this->handler->expects($this->once())->method('handle')->with($this->callback(
-            function (ServerRequestInterface $req) use ($expectedLength) {
+            static function (ServerRequestInterface $req) use ($expectedLength) {
                 $parsedBody = (array) $req->getParsedBody();
 
                 Assert::assertArrayHasKey('shortCodeLength', $parsedBody);

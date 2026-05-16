@@ -77,7 +77,7 @@ class RedirectRuleHandlerTest extends TestCase
         RedirectRuleHandlerAction $action,
         array|null $_,
     ): void {
-        $comment = fn (string $value) => sprintf('<comment>%s</comment>', $value);
+        $comment = static fn (string $value) => sprintf('<comment>%s</comment>', $value);
 
         $this->io->expects($this->once())->method('choice')->willReturn($action->value);
         $this->io->expects($this->never())->method('newLine');
@@ -115,7 +115,7 @@ class RedirectRuleHandlerTest extends TestCase
         bool $continue = false,
     ): void {
         $this->io->method('ask')->willReturnCallback(
-            fn (string $message): string|int => match ($message) {
+            static fn (string $message): string|int => match ($message) {
                 'Rule priority (the lower the value, the higher the priority)' => 2, // Add in between existing rules
                 'Long URL to redirect when the rule matches' => 'https://example.com/new-two',
                 'Language to match?' => 'en-US',
@@ -129,7 +129,7 @@ class RedirectRuleHandlerTest extends TestCase
             },
         );
         $this->io->method('choice')->willReturnCallback(
-            function (string $message) use (&$callIndex, $type): string {
+            static function (string $message) use (&$callIndex, $type): string {
                 $callIndex++;
 
                 if ($message === 'Type of the condition?') {
@@ -147,7 +147,7 @@ class RedirectRuleHandlerTest extends TestCase
         );
 
         $continueCallCount = 0;
-        $this->io->method('confirm')->willReturnCallback(function () use (&$continueCallCount, $continue) {
+        $this->io->method('confirm')->willReturnCallback(static function () use (&$continueCallCount, $continue) {
             $continueCallCount++;
             return $continueCallCount < 2 && $continue;
         });
@@ -207,7 +207,7 @@ class RedirectRuleHandlerTest extends TestCase
     {
         $callIndex = 0;
         $this->io->expects($this->exactly(3))->method('choice')->willReturnCallback(
-            function (string $message) use (&$callIndex): string {
+            static function (string $message) use (&$callIndex): string {
                 $callIndex++;
 
                 if ($message === 'What rule do you want to delete?') {
@@ -231,7 +231,7 @@ class RedirectRuleHandlerTest extends TestCase
     {
         $callIndex = 0;
         $this->io->expects($this->exactly(2))->method('choice')->willReturnCallback(
-            function () use (&$callIndex): string {
+            static function () use (&$callIndex): string {
                 $callIndex++;
                 $action = $callIndex === 1 ? RedirectRuleHandlerAction::REMOVE : RedirectRuleHandlerAction::DISCARD;
                 return $action->value;
@@ -246,13 +246,13 @@ class RedirectRuleHandlerTest extends TestCase
     public function existingRulesCanBeReArranged(): void
     {
         $this->io->method('ask')->willReturnCallback(
-            fn (string $message): string|int => match ($message) {
+            static fn (string $message): string|int => match ($message) {
                 'Rule priority (the lower the value, the higher the priority)' => 1,
                 default => '',
             },
         );
         $this->io->expects($this->exactly(3))->method('choice')->willReturnCallback(
-            function (string $message) use (&$callIndex): string {
+            static function (string $message) use (&$callIndex): string {
                 $callIndex++;
 
                 if ($message === 'What rule do you want to re-arrange?') {
@@ -276,7 +276,7 @@ class RedirectRuleHandlerTest extends TestCase
     {
         $callIndex = 0;
         $this->io->expects($this->exactly(2))->method('choice')->willReturnCallback(
-            function () use (&$callIndex): string {
+            static function () use (&$callIndex): string {
                 $callIndex++;
                 $action = $callIndex === 1 ? RedirectRuleHandlerAction::RE_ARRANGE : RedirectRuleHandlerAction::DISCARD;
                 return $action->value;

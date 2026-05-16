@@ -31,7 +31,7 @@ class NotFoundTypeResolverMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
         $this->handler->expects($this->once())->method('handle')->with(
-            $this->callback(function (ServerRequestInterface $req): bool {
+            $this->callback(static function (ServerRequestInterface $req): bool {
                 Assert::assertArrayHasKey(NotFoundType::class, $req->getAttributes());
                 return true;
             }),

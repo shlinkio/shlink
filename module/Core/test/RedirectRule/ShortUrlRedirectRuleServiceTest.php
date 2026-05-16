@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
+
 namespace ShlinkioTest\Shlink\Core\RedirectRule;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -78,7 +81,7 @@ class ShortUrlRedirectRuleServiceTest extends TestCase
         ]);
 
         $this->em->expects($this->once())->method('wrapInTransaction')->willReturnCallback(
-            fn (callable $callback) => $callback(),
+            static fn (callable $callback) => $callback(),
         );
         $this->em->expects($this->exactly(2))->method('persist');
         $this->em->expects($this->never())->method('remove');
@@ -106,7 +109,7 @@ class ShortUrlRedirectRuleServiceTest extends TestCase
             $repo,
         );
         $this->em->expects($this->once())->method('wrapInTransaction')->willReturnCallback(
-            fn (callable $callback) => $callback(),
+            static fn (callable $callback) => $callback(),
         );
         $this->em->expects($this->never())->method('persist');
         $this->em->expects($this->exactly(2))->method('remove');
@@ -137,13 +140,13 @@ class ShortUrlRedirectRuleServiceTest extends TestCase
         // Detach will be called 8 times: 3 rules + 5 conditions
         $this->em->expects($this->exactly(8))->method('detach');
         $this->em->expects($this->once())->method('wrapInTransaction')->willReturnCallback(
-            fn (callable $callback) => $callback(),
+            static fn (callable $callback) => $callback(),
         );
 
         // Persist will be called for each of the three rules. Their priorities should be consecutive starting at 1
         $cont = 0;
         $this->em->expects($this->exactly(3))->method('persist')->with($this->callback(
-            function (ShortUrlRedirectRule $rule) use (&$cont): bool {
+            static function (ShortUrlRedirectRule $rule) use (&$cont): bool {
                 $cont++;
                 return $rule->jsonSerialize()['priority'] === $cont;
             },

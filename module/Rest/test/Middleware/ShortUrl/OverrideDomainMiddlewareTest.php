@@ -59,7 +59,7 @@ class OverrideDomainMiddlewareTest extends TestCase
         );
         $this->domainService->expects($this->once())->method('getDomain')->with('123')->willReturn($domain);
         $this->handler->expects($this->once())->method('handle')->with($this->callback(
-            function (ServerRequestInterface $req) use ($expectedBody): bool {
+            static function (ServerRequestInterface $req) use ($expectedBody): bool {
                 Assert::assertEquals($req->getParsedBody(), $expectedBody);
                 return true;
             },
@@ -103,7 +103,7 @@ class OverrideDomainMiddlewareTest extends TestCase
         );
         $this->domainService->expects($this->once())->method('getDomain')->with('123')->willReturn($domain);
         $this->handler->expects($this->once())->method('handle')->with($this->callback(
-            function (ServerRequestInterface $req): bool {
+            static function (ServerRequestInterface $req): bool {
                 Assert::assertEquals($req->getAttribute(OverrideDomainMiddleware::REQUEST_ATTRIBUTE), 'something.com');
                 return true;
             },

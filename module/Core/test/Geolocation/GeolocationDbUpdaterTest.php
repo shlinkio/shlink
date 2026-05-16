@@ -124,7 +124,7 @@ class GeolocationDbUpdaterTest extends TestCase
             $this->isInstanceOf(Closure::class),
         )->willThrowException($prev);
         $this->em->expects($this->once())->method('persist')->with($this->callback(
-            fn (GeolocationDbUpdate $newUpdate): bool => $newUpdate->reason === $expectedReason,
+            static fn (GeolocationDbUpdate $newUpdate): bool => $newUpdate->reason === $expectedReason,
         ));
 
         try {
@@ -140,14 +140,14 @@ class GeolocationDbUpdaterTest extends TestCase
 
     public static function provideDbDoesNotExist(): iterable
     {
-        yield 'file does not exist' => [function (self $test): string {
+        yield 'file does not exist' => [static function (self $test): string {
             $test->repo->expects($test->once())->method('findBy')->willReturn([
                 GeolocationDbUpdate::withReason('')->finishSuccessfully(),
             ]);
             $test->dbUpdater->expects($test->once())->method('databaseFileExists')->willReturn(false);
             return 'Geolocation db file does not exist';
         }];
-        yield 'no attempts' => [function (self $test): string {
+        yield 'no attempts' => [static function (self $test): string {
             $test->repo->expects($test->once())->method('findBy')->willReturn([]);
             $test->dbUpdater->expects($test->never())->method('databaseFileExists');
             return 'No download attempts tracked for this instance';
@@ -191,7 +191,7 @@ class GeolocationDbUpdaterTest extends TestCase
 
         $newUpdate = null;
         $this->em->expects($this->once())->method('persist')->with($this->callback(
-            function (GeolocationDbUpdate $u) use (&$newUpdate): bool {
+            static function (GeolocationDbUpdate $u) use (&$newUpdate): bool {
                 $newUpdate = $u;
                 return true;
             },
@@ -235,7 +235,7 @@ class GeolocationDbUpdaterTest extends TestCase
         $this->dbUpdater->method('databaseFileExists')->willReturn(true);
         $this->dbUpdater->expects($this->once())->method('downloadFreshCopy');
         $this->em->expects($this->once())->method('persist')->with($this->callback(
-            fn (GeolocationDbUpdate $newUpdate): bool => $newUpdate->reason === $expectedReason,
+            static fn (GeolocationDbUpdate $newUpdate): bool => $newUpdate->reason === $expectedReason,
         ));
 
         $result = $this->geolocationDbUpdater()->checkDbUpdate();

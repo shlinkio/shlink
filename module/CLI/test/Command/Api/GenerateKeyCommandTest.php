@@ -36,7 +36,7 @@ class GenerateKeyCommandTest extends TestCase
     public function noExpirationDateIsDefinedIfNotProvided(): void
     {
         $this->apiKeyService->expects($this->once())->method('create')->with(
-            $this->callback(fn (ApiKeyMeta $meta) => $meta->expirationDate === null),
+            $this->callback(static fn (ApiKeyMeta $meta) => $meta->expirationDate === null),
         )->willReturn(ApiKey::create());
 
         $this->commandTester->execute([]);
@@ -49,7 +49,7 @@ class GenerateKeyCommandTest extends TestCase
     public function expirationDateIsDefinedIfProvided(): void
     {
         $this->apiKeyService->expects($this->once())->method('create')->with(
-            $this->callback(fn (ApiKeyMeta $meta) => $meta->expirationDate instanceof Chronos),
+            $this->callback(static fn (ApiKeyMeta $meta) => $meta->expirationDate instanceof Chronos),
         )->willReturn(ApiKey::create());
 
         $this->commandTester->execute([
@@ -61,7 +61,7 @@ class GenerateKeyCommandTest extends TestCase
     public function nameIsDefinedIfProvided(): void
     {
         $this->apiKeyService->expects($this->once())->method('create')->with(
-            $this->callback(fn (ApiKeyMeta $meta) => $meta->name === 'Alice'),
+            $this->callback(static fn (ApiKeyMeta $meta) => $meta->name === 'Alice'),
         )->willReturn(ApiKey::create());
 
         $exitCode = $this->commandTester->execute([

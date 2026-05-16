@@ -158,7 +158,7 @@ class NotifyVisitToRabbitMqTest extends TestCase
 
         yield 'non-orphan visit' => [
             Visit::forValidShortUrl(ShortUrl::withLongUrl('https://longUrl'), Visitor::empty()),
-            function (MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator) use ($once, $never): void {
+            static function (MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator) use ($once, $never): void {
                 $update = Update::forTopicAndPayload('', []);
                 $updatesGenerator->expects($never())->method('newOrphanVisitUpdate');
                 $updatesGenerator->expects($once())->method('newVisitUpdate')->withAnyParameters()->willReturn(
@@ -166,19 +166,19 @@ class NotifyVisitToRabbitMqTest extends TestCase
                 );
                 $updatesGenerator->expects($once())->method('newShortUrlVisitUpdate')->willReturn($update);
             },
-            function (MockObject & PublishingHelperInterface $helper) use ($exactly): void {
+            static function (MockObject & PublishingHelperInterface $helper) use ($exactly): void {
                 $helper->expects($exactly(2))->method('publishUpdate')->with(self::isInstanceOf(Update::class));
             },
         ];
         yield 'orphan visit' => [
             Visit::forBasePath(Visitor::empty()),
-            function (MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator) use ($once, $never): void {
+            static function (MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator) use ($once, $never): void {
                 $update = Update::forTopicAndPayload('', []);
                 $updatesGenerator->expects($once())->method('newOrphanVisitUpdate')->willReturn($update);
                 $updatesGenerator->expects($never())->method('newVisitUpdate');
                 $updatesGenerator->expects($never())->method('newShortUrlVisitUpdate');
             },
-            function (MockObject & PublishingHelperInterface $helper) use ($once): void {
+            static function (MockObject & PublishingHelperInterface $helper) use ($once): void {
                 $helper->expects($once())->method('publishUpdate')->with(self::isInstanceOf(Update::class));
             },
         ];

@@ -84,7 +84,7 @@ class ShortUrl extends AbstractEntity
         ShortUrlCreation $creation,
         ShortUrlRelationResolverInterface|null $relationResolver = null,
     ): self {
-        $relationResolver = $relationResolver ?? new SimpleShortUrlRelationResolver();
+        $relationResolver ??= new SimpleShortUrlRelationResolver();
         $shortCodeLength = $creation->shortCodeLength;
 
         return new self(
@@ -151,7 +151,7 @@ class ShortUrl extends AbstractEntity
             $this->longUrl = $shortUrlEdit->longUrl;
         }
         if ($shortUrlEdit->tags !== null) {
-            $relationResolver = $relationResolver ?? new SimpleShortUrlRelationResolver();
+            $relationResolver ??= new SimpleShortUrlRelationResolver();
             $this->tags = $relationResolver->resolveTags($shortUrlEdit->tags);
         }
         if ($shortUrlEdit->crawlable !== null) {

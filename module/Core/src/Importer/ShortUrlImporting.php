@@ -77,7 +77,7 @@ final readonly class ShortUrlImporting
         $shortUrl = $this->resolveShortUrl($em);
         $redirectRules = map(
             $rules,
-            function (ImportedShlinkRedirectRule $rule, int|string|float $index) use ($shortUrl): ShortUrlRedirectRule {
+            static function (ImportedShlinkRedirectRule $rule, int|string|float $index) use ($shortUrl): ShortUrlRedirectRule {
                 $conditions = new ArrayCollection();
                 foreach ($rule->conditions as $cond) {
                     $redirectCondition = RedirectCondition::fromImport($cond);

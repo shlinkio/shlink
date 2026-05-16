@@ -47,28 +47,28 @@ class TrimTrailingSlashMiddlewareTest extends TestCase
         yield 'trailing slash disabled' => [
             false,
             $inputReq = ServerRequestFactory::fromGlobals(),
-            function (ServerRequestInterface $request) use ($inputReq): void {
+            static function (ServerRequestInterface $request) use ($inputReq): void {
                 Assert::assertSame($inputReq, $request);
             },
         ];
         yield 'trailing slash enabled without shortCode attr' => [
             true,
             $inputReq = ServerRequestFactory::fromGlobals(),
-            function (ServerRequestInterface $request) use ($inputReq): void {
+            static function (ServerRequestInterface $request) use ($inputReq): void {
                 Assert::assertSame($inputReq, $request);
             },
         ];
         yield 'trailing slash enabled with null shortCode attr' => [
             true,
             $inputReq = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', null),
-            function (ServerRequestInterface $request) use ($inputReq): void {
+            static function (ServerRequestInterface $request) use ($inputReq): void {
                 Assert::assertSame($inputReq, $request);
             },
         ];
         yield 'trailing slash enabled with non-null shortCode attr' => [
             true,
             $inputReq = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', 'foo//'),
-            function (ServerRequestInterface $request) use ($inputReq): void {
+            static function (ServerRequestInterface $request) use ($inputReq): void {
                 Assert::assertNotSame($inputReq, $request);
                 Assert::assertEquals('foo', $request->getAttribute('shortCode'));
             },

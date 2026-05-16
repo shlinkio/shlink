@@ -73,7 +73,7 @@ class BodyParserMiddlewareTest extends TestCase
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects($this->once())->method('handle')->with(
             $this->isInstanceOf(ServerRequestInterface::class),
-        )->willReturnCallback(function (ServerRequestInterface $req) {
+        )->willReturnCallback(static function (ServerRequestInterface $req) {
             Assert::assertEquals([
                 'foo' => 'bar',
                 'bar' => ['one', 5],

@@ -37,8 +37,8 @@ class UrlShortenerTest extends TestCase
         $this->shortCodeHelper = $this->createMock(ShortCodeUniquenessHelperInterface::class);
 
         $em = $this->createStub(EntityManagerInterface::class);
-        $em->method('persist')->willReturnCallback(fn (ShortUrl $shortUrl) => $shortUrl->setId('10'));
-        $em->method('wrapInTransaction')->willReturnCallback(fn (callable $callback) => $callback());
+        $em->method('persist')->willReturnCallback(static fn (ShortUrl $shortUrl) => $shortUrl->setId('10'));
+        $em->method('wrapInTransaction')->willReturnCallback(static fn (callable $callback) => $callback());
 
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->repo = $this->createMock(ShortUrlRepositoryInterface::class);
@@ -66,7 +66,7 @@ class UrlShortenerTest extends TestCase
 
         $result = $this->urlShortener->shorten($meta);
         $thereIsError = false;
-        $result->onEventDispatchingError(function () use (&$thereIsError): void {
+        $result->onEventDispatchingError(static function () use (&$thereIsError): void {
             $thereIsError = true;
         });
 

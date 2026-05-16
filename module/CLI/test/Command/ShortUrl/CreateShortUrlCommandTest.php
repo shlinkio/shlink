@@ -98,7 +98,7 @@ class CreateShortUrlCommandTest extends TestCase
     {
         $shortUrl = ShortUrl::createFake();
         $this->urlShortener->expects($this->once())->method('shorten')->with(
-            $this->callback(function (ShortUrlCreation $creation) {
+            $this->callback(static function (ShortUrlCreation $creation) {
                 Assert::assertEquals(['foo', 'bar', 'baz', 'boo', 'zar'], $creation->tags);
                 return true;
             }),
@@ -119,7 +119,7 @@ class CreateShortUrlCommandTest extends TestCase
     public function properlyProcessesProvidedDomain(array $input, string|null $expectedDomain): void
     {
         $this->urlShortener->expects($this->once())->method('shorten')->with(
-            $this->callback(function (ShortUrlCreation $meta) use ($expectedDomain) {
+            $this->callback(static function (ShortUrlCreation $meta) use ($expectedDomain) {
                 Assert::assertEquals($expectedDomain, $meta->domain);
                 return true;
             }),
@@ -146,7 +146,7 @@ class CreateShortUrlCommandTest extends TestCase
     ): void {
         $shortUrl = ShortUrl::createFake();
         $this->urlShortener->expects($this->once())->method('shorten')->with(
-            $this->callback(function (ShortUrlCreation $meta) use ($expectedCrawlable) {
+            $this->callback(static function (ShortUrlCreation $meta) use ($expectedCrawlable) {
                 Assert::assertEquals($expectedCrawlable, $meta->crawlable);
                 return true;
             }),

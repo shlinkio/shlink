@@ -117,12 +117,12 @@ class ImportedLinksProcessorTest extends TestCase
         $this->io->expects($this->exactly($expectedCalls))->method('text')->with($this->isString());
         $this->redirectRuleService->expects($this->once())->method('saveRulesForShortUrl')->with(
             $this->isInstanceOf(ShortUrl::class),
-            $this->callback(function (array $rules): bool {
+            $this->callback(static function (array $rules): bool {
                 Assert::assertCount(2, $rules);
                 Assert::assertInstanceOf(ShortUrlRedirectRule::class, $rules[0]);
                 Assert::assertInstanceOf(ShortUrlRedirectRule::class, $rules[1]);
-                Assert::assertCount(1, $rules[0]->mapConditions(fn ($c) => $c));
-                Assert::assertCount(2, $rules[1]->mapConditions(fn ($c) => $c));
+                Assert::assertCount(1, $rules[0]->mapConditions(static fn ($c) => $c));
+                Assert::assertCount(2, $rules[1]->mapConditions(static fn ($c) => $c));
 
                 return true;
             }),
@@ -145,7 +145,7 @@ class ImportedLinksProcessorTest extends TestCase
         $this->shortCodeHelper->expects($this->exactly(3))->method('ensureShortCodeUniqueness')->willReturn(true);
         $this->em->expects($this->exactly(3))->method('persist')->with(
             $this->isInstanceOf(ShortUrl::class),
-        )->willReturnCallback(function (ShortUrl $shortUrl): void {
+        )->willReturnCallback(static function (ShortUrl $shortUrl): void {
             if ($shortUrl->getShortCode() === 'baz') {
                 throw new RuntimeException('Whatever error');
             }
@@ -171,7 +171,7 @@ class ImportedLinksProcessorTest extends TestCase
 
         $this->em->method('getRepository')->willReturn($this->repo);
         $this->repo->expects($this->exactly(count($urls)))->method('findOneByImportedUrl')->willReturnCallback(
-            fn (ImportedShlinkUrl $url): ShortUrl|null => contains(
+            static fn (ImportedShlinkUrl $url): ShortUrl|null => contains(
                 $url->longUrl,
                 ['https://foo', 'https://baz2', 'https://baz3'],
             ) ? ShortUrl::fromImport($url, true) : null,
@@ -200,12 +200,12 @@ class ImportedLinksProcessorTest extends TestCase
         $this->em->method('getRepository')->willReturn($this->repo);
         $this->repo->expects($this->exactly(count($urls)))->method('findOneByImportedUrl')->willReturn(null);
         $this->shortCodeHelper->expects($this->exactly(7))->method('ensureShortCodeUniqueness')->willReturnCallback(
-            fn ($_, bool $hasCustomSlug) => ! $hasCustomSlug,
+            static fn ($_, bool $hasCustomSlug) => ! $hasCustomSlug,
         );
         $this->em->expects($this->exactly(2))->method('persist')->with($this->isInstanceOf(ShortUrl::class));
-        $this->io->expects($this->exactly(5))->method('choice')->willReturnCallback(function (string $question) {
-            return some(['foo', 'baz2', 'baz3'], fn (string $item) => str_contains($question, $item)) ? 'Skip' : '';
-        });
+        $this->io->expects($this->exactly(5))->method('choice')->willReturnCallback(static fn (string $question) =>
+            some(['foo', 'baz2', 'baz3'], static fn (string $item) => str_contains($question, $item)) ? 'Skip' : '',
+        );
         $textCalls = $this->setUpIoText('Error');
 
         $this->processor->process($this->io, ImportResult::withShortUrls($urls), $this->buildParams());
@@ -228,7 +228,7 @@ class ImportedLinksProcessorTest extends TestCase
                               ->willReturn(true);
         $this->em->expects($this->exactly($amountOfPersistedVisits + ($foundShortUrl === null ? 1 : 0)))->method(
             'persist',
-        )->with($this->callback(fn (object $arg) => $arg instanceof ShortUrl || $arg instanceof Visit));
+        )->with($this->callback(static fn (object $arg) => $arg instanceof ShortUrl || $arg instanceof Visit));
         $this->em->method('find')->willReturn(null);
         $this->io->expects($this->once())->method('text')->with($this->stringContains($expectedOutput));
 
@@ -382,7 +382,7 @@ class ImportedLinksProcessorTest extends TestCase
         $counts->skippedCount = 0;
 
         $this->io->method('text')->willReturnCallback(
-            function (string $output) use ($counts, $skippedText, $importedText): void {
+            static function (string $output) use ($counts, $skippedText, $importedText): void {
                 if (str_contains($output, $skippedText)) {
                     $counts->skippedCount++;
                 } elseif (str_contains($output, $importedText)) {
