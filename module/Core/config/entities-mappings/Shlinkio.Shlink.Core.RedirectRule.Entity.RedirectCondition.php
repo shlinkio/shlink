@@ -15,7 +15,8 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
 
     $builder->setTable('redirect_conditions');
 
-    $builder->createField('id', Types::BIGINT)
+    $builder
+        ->createField('id', Types::BIGINT)
         ->columnName('id')
         ->makePrimaryKey()
         ->generatedValue('IDENTITY')
@@ -26,16 +27,19 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
         'fieldName' => 'type',
         'type' => Types::STRING,
         'enumType' => RedirectConditionType::class,
-    ])->columnName('type')
+    ])
+        ->columnName('type')
         ->length(255)
         ->build();
 
-    fieldWithUtf8Charset($builder->createField('matchKey', Types::STRING), $emConfig)->columnName('match_key')
+    fieldWithUtf8Charset($builder->createField('matchKey', Types::STRING), $emConfig)
+        ->columnName('match_key')
         ->length(512)
         ->nullable()
         ->build();
 
-    fieldWithUtf8Charset($builder->createField('matchValue', Types::STRING), $emConfig)->columnName('match_value')
+    fieldWithUtf8Charset($builder->createField('matchValue', Types::STRING), $emConfig)
+        ->columnName('match_value')
         ->length(512)
         ->nullable()
         ->build();

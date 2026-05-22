@@ -16,7 +16,8 @@ class ShortUrlVisitsCountRepository extends EntitySpecificationRepository implem
     public function countNonOrphanVisits(VisitsCountFiltering $filtering): int
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('COALESCE(SUM(vc.count), 0)')
+        $qb
+            ->select('COALESCE(SUM(vc.count), 0)')
             ->from(ShortUrlVisitsCount::class, 'vc')
             ->join('vc.shortUrl', 's');
 

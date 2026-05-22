@@ -68,10 +68,11 @@ class AuthenticationMiddlewareTest extends TestCase
                 new Route('foo', $dummyMiddleware, Route::HTTP_METHOD_ANY, HealthAction::class),
             ),
         )];
-        yield 'OPTIONS method' => [new ServerRequest()->withAttribute(
-            RouteResult::class,
-            RouteResult::fromRoute(new Route('bar', $dummyMiddleware), []),
-        )
+        yield 'OPTIONS method' => [new ServerRequest()
+            ->withAttribute(
+                RouteResult::class,
+                RouteResult::fromRoute(new Route('bar', $dummyMiddleware), []),
+            )
             ->withMethod(RequestMethodInterface::METHOD_OPTIONS)];
     }
 

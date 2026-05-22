@@ -11,33 +11,39 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder = new ClassMetadataBuilder($metadata);
 
-    $builder->setTable('short_url_visits_counts')
+    $builder
+        ->setTable('short_url_visits_counts')
         ->setCustomRepositoryClass(Visit\Repository\ShortUrlVisitsCountRepository::class);
 
-    $builder->createField('id', Types::BIGINT)
+    $builder
+        ->createField('id', Types::BIGINT)
         ->columnName('id')
         ->makePrimaryKey()
         ->generatedValue('IDENTITY')
         ->option('unsigned', true)
         ->build();
 
-    $builder->createField('potentialBot', Types::BOOLEAN)
+    $builder
+        ->createField('potentialBot', Types::BOOLEAN)
         ->columnName('potential_bot')
         ->option('default', false)
         ->build();
 
-    $builder->createField('count', Types::BIGINT)
+    $builder
+        ->createField('count', Types::BIGINT)
         ->columnName('count')
         ->option('unsigned', true)
         ->option('default', 1)
         ->build();
 
-    $builder->createField('slotId', Types::INTEGER)
+    $builder
+        ->createField('slotId', Types::INTEGER)
         ->columnName('slot_id')
         ->option('unsigned', true)
         ->build();
 
-    $builder->createManyToOne('shortUrl', ShortUrl\Entity\ShortUrl::class)
+    $builder
+        ->createManyToOne('shortUrl', ShortUrl\Entity\ShortUrl::class)
         ->addJoinColumn('short_url_id', 'id', onDelete: 'CASCADE')
         ->build();
 

@@ -68,13 +68,15 @@ class NotFoundRedirectHandlerTest extends TestCase
             MockObject&DomainServiceInterface $domainService,
             MockObject&NotFoundRedirectResolverInterface $resolver,
         ) use ($once): void {
-            $domainService->expects($once())
+            $domainService
+                ->expects($once())
                 ->method('findByAuthority')
                 ->withAnyParameters()
                 ->willReturn(
                     null,
                 );
-            $resolver->expects($once())
+            $resolver
+                ->expects($once())
                 ->method('resolveRedirectResponse')
                 ->with(
                     self::isInstanceOf(NotFoundType::class),
@@ -87,14 +89,16 @@ class NotFoundRedirectHandlerTest extends TestCase
             MockObject&DomainServiceInterface $domainService,
             MockObject&NotFoundRedirectResolverInterface $resolver,
         ) use ($once, $exactly): void {
-            $domainService->expects($once())
+            $domainService
+                ->expects($once())
                 ->method('findByAuthority')
                 ->withAnyParameters()
                 ->willReturn(
                     Domain::withAuthority(''),
                 );
             $callCount = 0;
-            $resolver->expects($exactly(2))
+            $resolver
+                ->expects($exactly(2))
                 ->method('resolveRedirectResponse')
                 ->willReturnCallback(
                     static function (mixed $arg1, mixed $arg2, mixed $arg3) use (&$callCount) {

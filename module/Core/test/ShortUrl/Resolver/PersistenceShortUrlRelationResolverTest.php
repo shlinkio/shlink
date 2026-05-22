@@ -77,7 +77,8 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
         $expectedPersistedTags = $expectedLookedOutTags - 1;
 
         $tagRepo = $this->createMock(TagRepository::class);
-        $tagRepo->expects($this->exactly($expectedLookedOutTags))
+        $tagRepo
+            ->expects($this->exactly($expectedLookedOutTags))
             ->method('findOneBy')
             ->with(
                 $this->isArray(),

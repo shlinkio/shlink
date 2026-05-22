@@ -18,7 +18,8 @@ readonly class DropDefaultDomainFromRequestMiddleware implements MiddlewareInter
     {
         /** @var array $body */
         $body = $request->getParsedBody() ?? [];
-        $request = $request->withQueryParams($this->sanitizeDomainFromPayload($request->getQueryParams()))
+        $request = $request
+            ->withQueryParams($this->sanitizeDomainFromPayload($request->getQueryParams()))
             ->withParsedBody($this->sanitizeDomainFromPayload($body));
 
         return $handler->handle($request);

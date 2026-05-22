@@ -22,7 +22,8 @@ class VisitIterationRepository extends EntitySpecificationRepository implements 
     public function findUnlocatedVisits(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('v')
+        $qb
+            ->select('v')
             ->from(Visit::class, 'v')
             ->where($qb->expr()->isNull('v.visitLocation'));
 
@@ -35,7 +36,8 @@ class VisitIterationRepository extends EntitySpecificationRepository implements 
     public function findVisitsWithEmptyLocation(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('v')
+        $qb
+            ->select('v')
             ->from(Visit::class, 'v')
             ->join('v.visitLocation', 'vl')
             ->where($qb->expr()->isNotNull('v.visitLocation'))

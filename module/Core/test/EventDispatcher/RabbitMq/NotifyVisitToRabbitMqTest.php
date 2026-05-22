@@ -185,7 +185,8 @@ class NotifyVisitToRabbitMqTest extends TestCase
             ): void {
                 $update = Update::forTopicAndPayload('', []);
                 $updatesGenerator->expects($never())->method('newOrphanVisitUpdate');
-                $updatesGenerator->expects($once())
+                $updatesGenerator
+                    ->expects($once())
                     ->method('newVisitUpdate')
                     ->withAnyParameters()
                     ->willReturn(

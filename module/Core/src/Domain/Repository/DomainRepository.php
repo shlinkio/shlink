@@ -23,7 +23,8 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
     public function findDomains(ApiKey|null $apiKey = null): array
     {
         $qb = $this->createQueryBuilder('d');
-        $qb->leftJoin(ShortUrl::class, 's', Join::WITH, 's.domain = d')
+        $qb
+            ->leftJoin(ShortUrl::class, 's', Join::WITH, 's.domain = d')
             ->groupBy('d')
             ->orderBy('d.authority', 'ASC')
             ->having($qb->expr()->gt('COUNT(s.id)', '0'))
@@ -58,7 +59,8 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
     private function createDomainQueryBuilder(string $authority, ApiKey|null $apiKey): QueryBuilder
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->from(Domain::class, 'd')
+        $qb
+            ->from(Domain::class, 'd')
             ->leftJoin(ShortUrl::class, 's', Join::WITH, 's.domain = d')
             ->where($qb->expr()->eq('d.authority', ':authority'))
             ->setParameter('authority', $authority)

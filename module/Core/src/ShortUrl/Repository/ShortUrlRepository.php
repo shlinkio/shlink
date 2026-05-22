@@ -35,7 +35,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         //       Investigate if the case-insensitive check can be done natively by the DB engine.
 
         $qb = $this->createQueryBuilder('s');
-        $qb->where($qb->expr()->eq($isStrict ? 's.shortCode' : 'LOWER(s.shortCode)', ':shortCode'))
+        $qb
+            ->where($qb->expr()->eq($isStrict ? 's.shortCode' : 'LOWER(s.shortCode)', ':shortCode'))
             ->setParameter('shortCode', $isStrict ? $identifier->shortCode : strtolower($identifier->shortCode))
             ->setMaxResults(1);
 
@@ -44,7 +45,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         if ($domain === null) {
             $qb->andWhere($qb->expr()->isNull('s.domain'));
         } else {
-            $qb->leftJoin('s.domain', 'd')
+            $qb
+                ->leftJoin('s.domain', 'd')
                 ->andWhere($qb->expr()->orX(
                     $qb->expr()->isNull('s.domain'),
                     $qb->expr()->eq('d.authority', ':domain'),
@@ -100,7 +102,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     private function createFindOneQueryBuilder(ShortUrlIdentifier $identifier, Specification|null $spec): QueryBuilder
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->from(ShortUrl::class, 's')
+        $qb
+            ->from(ShortUrl::class, 's')
             ->where($qb->expr()->isNotNull('s.shortCode'))
             ->andWhere($qb->expr()->eq('s.shortCode', ':slug'))
             ->setParameter('slug', $identifier->shortCode)
@@ -117,7 +120,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
-        $qb->select('s')
+        $qb
+            ->select('s')
             ->from(ShortUrl::class, 's')
             ->where($qb->expr()->eq('s.longUrl', ':longUrl'))
             ->setParameter('longUrl', $creation->longUrl)
@@ -141,7 +145,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
                 ->setParameter('validUntil', $creation->validUntil, ChronosDateTimeType::CHRONOS_DATETIME);
         }
         if ($creation->hasDomain()) {
-            $qb->join('s.domain', 'd')
+            $qb
+                ->join('s.domain', 'd')
                 ->andWhere($qb->expr()->eq('d.authority', ':domain'))
                 ->setParameter('domain', $creation->domain);
         }
@@ -161,7 +166,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
 
         // If tags where provided, we need an extra join to see the amount of tags that every short URL has, so that we
         // can discard those that also have more tags, making sure only those fully matching are included.
-        $qb->join('s.tags', 't')
+        $qb
+            ->join('s.tags', 't')
             ->groupBy('s')
             ->having($qb->expr()->eq('COUNT(t.id)', ':tagsAmount'))
             ->setParameter('tagsAmount', $tagsAmount);
@@ -181,7 +187,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     public function findOneByImportedUrl(ImportedShlinkUrl $url): ShortUrl|null
     {
         $qb = $this->createQueryBuilder('s');
-        $qb->andWhere($qb->expr()->eq('s.importOriginalShortCode', ':shortCode'))
+        $qb
+            ->andWhere($qb->expr()->eq('s.importOriginalShortCode', ':shortCode'))
             ->setParameter('shortCode', $url->shortCode)
             ->andWhere($qb->expr()->eq('s.importSource', ':importSource'))
             ->setParameter('importSource', $url->source->value)
@@ -195,7 +202,8 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     private function whereDomainIs(QueryBuilder $qb, string|null $domain): void
     {
         if ($domain !== null) {
-            $qb->join('s.domain', 'd')
+            $qb
+                ->join('s.domain', 'd')
                 ->andWhere($qb->expr()->eq('d.authority', ':authority'))
                 ->setParameter('authority', $domain);
         } else {

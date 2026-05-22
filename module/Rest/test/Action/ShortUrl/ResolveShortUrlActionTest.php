@@ -46,7 +46,8 @@ class ResolveShortUrlActionTest extends TestCase
             )
             ->willReturn(ShortUrl::withLongUrl('http://domain.com/foo/bar'));
 
-        $request = new ServerRequest()->withAttribute('shortCode', $shortCode)
+        $request = new ServerRequest()
+            ->withAttribute('shortCode', $shortCode)
             ->withAttribute(ApiKey::class, $apiKey);
         $response = $this->action->handle($request);
 

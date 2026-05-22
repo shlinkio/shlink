@@ -31,7 +31,8 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
     {
         $buildVisitsSubQuery = function (string $alias, bool $excludingBots): string {
             $vqb = $this->getEntityManager()->createQueryBuilder();
-            $vqb->select('COALESCE(SUM(' . $alias . '.count), 0)')
+            $vqb
+                ->select('COALESCE(SUM(' . $alias . '.count), 0)')
                 ->from(ShortUrlVisitsCount::class, $alias)
                 ->where($vqb->expr()->eq($alias . '.shortUrl', 's'));
 
@@ -43,13 +44,14 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
         };
 
         $qb = $this->createListQueryBuilder($filtering);
-        $qb->select(
-            'DISTINCT s AS shortUrl, d.authority',
-            '(' . $buildVisitsSubQuery('v', excludingBots: false) . ') AS ' . OrderableField::VISITS->value,
-            '(' . $buildVisitsSubQuery('v2', excludingBots: true) . ') AS ' . OrderableField::NON_BOT_VISITS->value,
-            // This is added only to have a consistent order by title between database engines
-            'COALESCE(s.title, \'\') AS title',
-        )
+        $qb
+            ->select(
+                'DISTINCT s AS shortUrl, d.authority',
+                '(' . $buildVisitsSubQuery('v', excludingBots: false) . ') AS ' . OrderableField::VISITS->value,
+                '(' . $buildVisitsSubQuery('v2', excludingBots: true) . ') AS ' . OrderableField::NON_BOT_VISITS->value,
+                // This is added only to have a consistent order by title between database engines
+                'COALESCE(s.title, \'\') AS title',
+            )
             ->setMaxResults($filtering->limit)
             ->setFirstResult($filtering->offset)
             // This param is used in one of the sub-queries, but needs to set in the parent query
@@ -90,7 +92,8 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
     private function createListQueryBuilder(ShortUrlsCountFiltering $filtering): QueryBuilder
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->from(ShortUrl::class, 's')
+        $qb
+            ->from(ShortUrl::class, 's')
             ->leftJoin('s.domain', 'd')
             ->where('1=1');
 
@@ -190,7 +193,8 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
 
         $apiKeyName = $filtering->apiKeyName;
         if ($apiKeyName !== null) {
-            $qb->join('s.authorApiKey', 'a')
+            $qb
+                ->join('s.authorApiKey', 'a')
                 ->andWhere($qb->expr()->eq('a.name', ':apiKeyName'))
                 ->setParameter('apiKeyName', $apiKeyName);
         }

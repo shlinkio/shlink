@@ -12,7 +12,8 @@ final class Version20240331111447 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $visitsQb = $this->connection->createQueryBuilder();
-        $visitsQb->select('COUNT(id)')
+        $visitsQb
+            ->select('COUNT(id)')
             ->from('visits')
             ->where($visitsQb->expr()->isNull('short_url_id'))
             ->andWhere($visitsQb->expr()->eq('potential_bot', ':potential_bot'));

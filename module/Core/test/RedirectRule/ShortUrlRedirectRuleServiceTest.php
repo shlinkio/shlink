@@ -46,7 +46,8 @@ class ShortUrlRedirectRuleServiceTest extends TestCase
         ];
 
         $repo = $this->createMock(EntityRepository::class);
-        $repo->expects($this->once())
+        $repo
+            ->expects($this->once())
             ->method('findBy')
             ->with(
                 ['shortUrl' => $shortUrl],
@@ -107,7 +108,8 @@ class ShortUrlRedirectRuleServiceTest extends TestCase
         $data = new RedirectRulesData([]);
 
         $repo = $this->createMock(EntityRepository::class);
-        $repo->expects($this->once())
+        $repo
+            ->expects($this->once())
             ->method('findBy')
             ->with(
                 ['shortUrl' => $shortUrl],

@@ -78,7 +78,8 @@ class NotFoundRedirectResolver implements NotFoundRedirectResolverInterface
             $query,
         );
 
-        return $redirectUri->withPath($replacePlaceholdersInPath($redirectUri->getPath()))
+        return $redirectUri
+            ->withPath($replacePlaceholdersInPath($redirectUri->getPath()))
             ->withQuery($replacePlaceholdersInQuery($redirectUri->getQuery()))
             ->__toString();
     }

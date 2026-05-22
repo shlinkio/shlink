@@ -27,7 +27,8 @@ class VisitDeleterRepository extends EntitySpecificationRepository implements Vi
     private function deleteByShortUrl(string $entityName, ShortUrl $shortUrl): int
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->delete($entityName, 'v')
+        $qb
+            ->delete($entityName, 'v')
             ->where($qb->expr()->eq('v.shortUrl', ':shortUrl'))
             ->setParameter('shortUrl', $shortUrl);
 
