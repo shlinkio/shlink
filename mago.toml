@@ -75,9 +75,20 @@ no-empty-loop = {
 prefer-static-closure = { level = "warning" }
 array-style = { level = "warning" }
 prefer-early-continue = { max_allowed_statements = 2 }
+no-fully-qualified-global-class-like = { enabled = true, level = "warning" }
+no-fully-qualified-global-constant = { enabled = true, level = "warning" }
+no-fully-qualified-global-function = { enabled = true, level = "warning" }
+ambiguous-constant-access = { enabled = true, level = "warning" }
+ambiguous-function-call = {
+    enabled = true,
+    level = "warning",
+    exclude = [
+        "module/Core/functions",
+        "module/Core/config/entities-mappings"
+    ]
+}
 
 no-multi-assignments = { enabled = false }
-ambiguous-function-call = { enabled = false }
 no-assign-in-condition = { enabled = false }
 literal-named-argument = { enabled = false }
 tagged-fixme = { enabled = false }
