@@ -44,8 +44,8 @@
         "shlinkio/shlink-common": "dev-main#f27cf71 as 9.0",
         "shlinkio/shlink-config": "^4.1.0",
         "shlinkio/shlink-event-dispatcher": "^4.4.0",
-        "shlinkio/shlink-importer": "^5.7.0",
-        "shlinkio/shlink-installer": "^10.0.0",
+        "shlinkio/shlink-importer": "dev-main#68e7def as 5.8.0",
+        "shlinkio/shlink-installer": "dev-main#3821160 as 10.1.0",
         "shlinkio/shlink-ip-geolocation": "^5.0.0",
         "shlinkio/shlink-json": "^1.3",
         "spiral/roadrunner": "^2025.1",
@@ -59,7 +59,7 @@
         "symfony/string": "^8.0"
     },
     "require-dev": {
-        "carthage-software/mago": "^1.27",
+        "carthage-software/mago": "^1.28",
         "devizzent/cebe-php-openapi": "^1.1.2",
         "devster/ubench": "^2.1",
         "phpstan/phpstan": "^2.1",
