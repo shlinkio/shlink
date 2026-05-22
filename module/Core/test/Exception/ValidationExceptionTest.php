@@ -27,9 +27,9 @@ class ValidationExceptionTest extends TestCase
         ];
         $barValue = print_r(['baz', 'foo'], true);
         $expectedStringRepresentation = <<<EOT
-            'foo' => bar
-            'something' => {$barValue}
-        EOT;
+                'foo' => bar
+                'something' => {$barValue}
+            EOT;
 
         $e = ValidationException::fromArray($invalidData, $prev);
 

@@ -24,8 +24,7 @@ class ListShortUrlsAction extends AbstractRestAction
         private readonly ShortUrlListServiceInterface $shortUrlService,
         private readonly ShortUrlDataTransformerInterface $transformer,
         private readonly TreeMapper $mapper,
-    ) {
-    }
+    ) {}
 
     public function handle(Request $request): Response
     {

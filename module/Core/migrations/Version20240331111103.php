@@ -45,12 +45,12 @@ final class Version20240331111103 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->skipIf(! $schema->hasTable('orphan_visits_counts'));
+        $this->skipIf(!$schema->hasTable('orphan_visits_counts'));
         $schema->dropTable('orphan_visits_counts');
     }
 
     public function isTransactional(): bool
     {
-        return ! ($this->connection->getDatabasePlatform() instanceof MySQLPlatform);
+        return !$this->connection->getDatabasePlatform() instanceof MySQLPlatform;
     }
 }

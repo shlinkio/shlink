@@ -21,7 +21,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class DomainVisitsActionTest extends TestCase
 {
     private DomainVisitsAction $action;
-    private MockObject & VisitsStatsHelperInterface $visitsHelper;
+    private MockObject&VisitsStatsHelperInterface $visitsHelper;
 
     protected function setUp(): void
     {
@@ -33,15 +33,20 @@ class DomainVisitsActionTest extends TestCase
     public function providingCorrectDomainReturnsVisits(string $providedDomain, string $expectedDomain): void
     {
         $apiKey = ApiKey::create();
-        $this->visitsHelper->expects($this->once())->method('visitsForDomain')->with(
-            $expectedDomain,
-            $this->isInstanceOf(VisitsParams::class),
-            $apiKey,
-        )->willReturn(new Paginator(new ArrayAdapter([])));
+        $this->visitsHelper
+            ->expects($this->once())
+            ->method('visitsForDomain')
+            ->with(
+                $expectedDomain,
+                $this->isInstanceOf(VisitsParams::class),
+                $apiKey,
+            )
+            ->willReturn(new Paginator(new ArrayAdapter([])));
 
         $response = $this->action->handle(
-            ServerRequestFactory::fromGlobals()->withAttribute('domain', $providedDomain)
-                                               ->withAttribute(ApiKey::class, $apiKey),
+            ServerRequestFactory::fromGlobals()
+                ->withAttribute('domain', $providedDomain)
+                ->withAttribute(ApiKey::class, $apiKey),
         );
 
         self::assertEquals(200, $response->getStatusCode());

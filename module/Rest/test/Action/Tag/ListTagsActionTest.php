@@ -22,7 +22,7 @@ use function count;
 class ListTagsActionTest extends TestCase
 {
     private ListTagsAction $action;
-    private MockObject & TagServiceInterface $tagService;
+    private MockObject&TagServiceInterface $tagService;
 
     protected function setUp(): void
     {
@@ -35,27 +35,34 @@ class ListTagsActionTest extends TestCase
     {
         $tags = [new Tag('foo'), new Tag('bar')];
         $tagsCount = count($tags);
-        $this->tagService->expects($this->once())->method('listTags')->with(
-            $this->anything(),
-            $this->isInstanceOf(ApiKey::class),
-        )->willReturn(new Paginator(new ArrayAdapter($tags)));
+        $this->tagService
+            ->expects($this->once())
+            ->method('listTags')
+            ->with(
+                $this->anything(),
+                $this->isInstanceOf(ApiKey::class),
+            )
+            ->willReturn(new Paginator(new ArrayAdapter($tags)));
 
         /** @var JsonResponse $resp */
         $resp = $this->action->handle($this->requestWithApiKey());
         $payload = $resp->getPayload();
 
-        self::assertEquals([
-            'tags' => [
-                'data' => $tags,
-                'pagination' => [
-                    'currentPage' => 1,
-                    'pagesCount' => 1,
-                    'itemsPerPage' => 10,
-                    'itemsInCurrentPage' => $tagsCount,
-                    'totalItems' => $tagsCount,
+        self::assertEquals(
+            [
+                'tags' => [
+                    'data' => $tags,
+                    'pagination' => [
+                        'currentPage' => 1,
+                        'pagesCount' => 1,
+                        'itemsPerPage' => 10,
+                        'itemsInCurrentPage' => $tagsCount,
+                        'totalItems' => $tagsCount,
+                    ],
                 ],
             ],
-        ], $payload);
+            $payload,
+        );
     }
 
     private function requestWithApiKey(): ServerRequestInterface

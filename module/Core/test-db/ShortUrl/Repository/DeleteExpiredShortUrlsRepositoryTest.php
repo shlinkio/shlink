@@ -71,10 +71,14 @@ class DeleteExpiredShortUrlsRepositoryTest extends DatabaseTestCase
         $this->createShortUrls(2, ['maxVisits' => 3], visitsPerShortUrl: 3);
 
         // Create some short URLs with a valid date in the past which also reached the max amount of visits
-        $this->createShortUrls(4, [
-            'validUntil' => Chronos::now()->subDays(1),
-            'maxVisits' => 3,
-        ], visitsPerShortUrl: 4);
+        $this->createShortUrls(
+            4,
+            [
+                'validUntil' => Chronos::now()->subDays(1),
+                'maxVisits' => 3,
+            ],
+            visitsPerShortUrl: 4,
+        );
 
         $this->getEntityManager()->flush();
 

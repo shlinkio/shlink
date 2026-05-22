@@ -28,8 +28,7 @@ use function trim;
 readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionHelperInterface
 {
     public const int MAX_REDIRECTS = 15;
-    public const string CHROME_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) '
-        . 'Chrome/121.0.0.0 Safari/537.36';
+    public const string CHROME_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36';
 
     /** Matches the value inside a html title tag */
     private const string TITLE_TAG_VALUE = '/<title[^>]*>(.*?)<\/title>/i';
@@ -46,8 +45,7 @@ readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionH
         private UrlShortenerOptions $options,
         private LoggerInterface $logger,
         private Closure|null $isIconvInstalled = null,
-    ) {
-    }
+    ) {}
 
     /**
      * @template T of TitleResolutionModelInterface
@@ -56,7 +54,7 @@ readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionH
      */
     public function processTitle(TitleResolutionModelInterface $data): TitleResolutionModelInterface
     {
-        if (! $this->options->autoResolveTitles || $data->hasTitle()) {
+        if (!$this->options->autoResolveTitles || $data->hasTitle()) {
             return $data;
         }
 
@@ -66,7 +64,7 @@ readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionH
         }
 
         $contentType = strtolower($response->getHeaderLine('Content-Type'));
-        if (! str_starts_with($contentType, 'text/html')) {
+        if (!str_starts_with($contentType, 'text/html')) {
             return $data;
         }
 
@@ -100,7 +98,7 @@ readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionH
         $body = $response->getBody();
 
         // With streaming enabled, we can walk the body until the </title> tag is found, and then stop
-        while (! str_contains($collectedBody, '</title>') && ! $body->eof()) {
+        while (!str_contains($collectedBody, '</title>') && !$body->eof()) {
             $collectedBody .= $body->read(1024);
         }
 
@@ -110,7 +108,7 @@ readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionH
         if ($titleInOriginalEncoding === null) {
             return null;
         }
-        ;
+
         $pageCharset = $this->resolvePageCharset($contentType, $body, $collectedBody);
         if ($pageCharset === null) {
             // If it was not possible to determine the page's charset, ignore the title to avoid the risk of encoding
@@ -118,9 +116,12 @@ readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionH
             return null;
         }
 
-        return $this->encodeToUtf8WithMbString($titleInOriginalEncoding, $pageCharset)
-            ?? $this->encodeToUtf8WithIconv($titleInOriginalEncoding, $pageCharset)
-            ?? $titleInOriginalEncoding;
+        return (
+            $this->encodeToUtf8WithMbString($titleInOriginalEncoding, $pageCharset) ?? $this->encodeToUtf8WithIconv(
+                $titleInOriginalEncoding,
+                $pageCharset,
+            ) ?? $titleInOriginalEncoding
+        );
     }
 
     /**
@@ -148,7 +149,7 @@ readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionH
 
         // Continue reading the body, looking for any of the charset meta tags
         $charsetFromMeta = $readCharsetFromMeta($collectedBody);
-        while ($charsetFromMeta === null && ! $body->eof()) {
+        while ($charsetFromMeta === null && !$body->eof()) {
             $collectedBody .= $body->read(1024);
             $charsetFromMeta = $readCharsetFromMeta($collectedBody);
         }
@@ -170,8 +171,8 @@ readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionH
 
     private function encodeToUtf8WithIconv(string $titleInOriginalEncoding, string $pageCharset): string|null
     {
-        $isIconvInstalled = ($this->isIconvInstalled ?? fn () => function_exists('iconv'))();
-        if (! $isIconvInstalled) {
+        $isIconvInstalled = ($this->isIconvInstalled ?? static fn () => function_exists('iconv'))();
+        if (!$isIconvInstalled) {
             $this->logger->warning('Missing iconv extension. Skipping title encoding');
             return null;
         }

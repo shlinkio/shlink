@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Rest\Action\RedirectRule;
 
 use Laminas\Diactoros\Response\JsonResponse;
@@ -19,8 +21,7 @@ class ListRedirectRulesAction extends AbstractRestAction
     public function __construct(
         private readonly ShortUrlResolverInterface $urlResolver,
         private readonly ShortUrlRedirectRuleServiceInterface $ruleService,
-    ) {
-    }
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

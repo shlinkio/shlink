@@ -30,7 +30,7 @@ use function range;
 class ShortUrlResolverTest extends TestCase
 {
     private ShortUrlResolver $urlResolver;
-    private MockObject & ShortUrlRepository $repo;
+    private MockObject&ShortUrlRepository $repo;
 
     protected function setUp(): void
     {
@@ -45,9 +45,13 @@ class ShortUrlResolverTest extends TestCase
         $shortCode = $shortUrl->getShortCode();
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
 
-        $this->repo->expects($this->once())->method('findOne')->with($identifier, $apiKey?->spec())->willReturn(
-            $shortUrl,
-        );
+        $this->repo
+            ->expects($this->once())
+            ->method('findOne')
+            ->with($identifier, $apiKey?->spec())
+            ->willReturn(
+                $shortUrl,
+            );
 
         $result = $this->urlResolver->resolveShortUrl($identifier, $apiKey);
 
@@ -73,10 +77,14 @@ class ShortUrlResolverTest extends TestCase
         $shortUrl = ShortUrl::withLongUrl('https://expected_url');
         $shortCode = $shortUrl->getShortCode();
 
-        $this->repo->expects($this->once())->method('findOneWithDomainFallback')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
-            ShortUrlMode::STRICT,
-        )->willReturn($shortUrl);
+        $this->repo
+            ->expects($this->once())
+            ->method('findOneWithDomainFallback')
+            ->with(
+                ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+                ShortUrlMode::STRICT,
+            )
+            ->willReturn($shortUrl);
 
         $result = $this->urlResolver->resolveEnabledShortUrl(ShortUrlIdentifier::fromShortCodeAndDomain($shortCode));
 
@@ -88,10 +96,14 @@ class ShortUrlResolverTest extends TestCase
     {
         $shortCode = 'abc123';
 
-        $this->repo->expects($this->once())->method('findOneWithDomainFallback')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
-            ShortUrlMode::STRICT,
-        )->willReturn(null);
+        $this->repo
+            ->expects($this->once())
+            ->method('findOneWithDomainFallback')
+            ->with(
+                ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+                ShortUrlMode::STRICT,
+            )
+            ->willReturn(null);
 
         $this->expectException(ShortUrlNotFoundException::class);
 
@@ -109,10 +121,14 @@ class ShortUrlResolverTest extends TestCase
     {
         $shortCode = $shortUrl->getShortCode();
 
-        $this->repo->expects($this->once())->method('findOneWithDomainFallback')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
-            ShortUrlMode::STRICT,
-        )->willReturn($shortUrl);
+        $this->repo
+            ->expects($this->once())
+            ->method('findOneWithDomainFallback')
+            ->with(
+                ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+                ShortUrlMode::STRICT,
+            )
+            ->willReturn($shortUrl);
 
         $this->expectException(ShortUrlNotFoundException::class);
 
@@ -123,10 +139,10 @@ class ShortUrlResolverTest extends TestCase
     {
         $now = Chronos::now();
 
-        yield 'maxVisits reached' => [(function () {
+        yield 'maxVisits reached' => [(static function () {
             $shortUrl = ShortUrl::create(new ShortUrlCreation('https://longUrl', maxVisits: 3));
             $shortUrl->setVisits(new ArrayCollection(array_map(
-                fn () => Visit::forValidShortUrl($shortUrl, Visitor::empty()),
+                static fn () => Visit::forValidShortUrl($shortUrl, Visitor::empty()),
                 range(0, 4),
             )));
 
@@ -140,14 +156,14 @@ class ShortUrlResolverTest extends TestCase
             longUrl: 'https://longUrl',
             validUntil: $now->subMonths(1),
         ))];
-        yield 'mixed' => [(function () use ($now) {
+        yield 'mixed' => [(static function () use ($now) {
             $shortUrl = ShortUrl::create(new ShortUrlCreation(
                 longUrl: 'https://longUrl',
                 validUntil: $now->subMonths(1),
                 maxVisits: 3,
             ));
             $shortUrl->setVisits(new ArrayCollection(array_map(
-                fn () => Visit::forValidShortUrl($shortUrl, Visitor::empty()),
+                static fn () => Visit::forValidShortUrl($shortUrl, Visitor::empty()),
                 range(0, 4),
             )));
 

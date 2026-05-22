@@ -18,9 +18,9 @@ use Shlinkio\Shlink\Rest\Middleware\Mercure\NotConfiguredMercureErrorHandler;
 class NotConfiguredMercureErrorHandlerTest extends TestCase
 {
     private NotConfiguredMercureErrorHandler $middleware;
-    private MockObject & ProblemDetailsResponseFactory $respFactory;
-    private MockObject & LoggerInterface $logger;
-    private MockObject & RequestHandlerInterface $handler;
+    private MockObject&ProblemDetailsResponseFactory $respFactory;
+    private MockObject&LoggerInterface $logger;
+    private MockObject&RequestHandlerInterface $handler;
 
     protected function setUp(): void
     {
@@ -45,9 +45,13 @@ class NotConfiguredMercureErrorHandlerTest extends TestCase
     public function exceptionIsParsedToResponse(): void
     {
         $req = ServerRequestFactory::fromGlobals();
-        $this->handler->expects($this->once())->method('handle')->with($req)->willThrowException(
-            MercureException::mercureNotConfigured(),
-        );
+        $this->handler
+            ->expects($this->once())
+            ->method('handle')
+            ->with($req)
+            ->willThrowException(
+                MercureException::mercureNotConfigured(),
+            );
         $this->respFactory->expects($this->once())->method('createResponseFromThrowable')->willReturn(new Response());
         $this->logger->expects($this->once())->method('warning');
 

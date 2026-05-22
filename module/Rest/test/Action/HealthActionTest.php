@@ -20,7 +20,7 @@ use Shlinkio\Shlink\Rest\Action\HealthAction;
 class HealthActionTest extends TestCase
 {
     private HealthAction $action;
-    private MockObject & Connection $conn;
+    private MockObject&Connection $conn;
 
     protected function setUp(): void
     {
@@ -47,10 +47,13 @@ class HealthActionTest extends TestCase
         self::assertEquals(200, $resp->getStatusCode());
         self::assertEquals('pass', $payload['status']);
         self::assertEquals('1.2.3', $payload['version']);
-        self::assertEquals([
-            'about' => 'https://shlink.io',
-            'project' => 'https://github.com/shlinkio/shlink',
-        ], $payload['links']);
+        self::assertEquals(
+            [
+                'about' => 'https://shlink.io',
+                'project' => 'https://github.com/shlinkio/shlink',
+            ],
+            $payload['links'],
+        );
         self::assertEquals('application/health+json', $resp->getHeaderLine('Content-type'));
     }
 
@@ -66,10 +69,13 @@ class HealthActionTest extends TestCase
         self::assertEquals(503, $resp->getStatusCode());
         self::assertEquals('fail', $payload['status']);
         self::assertEquals('1.2.3', $payload['version']);
-        self::assertEquals([
-            'about' => 'https://shlink.io',
-            'project' => 'https://github.com/shlinkio/shlink',
-        ], $payload['links']);
+        self::assertEquals(
+            [
+                'about' => 'https://shlink.io',
+                'project' => 'https://github.com/shlinkio/shlink',
+            ],
+            $payload['links'],
+        );
         self::assertEquals('application/health+json', $resp->getHeaderLine('Content-type'));
     }
 }

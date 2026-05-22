@@ -20,7 +20,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class ListDomainsActionTest extends TestCase
 {
     private ListDomainsAction $action;
-    private MockObject & DomainServiceInterface $domainService;
+    private MockObject&DomainServiceInterface $domainService;
     private NotFoundRedirectOptions $options;
 
     protected function setUp(): void
@@ -44,11 +44,14 @@ class ListDomainsActionTest extends TestCase
         $resp = $this->action->handle(ServerRequestFactory::fromGlobals()->withAttribute(ApiKey::class, $apiKey));
         $payload = $resp->getPayload();
 
-        self::assertEquals([
-            'domains' => [
-                'data' => $domains,
-                'defaultRedirects' => NotFoundRedirects::fromConfig($this->options),
+        self::assertEquals(
+            [
+                'domains' => [
+                    'data' => $domains,
+                    'defaultRedirects' => NotFoundRedirects::fromConfig($this->options),
+                ],
             ],
-        ], $payload);
+            $payload,
+        );
     }
 }

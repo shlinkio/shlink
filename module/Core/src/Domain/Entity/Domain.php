@@ -18,8 +18,7 @@ class Domain extends AbstractEntity implements JsonSerializable, NotFoundRedirec
         private(set) string|null $baseUrlRedirect = null,
         private(set) string|null $regular404Redirect = null,
         private(set) string|null $invalidShortUrlRedirect = null,
-    ) {
-    }
+    ) {}
 
     public static function withAuthority(string $authority): self
     {

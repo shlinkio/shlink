@@ -10,9 +10,7 @@ use function sprintf;
 
 final readonly class Renaming
 {
-    private function __construct(public string $oldName, public string $newName)
-    {
-    }
+    private function __construct(public string $oldName, public string $newName) {}
 
     public static function fromNames(string $oldName, string $newName): self
     {
@@ -21,7 +19,7 @@ final readonly class Renaming
 
     public static function fromArray(array $payload): self
     {
-        if (! isset($payload['oldName'], $payload['newName'])) {
+        if (!isset($payload['oldName'], $payload['newName'])) {
             throw ValidationException::fromArray([
                 'oldName' => 'oldName is required',
                 'newName' => 'newName is required',

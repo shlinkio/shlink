@@ -18,7 +18,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Middleware\TrimTrailingSlashMiddleware;
 
 class TrimTrailingSlashMiddlewareTest extends TestCase
 {
-    private MockObject & RequestHandlerInterface $requestHandler;
+    private MockObject&RequestHandlerInterface $requestHandler;
 
     protected function setUp(): void
     {
@@ -35,9 +35,13 @@ class TrimTrailingSlashMiddlewareTest extends TestCase
             $assertions(...$args);
             return true;
         };
-        $this->requestHandler->expects($this->once())->method('handle')->with($this->callback($arg))->willReturn(
-            new Response(),
-        );
+        $this->requestHandler
+            ->expects($this->once())
+            ->method('handle')
+            ->with($this->callback($arg))
+            ->willReturn(
+                new Response(),
+            );
 
         $this->middleware($trailingSlashEnabled)->process($inputRequest, $this->requestHandler);
     }
@@ -47,28 +51,28 @@ class TrimTrailingSlashMiddlewareTest extends TestCase
         yield 'trailing slash disabled' => [
             false,
             $inputReq = ServerRequestFactory::fromGlobals(),
-            function (ServerRequestInterface $request) use ($inputReq): void {
+            static function (ServerRequestInterface $request) use ($inputReq): void {
                 Assert::assertSame($inputReq, $request);
             },
         ];
         yield 'trailing slash enabled without shortCode attr' => [
             true,
             $inputReq = ServerRequestFactory::fromGlobals(),
-            function (ServerRequestInterface $request) use ($inputReq): void {
+            static function (ServerRequestInterface $request) use ($inputReq): void {
                 Assert::assertSame($inputReq, $request);
             },
         ];
         yield 'trailing slash enabled with null shortCode attr' => [
             true,
             $inputReq = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', null),
-            function (ServerRequestInterface $request) use ($inputReq): void {
+            static function (ServerRequestInterface $request) use ($inputReq): void {
                 Assert::assertSame($inputReq, $request);
             },
         ];
         yield 'trailing slash enabled with non-null shortCode attr' => [
             true,
             $inputReq = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', 'foo//'),
-            function (ServerRequestInterface $request) use ($inputReq): void {
+            static function (ServerRequestInterface $request) use ($inputReq): void {
                 Assert::assertNotSame($inputReq, $request);
                 Assert::assertEquals('foo', $request->getAttribute('shortCode'));
             },

@@ -21,12 +21,11 @@ final class Version20241105215309 extends AbstractMigration
 
         $qb = $this->connection->createQueryBuilder();
         $qb->select($keyColumnName)
-           ->from('api_keys');
+            ->from('api_keys');
         $result = $qb->executeQuery();
 
         $updateQb = $this->connection->createQueryBuilder();
-        $updateQb
-            ->update('api_keys')
+        $updateQb->update('api_keys')
             ->set($keyColumnName, ':encryptedKey')
             ->where($updateQb->expr()->eq($keyColumnName, ':plainTextKey'));
 
@@ -40,6 +39,6 @@ final class Version20241105215309 extends AbstractMigration
 
     public function isTransactional(): bool
     {
-        return ! ($this->connection->getDatabasePlatform() instanceof MySQLPlatform);
+        return !$this->connection->getDatabasePlatform() instanceof MySQLPlatform;
     }
 }

@@ -16,7 +16,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class DeleteTagsActionTest extends TestCase
 {
     private DeleteTagsAction $action;
-    private MockObject & TagServiceInterface $tagService;
+    private MockObject&TagServiceInterface $tagService;
 
     protected function setUp(): void
     {
@@ -27,13 +27,15 @@ class DeleteTagsActionTest extends TestCase
     #[Test, DataProvider('provideTags')]
     public function processDelegatesIntoService(array|null $tags): void
     {
-        $request = (new ServerRequest())
-            ->withQueryParams(['tags' => $tags])
+        $request = new ServerRequest()->withQueryParams(['tags' => $tags])
             ->withAttribute(ApiKey::class, ApiKey::create());
-        $this->tagService->expects($this->once())->method('deleteTags')->with(
-            $tags ?? [],
-            $this->isInstanceOf(ApiKey::class),
-        );
+        $this->tagService
+            ->expects($this->once())
+            ->method('deleteTags')
+            ->with(
+                $tags ?? [],
+                $this->isInstanceOf(ApiKey::class),
+            );
 
         $response = $this->action->handle($request);
 

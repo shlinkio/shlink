@@ -19,7 +19,7 @@ use Shlinkio\Shlink\Rest\Middleware\ShortUrl\ShortUrlOptionsPayloadMiddleware;
 class ShortUrlOptionsPayloadMiddlewareTest extends TestCase
 {
     private ShortUrlOptionsPayloadMiddleware $middleware;
-    private MockObject & RequestHandlerInterface $handler;
+    private MockObject&RequestHandlerInterface $handler;
 
     protected function setUp(): void
     {
@@ -31,19 +31,23 @@ class ShortUrlOptionsPayloadMiddlewareTest extends TestCase
     public function defaultValueIsInjectedInBodyWhenNotProvided(array $body, int $expectedLength): void
     {
         $request = ServerRequestFactory::fromGlobals()->withParsedBody($body);
-        $this->handler->expects($this->once())->method('handle')->with($this->callback(
-            function (ServerRequestInterface $req) use ($expectedLength) {
-                $parsedBody = (array) $req->getParsedBody();
+        $this->handler
+            ->expects($this->once())
+            ->method('handle')
+            ->with($this->callback(
+                static function (ServerRequestInterface $req) use ($expectedLength) {
+                    $parsedBody = (array) $req->getParsedBody();
 
-                Assert::assertArrayHasKey('shortCodeLength', $parsedBody);
-                Assert::assertEquals($expectedLength, $parsedBody['shortCodeLength']);
+                    Assert::assertArrayHasKey('shortCodeLength', $parsedBody);
+                    Assert::assertEquals($expectedLength, $parsedBody['shortCodeLength']);
 
-                Assert::assertArrayHasKey('shortUrlMode', $parsedBody);
-                Assert::assertArrayHasKey('multiSegmentSlugsEnabled', $parsedBody);
+                    Assert::assertArrayHasKey('shortUrlMode', $parsedBody);
+                    Assert::assertArrayHasKey('multiSegmentSlugsEnabled', $parsedBody);
 
-                return true;
-            },
-        ))->willReturn(new Response());
+                    return true;
+                },
+            ))
+            ->willReturn(new Response());
 
         $this->middleware->process($request, $this->handler);
     }

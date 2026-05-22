@@ -21,9 +21,7 @@ use function sprintf;
 
 final readonly class ShortUrlImporting
 {
-    private function __construct(private ShortUrl $shortUrl, private bool $isNew)
-    {
-    }
+    private function __construct(private ShortUrl $shortUrl, private bool $isNew) {}
 
     public static function fromExistingShortUrl(ShortUrl $shortUrl): self
     {
@@ -77,7 +75,9 @@ final readonly class ShortUrlImporting
         $shortUrl = $this->resolveShortUrl($em);
         $redirectRules = map(
             $rules,
-            function (ImportedShlinkRedirectRule $rule, int|string|float $index) use ($shortUrl): ShortUrlRedirectRule {
+            static function (ImportedShlinkRedirectRule $rule, int|string|float $index) use (
+                $shortUrl,
+            ): ShortUrlRedirectRule {
                 $conditions = new ArrayCollection();
                 foreach ($rule->conditions as $cond) {
                     $redirectCondition = RedirectCondition::fromImport($cond);
@@ -88,8 +88,8 @@ final readonly class ShortUrlImporting
 
                 return new ShortUrlRedirectRule(
                     shortUrl: $shortUrl,
-                    priority: ((int) $index) + 1,
-                    longUrl:$rule->longUrl,
+                    priority: (int) $index + 1,
+                    longUrl: $rule->longUrl,
                     conditions: $conditions,
                 );
             },

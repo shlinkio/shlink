@@ -15,8 +15,7 @@ final readonly class DomainItem implements JsonSerializable
         private string $authority,
         public NotFoundRedirectConfigInterface $notFoundRedirectConfig,
         public bool $isDefault,
-    ) {
-    }
+    ) {}
 
     public static function forNonDefaultDomain(Domain $domain): self
     {

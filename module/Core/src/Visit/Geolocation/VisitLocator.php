@@ -16,8 +16,7 @@ readonly class VisitLocator implements VisitLocatorInterface
     public function __construct(
         private EntityManagerInterface $em,
         private VisitIterationRepositoryInterface $repo,
-    ) {
-    }
+    ) {}
 
     public function locateUnlocatedVisits(VisitGeolocationHelperInterface $helper): void
     {
@@ -48,7 +47,7 @@ readonly class VisitLocator implements VisitLocatorInterface
             try {
                 $location = $helper->geolocateVisit($visit);
             } catch (IpCannotBeLocatedException $e) {
-                if (! $e->isNonLocatableAddress()) {
+                if (!$e->isNonLocatableAddress()) {
                     // Skip if the visit's IP could not be located because of an error
                     continue;
                 }
@@ -60,7 +59,7 @@ readonly class VisitLocator implements VisitLocatorInterface
             $this->locateVisit($visit, VisitLocation::fromLocation($location), $helper);
 
             // Flush and clear after X iterations
-            if ($count % $persistBlock === 0) {
+            if (($count % $persistBlock) === 0) {
                 $this->em->flush();
                 $this->em->clear();
             }

@@ -58,84 +58,105 @@ class EnabledListenerCheckerTest extends TestCase
 
     public static function provideConfiguredCheckers(): iterable
     {
-        yield 'RabbitMQ' => [self::checker(rabbitMqEnabled: true), [
-            NotifyVisitToRabbitMq::class => true,
-            NotifyNewShortUrlToRabbitMq::class => true,
-            NotifyVisitToRedis::class => false,
-            NotifyNewShortUrlToRedis::class => false,
-            NotifyVisitToMercure::class => false,
-            NotifyNewShortUrlToMercure::class => false,
-            UpdateGeoLiteDb::class => false,
-            'unknown' => false,
-        ]];
-        yield 'Redis Pub/Sub' => [self::checker(redisPubSubEnabled: true), [
-            NotifyVisitToRabbitMq::class => false,
-            NotifyNewShortUrlToRabbitMq::class => false,
-            NotifyVisitToRedis::class => true,
-            NotifyNewShortUrlToRedis::class => true,
-            NotifyVisitToMercure::class => false,
-            NotifyNewShortUrlToMercure::class => false,
-            UpdateGeoLiteDb::class => false,
-            'unknown' => false,
-        ]];
-        yield 'Mercure' => [self::checker(mercureEnabled: true), [
-            NotifyVisitToRabbitMq::class => false,
-            NotifyNewShortUrlToRabbitMq::class => false,
-            NotifyVisitToRedis::class => false,
-            NotifyNewShortUrlToRedis::class => false,
-            NotifyVisitToMercure::class => true,
-            NotifyNewShortUrlToMercure::class => true,
-            UpdateGeoLiteDb::class => false,
-            'unknown' => false,
-        ]];
-        yield 'GeoLite' => [self::checker(geoLiteEnabled: true), [
-            NotifyVisitToRabbitMq::class => false,
-            NotifyNewShortUrlToRabbitMq::class => false,
-            NotifyVisitToRedis::class => false,
-            NotifyNewShortUrlToRedis::class => false,
-            NotifyVisitToMercure::class => false,
-            NotifyNewShortUrlToMercure::class => false,
-            UpdateGeoLiteDb::class => true,
-            'unknown' => false,
-        ]];
-        yield 'Matomo' => [self::checker(matomoEnabled: true), [
-            NotifyVisitToRabbitMq::class => false,
-            NotifyNewShortUrlToRabbitMq::class => false,
-            NotifyVisitToRedis::class => false,
-            NotifyNewShortUrlToRedis::class => false,
-            NotifyVisitToMercure::class => false,
-            NotifyNewShortUrlToMercure::class => false,
-            SendVisitToMatomo::class => true,
-            UpdateGeoLiteDb::class => false,
-            'unknown' => false,
-        ]];
-        yield 'All disabled' => [self::checker(), [
-            NotifyVisitToRabbitMq::class => false,
-            NotifyNewShortUrlToRabbitMq::class => false,
-            NotifyVisitToRedis::class => false,
-            NotifyNewShortUrlToRedis::class => false,
-            NotifyVisitToMercure::class => false,
-            NotifyNewShortUrlToMercure::class => false,
-            UpdateGeoLiteDb::class => false,
-            'unknown' => false,
-        ]];
-        yield 'All enabled' => [self::checker(
-            rabbitMqEnabled: true,
-            redisPubSubEnabled: true,
-            mercureEnabled: true,
-            geoLiteEnabled: true,
-            matomoEnabled: true,
-        ), [
-            NotifyVisitToRabbitMq::class => true,
-            NotifyNewShortUrlToRabbitMq::class => true,
-            NotifyVisitToRedis::class => true,
-            NotifyNewShortUrlToRedis::class => true,
-            NotifyVisitToMercure::class => true,
-            NotifyNewShortUrlToMercure::class => true,
-            SendVisitToMatomo::class => true,
-            UpdateGeoLiteDb::class => true,
-            'unknown' => false,
-        ]];
+        yield 'RabbitMQ' => [
+            self::checker(rabbitMqEnabled: true),
+            [
+                NotifyVisitToRabbitMq::class => true,
+                NotifyNewShortUrlToRabbitMq::class => true,
+                NotifyVisitToRedis::class => false,
+                NotifyNewShortUrlToRedis::class => false,
+                NotifyVisitToMercure::class => false,
+                NotifyNewShortUrlToMercure::class => false,
+                UpdateGeoLiteDb::class => false,
+                'unknown' => false,
+            ],
+        ];
+        yield 'Redis Pub/Sub' => [
+            self::checker(redisPubSubEnabled: true),
+            [
+                NotifyVisitToRabbitMq::class => false,
+                NotifyNewShortUrlToRabbitMq::class => false,
+                NotifyVisitToRedis::class => true,
+                NotifyNewShortUrlToRedis::class => true,
+                NotifyVisitToMercure::class => false,
+                NotifyNewShortUrlToMercure::class => false,
+                UpdateGeoLiteDb::class => false,
+                'unknown' => false,
+            ],
+        ];
+        yield 'Mercure' => [
+            self::checker(mercureEnabled: true),
+            [
+                NotifyVisitToRabbitMq::class => false,
+                NotifyNewShortUrlToRabbitMq::class => false,
+                NotifyVisitToRedis::class => false,
+                NotifyNewShortUrlToRedis::class => false,
+                NotifyVisitToMercure::class => true,
+                NotifyNewShortUrlToMercure::class => true,
+                UpdateGeoLiteDb::class => false,
+                'unknown' => false,
+            ],
+        ];
+        yield 'GeoLite' => [
+            self::checker(geoLiteEnabled: true),
+            [
+                NotifyVisitToRabbitMq::class => false,
+                NotifyNewShortUrlToRabbitMq::class => false,
+                NotifyVisitToRedis::class => false,
+                NotifyNewShortUrlToRedis::class => false,
+                NotifyVisitToMercure::class => false,
+                NotifyNewShortUrlToMercure::class => false,
+                UpdateGeoLiteDb::class => true,
+                'unknown' => false,
+            ],
+        ];
+        yield 'Matomo' => [
+            self::checker(matomoEnabled: true),
+            [
+                NotifyVisitToRabbitMq::class => false,
+                NotifyNewShortUrlToRabbitMq::class => false,
+                NotifyVisitToRedis::class => false,
+                NotifyNewShortUrlToRedis::class => false,
+                NotifyVisitToMercure::class => false,
+                NotifyNewShortUrlToMercure::class => false,
+                SendVisitToMatomo::class => true,
+                UpdateGeoLiteDb::class => false,
+                'unknown' => false,
+            ],
+        ];
+        yield 'All disabled' => [
+            self::checker(),
+            [
+                NotifyVisitToRabbitMq::class => false,
+                NotifyNewShortUrlToRabbitMq::class => false,
+                NotifyVisitToRedis::class => false,
+                NotifyNewShortUrlToRedis::class => false,
+                NotifyVisitToMercure::class => false,
+                NotifyNewShortUrlToMercure::class => false,
+                UpdateGeoLiteDb::class => false,
+                'unknown' => false,
+            ],
+        ];
+        yield 'All enabled' => [
+            self::checker(
+                rabbitMqEnabled: true,
+                redisPubSubEnabled: true,
+                mercureEnabled: true,
+                geoLiteEnabled: true,
+                matomoEnabled: true,
+            ),
+            [
+                NotifyVisitToRabbitMq::class => true,
+                NotifyNewShortUrlToRabbitMq::class => true,
+                NotifyVisitToRedis::class => true,
+                NotifyNewShortUrlToRedis::class => true,
+                NotifyVisitToMercure::class => true,
+                NotifyNewShortUrlToMercure::class => true,
+                SendVisitToMatomo::class => true,
+                UpdateGeoLiteDb::class => true,
+                'unknown' => false,
+            ],
+        ];
     }
 
     private static function checker(

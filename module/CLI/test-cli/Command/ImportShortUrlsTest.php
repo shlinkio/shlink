@@ -25,22 +25,22 @@ class ImportShortUrlsTest extends CliTestCase
     protected function setUp(): void
     {
         $this->tempCsvFile = tempnam(sys_get_temp_dir(), 'shlink_csv');
-        if (! $this->tempCsvFile) {
+        if (!$this->tempCsvFile) {
             return;
         }
 
         $handle = fopen($this->tempCsvFile, 'w+');
-        if (! $handle) {
+        if (!$handle) {
             $this->fail('It was not possible to open the temporary file to write CSV on it');
         }
 
         fwrite(
             $handle,
             <<<CSV
-            longURL;tags;domain;short code;Title
-            https://shlink.io;foo,baz;s.test;testing-default-domain-import-1;
-            https://example.com;foo;s.test;testing-default-domain-import-2;
-            CSV,
+                longURL;tags;domain;short code;Title
+                https://shlink.io;foo,baz;s.test;testing-default-domain-import-1;
+                https://example.com;foo;s.test;testing-default-domain-import-2;
+                CSV,
         );
         fclose($handle);
     }
@@ -55,7 +55,7 @@ class ImportShortUrlsTest extends CliTestCase
     #[Test]
     public function defaultDomainIsIgnoredWhenExplicitlyProvided(): void
     {
-        if (! $this->tempCsvFile) {
+        if (!$this->tempCsvFile) {
             $this->fail('It was not possible to create a temporary CSV file');
         }
 

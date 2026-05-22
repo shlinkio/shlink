@@ -21,6 +21,6 @@ final class Version20250722060208 extends AbstractMigration
 
     public function isTransactional(): bool
     {
-        return ! ($this->connection->getDatabasePlatform() instanceof MySQLPlatform);
+        return !$this->connection->getDatabasePlatform() instanceof MySQLPlatform;
     }
 }

@@ -14,36 +14,36 @@ return static function (ClassMetadata $metadata): void {
     $builder = new ClassMetadataBuilder($metadata);
 
     $builder->setTable('api_keys')
-            ->setCustomRepositoryClass(ApiKey\Repository\ApiKeyRepository::class);
+        ->setCustomRepositoryClass(ApiKey\Repository\ApiKeyRepository::class);
 
     $builder->createField('id', Types::BIGINT)
-            ->makePrimaryKey()
-            ->generatedValue('IDENTITY')
-            ->option('unsigned', true)
-            ->build();
+        ->makePrimaryKey()
+        ->generatedValue('IDENTITY')
+        ->option('unsigned', true)
+        ->build();
 
     $builder->createField('key', Types::STRING)
-            ->columnName('`key`')
-            ->unique()
-            ->build();
+        ->columnName('`key`')
+        ->unique()
+        ->build();
 
     $builder->createField('name', Types::STRING)
-            ->columnName('`name`')
-            ->nullable()
-            ->build();
+        ->columnName('`name`')
+        ->nullable()
+        ->build();
 
     $builder->createField('expirationDate', ChronosDateTimeType::CHRONOS_DATETIME)
-            ->columnName('expiration_date')
-            ->nullable()
-            ->build();
+        ->columnName('expiration_date')
+        ->nullable()
+        ->build();
 
     $builder->createField('enabled', Types::BOOLEAN)
-            ->build();
+        ->build();
 
     $builder->createOneToMany('roles', ApiKeyRole::class)
-            ->mappedBy('apiKey')
-            ->setIndexBy('role')
-            ->cascadePersist()
-            ->orphanRemoval()
-            ->build();
+        ->mappedBy('apiKey')
+        ->setIndexBy('role')
+        ->cascadePersist()
+        ->orphanRemoval()
+        ->build();
 };

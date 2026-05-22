@@ -134,18 +134,23 @@ function arrayToString(array $array, int $indentSize = 4): string
     $names = array_keys($array);
     $index = 0;
 
-    return array_reduce($names, static function (string $acc, string $name) use (&$index, $indent, $array) {
-        $index++;
-        $messages = $array[$name];
+    return array_reduce(
+        $names,
+        static function (string $acc, string $name) use (&$index, $indent, $array) {
+            $index++;
+            $messages = $array[$name];
 
-        return $acc . sprintf(
-            "%s%s'%s' => %s",
-            $index === 1 ? '' : "\n",
-            $indent,
-            $name,
-            is_array($messages) ? print_r($messages, true) : $messages,
-        );
-    }, '');
+            return sprintf(
+                "%s%s%s'%s' => %s",
+                $acc,
+                $index === 1 ? '' : "\n",
+                $indent,
+                $name,
+                is_array($messages) ? print_r($messages, true) : $messages,
+            );
+        },
+        '',
+    );
 }
 
 function isCrawler(string $userAgent): bool
@@ -164,7 +169,7 @@ function fieldWithUtf8Charset(FieldBuilder $field, array $emConfig, string $coll
 {
     return match ($emConfig['connection']['driver'] ?? null) {
         'pdo_mysql' => $field->option('charset', 'utf8mb4')
-                             ->option('collation', 'utf8mb4_' . $collation),
+            ->option('collation', 'utf8mb4_' . $collation),
         default => $field,
     };
 }
@@ -215,11 +220,11 @@ function enumSide(string $enum, string $type): array
         $cache = [];
     }
 
-    return $cache[$type][$enum] ?? (
-        $cache[$type][$enum] = array_map(
+    return (
+        $cache[$type][$enum] ?? ($cache[$type][$enum] = array_map(
             static fn (BackedEnum $entry) => (string) ($type === 'name' ? $entry->name : $entry->value),
             $enum::cases(),
-        )
+        ))
     );
 }
 
@@ -252,7 +257,7 @@ function ipAddressFromRequest(ServerRequestInterface $request): string|null
 function geolocationFromRequest(ServerRequestInterface $request): Location|null
 {
     $geolocation = $request->getAttribute(Location::class);
-    if ($geolocation !== null && ! $geolocation instanceof Location) {
+    if ($geolocation !== null && !$geolocation instanceof Location) {
         // TODO Throw exception
     }
 

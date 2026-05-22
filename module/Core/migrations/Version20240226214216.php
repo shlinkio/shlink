@@ -14,13 +14,13 @@ final class Version20240226214216 extends AbstractMigration
 {
     public function up(Schema $schema): void
     {
-        $this->skipIf(! $schema->hasTable('device_long_urls'));
+        $this->skipIf(!$schema->hasTable('device_long_urls'));
 
         // Insert a rule per every device_long_url, and link it to the corresponding condition
         $qb = $this->connection->createQueryBuilder();
         $rules = $qb->select('short_url_id', 'device_type', 'long_url')
-                    ->from('device_long_urls')
-                    ->executeQuery();
+            ->from('device_long_urls')
+            ->executeQuery();
 
         $priorities = [];
         while ($ruleRow = $rules->fetchAssociative()) {

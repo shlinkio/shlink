@@ -18,9 +18,7 @@ class ListTagsAction extends AbstractRestAction
     protected const string ROUTE_PATH = '/tags';
     protected const array ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
-    public function __construct(private readonly TagServiceInterface $tagService)
-    {
-    }
+    public function __construct(private readonly TagServiceInterface $tagService) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

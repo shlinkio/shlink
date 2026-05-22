@@ -26,10 +26,10 @@ use Shlinkio\Shlink\Core\ShortUrl\UrlShortener;
 class UrlShortenerTest extends TestCase
 {
     private UrlShortener $urlShortener;
-    private MockObject & ShortUrlTitleResolutionHelperInterface $titleResolutionHelper;
-    private MockObject & ShortCodeUniquenessHelperInterface $shortCodeHelper;
-    private MockObject & EventDispatcherInterface $dispatcher;
-    private MockObject & ShortUrlRepositoryInterface $repo;
+    private MockObject&ShortUrlTitleResolutionHelperInterface $titleResolutionHelper;
+    private MockObject&ShortCodeUniquenessHelperInterface $shortCodeHelper;
+    private MockObject&EventDispatcherInterface $dispatcher;
+    private MockObject&ShortUrlRepositoryInterface $repo;
 
     protected function setUp(): void
     {
@@ -37,8 +37,8 @@ class UrlShortenerTest extends TestCase
         $this->shortCodeHelper = $this->createMock(ShortCodeUniquenessHelperInterface::class);
 
         $em = $this->createStub(EntityManagerInterface::class);
-        $em->method('persist')->willReturnCallback(fn (ShortUrl $shortUrl) => $shortUrl->setId('10'));
-        $em->method('wrapInTransaction')->willReturnCallback(fn (callable $callback) => $callback());
+        $em->method('persist')->willReturnCallback(static fn (ShortUrl $shortUrl) => $shortUrl->setId('10'));
+        $em->method('wrapInTransaction')->willReturnCallback(static fn (callable $callback) => $callback());
 
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->repo = $this->createMock(ShortUrlRepositoryInterface::class);
@@ -58,15 +58,19 @@ class UrlShortenerTest extends TestCase
     {
         $longUrl = 'http://foobar.com/12345/hello?foo=bar';
         $meta = new ShortUrlCreation($longUrl);
-        $this->titleResolutionHelper->expects($this->once())->method('processTitle')->with(
-            $meta,
-        )->willReturnArgument(0);
+        $this->titleResolutionHelper
+            ->expects($this->once())
+            ->method('processTitle')
+            ->with(
+                $meta,
+            )
+            ->willReturnArgument(0);
         $this->shortCodeHelper->method('ensureShortCodeUniqueness')->willReturn(true);
         $this->dispatcher->expects($this->once())->method('dispatch')->willReturnCallback($dispatchBehavior);
 
         $result = $this->urlShortener->shorten($meta);
         $thereIsError = false;
-        $result->onEventDispatchingError(function () use (&$thereIsError): void {
+        $result->onEventDispatchingError(static function () use (&$thereIsError): void {
             $thereIsError = true;
         });
 
@@ -76,11 +80,13 @@ class UrlShortenerTest extends TestCase
 
     public static function provideDispatchBehavior(): iterable
     {
-        yield 'no dispatch error' => [false, static function (): void {
-        }];
-        yield 'dispatch error' => [true, static function (): void {
-            throw new ServiceNotFoundException();
-        }];
+        yield 'no dispatch error' => [false, static function (): void {}];
+        yield 'dispatch error' => [
+            true,
+            static function (): void {
+                throw new ServiceNotFoundException();
+            },
+        ];
     }
 
     #[Test]
@@ -89,9 +95,13 @@ class UrlShortenerTest extends TestCase
         $meta = new ShortUrlCreation(longUrl: 'http://foobar.com/12345/hello?foo=bar', customSlug: 'custom-slug');
 
         $this->shortCodeHelper->expects($this->once())->method('ensureShortCodeUniqueness')->willReturn(false);
-        $this->titleResolutionHelper->expects($this->once())->method('processTitle')->with(
-            $meta,
-        )->willReturnArgument(0);
+        $this->titleResolutionHelper
+            ->expects($this->once())
+            ->method('processTitle')
+            ->with(
+                $meta,
+            )
+            ->willReturnArgument(0);
 
         $this->expectException(NonUniqueSlugException::class);
 

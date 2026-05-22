@@ -34,7 +34,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
 
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->delete(Tag::class, 't')
-           ->where($qb->expr()->in('t.name', $names));
+            ->where($qb->expr()->in('t.name', $names));
 
         return $qb->getQuery()->execute();
     }
@@ -49,22 +49,23 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         $apiKey = $filtering?->apiKey;
         $conn = $this->getEntityManager()->getConnection();
 
-        $applyApiKeyToNativeQb = static fn (NativeQueryBuilder $qb) =>
-            $apiKey?->mapRoles(static fn (Role $role, array $meta) => match ($role) {
-                Role::DOMAIN_SPECIFIC => $qb->andWhere(
-                    $qb->expr()->eq('s.domain_id', $conn->quote(Role::domainIdFromMeta($meta))),
-                ),
-                Role::AUTHORED_SHORT_URLS => $qb->andWhere(
-                    $qb->expr()->eq('s.author_api_key_id', $conn->quote($apiKey->getId())),
-                ),
-                default => $qb,
-            });
+        $applyApiKeyToNativeQb = static fn (NativeQueryBuilder $qb) => $apiKey?->mapRoles(static fn (
+            Role $role,
+            array $meta,
+        ) => match ($role) {
+            Role::DOMAIN_SPECIFIC => $qb->andWhere(
+                $qb->expr()->eq('s.domain_id', $conn->quote(Role::domainIdFromMeta($meta))),
+            ),
+            Role::AUTHORED_SHORT_URLS => $qb->andWhere(
+                $qb->expr()->eq('s.author_api_key_id', $conn->quote($apiKey->getId())),
+            ),
+            default => $qb,
+        });
 
         // For non-restricted API keys, we'll return tags which are not linked to any short URL
-        $joiningMethod = ! ApiKey::isShortUrlRestricted($apiKey) ? 'leftJoin' : 'join';
+        $joiningMethod = !ApiKey::isShortUrlRestricted($apiKey) ? 'leftJoin' : 'join';
         $tagsSubQb = $conn->createQueryBuilder();
-        $tagsSubQb
-            ->select('t.id AS tag_id', 't.name AS tag', 'COUNT(DISTINCT s.id) AS short_urls_count')
+        $tagsSubQb->select('t.id AS tag_id', 't.name AS tag', 'COUNT(DISTINCT s.id) AS short_urls_count')
             ->from('tags', 't')
             ->groupBy('t.id', 't.name')
             ->{$joiningMethod}('t', 'short_urls_in_tags', 'st', $tagsSubQb->expr()->eq('st.tag_id', 't.id'))
@@ -78,15 +79,16 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         $buildVisitsSubQb = static function (bool $excludeBots, string $aggregateAlias) use ($conn) {
             $visitsSubQb = $conn->createQueryBuilder();
             $commonJoinCondition = $visitsSubQb->expr()->eq('sc.short_url_id', 'st.short_url_id');
-            $visitsJoin = ! $excludeBots
+            $visitsJoin = !$excludeBots
                 ? $commonJoinCondition
-                : $visitsSubQb->expr()->and(
-                    $commonJoinCondition,
-                    $visitsSubQb->expr()->eq('sc.potential_bot', $conn->quote('0')),
-                )->__toString();
+                : $visitsSubQb->expr()
+                    ->and(
+                        $commonJoinCondition,
+                        $visitsSubQb->expr()->eq('sc.potential_bot', $conn->quote('0')),
+                    )
+                    ->__toString();
 
-            return $visitsSubQb
-                ->select('st.tag_id AS tag_id', 'SUM(sc.count) AS ' . $aggregateAlias)
+            return $visitsSubQb->select('st.tag_id AS tag_id', 'SUM(sc.count) AS ' . $aggregateAlias)
                 ->from('short_url_visits_counts', 'sc')
                 ->join('sc', 'short_urls_in_tags', 'st', $visitsJoin)
                 ->join('sc', 'short_urls', 's', $visitsSubQb->expr()->eq('sc.short_url_id', 's.id'))
@@ -103,13 +105,12 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         // sub-queries at "from" and "join" level.
         // If no sub-query is used, the whole list is loaded even with pagination, making it very inefficient.
         $mainQb = $conn->createQueryBuilder();
-        $mainQb
-            ->select(
-                't.tag AS tag',
-                'COALESCE(v.visits, 0) AS visits', // COALESCE required for postgres to properly order
-                'COALESCE(b.non_bot_visits, 0) AS non_bot_visits',
-                'COALESCE(t.short_urls_count, 0) AS short_urls_count',
-            )
+        $mainQb->select(
+            't.tag AS tag',
+            'COALESCE(v.visits, 0) AS visits', // COALESCE required for postgres to properly order
+            'COALESCE(b.non_bot_visits, 0) AS non_bot_visits',
+            'COALESCE(t.short_urls_count, 0) AS short_urls_count',
+        )
             ->from('(' . $tagsSubQb->getSQL() . ')', 't')
             ->leftJoin('t', '(' . $allVisitsSubQb->getSQL() . ')', 'v', $mainQb->expr()->eq('t.tag_id', 'v.tag_id'))
             ->leftJoin('t', '(' . $nonBotVisitsSubQb->getSQL() . ')', 'b', $mainQb->expr()->eq('t.tag_id', 'b.tag_id'))

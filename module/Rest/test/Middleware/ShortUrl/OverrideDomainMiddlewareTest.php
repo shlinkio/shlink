@@ -22,9 +22,9 @@ use Shlinkio\Shlink\Rest\Middleware\ShortUrl\OverrideDomainMiddleware;
 class OverrideDomainMiddlewareTest extends TestCase
 {
     private OverrideDomainMiddleware $middleware;
-    private MockObject & DomainServiceInterface $domainService;
-    private MockObject & ApiKey $apiKey;
-    private MockObject & RequestHandlerInterface $handler;
+    private MockObject&DomainServiceInterface $domainService;
+    private MockObject&ApiKey $apiKey;
+    private MockObject&RequestHandlerInterface $handler;
 
     protected function setUp(): void
     {
@@ -54,16 +54,24 @@ class OverrideDomainMiddlewareTest extends TestCase
     {
         $request = $this->requestWithApiKey()->withMethod('POST')->withParsedBody($body);
         $this->apiKey->expects($this->once())->method('hasRole')->with(Role::DOMAIN_SPECIFIC)->willReturn(true);
-        $this->apiKey->expects($this->once())->method('getRoleMeta')->with(Role::DOMAIN_SPECIFIC)->willReturn(
-            ['domain_id' => '123'],
-        );
+        $this->apiKey
+            ->expects($this->once())
+            ->method('getRoleMeta')
+            ->with(Role::DOMAIN_SPECIFIC)
+            ->willReturn(
+                ['domain_id' => '123'],
+            );
         $this->domainService->expects($this->once())->method('getDomain')->with('123')->willReturn($domain);
-        $this->handler->expects($this->once())->method('handle')->with($this->callback(
-            function (ServerRequestInterface $req) use ($expectedBody): bool {
-                Assert::assertEquals($req->getParsedBody(), $expectedBody);
-                return true;
-            },
-        ))->willReturn(new Response());
+        $this->handler
+            ->expects($this->once())
+            ->method('handle')
+            ->with($this->callback(
+                static function (ServerRequestInterface $req) use ($expectedBody): bool {
+                    Assert::assertEquals($req->getParsedBody(), $expectedBody);
+                    return true;
+                },
+            ))
+            ->willReturn(new Response());
 
         $this->middleware->process($request, $this->handler);
     }
@@ -98,16 +106,27 @@ class OverrideDomainMiddlewareTest extends TestCase
         $domain = Domain::withAuthority('something.com');
         $request = $this->requestWithApiKey()->withMethod($method);
         $this->apiKey->expects($this->once())->method('hasRole')->with(Role::DOMAIN_SPECIFIC)->willReturn(true);
-        $this->apiKey->expects($this->once())->method('getRoleMeta')->with(Role::DOMAIN_SPECIFIC)->willReturn(
-            ['domain_id' => '123'],
-        );
+        $this->apiKey
+            ->expects($this->once())
+            ->method('getRoleMeta')
+            ->with(Role::DOMAIN_SPECIFIC)
+            ->willReturn(
+                ['domain_id' => '123'],
+            );
         $this->domainService->expects($this->once())->method('getDomain')->with('123')->willReturn($domain);
-        $this->handler->expects($this->once())->method('handle')->with($this->callback(
-            function (ServerRequestInterface $req): bool {
-                Assert::assertEquals($req->getAttribute(OverrideDomainMiddleware::REQUEST_ATTRIBUTE), 'something.com');
-                return true;
-            },
-        ))->willReturn(new Response());
+        $this->handler
+            ->expects($this->once())
+            ->method('handle')
+            ->with($this->callback(
+                static function (ServerRequestInterface $req): bool {
+                    Assert::assertEquals(
+                        $req->getAttribute(OverrideDomainMiddleware::REQUEST_ATTRIBUTE),
+                        'something.com',
+                    );
+                    return true;
+                },
+            ))
+            ->willReturn(new Response());
 
         $this->middleware->process($request, $this->handler);
     }

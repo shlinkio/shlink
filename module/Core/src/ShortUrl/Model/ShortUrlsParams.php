@@ -32,18 +32,15 @@ final readonly class ShortUrlsParams
         public int $page = 1,
         public int $itemsPerPage = self::DEFAULT_ITEMS_PER_PAGE,
         public string|null $searchTerm = null,
-        #[TagsConverter]
-        public array $tags = [],
-        #[OrderingConverter(OrderableField::class)]
-        public Ordering $orderBy = new Ordering(),
+        #[TagsConverter] public array $tags = [],
+        #[OrderingConverter(OrderableField::class)] public Ordering $orderBy = new Ordering(),
         DateTimeInterface|string|null $startDate = null,
         DateTimeInterface|string|null $endDate = null,
         public bool $excludeMaxVisitsReached = false,
         public bool $excludePastValidUntil = false,
         public TagsMode $tagsMode = TagsMode::ANY,
         public string|null $domain = null,
-        #[TagsConverter]
-        public array $excludeTags = [],
+        #[TagsConverter] public array $excludeTags = [],
         public TagsMode $excludeTagsMode = TagsMode::ANY,
         public string|null $apiKeyName = null,
     ) {

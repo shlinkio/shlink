@@ -19,7 +19,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class NonOrphanVisitsActionTest extends TestCase
 {
     private NonOrphanVisitsAction $action;
-    private MockObject & VisitsStatsHelperInterface $visitsHelper;
+    private MockObject&VisitsStatsHelperInterface $visitsHelper;
 
     protected function setUp(): void
     {
@@ -31,10 +31,14 @@ class NonOrphanVisitsActionTest extends TestCase
     public function requestIsHandled(): void
     {
         $apiKey = ApiKey::create();
-        $this->visitsHelper->expects($this->once())->method('nonOrphanVisits')->with(
-            $this->isInstanceOf(VisitsParams::class),
-            $apiKey,
-        )->willReturn(new Paginator(new ArrayAdapter([])));
+        $this->visitsHelper
+            ->expects($this->once())
+            ->method('nonOrphanVisits')
+            ->with(
+                $this->isInstanceOf(VisitsParams::class),
+                $apiKey,
+            )
+            ->willReturn(new Paginator(new ArrayAdapter([])));
 
         /** @var JsonResponse $response */
         $response = $this->action->handle(ServerRequestFactory::fromGlobals()->withAttribute(ApiKey::class, $apiKey));

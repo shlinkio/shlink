@@ -24,16 +24,16 @@ use function sprintf;
     description: 'Send existing visits to the configured matomo instance',
     help: <<<HELP
         This command allows you to send existing visits from this Shlink instance to the configured Matomo server.
-        
+
         Its intention is to allow you to configure Matomo at some point in time, and still have your whole visits 
         history tracked there.
-        
+
         This command will unconditionally send to Matomo all visits for a specific date range, so make sure you 
         provide the proper limits to avoid duplicated visits.
-        
+
         Send all visits created so far:
             <info>%command.name%</info>
-        
+
         Send all visits created before 2024:
             <info>%command.name% --until 2023-12-31</info>
 
@@ -67,7 +67,7 @@ class MatomoSendVisitsCommand extends Command implements VisitSendingProgressTra
     ): int {
         $this->io = $io;
 
-        if (! $this->matomoEnabled) {
+        if (!$this->matomoEnabled) {
             $this->io->warning('Matomo integration is not enabled in this Shlink instance');
             return self::INVALID;
         }
@@ -83,9 +83,9 @@ class MatomoSendVisitsCommand extends Command implements VisitSendingProgressTra
                 'You are about to send visits from this Shlink instance to Matomo',
                 'Resolved date range -> ' . dateRangeToHumanFriendly($dateRange),
                 'Shlink will not check for already sent visits, which could result in some duplications. Make sure '
-                . 'you have verified only visits in the right date range are going to be sent.',
+                    . 'you have verified only visits in the right date range are going to be sent.',
             ]);
-            if (! $this->io->confirm('Continue?', default: false)) {
+            if (!$this->io->confirm('Continue?', default: false)) {
                 return self::INVALID;
             }
         }

@@ -59,7 +59,7 @@ class OrphanVisitsCountTrackerTest extends DatabaseTestCase
         $result = $this->repo->findAll();
         $itemsWithCountBiggerThanOnce = array_values(array_filter(
             $result,
-            static fn (OrphanVisitsCount $item) => ((int) $item->count) > 1,
+            static fn (OrphanVisitsCount $item) => (int) $item->count > 1,
         ));
 
         self::assertCount(101, $result);

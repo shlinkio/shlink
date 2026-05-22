@@ -49,7 +49,8 @@ class ListShortUrlsCommand extends Command
             $result = $this->renderPage($io, $columnsMap, $params, $paramsInput->all);
             $paramsInput->page += 1;
 
-            $continue = $result->hasNextPage() && $io->confirm(
+            $continue = $result->hasNextPage()
+            && $io->confirm(
                 sprintf('Continue with page <options=bold>%s</>?', $paramsInput->page),
                 default: false,
             );
@@ -75,7 +76,7 @@ class ListShortUrlsCommand extends Command
 
         $rows = map([...$shortUrls], function (ShortUrlWithDeps $shortUrl) use ($columnsMap) {
             $serializedShortUrl = $this->transformer->transform($shortUrl);
-            return map($columnsMap, fn (callable $call) => $call($serializedShortUrl, $shortUrl->shortUrl));
+            return map($columnsMap, static fn (callable $call) => $call($serializedShortUrl, $shortUrl->shortUrl));
         });
 
         ShlinkTable::default($output)->render(
@@ -105,12 +106,15 @@ class ListShortUrlsCommand extends Command
             $columnsMap['Tags'] = static fn (array $shortUrl): string => implode(', ', $shortUrl['tags']);
         }
         if ($params->showDomain) {
-            $columnsMap['Domain'] = static fn (array $_, ShortUrl $shortUrl): string =>
-                $shortUrl->getDomain()->authority ?? Domain::DEFAULT_AUTHORITY;
+            $columnsMap['Domain'] = static fn (array $_, ShortUrl $shortUrl): string => (
+                $shortUrl->getDomain()->authority ?? Domain::DEFAULT_AUTHORITY
+            );
         }
         if ($params->showApiKey) {
-            $columnsMap['API Key Name'] = static fn (array $_, ShortUrl $shortUrl): string|null =>
-                $shortUrl->authorApiKey?->name;
+            $columnsMap['API Key Name'] = static fn (
+                array $_,
+                ShortUrl $shortUrl,
+            ): string|null => $shortUrl->authorApiKey?->name;
         }
 
         return $columnsMap;

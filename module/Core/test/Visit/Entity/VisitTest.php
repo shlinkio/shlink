@@ -27,15 +27,18 @@ class VisitTest extends TestCase
             Visitor::fromParams($userAgent, 'some site', '1.2.3.4'),
         );
 
-        self::assertEquals([
-            'referer' => 'some site',
-            'date' => $visit->date->toAtomString(),
-            'userAgent' => $userAgent,
-            'visitLocation' => null,
-            'potentialBot' => $expectedToBePotentialBot,
-            'visitedUrl' => $visit->visitedUrl,
-            'redirectUrl' => $visit->redirectUrl,
-        ], $visit->jsonSerialize());
+        self::assertEquals(
+            [
+                'referer' => 'some site',
+                'date' => $visit->date->toAtomString(),
+                'userAgent' => $userAgent,
+                'visitLocation' => null,
+                'potentialBot' => $expectedToBePotentialBot,
+                'visitedUrl' => $visit->visitedUrl,
+                'redirectUrl' => $visit->redirectUrl,
+            ],
+            $visit->jsonSerialize(),
+        );
     }
 
     public static function provideUserAgents(): iterable
@@ -73,7 +76,8 @@ class VisitTest extends TestCase
         ];
         yield 'invalid short url visit' => [
             $visit = Visit::forInvalidShortUrl(Visitor::fromRequest(
-                ServerRequestFactory::fromGlobals()->withHeader('User-Agent', 'foo')
+                ServerRequestFactory::fromGlobals()
+                    ->withHeader('User-Agent', 'foo')
                     ->withHeader('Referer', 'bar')
                     ->withUri(new Uri('https://example.com/foo')),
             )),
@@ -91,7 +95,8 @@ class VisitTest extends TestCase
         yield 'regular 404 visit' => [
             $visit = Visit::forRegularNotFound(
                 Visitor::fromRequest(
-                    ServerRequestFactory::fromGlobals()->withHeader('User-Agent', 'user-agent')
+                    ServerRequestFactory::fromGlobals()
+                        ->withHeader('User-Agent', 'user-agent')
                         ->withHeader('Referer', 'referer')
                         ->withUri(new Uri('https://s.test/foo/bar')),
                 ),

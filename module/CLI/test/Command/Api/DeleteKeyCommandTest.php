@@ -19,7 +19,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 class DeleteKeyCommandTest extends TestCase
 {
     private CommandTester $commandTester;
-    private MockObject & ApiKeyServiceInterface $apiKeyService;
+    private MockObject&ApiKeyServiceInterface $apiKeyService;
 
     protected function setUp(): void
     {
@@ -68,11 +68,14 @@ class DeleteKeyCommandTest extends TestCase
     {
         $name = 'the key to delete';
         $this->apiKeyService->expects($this->once())->method('deleteByName')->with($name);
-        $this->apiKeyService->expects($this->once())->method('listKeys')->willReturn([
-            ApiKey::fromMeta(ApiKeyMeta::fromParams(name: 'foo')),
-            ApiKey::fromMeta(ApiKeyMeta::fromParams(name: $name)),
-            ApiKey::fromMeta(ApiKeyMeta::fromParams(name: 'bar')),
-        ]);
+        $this->apiKeyService
+            ->expects($this->once())
+            ->method('listKeys')
+            ->willReturn([
+                ApiKey::fromMeta(ApiKeyMeta::fromParams(name: 'foo')),
+                ApiKey::fromMeta(ApiKeyMeta::fromParams(name: $name)),
+                ApiKey::fromMeta(ApiKeyMeta::fromParams(name: 'bar')),
+            ]);
 
         $this->commandTester->setInputs([$name, 'y']);
         $exitCode = $this->commandTester->execute([]);

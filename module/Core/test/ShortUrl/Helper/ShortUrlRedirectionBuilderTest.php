@@ -21,7 +21,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 class ShortUrlRedirectionBuilderTest extends TestCase
 {
     private ShortUrlRedirectionBuilder $redirectionBuilder;
-    private ShortUrlRedirectionResolverInterface & MockObject $redirectionResolver;
+    private ShortUrlRedirectionResolverInterface&MockObject $redirectionResolver;
 
     protected function setUp(): void
     {
@@ -42,10 +42,14 @@ class ShortUrlRedirectionBuilderTest extends TestCase
             longUrl: 'https://example.com/foo/bar?some=thing',
             forwardQuery: $forwardQuery ?? true,
         ));
-        $this->redirectionResolver->expects($this->once())->method('resolveLongUrl')->with(
-            $shortUrl,
-            $request,
-        )->willReturn($shortUrl->getLongUrl());
+        $this->redirectionResolver
+            ->expects($this->once())
+            ->method('resolveLongUrl')
+            ->with(
+                $shortUrl,
+                $request,
+            )
+            ->willReturn($shortUrl->getLongUrl());
 
         $result = $this->redirectionBuilder->buildShortUrlRedirect($shortUrl, $request, $extraPath);
 
@@ -55,7 +59,7 @@ class ShortUrlRedirectionBuilderTest extends TestCase
     public static function provideData(): iterable
     {
         $request = static fn (string $query = '') => ServerRequestFactory::fromGlobals()->withUri(
-            (new Uri())->withQuery($query),
+            new Uri()->withQuery($query),
         );
 
         yield ['https://example.com/foo/bar?some=thing', $request(), null, true];
@@ -96,25 +100,25 @@ class ShortUrlRedirectionBuilderTest extends TestCase
         yield ['https://example.com/foo/bar/something/else-baz?some=thing', $request(), '/something/else-baz', true];
         yield [
             'https://example.com/foo/bar/something/else-baz?some=thing&hello=world',
-            $request('hello=world',),
+            $request('hello=world'),
             '/something/else-baz',
             true,
         ];
         yield [
             'https://example.com/foo/bar/something/else-baz?some=thing&hello=world',
-            $request('hello=world',),
+            $request('hello=world'),
             '/something/else-baz',
             null,
         ];
         yield [
             'https://example.com/foo/bar/something/else-baz?some=thing',
-            $request('hello=world',),
+            $request('hello=world'),
             '/something/else-baz',
             false,
         ];
         yield [
             'https://example.com/foo/bar/something/else-baz?some=thing&parameter%20with%20spaces=world',
-            $request('parameter with spaces=world',),
+            $request('parameter with spaces=world'),
             '/something/else-baz',
             true,
         ];
@@ -132,10 +136,14 @@ class ShortUrlRedirectionBuilderTest extends TestCase
         $shortUrl = ShortUrl::withLongUrl($longUrl);
         $request = ServerRequestFactory::fromGlobals();
 
-        $this->redirectionResolver->expects($this->once())->method('resolveLongUrl')->with(
-            $shortUrl,
-            $request,
-        )->willReturn($shortUrl->getLongUrl());
+        $this->redirectionResolver
+            ->expects($this->once())
+            ->method('resolveLongUrl')
+            ->with(
+                $shortUrl,
+                $request,
+            )
+            ->willReturn($shortUrl->getLongUrl());
 
         $result = $this->redirectionBuilder->buildShortUrlRedirect($shortUrl, $request);
 

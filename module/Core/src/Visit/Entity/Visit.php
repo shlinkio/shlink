@@ -31,8 +31,7 @@ class Visit extends AbstractEntity implements JsonSerializable
         public readonly string|null $redirectUrl = null,
         private(set) VisitLocation|null $visitLocation = null,
         public readonly Chronos $date = new Chronos(),
-    ) {
-    }
+    ) {}
 
     public static function forValidShortUrl(ShortUrl $shortUrl, Visitor $visitor, bool $anonymize = true): self
     {
@@ -77,7 +76,7 @@ class Visit extends AbstractEntity implements JsonSerializable
     private static function processAddress(string|null $address, bool $anonymize): string|null
     {
         // Localhost address does not need to be anonymized
-        if (! $anonymize || $address === null || $address === IpAddress::LOCALHOST) {
+        if (!$anonymize || $address === null || $address === IpAddress::LOCALHOST) {
             return $address;
         }
 
@@ -121,7 +120,7 @@ class Visit extends AbstractEntity implements JsonSerializable
 
     public function hasRemoteAddr(): bool
     {
-        return ! empty($this->remoteAddr);
+        return !empty($this->remoteAddr);
     }
 
     public function locate(VisitLocation $visitLocation): self
@@ -155,7 +154,7 @@ class Visit extends AbstractEntity implements JsonSerializable
             'visitedUrl' => $this->visitedUrl,
             'redirectUrl' => $this->redirectUrl,
         ];
-        if (! $this->isOrphan()) {
+        if (!$this->isOrphan()) {
             return $base;
         }
 

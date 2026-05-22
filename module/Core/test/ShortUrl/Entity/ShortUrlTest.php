@@ -86,7 +86,7 @@ class ShortUrlTest extends TestCase
     public static function provideLengths(): iterable
     {
         yield [null, DEFAULT_SHORT_CODES_LENGTH];
-        yield from array_map(fn (int $value) => [$value, $value], range(4, 10));
+        yield from array_map(static fn (int $value) => [$value, $value], range(4, 10));
     }
 
     #[Test]

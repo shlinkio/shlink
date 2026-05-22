@@ -20,8 +20,7 @@ readonly class ShortUrlRepositoryAdapter implements AdapterInterface
         private ShortUrlsParams $params,
         private ApiKey|null $apiKey,
         private string $defaultDomain,
-    ) {
-    }
+    ) {}
 
     public function getSlice(int $offset, int $length): iterable
     {

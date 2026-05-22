@@ -15,7 +15,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 class DeleteTagsCommandTest extends TestCase
 {
     private CommandTester $commandTester;
-    private MockObject & TagServiceInterface $tagService;
+    private MockObject&TagServiceInterface $tagService;
 
     protected function setUp(): void
     {

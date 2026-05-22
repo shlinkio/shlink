@@ -11,9 +11,7 @@ use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 
 final readonly class PublishingUpdatesGenerator implements PublishingUpdatesGeneratorInterface
 {
-    public function __construct(private ShortUrlDataTransformerInterface $shortUrlTransformer)
-    {
-    }
+    public function __construct(private ShortUrlDataTransformerInterface $shortUrlTransformer) {}
 
     public function newVisitUpdate(Visit $visit): Update
     {

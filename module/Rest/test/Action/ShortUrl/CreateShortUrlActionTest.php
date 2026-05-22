@@ -22,8 +22,8 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class CreateShortUrlActionTest extends TestCase
 {
     private CreateShortUrlAction $action;
-    private MockObject & UrlShortener $urlShortener;
-    private MockObject & ShortUrlDataTransformerInterface $transformer;
+    private MockObject&UrlShortener $urlShortener;
+    private MockObject&ShortUrlDataTransformerInterface $transformer;
 
     protected function setUp(): void
     {
@@ -60,12 +60,20 @@ class CreateShortUrlActionTest extends TestCase
             'domain' => $expectedCreation->domain,
         ];
 
-        $this->urlShortener->expects($this->once())->method('shorten')->with(
-            $expectedCreation,
-        )->willReturn(UrlShorteningResult::withoutErrorOnEventDispatching($shortUrl));
-        $this->transformer->expects($this->once())->method('transform')->with($shortUrl)->willReturn(
-            ['shortUrl' => 'stringified_short_url'],
-        );
+        $this->urlShortener
+            ->expects($this->once())
+            ->method('shorten')
+            ->with(
+                $expectedCreation,
+            )
+            ->willReturn(UrlShorteningResult::withoutErrorOnEventDispatching($shortUrl));
+        $this->transformer
+            ->expects($this->once())
+            ->method('transform')
+            ->with($shortUrl)
+            ->willReturn(
+                ['shortUrl' => 'stringified_short_url'],
+            );
 
         $request = ServerRequestFactory::fromGlobals()->withParsedBody($body)->withAttribute(ApiKey::class, $apiKey);
 

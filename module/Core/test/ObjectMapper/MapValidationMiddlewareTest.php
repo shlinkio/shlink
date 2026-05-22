@@ -82,10 +82,13 @@ class MapValidationMiddlewareTest extends TestCase
             $this->middleware->process(ServerRequestFactory::fromGlobals(), $this->createHandlerWithError($e));
             $this->fail('A ValidationException was not thrown');
         } catch (ValidationException $e) {
-            self::assertEquals([
-                'the-error' => 'The error body',
-                'the-second-error' => 'The second error body',
-            ], $e->invalidElements);
+            self::assertEquals(
+                [
+                    'the-error' => 'The error body',
+                    'the-second-error' => 'The second error body',
+                ],
+                $e->invalidElements,
+            );
         }
     }
 

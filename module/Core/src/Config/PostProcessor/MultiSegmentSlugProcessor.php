@@ -17,7 +17,7 @@ class MultiSegmentSlugProcessor
     public function __invoke(array $config): array
     {
         $multiSegmentEnabled = (bool) EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->loadFromEnv();
-        if (! $multiSegmentEnabled) {
+        if (!$multiSegmentEnabled) {
             return $config;
         }
 

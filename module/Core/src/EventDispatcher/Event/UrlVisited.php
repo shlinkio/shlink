@@ -9,11 +9,10 @@ use Shlinkio\Shlink\EventDispatcher\Util\JsonUnserializable;
 
 final readonly class UrlVisited implements JsonSerializable, JsonUnserializable
 {
-    final public function __construct(
+    public function __construct(
         public string $visitId,
         public string|null $originalIpAddress = null,
-    ) {
-    }
+    ) {}
 
     public function jsonSerialize(): array
     {

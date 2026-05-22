@@ -20,8 +20,7 @@ readonly class NotFoundRedirectHandler implements MiddlewareInterface
         private Config\Options\NotFoundRedirectOptions $redirectOptions,
         private NotFoundRedirectResolverInterface $redirectResolver,
         private DomainServiceInterface $domainService,
-    ) {
-    }
+    ) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -30,11 +29,13 @@ readonly class NotFoundRedirectHandler implements MiddlewareInterface
         $currentUri = $request->getUri();
         $domainSpecificRedirect = $this->resolveDomainSpecificRedirect($currentUri, $notFoundType);
 
-        return $domainSpecificRedirect
+        return (
+            $domainSpecificRedirect
             // If we did not find domain-specific redirects for current domain, we try to fall back to default redirects
             ?? $this->redirectResolver->resolveRedirectResponse($notFoundType, $this->redirectOptions, $currentUri)
             // Ultimately, we just call next handler if no domain-specific redirects or default redirects were found
-            ?? $handler->handle($request);
+            ?? $handler->handle($request)
+        );
     }
 
     private function resolveDomainSpecificRedirect(

@@ -18,7 +18,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class DeleteOrphanVisitsActionTest extends TestCase
 {
     private DeleteOrphanVisitsAction $action;
-    private MockObject & VisitsDeleterInterface $deleter;
+    private MockObject&VisitsDeleterInterface $deleter;
 
     protected function setUp(): void
     {
@@ -32,9 +32,13 @@ class DeleteOrphanVisitsActionTest extends TestCase
         $apiKey = ApiKey::create();
         $request = ServerRequestFactory::fromGlobals()->withAttribute(ApiKey::class, $apiKey);
 
-        $this->deleter->expects($this->once())->method('deleteOrphanVisits')->with($apiKey)->willReturn(
-            new BulkDeleteResult($visitsCount),
-        );
+        $this->deleter
+            ->expects($this->once())
+            ->method('deleteOrphanVisits')
+            ->with($apiKey)
+            ->willReturn(
+                new BulkDeleteResult($visitsCount),
+            );
 
         /** @var JsonResponse $resp */
         $resp = $this->action->handle($request);

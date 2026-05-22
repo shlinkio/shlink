@@ -24,8 +24,7 @@ class EditShortUrlAction extends AbstractRestAction
         private readonly ShortUrlServiceInterface $shortUrlService,
         private readonly ShortUrlDataTransformerInterface $transformer,
         private readonly TreeMapper $treeMapper,
-    ) {
-    }
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

@@ -16,8 +16,7 @@ readonly class RoleResolver implements RoleResolverInterface
     public function __construct(
         private DomainServiceInterface $domainService,
         private UrlShortenerOptions $urlShortenerOptions,
-    ) {
-    }
+    ) {}
 
     public function determineRoles(ApiKeyInput $input): iterable
     {

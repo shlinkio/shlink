@@ -13,9 +13,7 @@ use function rtrim;
 
 readonly class NotFoundType
 {
-    private function __construct(private VisitType|null $type)
-    {
-    }
+    private function __construct(private VisitType|null $type) {}
 
     public static function fromRequest(ServerRequestInterface $request, string $basePath): self
     {

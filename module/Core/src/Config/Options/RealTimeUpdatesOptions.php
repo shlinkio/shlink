@@ -23,10 +23,12 @@ final readonly class RealTimeUpdatesOptions
     public function __construct(array|null $enabledTopics = null)
     {
         $validTopics = Topic::allTopicNames();
-        $this->enabledTopics = $enabledTopics === null ? $validTopics : self::validateTopics(
-            $enabledTopics,
-            $validTopics,
-        );
+        $this->enabledTopics = $enabledTopics === null
+            ? $validTopics
+            : self::validateTopics(
+                $enabledTopics,
+                $validTopics,
+            );
     }
 
     public static function fromEnv(): self
@@ -41,7 +43,7 @@ final readonly class RealTimeUpdatesOptions
      */
     private static function validateTopics(array $providedTopics, array $validTopics): array
     {
-        return map($providedTopics, function (string $topic) use ($validTopics): string {
+        return map($providedTopics, static function (string $topic) use ($validTopics): string {
             if (contains($topic, $validTopics)) {
                 return $topic;
             }

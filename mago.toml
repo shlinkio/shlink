@@ -1,0 +1,132 @@
+#:schema https://mago.carthage.software/1.27.1/schema.json
+# Welcome to Mago!
+# For full documentation, see https://mago.carthage.software/tools/overview
+version = "1"
+php-version = "8.4.0"
+
+[source]
+workspace = "."
+paths = ["bin", "config", "module"]
+excludes = ["vendor"]
+
+[source.glob]
+literal-separator = true
+
+[formatter]
+print-width = 120
+tab-width = 4
+use-tabs = false
+null-type-hint = "null_pipe_last"
+space-before-arrow-function-parameter-list-parenthesis = true
+break-promoted-properties-list = false
+parameter-attribute-on-new-line = false
+preserve-breaking-member-access-chain = true
+preserve-breaking-member-access-chain-first-method-on-same-line = true
+preserve-breaking-argument-list = true
+preserve-breaking-array-like = true
+preserve-breaking-parameter-list = true
+preserve-breaking-attribute-list = true
+preserve-breaking-conditional-expression = true
+preserve-breaking-condition-expression = true
+preserve-redundant-logical-binary-expression-parentheses = true
+
+[linter]
+integrations = ["phpunit"]
+
+[linter.rules]
+no-literal-password = {
+    exclude = [
+        "config/test",
+        "module/CLI/test",
+        "module/CLI/test-cli",
+        "module/Core/test",
+        "module/Core/test-api",
+        "module/Core/test-db",
+        "module/Rest/test",
+        "module/Rest/test-api",
+        "module/Rest/test-db"
+    ]
+}
+no-empty-catch-clause = {
+    exclude = [
+        "module/CLI/test",
+        "module/CLI/test-cli",
+        "module/Core/test",
+        "module/Core/test-api",
+        "module/Core/test-db",
+        "module/Rest/test",
+        "module/Rest/test-api",
+        "module/Rest/test-db"
+    ]
+}
+no-empty-loop = {
+    exclude = [
+        "module/CLI/test",
+        "module/CLI/test-cli",
+        "module/Core/test",
+        "module/Core/test-api",
+        "module/Core/test-db",
+        "module/Rest/test",
+        "module/Rest/test-api",
+        "module/Rest/test-db"
+    ]
+}
+
+prefer-static-closure = { level = "warning" }
+array-style = { level = "warning" }
+prefer-early-continue = { max_allowed_statements = 2 }
+no-fully-qualified-global-class-like = { enabled = true, level = "warning" }
+no-fully-qualified-global-constant = { enabled = true, level = "warning" }
+no-fully-qualified-global-function = { enabled = true, level = "warning" }
+ambiguous-constant-access = { enabled = true, level = "warning" }
+ambiguous-function-call = {
+    enabled = true,
+    level = "warning",
+    exclude = [
+        "module/Core/functions",
+        "module/Core/config/entities-mappings"
+    ]
+}
+
+no-multi-assignments = { enabled = false }
+no-assign-in-condition = { enabled = false }
+literal-named-argument = { enabled = false }
+tagged-fixme = { enabled = false }
+tagged-todo = { enabled = false }
+no-boolean-flag-parameter = { enabled = false }
+no-else-clause = { enabled = false }
+no-isset = { enabled = false }
+no-empty = { enabled = false }
+no-shorthand-ternary = { enabled = false }
+no-ini-set = { enabled = false }
+too-many-enum-cases = { enabled = false }
+function-name = { enabled = false }
+
+# TODO Fine tune these
+too-many-methods = { enabled = false }
+too-many-properties = { enabled = false }
+excessive-parameter-list = { enabled = false }
+cyclomatic-complexity = { enabled = false }
+kan-defect = { enabled = false }
+halstead = { effort-threshold = 7000, enabled = false }
+
+# TODO Enable this
+sensitive-parameter = { enabled = false }
+
+[analyzer]
+plugins = []
+find-unused-definitions = true
+find-unused-expressions = true
+analyze-dead-code = false
+memoize-properties = true
+check-throws = true
+unchecked-exceptions = ["Error", "LogicException"]
+unchecked-exception-classes = []
+check-missing-override = true
+find-unused-parameters = true
+strict-list-index-checks = true
+strict-array-index-existence = false
+allow-array-truthy-operand = false
+no-boolean-literal-comparison = false
+check-missing-type-hints = false
+register-super-globals = true

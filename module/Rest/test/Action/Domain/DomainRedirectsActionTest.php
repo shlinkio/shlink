@@ -19,7 +19,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class DomainRedirectsActionTest extends TestCase
 {
     private DomainRedirectsAction $action;
-    private MockObject & DomainServiceInterface $domainService;
+    private MockObject&DomainServiceInterface $domainService;
 
     protected function setUp(): void
     {
@@ -35,15 +35,19 @@ class DomainRedirectsActionTest extends TestCase
         $domain = Domain::withAuthority($authority);
         $domain->configureNotFoundRedirects($notFoundRedirects);
         $apiKey = ApiKey::create();
-        $request = ServerRequestFactory::fromGlobals()->withParsedBody(['domain' => $authority])
-                                                      ->withAttribute(ApiKey::class, $apiKey);
+        $request = ServerRequestFactory::fromGlobals()
+            ->withParsedBody(['domain' => $authority])
+            ->withAttribute(ApiKey::class, $apiKey);
 
         $this->domainService->expects($this->once())->method('getOrCreate')->with($authority)->willReturn($domain);
-        $this->domainService->expects($this->once())->method('configureNotFoundRedirects')->with(
-            $authority,
-            $notFoundRedirects,
-            $apiKey,
-        );
+        $this->domainService
+            ->expects($this->once())
+            ->method('configureNotFoundRedirects')
+            ->with(
+                $authority,
+                $notFoundRedirects,
+                $apiKey,
+            );
 
         /** @var JsonResponse $response */
         $response = $this->action->handle($request);

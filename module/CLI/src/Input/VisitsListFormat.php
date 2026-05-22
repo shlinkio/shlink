@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\CLI\Input;
 
 enum VisitsListFormat: string

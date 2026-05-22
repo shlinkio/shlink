@@ -20,8 +20,8 @@ use Shlinkio\Shlink\IpGeolocation\Model\Location;
 class LocateUnlocatedVisitsTest extends TestCase
 {
     private LocateUnlocatedVisits $listener;
-    private MockObject & VisitLocatorInterface $locator;
-    private MockObject & VisitToLocationHelperInterface $visitToLocation;
+    private MockObject&VisitLocatorInterface $locator;
+    private MockObject&VisitToLocationHelperInterface $visitToLocation;
 
     protected function setUp(): void
     {
@@ -44,9 +44,13 @@ class LocateUnlocatedVisitsTest extends TestCase
         $visit = Visit::forBasePath(Visitor::empty());
         $location = Location::empty();
 
-        $this->visitToLocation->expects($this->once())->method('resolveVisitLocation')->with($visit)->willReturn(
-            $location,
-        );
+        $this->visitToLocation
+            ->expects($this->once())
+            ->method('resolveVisitLocation')
+            ->with($visit)
+            ->willReturn(
+                $location,
+            );
 
         $result = $this->listener->geolocateVisit($visit);
 

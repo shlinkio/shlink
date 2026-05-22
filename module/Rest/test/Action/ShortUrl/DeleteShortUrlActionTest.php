@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class DeleteShortUrlActionTest extends TestCase
 {
     private DeleteShortUrlAction $action;
-    private MockObject & DeleteShortUrlServiceInterface $service;
+    private MockObject&DeleteShortUrlServiceInterface $service;
 
     protected function setUp(): void
     {

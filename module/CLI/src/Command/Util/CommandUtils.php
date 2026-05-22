@@ -21,7 +21,7 @@ class CommandUtils
     public static function executeWithWarning(string $warning, SymfonyStyle $io, callable $callback): int
     {
         $io->warning($warning);
-        if (! $io->confirm('<comment>Do you want to proceed?</comment>', default: false)) {
+        if (!$io->confirm('<comment>Do you want to proceed?</comment>', default: false)) {
             $io->info('Operation aborted');
             return Command::SUCCESS;
         }
@@ -42,7 +42,7 @@ class CommandUtils
         callable $callback,
     ): int {
         $lock = $locker->createLock($lockConfig->lockName, $lockConfig->ttl, $lockConfig->isBlocking);
-        if (! $lock->acquire($lockConfig->isBlocking)) {
+        if (!$lock->acquire($lockConfig->isBlocking)) {
             $io->writeln(
                 sprintf('<comment>Command "%s" is already in progress. Skipping.</comment>', $lockConfig->lockName),
             );

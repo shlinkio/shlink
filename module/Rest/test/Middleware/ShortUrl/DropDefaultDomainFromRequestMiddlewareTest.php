@@ -19,7 +19,7 @@ use Shlinkio\Shlink\Rest\Middleware\ShortUrl\DropDefaultDomainFromRequestMiddlew
 class DropDefaultDomainFromRequestMiddlewareTest extends TestCase
 {
     private DropDefaultDomainFromRequestMiddleware $middleware;
-    private MockObject & RequestHandlerInterface $next;
+    private MockObject&RequestHandlerInterface $next;
 
     protected function setUp(): void
     {
@@ -32,13 +32,17 @@ class DropDefaultDomainFromRequestMiddlewareTest extends TestCase
     {
         $req = ServerRequestFactory::fromGlobals()->withQueryParams($providedPayload)->withParsedBody($providedPayload);
 
-        $this->next->expects($this->once())->method('handle')->with($this->callback(
-            function (ServerRequestInterface $request) use ($expectedPayload) {
-                Assert::assertEquals($expectedPayload, $request->getQueryParams());
-                Assert::assertEquals($expectedPayload, $request->getParsedBody());
-                return true;
-            },
-        ))->willReturn(new Response());
+        $this->next
+            ->expects($this->once())
+            ->method('handle')
+            ->with($this->callback(
+                static function (ServerRequestInterface $request) use ($expectedPayload) {
+                    Assert::assertEquals($expectedPayload, $request->getQueryParams());
+                    Assert::assertEquals($expectedPayload, $request->getParsedBody());
+                    return true;
+                },
+            ))
+            ->willReturn(new Response());
 
         $this->middleware->process($req, $this->next);
     }

@@ -19,8 +19,7 @@ readonly class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderI
     public function __construct(
         private TrackingOptions $trackingOptions,
         private ShortUrlRedirectionResolverInterface $redirectionResolver,
-    ) {
-    }
+    ) {}
 
     public function buildShortUrlRedirect(
         ShortUrl $shortUrl,
@@ -37,8 +36,9 @@ readonly class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderI
         // names are valid variable names.
         $currentQuery = Query::parse($request->getUri()->getQuery());
 
-        return $uri
-            ->withQuery($shouldForwardQuery ? $this->resolveQuery($baseQueryString, $currentQuery) : $baseQueryString)
+        return $uri->withQuery(
+            $shouldForwardQuery ? $this->resolveQuery($baseQueryString, $currentQuery) : $baseQueryString,
+        )
             ->withPath($this->resolvePath($basePath, $extraPath))
             ->__toString();
     }

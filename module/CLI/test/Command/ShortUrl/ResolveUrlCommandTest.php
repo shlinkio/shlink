@@ -22,7 +22,7 @@ use const PHP_EOL;
 class ResolveUrlCommandTest extends TestCase
 {
     private CommandTester $commandTester;
-    private MockObject & ShortUrlResolverInterface $urlResolver;
+    private MockObject&ShortUrlResolverInterface $urlResolver;
 
     protected function setUp(): void
     {
@@ -36,9 +36,13 @@ class ResolveUrlCommandTest extends TestCase
         $shortCode = 'abc123';
         $expectedUrl = 'http://domain.com/foo/bar';
         $shortUrl = ShortUrl::withLongUrl($expectedUrl);
-        $this->urlResolver->expects($this->once())->method('resolveShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
-        )->willReturn($shortUrl);
+        $this->urlResolver
+            ->expects($this->once())
+            ->method('resolveShortUrl')
+            ->with(
+                ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            )
+            ->willReturn($shortUrl);
 
         $this->commandTester->execute(['short-code' => $shortCode]);
         $output = $this->commandTester->getDisplay();
@@ -50,9 +54,13 @@ class ResolveUrlCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $shortUrl = ShortUrl::createFake();
-        $this->urlResolver->expects($this->once())->method('resolveShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
-        )->willReturn($shortUrl);
+        $this->urlResolver
+            ->expects($this->once())
+            ->method('resolveShortUrl')
+            ->with(
+                ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            )
+            ->willReturn($shortUrl);
 
         $this->commandTester->setInputs([$shortCode]);
         $this->commandTester->execute([]);
@@ -64,9 +72,13 @@ class ResolveUrlCommandTest extends TestCase
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain('abc123');
         $shortCode = $identifier->shortCode;
 
-        $this->urlResolver->expects($this->once())->method('resolveShortUrl')->with($identifier)->willThrowException(
-            ShortUrlNotFoundException::fromNotFound($identifier),
-        );
+        $this->urlResolver
+            ->expects($this->once())
+            ->method('resolveShortUrl')
+            ->with($identifier)
+            ->willThrowException(
+                ShortUrlNotFoundException::fromNotFound($identifier),
+            );
 
         $this->commandTester->execute(['short-code' => $shortCode]);
         $output = $this->commandTester->getDisplay();

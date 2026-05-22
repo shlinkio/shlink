@@ -11,9 +11,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 readonly class VisitsDeleter implements VisitsDeleterInterface
 {
-    public function __construct(private VisitDeleterRepositoryInterface $repository)
-    {
-    }
+    public function __construct(private VisitDeleterRepositoryInterface $repository) {}
 
     public function deleteOrphanVisits(ApiKey|null $apiKey = null): BulkDeleteResult
     {

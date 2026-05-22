@@ -60,7 +60,7 @@ class VisitsFixture extends AbstractFixture implements DependentFixtureInterface
 
         // Orphan visits (s.test is the default domain in tests env)
         $manager->persist($this->setVisitDate(
-            fn () => Visit::forBasePath(Visitor::fromParams(
+            static fn () => Visit::forBasePath(Visitor::fromParams(
                 'shlink-tests-agent',
                 'https://s.test',
                 '1.2.3.4',
@@ -69,7 +69,7 @@ class VisitsFixture extends AbstractFixture implements DependentFixtureInterface
             '2020-01-01',
         ));
         $manager->persist($this->setVisitDate(
-            fn () => Visit::forRegularNotFound(Visitor::fromParams(
+            static fn () => Visit::forRegularNotFound(Visitor::fromParams(
                 'shlink-tests-agent',
                 'https://s.test/foo/bar',
                 '1.2.3.4',
@@ -78,7 +78,7 @@ class VisitsFixture extends AbstractFixture implements DependentFixtureInterface
             '2020-02-01',
         ));
         $manager->persist($this->setVisitDate(
-            fn () => Visit::forInvalidShortUrl(Visitor::fromParams(
+            static fn () => Visit::forInvalidShortUrl(Visitor::fromParams(
                 'cf-facebook',
                 'https://s.test/foo',
                 '1.2.3.4',

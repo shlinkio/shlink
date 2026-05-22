@@ -20,8 +20,7 @@ readonly class DeleteShortUrlService implements DeleteShortUrlServiceInterface
         private DeleteShortUrlsOptions $deleteShortUrlsOptions,
         private ShortUrlResolverInterface $urlResolver,
         private ExpiredShortUrlsRepositoryInterface $expiredShortUrlsRepository,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws Exception\ShortUrlNotFoundException
@@ -33,7 +32,7 @@ readonly class DeleteShortUrlService implements DeleteShortUrlServiceInterface
         ApiKey|null $apiKey = null,
     ): void {
         $shortUrl = $this->urlResolver->resolveShortUrl($identifier, $apiKey);
-        if (! $ignoreThreshold && $this->isThresholdReached($shortUrl)) {
+        if (!$ignoreThreshold && $this->isThresholdReached($shortUrl)) {
             throw Exception\DeleteShortUrlException::fromVisitsThreshold(
                 $this->deleteShortUrlsOptions->visitsThreshold,
                 $identifier,
@@ -46,8 +45,11 @@ readonly class DeleteShortUrlService implements DeleteShortUrlServiceInterface
 
     private function isThresholdReached(ShortUrl $shortUrl): bool
     {
-        return $this->deleteShortUrlsOptions->checkVisitsThreshold && $shortUrl->reachedVisits(
-            $this->deleteShortUrlsOptions->visitsThreshold,
+        return (
+            $this->deleteShortUrlsOptions->checkVisitsThreshold
+            && $shortUrl->reachedVisits(
+                $this->deleteShortUrlsOptions->visitsThreshold,
+            )
         );
     }
 

@@ -14,9 +14,7 @@ final readonly class RobotsOptions
     /**
      * @param string[] $userAgents
      */
-    public function __construct(public bool $allowAllShortUrls = false, public array $userAgents = [])
-    {
-    }
+    public function __construct(public bool $allowAllShortUrls = false, public array $userAgents = []) {}
 
     public static function fromEnv(): self
     {

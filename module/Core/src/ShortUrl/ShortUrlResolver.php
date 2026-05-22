@@ -16,8 +16,7 @@ readonly class ShortUrlResolver implements ShortUrlResolverInterface
     public function __construct(
         private ShortUrlRepositoryInterface $repo,
         private UrlShortenerOptions $urlShortenerOptions,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws ShortUrlNotFoundException
@@ -38,7 +37,7 @@ readonly class ShortUrlResolver implements ShortUrlResolverInterface
     public function resolveEnabledShortUrl(ShortUrlIdentifier $identifier): ShortUrl
     {
         $shortUrl = $this->resolvePublicShortUrl($identifier);
-        if (! $shortUrl->isEnabled()) {
+        if (!$shortUrl->isEnabled()) {
             throw ShortUrlNotFoundException::fromNotFound($identifier);
         }
 

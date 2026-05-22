@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Core\RedirectRule;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -14,9 +16,7 @@ use function Shlinkio\Shlink\Core\ArrayUtils\map;
 
 readonly class ShortUrlRedirectRuleService implements ShortUrlRedirectRuleServiceInterface
 {
-    public function __construct(private EntityManagerInterface $em)
-    {
-    }
+    public function __construct(private EntityManagerInterface $em) {}
 
     /** @inheritDoc */
     public function rulesForShortUrl(ShortUrl $shortUrl): array
@@ -55,7 +55,7 @@ readonly class ShortUrlRedirectRuleService implements ShortUrlRedirectRuleServic
             $this->em->detach($rule);
 
             // Normalize priorities so that they are sequential
-            return $rule->withPriority(((int) $priority) + 1);
+            return $rule->withPriority((int) $priority + 1);
         });
 
         $this->doSetRulesForShortUrl($shortUrl, $normalizedAndDetachedRules);

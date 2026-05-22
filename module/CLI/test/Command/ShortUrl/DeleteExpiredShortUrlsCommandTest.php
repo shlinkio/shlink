@@ -18,7 +18,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 class DeleteExpiredShortUrlsCommandTest extends TestCase
 {
     private CommandTester $commandTester;
-    private MockObject & DeleteShortUrlServiceInterface $service;
+    private MockObject&DeleteShortUrlServiceInterface $service;
 
     protected function setUp(): void
     {

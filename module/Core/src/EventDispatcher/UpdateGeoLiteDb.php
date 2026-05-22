@@ -21,19 +21,17 @@ readonly class UpdateGeoLiteDb
         private GeolocationDbUpdaterInterface $dbUpdater,
         private LoggerInterface $logger,
         private EventDispatcherInterface $eventDispatcher,
-    ) {
-    }
+    ) {}
 
     public function __invoke(): void
     {
         try {
             $result = $this->dbUpdater->checkDbUpdate(
-                new class ($this->logger) implements GeolocationDownloadProgressHandlerInterface {
+                new class($this->logger) implements GeolocationDownloadProgressHandlerInterface {
                     public function __construct(
                         private readonly LoggerInterface $logger,
                         private bool $messageLogged = false,
-                    ) {
-                    }
+                    ) {}
 
                     public function beforeDownload(bool $olderDbExists): void
                     {

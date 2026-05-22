@@ -12,7 +12,7 @@ final class Version20241125213106 extends AbstractMigration
 {
     public function up(Schema $schema): void
     {
-        $this->skipIf(! $this->isMsSql());
+        $this->skipIf(!$this->isMsSql());
 
         // Recreate unique_short_code_plus_domain index in Microsoft SQL, as it accidentally has the columns defined in
         // the wrong order after Version20230130090946 migration

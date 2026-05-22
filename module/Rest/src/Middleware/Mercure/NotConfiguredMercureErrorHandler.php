@@ -14,9 +14,7 @@ use Shlinkio\Shlink\Rest\Exception\MercureException;
 
 class NotConfiguredMercureErrorHandler implements MiddlewareInterface
 {
-    public function __construct(private ProblemDetailsResponseFactory $respFactory, private LoggerInterface $logger)
-    {
-    }
+    public function __construct(private ProblemDetailsResponseFactory $respFactory, private LoggerInterface $logger) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {

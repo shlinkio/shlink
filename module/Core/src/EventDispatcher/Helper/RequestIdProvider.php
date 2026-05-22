@@ -9,9 +9,7 @@ use Shlinkio\Shlink\EventDispatcher\Util\RequestIdProviderInterface;
 
 readonly class RequestIdProvider implements RequestIdProviderInterface
 {
-    public function __construct(private RequestIdMiddleware $requestIdMiddleware)
-    {
-    }
+    public function __construct(private RequestIdMiddleware $requestIdMiddleware) {}
 
     public function currentRequestId(): string
     {

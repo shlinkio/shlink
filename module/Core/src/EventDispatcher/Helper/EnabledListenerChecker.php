@@ -19,22 +19,24 @@ readonly class EnabledListenerChecker implements EnabledListenerCheckerInterface
         private MercureOptions $mercureOptions,
         private GeoLite2Options $geoLiteOptions,
         private MatomoOptions $matomoOptions,
-    ) {
-    }
+    ) {}
 
     public function shouldRegisterListener(string $event, string $listener, bool $isAsync): bool
     {
-        if (! $isAsync) {
+        if (!$isAsync) {
             return true;
         }
 
         return match ($listener) {
             EventDispatcher\RabbitMq\NotifyVisitToRabbitMq::class,
-            EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq::class => $this->rabbitMqOptions->enabled,
+            EventDispatcher\RabbitMq\NotifyNewShortUrlToRabbitMq::class,
+                => $this->rabbitMqOptions->enabled,
             EventDispatcher\RedisPubSub\NotifyVisitToRedis::class,
-            EventDispatcher\RedisPubSub\NotifyNewShortUrlToRedis::class => $this->redisPubSubEnabled,
+            EventDispatcher\RedisPubSub\NotifyNewShortUrlToRedis::class,
+                => $this->redisPubSubEnabled,
             EventDispatcher\Mercure\NotifyVisitToMercure::class,
-            EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class => $this->mercureOptions->enabled,
+            EventDispatcher\Mercure\NotifyNewShortUrlToMercure::class,
+                => $this->mercureOptions->enabled,
             EventDispatcher\Matomo\SendVisitToMatomo::class => $this->matomoOptions->enabled,
             EventDispatcher\UpdateGeoLiteDb::class => $this->geoLiteOptions->hasLicenseKey(),
             default => false, // Any unknown async listener should not be enabled by default

@@ -48,11 +48,11 @@ use function str_contains;
 class ImportedLinksProcessorTest extends TestCase
 {
     private ImportedLinksProcessor $processor;
-    private MockObject & EntityManagerInterface $em;
-    private MockObject & ShortCodeUniquenessHelperInterface $shortCodeHelper;
-    private MockObject & ShortUrlRepository $repo;
-    private MockObject & StyleInterface $io;
-    private MockObject & ShortUrlRedirectRuleServiceInterface $redirectRuleService;
+    private MockObject&EntityManagerInterface $em;
+    private MockObject&ShortCodeUniquenessHelperInterface $shortCodeHelper;
+    private MockObject&ShortUrlRepository $repo;
+    private MockObject&StyleInterface $io;
+    private MockObject&ShortUrlRedirectRuleServiceInterface $redirectRuleService;
 
     protected function setUp(): void
     {
@@ -108,25 +108,32 @@ class ImportedLinksProcessorTest extends TestCase
 
         $this->em->method('getRepository')->willReturn($this->repo);
         $this->repo->expects($this->exactly($expectedCalls))->method('findOneByImportedUrl')->willReturn(null);
-        $this->shortCodeHelper->expects($this->exactly($expectedCalls))
-                              ->method('ensureShortCodeUniqueness')
-                              ->willReturn(true);
-        $this->em->expects($this->exactly($expectedCalls))->method('persist')->with(
-            $this->isInstanceOf(ShortUrl::class),
-        );
+        $this->shortCodeHelper
+            ->expects($this->exactly($expectedCalls))
+            ->method('ensureShortCodeUniqueness')
+            ->willReturn(true);
+        $this->em
+            ->expects($this->exactly($expectedCalls))
+            ->method('persist')
+            ->with(
+                $this->isInstanceOf(ShortUrl::class),
+            );
         $this->io->expects($this->exactly($expectedCalls))->method('text')->with($this->isString());
-        $this->redirectRuleService->expects($this->once())->method('saveRulesForShortUrl')->with(
-            $this->isInstanceOf(ShortUrl::class),
-            $this->callback(function (array $rules): bool {
-                Assert::assertCount(2, $rules);
-                Assert::assertInstanceOf(ShortUrlRedirectRule::class, $rules[0]);
-                Assert::assertInstanceOf(ShortUrlRedirectRule::class, $rules[1]);
-                Assert::assertCount(1, $rules[0]->mapConditions(fn ($c) => $c));
-                Assert::assertCount(2, $rules[1]->mapConditions(fn ($c) => $c));
+        $this->redirectRuleService
+            ->expects($this->once())
+            ->method('saveRulesForShortUrl')
+            ->with(
+                $this->isInstanceOf(ShortUrl::class),
+                $this->callback(static function (array $rules): bool {
+                    Assert::assertCount(2, $rules);
+                    Assert::assertInstanceOf(ShortUrlRedirectRule::class, $rules[0]);
+                    Assert::assertInstanceOf(ShortUrlRedirectRule::class, $rules[1]);
+                    Assert::assertCount(1, $rules[0]->mapConditions(static fn ($c) => $c));
+                    Assert::assertCount(2, $rules[1]->mapConditions(static fn ($c) => $c));
 
-                return true;
-            }),
-        );
+                    return true;
+                }),
+            );
 
         $this->processor->process($this->io, ImportResult::withShortUrls($urls), $this->buildParams());
     }
@@ -143,13 +150,17 @@ class ImportedLinksProcessorTest extends TestCase
         $this->em->method('getRepository')->willReturn($this->repo);
         $this->repo->expects($this->exactly(3))->method('findOneByImportedUrl')->willReturn(null);
         $this->shortCodeHelper->expects($this->exactly(3))->method('ensureShortCodeUniqueness')->willReturn(true);
-        $this->em->expects($this->exactly(3))->method('persist')->with(
-            $this->isInstanceOf(ShortUrl::class),
-        )->willReturnCallback(function (ShortUrl $shortUrl): void {
-            if ($shortUrl->getShortCode() === 'baz') {
-                throw new RuntimeException('Whatever error');
-            }
-        });
+        $this->em
+            ->expects($this->exactly(3))
+            ->method('persist')
+            ->with(
+                $this->isInstanceOf(ShortUrl::class),
+            )
+            ->willReturnCallback(static function (ShortUrl $shortUrl): void {
+                if ($shortUrl->getShortCode() === 'baz') {
+                    throw new RuntimeException('Whatever error');
+                }
+            });
         $textCalls = $this->setUpIoText('<comment>Skipped</comment>. Reason: Whatever error', '<info>Imported</info>');
 
         $this->processor->process($this->io, ImportResult::withShortUrls($urls), $this->buildParams());
@@ -170,12 +181,17 @@ class ImportedLinksProcessorTest extends TestCase
         ];
 
         $this->em->method('getRepository')->willReturn($this->repo);
-        $this->repo->expects($this->exactly(count($urls)))->method('findOneByImportedUrl')->willReturnCallback(
-            fn (ImportedShlinkUrl $url): ShortUrl|null => contains(
-                $url->longUrl,
-                ['https://foo', 'https://baz2', 'https://baz3'],
-            ) ? ShortUrl::fromImport($url, true) : null,
-        );
+        $this->repo
+            ->expects($this->exactly(count($urls)))
+            ->method('findOneByImportedUrl')
+            ->willReturnCallback(
+                static fn (ImportedShlinkUrl $url): ShortUrl|null => contains(
+                    $url->longUrl,
+                    ['https://foo', 'https://baz2', 'https://baz3'],
+                )
+                        ? ShortUrl::fromImport($url, true)
+                        : null,
+            );
         $this->shortCodeHelper->expects($this->exactly(2))->method('ensureShortCodeUniqueness')->willReturn(true);
         $this->em->expects($this->exactly(2))->method('persist')->with($this->isInstanceOf(ShortUrl::class));
         $textCalls = $this->setUpIoText();
@@ -198,14 +214,26 @@ class ImportedLinksProcessorTest extends TestCase
         ];
 
         $this->em->method('getRepository')->willReturn($this->repo);
-        $this->repo->expects($this->exactly(count($urls)))->method('findOneByImportedUrl')->willReturn(null);
-        $this->shortCodeHelper->expects($this->exactly(7))->method('ensureShortCodeUniqueness')->willReturnCallback(
-            fn ($_, bool $hasCustomSlug) => ! $hasCustomSlug,
-        );
+        $this->repo
+            ->expects($this->exactly(count($urls)))
+            ->method('findOneByImportedUrl')
+            ->willReturn(null);
+        $this->shortCodeHelper
+            ->expects($this->exactly(7))
+            ->method('ensureShortCodeUniqueness')
+            ->willReturnCallback(
+                static fn ($_, bool $hasCustomSlug) => !$hasCustomSlug,
+            );
         $this->em->expects($this->exactly(2))->method('persist')->with($this->isInstanceOf(ShortUrl::class));
-        $this->io->expects($this->exactly(5))->method('choice')->willReturnCallback(function (string $question) {
-            return some(['foo', 'baz2', 'baz3'], fn (string $item) => str_contains($question, $item)) ? 'Skip' : '';
-        });
+        $this->io
+            ->expects($this->exactly(5))
+            ->method('choice')
+            ->willReturnCallback(static fn (string $question) => some(
+                ['foo', 'baz2', 'baz3'],
+                static fn (string $item) => str_contains($question, $item),
+            )
+                    ? 'Skip'
+                    : '');
         $textCalls = $this->setUpIoText('Error');
 
         $this->processor->process($this->io, ImportResult::withShortUrls($urls), $this->buildParams());
@@ -223,12 +251,16 @@ class ImportedLinksProcessorTest extends TestCase
     ): void {
         $this->em->method('getRepository')->willReturn($this->repo);
         $this->repo->expects($this->once())->method('findOneByImportedUrl')->willReturn($foundShortUrl);
-        $this->shortCodeHelper->expects($this->exactly($foundShortUrl === null ? 1 : 0))
-                              ->method('ensureShortCodeUniqueness')
-                              ->willReturn(true);
-        $this->em->expects($this->exactly($amountOfPersistedVisits + ($foundShortUrl === null ? 1 : 0)))->method(
-            'persist',
-        )->with($this->callback(fn (object $arg) => $arg instanceof ShortUrl || $arg instanceof Visit));
+        $this->shortCodeHelper
+            ->expects($this->exactly($foundShortUrl === null ? 1 : 0))
+            ->method('ensureShortCodeUniqueness')
+            ->willReturn(true);
+        $this->em
+            ->expects($this->exactly($amountOfPersistedVisits + ($foundShortUrl === null ? 1 : 0)))
+            ->method(
+                'persist',
+            )
+            ->with($this->callback(static fn (object $arg) => $arg instanceof ShortUrl || $arg instanceof Visit));
         $this->em->method('find')->willReturn(null);
         $this->io->expects($this->once())->method('text')->with($this->stringContains($expectedOutput));
 
@@ -238,16 +270,29 @@ class ImportedLinksProcessorTest extends TestCase
     public static function provideUrlsWithVisits(): iterable
     {
         $now = Chronos::now();
-        $createImportedUrl = static fn (array $visits) =>
-            new ImportedShlinkUrl(ImportSource::BITLY, 'https://s', [], $now, null, 's', null, $visits);
+        $createImportedUrl = static fn (array $visits) => new ImportedShlinkUrl(
+            ImportSource::BITLY,
+            'https://s',
+            [],
+            $now,
+            null,
+            's',
+            null,
+            $visits,
+        );
 
-        yield 'new short URL' => [$createImportedUrl([
-            new ImportedShlinkVisit('', '', $now, null),
-            new ImportedShlinkVisit('', '', $now, null),
-            new ImportedShlinkVisit('', '', $now, null),
-            new ImportedShlinkVisit('', '', $now, null),
-            new ImportedShlinkVisit('', '', $now, null),
-        ]), '<info>Imported</info> with <info>5</info> visits', 5, null];
+        yield 'new short URL' => [
+            $createImportedUrl([
+                new ImportedShlinkVisit('', '', $now, null),
+                new ImportedShlinkVisit('', '', $now, null),
+                new ImportedShlinkVisit('', '', $now, null),
+                new ImportedShlinkVisit('', '', $now, null),
+                new ImportedShlinkVisit('', '', $now, null),
+            ]),
+            '<info>Imported</info> with <info>5</info> visits',
+            5,
+            null,
+        ];
         yield 'existing short URL without previous imported visits' => [
             $createImportedUrl([
                 new ImportedShlinkVisit('', '', $now, null),
@@ -286,19 +331,26 @@ class ImportedLinksProcessorTest extends TestCase
             // 3 times: Initial short URL checking, before creating redirect rules, before creating visits
             $this->em->expects($this->exactly(3))->method('find')->willReturn($foundShortUrl);
         }
-        $this->em->expects($this->once())->method('persist')->willReturnCallback(
-            static fn (Visit $visit)  => Assert::assertSame(
-                $foundShortUrl ?? $originalShortUrl,
-                $visit->shortUrl,
-            ),
-        );
+        $this->em
+            ->expects($this->once())
+            ->method('persist')
+            ->willReturnCallback(
+                static fn (Visit $visit) => Assert::assertSame(
+                    $foundShortUrl ?? $originalShortUrl,
+                    $visit->shortUrl,
+                ),
+            );
 
         $now = Chronos::now();
-        $this->processor->process($this->io, ImportResult::withShortUrls([
-            new ImportedShlinkUrl(ImportSource::SHLINK, 'https://s', [], $now, null, 's', null, [
-                new ImportedShlinkVisit('', '', $now, null),
+        $this->processor->process(
+            $this->io,
+            ImportResult::withShortUrls([
+                new ImportedShlinkUrl(ImportSource::SHLINK, 'https://s', [], $now, null, 's', null, [
+                    new ImportedShlinkVisit('', '', $now, null),
+                ]),
             ]),
-        ]), $this->buildParams());
+            $this->buildParams(),
+        );
     }
 
     public static function provideFoundShortUrls(): iterable
@@ -322,20 +374,32 @@ class ImportedLinksProcessorTest extends TestCase
         int $expectedImportedVisits,
     ): void {
         $this->io->expects($this->exactly($importOrphanVisits ? 2 : 1))->method('title');
-        $this->io->expects($importOrphanVisits ? $this->once() : $this->never())->method('text')->with(
-            sprintf('<info>Imported %s</info> orphan visits.', $expectedImportedVisits),
-        );
+        $this->io
+            ->expects($importOrphanVisits ? $this->once() : $this->never())
+            ->method('text')
+            ->with(
+                sprintf('<info>Imported %s</info> orphan visits.', $expectedImportedVisits),
+            );
 
         $visitRepo = $this->createMock(VisitRepository::class);
-        $visitRepo->expects($importOrphanVisits ? $this->once() : $this->never())->method(
-            'findMostRecentOrphanVisit',
-        )->willReturn($lastOrphanVisit);
-        $this->em->expects($importOrphanVisits ? $this->once() : $this->never())->method('getRepository')->with(
-            Visit::class,
-        )->willReturn($visitRepo);
-        $this->em->expects($importOrphanVisits ? $this->exactly($expectedImportedVisits) : $this->never())->method(
-            'persist',
-        )->with($this->isInstanceOf(Visit::class));
+        $visitRepo->expects($importOrphanVisits ? $this->once() : $this->never())
+            ->method(
+                'findMostRecentOrphanVisit',
+            )
+            ->willReturn($lastOrphanVisit);
+        $this->em
+            ->expects($importOrphanVisits ? $this->once() : $this->never())
+            ->method('getRepository')
+            ->with(
+                Visit::class,
+            )
+            ->willReturn($visitRepo);
+        $this->em
+            ->expects($importOrphanVisits ? $this->exactly($expectedImportedVisits) : $this->never())
+            ->method(
+                'persist',
+            )
+            ->with($this->isInstanceOf(Visit::class));
 
         $this->processor->process(
             $this->io,
@@ -348,23 +412,38 @@ class ImportedLinksProcessorTest extends TestCase
     {
         yield 'import orphan disable without visits' => [false, [], null, 0];
         yield 'import orphan enabled without visits' => [true, [], null, 0];
-        yield 'import orphan disabled with visits' => [false, [
-            new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
-        ], null, 0];
-        yield 'import orphan enabled with visits' => [true, [
-            new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
-            new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
-            new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
-            new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
-            new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
-        ], null, 5];
-        yield 'existing orphan visit' => [true, [
-            new ImportedShlinkOrphanVisit('', '', Chronos::now()->subDays(3), '', '', null),
-            new ImportedShlinkOrphanVisit('', '', Chronos::now()->subDays(2), '', '', null),
-            new ImportedShlinkOrphanVisit('', '', Chronos::now()->addDays(1), '', '', null),
-            new ImportedShlinkOrphanVisit('', '', Chronos::now()->addDays(1), '', '', null),
-            new ImportedShlinkOrphanVisit('', '', Chronos::now()->addDays(1), '', '', null),
-        ], Visit::forBasePath(Visitor::botInstance()), 3];
+        yield 'import orphan disabled with visits' => [
+            false,
+            [
+                new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
+            ],
+            null,
+            0,
+        ];
+        yield 'import orphan enabled with visits' => [
+            true,
+            [
+                new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
+                new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
+                new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
+                new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
+                new ImportedShlinkOrphanVisit('', '', Chronos::now(), '', '', null),
+            ],
+            null,
+            5,
+        ];
+        yield 'existing orphan visit' => [
+            true,
+            [
+                new ImportedShlinkOrphanVisit('', '', Chronos::now()->subDays(3), '', '', null),
+                new ImportedShlinkOrphanVisit('', '', Chronos::now()->subDays(2), '', '', null),
+                new ImportedShlinkOrphanVisit('', '', Chronos::now()->addDays(1), '', '', null),
+                new ImportedShlinkOrphanVisit('', '', Chronos::now()->addDays(1), '', '', null),
+                new ImportedShlinkOrphanVisit('', '', Chronos::now()->addDays(1), '', '', null),
+            ],
+            Visit::forBasePath(Visitor::botInstance()),
+            3,
+        ];
     }
 
     private function buildParams(bool $importOrphanVisits = false): ImportParams
@@ -381,15 +460,17 @@ class ImportedLinksProcessorTest extends TestCase
         $counts->importedCount = 0;
         $counts->skippedCount = 0;
 
-        $this->io->method('text')->willReturnCallback(
-            function (string $output) use ($counts, $skippedText, $importedText): void {
-                if (str_contains($output, $skippedText)) {
-                    $counts->skippedCount++;
-                } elseif (str_contains($output, $importedText)) {
-                    $counts->importedCount++;
-                }
-            },
-        );
+        $this->io
+            ->method('text')
+            ->willReturnCallback(
+                static function (string $output) use ($counts, $skippedText, $importedText): void {
+                    if (str_contains($output, $skippedText)) {
+                        $counts->skippedCount++;
+                    } elseif (str_contains($output, $importedText)) {
+                        $counts->importedCount++;
+                    }
+                },
+            );
 
         return $counts;
     }

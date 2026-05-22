@@ -21,7 +21,7 @@ use function count;
 class ShortUrlListServiceTest extends TestCase
 {
     private ShortUrlListService $service;
-    private MockObject & ShortUrlListRepositoryInterface $repo;
+    private MockObject&ShortUrlListRepositoryInterface $repo;
 
     protected function setUp(): void
     {

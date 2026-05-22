@@ -32,8 +32,9 @@ class GetTagVisitsCommand extends Command
         #[Argument('The tag which visits we want to get'), Ask('For what tag do you want to get visits')] string $tag,
         #[MapInput] VisitsListInput $input,
         #[Option(
-            'Return visits that belong to this domain only. Use ' . Domain::DEFAULT_AUTHORITY . ' keyword for visits '
-            . 'in default domain',
+            'Return visits that belong to this domain only. Use '
+            . Domain::DEFAULT_AUTHORITY
+            . ' keyword for visits in default domain',
             shortcut: 'd',
         )]
         string|null $domain = null,

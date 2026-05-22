@@ -30,15 +30,12 @@ final readonly class ShortUrlEdition implements TitleResolutionModelInterface
      * @param string[]|null $tags
      */
     public function __construct(
-        #[LooseUriConverter]
-        public string|null $longUrl = null,
+        #[LooseUriConverter] public string|null $longUrl = null,
         DateTimeInterface|string|NoValue|null $validSince = NoValue::NO_VALUE,
         DateTimeInterface|string|NoValue|null $validUntil = NoValue::NO_VALUE,
         int|NoValue|null $maxVisits = NoValue::NO_VALUE,
-        #[TagsConverter]
-        public array|null $tags = null,
-        #[SubstringConverter(512)]
-        string|NoValue|null $title = NoValue::NO_VALUE,
+        #[TagsConverter] public array|null $tags = null,
+        #[SubstringConverter(512)] string|NoValue|null $title = NoValue::NO_VALUE,
         public bool $titleWasAutoResolved = false,
         public bool|null $crawlable = null,
         public bool|null $forwardQuery = null,

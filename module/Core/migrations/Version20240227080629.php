@@ -16,7 +16,7 @@ final class Version20240227080629 extends AbstractMigration
 {
     public function up(Schema $schema): void
     {
-        $this->skipIf(! $schema->hasTable('device_long_urls'));
+        $this->skipIf(!$schema->hasTable('device_long_urls'));
         $schema->dropTable('device_long_urls');
     }
 
@@ -39,16 +39,21 @@ final class Version20240227080629 extends AbstractMigration
             'notnull' => true,
         ]);
 
-        $table->addForeignKeyConstraint('short_urls', ['short_url_id'], ['id'], [
-            'onDelete' => 'CASCADE',
-            'onUpdate' => 'RESTRICT',
-        ]);
+        $table->addForeignKeyConstraint(
+            'short_urls',
+            ['short_url_id'],
+            ['id'],
+            [
+                'onDelete' => 'CASCADE',
+                'onUpdate' => 'RESTRICT',
+            ],
+        );
 
         $table->addUniqueIndex(['device_type', 'short_url_id'], 'UQ_device_type_per_short_url');
     }
 
     public function isTransactional(): bool
     {
-        return ! ($this->connection->getDatabasePlatform() instanceof MySQLPlatform);
+        return !$this->connection->getDatabasePlatform() instanceof MySQLPlatform;
     }
 }

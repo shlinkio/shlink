@@ -20,9 +20,14 @@ class TagVisitsTest extends ApiTestCase
         array $query,
         int $expectedVisitsAmount,
     ): void {
-        $resp = $this->callApiWithKey(self::METHOD_GET, sprintf('/tags/%s/visits', $tag), [
-            RequestOptions::QUERY => $query,
-        ], $apiKey);
+        $resp = $this->callApiWithKey(
+            self::METHOD_GET,
+            sprintf('/tags/%s/visits', $tag),
+            [
+                RequestOptions::QUERY => $query,
+            ],
+            $apiKey,
+        );
         $payload = $this->getJsonResponsePayload($resp);
 
         self::assertEquals(self::STATUS_OK, $resp->getStatusCode());

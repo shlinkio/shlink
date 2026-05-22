@@ -18,8 +18,7 @@ readonly class VisitsTracker implements VisitsTrackerInterface
         private ORM\EntityManagerInterface $em,
         private EventDispatcherInterface $eventDispatcher,
         private TrackingOptions $options,
-    ) {
-    }
+    ) {}
 
     public function track(ShortUrl $shortUrl, Visitor $visitor): Visit|null
     {
@@ -55,7 +54,7 @@ readonly class VisitsTracker implements VisitsTrackerInterface
 
     private function trackOrphanVisit(callable $createVisit, Visitor $visitor): Visit|null
     {
-        if (! $this->options->trackOrphanVisits) {
+        if (!$this->options->trackOrphanVisits) {
             return null;
         }
 

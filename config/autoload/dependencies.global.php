@@ -17,7 +17,6 @@ use Spiral\RoadRunner\WorkerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 return [
-
     'dependencies' => [
         'factories' => [
             PSR7Worker::class => ConfigAbstractFactory::class,
@@ -49,5 +48,4 @@ return [
             UploadedFileFactoryInterface::class,
         ],
     ],
-
 ];

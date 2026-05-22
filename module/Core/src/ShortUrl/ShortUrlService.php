@@ -20,8 +20,7 @@ readonly class ShortUrlService implements ShortUrlServiceInterface
         private ShortUrlResolverInterface $urlResolver,
         private ShortUrlTitleResolutionHelperInterface $titleResolutionHelper,
         private ShortUrlRelationResolverInterface $relationResolver,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws ShortUrlNotFoundException

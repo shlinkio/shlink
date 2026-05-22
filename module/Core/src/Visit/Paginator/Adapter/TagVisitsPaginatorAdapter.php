@@ -20,8 +20,7 @@ class TagVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
         private readonly string $tag,
         private readonly WithDomainVisitsParams $params,
         private readonly ApiKey|null $apiKey,
-    ) {
-    }
+    ) {}
 
     public function getSlice(int $offset, int $length): iterable
     {

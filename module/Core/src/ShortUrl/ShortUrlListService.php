@@ -16,8 +16,7 @@ readonly class ShortUrlListService implements ShortUrlListServiceInterface
     public function __construct(
         private ShortUrlListRepositoryInterface $repo,
         private UrlShortenerOptions $urlShortenerOptions,
-    ) {
-    }
+    ) {}
 
     /** @inheritDoc */
     public function listShortUrls(ShortUrlsParams $params, ApiKey|null $apiKey = null): Paginator
@@ -25,7 +24,7 @@ readonly class ShortUrlListService implements ShortUrlListServiceInterface
         $defaultDomain = $this->urlShortenerOptions->defaultDomain;
         $paginator = new Paginator(new ShortUrlRepositoryAdapter($this->repo, $params, $apiKey, $defaultDomain));
         $paginator->setMaxPerPage($params->itemsPerPage)
-                  ->setCurrentPage($params->page);
+            ->setCurrentPage($params->page);
 
         return $paginator;
     }

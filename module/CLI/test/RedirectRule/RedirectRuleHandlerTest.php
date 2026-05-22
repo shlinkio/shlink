@@ -27,7 +27,7 @@ use function sprintf;
 class RedirectRuleHandlerTest extends TestCase
 {
     private RedirectRuleHandler $handler;
-    private StyleInterface & MockObject $io;
+    private StyleInterface&MockObject $io;
     private ShortUrl $shortUrl;
     private RedirectCondition $cond1;
     private RedirectCondition $cond2;
@@ -57,7 +57,7 @@ class RedirectRuleHandlerTest extends TestCase
         $this->handler = new RedirectRuleHandler();
     }
 
-    #[Test,  DataProvider('provideExitActions')]
+    #[Test, DataProvider('provideExitActions')]
     public function commentIsDisplayedWhenRulesListIsEmpty(
         RedirectRuleHandlerAction $action,
         array|null $expectedResult,
@@ -77,24 +77,27 @@ class RedirectRuleHandlerTest extends TestCase
         RedirectRuleHandlerAction $action,
         array|null $_,
     ): void {
-        $comment = fn (string $value) => sprintf('<comment>%s</comment>', $value);
+        $comment = static fn (string $value) => sprintf('<comment>%s</comment>', $value);
 
         $this->io->expects($this->once())->method('choice')->willReturn($action->value);
         $this->io->expects($this->never())->method('newLine');
         $this->io->expects($this->never())->method('text');
-        $this->io->expects($this->once())->method('table')->with($this->isArray(), [
-            ['1', $comment($this->cond1->toHumanFriendly()), 'https://example.com/one'],
-            [
-                '2',
-                $comment($this->cond2->toHumanFriendly()) . ' AND ' . $comment($this->cond3->toHumanFriendly()),
-                'https://example.com/two',
-            ],
-            [
-                '3',
-                $comment($this->cond1->toHumanFriendly()) . ' AND ' . $comment($this->cond3->toHumanFriendly()),
-                'https://example.com/three',
-            ],
-        ]);
+        $this->io
+            ->expects($this->once())
+            ->method('table')
+            ->with($this->isArray(), [
+                ['1', $comment($this->cond1->toHumanFriendly()), 'https://example.com/one'],
+                [
+                    '2',
+                    $comment($this->cond2->toHumanFriendly()) . ' AND ' . $comment($this->cond3->toHumanFriendly()),
+                    'https://example.com/two',
+                ],
+                [
+                    '3',
+                    $comment($this->cond1->toHumanFriendly()) . ' AND ' . $comment($this->cond3->toHumanFriendly()),
+                    'https://example.com/three',
+                ],
+            ]);
 
         $this->handler->manageRules($this->io, $this->shortUrl, $this->rules);
     }
@@ -114,54 +117,68 @@ class RedirectRuleHandlerTest extends TestCase
         array $expectedConditions,
         bool $continue = false,
     ): void {
-        $this->io->method('ask')->willReturnCallback(
-            fn (string $message): string|int => match ($message) {
-                'Rule priority (the lower the value, the higher the priority)' => 2, // Add in between existing rules
-                'Long URL to redirect when the rule matches' => 'https://example.com/new-two',
-                'Language to match?' => 'en-US',
-                'Query param name?' => 'foo',
-                'Query param value?' => 'bar',
-                'IP address, CIDR block or wildcard-pattern (1.2.*.*)' => '1.2.3.4',
-                'Country code to match?' => 'FR',
-                'City name to match?' => 'Los angeles',
-                'Date to match?' => '2016-05-01T20:34:16+02:00',
-                default => '',
-            },
-        );
-        $this->io->method('choice')->willReturnCallback(
-            function (string $message) use (&$callIndex, $type): string {
-                $callIndex++;
+        $this->io
+            ->method('ask')
+            ->willReturnCallback(
+                static fn (string $message): string|int => match ($message) {
+                    'Rule priority (the lower the value, the higher the priority)' => 2, // Add in between existing rules
+                    'Long URL to redirect when the rule matches' => 'https://example.com/new-two',
+                    'Language to match?' => 'en-US',
+                    'Query param name?' => 'foo',
+                    'Query param value?' => 'bar',
+                    'IP address, CIDR block or wildcard-pattern (1.2.*.*)' => '1.2.3.4',
+                    'Country code to match?' => 'FR',
+                    'City name to match?' => 'Los angeles',
+                    'Date to match?' => '2016-05-01T20:34:16+02:00',
+                    default => '',
+                },
+            );
+        $this->io
+            ->method('choice')
+            ->willReturnCallback(
+                static function (string $message) use (&$callIndex, $type): string {
+                    $callIndex++;
 
-                if ($message === 'Type of the condition?') {
-                    return $type->value;
-                } elseif ($message === 'Device to match?') {
-                    return DeviceType::ANDROID->value;
-                } elseif ($message === 'Browser to match?') {
-                    return Browser::CHROME->value;
-                }
+                    if ($message === 'Type of the condition?') {
+                        return $type->value;
+                    } elseif ($message === 'Device to match?') {
+                        return DeviceType::ANDROID->value;
+                    } elseif ($message === 'Browser to match?') {
+                        return Browser::CHROME->value;
+                    }
 
-                // First we select remove action to trigger code branch, then save to finish execution
-                $action = $callIndex === 1 ? RedirectRuleHandlerAction::ADD : RedirectRuleHandlerAction::SAVE;
-                return $action->value;
-            },
-        );
+                    // First we select remove action to trigger code branch, then save to finish execution
+                    $action = $callIndex === 1 ? RedirectRuleHandlerAction::ADD : RedirectRuleHandlerAction::SAVE;
+                    return $action->value;
+                },
+            );
 
         $continueCallCount = 0;
-        $this->io->method('confirm')->willReturnCallback(function () use (&$continueCallCount, $continue) {
-            $continueCallCount++;
-            return $continueCallCount < 2 && $continue;
-        });
+        $this->io
+            ->method('confirm')
+            ->willReturnCallback(static function () use (&$continueCallCount, $continue) {
+                $continueCallCount++;
+                return $continueCallCount < 2 && $continue;
+            });
 
         $result = $this->handler->manageRules($this->io, $this->shortUrl, $this->rules);
 
-        self::assertEquals([
-            $this->rules[0],
-            new ShortUrlRedirectRule($this->shortUrl, 2, 'https://example.com/new-two', new ArrayCollection(
-                $expectedConditions,
-            )),
-            $this->rules[1],
-            $this->rules[2],
-        ], $result);
+        self::assertEquals(
+            [
+                $this->rules[0],
+                new ShortUrlRedirectRule(
+                    $this->shortUrl,
+                    2,
+                    'https://example.com/new-two',
+                    new ArrayCollection(
+                        $expectedConditions,
+                    ),
+                ),
+                $this->rules[1],
+                $this->rules[2],
+            ],
+            $result,
+        );
     }
 
     public static function provideDeviceConditions(): iterable
@@ -206,19 +223,22 @@ class RedirectRuleHandlerTest extends TestCase
     public function existingRulesCanBeRemoved(): void
     {
         $callIndex = 0;
-        $this->io->expects($this->exactly(3))->method('choice')->willReturnCallback(
-            function (string $message) use (&$callIndex): string {
-                $callIndex++;
+        $this->io
+            ->expects($this->exactly(3))
+            ->method('choice')
+            ->willReturnCallback(
+                static function (string $message) use (&$callIndex): string {
+                    $callIndex++;
 
-                if ($message === 'What rule do you want to delete?') {
-                    return '2 - https://example.com/two'; // Second rule to be removed
-                }
+                    if ($message === 'What rule do you want to delete?') {
+                        return '2 - https://example.com/two'; // Second rule to be removed
+                    }
 
-                // First we select remove action to trigger code branch, then save to finish execution
-                $action = $callIndex === 1 ? RedirectRuleHandlerAction::REMOVE : RedirectRuleHandlerAction::SAVE;
-                return $action->value;
-            },
-        );
+                    // First we select remove action to trigger code branch, then save to finish execution
+                    $action = $callIndex === 1 ? RedirectRuleHandlerAction::REMOVE : RedirectRuleHandlerAction::SAVE;
+                    return $action->value;
+                },
+            );
         $this->io->expects($this->never())->method('warning');
 
         $result = $this->handler->manageRules($this->io, $this->shortUrl, $this->rules);
@@ -230,13 +250,16 @@ class RedirectRuleHandlerTest extends TestCase
     public function warningIsPrintedWhenTryingToRemoveRuleFromEmptyList(): void
     {
         $callIndex = 0;
-        $this->io->expects($this->exactly(2))->method('choice')->willReturnCallback(
-            function () use (&$callIndex): string {
-                $callIndex++;
-                $action = $callIndex === 1 ? RedirectRuleHandlerAction::REMOVE : RedirectRuleHandlerAction::DISCARD;
-                return $action->value;
-            },
-        );
+        $this->io
+            ->expects($this->exactly(2))
+            ->method('choice')
+            ->willReturnCallback(
+                static function () use (&$callIndex): string {
+                    $callIndex++;
+                    $action = $callIndex === 1 ? RedirectRuleHandlerAction::REMOVE : RedirectRuleHandlerAction::DISCARD;
+                    return $action->value;
+                },
+            );
         $this->io->expects($this->once())->method('warning')->with('There are no rules to remove');
 
         $this->handler->manageRules($this->io, $this->shortUrl, []);
@@ -245,25 +268,32 @@ class RedirectRuleHandlerTest extends TestCase
     #[Test]
     public function existingRulesCanBeReArranged(): void
     {
-        $this->io->method('ask')->willReturnCallback(
-            fn (string $message): string|int => match ($message) {
-                'Rule priority (the lower the value, the higher the priority)' => 1,
-                default => '',
-            },
-        );
-        $this->io->expects($this->exactly(3))->method('choice')->willReturnCallback(
-            function (string $message) use (&$callIndex): string {
-                $callIndex++;
+        $this->io
+            ->method('ask')
+            ->willReturnCallback(
+                static fn (string $message): string|int => match ($message) {
+                    'Rule priority (the lower the value, the higher the priority)' => 1,
+                    default => '',
+                },
+            );
+        $this->io
+            ->expects($this->exactly(3))
+            ->method('choice')
+            ->willReturnCallback(
+                static function (string $message) use (&$callIndex): string {
+                    $callIndex++;
 
-                if ($message === 'What rule do you want to re-arrange?') {
-                    return '2 - https://example.com/two'; // Second rule to be re-arrange
-                }
+                    if ($message === 'What rule do you want to re-arrange?') {
+                        return '2 - https://example.com/two'; // Second rule to be re-arrange
+                    }
 
-                // First we select remove action to trigger code branch, then save to finish execution
-                $action = $callIndex === 1 ? RedirectRuleHandlerAction::RE_ARRANGE : RedirectRuleHandlerAction::SAVE;
-                return $action->value;
-            },
-        );
+                    // First we select remove action to trigger code branch, then save to finish execution
+                    $action = $callIndex === 1
+                        ? RedirectRuleHandlerAction::RE_ARRANGE
+                        : RedirectRuleHandlerAction::SAVE;
+                    return $action->value;
+                },
+            );
         $this->io->expects($this->never())->method('warning');
 
         $result = $this->handler->manageRules($this->io, $this->shortUrl, $this->rules);
@@ -275,13 +305,18 @@ class RedirectRuleHandlerTest extends TestCase
     public function warningIsPrintedWhenTryingToReArrangeRuleFromEmptyList(): void
     {
         $callIndex = 0;
-        $this->io->expects($this->exactly(2))->method('choice')->willReturnCallback(
-            function () use (&$callIndex): string {
-                $callIndex++;
-                $action = $callIndex === 1 ? RedirectRuleHandlerAction::RE_ARRANGE : RedirectRuleHandlerAction::DISCARD;
-                return $action->value;
-            },
-        );
+        $this->io
+            ->expects($this->exactly(2))
+            ->method('choice')
+            ->willReturnCallback(
+                static function () use (&$callIndex): string {
+                    $callIndex++;
+                    $action = $callIndex === 1
+                        ? RedirectRuleHandlerAction::RE_ARRANGE
+                        : RedirectRuleHandlerAction::DISCARD;
+                    return $action->value;
+                },
+            );
         $this->io->expects($this->once())->method('warning')->with('There are no rules to re-arrange');
 
         $this->handler->manageRules($this->io, $this->shortUrl, []);

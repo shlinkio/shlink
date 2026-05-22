@@ -21,8 +21,8 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ListRedirectRulesActionTest extends TestCase
 {
-    private ShortUrlResolverInterface & MockObject $urlResolver;
-    private ShortUrlRedirectRuleServiceInterface & MockObject $ruleService;
+    private ShortUrlResolverInterface&MockObject $urlResolver;
+    private ShortUrlRedirectRuleServiceInterface&MockObject $ruleService;
     private ListRedirectRulesAction $action;
 
     protected function setUp(): void
@@ -50,9 +50,12 @@ class ListRedirectRulesActionTest extends TestCase
         $response = $this->action->handle($request);
         $payload = $response->getPayload();
 
-        self::assertEquals([
-            'defaultLongUrl' => $shortUrl->getLongUrl(),
-            'redirectRules' => $redirectRules,
-        ], $payload);
+        self::assertEquals(
+            [
+                'defaultLongUrl' => $shortUrl->getLongUrl(),
+                'redirectRules' => $redirectRules,
+            ],
+            $payload,
+        );
     }
 }

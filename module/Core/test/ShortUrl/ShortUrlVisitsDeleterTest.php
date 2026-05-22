@@ -17,8 +17,8 @@ use Shlinkio\Shlink\Core\Visit\Repository\VisitDeleterRepositoryInterface;
 class ShortUrlVisitsDeleterTest extends TestCase
 {
     private ShortUrlVisitsDeleter $deleter;
-    private MockObject & VisitDeleterRepositoryInterface $repository;
-    private MockObject & ShortUrlResolverInterface $resolver;
+    private MockObject&VisitDeleterRepositoryInterface $repository;
+    private MockObject&ShortUrlResolverInterface $resolver;
 
     protected function setUp(): void
     {
@@ -34,12 +34,20 @@ class ShortUrlVisitsDeleterTest extends TestCase
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain('');
         $shortUrl = ShortUrl::withLongUrl('https://example.com');
 
-        $this->resolver->expects($this->once())->method('resolveShortUrl')->with($identifier, null)->willReturn(
-            $shortUrl,
-        );
-        $this->repository->expects($this->once())->method('deleteShortUrlVisits')->with($shortUrl)->willReturn(
-            $visitsCount,
-        );
+        $this->resolver
+            ->expects($this->once())
+            ->method('resolveShortUrl')
+            ->with($identifier, null)
+            ->willReturn(
+                $shortUrl,
+            );
+        $this->repository
+            ->expects($this->once())
+            ->method('deleteShortUrlVisits')
+            ->with($shortUrl)
+            ->willReturn(
+                $visitsCount,
+            );
 
         $result = $this->deleter->deleteShortUrlVisits($identifier, null);
 

@@ -20,9 +20,9 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class ManageRedirectRulesCommandTest extends TestCase
 {
-    private ShortUrlResolverInterface & MockObject $shortUrlResolver;
-    private ShortUrlRedirectRuleServiceInterface & MockObject $ruleService;
-    private RedirectRuleHandlerInterface & MockObject $ruleHandler;
+    private ShortUrlResolverInterface&MockObject $shortUrlResolver;
+    private ShortUrlRedirectRuleServiceInterface&MockObject $ruleService;
+    private RedirectRuleHandlerInterface&MockObject $ruleHandler;
     private CommandTester $commandTester;
 
     protected function setUp(): void
@@ -41,9 +41,13 @@ class ManageRedirectRulesCommandTest extends TestCase
     #[Test]
     public function errorIsReturnedIfShortUrlCannotBeFound(): void
     {
-        $this->shortUrlResolver->expects($this->once())->method('resolveShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain('foo'),
-        )->willThrowException(new ShortUrlNotFoundException(''));
+        $this->shortUrlResolver
+            ->expects($this->once())
+            ->method('resolveShortUrl')
+            ->with(
+                ShortUrlIdentifier::fromShortCodeAndDomain('foo'),
+            )
+            ->willThrowException(new ShortUrlNotFoundException(''));
         $this->ruleService->expects($this->never())->method('rulesForShortUrl');
         $this->ruleService->expects($this->never())->method('saveRulesForShortUrl');
         $this->ruleHandler->expects($this->never())->method('manageRules');
@@ -60,9 +64,13 @@ class ManageRedirectRulesCommandTest extends TestCase
     {
         $shortUrl = ShortUrl::withLongUrl('https://example.com');
 
-        $this->shortUrlResolver->expects($this->once())->method('resolveShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain('foo'),
-        )->willReturn($shortUrl);
+        $this->shortUrlResolver
+            ->expects($this->once())
+            ->method('resolveShortUrl')
+            ->with(
+                ShortUrlIdentifier::fromShortCodeAndDomain('foo'),
+            )
+            ->willReturn($shortUrl);
         $this->ruleService->expects($this->once())->method('rulesForShortUrl')->with($shortUrl)->willReturn([]);
         $this->ruleHandler->expects($this->once())->method('manageRules')->willReturn(null);
         $this->ruleService->expects($this->never())->method('saveRulesForShortUrl');
@@ -79,9 +87,13 @@ class ManageRedirectRulesCommandTest extends TestCase
     {
         $shortUrl = ShortUrl::withLongUrl('https://example.com');
 
-        $this->shortUrlResolver->expects($this->once())->method('resolveShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain('foo'),
-        )->willReturn($shortUrl);
+        $this->shortUrlResolver
+            ->expects($this->once())
+            ->method('resolveShortUrl')
+            ->with(
+                ShortUrlIdentifier::fromShortCodeAndDomain('foo'),
+            )
+            ->willReturn($shortUrl);
         $this->ruleService->expects($this->once())->method('rulesForShortUrl')->with($shortUrl)->willReturn([]);
         $this->ruleHandler->expects($this->once())->method('manageRules')->willReturn([]);
         $this->ruleService->expects($this->once())->method('saveRulesForShortUrl')->with($shortUrl, []);

@@ -16,8 +16,7 @@ final readonly class MatomoOptions
         public string|null $baseUrl = null,
         private string|int|null $siteId = null,
         public string|null $apiToken = null,
-    ) {
-    }
+    ) {}
 
     public static function fromEnv(): self
     {

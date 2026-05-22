@@ -66,7 +66,7 @@ class ShortUrlVisitsCountTrackerTest extends DatabaseTestCase
         $result = $this->repo->findBy(['shortUrl' => $shortUrl]);
         $itemsWithCountBiggerThanOnce = array_values(array_filter(
             $result,
-            static fn (ShortUrlVisitsCount $item) => ((int) $item->count) > 1,
+            static fn (ShortUrlVisitsCount $item) => (int) $item->count > 1,
         ));
 
         self::assertCount(101, $result);

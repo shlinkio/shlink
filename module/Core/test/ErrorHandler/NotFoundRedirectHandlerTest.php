@@ -26,9 +26,9 @@ class NotFoundRedirectHandlerTest extends TestCase
 {
     private NotFoundRedirectHandler $middleware;
     private NotFoundRedirectOptions $redirectOptions;
-    private MockObject & NotFoundRedirectResolverInterface $resolver;
-    private MockObject & DomainServiceInterface $domainService;
-    private MockObject & RequestHandlerInterface $next;
+    private MockObject&NotFoundRedirectResolverInterface $resolver;
+    private MockObject&DomainServiceInterface $domainService;
+    private MockObject&RequestHandlerInterface $next;
     private ServerRequestInterface $req;
 
     protected function setUp(): void
@@ -64,42 +64,51 @@ class NotFoundRedirectHandlerTest extends TestCase
         $exactly = static fn (int $expectedCount) => new InvokedCountMatcher($expectedCount);
         $once = static fn () => $exactly(1);
 
-        yield 'no domain' => [function (
+        yield 'no domain' => [static function (
             MockObject&DomainServiceInterface $domainService,
             MockObject&NotFoundRedirectResolverInterface $resolver,
-        ) use (
-            $once,
-        ): void {
-            $domainService->expects($once())->method('findByAuthority')->withAnyParameters()->willReturn(
-                null,
-            );
-            $resolver->expects($once())->method('resolveRedirectResponse')->with(
-                self::isInstanceOf(NotFoundType::class),
-                self::isInstanceOf(NotFoundRedirectOptions::class),
-                self::isInstanceOf(UriInterface::class),
-            )->willReturn(null);
+        ) use ($once): void {
+            $domainService->expects($once())
+                ->method('findByAuthority')
+                ->withAnyParameters()
+                ->willReturn(
+                    null,
+                );
+            $resolver->expects($once())
+                ->method('resolveRedirectResponse')
+                ->with(
+                    self::isInstanceOf(NotFoundType::class),
+                    self::isInstanceOf(NotFoundRedirectOptions::class),
+                    self::isInstanceOf(UriInterface::class),
+                )
+                ->willReturn(null);
         }];
-        yield 'non-redirecting domain' => [function (
+        yield 'non-redirecting domain' => [static function (
             MockObject&DomainServiceInterface $domainService,
             MockObject&NotFoundRedirectResolverInterface $resolver,
-        ) use (
-            $once,
-            $exactly,
-        ): void {
-            $domainService->expects($once())->method('findByAuthority')->withAnyParameters()->willReturn(
-                Domain::withAuthority(''),
-            );
+        ) use ($once, $exactly): void {
+            $domainService->expects($once())
+                ->method('findByAuthority')
+                ->withAnyParameters()
+                ->willReturn(
+                    Domain::withAuthority(''),
+                );
             $callCount = 0;
-            $resolver->expects($exactly(2))->method('resolveRedirectResponse')->willReturnCallback(
-                function (mixed $arg1, mixed $arg2, mixed $arg3) use (&$callCount) {
-                    Assert::assertInstanceOf(NotFoundType::class, $arg1);
-                    Assert::assertInstanceOf($callCount === 0 ? Domain::class : NotFoundRedirectOptions::class, $arg2);
-                    Assert::assertInstanceOf(UriInterface::class, $arg3);
+            $resolver->expects($exactly(2))
+                ->method('resolveRedirectResponse')
+                ->willReturnCallback(
+                    static function (mixed $arg1, mixed $arg2, mixed $arg3) use (&$callCount) {
+                        Assert::assertInstanceOf(NotFoundType::class, $arg1);
+                        Assert::assertInstanceOf(
+                            $callCount === 0 ? Domain::class : NotFoundRedirectOptions::class,
+                            $arg2,
+                        );
+                        Assert::assertInstanceOf(UriInterface::class, $arg3);
 
-                    $callCount++;
-                    return null;
-                },
-            );
+                        $callCount++;
+                        return null;
+                    },
+                );
         }];
     }
 
@@ -109,11 +118,15 @@ class NotFoundRedirectHandlerTest extends TestCase
         $expectedResp = new Response();
 
         $this->domainService->expects($this->once())->method('findByAuthority')->withAnyParameters()->willReturn(null);
-        $this->resolver->expects($this->once())->method('resolveRedirectResponse')->with(
-            $this->isInstanceOf(NotFoundType::class),
-            $this->redirectOptions,
-            $this->isInstanceOf(UriInterface::class),
-        )->willReturn($expectedResp);
+        $this->resolver
+            ->expects($this->once())
+            ->method('resolveRedirectResponse')
+            ->with(
+                $this->isInstanceOf(NotFoundType::class),
+                $this->redirectOptions,
+                $this->isInstanceOf(UriInterface::class),
+            )
+            ->willReturn($expectedResp);
         $this->next->expects($this->never())->method('handle');
 
         $result = $this->middleware->process($this->req, $this->next);
@@ -127,14 +140,22 @@ class NotFoundRedirectHandlerTest extends TestCase
         $expectedResp = new Response();
         $domain = Domain::withAuthority('');
 
-        $this->domainService->expects($this->once())->method('findByAuthority')->withAnyParameters()->willReturn(
-            $domain,
-        );
-        $this->resolver->expects($this->once())->method('resolveRedirectResponse')->with(
-            $this->isInstanceOf(NotFoundType::class),
-            $domain,
-            $this->isInstanceOf(UriInterface::class),
-        )->willReturn($expectedResp);
+        $this->domainService
+            ->expects($this->once())
+            ->method('findByAuthority')
+            ->withAnyParameters()
+            ->willReturn(
+                $domain,
+            );
+        $this->resolver
+            ->expects($this->once())
+            ->method('resolveRedirectResponse')
+            ->with(
+                $this->isInstanceOf(NotFoundType::class),
+                $domain,
+                $this->isInstanceOf(UriInterface::class),
+            )
+            ->willReturn($expectedResp);
         $this->next->expects($this->never())->method('handle');
 
         $result = $this->middleware->process($this->req, $this->next);

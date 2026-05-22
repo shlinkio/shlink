@@ -23,8 +23,7 @@ abstract class AbstractTrackingAction implements MiddlewareInterface, RequestMet
     public function __construct(
         private readonly ShortUrlResolverInterface $urlResolver,
         private readonly RequestTrackerInterface $requestTracker,
-    ) {
-    }
+    ) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {

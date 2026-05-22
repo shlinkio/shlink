@@ -136,10 +136,8 @@ class DomainRepositoryTest extends DatabaseTestCase
                 domain: $domain->authority,
                 apiKey: $apiKey,
             ),
-            new class ($domain) implements ShortUrlRelationResolverInterface {
-                public function __construct(private Domain $domain)
-                {
-                }
+            new class($domain) implements ShortUrlRelationResolverInterface {
+                public function __construct(private Domain $domain) {}
 
                 public function resolveDomain(string|null $domain): Domain
                 {

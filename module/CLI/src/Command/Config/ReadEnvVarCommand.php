@@ -48,7 +48,7 @@ class ReadEnvVarCommand extends Command
             $envVar = $io->choice('Select the env var to read', $validEnvVars);
         }
 
-        if (! contains($envVar, $validEnvVars)) {
+        if (!contains($envVar, $validEnvVars)) {
             throw new InvalidArgumentException(sprintf('%s is not a valid Shlink environment variable', $envVar));
         }
 

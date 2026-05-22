@@ -21,7 +21,7 @@ class MapperBuilderWithCacheDelegatorFactory
         $mapperBuilder = $callback();
 
         $cache = new FileSystemCache('data/cache/valinor');
-        if (! EnvVars::isProdEnv()) {
+        if (!EnvVars::isProdEnv()) {
             $cache = new FileWatchingCache($cache);
         }
 

@@ -12,9 +12,7 @@ readonly class RedirectRuleData
      * @param RedirectConditionData[] $conditions
      */
     public function __construct(
-        #[LooseUriConverter]
-        public string $longUrl,
+        #[LooseUriConverter] public string $longUrl,
         public array $conditions,
-    ) {
-    }
+    ) {}
 }

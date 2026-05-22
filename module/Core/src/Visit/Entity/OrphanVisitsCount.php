@@ -12,6 +12,5 @@ class OrphanVisitsCount extends AbstractEntity
         public readonly bool $potentialBot = false,
         public readonly int $slotId = 1,
         public readonly string $count = '1',
-    ) {
-    }
+    ) {}
 }

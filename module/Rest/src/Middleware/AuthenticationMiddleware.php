@@ -27,8 +27,7 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
         private readonly ApiKeyServiceInterface $apiKeyService,
         private readonly array $routesWithoutApiKey,
         private readonly array $routesWithQueryApiKey,
-    ) {
-    }
+    ) {}
 
     public function process(Request $request, RequestHandlerInterface $handler): Response
     {
@@ -45,7 +44,7 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
 
         $apiKey = $this->getApiKeyFromRequest($request, $routeResult);
         $result = $this->apiKeyService->check($apiKey);
-        if (! $result->isValid()) {
+        if (!$result->isValid()) {
             throw VerifyAuthenticationException::forInvalidApiKey();
         }
 
@@ -62,7 +61,7 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
         $routeName = $routeResult->getMatchedRouteName();
         $query = $request->getQueryParams();
         $isRouteWithApiKeyInQuery = contains($routeName, $this->routesWithQueryApiKey);
-        $apiKey = $isRouteWithApiKeyInQuery ? ($query['apiKey'] ?? '') : $request->getHeaderLine(self::API_KEY_HEADER);
+        $apiKey = $isRouteWithApiKeyInQuery ? $query['apiKey'] ?? '' : $request->getHeaderLine(self::API_KEY_HEADER);
 
         if (empty($apiKey)) {
             throw $isRouteWithApiKeyInQuery

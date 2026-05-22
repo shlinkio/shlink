@@ -20,7 +20,7 @@ final class Version20250215100756 extends AbstractMigration
 {
     public function up(Schema $schema): void
     {
-        $this->skipIf(! $this->isMicrosoftSql());
+        $this->skipIf(!$this->isMicrosoftSql());
 
         // Drop the existing unique index
         $shortUrls = $schema->getTable('short_urls');

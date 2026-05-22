@@ -27,10 +27,10 @@ use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
 
 class IpGeolocationMiddlewareTest extends TestCase
 {
-    private MockObject & IpLocationResolverInterface $ipLocationResolver;
-    private MockObject & DbUpdaterInterface $dbUpdater;
-    private MockObject & LoggerInterface $logger;
-    private MockObject & RequestHandlerInterface $handler;
+    private MockObject&IpLocationResolverInterface $ipLocationResolver;
+    private MockObject&DbUpdaterInterface $dbUpdater;
+    private MockObject&LoggerInterface $logger;
+    private MockObject&RequestHandlerInterface $handler;
 
     protected function setUp(): void
     {
@@ -58,9 +58,12 @@ class IpGeolocationMiddlewareTest extends TestCase
     {
         $this->ipLocationResolver->expects($this->never())->method('resolveIpLocation');
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(false);
-        $this->logger->expects($this->once())->method('warning')->with(
-            'Tried to geolocate IP address, but a GeoLite2 db was not found.',
-        );
+        $this->logger
+            ->expects($this->once())
+            ->method('warning')
+            ->with(
+                'Tried to geolocate IP address, but a GeoLite2 db was not found.',
+            );
 
         $request = ServerRequestFactory::fromGlobals();
         $this->handler->expects($this->once())->method('handle')->with($request);
@@ -78,17 +81,20 @@ class IpGeolocationMiddlewareTest extends TestCase
         $this->logger->expects($this->never())->method('warning');
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, $ipAddress);
-        $this->handler->expects($this->once())->method('handle')->with($this->callback(
-            function (ServerRequestInterface $req): bool {
-                $location = $req->getAttribute(Location::class);
-                if (! $location instanceof Location) {
-                    return false;
-                }
+        $this->handler
+            ->expects($this->once())
+            ->method('handle')
+            ->with($this->callback(
+                static function (ServerRequestInterface $req): bool {
+                    $location = $req->getAttribute(Location::class);
+                    if (!$location instanceof Location) {
+                        return false;
+                    }
 
-                Assert::assertEmpty($location->countryCode);
-                return true;
-            },
-        ));
+                    Assert::assertEmpty($location->countryCode);
+                    return true;
+                },
+            ));
 
         $this->middleware()->process($request, $this->handler);
     }
@@ -97,23 +103,30 @@ class IpGeolocationMiddlewareTest extends TestCase
     public function locationIsResolvedFromIpAddress(): void
     {
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(true);
-        $this->ipLocationResolver->expects($this->once())->method('resolveIpLocation')->with('1.2.3.4')->willReturn(
-            new Location(countryCode: 'ES'),
-        );
+        $this->ipLocationResolver
+            ->expects($this->once())
+            ->method('resolveIpLocation')
+            ->with('1.2.3.4')
+            ->willReturn(
+                new Location(countryCode: 'ES'),
+            );
         $this->logger->expects($this->never())->method('warning');
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, '1.2.3.4');
-        $this->handler->expects($this->once())->method('handle')->with($this->callback(
-            function (ServerRequestInterface $req): bool {
-                $location = $req->getAttribute(Location::class);
-                if (! $location instanceof Location) {
-                    return false;
-                }
+        $this->handler
+            ->expects($this->once())
+            ->method('handle')
+            ->with($this->callback(
+                static function (ServerRequestInterface $req): bool {
+                    $location = $req->getAttribute(Location::class);
+                    if (!$location instanceof Location) {
+                        return false;
+                    }
 
-                Assert::assertEquals('ES', $location->countryCode);
-                return true;
-            },
-        ));
+                    Assert::assertEquals('ES', $location->countryCode);
+                    return true;
+                },
+            ));
 
         $this->middleware()->process($request, $this->handler);
     }
@@ -146,17 +159,20 @@ class IpGeolocationMiddlewareTest extends TestCase
         $this->logger->expects($this->once())->method($loggerMethod)->with($expectedLoggedMessage, ['e' => $exception]);
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, '1.2.3.4');
-        $this->handler->expects($this->once())->method('handle')->with($this->callback(
-            function (ServerRequestInterface $req): bool {
-                $location = $req->getAttribute(Location::class);
-                if (! $location instanceof Location) {
-                    return false;
-                }
+        $this->handler
+            ->expects($this->once())
+            ->method('handle')
+            ->with($this->callback(
+                static function (ServerRequestInterface $req): bool {
+                    $location = $req->getAttribute(Location::class);
+                    if (!$location instanceof Location) {
+                        return false;
+                    }
 
-                Assert::assertEmpty($location->countryCode);
-                return true;
-            },
-        ));
+                    Assert::assertEmpty($location->countryCode);
+                    return true;
+                },
+            ));
 
         $this->middleware()->process($request, $this->handler);
     }

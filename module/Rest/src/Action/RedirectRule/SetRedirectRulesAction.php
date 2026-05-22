@@ -24,8 +24,7 @@ class SetRedirectRulesAction extends AbstractRestAction
         private readonly ShortUrlResolverInterface $urlResolver,
         private readonly ShortUrlRedirectRuleServiceInterface $ruleService,
         private readonly TreeMapper $treeMapper,
-    ) {
-    }
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

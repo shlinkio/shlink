@@ -17,14 +17,12 @@ class OverrideDomainMiddleware implements MiddlewareInterface
 {
     public const string REQUEST_ATTRIBUTE = 'domain';
 
-    public function __construct(private readonly DomainServiceInterface $domainService)
-    {
-    }
+    public function __construct(private readonly DomainServiceInterface $domainService) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
-        if (! $apiKey->hasRole(Role::DOMAIN_SPECIFIC)) {
+        if (!$apiKey->hasRole(Role::DOMAIN_SPECIFIC)) {
             return $handler->handle($request);
         }
 

@@ -19,13 +19,14 @@ use function Shlinkio\Shlink\Core\ipAddressFromRequest;
 
 readonly class RequestTracker implements RequestTrackerInterface, RequestMethodInterface
 {
-    public function __construct(private VisitsTrackerInterface $visitsTracker, private TrackingOptions $trackingOptions)
-    {
-    }
+    public function __construct(
+        private VisitsTrackerInterface $visitsTracker,
+        private TrackingOptions $trackingOptions,
+    ) {}
 
     public function trackIfApplicable(ShortUrl $shortUrl, ServerRequestInterface $request): Visit|null
     {
-        if (! $this->shouldTrackRequest($request)) {
+        if (!$this->shouldTrackRequest($request)) {
             return null;
         }
 
@@ -34,7 +35,7 @@ readonly class RequestTracker implements RequestTrackerInterface, RequestMethodI
 
     public function trackNotFoundIfApplicable(ServerRequestInterface $request): Visit|null
     {
-        if (! $this->shouldTrackRequest($request)) {
+        if (!$this->shouldTrackRequest($request)) {
             return null;
         }
 
@@ -63,12 +64,12 @@ readonly class RequestTracker implements RequestTrackerInterface, RequestMethodI
         }
 
         $query = $request->getQueryParams();
-        return ! $this->trackingOptions->queryHasDisableTrackParam($query);
+        return !$this->trackingOptions->queryHasDisableTrackParam($query);
     }
 
     private function shouldDisableTrackingFromAddress(string|null $remoteAddr): bool
     {
-        if ($remoteAddr === null || ! $this->trackingOptions->hasDisableTrackingFrom()) {
+        if ($remoteAddr === null || !$this->trackingOptions->hasDisableTrackingFrom()) {
             return false;
         }
 

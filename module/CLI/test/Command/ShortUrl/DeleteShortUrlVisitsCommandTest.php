@@ -19,7 +19,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 class DeleteShortUrlVisitsCommandTest extends TestCase
 {
     private CommandTester $commandTester;
-    private MockObject & ShortUrlVisitsDeleterInterface $deleter;
+    private MockObject&ShortUrlVisitsDeleterInterface $deleter;
 
     protected function setUp(): void
     {
@@ -53,9 +53,12 @@ class DeleteShortUrlVisitsCommandTest extends TestCase
     #[Test, DataProvider('provideErrorArgs')]
     public function warningIsPrintedInCaseOfNotFoundShortUrl(array $args, string $expectedError): void
     {
-        $this->deleter->expects($this->once())->method('deleteShortUrlVisits')->willThrowException(
-            new ShortUrlNotFoundException(),
-        );
+        $this->deleter
+            ->expects($this->once())
+            ->method('deleteShortUrlVisits')
+            ->willThrowException(
+                new ShortUrlNotFoundException(),
+            );
         $this->commandTester->setInputs(['yes']);
 
         $exitCode = $this->commandTester->execute($args);

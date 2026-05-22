@@ -18,7 +18,7 @@ use Shlinkio\Shlink\Rest\Exception\MercureException;
 
 class MercureInfoActionTest extends TestCase
 {
-    private MockObject & JwtProviderInterface $provider;
+    private MockObject&JwtProviderInterface $provider;
 
     protected function setUp(): void
     {
@@ -82,11 +82,14 @@ class MercureInfoActionTest extends TestCase
     #[Test, AllowMockObjectsWithoutExpectations]
     public function getRouteDefReturnsExpectedData(): void
     {
-        self::assertEquals([
-            'name' => MercureInfoAction::class,
-            'middleware' => [MercureInfoAction::class],
-            'path' => '/mercure-info',
-            'allowed_methods' => ['GET'],
-        ], MercureInfoAction::getRouteDef());
+        self::assertEquals(
+            [
+                'name' => MercureInfoAction::class,
+                'middleware' => [MercureInfoAction::class],
+                'path' => '/mercure-info',
+                'allowed_methods' => ['GET'],
+            ],
+            MercureInfoAction::getRouteDef(),
+        );
     }
 }

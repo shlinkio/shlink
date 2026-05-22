@@ -28,8 +28,8 @@ use function array_values;
 
 class MatomoVisitSenderTest extends TestCase
 {
-    private MockObject & MatomoTrackerBuilderInterface $trackerBuilder;
-    private Stub & VisitIterationRepositoryInterface $visitIterationRepository;
+    private MockObject&MatomoTrackerBuilderInterface $trackerBuilder;
+    private Stub&VisitIterationRepositoryInterface $visitIterationRepository;
     private MatomoVisitSender $visitSender;
 
     protected function setUp(): void
@@ -54,27 +54,39 @@ class MatomoVisitSenderTest extends TestCase
         $tracker->expects($this->once())->method('setUrl')->willReturn($tracker);
         $tracker->expects($this->once())->method('setUserAgent')->willReturn($tracker);
         $tracker->expects($this->once())->method('setUrlReferrer')->willReturn($tracker);
-        $tracker->expects($this->once())->method('doTrackPageView')->with($visit->shortUrl?->title() ?? '');
-        $tracker->expects($this->once())->method('setForceVisitDateTime')->with(
-            $visit->date->setTimezone('UTC')->toDateTimeString(),
-        );
+        $tracker->expects($this->once())
+            ->method('doTrackPageView')
+            ->with($visit->shortUrl?->title() ?? '');
+        $tracker->expects($this->once())
+            ->method('setForceVisitDateTime')
+            ->with(
+                $visit->date->setTimezone('UTC')->toDateTimeString(),
+            );
 
         if ($visit->isOrphan()) {
-            $tracker->expects($this->exactly(2))->method('setCustomTrackingParameter')->willReturnMap([
-                ['type', $visit->type->value, $tracker],
-                ['orphan', 'true', $tracker],
-            ]);
+            $tracker->expects($this->exactly(2))
+                ->method('setCustomTrackingParameter')
+                ->willReturnMap([
+                    ['type', $visit->type->value, $tracker],
+                    ['orphan', 'true', $tracker],
+                ]);
         } else {
-            $tracker->expects($this->once())->method('setCustomTrackingParameter')->with(
-                'type',
-                $visit->type->value,
-            )->willReturn($tracker);
+            $tracker->expects($this->once())
+                ->method('setCustomTrackingParameter')
+                ->with(
+                    'type',
+                    $visit->type->value,
+                )
+                ->willReturn($tracker);
         }
 
         foreach ($invokedMethods as $invokedMethod => $args) {
-            $tracker->expects($this->once())->method($invokedMethod)->with(...array_values($args))->willReturn(
-                $tracker,
-            );
+            $tracker->expects($this->once())
+                ->method($invokedMethod)
+                ->with(...array_values($args))
+                ->willReturn(
+                    $tracker,
+                );
         }
 
         $this->trackerBuilder->expects($this->once())->method('buildMatomoTracker')->willReturn($tracker);
@@ -135,9 +147,12 @@ class MatomoVisitSenderTest extends TestCase
             'https://s.test/foo',
         ];
         yield 'non-orphan visit' => [
-            Visit::forValidShortUrl(ShortUrl::create(
-                new ShortUrlCreation('https://shlink.io', customSlug: 'bar'),
-            ), Visitor::empty()),
+            Visit::forValidShortUrl(
+                ShortUrl::create(
+                    new ShortUrlCreation('https://shlink.io', customSlug: 'bar'),
+                ),
+                Visitor::empty(),
+            ),
             'http://s2.test/bar',
         ];
     }
@@ -149,11 +164,13 @@ class MatomoVisitSenderTest extends TestCase
         $visitor = Visitor::empty();
         $bot = Visitor::botInstance();
 
-        $this->visitIterationRepository->method('findAllVisits')->willReturn([
-            Visit::forBasePath($bot),
-            Visit::forValidShortUrl(ShortUrl::createFake(), $visitor),
-            Visit::forInvalidShortUrl($visitor),
-        ]);
+        $this->visitIterationRepository
+            ->method('findAllVisits')
+            ->willReturn([
+                Visit::forBasePath($bot),
+                Visit::forValidShortUrl(ShortUrl::createFake(), $visitor),
+                Visit::forInvalidShortUrl($visitor),
+            ]);
 
         $tracker = $this->createStub(MatomoTracker::class);
         $tracker->method('setUrl')->willReturn($tracker);
@@ -162,17 +179,20 @@ class MatomoVisitSenderTest extends TestCase
         $tracker->method('setCustomTrackingParameter')->willReturn($tracker);
 
         $callCount = 0;
-        $this->trackerBuilder->expects($this->exactly(3))->method('buildMatomoTracker')->willReturnCallback(
-            function () use (&$callCount, $tracker) {
-                $callCount++;
+        $this->trackerBuilder
+            ->expects($this->exactly(3))
+            ->method('buildMatomoTracker')
+            ->willReturnCallback(
+                static function () use (&$callCount, $tracker) {
+                    $callCount++;
 
-                if ($callCount === 2) {
-                    throw new Exception('Error');
-                }
+                    if ($callCount === 2) {
+                        throw new Exception('Error');
+                    }
 
-                return $tracker;
-            },
-        );
+                    return $tracker;
+                },
+            );
 
         $result = $this->visitSender->sendVisitsInDateRange($dateRange);
 

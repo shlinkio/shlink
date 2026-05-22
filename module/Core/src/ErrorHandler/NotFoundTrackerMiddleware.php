@@ -14,9 +14,7 @@ use const Shlinkio\Shlink\REDIRECT_URL_REQUEST_ATTRIBUTE;
 
 readonly class NotFoundTrackerMiddleware implements MiddlewareInterface
 {
-    public function __construct(private RequestTrackerInterface $requestTracker)
-    {
-    }
+    public function __construct(private RequestTrackerInterface $requestTracker) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {

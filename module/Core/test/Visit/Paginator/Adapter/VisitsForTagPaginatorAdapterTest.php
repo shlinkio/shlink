@@ -17,7 +17,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class VisitsForTagPaginatorAdapterTest extends TestCase
 {
-    private MockObject & VisitRepositoryInterface $repo;
+    private MockObject&VisitRepositoryInterface $repo;
 
     protected function setUp(): void
     {
@@ -31,10 +31,14 @@ class VisitsForTagPaginatorAdapterTest extends TestCase
         $limit = 1;
         $offset = 5;
         $adapter = $this->createAdapter(null);
-        $this->repo->expects($this->exactly($count))->method('findVisitsByTag')->with(
-            'foo',
-            new WithDomainVisitsListFiltering(DateRange::allTime(), limit: $limit, offset: $offset),
-        )->willReturn([]);
+        $this->repo
+            ->expects($this->exactly($count))
+            ->method('findVisitsByTag')
+            ->with(
+                'foo',
+                new WithDomainVisitsListFiltering(DateRange::allTime(), limit: $limit, offset: $offset),
+            )
+            ->willReturn([]);
 
         for ($i = 0; $i < $count; $i++) {
             $adapter->getSlice($offset, $limit);
@@ -47,10 +51,14 @@ class VisitsForTagPaginatorAdapterTest extends TestCase
         $count = 3;
         $apiKey = ApiKey::create();
         $adapter = $this->createAdapter($apiKey);
-        $this->repo->expects($this->once())->method('countVisitsByTag')->with(
-            'foo',
-            new WithDomainVisitsCountFiltering(DateRange::allTime(), apiKey: $apiKey),
-        )->willReturn(3);
+        $this->repo
+            ->expects($this->once())
+            ->method('countVisitsByTag')
+            ->with(
+                'foo',
+                new WithDomainVisitsCountFiltering(DateRange::allTime(), apiKey: $apiKey),
+            )
+            ->willReturn(3);
 
         for ($i = 0; $i < $count; $i++) {
             $adapter->getNbResults();

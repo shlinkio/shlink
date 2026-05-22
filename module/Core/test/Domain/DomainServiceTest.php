@@ -26,8 +26,8 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class DomainServiceTest extends TestCase
 {
     private DomainService $domainService;
-    private Stub & EntityManagerInterface $em;
-    private MockObject & DomainRepositoryInterface $repo;
+    private Stub&EntityManagerInterface $em;
+    private MockObject&DomainRepositoryInterface $repo;
 
     protected function setUp(): void
     {
@@ -133,9 +133,13 @@ class DomainServiceTest extends TestCase
     public function getOrCreateAlwaysPersistsDomain(Domain|null $foundDomain, ApiKey|null $apiKey): void
     {
         $authority = 'example.com';
-        $this->repo->expects($this->once())->method('findOneByAuthority')->with($authority, $apiKey)->willReturn(
-            $foundDomain,
-        );
+        $this->repo
+            ->expects($this->once())
+            ->method('findOneByAuthority')
+            ->with($authority, $apiKey)
+            ->willReturn(
+                $foundDomain,
+            );
 
         $result = $this->domainService->getOrCreate($authority, $apiKey);
 
@@ -164,15 +168,23 @@ class DomainServiceTest extends TestCase
         ApiKey|null $apiKey,
     ): void {
         $authority = 'example.com';
-        $this->repo->expects($this->once())->method('findOneByAuthority')->with($authority, $apiKey)->willReturn(
-            $foundDomain,
-        );
+        $this->repo
+            ->expects($this->once())
+            ->method('findOneByAuthority')
+            ->with($authority, $apiKey)
+            ->willReturn(
+                $foundDomain,
+            );
 
-        $result = $this->domainService->configureNotFoundRedirects($authority, NotFoundRedirects::withRedirects(
-            'foo.com',
-            'bar.com',
-            'baz.com',
-        ), $apiKey);
+        $result = $this->domainService->configureNotFoundRedirects(
+            $authority,
+            NotFoundRedirects::withRedirects(
+                'foo.com',
+                'bar.com',
+                'baz.com',
+            ),
+            $apiKey,
+        );
 
         if ($foundDomain !== null) {
             self::assertSame($result, $foundDomain);

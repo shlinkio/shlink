@@ -14,11 +14,11 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder->setTable('visit_locations');
 
     $builder->createField('id', Types::BIGINT)
-            ->columnName('id')
-            ->makePrimaryKey()
-            ->generatedValue('IDENTITY')
-            ->option('unsigned', true)
-            ->build();
+        ->columnName('id')
+        ->makePrimaryKey()
+        ->generatedValue('IDENTITY')
+        ->option('unsigned', true)
+        ->build();
 
     $columns = [
         'country_code' => 'countryCode',
@@ -29,25 +29,24 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
     ];
 
     foreach ($columns as $columnName => $fieldName) {
-        fieldWithUtf8Charset($builder->createField($fieldName, Types::STRING), $emConfig)
-                ->columnName($columnName)
-                ->nullable()
-                ->build();
+        fieldWithUtf8Charset($builder->createField($fieldName, Types::STRING), $emConfig)->columnName($columnName)
+            ->nullable()
+            ->build();
     }
 
     $builder->createField('latitude', Types::FLOAT)
-            ->columnName('lat')
-            ->nullable(false)
-            ->build();
+        ->columnName('lat')
+        ->nullable(false)
+        ->build();
 
     $builder->createField('longitude', Types::FLOAT)
-            ->columnName('lon')
-            ->nullable(false)
-            ->build();
+        ->columnName('lon')
+        ->nullable(false)
+        ->build();
 
     $builder->createField('isEmpty', Types::BOOLEAN)
-            ->columnName('is_empty')
-            ->option('default', false)
-            ->nullable(false)
-            ->build();
+        ->columnName('is_empty')
+        ->option('default', false)
+        ->nullable(false)
+        ->build();
 };

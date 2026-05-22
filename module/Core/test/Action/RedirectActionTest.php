@@ -26,9 +26,9 @@ class RedirectActionTest extends TestCase
     private const string LONG_URL = 'https://domain.com/foo/bar?some=thing';
 
     private RedirectAction $action;
-    private MockObject & ShortUrlResolverInterface $urlResolver;
-    private MockObject & RequestTrackerInterface $requestTracker;
-    private MockObject & RedirectResponseHelperInterface $redirectRespHelper;
+    private MockObject&ShortUrlResolverInterface $urlResolver;
+    private MockObject&RequestTrackerInterface $requestTracker;
+    private MockObject&RedirectResponseHelperInterface $redirectRespHelper;
 
     protected function setUp(): void
     {
@@ -53,18 +53,29 @@ class RedirectActionTest extends TestCase
         $shortCode = 'abc123';
         $shortUrl = ShortUrl::withLongUrl(self::LONG_URL);
         $expectedResp = new Response\RedirectResponse(self::LONG_URL);
-        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
+        $request = new ServerRequest()->withAttribute('shortCode', $shortCode);
 
-        $this->urlResolver->expects($this->once())->method('resolveEnabledShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''),
-        )->willReturn($shortUrl);
-        $this->requestTracker->expects($this->once())->method('trackIfApplicable')->with(
-            $shortUrl,
-            $request->withAttribute(REDIRECT_URL_REQUEST_ATTRIBUTE, self::LONG_URL),
-        );
-        $this->redirectRespHelper->expects($this->once())->method('buildRedirectResponse')->with(
-            self::LONG_URL,
-        )->willReturn($expectedResp);
+        $this->urlResolver
+            ->expects($this->once())
+            ->method('resolveEnabledShortUrl')
+            ->with(
+                ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''),
+            )
+            ->willReturn($shortUrl);
+        $this->requestTracker
+            ->expects($this->once())
+            ->method('trackIfApplicable')
+            ->with(
+                $shortUrl,
+                $request->withAttribute(REDIRECT_URL_REQUEST_ATTRIBUTE, self::LONG_URL),
+            );
+        $this->redirectRespHelper
+            ->expects($this->once())
+            ->method('buildRedirectResponse')
+            ->with(
+                self::LONG_URL,
+            )
+            ->willReturn($expectedResp);
 
         $response = $this->action->process($request, $this->createStub(RequestHandlerInterface::class));
 
@@ -75,9 +86,15 @@ class RedirectActionTest extends TestCase
     public function nextMiddlewareIsInvokedIfLongUrlIsNotFound(): void
     {
         $shortCode = 'abc123';
-        $this->urlResolver->expects($this->once())->method('resolveEnabledShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''),
-        )->willThrowException(ShortUrlNotFoundException::fromNotFound(ShortUrlIdentifier::fromShortCodeAndDomain('')));
+        $this->urlResolver
+            ->expects($this->once())
+            ->method('resolveEnabledShortUrl')
+            ->with(
+                ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''),
+            )
+            ->willThrowException(ShortUrlNotFoundException::fromNotFound(ShortUrlIdentifier::fromShortCodeAndDomain(
+                '',
+            )));
         $this->requestTracker->expects($this->never())->method('trackIfApplicable');
         $this->redirectRespHelper->expects($this->never())->method('buildRedirectResponse');
 

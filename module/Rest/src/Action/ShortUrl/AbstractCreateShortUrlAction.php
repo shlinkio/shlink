@@ -20,8 +20,7 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
         private readonly UrlShortenerInterface $urlShortener,
         private readonly ShortUrlDataTransformerInterface $transformer,
         private readonly TreeMapper $treeMapper,
-    ) {
-    }
+    ) {}
 
     public function handle(Request $request): Response
     {

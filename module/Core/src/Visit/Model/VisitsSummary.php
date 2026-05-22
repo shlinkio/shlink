@@ -8,9 +8,7 @@ use JsonSerializable;
 
 final class VisitsSummary implements JsonSerializable
 {
-    private function __construct(public readonly int $total, public readonly int $nonBots)
-    {
-    }
+    private function __construct(public readonly int $total, public readonly int $nonBots) {}
 
     public static function fromTotalAndNonBots(int $total, int $nonBots): self
     {

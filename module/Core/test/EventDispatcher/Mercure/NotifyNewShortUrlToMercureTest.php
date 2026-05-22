@@ -20,10 +20,10 @@ use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 
 class NotifyNewShortUrlToMercureTest extends TestCase
 {
-    private MockObject & PublishingHelperInterface $helper;
-    private MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator;
-    private MockObject & EntityManagerInterface $em;
-    private MockObject & LoggerInterface $logger;
+    private MockObject&PublishingHelperInterface $helper;
+    private MockObject&PublishingUpdatesGeneratorInterface $updatesGenerator;
+    private MockObject&EntityManagerInterface $em;
+    private MockObject&LoggerInterface $logger;
 
     protected function setUp(): void
     {
@@ -39,10 +39,13 @@ class NotifyNewShortUrlToMercureTest extends TestCase
         $this->em->expects($this->once())->method('find')->with(ShortUrl::class, '123')->willReturn(null);
         $this->helper->expects($this->never())->method('publishUpdate');
         $this->updatesGenerator->expects($this->never())->method('newShortUrlUpdate');
-        $this->logger->expects($this->once())->method('warning')->with(
-            'Tried to notify {name} for new short URL with id "{shortUrlId}", but it does not exist.',
-            ['shortUrlId' => '123', 'name' => 'Mercure'],
-        );
+        $this->logger
+            ->expects($this->once())
+            ->method('warning')
+            ->with(
+                'Tried to notify {name} for new short URL with id "{shortUrlId}", but it does not exist.',
+                ['shortUrlId' => '123', 'name' => 'Mercure'],
+            );
         $this->logger->expects($this->never())->method('debug');
 
         $this->listener()(new ShortUrlCreated('123'));
@@ -55,9 +58,13 @@ class NotifyNewShortUrlToMercureTest extends TestCase
         $update = Update::forTopicAndPayload('', []);
 
         $this->em->expects($this->once())->method('find')->with(ShortUrl::class, '123')->willReturn($shortUrl);
-        $this->updatesGenerator->expects($this->once())->method('newShortUrlUpdate')->with($shortUrl)->willReturn(
-            $update,
-        );
+        $this->updatesGenerator
+            ->expects($this->once())
+            ->method('newShortUrlUpdate')
+            ->with($shortUrl)
+            ->willReturn(
+                $update,
+            );
         $this->helper->expects($this->once())->method('publishUpdate')->with($update);
         $this->logger->expects($this->never())->method('warning');
         $this->logger->expects($this->never())->method('debug');
@@ -72,19 +79,30 @@ class NotifyNewShortUrlToMercureTest extends TestCase
         $update = Update::forTopicAndPayload('', []);
         $e = new Exception('Error');
 
-        $this->em->expects($this->once())->method('find')->with(
-            ShortUrl::class,
-            '123',
-        )->willReturn($shortUrl);
-        $this->updatesGenerator->expects($this->once())->method('newShortUrlUpdate')->with($shortUrl)->willReturn(
-            $update,
-        );
+        $this->em
+            ->expects($this->once())
+            ->method('find')
+            ->with(
+                ShortUrl::class,
+                '123',
+            )
+            ->willReturn($shortUrl);
+        $this->updatesGenerator
+            ->expects($this->once())
+            ->method('newShortUrlUpdate')
+            ->with($shortUrl)
+            ->willReturn(
+                $update,
+            );
         $this->helper->expects($this->once())->method('publishUpdate')->with($update)->willThrowException($e);
         $this->logger->expects($this->never())->method('warning');
-        $this->logger->expects($this->once())->method('debug')->with(
-            'Error while trying to notify {name} with new short URL. {e}',
-            ['e' => $e, 'name' => 'Mercure'],
-        );
+        $this->logger
+            ->expects($this->once())
+            ->method('debug')
+            ->with(
+                'Error while trying to notify {name} with new short URL. {e}',
+                ['e' => $e, 'name' => 'Mercure'],
+            );
 
         $this->listener()(new ShortUrlCreated('123'));
     }

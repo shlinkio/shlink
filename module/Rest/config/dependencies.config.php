@@ -23,7 +23,6 @@ use Shlinkio\Shlink\Rest\ApiKey\Repository\ApiKeyRepository;
 use Shlinkio\Shlink\Rest\Service\ApiKeyService;
 
 return [
-
     'dependencies' => [
         'factories' => [
             ApiKeyService::class => ConfigAbstractFactory::class,
@@ -133,5 +132,4 @@ return [
             LoggerInterface::class,
         ],
     ],
-
 ];

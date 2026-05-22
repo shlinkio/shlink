@@ -23,8 +23,7 @@ readonly class DomainService implements DomainServiceInterface
         private EntityManagerInterface $em,
         private UrlShortenerOptions $urlShortenerOptions,
         private DomainRepositoryInterface $repo,
-    ) {
-    }
+    ) {}
 
     /**
      * @return DomainItem[]
@@ -32,7 +31,7 @@ readonly class DomainService implements DomainServiceInterface
     public function listDomains(ApiKey|null $apiKey = null): array
     {
         [$default, $domains] = $this->defaultDomainAndRest($apiKey);
-        $mappedDomains = array_map(fn (Domain $domain) => DomainItem::forNonDefaultDomain($domain), $domains);
+        $mappedDomains = array_map(DomainItem::forNonDefaultDomain(...), $domains);
 
         if ($apiKey?->hasRole(Role::DOMAIN_SPECIFIC)) {
             return $mappedDomains;
@@ -123,7 +122,7 @@ readonly class DomainService implements DomainServiceInterface
             throw DomainNotFoundException::fromAuthority($authority);
         }
 
-        $domain = $domain ?? Domain::withAuthority($authority);
+        $domain ??= Domain::withAuthority($authority);
         $this->em->persist($domain);
 
         return $domain;

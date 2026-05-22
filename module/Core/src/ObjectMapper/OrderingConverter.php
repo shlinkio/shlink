@@ -39,13 +39,13 @@ final readonly class OrderingConverter
         }
 
         [$field, $dir] = parseOrderBy($value);
-        if ($this->validFields !== null && ! contains($field, $this->validFields)) {
+        if ($this->validFields !== null && !contains($field, $this->validFields)) {
             throw MappingError::withBody(
                 sprintf('Resolved order field is not one of ["%s"]', implode('", "', $this->validFields)),
             );
         }
 
-        if ($dir !== null && ! contains($dir, Ordering::VALID_ORDER_DIRS)) {
+        if ($dir !== null && !contains($dir, Ordering::VALID_ORDER_DIRS)) {
             throw MappingError::withBody('Resolved order direction has to be one of ["ASC", "DESC"]');
         }
 

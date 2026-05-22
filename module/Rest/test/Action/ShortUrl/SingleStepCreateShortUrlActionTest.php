@@ -20,7 +20,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class SingleStepCreateShortUrlActionTest extends TestCase
 {
     private SingleStepCreateShortUrlAction $action;
-    private MockObject & UrlShortenerInterface $urlShortener;
+    private MockObject&UrlShortenerInterface $urlShortener;
 
     protected function setUp(): void
     {
@@ -40,9 +40,13 @@ class SingleStepCreateShortUrlActionTest extends TestCase
         $request = new ServerRequest()->withQueryParams([
             'longUrl' => 'http://foobar.com',
         ])->withAttribute(ApiKey::class, $apiKey);
-        $this->urlShortener->expects($this->once())->method('shorten')->with(
-            new ShortUrlCreation('http://foobar.com', apiKey: $apiKey),
-        )->willReturn(UrlShorteningResult::withoutErrorOnEventDispatching(ShortUrl::createFake()));
+        $this->urlShortener
+            ->expects($this->once())
+            ->method('shorten')
+            ->with(
+                new ShortUrlCreation('http://foobar.com', apiKey: $apiKey),
+            )
+            ->willReturn(UrlShorteningResult::withoutErrorOnEventDispatching(ShortUrl::createFake()));
 
         $resp = $this->action->handle($request);
 

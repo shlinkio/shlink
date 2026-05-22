@@ -68,7 +68,7 @@ class LocateVisitsCommand extends Command implements VisitGeolocationHelperInter
             );
         }
 
-        if ($all && $retry && ! $this->warnAndVerifyContinue()) {
+        if ($all && $retry && !$this->warnAndVerifyContinue()) {
             throw new RuntimeException('Execution aborted');
         }
 
@@ -85,9 +85,9 @@ class LocateVisitsCommand extends Command implements VisitGeolocationHelperInter
         $this->io->warning([
             'You are about to process the location of all existing visits your short URLs received.',
             'Since shlink saves visitors IP addresses anonymized, you could end up losing precision on some of '
-            . 'your visits.',
+                . 'your visits.',
             'Also, if you have a large amount of visits, this can be a very time consuming process. '
-            . 'Continue at your own risk.',
+                . 'Continue at your own risk.',
         ]);
         return $this->io->confirm('Do you want to proceed?', false);
     }
@@ -145,7 +145,7 @@ class LocateVisitsCommand extends Command implements VisitGeolocationHelperInter
 
     public function onVisitLocated(VisitLocation $visitLocation, Visit $visit): void
     {
-        if (! $visitLocation->isEmpty) {
+        if (!$visitLocation->isEmpty) {
             $this->io->writeln(sprintf(' [<info>Address located in "%s"</info>]', $visitLocation->countryName));
         } elseif ($visit->hasRemoteAddr() && $visit->remoteAddr !== IpAddress::LOCALHOST) {
             $this->io->writeln(' <comment>[Could not locate address]</comment>');

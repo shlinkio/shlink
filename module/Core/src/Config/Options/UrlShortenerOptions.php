@@ -26,8 +26,7 @@ final readonly class UrlShortenerOptions
         public bool $trailingSlashEnabled = false,
         public ShortUrlMode $mode = ShortUrlMode::STRICT,
         public ExtraPathMode $extraPathMode = ExtraPathMode::DEFAULT,
-    ) {
-    }
+    ) {}
 
     public static function fromEnv(): self
     {
@@ -41,7 +40,7 @@ final readonly class UrlShortenerOptions
 
         return new self(
             defaultDomain: EnvVars::DEFAULT_DOMAIN->loadFromEnv(),
-            schema: ((bool) EnvVars::IS_HTTPS_ENABLED->loadFromEnv()) ? 'https' : 'http',
+            schema: (bool) EnvVars::IS_HTTPS_ENABLED->loadFromEnv() ? 'https' : 'http',
             defaultShortCodesLength: $shortCodesLength,
             autoResolveTitles: (bool) EnvVars::AUTO_RESOLVE_TITLES->loadFromEnv(),
             multiSegmentSlugsEnabled: (bool) EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->loadFromEnv(),

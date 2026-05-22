@@ -18,11 +18,11 @@ class CrawlableShortCodesQuery extends EntitySpecificationRepository implements 
         $blockSize = 1000;
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('DISTINCT s.shortCode')
-           ->from(ShortUrl::class, 's')
-           ->where($qb->expr()->eq('s.crawlable', ':crawlable'))
-           ->setParameter('crawlable', true)
-           ->setMaxResults($blockSize)
-           ->orderBy('s.shortCode');
+            ->from(ShortUrl::class, 's')
+            ->where($qb->expr()->eq('s.crawlable', ':crawlable'))
+            ->setParameter('crawlable', true)
+            ->setMaxResults($blockSize)
+            ->orderBy('s.shortCode');
 
         $page = 0;
         do {

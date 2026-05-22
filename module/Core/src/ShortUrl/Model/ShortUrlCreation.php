@@ -34,8 +34,7 @@ final readonly class ShortUrlCreation implements TitleResolutionModelInterface
      * @param int<4, max> $shortCodeLength
      */
     public function __construct(
-        #[LooseUriConverter]
-        public string $longUrl,
+        #[LooseUriConverter] public string $longUrl,
         DateTimeInterface|string|null $validSince = null,
         DateTimeInterface|string|null $validUntil = null,
         public ShortUrlMode $shortUrlMode = ShortUrlMode::STRICT,
@@ -44,14 +43,11 @@ final readonly class ShortUrlCreation implements TitleResolutionModelInterface
         string|null $pathPrefix = null,
         public int|null $maxVisits = null,
         public bool $findIfExists = false,
-        #[HostAndPortConverter]
-        public string|null $domain = null,
+        #[HostAndPortConverter] public string|null $domain = null,
         public int $shortCodeLength = DEFAULT_SHORT_CODES_LENGTH,
         public ApiKey|null $apiKey = null,
-        #[TagsConverter]
-        public array $tags = [],
-        #[SubstringConverter(512)]
-        public string|null $title = null,
+        #[TagsConverter] public array $tags = [],
+        #[SubstringConverter(512)] public string|null $title = null,
         public bool $titleWasAutoResolved = false,
         public bool $crawlable = false,
         public bool $forwardQuery = true,
@@ -77,7 +73,7 @@ final readonly class ShortUrlCreation implements TitleResolutionModelInterface
 
         // URL gen-delimiter reserved characters, except `/`: https://datatracker.ietf.org/doc/html/rfc3986#section-2.2
         $reservedChars = ':?#[]@';
-        if (! $this->multiSegmentSlugsEnabled) {
+        if (!$this->multiSegmentSlugsEnabled) {
             // Slashes should only be allowed if multi-segment slugs are enabled
             $reservedChars .= '/';
         }

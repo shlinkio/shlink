@@ -26,8 +26,8 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
 {
     private const string LONG_URL = 'https://foobar.com/12345/hello?foo=bar';
 
-    private MockObject & ClientInterface $httpClient;
-    private MockObject & LoggerInterface $logger;
+    private MockObject&ClientInterface $httpClient;
+    private MockObject&LoggerInterface $logger;
 
     protected function setUp(): void
     {
@@ -102,10 +102,13 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
     {
         $this->expectRequestToBeCalled()->willReturn($this->respWithTitle($contentType));
         if ($expectsWarning) {
-            $this->logger->expects($this->once())->method('warning')->with(
-                'It was impossible to encode page title in UTF-8 with mb_convert_encoding. {e}',
-                $this->isArray(),
-            );
+            $this->logger
+                ->expects($this->once())
+                ->method('warning')
+                ->with(
+                    'It was impossible to encode page title in UTF-8 with mb_convert_encoding. {e}',
+                    $this->isArray(),
+                );
         } else {
             $this->logger->expects($this->never())->method('warning');
         }
@@ -166,16 +169,21 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
     ): void {
         $this->expectRequestToBeCalled()->willReturn($this->respWithTitle($contentType));
         $callCount = 0;
-        $this->logger->expects($this->exactly(2))->method('warning')->with($this->callback(
-            function (string $message) use (&$callCount, $expectedSecondMessage): bool {
-                $callCount++;
-                if ($callCount === 1) {
-                    return $message === 'It was impossible to encode page title in UTF-8 with mb_convert_encoding. {e}';
-                }
+        $this->logger
+            ->expects($this->exactly(2))
+            ->method('warning')
+            ->with($this->callback(
+                static function (string $message) use (&$callCount, $expectedSecondMessage): bool {
+                    $callCount++;
+                    if ($callCount === 1) {
+                        return (
+                            $message === 'It was impossible to encode page title in UTF-8 with mb_convert_encoding. {e}'
+                        );
+                    }
 
-                return $message === $expectedSecondMessage;
-            },
-        ));
+                    return $message === $expectedSecondMessage;
+                },
+            ));
 
         $data = new ShortUrlCreation(self::LONG_URL);
         $result = $this->helper(autoResolveTitles: true, iconvEnabled: $iconvEnabled)->processTitle($data);
@@ -186,18 +194,21 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
 
     private function expectRequestToBeCalled(): InvocationStubber
     {
-        return $this->httpClient->expects($this->once())->method('request')->with(
-            RequestMethodInterface::METHOD_GET,
-            self::LONG_URL,
-            [
-                RequestOptions::TIMEOUT => 3,
-                RequestOptions::CONNECT_TIMEOUT => 3,
-                RequestOptions::ALLOW_REDIRECTS => ['max' => ShortUrlTitleResolutionHelper::MAX_REDIRECTS],
-                RequestOptions::IDN_CONVERSION => true,
-                RequestOptions::HEADERS => ['User-Agent' => ShortUrlTitleResolutionHelper::CHROME_USER_AGENT],
-                RequestOptions::STREAM => true,
-            ],
-        );
+        return $this->httpClient
+            ->expects($this->once())
+            ->method('request')
+            ->with(
+                RequestMethodInterface::METHOD_GET,
+                self::LONG_URL,
+                [
+                    RequestOptions::TIMEOUT => 3,
+                    RequestOptions::CONNECT_TIMEOUT => 3,
+                    RequestOptions::ALLOW_REDIRECTS => ['max' => ShortUrlTitleResolutionHelper::MAX_REDIRECTS],
+                    RequestOptions::IDN_CONVERSION => true,
+                    RequestOptions::HEADERS => ['User-Agent' => ShortUrlTitleResolutionHelper::CHROME_USER_AGENT],
+                    RequestOptions::STREAM => true,
+                ],
+            );
     }
 
     private function respWithoutTitle(): Response
@@ -232,7 +243,7 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
             $this->httpClient,
             new UrlShortenerOptions(autoResolveTitles: $autoResolveTitles),
             $this->logger,
-            fn () => $iconvEnabled,
+            static fn () => $iconvEnabled,
         );
     }
 }

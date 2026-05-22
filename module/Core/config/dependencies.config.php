@@ -20,9 +20,7 @@ use Symfony\Component\Lock;
 use const Shlinkio\Shlink\LOCAL_LOCK_FACTORY;
 
 return [
-
     'dependencies' => [
-
         'delegators' => [
             MapperBuilder::class => [
                 ObjectMapper\MapperBuilderWithCacheDelegatorFactory::class,
@@ -270,5 +268,4 @@ return [
 
         Crawling\CrawlingHelper::class => [ShortUrl\Repository\CrawlableShortCodesQuery::class],
     ],
-
 ];
