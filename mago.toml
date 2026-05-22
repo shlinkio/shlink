@@ -31,7 +31,7 @@ preserve-breaking-condition-expression = true
 preserve-redundant-logical-binary-expression-parentheses = true
 
 [linter]
-integrations = ["symfony", "phpunit"]
+integrations = ["phpunit"]
 
 [linter.rules]
 no-literal-password = {
