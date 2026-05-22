@@ -12,9 +12,7 @@ use Throwable;
  */
 class DoctrineBatchHelper implements DoctrineBatchHelperInterface
 {
-    public function __construct(private EntityManagerInterface $em)
-    {
-    }
+    public function __construct(private EntityManagerInterface $em) {}
 
     /**
      * @template T

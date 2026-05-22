@@ -23,8 +23,8 @@ class VisitIterationRepository extends EntitySpecificationRepository implements 
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('v')
-           ->from(Visit::class, 'v')
-           ->where($qb->expr()->isNull('v.visitLocation'));
+            ->from(Visit::class, 'v')
+            ->where($qb->expr()->isNull('v.visitLocation'));
 
         return $this->visitsIterableForQuery($qb, $blockSize);
     }
@@ -36,11 +36,11 @@ class VisitIterationRepository extends EntitySpecificationRepository implements 
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('v')
-           ->from(Visit::class, 'v')
-           ->join('v.visitLocation', 'vl')
-           ->where($qb->expr()->isNotNull('v.visitLocation'))
-           ->andWhere($qb->expr()->eq('vl.isEmpty', ':isEmpty'))
-           ->setParameter('isEmpty', true);
+            ->from(Visit::class, 'v')
+            ->join('v.visitLocation', 'vl')
+            ->where($qb->expr()->isNotNull('v.visitLocation'))
+            ->andWhere($qb->expr()->eq('vl.isEmpty', ':isEmpty'))
+            ->setParameter('isEmpty', true);
 
         return $this->visitsIterableForQuery($qb, $blockSize);
     }
@@ -53,11 +53,11 @@ class VisitIterationRepository extends EntitySpecificationRepository implements 
         $qb = $this->createQueryBuilder('v');
         if ($dateRange?->startDate !== null) {
             $qb->andWhere($qb->expr()->gte('v.date', ':since'))
-               ->setParameter('since', $dateRange->startDate, ChronosDateTimeType::CHRONOS_DATETIME);
+                ->setParameter('since', $dateRange->startDate, ChronosDateTimeType::CHRONOS_DATETIME);
         }
         if ($dateRange?->endDate !== null) {
             $qb->andWhere($qb->expr()->lte('v.date', ':until'))
-               ->setParameter('until', $dateRange->endDate, ChronosDateTimeType::CHRONOS_DATETIME);
+                ->setParameter('until', $dateRange->endDate, ChronosDateTimeType::CHRONOS_DATETIME);
         }
 
         return $this->visitsIterableForQuery($qb, $blockSize);
@@ -66,7 +66,7 @@ class VisitIterationRepository extends EntitySpecificationRepository implements 
     private function visitsIterableForQuery(QueryBuilder $qb, int $blockSize): iterable
     {
         $originalQueryBuilder = $qb->setMaxResults($blockSize)
-                                   ->orderBy('v.id', 'ASC');
+            ->orderBy('v.id', 'ASC');
         $lastId = '0';
 
         do {

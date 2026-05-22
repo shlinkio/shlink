@@ -15,7 +15,7 @@ readonly class RedirectConditionData
         public string|null $matchKey = null,
         public string|null $matchValue = null,
     ) {
-        if ($matchValue !== null && ! $type->isValid($matchValue)) {
+        if ($matchValue !== null && !$type->isValid($matchValue)) {
             throw MappingError::withBody(
                 sprintf('"%s" is not a valid value for the "%s" redirect condition', $matchValue, $type->name),
             );

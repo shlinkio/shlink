@@ -45,12 +45,14 @@ class ListDomainsCommand extends Command
             array_map(function (DomainItem $domain) use ($showRedirects) {
                 $commonValues = [$domain->toString(), $domain->isDefault ? 'Yes' : 'No'];
 
-                return $showRedirects
-                    ? [
-                        ...$commonValues,
-                        $this->notFoundRedirectsToString($domain->notFoundRedirectConfig),
-                    ]
-                    : $commonValues;
+                return (
+                    $showRedirects
+                        ? [
+                            ...$commonValues,
+                            $this->notFoundRedirectsToString($domain->notFoundRedirectConfig),
+                        ]
+                        : $commonValues
+                );
             }, $domains),
         );
 
@@ -64,9 +66,9 @@ class ListDomainsCommand extends Command
         $invalidShortUrl = $config->invalidShortUrlRedirect ?? 'N/A';
 
         return <<<EOL
-        * Base URL: {$baseUrl}
-        * Regular 404: {$regular404}
-        * Invalid short URL: {$invalidShortUrl}
-        EOL;
+            * Base URL: {$baseUrl}
+            * Regular 404: {$regular404}
+            * Invalid short URL: {$invalidShortUrl}
+            EOL;
     }
 }

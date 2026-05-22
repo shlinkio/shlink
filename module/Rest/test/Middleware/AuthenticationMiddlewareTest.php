@@ -30,8 +30,8 @@ use function Laminas\Stratigility\middleware;
 class AuthenticationMiddlewareTest extends TestCase
 {
     private AuthenticationMiddleware $middleware;
-    private MockObject & ApiKeyServiceInterface $apiKeyService;
-    private MockObject & RequestHandlerInterface $handler;
+    private MockObject&ApiKeyServiceInterface $apiKeyService;
+    private MockObject&RequestHandlerInterface $handler;
 
     protected function setUp(): void
     {
@@ -58,20 +58,21 @@ class AuthenticationMiddlewareTest extends TestCase
         $dummyMiddleware = self::getDummyMiddleware();
 
         yield 'no route result' => [new ServerRequest()];
-        yield 'failure route result' => [(new ServerRequest())->withAttribute(
+        yield 'failure route result' => [new ServerRequest()->withAttribute(
             RouteResult::class,
             RouteResult::fromRouteFailure([RequestMethodInterface::METHOD_GET]),
         )];
-        yield 'route without API key required' => [(new ServerRequest())->withAttribute(
+        yield 'route without API key required' => [new ServerRequest()->withAttribute(
             RouteResult::class,
             RouteResult::fromRoute(
                 new Route('foo', $dummyMiddleware, Route::HTTP_METHOD_ANY, HealthAction::class),
             ),
         )];
-        yield 'OPTIONS method' => [(new ServerRequest())->withAttribute(
+        yield 'OPTIONS method' => [new ServerRequest()->withAttribute(
             RouteResult::class,
             RouteResult::fromRoute(new Route('bar', $dummyMiddleware), []),
-        )->withMethod(RequestMethodInterface::METHOD_OPTIONS)];
+        )
+            ->withMethod(RequestMethodInterface::METHOD_OPTIONS)];
     }
 
     #[Test, DataProvider('provideRequestsWithoutApiKey')]
@@ -116,9 +117,13 @@ class AuthenticationMiddlewareTest extends TestCase
             )
             ->withHeader('X-Api-Key', $apiKey);
 
-        $this->apiKeyService->expects($this->once())->method('check')->with($apiKey)->willReturn(
-            new ApiKeyCheckResult(),
-        );
+        $this->apiKeyService
+            ->expects($this->once())
+            ->method('check')
+            ->with($apiKey)
+            ->willReturn(
+                new ApiKeyCheckResult(),
+            );
         $this->handler->expects($this->never())->method('handle');
         $this->expectException(VerifyAuthenticationException::class);
         $this->expectExceptionMessage('Provided API key does not exist or is invalid');
@@ -137,12 +142,20 @@ class AuthenticationMiddlewareTest extends TestCase
             )
             ->withHeader('X-Api-Key', $apiKey->key);
 
-        $this->handler->expects($this->once())->method('handle')->with(
-            $request->withAttribute(ApiKey::class, $apiKey),
-        )->willReturn(new Response());
-        $this->apiKeyService->expects($this->once())->method('check')->with($apiKey->key)->willReturn(
-            new ApiKeyCheckResult($apiKey),
-        );
+        $this->handler
+            ->expects($this->once())
+            ->method('handle')
+            ->with(
+                $request->withAttribute(ApiKey::class, $apiKey),
+            )
+            ->willReturn(new Response());
+        $this->apiKeyService
+            ->expects($this->once())
+            ->method('check')
+            ->with($apiKey->key)
+            ->willReturn(
+                new ApiKeyCheckResult($apiKey),
+            );
 
         $this->middleware->process($request, $this->handler);
     }

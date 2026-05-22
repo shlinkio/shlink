@@ -19,8 +19,8 @@ use Shlinkio\Shlink\Core\Visit\VisitsTracker;
 
 class VisitsTrackerTest extends TestCase
 {
-    private MockObject & EntityManager $em;
-    private MockObject & EventDispatcherInterface $eventDispatcher;
+    private MockObject&EntityManager $em;
+    private MockObject&EventDispatcherInterface $eventDispatcher;
 
     protected function setUp(): void
     {
@@ -34,9 +34,12 @@ class VisitsTrackerTest extends TestCase
     public function trackPersistsVisitAndDispatchesEvent(string $method, array $args): void
     {
         $this->em->expects($this->once())->method('persist')->with($this->isInstanceOf(Visit::class));
-        $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
-            $this->isInstanceOf(UrlVisited::class),
-        );
+        $this->eventDispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with(
+                $this->isInstanceOf(UrlVisited::class),
+            );
 
         $result = $this->visitsTracker()->{$method}(...$args);
 

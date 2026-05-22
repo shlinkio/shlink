@@ -22,12 +22,11 @@ abstract class AbstractNotifyNewShortUrlListener extends AbstractAsyncListener
         private readonly EntityManagerInterface $em,
         private readonly LoggerInterface $logger,
         private readonly RealTimeUpdatesOptions $realTimeUpdatesOptions,
-    ) {
-    }
+    ) {}
 
     public function __invoke(ShortUrlCreated $shortUrlCreated): void
     {
-        if (! $this->isEnabled()) {
+        if (!$this->isEnabled()) {
             return;
         }
 
@@ -43,7 +42,7 @@ abstract class AbstractNotifyNewShortUrlListener extends AbstractAsyncListener
             return;
         }
 
-        if (! $this->realTimeUpdatesOptions->isTopicEnabled(Topic::NEW_SHORT_URL)) {
+        if (!$this->realTimeUpdatesOptions->isTopicEnabled(Topic::NEW_SHORT_URL)) {
             return;
         }
 

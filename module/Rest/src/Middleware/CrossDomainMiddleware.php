@@ -16,14 +16,12 @@ use function implode;
 
 readonly class CrossDomainMiddleware implements MiddlewareInterface, RequestMethodInterface
 {
-    public function __construct(private CorsOptions $options)
-    {
-    }
+    public function __construct(private CorsOptions $options) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $response = $handler->handle($request);
-        if (! $request->hasHeader('Origin')) {
+        if (!$request->hasHeader('Origin')) {
             return $response;
         }
 

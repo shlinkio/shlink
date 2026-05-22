@@ -18,7 +18,7 @@ use Symfony\Component\Lock\SharedLockInterface;
 class MigrateDatabaseCommandTest extends TestCase
 {
     private CommandTester $commandTester;
-    private MockObject & ProcessRunnerInterface $processHelper;
+    private MockObject&ProcessRunnerInterface $processHelper;
 
     protected function setUp(): void
     {
@@ -36,11 +36,17 @@ class MigrateDatabaseCommandTest extends TestCase
     #[Test]
     public function migrationsCommandIsRunWithProperVerbosity(): void
     {
-        $this->processHelper->expects($this->once())->method('run')->with($this->isInstanceOf(OutputInterface::class), [
-            MigrateDatabaseCommand::SCRIPT,
-            MigrateDatabaseCommand::COMMAND,
-            '--no-interaction',
-        ]);
+        $this->processHelper
+            ->expects($this->once())
+            ->method('run')
+            ->with(
+                $this->isInstanceOf(OutputInterface::class),
+                [
+                    MigrateDatabaseCommand::SCRIPT,
+                    MigrateDatabaseCommand::COMMAND,
+                    '--no-interaction',
+                ],
+            );
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();

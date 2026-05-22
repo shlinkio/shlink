@@ -19,8 +19,7 @@ class GeolocationDbUpdate extends AbstractEntity
         private readonly Chronos $dateCreated = new Chronos(),
         private Chronos $dateUpdated = new Chronos(),
         private string|null $error = null,
-    ) {
-    }
+    ) {}
 
     public static function withReason(string $reason): self
     {
@@ -30,7 +29,7 @@ class GeolocationDbUpdate extends AbstractEntity
     public static function currentFilesystemId(): string
     {
         $system = stat(__FILE__);
-        if (! $system) {
+        if (!$system) {
             throw new RuntimeException('It was not possible to resolve filesystem ID via stat function');
         }
 

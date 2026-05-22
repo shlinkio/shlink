@@ -95,7 +95,9 @@ final class ShortUrlsParamsInput
 
     #[Option(
         'Whether to display the domain or not. Those belonging to default domain will have value '
-        . '"' . Domain::DEFAULT_AUTHORITY . '"',
+        . '"'
+        . Domain::DEFAULT_AUTHORITY
+        . '"',
     )]
     public bool $showDomain = false;
 

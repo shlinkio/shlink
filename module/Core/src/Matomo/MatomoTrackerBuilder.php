@@ -11,9 +11,7 @@ readonly class MatomoTrackerBuilder implements MatomoTrackerBuilderInterface
 {
     public const int MATOMO_DEFAULT_TIMEOUT = 10; // Time in seconds
 
-    public function __construct(private MatomoOptions $options)
-    {
-    }
+    public function __construct(private MatomoOptions $options) {}
 
     /**
      * @throws RuntimeException If there's any missing matomo parameter
@@ -29,9 +27,8 @@ readonly class MatomoTrackerBuilder implements MatomoTrackerBuilderInterface
 
         // Create a new MatomoTracker on every request, because it infers request info during construction
         $tracker = new MatomoTracker($siteId, $this->options->baseUrl);
-        $tracker
-            // Token required to set the IP and location
-            ->setTokenAuth($this->options->apiToken)
+        $tracker// Token required to set the IP and location
+        ->setTokenAuth($this->options->apiToken)
             // Ensure params are not sent in the URL, for security reasons
             ->setRequestMethodNonBulk('POST')
             // Set a reasonable timeout

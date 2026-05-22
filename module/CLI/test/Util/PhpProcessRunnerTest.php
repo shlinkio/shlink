@@ -15,8 +15,8 @@ use Symfony\Component\Process\PhpExecutableFinder;
 
 class PhpProcessRunnerTest extends TestCase
 {
-    private MockObject & ProcessRunnerInterface $wrapped;
-    private MockObject & PhpExecutableFinder $executableFinder;
+    private MockObject&ProcessRunnerInterface $wrapped;
+    private MockObject&PhpExecutableFinder $executableFinder;
 
     protected function setUp(): void
     {

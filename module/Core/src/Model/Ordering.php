@@ -13,9 +13,7 @@ final readonly class Ordering
     public const array VALID_ORDER_DIRS = [self::ASC_DIR, self::DESC_DIR];
     private const string DEFAULT_DIR = self::ASC_DIR;
 
-    public function __construct(public string|null $field = null, public string $direction = self::DEFAULT_DIR)
-    {
-    }
+    public function __construct(public string|null $field = null, public string $direction = self::DEFAULT_DIR) {}
 
     public static function none(): self
     {

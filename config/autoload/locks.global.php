@@ -12,7 +12,6 @@ use Symfony\Component\Lock;
 use const Shlinkio\Shlink\LOCAL_LOCK_FACTORY;
 
 return [
-
     'locks' => [
         'locks_dir' => __DIR__ . '/../../data/locks',
     ],
@@ -46,5 +45,4 @@ return [
         Lock\LockFactory::class => ['lock_store'],
         LOCAL_LOCK_FACTORY => ['local_lock_store'],
     ],
-
 ];

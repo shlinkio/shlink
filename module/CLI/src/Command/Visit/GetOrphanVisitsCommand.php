@@ -29,8 +29,9 @@ class GetOrphanVisitsCommand extends Command
         SymfonyStyle $io,
         #[MapInput] VisitsListInput $input,
         #[Option(
-            'Return visits that belong to this domain only. Use ' . Domain::DEFAULT_AUTHORITY . ' keyword for visits '
-            . 'in default domain',
+            'Return visits that belong to this domain only. Use '
+            . Domain::DEFAULT_AUTHORITY
+            . ' keyword for visits in default domain',
             shortcut: 'd',
         )]
         string|null $domain = null,

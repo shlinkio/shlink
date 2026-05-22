@@ -21,8 +21,7 @@ class ShortUrlVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdap
         private readonly ShortUrlIdentifier $identifier,
         private readonly VisitsParams $params,
         private readonly ApiKey|null $apiKey,
-    ) {
-    }
+    ) {}
 
     public function getSlice(int $offset, int $length): iterable
     {

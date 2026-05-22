@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use CuyZ\Valinor\MapperBuilder;
@@ -25,8 +24,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 class EditShortUrlCommandTest extends TestCase
 {
     private CommandTester $commandTester;
-    private MockObject & ShortUrlServiceInterface $shortUrlService;
-    private MockObject & ShortUrlStringifierInterface $stringifier;
+    private MockObject&ShortUrlServiceInterface $shortUrlService;
+    private MockObject&ShortUrlStringifierInterface $stringifier;
 
     protected function setUp(): void
     {
@@ -41,12 +40,16 @@ class EditShortUrlCommandTest extends TestCase
     public function successMessageIsPrintedIfNoErrorOccurs(): void
     {
         $newLongUrl = 'https://example.com';
-        $this->shortUrlService->expects($this->once())->method('updateShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain('foobar'),
-            $this->callback(static fn (ShortUrlEdition $edition): bool => $edition->longUrl === $newLongUrl),
-        )->willReturn(
-            ShortUrl::createFake(),
-        );
+        $this->shortUrlService
+            ->expects($this->once())
+            ->method('updateShortUrl')
+            ->with(
+                ShortUrlIdentifier::fromShortCodeAndDomain('foobar'),
+                $this->callback(static fn (ShortUrlEdition $edition): bool => $edition->longUrl === $newLongUrl),
+            )
+            ->willReturn(
+                ShortUrl::createFake(),
+            );
         $this->stringifier->expects($this->once())->method('stringify')->willReturn('https://s.test/foo');
 
         $this->commandTester->execute(['short-code' => 'foobar', '--long-url' => $newLongUrl]);

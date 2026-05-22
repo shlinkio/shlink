@@ -30,7 +30,7 @@ use function Shlinkio\Shlink\Common\buildDateRange;
 class GetShortUrlVisitsCommandTest extends TestCase
 {
     private CommandTester $commandTester;
-    private MockObject & VisitsStatsHelperInterface $visitsHelper;
+    private MockObject&VisitsStatsHelperInterface $visitsHelper;
 
     protected function setUp(): void
     {
@@ -43,10 +43,14 @@ class GetShortUrlVisitsCommandTest extends TestCase
     public function noDateFlagsTriesToListWithoutDateRange(): void
     {
         $shortCode = 'abc123';
-        $this->visitsHelper->expects($this->once())->method('visitsForShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
-            new VisitsParams(DateRange::allTime()),
-        )->willReturn(new Paginator(new ArrayAdapter([])));
+        $this->visitsHelper
+            ->expects($this->once())
+            ->method('visitsForShortUrl')
+            ->with(
+                ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+                new VisitsParams(DateRange::allTime()),
+            )
+            ->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->execute(['short-code' => $shortCode]);
     }
@@ -55,10 +59,14 @@ class GetShortUrlVisitsCommandTest extends TestCase
     public function shortCodeIsAskedIfNotProvided(): void
     {
         $shortCode = 'abc123';
-        $this->visitsHelper->expects($this->once())->method('visitsForShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
-            $this->anything(),
-        )->willReturn(new Paginator(new ArrayAdapter([])));
+        $this->visitsHelper
+            ->expects($this->once())
+            ->method('visitsForShortUrl')
+            ->with(
+                ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+                $this->anything(),
+            )
+            ->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->setInputs([$shortCode]);
         $this->commandTester->execute([]);
@@ -70,10 +78,14 @@ class GetShortUrlVisitsCommandTest extends TestCase
         $shortCode = 'abc123';
         $startDate = '2016-01-01';
         $endDate = '2016-02-01';
-        $this->visitsHelper->expects($this->once())->method('visitsForShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
-            new VisitsParams(buildDateRange(Chronos::parse($startDate), Chronos::parse($endDate))),
-        )->willReturn(new Paginator(new ArrayAdapter([])));
+        $this->visitsHelper
+            ->expects($this->once())
+            ->method('visitsForShortUrl')
+            ->with(
+                ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+                new VisitsParams(buildDateRange(Chronos::parse($startDate), Chronos::parse($endDate))),
+            )
+            ->willReturn(new Paginator(new ArrayAdapter([])));
 
         $this->commandTester->execute([
             'short-code' => $shortCode,
@@ -92,10 +104,14 @@ class GetShortUrlVisitsCommandTest extends TestCase
             VisitLocation::fromLocation(new Location('', 'Spain', '', 'Madrid', 0, 0, '')),
         );
         $shortCode = 'abc123';
-        $this->visitsHelper->expects($this->once())->method('visitsForShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
-            $this->anything(),
-        )->willReturn(new Paginator(new ArrayAdapter([$visit])));
+        $this->visitsHelper
+            ->expects($this->once())
+            ->method('visitsForShortUrl')
+            ->with(
+                ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+                $this->anything(),
+            )
+            ->willReturn(new Paginator(new ArrayAdapter([$visit])));
 
         $this->commandTester->execute(['short-code' => $shortCode, '--format' => $format->value]);
         $output = $this->commandTester->getDisplay();

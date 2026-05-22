@@ -9,9 +9,7 @@ use Shlinkio\Shlink\EventDispatcher\Util\JsonUnserializable;
 
 final readonly class ShortUrlCreated implements JsonSerializable, JsonUnserializable
 {
-    public function __construct(public string $shortUrlId)
-    {
-    }
+    public function __construct(public string $shortUrlId) {}
 
     public function jsonSerialize(): array
     {

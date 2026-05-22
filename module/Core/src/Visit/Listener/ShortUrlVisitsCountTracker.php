@@ -122,16 +122,16 @@ final class ShortUrlVisitsCountTracker
         // For engines without a specific UPSERT syntax, do a regular locked select followed by an insert or update
         $qb = $conn->createQueryBuilder();
         $qb->select('id')
-           ->from('short_url_visits_counts')
-           ->where($qb->expr()->and(
-               $qb->expr()->eq('short_url_id', ':short_url_id'),
-               $qb->expr()->eq('potential_bot', ':potential_bot'),
-               $qb->expr()->eq('slot_id', ':slot_id'),
-           ))
-           ->setParameter('short_url_id', $shortUrlId)
-           ->setParameter('potential_bot', $potentialBot ? '1' : '0')
-           ->setParameter('slot_id', $slotId)
-           ->setMaxResults(1);
+            ->from('short_url_visits_counts')
+            ->where($qb->expr()->and(
+                $qb->expr()->eq('short_url_id', ':short_url_id'),
+                $qb->expr()->eq('potential_bot', ':potential_bot'),
+                $qb->expr()->eq('slot_id', ':slot_id'),
+            ))
+            ->setParameter('short_url_id', $shortUrlId)
+            ->setParameter('potential_bot', $potentialBot ? '1' : '0')
+            ->setParameter('slot_id', $slotId)
+            ->setMaxResults(1);
 
         if ($conn->getDatabasePlatform()::class === SQLServerPlatform::class) {
             $qb->forUpdate();
@@ -139,7 +139,7 @@ final class ShortUrlVisitsCountTracker
 
         $visitsCountId = $qb->executeQuery()->fetchOne();
 
-        $writeQb = ! $visitsCountId
+        $writeQb = !$visitsCountId
             ? $conn->createQueryBuilder()
                 ->insert('short_url_visits_counts')
                 ->values([

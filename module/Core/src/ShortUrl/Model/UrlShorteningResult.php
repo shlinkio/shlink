@@ -12,8 +12,7 @@ final readonly class UrlShorteningResult
     private function __construct(
         public ShortUrl $shortUrl,
         private Throwable|null $errorOnEventDispatching,
-    ) {
-    }
+    ) {}
 
     /**
      * @param callable(Throwable $errorOnEventDispatching): mixed $handler

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace Shlinkio\Shlink\Core\RedirectRule\Model;
 
 use Shlinkio\Shlink\Core\Model\Browser;

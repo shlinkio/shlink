@@ -42,10 +42,14 @@ class TagsPaginatorAdapterTest extends DatabaseTestCase
         }
         $this->getEntityManager()->flush();
 
-        $adapter = new TagsPaginatorAdapter($this->repo, TagsParams::fromRawData([
-            'searchTerm' => $searchTerm,
-            'orderBy' => $orderBy,
-        ]), null);
+        $adapter = new TagsPaginatorAdapter(
+            $this->repo,
+            TagsParams::fromRawData([
+                'searchTerm' => $searchTerm,
+                'orderBy' => $orderBy,
+            ]),
+            null,
+        );
 
         $tagNames = array_map(static fn (Tag $tag) => $tag->__toString(), [...$adapter->getSlice($offset, $length)]);
 

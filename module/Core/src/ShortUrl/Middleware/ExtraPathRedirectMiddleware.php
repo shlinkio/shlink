@@ -36,14 +36,13 @@ readonly class ExtraPathRedirectMiddleware implements MiddlewareInterface
         private ShortUrlRedirectionBuilderInterface $redirectionBuilder,
         private RedirectResponseHelperInterface $redirectResponseHelper,
         private UrlShortenerOptions $urlShortenerOptions,
-    ) {
-    }
+    ) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         /** @var NotFoundType|null $notFoundType */
         $notFoundType = $request->getAttribute(NotFoundType::class);
-        if (! $this->shouldApplyLogic($notFoundType)) {
+        if (!$this->shouldApplyLogic($notFoundType)) {
             return $handler->handle($request);
         }
 
@@ -57,11 +56,14 @@ readonly class ExtraPathRedirectMiddleware implements MiddlewareInterface
         }
 
         return (
-            // If multi-segment slugs are enabled, the appropriate not-found type is "invalid_short_url"
-            $this->urlShortenerOptions->multiSegmentSlugsEnabled && $notFoundType->isInvalidShortUrl()
-        ) || (
-            // If multi-segment slugs are disabled, the appropriate not-found type is "regular_404"
-            ! $this->urlShortenerOptions->multiSegmentSlugsEnabled && $notFoundType->isRegularNotFound()
+            (
+                // If multi-segment slugs are enabled, the appropriate not-found type is "invalid_short_url"
+                $this->urlShortenerOptions->multiSegmentSlugsEnabled && $notFoundType->isInvalidShortUrl()
+            ) ||
+            (
+                // If multi-segment slugs are disabled, the appropriate not-found type is "regular_404"
+                !$this->urlShortenerOptions->multiSegmentSlugsEnabled && $notFoundType->isRegularNotFound()
+            )
         );
     }
 
@@ -88,7 +90,7 @@ readonly class ExtraPathRedirectMiddleware implements MiddlewareInterface
 
             return $this->redirectResponseHelper->buildRedirectResponse($longUrl);
         } catch (ShortUrlNotFoundException) {
-            if ($extraPath === null || ! $this->urlShortenerOptions->multiSegmentSlugsEnabled) {
+            if ($extraPath === null || !$this->urlShortenerOptions->multiSegmentSlugsEnabled) {
                 return $handler->handle($request);
             }
 

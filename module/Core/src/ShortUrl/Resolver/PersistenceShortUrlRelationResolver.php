@@ -76,22 +76,25 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
         $tags = array_unique($tags);
         $repo = $this->em->getRepository(Tag::class);
 
-        return new Collections\ArrayCollection(array_map(function (string $tagName) use ($repo): Tag {
-            $this->lock($this->tagLocks, 'tag_' . $tagName);
+        return new Collections\ArrayCollection(array_map(
+            function (string $tagName) use ($repo): Tag {
+                $this->lock($this->tagLocks, 'tag_' . $tagName);
 
-            /** @var Tag|null $existingTag */
-            $existingTag = $repo->findOneBy(['name' => $tagName]);
-            if ($existingTag) {
-                $this->releaseLock($this->tagLocks, 'tag_' . $tagName);
-                return $existingTag;
-            }
+                /** @var Tag|null $existingTag */
+                $existingTag = $repo->findOneBy(['name' => $tagName]);
+                if ($existingTag) {
+                    $this->releaseLock($this->tagLocks, 'tag_' . $tagName);
+                    return $existingTag;
+                }
 
-            // Memoize only new tags, and let doctrine handle objects hydrated from persistence
-            $tag = $this->memoizeNewTag($tagName);
-            $this->em->persist($tag);
+                // Memoize only new tags, and let doctrine handle objects hydrated from persistence
+                $tag = $this->memoizeNewTag($tagName);
+                $this->em->persist($tag);
 
-            return $tag;
-        }, $tags));
+                return $tag;
+            },
+            $tags,
+        ));
     }
 
     private function memoizeNewTag(string $tagName): Tag
@@ -111,7 +114,7 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
     }
 
     /**
-    /**
+     * /**
      * @param array<string, SharedLockInterface> $locks
      */
     private function releaseLock(array &$locks, string $name): void

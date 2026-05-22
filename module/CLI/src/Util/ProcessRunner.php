@@ -48,10 +48,12 @@ class ProcessRunner implements ProcessRunnerInterface
         $process->mustRun($callback);
 
         if ($output->isVeryVerbose()) {
-            $message = $process->isSuccessful() ? 'Command ran successfully' : sprintf(
-                '%s Command did not run successfully',
-                $process->getExitCode(),
-            );
+            $message = $process->isSuccessful()
+                ? 'Command ran successfully'
+                : sprintf(
+                    '%s Command did not run successfully',
+                    $process->getExitCode(),
+                );
             $output->write($formatter->stop(spl_object_hash($process), $message, $process->isSuccessful()));
         }
     }

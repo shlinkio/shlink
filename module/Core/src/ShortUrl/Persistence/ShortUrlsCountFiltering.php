@@ -34,7 +34,9 @@ class ShortUrlsCountFiltering
         public readonly TagsMode $excludeTagsMode = TagsMode::ANY,
         string|null $apiKeyName = null,
     ) {
-        $this->searchIncludesDefaultDomain = !empty($searchTerm) && !empty($defaultDomain) && str_contains(
+        $this->searchIncludesDefaultDomain = !empty($searchTerm)
+        && !empty($defaultDomain)
+        && str_contains(
             strtolower($defaultDomain),
             strtolower($searchTerm),
         );

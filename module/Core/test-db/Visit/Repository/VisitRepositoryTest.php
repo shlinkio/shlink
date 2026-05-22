@@ -336,31 +336,67 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertEquals(4 + 5 + 7, $this->countRepo->countNonOrphanVisits(new VisitsCountFiltering()));
         self::assertEquals(4, $this->repo->countNonOrphanVisits(new WithDomainVisitsCountFiltering(apiKey: $apiKey1)));
         self::assertEquals(4, $this->countRepo->countNonOrphanVisits(new VisitsCountFiltering(apiKey: $apiKey1)));
-        self::assertEquals(5 + 7, $this->repo->countNonOrphanVisits(new WithDomainVisitsCountFiltering(
-            apiKey: $apiKey2,
-        )));
+        self::assertEquals(
+            5 + 7,
+            $this->repo->countNonOrphanVisits(new WithDomainVisitsCountFiltering(
+                apiKey: $apiKey2,
+            )),
+        );
         self::assertEquals(5 + 7, $this->countRepo->countNonOrphanVisits(new VisitsCountFiltering(apiKey: $apiKey2)));
-        self::assertEquals(4 + 7, $this->repo->countNonOrphanVisits(new WithDomainVisitsCountFiltering(
-            apiKey: $domainApiKey,
-        )));
-        self::assertEquals(4 + 7, $this->countRepo->countNonOrphanVisits(new VisitsCountFiltering(
-            apiKey: $domainApiKey,
-        )));
-        self::assertEquals(0, $this->repo->countOrphanVisits(new OrphanVisitsCountFiltering(
-            apiKey: $noOrphanVisitsApiKey,
-        )));
-        self::assertEquals(0, $this->orphanCountRepo->countOrphanVisits(new OrphanVisitsCountFiltering(
-            apiKey: $noOrphanVisitsApiKey,
-        )));
-        self::assertEquals(4, $this->repo->countNonOrphanVisits(new WithDomainVisitsCountFiltering(DateRange::since(
-            Chronos::parse('2016-01-05')->startOfDay(),
-        ))));
-        self::assertEquals(2, $this->repo->countNonOrphanVisits(new WithDomainVisitsCountFiltering(DateRange::since(
-            Chronos::parse('2016-01-03')->startOfDay(),
-        ), false, $apiKey1)));
-        self::assertEquals(1, $this->repo->countNonOrphanVisits(new WithDomainVisitsCountFiltering(DateRange::since(
-            Chronos::parse('2016-01-07')->startOfDay(),
-        ), false, $apiKey2)));
+        self::assertEquals(
+            4 + 7,
+            $this->repo->countNonOrphanVisits(new WithDomainVisitsCountFiltering(
+                apiKey: $domainApiKey,
+            )),
+        );
+        self::assertEquals(
+            4 + 7,
+            $this->countRepo->countNonOrphanVisits(new VisitsCountFiltering(
+                apiKey: $domainApiKey,
+            )),
+        );
+        self::assertEquals(
+            0,
+            $this->repo->countOrphanVisits(new OrphanVisitsCountFiltering(
+                apiKey: $noOrphanVisitsApiKey,
+            )),
+        );
+        self::assertEquals(
+            0,
+            $this->orphanCountRepo->countOrphanVisits(new OrphanVisitsCountFiltering(
+                apiKey: $noOrphanVisitsApiKey,
+            )),
+        );
+        self::assertEquals(
+            4,
+            $this->repo->countNonOrphanVisits(new WithDomainVisitsCountFiltering(DateRange::since(
+                Chronos::parse('2016-01-05')->startOfDay(),
+            ))),
+        );
+        self::assertEquals(
+            2,
+            $this->repo->countNonOrphanVisits(
+                new WithDomainVisitsCountFiltering(
+                    DateRange::since(
+                        Chronos::parse('2016-01-03')->startOfDay(),
+                    ),
+                    false,
+                    $apiKey1,
+                ),
+            ),
+        );
+        self::assertEquals(
+            1,
+            $this->repo->countNonOrphanVisits(
+                new WithDomainVisitsCountFiltering(
+                    DateRange::since(
+                        Chronos::parse('2016-01-07')->startOfDay(),
+                    ),
+                    false,
+                    $apiKey2,
+                ),
+            ),
+        );
         self::assertEquals(3 + 5, $this->repo->countNonOrphanVisits(
             new WithDomainVisitsCountFiltering(excludeBots: true, apiKey: $apiKey2),
         ));
@@ -402,7 +438,9 @@ class VisitRepositoryTest extends DatabaseTestCase
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
             $this->getEntityManager()->persist($this->setDateOnVisit(
-                static fn () => Visit::forRegularNotFound(Visitor::fromParams(visitedUrl: 'https://example.com/foo?1=2')),
+                static fn () => Visit::forRegularNotFound(Visitor::fromParams(
+                    visitedUrl: 'https://example.com/foo?1=2',
+                )),
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
 
@@ -411,11 +449,14 @@ class VisitRepositoryTest extends DatabaseTestCase
 
         $this->getEntityManager()->flush();
 
-        self::assertCount(0, $this->repo->findOrphanVisits(new OrphanVisitsListFiltering(
-            apiKey: $noOrphanVisitsApiKey,
-        )));
+        self::assertCount(
+            0,
+            $this->repo->findOrphanVisits(new OrphanVisitsListFiltering(
+                apiKey: $noOrphanVisitsApiKey,
+            )),
+        );
         self::assertCount(18, $this->repo->findOrphanVisits(new OrphanVisitsListFiltering()));
-        self::assertCount(15, $this->repo->findOrphanVisits(new OrphanVisitsListFiltering(excludeBots:  true)));
+        self::assertCount(15, $this->repo->findOrphanVisits(new OrphanVisitsListFiltering(excludeBots: true)));
         self::assertCount(5, $this->repo->findOrphanVisits(new OrphanVisitsListFiltering(limit: 5)));
         self::assertCount(10, $this->repo->findOrphanVisits(new OrphanVisitsListFiltering(limit: 15, offset: 8)));
         self::assertCount(9, $this->repo->findOrphanVisits(new OrphanVisitsListFiltering(
@@ -431,12 +472,18 @@ class VisitRepositoryTest extends DatabaseTestCase
             dateRange: DateRange::between(Chronos::parse('2020-01-02'), Chronos::parse('2020-01-03')),
             type: OrphanVisitType::INVALID_SHORT_URL,
         )));
-        self::assertCount(3, $this->repo->findOrphanVisits(new OrphanVisitsListFiltering(
-            DateRange::until(Chronos::parse('2020-01-01')),
-        )));
-        self::assertCount(6, $this->repo->findOrphanVisits(new OrphanVisitsListFiltering(
-            type: OrphanVisitType::REGULAR_404,
-        )));
+        self::assertCount(
+            3,
+            $this->repo->findOrphanVisits(new OrphanVisitsListFiltering(
+                DateRange::until(Chronos::parse('2020-01-01')),
+            )),
+        );
+        self::assertCount(
+            6,
+            $this->repo->findOrphanVisits(new OrphanVisitsListFiltering(
+                type: OrphanVisitType::REGULAR_404,
+            )),
+        );
         self::assertCount(4, $this->repo->findOrphanVisits(new OrphanVisitsListFiltering(
             type: OrphanVisitType::BASE_URL,
             limit: 4,
@@ -465,7 +512,9 @@ class VisitRepositoryTest extends DatabaseTestCase
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
             $this->getEntityManager()->persist($this->setDateOnVisit(
-                static fn () => Visit::forRegularNotFound(Visitor::fromParams(visitedUrl: 'https://example.com/foo/bar')),
+                static fn () => Visit::forRegularNotFound(Visitor::fromParams(
+                    visitedUrl: 'https://example.com/foo/bar',
+                )),
                 Chronos::parse(sprintf('2020-01-0%s', $i + 1)),
             ));
         }
@@ -478,9 +527,12 @@ class VisitRepositoryTest extends DatabaseTestCase
         self::assertEquals(9, $this->repo->countOrphanVisits(
             new OrphanVisitsCountFiltering(DateRange::since(Chronos::parse('2020-01-04'))),
         ));
-        self::assertEquals(6, $this->repo->countOrphanVisits(new OrphanVisitsCountFiltering(
-            DateRange::between(Chronos::parse('2020-01-02'), Chronos::parse('2020-01-03')),
-        )));
+        self::assertEquals(
+            6,
+            $this->repo->countOrphanVisits(new OrphanVisitsCountFiltering(
+                DateRange::between(Chronos::parse('2020-01-02'), Chronos::parse('2020-01-03')),
+            )),
+        );
         self::assertEquals(3, $this->repo->countOrphanVisits(
             new OrphanVisitsCountFiltering(DateRange::until(Chronos::parse('2020-01-01'))),
         ));
@@ -488,12 +540,18 @@ class VisitRepositoryTest extends DatabaseTestCase
             dateRange: DateRange::between(Chronos::parse('2020-01-02'), Chronos::parse('2020-01-03')),
             type: OrphanVisitType::BASE_URL,
         )));
-        self::assertEquals(6, $this->repo->countOrphanVisits(new OrphanVisitsCountFiltering(
-            type: OrphanVisitType::INVALID_SHORT_URL,
-        )));
-        self::assertEquals(6, $this->repo->countOrphanVisits(new OrphanVisitsCountFiltering(
-            type: OrphanVisitType::REGULAR_404,
-        )));
+        self::assertEquals(
+            6,
+            $this->repo->countOrphanVisits(new OrphanVisitsCountFiltering(
+                type: OrphanVisitType::INVALID_SHORT_URL,
+            )),
+        );
+        self::assertEquals(
+            6,
+            $this->repo->countOrphanVisits(new OrphanVisitsCountFiltering(
+                type: OrphanVisitType::REGULAR_404,
+            )),
+        );
         self::assertEquals(6, $this->repo->countOrphanVisits(new OrphanVisitsCountFiltering(domain: 'example.com')));
         self::assertEquals(6, $this->repo->countOrphanVisits(new OrphanVisitsCountFiltering(
             domain: Domain::DEFAULT_AUTHORITY,
@@ -514,30 +572,57 @@ class VisitRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->flush();
 
         self::assertCount(21, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering()));
-        self::assertCount(21, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(
-            DateRange::allTime(),
-        )));
-        self::assertCount(4, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(
-            apiKey: $authoredApiKey,
-        )));
-        self::assertCount(7, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(DateRange::since(
-            Chronos::parse('2016-01-05')->endOfDay(),
-        ))));
-        self::assertCount(12, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(DateRange::until(
-            Chronos::parse('2016-01-04')->endOfDay(),
-        ))));
-        self::assertCount(6, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(DateRange::between(
-            Chronos::parse('2016-01-03')->startOfDay(),
-            Chronos::parse('2016-01-04')->endOfDay(),
-        ))));
-        self::assertCount(13, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(DateRange::between(
-            Chronos::parse('2016-01-03')->startOfDay(),
-            Chronos::parse('2016-01-08')->endOfDay(),
-        ))));
-        self::assertCount(3, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(DateRange::between(
-            Chronos::parse('2016-01-03')->startOfDay(),
-            Chronos::parse('2016-01-08')->endOfDay(),
-        ), limit: 10, offset: 10)));
+        self::assertCount(
+            21,
+            $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(
+                DateRange::allTime(),
+            )),
+        );
+        self::assertCount(
+            4,
+            $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(
+                apiKey: $authoredApiKey,
+            )),
+        );
+        self::assertCount(
+            7,
+            $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(DateRange::since(
+                Chronos::parse('2016-01-05')->endOfDay(),
+            ))),
+        );
+        self::assertCount(
+            12,
+            $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(DateRange::until(
+                Chronos::parse('2016-01-04')->endOfDay(),
+            ))),
+        );
+        self::assertCount(
+            6,
+            $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(DateRange::between(
+                Chronos::parse('2016-01-03')->startOfDay(),
+                Chronos::parse('2016-01-04')->endOfDay(),
+            ))),
+        );
+        self::assertCount(
+            13,
+            $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(DateRange::between(
+                Chronos::parse('2016-01-03')->startOfDay(),
+                Chronos::parse('2016-01-08')->endOfDay(),
+            ))),
+        );
+        self::assertCount(
+            3,
+            $this->repo->findNonOrphanVisits(
+                new WithDomainVisitsListFiltering(
+                    DateRange::between(
+                        Chronos::parse('2016-01-03')->startOfDay(),
+                        Chronos::parse('2016-01-08')->endOfDay(),
+                    ),
+                    limit: 10,
+                    offset: 10,
+                ),
+            ),
+        );
         self::assertCount(15, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(excludeBots: true)));
         self::assertCount(10, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(limit: 10)));
         self::assertCount(1, $this->repo->findNonOrphanVisits(new WithDomainVisitsListFiltering(

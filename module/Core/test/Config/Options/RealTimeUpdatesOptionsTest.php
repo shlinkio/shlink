@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace Config\Options;
 
 use PHPUnit\Framework\Attributes\Test;
@@ -17,7 +16,10 @@ class RealTimeUpdatesOptionsTest extends TestCase
     #[Test]
     #[TestWith([null, ['NEW_VISIT', 'NEW_SHORT_URL_VISIT', 'NEW_ORPHAN_VISIT', 'NEW_SHORT_URL']])]
     #[TestWith([['NEW_VISIT'], ['NEW_VISIT']])]
-    #[TestWith([['NEW_SHORT_URL_VISIT', 'NEW_ORPHAN_VISIT'], ['NEW_SHORT_URL_VISIT', 'NEW_ORPHAN_VISIT']])]
+    #[TestWith([
+        ['NEW_SHORT_URL_VISIT', 'NEW_ORPHAN_VISIT'],
+        ['NEW_SHORT_URL_VISIT', 'NEW_ORPHAN_VISIT'],
+    ])]
     public function expectedTopicsAreResolved(array|null $providedTopics, array $expectedTopics): void
     {
         $options = new RealTimeUpdatesOptions($providedTopics);

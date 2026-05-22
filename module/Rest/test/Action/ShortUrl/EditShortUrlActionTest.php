@@ -19,7 +19,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class EditShortUrlActionTest extends TestCase
 {
     private EditShortUrlAction $action;
-    private MockObject & ShortUrlServiceInterface $shortUrlService;
+    private MockObject&ShortUrlServiceInterface $shortUrlService;
 
     protected function setUp(): void
     {
@@ -34,9 +34,10 @@ class EditShortUrlActionTest extends TestCase
     #[Test]
     public function correctShortCodeReturnsSuccess(): void
     {
-        $request = ServerRequestFactory::fromGlobals()->withAttribute('shortCode', 'abc123')
-                                                      ->withAttribute(ApiKey::class, ApiKey::create())
-                                                      ->withParsedBody(['maxVisits' => 5]);
+        $request = ServerRequestFactory::fromGlobals()
+            ->withAttribute('shortCode', 'abc123')
+            ->withAttribute(ApiKey::class, ApiKey::create())
+            ->withParsedBody(['maxVisits' => 5]);
         $this->shortUrlService->expects($this->once())->method('updateShortUrl')->willReturn(ShortUrl::createFake());
 
         $resp = $this->action->handle($request);

@@ -124,101 +124,119 @@ class SetRedirectRulesTest extends ApiTestCase
 
     #[Test]
     #[TestWith(['def456', []])]
-    #[TestWith(['abc123', [
+    #[TestWith([
+        'abc123',
         [
-            'longUrl' => 'https://example.com/english-and-foo-query',
-            'priority' => 1,
-            'conditions' => [
-                self::LANGUAGE_EN_CONDITION,
-                [
-                    'type' => 'any-value-query-param',
-                    'matchKey' => 'foo',
-                    'matchValue' => null,
+            [
+                'longUrl' => 'https://example.com/english-and-foo-query',
+                'priority' => 1,
+                'conditions' => [
+                    self::LANGUAGE_EN_CONDITION,
+                    [
+                        'type' => 'any-value-query-param',
+                        'matchKey' => 'foo',
+                        'matchValue' => null,
+                    ],
+                ],
+            ],
+            [
+                'longUrl' => 'https://example.com/multiple-query-params',
+                'priority' => 2,
+                'conditions' => [
+                    [
+                        'type' => 'query-param',
+                        'matchKey' => 'hello',
+                        'matchValue' => 'world',
+                    ],
+                    [
+                        'type' => 'query-param',
+                        'matchKey' => 'foo',
+                        'matchValue' => 'bar',
+                    ],
                 ],
             ],
         ],
+    ])]
+    #[TestWith([
+        'abc123',
         [
-            'longUrl' => 'https://example.com/multiple-query-params',
-            'priority' => 2,
-            'conditions' => [
-                [
-                    'type' => 'query-param',
-                    'matchKey' => 'hello',
-                    'matchValue' => 'world',
-                ],
-                [
-                    'type' => 'query-param',
-                    'matchKey' => 'foo',
-                    'matchValue' => 'bar',
+            [
+                'longUrl' => 'https://example.com',
+                'priority' => 1,
+                'conditions' => [
+                    [
+                        'type' => 'ip-address',
+                        'matchKey' => null,
+                        'matchValue' => '1.2.3.4',
+                    ],
                 ],
             ],
         ],
-    ]])]
-    #[TestWith(['abc123', [
+    ], 'static IP')]
+    #[TestWith([
+        'abc123',
         [
-            'longUrl' => 'https://example.com',
-            'priority' => 1,
-            'conditions' => [
-                [
-                    'type' => 'ip-address',
-                    'matchKey' => null,
-                    'matchValue' => '1.2.3.4',
+            [
+                'longUrl' => 'https://example.com',
+                'priority' => 1,
+                'conditions' => [
+                    [
+                        'type' => 'ip-address',
+                        'matchKey' => null,
+                        'matchValue' => '1.2.3.0/24',
+                    ],
                 ],
             ],
         ],
-    ]], 'static IP')]
-    #[TestWith(['abc123', [
+    ], 'CIDR block')]
+    #[TestWith([
+        'abc123',
         [
-            'longUrl' => 'https://example.com',
-            'priority' => 1,
-            'conditions' => [
-                [
-                    'type' => 'ip-address',
-                    'matchKey' => null,
-                    'matchValue' => '1.2.3.0/24',
+            [
+                'longUrl' => 'https://example.com',
+                'priority' => 1,
+                'conditions' => [
+                    [
+                        'type' => 'ip-address',
+                        'matchKey' => null,
+                        'matchValue' => '1.2.3.*',
+                    ],
                 ],
             ],
         ],
-    ]], 'CIDR block')]
-    #[TestWith(['abc123', [
+    ], 'IP wildcard pattern')]
+    #[TestWith([
+        'abc123',
         [
-            'longUrl' => 'https://example.com',
-            'priority' => 1,
-            'conditions' => [
-                [
-                    'type' => 'ip-address',
-                    'matchKey' => null,
-                    'matchValue' => '1.2.3.*',
+            [
+                'longUrl' => 'https://example.com',
+                'priority' => 1,
+                'conditions' => [
+                    [
+                        'type' => 'ip-address',
+                        'matchKey' => null,
+                        'matchValue' => '1.2.*.4',
+                    ],
                 ],
             ],
         ],
-    ]], 'IP wildcard pattern')]
-    #[TestWith(['abc123', [
+    ], 'in-between IP wildcard pattern')]
+    #[TestWith([
+        'abc123',
         [
-            'longUrl' => 'https://example.com',
-            'priority' => 1,
-            'conditions' => [
-                [
-                    'type' => 'ip-address',
-                    'matchKey' => null,
-                    'matchValue' => '1.2.*.4',
+            [
+                'longUrl' => 'https://example.com',
+                'priority' => 1,
+                'conditions' => [
+                    [
+                        'type' => 'geolocation-country-code',
+                        'matchKey' => null,
+                        'matchValue' => 'US',
+                    ],
                 ],
             ],
         ],
-    ]], 'in-between IP wildcard pattern')]
-    #[TestWith(['abc123', [
-        [
-            'longUrl' => 'https://example.com',
-            'priority' => 1,
-            'conditions' => [
-                [
-                    'type' => 'geolocation-country-code',
-                    'matchKey' => null,
-                    'matchValue' => 'US',
-                ],
-            ],
-        ],
-    ]], 'country code')]
+    ], 'country code')]
     public function setsListOfRulesForShortUrl(string $shortCode, array $expectedRules): void
     {
         $response = $this->callApiWithKey(self::METHOD_POST, sprintf('/short-urls/%s/redirect-rules', $shortCode), [

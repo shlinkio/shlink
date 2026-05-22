@@ -32,7 +32,7 @@ date_default_timezone_set(EnvVars::TIMEZONE->loadFromEnv());
 
 // This class alias tricks the ConfigAbstractFactory to return Lock\Factory instances even with a different service name
 // It needs to be placed here as individual config files will not be loaded once config is cached
-if (! class_exists(LOCAL_LOCK_FACTORY)) {
+if (!class_exists(LOCAL_LOCK_FACTORY)) {
     class_alias(Lock\LockFactory::class, LOCAL_LOCK_FACTORY);
 }
 

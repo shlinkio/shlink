@@ -34,8 +34,7 @@ readonly class ImportedLinksProcessor implements ImportedLinksProcessorInterface
         private ShortCodeUniquenessHelperInterface $shortCodeHelper,
         private DoctrineBatchHelperInterface $batchHelper,
         private ShortUrlRedirectRuleServiceInterface $redirectRuleService,
-    ) {
-    }
+    ) {}
 
     public function process(StyleInterface $io, ImportResult $result, ImportParams $params): void
     {
@@ -59,12 +58,16 @@ readonly class ImportedLinksProcessor implements ImportedLinksProcessorInterface
         $iterable = $this->batchHelper->wrapIterable($shlinkUrls, $params->importVisits ? 10 : 100);
 
         foreach ($iterable as $importedUrl) {
-            $skipOnShortCodeConflict = static fn (): bool => $io->choice(sprintf(
-                'Failed to import URL "%s" because its short-code "%s" is already in use. Do you want to generate '
-                . 'a new one or skip it?',
-                $importedUrl->longUrl,
-                $importedUrl->shortCode,
-            ), ['Generate new short-code', 'Skip'], 1) === 'Skip';
+            $skipOnShortCodeConflict = static fn (): bool => $io->choice(
+                sprintf(
+                    'Failed to import URL "%s" because its short-code "%s" is already in use. Do you want to generate '
+                    . 'a new one or skip it?',
+                    $importedUrl->longUrl,
+                    $importedUrl->shortCode,
+                ),
+                ['Generate new short-code', 'Skip'],
+                1,
+            ) === 'Skip';
             $longUrl = $importedUrl->longUrl;
 
             try {
@@ -104,7 +107,7 @@ readonly class ImportedLinksProcessor implements ImportedLinksProcessorInterface
         }
 
         $shortUrl = ShortUrl::fromImport($importedUrl, $importShortCodes, $this->relationResolver);
-        if (! $this->handleShortCodeUniqueness($shortUrl, $importShortCodes, $skipOnShortCodeConflict)) {
+        if (!$this->handleShortCodeUniqueness($shortUrl, $importShortCodes, $skipOnShortCodeConflict)) {
             throw NonUniqueSlugException::fromImport($importedUrl);
         }
 

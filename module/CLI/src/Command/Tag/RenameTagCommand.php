@@ -32,7 +32,7 @@ class RenameTagCommand extends Command
             $this->tagService->renameTag(Renaming::fromNames($oldName, $newName));
             $io->success('Tag properly renamed.');
             return Command::SUCCESS;
-        } catch (TagNotFoundException | TagConflictException $e) {
+        } catch (TagNotFoundException|TagConflictException $e) {
             $io->error($e->getMessage());
             return Command::FAILURE;
         }

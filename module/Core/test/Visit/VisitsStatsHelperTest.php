@@ -50,7 +50,7 @@ use function range;
 class VisitsStatsHelperTest extends TestCase
 {
     private VisitsStatsHelper $helper;
-    private MockObject & EntityManagerInterface $em;
+    private MockObject&EntityManagerInterface $em;
 
     protected function setUp(): void
     {
@@ -63,25 +63,33 @@ class VisitsStatsHelperTest extends TestCase
     {
         $callCount = 0;
         $visitsCountRepo = $this->createMock(ShortUrlVisitsCountRepository::class);
-        $visitsCountRepo->expects($this->exactly(2))->method('countNonOrphanVisits')->willReturnCallback(
-            static function (VisitsCountFiltering $options) use ($expectedCount, $apiKey, &$callCount) {
-                Assert::assertEquals($callCount !== 0, $options->excludeBots);
-                Assert::assertEquals($apiKey, $options->apiKey);
-                $callCount++;
+        $visitsCountRepo->expects($this->exactly(2))
+            ->method('countNonOrphanVisits')
+            ->willReturnCallback(
+                static function (VisitsCountFiltering $options) use ($expectedCount, $apiKey, &$callCount) {
+                    Assert::assertEquals($callCount !== 0, $options->excludeBots);
+                    Assert::assertEquals($apiKey, $options->apiKey);
+                    $callCount++;
 
-                return $expectedCount * 3;
-            },
-        );
+                    return $expectedCount * 3;
+                },
+            );
 
         $orphanVisitsCountRepo = $this->createMock(OrphanVisitsCountRepository::class);
-        $orphanVisitsCountRepo->expects($this->exactly(2))->method('countOrphanVisits')->with(
-            $this->isInstanceOf(VisitsCountFiltering::class),
-        )->willReturn($expectedCount);
+        $orphanVisitsCountRepo->expects($this->exactly(2))
+            ->method('countOrphanVisits')
+            ->with(
+                $this->isInstanceOf(VisitsCountFiltering::class),
+            )
+            ->willReturn($expectedCount);
 
-        $this->em->expects($this->exactly(2))->method('getRepository')->willReturnMap([
-            [OrphanVisitsCount::class, $orphanVisitsCountRepo],
-            [ShortUrlVisitsCount::class, $visitsCountRepo],
-        ]);
+        $this->em
+            ->expects($this->exactly(2))
+            ->method('getRepository')
+            ->willReturnMap([
+                [OrphanVisitsCount::class,   $orphanVisitsCountRepo],
+                [ShortUrlVisitsCount::class, $visitsCountRepo],
+            ]);
 
         $stats = $this->helper->getVisitsStats($apiKey);
 
@@ -114,10 +122,13 @@ class VisitsStatsHelperTest extends TestCase
         $repo2->method('findVisitsByShortCode')->willReturn($list);
         $repo2->method('countVisitsByShortCode')->willReturn(1);
 
-        $this->em->expects($this->exactly(2))->method('getRepository')->willReturnMap([
-            [ShortUrl::class, $repo],
-            [Visit::class, $repo2],
-        ]);
+        $this->em
+            ->expects($this->exactly(2))
+            ->method('getRepository')
+            ->willReturnMap([
+                [ShortUrl::class, $repo],
+                [Visit::class,    $repo2],
+            ]);
 
         $paginator = $this->helper->visitsForShortUrl($identifier, new VisitsParams(), $apiKey);
 
@@ -168,10 +179,13 @@ class VisitsStatsHelperTest extends TestCase
         $repo2->method('findVisitsByTag')->willReturn($list);
         $repo2->method('countVisitsByTag')->willReturn(1);
 
-        $this->em->expects($this->exactly(2))->method('getRepository')->willReturnMap([
-            [Tag::class, $repo],
-            [Visit::class, $repo2],
-        ]);
+        $this->em
+            ->expects($this->exactly(2))
+            ->method('getRepository')
+            ->willReturnMap([
+                [Tag::class,   $repo],
+                [Visit::class, $repo2],
+            ]);
 
         $paginator = $this->helper->visitsForTag($tag, new WithDomainVisitsParams(), $apiKey);
 
@@ -207,10 +221,13 @@ class VisitsStatsHelperTest extends TestCase
         $repo2->method('findVisitsByDomain')->willReturn($list);
         $repo2->method('countVisitsByDomain')->willReturn(1);
 
-        $this->em->expects($this->exactly(2))->method('getRepository')->willReturnMap([
-            [Domain::class, $repo],
-            [Visit::class, $repo2],
-        ]);
+        $this->em
+            ->expects($this->exactly(2))
+            ->method('getRepository')
+            ->willReturnMap([
+                [Domain::class, $repo],
+                [Visit::class,  $repo2],
+            ]);
 
         $paginator = $this->helper->visitsForDomain($domain, new VisitsParams(), $apiKey);
 
@@ -231,10 +248,13 @@ class VisitsStatsHelperTest extends TestCase
         $repo2->method('findVisitsByDomain')->willReturn($list);
         $repo2->method('countVisitsByDomain')->willReturn(1);
 
-        $this->em->expects($this->exactly(2))->method('getRepository')->willReturnMap([
-            [Domain::class, $repo],
-            [Visit::class, $repo2],
-        ]);
+        $this->em
+            ->expects($this->exactly(2))
+            ->method('getRepository')
+            ->willReturnMap([
+                [Domain::class, $repo],
+                [Visit::class,  $repo2],
+            ]);
 
         $paginator = $this->helper->visitsForDomain(Domain::DEFAULT_AUTHORITY, new VisitsParams(), $apiKey);
 
@@ -246,12 +266,18 @@ class VisitsStatsHelperTest extends TestCase
     {
         $list = array_map(static fn () => Visit::forBasePath(Visitor::empty()), range(0, 3));
         $repo = $this->createMock(VisitRepository::class);
-        $repo->expects($this->once())->method('countOrphanVisits')->with(
-            $this->isInstanceOf(OrphanVisitsCountFiltering::class),
-        )->willReturn(count($list));
-        $repo->expects($this->once())->method('findOrphanVisits')->with(
-            $this->isInstanceOf(OrphanVisitsListFiltering::class),
-        )->willReturn($list);
+        $repo->expects($this->once())
+            ->method('countOrphanVisits')
+            ->with(
+                $this->isInstanceOf(OrphanVisitsCountFiltering::class),
+            )
+            ->willReturn(count($list));
+        $repo->expects($this->once())
+            ->method('findOrphanVisits')
+            ->with(
+                $this->isInstanceOf(OrphanVisitsListFiltering::class),
+            )
+            ->willReturn($list);
         $this->em->expects($this->once())->method('getRepository')->with(Visit::class)->willReturn($repo);
 
         $paginator = $this->helper->orphanVisits(new OrphanVisitsParams());
@@ -267,12 +293,18 @@ class VisitsStatsHelperTest extends TestCase
             range(0, 3),
         );
         $repo = $this->createMock(VisitRepository::class);
-        $repo->expects($this->once())->method('countNonOrphanVisits')->with(
-            $this->isInstanceOf(WithDOmainVisitsCountFiltering::class),
-        )->willReturn(count($list));
-        $repo->expects($this->once())->method('findNonOrphanVisits')->with(
-            $this->isInstanceOf(WithDOmainVisitsListFiltering::class),
-        )->willReturn($list);
+        $repo->expects($this->once())
+            ->method('countNonOrphanVisits')
+            ->with(
+                $this->isInstanceOf(WithDOmainVisitsCountFiltering::class),
+            )
+            ->willReturn(count($list));
+        $repo->expects($this->once())
+            ->method('findNonOrphanVisits')
+            ->with(
+                $this->isInstanceOf(WithDOmainVisitsListFiltering::class),
+            )
+            ->willReturn($list);
         $this->em->expects($this->once())->method('getRepository')->with(Visit::class)->willReturn($repo);
 
         $paginator = $this->helper->nonOrphanVisits(new WithDomainVisitsParams());

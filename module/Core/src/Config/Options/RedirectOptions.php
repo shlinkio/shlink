@@ -27,9 +27,10 @@ final readonly class RedirectOptions
         $this->redirectCacheLifetime = $redirectCacheLifetime > 0
             ? $redirectCacheLifetime
             : DEFAULT_REDIRECT_CACHE_LIFETIME;
-        $this->redirectCacheVisibility = $redirectCacheVisibility === 'public' || $redirectCacheVisibility === 'private'
-            ? $redirectCacheVisibility
-            : DEFAULT_REDIRECT_CACHE_VISIBILITY;
+        $this->redirectCacheVisibility =
+            $redirectCacheVisibility === 'public' || $redirectCacheVisibility === 'private'
+                ? $redirectCacheVisibility
+                : DEFAULT_REDIRECT_CACHE_VISIBILITY;
     }
 
     public static function fromEnv(): self

@@ -29,7 +29,7 @@ use function gc_collect_cycles;
         // Call the garbage collector to reduce the chances of it being triggered in the middle of a page generation
         gc_collect_cycles();
 
-        if (! $keepRunning) {
+        if (!$keepRunning) {
             break;
         }
     }

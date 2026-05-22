@@ -9,9 +9,7 @@ use Shlinkio\Shlink\Rest\ApiKey\Role;
 
 class ApiKeyRole extends AbstractEntity
 {
-    public function __construct(public readonly Role $role, private array $meta, public readonly ApiKey $apiKey)
-    {
-    }
+    public function __construct(public readonly Role $role, private array $meta, public readonly ApiKey $apiKey) {}
 
     public function meta(): array
     {

@@ -37,15 +37,15 @@ class DeleteExpiredShortUrlsCommand extends Command
         bool $dryRun = false,
     ): int {
         $conditions = new ExpiredShortUrlsConditions(maxVisitsReached: $evaluateMaxVisits);
-        $force = $force || ! $input->isInteractive();
+        $force = $force || !$input->isInteractive();
 
-        if (! $force && ! $dryRun) {
+        if (!$force && !$dryRun) {
             $io->warning([
                 'Careful!',
                 'You are about to perform a destructive operation that can result in deleted short URLs and visits.',
                 'This action cannot be undone. Proceed at your own risk',
             ]);
-            if (! $io->confirm('Continue?', default: false)) {
+            if (!$io->confirm('Continue?', default: false)) {
                 return self::INVALID;
             }
         }

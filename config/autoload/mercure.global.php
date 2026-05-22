@@ -9,7 +9,6 @@ use Symfony\Component\Mercure\Hub;
 use Symfony\Component\Mercure\HubInterface;
 
 return [
-
     // This config is used by shlink-common. Do not delete
     'mercure' => [
         'enabled' => EnvVars::MERCURE_ENABLED->loadFromEnv(),
@@ -35,5 +34,4 @@ return [
             ],
         ],
     ],
-
 ];

@@ -18,7 +18,7 @@ use Shlinkio\Shlink\Core\ErrorHandler\NotFoundTypeResolverMiddleware;
 class NotFoundTypeResolverMiddlewareTest extends TestCase
 {
     private NotFoundTypeResolverMiddleware $middleware;
-    private MockObject & RequestHandlerInterface $handler;
+    private MockObject&RequestHandlerInterface $handler;
 
     protected function setUp(): void
     {
@@ -30,12 +30,16 @@ class NotFoundTypeResolverMiddlewareTest extends TestCase
     public function notFoundTypeIsAddedToRequest(): void
     {
         $request = ServerRequestFactory::fromGlobals();
-        $this->handler->expects($this->once())->method('handle')->with(
-            $this->callback(static function (ServerRequestInterface $req): bool {
-                Assert::assertArrayHasKey(NotFoundType::class, $req->getAttributes());
-                return true;
-            }),
-        )->willReturn(new Response());
+        $this->handler
+            ->expects($this->once())
+            ->method('handle')
+            ->with(
+                $this->callback(static function (ServerRequestInterface $req): bool {
+                    Assert::assertArrayHasKey(NotFoundType::class, $req->getAttributes());
+                    return true;
+                }),
+            )
+            ->willReturn(new Response());
 
         $this->middleware->process($request, $this->handler);
 

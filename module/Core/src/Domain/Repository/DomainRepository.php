@@ -24,12 +24,12 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
     {
         $qb = $this->createQueryBuilder('d');
         $qb->leftJoin(ShortUrl::class, 's', Join::WITH, 's.domain = d')
-           ->groupBy('d')
-           ->orderBy('d.authority', 'ASC')
-           ->having($qb->expr()->gt('COUNT(s.id)', '0'))
-           ->orHaving($qb->expr()->isNotNull('d.baseUrlRedirect'))
-           ->orHaving($qb->expr()->isNotNull('d.regular404Redirect'))
-           ->orHaving($qb->expr()->isNotNull('d.invalidShortUrlRedirect'));
+            ->groupBy('d')
+            ->orderBy('d.authority', 'ASC')
+            ->having($qb->expr()->gt('COUNT(s.id)', '0'))
+            ->orHaving($qb->expr()->isNotNull('d.baseUrlRedirect'))
+            ->orHaving($qb->expr()->isNotNull('d.regular404Redirect'))
+            ->orHaving($qb->expr()->isNotNull('d.invalidShortUrlRedirect'));
 
         $specs = $this->determineExtraSpecs($apiKey);
         foreach ($specs as [$alias, $spec]) {
@@ -52,17 +52,17 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
         $qb = $this->createDomainQueryBuilder($authority, $apiKey);
         $qb->select('COUNT(d.id)');
 
-        return ((int) $qb->getQuery()->getSingleScalarResult()) > 0;
+        return (int) $qb->getQuery()->getSingleScalarResult() > 0;
     }
 
     private function createDomainQueryBuilder(string $authority, ApiKey|null $apiKey): QueryBuilder
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(Domain::class, 'd')
-           ->leftJoin(ShortUrl::class, 's', Join::WITH, 's.domain = d')
-           ->where($qb->expr()->eq('d.authority', ':authority'))
-           ->setParameter('authority', $authority)
-           ->setMaxResults(1);
+            ->leftJoin(ShortUrl::class, 's', Join::WITH, 's.domain = d')
+            ->where($qb->expr()->eq('d.authority', ':authority'))
+            ->setParameter('authority', $authority)
+            ->setMaxResults(1);
 
         $specs = $this->determineExtraSpecs($apiKey);
         foreach ($specs as [$alias, $spec]) {

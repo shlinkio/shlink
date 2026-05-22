@@ -6,9 +6,7 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Model;
 
 final readonly class ExpiredShortUrlsConditions
 {
-    public function __construct(public bool $pastValidUntil = true, public bool $maxVisitsReached = false)
-    {
-    }
+    public function __construct(public bool $pastValidUntil = true, public bool $maxVisitsReached = false) {}
 
     public function hasConditions(): bool
     {

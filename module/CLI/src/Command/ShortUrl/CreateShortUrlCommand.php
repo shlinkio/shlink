@@ -42,10 +42,13 @@ class CreateShortUrlCommand extends Command
                 $this->treeMapper->map(ShortUrlCreation::class, $inputData->toArray($this->options)),
             );
 
-            $result->onEventDispatchingError(static fn () => $io->isVerbose() && $io->warning(
-                'Short URL properly created, but the real-time updates cannot be notified when generating the '
+            $result->onEventDispatchingError(
+                static fn () => $io->isVerbose()
+                && $io->warning(
+                    'Short URL properly created, but the real-time updates cannot be notified when generating the '
                     . 'short URL from the command line. Migrate to roadrunner in order to bypass this limitation.',
-            ));
+                ),
+            );
 
             $io->writeln([
                 sprintf('Processed long URL: <info>%s</info>', $result->shortUrl->getLongUrl()),

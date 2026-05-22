@@ -14,12 +14,17 @@ class RenameTagTest extends ApiTestCase
     #[Test, DataProvider('provideNonAdminApiKeys')]
     public function anErrorIsReturnedWithNonAdminApiKeys(string $apiKey): void
     {
-        $resp = $this->callApiWithKey(self::METHOD_PUT, '/tags', [
-            RequestOptions::JSON => [
-                'oldName' => 'foo',
-                'newName' => 'foo_renamed',
+        $resp = $this->callApiWithKey(
+            self::METHOD_PUT,
+            '/tags',
+            [
+                RequestOptions::JSON => [
+                    'oldName' => 'foo',
+                    'newName' => 'foo_renamed',
+                ],
             ],
-        ], $apiKey);
+            $apiKey,
+        );
         $payload = $this->getJsonResponsePayload($resp);
 
         self::assertEquals(self::STATUS_FORBIDDEN, $resp->getStatusCode());

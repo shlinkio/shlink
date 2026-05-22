@@ -16,15 +16,13 @@ use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
  */
 readonly class ShortUrlOptionsPayloadMiddleware implements MiddlewareInterface
 {
-    public function __construct(private UrlShortenerOptions $urlShortenerOptions)
-    {
-    }
+    public function __construct(private UrlShortenerOptions $urlShortenerOptions) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         /** @var array $body */
         $body = $request->getParsedBody();
-        if (! isset($body['shortCodeLength'])) {
+        if (!isset($body['shortCodeLength'])) {
             $body['shortCodeLength'] = $this->urlShortenerOptions->defaultShortCodesLength;
         }
 

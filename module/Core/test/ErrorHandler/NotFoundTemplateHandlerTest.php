@@ -56,8 +56,7 @@ class NotFoundTemplateHandlerTest extends TestCase
                 RouteResult::fromRoute(
                     new Route(
                         'foo',
-                        middleware(static function (): void {
-                        }),
+                        middleware(static function (): void {}),
                         ['GET'],
                         RedirectAction::class,
                     ),

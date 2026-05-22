@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace Shlinkio\Shlink\Core\Visit\Model;
 
 use Shlinkio\Shlink\Common\Util\DateRange;

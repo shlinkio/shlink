@@ -45,8 +45,8 @@ class ShortUrl extends AbstractEntity
         private string $shortCode,
         private Chronos $dateCreated = new Chronos(),
         private Collection $tags = new ArrayCollection(),
-        private Collection & Selectable $visits = new ArrayCollection(),
-        private Collection & Selectable $visitsCounts = new ArrayCollection(),
+        private Collection&Selectable $visits = new ArrayCollection(),
+        private Collection&Selectable $visitsCounts = new ArrayCollection(),
         private Chronos|null $validSince = null,
         private Chronos|null $validUntil = null,
         private int|null $maxVisits = null,
@@ -61,8 +61,7 @@ class ShortUrl extends AbstractEntity
         private string|null $importSource = null,
         private string|null $importOriginalShortCode = null,
         private Collection $redirectRules = new ArrayCollection(),
-    ) {
-    }
+    ) {}
 
     /**
      * @internal
@@ -160,7 +159,8 @@ class ShortUrl extends AbstractEntity
         if (
             $this->title === null
             || $shortUrlEdit->titleWasProvided
-            || ($this->titleWasAutoResolved && $shortUrlEdit->titleWasAutoResolved)
+            || ($this->titleWasAutoResolved
+            && $shortUrlEdit->titleWasAutoResolved)
         ) {
             $this->title = $shortUrlEdit->title;
             $this->titleWasAutoResolved = $shortUrlEdit->titleWasAutoResolved;
@@ -207,9 +207,10 @@ class ShortUrl extends AbstractEntity
 
     public function mostRecentImportedVisitDate(): Chronos|null
     {
-        $criteria = Criteria::create()->where(Criteria::expr()->eq('type', VisitType::IMPORTED))
-                                      ->orderBy(['id' => 'DESC'])
-                                      ->setMaxResults(1);
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->eq('type', VisitType::IMPORTED))
+            ->orderBy(['id' => 'DESC'])
+            ->setMaxResults(1);
         $visit = $this->visits->matching($criteria)->last();
 
         return $visit instanceof Visit ? $visit->date : null;
@@ -219,7 +220,7 @@ class ShortUrl extends AbstractEntity
      * @param Collection<int, Visit> & Selectable<int, Visit> $visits
      * @internal
      */
-    public function setVisits(Collection & Selectable $visits): self
+    public function setVisits(Collection&Selectable $visits): self
     {
         $this->visits = $visits;
         return $this;

@@ -16,7 +16,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 class RenameApiKeyCommandTest extends TestCase
 {
     private CommandTester $commandTester;
-    private MockObject & ApiKeyServiceInterface $apiKeyService;
+    private MockObject&ApiKeyServiceInterface $apiKeyService;
 
     protected function setUp(): void
     {
@@ -30,9 +30,12 @@ class RenameApiKeyCommandTest extends TestCase
         $oldName = 'old name';
         $newName = 'new name';
 
-        $this->apiKeyService->expects($this->once())->method('renameApiKey')->with(
-            Renaming::fromNames($oldName, $newName),
-        );
+        $this->apiKeyService
+            ->expects($this->once())
+            ->method('renameApiKey')
+            ->with(
+                Renaming::fromNames($oldName, $newName),
+            );
 
         $this->commandTester->setInputs([$oldName]);
         $this->commandTester->execute([
@@ -46,9 +49,12 @@ class RenameApiKeyCommandTest extends TestCase
         $oldName = 'old name';
         $newName = 'new name';
 
-        $this->apiKeyService->expects($this->once())->method('renameApiKey')->with(
-            Renaming::fromNames($oldName, $newName),
-        );
+        $this->apiKeyService
+            ->expects($this->once())
+            ->method('renameApiKey')
+            ->with(
+                Renaming::fromNames($oldName, $newName),
+            );
 
         $this->commandTester->setInputs([$newName]);
         $this->commandTester->execute([
@@ -62,9 +68,12 @@ class RenameApiKeyCommandTest extends TestCase
         $oldName = 'old name';
         $newName = 'new name';
 
-        $this->apiKeyService->expects($this->once())->method('renameApiKey')->with(
-            Renaming::fromNames($oldName, $newName),
-        );
+        $this->apiKeyService
+            ->expects($this->once())
+            ->method('renameApiKey')
+            ->with(
+                Renaming::fromNames($oldName, $newName),
+            );
 
         $this->commandTester->execute([
             'old-name' => $oldName,

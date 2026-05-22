@@ -23,7 +23,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 class GetNonOrphanVisitsCommandTest extends TestCase
 {
     private CommandTester $commandTester;
-    private MockObject & VisitsStatsHelperInterface $visitsHelper;
+    private MockObject&VisitsStatsHelperInterface $visitsHelper;
 
     protected function setUp(): void
     {
@@ -38,9 +38,13 @@ class GetNonOrphanVisitsCommandTest extends TestCase
         $visit = Visit::forValidShortUrl($shortUrl, Visitor::fromParams('bar', 'foo', ''))->locate(
             VisitLocation::fromLocation(new Location('', 'Spain', '', 'Madrid', 0, 0, '')),
         );
-        $this->visitsHelper->expects($this->once())->method('nonOrphanVisits')->withAnyParameters()->willReturn(
-            new Paginator(new ArrayAdapter([$visit])),
-        );
+        $this->visitsHelper
+            ->expects($this->once())
+            ->method('nonOrphanVisits')
+            ->withAnyParameters()
+            ->willReturn(
+                new Paginator(new ArrayAdapter([$visit])),
+            );
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
@@ -49,13 +53,13 @@ class GetNonOrphanVisitsCommandTest extends TestCase
         self::assertEquals(
             // phpcs:disable Generic.Files.LineLength
             <<<OUTPUT
-            +---------------------------+---------------+------------+---------+---------+--------+--------+-------------+--------------+-----------------+
-            | Date                      | Potential bot | User agent | Referer | Country | Region | City   | Visited URL | Redirect URL | Type            |
-            +---------------------------+---------------+------------+---------+---------+--------+--------+-------------+--------------+-----------------+
-            | {$visit->date->toAtomString()} |               | bar        | foo     | Spain   |        | Madrid |             | Unknown      | {$type} |
-            +---------------------------+---------------+------------+------- Page 1 of 1 --------+--------+-------------+--------------+-----------------+
+                +---------------------------+---------------+------------+---------+---------+--------+--------+-------------+--------------+-----------------+
+                | Date                      | Potential bot | User agent | Referer | Country | Region | City   | Visited URL | Redirect URL | Type            |
+                +---------------------------+---------------+------------+---------+---------+--------+--------+-------------+--------------+-----------------+
+                | {$visit->date->toAtomString()} |               | bar        | foo     | Spain   |        | Madrid |             | Unknown      | {$type} |
+                +---------------------------+---------------+------------+------- Page 1 of 1 --------+--------+-------------+--------------+-----------------+
 
-            OUTPUT,
+                OUTPUT,
             // phpcs:enable
             $output,
         );

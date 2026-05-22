@@ -15,7 +15,6 @@ return (static function (): array {
     $proxiesIsHopCount = is_numeric($trustedProxies);
 
     return [
-
         // Configuration for RKA\Middleware\IpAddress
         'rka' => [
             'ip_address' => [
@@ -43,6 +42,5 @@ return (static function (): array {
                 IpAddress::class => IpAddressFactory::class,
             ],
         ],
-
     ];
 })();

@@ -24,7 +24,6 @@ use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Process\PhpExecutableFinder;
 
 return [
-
     'dependencies' => [
         'factories' => [
             SymfonyCli\Application::class => Factory\ApplicationFactory::class,
@@ -151,5 +150,4 @@ return [
         ],
         Command\Db\MigrateDatabaseCommand::class => [LockFactory::class, Util\PhpProcessRunner::class],
     ],
-
 ];

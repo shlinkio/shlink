@@ -14,8 +14,7 @@ final readonly class DomainRedirectsRequest
     public string $authority;
 
     public function __construct(
-        #[HostAndPortConverter]
-        string $domain,
+        #[HostAndPortConverter] string $domain,
         private NoValue|string|null $baseUrlRedirect = NoValue::NO_VALUE,
         private NoValue|string|null $regular404Redirect = NoValue::NO_VALUE,
         private NoValue|string|null $invalidShortUrlRedirect = NoValue::NO_VALUE,

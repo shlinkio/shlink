@@ -28,8 +28,7 @@ class ApiKey extends AbstractEntity
         public readonly Chronos|null $expirationDate = null,
         private bool $enabled = true,
         private Collection $roles = new ArrayCollection(),
-    ) {
-    }
+    ) {}
 
     public static function create(): ApiKey
     {
@@ -75,7 +74,7 @@ class ApiKey extends AbstractEntity
      */
     public function isValid(): bool
     {
-        return $this->isEnabled() && ! $this->isExpired();
+        return $this->isEnabled() && !$this->isExpired();
     }
 
     public function spec(string|null $context = null): Specification

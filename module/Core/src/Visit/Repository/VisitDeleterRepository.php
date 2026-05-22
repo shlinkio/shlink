@@ -28,8 +28,8 @@ class VisitDeleterRepository extends EntitySpecificationRepository implements Vi
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->delete($entityName, 'v')
-           ->where($qb->expr()->eq('v.shortUrl', ':shortUrl'))
-           ->setParameter('shortUrl', $shortUrl);
+            ->where($qb->expr()->eq('v.shortUrl', ':shortUrl'))
+            ->setParameter('shortUrl', $shortUrl);
 
         return $qb->getQuery()->execute();
     }
@@ -42,7 +42,7 @@ class VisitDeleterRepository extends EntitySpecificationRepository implements Vi
 
             $qb = $em->createQueryBuilder();
             $qb->delete(Visit::class, 'v')
-               ->where($qb->expr()->isNull('v.shortUrl'));
+                ->where($qb->expr()->isNull('v.shortUrl'));
 
             return $qb->getQuery()->execute();
         });

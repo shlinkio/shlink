@@ -6,6 +6,4 @@ namespace Shlinkio\Shlink\Core\Exception;
 
 use DomainException as SplDomainException;
 
-class DomainException extends SplDomainException implements ExceptionInterface
-{
-}
+class DomainException extends SplDomainException implements ExceptionInterface {}

@@ -23,8 +23,7 @@ readonly class DomainService implements DomainServiceInterface
         private EntityManagerInterface $em,
         private UrlShortenerOptions $urlShortenerOptions,
         private DomainRepositoryInterface $repo,
-    ) {
-    }
+    ) {}
 
     /**
      * @return DomainItem[]

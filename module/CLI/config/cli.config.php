@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI;
 
 return [
-
     'cli' => [
         'commands' => [
             Command\ShortUrl\CreateShortUrlCommand::NAME => Command\ShortUrl\CreateShortUrlCommand::class,
@@ -51,5 +50,4 @@ return [
             Command\Config\ReadEnvVarCommand::NAME => Command\Config\ReadEnvVarCommand::class,
         ],
     ],
-
 ];

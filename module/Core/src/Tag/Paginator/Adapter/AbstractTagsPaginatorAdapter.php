@@ -22,8 +22,7 @@ abstract class AbstractTagsPaginatorAdapter implements AdapterInterface
         protected TagRepositoryInterface $repo,
         protected TagsParams $params,
         protected ApiKey|null $apiKey,
-    ) {
-    }
+    ) {}
 
     public function getNbResults(): int
     {

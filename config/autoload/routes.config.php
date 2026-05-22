@@ -24,7 +24,6 @@ return (static function (): array {
     $shortUrlRouteSuffix = EnvVars::SHORT_URL_TRAILING_SLASH->loadFromEnv() ? '[/]' : '';
 
     return [
-
         // The order of the routes defined here matters. Changing it might cause path conflicts
         'routes' => [
             // Rest
@@ -108,6 +107,5 @@ return (static function (): array {
                 'allowed_methods' => [RequestMethodInterface::METHOD_GET],
             ],
         ],
-
     ];
 })();

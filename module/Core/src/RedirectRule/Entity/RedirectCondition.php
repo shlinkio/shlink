@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace Shlinkio\Shlink\Core\RedirectRule\Entity;
 
 use Cake\Chronos\Chronos;
@@ -34,8 +33,7 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
         public readonly RedirectConditionType $type,
         private readonly string|null $matchValue = null,
         private readonly string|null $matchKey = null,
-    ) {
-    }
+    ) {}
 
     public static function forQueryParam(string $param, string $value): self
     {
@@ -146,7 +144,7 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
     private function matchesQueryParam(ServerRequestInterface $request): bool
     {
         $query = $request->getQueryParams();
-        $queryValue = $this->matchKey !== null ? ($query[$this->matchKey] ?? null) : null;
+        $queryValue = $this->matchKey !== null ? $query[$this->matchKey] ?? null : null;
 
         return $queryValue === $this->matchValue;
     }

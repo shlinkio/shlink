@@ -29,8 +29,8 @@ use function Laminas\Stratigility\middleware;
 class NotFoundRedirectResolverTest extends TestCase
 {
     private NotFoundRedirectResolver $resolver;
-    private MockObject & RedirectResponseHelperInterface $helper;
-    private MockObject & LoggerInterface $logger;
+    private MockObject&RedirectResponseHelperInterface $helper;
+    private MockObject&LoggerInterface $logger;
 
     protected function setUp(): void
     {
@@ -48,9 +48,13 @@ class NotFoundRedirectResolverTest extends TestCase
         string $expectedRedirectTo,
     ): void {
         $expectedResp = new Response();
-        $this->helper->expects($this->once())->method('buildRedirectResponse')->with($expectedRedirectTo)->willReturn(
-            $expectedResp,
-        );
+        $this->helper
+            ->expects($this->once())
+            ->method('buildRedirectResponse')
+            ->with($expectedRedirectTo)
+            ->willReturn(
+                $expectedResp,
+            );
 
         $resp = $this->resolver->resolveRedirectResponse($notFoundType, $redirectConfig, $uri);
 
@@ -131,10 +135,13 @@ class NotFoundRedirectResolverTest extends TestCase
     #[Test]
     public function warningMessageIsLoggedIfRedirectUrlIsMalformed(): void
     {
-        $this->logger->expects($this->once())->method('warning')->with(
-            'It was not possible to parse "{url}" as a valid URL: {e}',
-            $this->isArray(),
-        );
+        $this->logger
+            ->expects($this->once())
+            ->method('warning')
+            ->with(
+                'It was not possible to parse "{url}" as a valid URL: {e}',
+                $this->isArray(),
+            );
 
         $uri = new Uri('/');
         $this->resolver->resolveRedirectResponse(
@@ -157,8 +164,7 @@ class NotFoundRedirectResolverTest extends TestCase
                 RouteResult::fromRoute(
                     new Route(
                         'foo',
-                        middleware(static function (): void {
-                        }),
+                        middleware(static function (): void {}),
                         ['GET'],
                         $routeName,
                     ),

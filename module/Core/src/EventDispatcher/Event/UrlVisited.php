@@ -12,8 +12,7 @@ final readonly class UrlVisited implements JsonSerializable, JsonUnserializable
     public function __construct(
         public string $visitId,
         public string|null $originalIpAddress = null,
-    ) {
-    }
+    ) {}
 
     public function jsonSerialize(): array
     {

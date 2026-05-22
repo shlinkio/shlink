@@ -18,7 +18,7 @@ use Shlinkio\Shlink\Rest\Middleware\ShortUrl\CreateShortUrlContentNegotiationMid
 class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
 {
     private CreateShortUrlContentNegotiationMiddleware $middleware;
-    private MockObject & RequestHandlerInterface $requestHandler;
+    private MockObject&RequestHandlerInterface $requestHandler;
 
     protected function setUp(): void
     {
@@ -45,9 +45,13 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
             $request = $request->withHeader('Accept', $accept);
         }
 
-        $this->requestHandler->expects($this->once())->method('handle')->with(
-            $this->isInstanceOf(ServerRequestInterface::class),
-        )->willReturn(new JsonResponse(['shortUrl' => 'http://s.test/foo']));
+        $this->requestHandler
+            ->expects($this->once())
+            ->method('handle')
+            ->with(
+                $this->isInstanceOf(ServerRequestInterface::class),
+            )
+            ->willReturn(new JsonResponse(['shortUrl' => 'http://s.test/foo']));
 
         $response = $this->middleware->process($request, $this->requestHandler);
 
@@ -69,11 +73,15 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
     #[Test, DataProvider('provideTextBodies')]
     public function properBodyIsReturnedInPlainTextResponses(array $json, string $expectedBody): void
     {
-        $request = (new ServerRequest())->withQueryParams(['format' => 'txt']);
+        $request = new ServerRequest()->withQueryParams(['format' => 'txt']);
 
-        $this->requestHandler->expects($this->once())->method('handle')->with(
-            $this->isInstanceOf(ServerRequestInterface::class),
-        )->willReturn(new JsonResponse($json));
+        $this->requestHandler
+            ->expects($this->once())
+            ->method('handle')
+            ->with(
+                $this->isInstanceOf(ServerRequestInterface::class),
+            )
+            ->willReturn(new JsonResponse($json));
 
         $response = $this->middleware->process($request, $this->requestHandler);
 

@@ -17,7 +17,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class VisitsDeleterTest extends TestCase
 {
     private VisitsDeleter $visitsDeleter;
-    private MockObject & VisitDeleterRepositoryInterface $repo;
+    private MockObject&VisitDeleterRepositoryInterface $repo;
 
     protected function setUp(): void
     {

@@ -45,8 +45,8 @@ class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRe
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('a.id')
-           ->from(ApiKey::class, 'a')
-           ->setMaxResults(1);
+            ->from(ApiKey::class, 'a')
+            ->setMaxResults(1);
 
         $this->queryBuilderByName($qb, $name);
 
@@ -74,6 +74,6 @@ class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRe
     private function queryBuilderByName(QueryBuilder $qb, string $name): void
     {
         $qb->where($qb->expr()->eq('a.name', ':name'))
-           ->setParameter('name', $name);
+            ->setParameter('name', $name);
     }
 }

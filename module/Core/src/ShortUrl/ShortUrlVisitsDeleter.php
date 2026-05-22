@@ -15,8 +15,7 @@ readonly class ShortUrlVisitsDeleter implements ShortUrlVisitsDeleterInterface
     public function __construct(
         private VisitDeleterRepositoryInterface $repository,
         private ShortUrlResolverInterface $resolver,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws ShortUrlNotFoundException

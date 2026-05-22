@@ -25,10 +25,10 @@ use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 
 class NotifyVisitToMercureTest extends TestCase
 {
-    private MockObject & PublishingHelperInterface $helper;
-    private MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator;
-    private MockObject & EntityManagerInterface $em;
-    private MockObject & LoggerInterface $logger;
+    private MockObject&PublishingHelperInterface $helper;
+    private MockObject&PublishingUpdatesGeneratorInterface $updatesGenerator;
+    private MockObject&EntityManagerInterface $em;
+    private MockObject&LoggerInterface $logger;
 
     protected function setUp(): void
     {
@@ -43,10 +43,13 @@ class NotifyVisitToMercureTest extends TestCase
     {
         $visitId = '123';
         $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn(null);
-        $this->logger->expects($this->once())->method('warning')->with(
-            'Tried to notify {name} for visit with id "{visitId}", but it does not exist.',
-            ['visitId' => $visitId, 'name' => 'Mercure'],
-        );
+        $this->logger
+            ->expects($this->once())
+            ->method('warning')
+            ->with(
+                'Tried to notify {name} for visit with id "{visitId}", but it does not exist.',
+                ['visitId' => $visitId, 'name' => 'Mercure'],
+            );
         $this->logger->expects($this->never())->method('debug');
         $this->updatesGenerator->expects($this->never())->method('newShortUrlVisitUpdate');
         $this->updatesGenerator->expects($this->never())->method('newOrphanVisitUpdate');
@@ -88,13 +91,20 @@ class NotifyVisitToMercureTest extends TestCase
 
         $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn($visit);
         $this->logger->expects($this->never())->method('warning');
-        $this->logger->expects($this->once())->method('debug')->with(
-            'Error while trying to notify {name} with new visit. {e}',
-            ['e' => $e, 'name' => 'Mercure'],
-        );
-        $this->updatesGenerator->expects($this->once())->method('newShortUrlVisitUpdate')->with($visit)->willReturn(
-            $update,
-        );
+        $this->logger
+            ->expects($this->once())
+            ->method('debug')
+            ->with(
+                'Error while trying to notify {name} with new visit. {e}',
+                ['e' => $e, 'name' => 'Mercure'],
+            );
+        $this->updatesGenerator
+            ->expects($this->once())
+            ->method('newShortUrlVisitUpdate')
+            ->with($visit)
+            ->willReturn(
+                $update,
+            );
         $this->updatesGenerator->expects($this->never())->method('newOrphanVisitUpdate');
         $this->updatesGenerator->expects($this->once())->method('newVisitUpdate')->with($visit)->willReturn($update);
         $this->helper->expects($this->once())->method('publishUpdate')->with($update)->willThrowException($e);
@@ -139,7 +149,7 @@ class NotifyVisitToMercureTest extends TestCase
             $this->updatesGenerator,
             $this->em,
             $this->logger,
-            new RealTimeUpdatesOptions(enabledTopics:  $enabledTopics),
+            new RealTimeUpdatesOptions(enabledTopics: $enabledTopics),
         );
     }
 }

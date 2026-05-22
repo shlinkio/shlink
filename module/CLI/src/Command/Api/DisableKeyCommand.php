@@ -21,17 +21,17 @@ use function sprintf;
     name: DisableKeyCommand::NAME,
     description: 'Disables an API key by name',
     help: <<<HELP
-    The <info>%command.name%</info> command allows you to disable an existing API key.
+        The <info>%command.name%</info> command allows you to disable an existing API key.
 
-    If no arguments are provided, you will be prompted to select one of the existing non-disabled API keys.
+        If no arguments are provided, you will be prompted to select one of the existing non-disabled API keys.
 
-        <info>%command.full_name%</info>
+            <info>%command.full_name%</info>
 
-    You can optionally pass the API key name to be disabled:
+        You can optionally pass the API key name to be disabled:
 
-        <info>%command.full_name% the_key_name</info>
+            <info>%command.full_name% the_key_name</info>
 
-    HELP,
+        HELP,
 )]
 class DisableKeyCommand extends Command
 {

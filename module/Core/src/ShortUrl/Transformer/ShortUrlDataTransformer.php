@@ -11,9 +11,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithDeps;
 
 readonly class ShortUrlDataTransformer implements ShortUrlDataTransformerInterface
 {
-    public function __construct(private ShortUrlStringifierInterface $stringifier)
-    {
-    }
+    public function __construct(private ShortUrlStringifierInterface $stringifier) {}
 
     public function transform(ShortUrlWithDeps|ShortUrl $shortUrl): array
     {

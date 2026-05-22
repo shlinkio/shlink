@@ -51,7 +51,7 @@ class ApiKeyFixture extends AbstractFixture implements DependentFixtureInterface
     private function buildApiKey(string $key, bool $enabled, Chronos|null $expiresAt = null): ApiKey
     {
         $apiKey = ApiKey::fromMeta(ApiKeyMeta::fromParams(key: $key, expirationDate: $expiresAt));
-        if (! $enabled) {
+        if (!$enabled) {
             $apiKey->disable();
         }
 

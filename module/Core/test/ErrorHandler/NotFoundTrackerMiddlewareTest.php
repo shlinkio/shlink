@@ -22,8 +22,8 @@ class NotFoundTrackerMiddlewareTest extends TestCase
 {
     private NotFoundTrackerMiddleware $middleware;
     private ServerRequestInterface $request;
-    private MockObject & RequestHandlerInterface $handler;
-    private MockObject & RequestTrackerInterface $requestTracker;
+    private MockObject&RequestHandlerInterface $handler;
+    private MockObject&RequestTrackerInterface $requestTracker;
 
     protected function setUp(): void
     {
@@ -41,9 +41,12 @@ class NotFoundTrackerMiddlewareTest extends TestCase
     public function delegatesIntoRequestTracker(Response $resp, string|null $expectedRedirectUrl): void
     {
         $this->handler->expects($this->once())->method('handle')->with($this->request)->willReturn($resp);
-        $this->requestTracker->expects($this->once())->method('trackNotFoundIfApplicable')->with(
-            $this->request->withAttribute(REDIRECT_URL_REQUEST_ATTRIBUTE, $expectedRedirectUrl),
-        );
+        $this->requestTracker
+            ->expects($this->once())
+            ->method('trackNotFoundIfApplicable')
+            ->with(
+                $this->request->withAttribute(REDIRECT_URL_REQUEST_ATTRIBUTE, $expectedRedirectUrl),
+            );
 
         $result = $this->middleware->process($this->request, $this->handler);
 

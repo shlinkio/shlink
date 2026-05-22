@@ -9,9 +9,7 @@ use Happyr\DoctrineSpecification\Filter\Filter;
 
 class BelongsToDomainInlined implements Filter
 {
-    public function __construct(private string $domainId)
-    {
-    }
+    public function __construct(private string $domainId) {}
 
     public function getFilter(QueryBuilder $qb, string $context): string
     {

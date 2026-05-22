@@ -23,10 +23,12 @@ final readonly class RealTimeUpdatesOptions
     public function __construct(array|null $enabledTopics = null)
     {
         $validTopics = Topic::allTopicNames();
-        $this->enabledTopics = $enabledTopics === null ? $validTopics : self::validateTopics(
-            $enabledTopics,
-            $validTopics,
-        );
+        $this->enabledTopics = $enabledTopics === null
+            ? $validTopics
+            : self::validateTopics(
+                $enabledTopics,
+                $validTopics,
+            );
     }
 
     public static function fromEnv(): self

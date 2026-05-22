@@ -19,8 +19,7 @@ readonly class MatomoVisitSender implements MatomoVisitSenderInterface
         private MatomoTrackerBuilderInterface $trackerBuilder,
         private ShortUrlStringifier $shortUrlStringifier,
         private VisitIterationRepositoryInterface $visitIterationRepository,
-    ) {
-    }
+    ) {}
 
     /**
      * Sends all visits in provided date range to matomo, and returns the amount of affected visits
@@ -51,8 +50,7 @@ readonly class MatomoVisitSender implements MatomoVisitSenderInterface
     {
         $tracker = $this->trackerBuilder->buildMatomoTracker();
 
-        $tracker
-            ->setUrl($this->resolveUrlToTrack($visit))
+        $tracker->setUrl($this->resolveUrlToTrack($visit))
             ->setCustomTrackingParameter('type', $visit->type->value)
             ->setUserAgent($visit->userAgent)
             ->setUrlReferrer($visit->referer)
@@ -60,8 +58,7 @@ readonly class MatomoVisitSender implements MatomoVisitSenderInterface
 
         $location = $visit->visitLocation;
         if ($location !== null) {
-            $tracker
-                ->setCity($location->cityName)
+            $tracker->setCity($location->cityName)
                 ->setCountry(strtolower($location->countryCode))
                 ->setLatitude($location->latitude)
                 ->setLongitude($location->longitude);

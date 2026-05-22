@@ -108,7 +108,10 @@ class CreateShortUrlTest extends ApiTestCase
     public static function provideTags(): iterable
     {
         yield 'simple tags' => [$simpleTags = ['foo', 'bar', 'baz'], $simpleTags];
-        yield 'tags with spaces' => [['fo o', '  bar', 'b az'], ['fo-o', 'bar', 'b-az']];
+        yield 'tags with spaces' => [
+            ['fo o', '  bar', 'b az'],
+            ['fo-o', 'bar',   'b-az'],
+        ];
         yield 'tags with special chars' => [['UUU', 'Aäa'], ['uuu', 'aäa']];
     }
 
@@ -369,8 +372,6 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertStringStartsWith('foo-b--ar-baz', $payload['shortCode']);
     }
 
-
-
     #[Test]
     #[TestWith(['localhost:80000'])]
     #[TestWith(['127.0.0.1'])]
@@ -391,7 +392,7 @@ class CreateShortUrlTest extends ApiTestCase
      */
     private function createShortUrl(array $body = [], string $apiKey = 'valid_api_key', string $version = '2'): array
     {
-        if (! isset($body['longUrl'])) {
+        if (!isset($body['longUrl'])) {
             $body['longUrl'] = 'https://app.shlink.io';
         }
         $resp = $this->callApiWithKey(

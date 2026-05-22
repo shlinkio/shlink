@@ -47,7 +47,7 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
             $listing = map(
                 $rules,
                 static function (ShortUrlRedirectRule $rule, string|int|float $index) use ($amountOfRules): array {
-                    $priority = ((int) $index) + 1;
+                    $priority = (int) $index + 1;
                     $conditions = $rule->mapConditions(static fn (RedirectCondition $condition): string => sprintf(
                         '<comment>%s</comment>',
                         $condition->toHumanFriendly(),
@@ -210,7 +210,7 @@ class RedirectRuleHandler implements RedirectRuleHandlerInterface
             'Rule priority (the lower the value, the higher the priority)',
             (string) $max,
             static function (string $answer) use ($max): int {
-                if (! is_numeric($answer)) {
+                if (!is_numeric($answer)) {
                     throw new InvalidArgumentException('The priority must be a numeric positive value');
                 }
 

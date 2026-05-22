@@ -14,33 +14,32 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder->setTable('short_url_redirect_rules');
 
     $builder->createField('id', Types::BIGINT)
-            ->columnName('id')
-            ->makePrimaryKey()
-            ->generatedValue('IDENTITY')
-            ->option('unsigned', true)
-            ->build();
+        ->columnName('id')
+        ->makePrimaryKey()
+        ->generatedValue('IDENTITY')
+        ->option('unsigned', true)
+        ->build();
 
     $builder->createField('priority', Types::INTEGER)
-            ->columnName('priority')
-            ->build();
+        ->columnName('priority')
+        ->build();
 
-    fieldWithUtf8Charset($builder->createField('longUrl', Types::TEXT), $emConfig)
-        ->columnName('long_url')
+    fieldWithUtf8Charset($builder->createField('longUrl', Types::TEXT), $emConfig)->columnName('long_url')
         ->length(2048)
         ->build();
 
     $builder->createManyToOne('shortUrl', ShortUrl\Entity\ShortUrl::class)
-            ->addJoinColumn('short_url_id', 'id', nullable: false, onDelete: 'CASCADE')
-            ->build();
+        ->addJoinColumn('short_url_id', 'id', nullable: false, onDelete: 'CASCADE')
+        ->build();
 
     // We treat this ManyToMany relation as a unidirectional OneToMany, where conditions are persisted and deleted
     // together with the rule
     $builder->createManyToMany('conditions', RedirectRule\Entity\RedirectCondition::class)
-            ->setJoinTable('redirect_conditions_in_short_url_redirect_rules')
-            ->addInverseJoinColumn('redirect_condition_id', 'id', onDelete: 'CASCADE')
-            ->addJoinColumn('short_url_redirect_rule_id', 'id', onDelete: 'CASCADE')
-            ->setOrderBy(['id' => 'ASC']) // Ensure a reliable order in the list of conditions
-            ->cascadePersist() // Create automatically with the rule
-            ->orphanRemoval() // Remove conditions when they are not linked to any rule
-            ->build();
+        ->setJoinTable('redirect_conditions_in_short_url_redirect_rules')
+        ->addInverseJoinColumn('redirect_condition_id', 'id', onDelete: 'CASCADE')
+        ->addJoinColumn('short_url_redirect_rule_id', 'id', onDelete: 'CASCADE')
+        ->setOrderBy(['id' => 'ASC']) // Ensure a reliable order in the list of conditions
+        ->cascadePersist() // Create automatically with the rule
+        ->orphanRemoval() // Remove conditions when they are not linked to any rule
+        ->build();
 };

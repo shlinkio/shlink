@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace Shlinkio\Shlink\Core\RedirectRule;
 
 use Psr\Http\Message\ServerRequestInterface;

@@ -19,8 +19,7 @@ class NonOrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAda
         private readonly VisitRepositoryInterface $repo,
         private readonly WithDomainVisitsParams $params,
         private readonly ApiKey|null $apiKey,
-    ) {
-    }
+    ) {}
 
     protected function doCount(): int
     {

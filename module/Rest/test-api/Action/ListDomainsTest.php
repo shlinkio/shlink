@@ -17,79 +17,91 @@ class ListDomainsTest extends ApiTestCase
         $respPayload = $this->getJsonResponsePayload($resp);
 
         self::assertEquals(self::STATUS_OK, $resp->getStatusCode());
-        self::assertEquals([
-            'domains' => [
-                'data' => $expectedDomains,
-                'defaultRedirects' => [
-                    'baseUrlRedirect' => null,
-                    'regular404Redirect' => null,
-                    'invalidShortUrlRedirect' => null,
+        self::assertEquals(
+            [
+                'domains' => [
+                    'data' => $expectedDomains,
+                    'defaultRedirects' => [
+                        'baseUrlRedirect' => null,
+                        'regular404Redirect' => null,
+                        'invalidShortUrlRedirect' => null,
+                    ],
                 ],
             ],
-        ], $respPayload);
+            $respPayload,
+        );
     }
 
     public static function provideApiKeysAndDomains(): iterable
     {
-        yield 'admin API key' => ['valid_api_key', [
+        yield 'admin API key' => [
+            'valid_api_key',
             [
-                'domain' => 's.test',
-                'isDefault' => true,
-                'redirects' => [
-                    'baseUrlRedirect' => null,
-                    'regular404Redirect' => null,
-                    'invalidShortUrlRedirect' => null,
+                [
+                    'domain' => 's.test',
+                    'isDefault' => true,
+                    'redirects' => [
+                        'baseUrlRedirect' => null,
+                        'regular404Redirect' => null,
+                        'invalidShortUrlRedirect' => null,
+                    ],
+                ],
+                [
+                    'domain' => 'detached-with-redirects.com',
+                    'isDefault' => false,
+                    'redirects' => [
+                        'baseUrlRedirect' => 'foo.com',
+                        'regular404Redirect' => 'bar.com',
+                        'invalidShortUrlRedirect' => null,
+                    ],
+                ],
+                [
+                    'domain' => 'example.com',
+                    'isDefault' => false,
+                    'redirects' => [
+                        'baseUrlRedirect' => null,
+                        'regular404Redirect' => null,
+                        'invalidShortUrlRedirect' => null,
+                    ],
+                ],
+                [
+                    'domain' => 'some-domain.com',
+                    'isDefault' => false,
+                    'redirects' => [
+                        'baseUrlRedirect' => null,
+                        'regular404Redirect' => null,
+                        'invalidShortUrlRedirect' => null,
+                    ],
                 ],
             ],
+        ];
+        yield 'author API key' => [
+            'author_api_key',
             [
-                'domain' => 'detached-with-redirects.com',
-                'isDefault' => false,
-                'redirects' => [
-                    'baseUrlRedirect' => 'foo.com',
-                    'regular404Redirect' => 'bar.com',
-                    'invalidShortUrlRedirect' => null,
+                [
+                    'domain' => 's.test',
+                    'isDefault' => true,
+                    'redirects' => [
+                        'baseUrlRedirect' => null,
+                        'regular404Redirect' => null,
+                        'invalidShortUrlRedirect' => null,
+                    ],
                 ],
             ],
+        ];
+        yield 'domain API key' => [
+            'domain_api_key',
             [
-                'domain' => 'example.com',
-                'isDefault' => false,
-                'redirects' => [
-                    'baseUrlRedirect' => null,
-                    'regular404Redirect' => null,
-                    'invalidShortUrlRedirect' => null,
+                [
+                    'domain' => 'example.com',
+                    'isDefault' => false,
+                    'redirects' => [
+                        'baseUrlRedirect' => null,
+                        'regular404Redirect' => null,
+                        'invalidShortUrlRedirect' => null,
+                    ],
                 ],
             ],
-            [
-                'domain' => 'some-domain.com',
-                'isDefault' => false,
-                'redirects' => [
-                    'baseUrlRedirect' => null,
-                    'regular404Redirect' => null,
-                    'invalidShortUrlRedirect' => null,
-                ],
-            ],
-        ]];
-        yield 'author API key' => ['author_api_key', [
-            [
-                'domain' => 's.test',
-                'isDefault' => true,
-                'redirects' => [
-                    'baseUrlRedirect' => null,
-                    'regular404Redirect' => null,
-                    'invalidShortUrlRedirect' => null,
-                ],
-            ],
-        ]];
-        yield 'domain API key' => ['domain_api_key', [
-            [
-                'domain' => 'example.com',
-                'isDefault' => false,
-                'redirects' => [
-                    'baseUrlRedirect' => null,
-                    'regular404Redirect' => null,
-                    'invalidShortUrlRedirect' => null,
-                ],
-            ],
-        ]];
+        ];
     }
 }

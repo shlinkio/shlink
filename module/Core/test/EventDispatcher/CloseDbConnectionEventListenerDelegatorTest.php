@@ -14,7 +14,7 @@ use Shlinkio\Shlink\Core\EventDispatcher\CloseDbConnectionEventListenerDelegator
 class CloseDbConnectionEventListenerDelegatorTest extends TestCase
 {
     private CloseDbConnectionEventListenerDelegator $delegator;
-    private MockObject & ContainerInterface $container;
+    private MockObject&ContainerInterface $container;
 
     protected function setUp(): void
     {
@@ -29,13 +29,16 @@ class CloseDbConnectionEventListenerDelegatorTest extends TestCase
         $callback = static function () use (&$callbackInvoked): callable {
             $callbackInvoked = true;
 
-            return static function (): void {
-            };
+            return static function (): void {};
         };
 
-        $this->container->expects($this->once())->method('get')->with('em')->willReturn(
-            $this->createStub(ReopeningEntityManagerInterface::class),
-        );
+        $this->container
+            ->expects($this->once())
+            ->method('get')
+            ->with('em')
+            ->willReturn(
+                $this->createStub(ReopeningEntityManagerInterface::class),
+            );
 
         ($this->delegator)($this->container, '', $callback);
 

@@ -24,8 +24,8 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class ShortUrlServiceTest extends TestCase
 {
     private ShortUrlService $service;
-    private MockObject & ShortUrlResolverInterface $urlResolver;
-    private MockObject & ShortUrlTitleResolutionHelperInterface $titleResolutionHelper;
+    private MockObject&ShortUrlResolverInterface $urlResolver;
+    private MockObject&ShortUrlTitleResolutionHelperInterface $titleResolutionHelper;
 
     protected function setUp(): void
     {
@@ -49,15 +49,20 @@ class ShortUrlServiceTest extends TestCase
         $originalLongUrl = 'https://originalLongUrl';
         $shortUrl = ShortUrl::withLongUrl($originalLongUrl);
 
-        $this->urlResolver->expects($this->once())->method('resolveShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain('abc123'),
-            $apiKey,
-        )->willReturn($shortUrl);
+        $this->urlResolver
+            ->expects($this->once())
+            ->method('resolveShortUrl')
+            ->with(
+                ShortUrlIdentifier::fromShortCodeAndDomain('abc123'),
+                $apiKey,
+            )
+            ->willReturn($shortUrl);
 
-        $this->titleResolutionHelper->expects($expectedValidateCalls)
-                                    ->method('processTitle')
-                                    ->with($shortUrlEdit)
-                                    ->willReturn($shortUrlEdit);
+        $this->titleResolutionHelper
+            ->expects($expectedValidateCalls)
+            ->method('processTitle')
+            ->with($shortUrlEdit)
+            ->willReturn($shortUrlEdit);
 
         $result = $this->service->updateShortUrl(
             ShortUrlIdentifier::fromShortCodeAndDomain('abc123'),
@@ -82,15 +87,23 @@ class ShortUrlServiceTest extends TestCase
 
     public static function provideShortUrlEdits(): iterable
     {
-        yield 'no long URL' => [new InvokedCount(0), new ShortUrlEdition(
-            validSince: Chronos::parse('2017-01-01 00:00:00'),
-            validUntil: Chronos::parse('2017-01-05 00:00:00'),
-            maxVisits: 5,
-        ), null];
-        yield 'long URL and API key' => [new InvokedCount(1), new ShortUrlEdition(
-            longUrl: 'https://modifiedLongUrl',
-            validSince: Chronos::parse('2017-01-01 00:00:00'),
-            maxVisits: 10,
-        ), ApiKey::create()];
+        yield 'no long URL' => [
+            new InvokedCount(0),
+            new ShortUrlEdition(
+                validSince: Chronos::parse('2017-01-01 00:00:00'),
+                validUntil: Chronos::parse('2017-01-05 00:00:00'),
+                maxVisits: 5,
+            ),
+            null,
+        ];
+        yield 'long URL and API key' => [
+            new InvokedCount(1),
+            new ShortUrlEdition(
+                longUrl: 'https://modifiedLongUrl',
+                validSince: Chronos::parse('2017-01-01 00:00:00'),
+                maxVisits: 10,
+            ),
+            ApiKey::create(),
+        ];
     }
 }

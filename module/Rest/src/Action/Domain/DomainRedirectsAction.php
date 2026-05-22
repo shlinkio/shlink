@@ -21,8 +21,7 @@ class DomainRedirectsAction extends AbstractRestAction
     public function __construct(
         private readonly DomainServiceInterface $domainService,
         private readonly TreeMapper $mapper,
-    ) {
-    }
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

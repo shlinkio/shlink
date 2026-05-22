@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace Shlinkio\Shlink\Core\Model;
 
 use donatj\UserAgent\Platforms;

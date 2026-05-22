@@ -13,7 +13,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Repository\CrawlableShortCodesQueryInterface;
 class CrawlingHelperTest extends TestCase
 {
     private CrawlingHelper $helper;
-    private MockObject & CrawlableShortCodesQueryInterface $query;
+    private MockObject&CrawlableShortCodesQueryInterface $query;
 
     protected function setUp(): void
     {

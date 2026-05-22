@@ -80,9 +80,11 @@ class EditShortUrlTest extends ApiTestCase
         $shortCode = 'abc123';
         $url = sprintf('/short-urls/%s', $shortCode);
 
-        $resp = $this->callApiWithKey(self::METHOD_PATCH, $url, [RequestOptions::JSON => [
-            'longUrl' => 'https://shlink.io',
-        ]]);
+        $resp = $this->callApiWithKey(self::METHOD_PATCH, $url, [
+            RequestOptions::JSON => [
+                'longUrl' => 'https://shlink.io',
+            ],
+        ]);
 
         self::assertEquals(self::STATUS_OK, $resp->getStatusCode());
     }
@@ -112,9 +114,11 @@ class EditShortUrlTest extends ApiTestCase
     {
         $expectedDetail = 'Provided data is not valid';
 
-        $resp = $this->callApiWithKey(self::METHOD_PATCH, '/short-urls/invalid', [RequestOptions::JSON => [
-            'maxVisits' => 'not_a_number',
-        ]]);
+        $resp = $this->callApiWithKey(self::METHOD_PATCH, '/short-urls/invalid', [
+            RequestOptions::JSON => [
+                'maxVisits' => 'not_a_number',
+            ],
+        ]);
         $payload = $this->getJsonResponsePayload($resp);
 
         self::assertEquals(self::STATUS_BAD_REQUEST, $resp->getStatusCode());
@@ -134,9 +138,11 @@ class EditShortUrlTest extends ApiTestCase
             $url = $url->withQuery(Query::build(['domain' => $domain]));
         }
 
-        $editResp = $this->callApiWithKey(self::METHOD_PATCH, (string) $url, [RequestOptions::JSON => [
-            'maxVisits' => 100,
-        ]]);
+        $editResp = $this->callApiWithKey(self::METHOD_PATCH, (string) $url, [
+            RequestOptions::JSON => [
+                'maxVisits' => 100,
+            ],
+        ]);
         $editedShortUrl = $this->getJsonResponsePayload($editResp);
 
         self::assertEquals(self::STATUS_OK, $editResp->getStatusCode());

@@ -13,8 +13,7 @@ final readonly class ShortUrlWithDeps
         public ShortUrl $shortUrl,
         private string|null $authority,
         private VisitsSummary|null $visitsSummary = null,
-    ) {
-    }
+    ) {}
 
     /**
      * @param array{shortUrl: ShortUrl, visits: string|int, nonBotVisits: string|int, authority: string|null} $data
@@ -43,6 +42,6 @@ final readonly class ShortUrlWithDeps
 
     public function toArray(): array
     {
-        return $this->shortUrl->toArray($this->visitsSummary, fn() => $this->authority);
+        return $this->shortUrl->toArray($this->visitsSummary, fn () => $this->authority);
     }
 }

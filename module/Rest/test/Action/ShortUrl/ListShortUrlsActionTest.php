@@ -25,27 +25,34 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class ListShortUrlsActionTest extends TestCase
 {
     private ListShortUrlsAction $action;
-    private MockObject & ShortUrlListServiceInterface $service;
+    private MockObject&ShortUrlListServiceInterface $service;
 
     protected function setUp(): void
     {
         $this->service = $this->createMock(ShortUrlListServiceInterface::class);
 
-        $this->action = new ListShortUrlsAction($this->service, new ShortUrlDataTransformer(
-            new ShortUrlStringifier(new UrlShortenerOptions('s.test')),
-        ), new MapperBuilder()->mapper());
+        $this->action = new ListShortUrlsAction(
+            $this->service,
+            new ShortUrlDataTransformer(
+                new ShortUrlStringifier(new UrlShortenerOptions('s.test')),
+            ),
+            new MapperBuilder()->mapper(),
+        );
     }
 
     #[Test, DataProvider('provideFilteringData')]
     public function properListReturnsSuccessResponse(array $query): void
     {
         $apiKey = ApiKey::create();
-        $request = ServerRequestFactory::fromGlobals()->withQueryParams($query)
-                                                      ->withAttribute(ApiKey::class, $apiKey);
-        $this->service->expects($this->once())->method('listShortUrls')->with(
-            $this->isInstanceOf(ShortUrlsParams::class),
-            $apiKey,
-        )->willReturn(new Paginator(new ArrayAdapter([])));
+        $request = ServerRequestFactory::fromGlobals()->withQueryParams($query)->withAttribute(ApiKey::class, $apiKey);
+        $this->service
+            ->expects($this->once())
+            ->method('listShortUrls')
+            ->with(
+                $this->isInstanceOf(ShortUrlsParams::class),
+                $apiKey,
+            )
+            ->willReturn(new Paginator(new ArrayAdapter([])));
 
         /** @var JsonResponse $response */
         $response = $this->action->handle($request);
@@ -62,7 +69,7 @@ class ListShortUrlsActionTest extends TestCase
         yield [[]];
         yield [['page' => 10]];
         yield [['searchTerm' => 'foo']];
-        yield [['tags' => ['foo','bar']]];
+        yield [['tags' => ['foo', 'bar']]];
         yield [['orderBy' => 'longUrl']];
         yield [[
             'page' => 2,

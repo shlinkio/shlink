@@ -6,6 +6,4 @@ namespace Shlinkio\Shlink\Core\Exception;
 
 use RuntimeException as SplRuntimeException;
 
-class RuntimeException extends SplRuntimeException implements ExceptionInterface
-{
-}
+class RuntimeException extends SplRuntimeException implements ExceptionInterface {}

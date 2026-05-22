@@ -17,10 +17,10 @@ use Symfony\Component\Process\Process;
 class ProcessRunnerTest extends TestCase
 {
     private ProcessRunner $runner;
-    private MockObject & ProcessHelper $helper;
-    private MockObject & DebugFormatterHelper $formatter;
-    private MockObject & Process $process;
-    private MockObject & OutputInterface $output;
+    private MockObject&ProcessHelper $helper;
+    private MockObject&DebugFormatterHelper $formatter;
+    private MockObject&Process $process;
+    private MockObject&OutputInterface $output;
 
     protected function setUp(): void
     {
@@ -76,10 +76,13 @@ class ProcessRunnerTest extends TestCase
         $this->process->expects($this->once())->method('mustRun')->withAnyParameters()->willReturnSelf();
         $this->process->expects($this->never())->method('isSuccessful');
         $this->process->expects($this->never())->method('getCommandLine');
-        $this->helper->expects($this->once())->method('wrapCallback')->withAnyParameters()->willReturn(
-            static function (): void {
-            },
-        );
+        $this->helper
+            ->expects($this->once())
+            ->method('wrapCallback')
+            ->withAnyParameters()
+            ->willReturn(
+                static function (): void {},
+            );
         $this->formatter->expects($this->never())->method('start');
         $this->formatter->expects($this->never())->method('stop');
 

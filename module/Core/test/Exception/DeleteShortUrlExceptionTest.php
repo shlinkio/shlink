@@ -31,10 +31,13 @@ class DeleteShortUrlExceptionTest extends TestCase
         self::assertEquals($threshold, $e->getVisitsThreshold());
         self::assertEquals($expectedMessage, $e->getMessage());
         self::assertEquals($expectedMessage, $e->getDetail());
-        self::assertEquals([
-            'shortCode' => $shortCode,
-            'threshold' => $threshold,
-        ], $e->getAdditionalData());
+        self::assertEquals(
+            [
+                'shortCode' => $shortCode,
+                'threshold' => $threshold,
+            ],
+            $e->getAdditionalData(),
+        );
         self::assertEquals('Cannot delete short URL', $e->getTitle());
         self::assertEquals('https://shlink.io/api/error/invalid-short-url-deletion', $e->getType());
         self::assertEquals(422, $e->getStatus());
@@ -42,11 +45,18 @@ class DeleteShortUrlExceptionTest extends TestCase
 
     public static function provideThresholds(): array
     {
-        return array_map(static fn (int $number) => [$number, $shortCode = generateRandomShortCode(6), sprintf(
-            'Impossible to delete short URL with short code "%s", since it has more than "%s" visits.',
-            $shortCode,
-            $number,
-        )], range(5, 50, 5));
+        return array_map(
+            static fn (int $number) => [
+                $number,
+                $shortCode = generateRandomShortCode(6),
+                sprintf(
+                    'Impossible to delete short URL with short code "%s", since it has more than "%s" visits.',
+                    $shortCode,
+                    $number,
+                ),
+            ],
+            range(5, 50, 5),
+        );
     }
 
     #[Test]
@@ -56,14 +66,18 @@ class DeleteShortUrlExceptionTest extends TestCase
             10,
             ShortUrlIdentifier::fromShortCodeAndDomain('abc123', 's.test'),
         );
-        $expectedMessage = 'Impossible to delete short URL with short code "abc123" for domain "s.test", since it '
+        $expectedMessage =
+            'Impossible to delete short URL with short code "abc123" for domain "s.test", since it '
             . 'has more than "10" visits.';
 
-        self::assertEquals([
-            'shortCode' => 'abc123',
-            'domain' => 's.test',
-            'threshold' => 10,
-        ], $e->getAdditionalData());
+        self::assertEquals(
+            [
+                'shortCode' => 'abc123',
+                'domain' => 's.test',
+                'threshold' => 10,
+            ],
+            $e->getAdditionalData(),
+        );
         self::assertEquals($expectedMessage, $e->getMessage());
         self::assertEquals($expectedMessage, $e->getDetail());
     }

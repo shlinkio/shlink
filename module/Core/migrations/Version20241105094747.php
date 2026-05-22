@@ -28,13 +28,13 @@ final class Version20241105094747 extends AbstractMigration
         // Set plain key as name for all API keys without a name
         $qb = $this->connection->createQueryBuilder();
         $qb->update('api_keys')
-           ->set('name', $keyColumnName)
-           ->where($qb->expr()->isNull('name'));
+            ->set('name', $keyColumnName)
+            ->where($qb->expr()->isNull('name'));
         $qb->executeStatement();
     }
 
     public function isTransactional(): bool
     {
-        return ! ($this->connection->getDatabasePlatform() instanceof MySQLPlatform);
+        return !$this->connection->getDatabasePlatform() instanceof MySQLPlatform;
     }
 }

@@ -43,8 +43,7 @@ class ShortUrlsFixture extends AbstractFixture implements DependentFixtureInterf
         $manager->persist($abcShortUrl);
 
         $defShortUrl = $this->setShortUrlDate(ShortUrl::create(new ShortUrlCreation(
-            longUrl:
-                'https://blog.alejandrocelaya.com/2017/12/09/acmailer-7-0-the-most-important-release-in-a-long-time/',
+            longUrl: 'https://blog.alejandrocelaya.com/2017/12/09/acmailer-7-0-the-most-important-release-in-a-long-time/',
             validSince: Chronos::parse('2020-05-01'),
             customSlug: 'def456',
             apiKey: $authorApiKey,
@@ -74,16 +73,19 @@ class ShortUrlsFixture extends AbstractFixture implements DependentFixtureInterf
 
         $withDomainDuplicatingShortCode = $this->setShortUrlDate(ShortUrl::create(new ShortUrlCreation(
             longUrl: 'https://blog.alejandrocelaya.com/2019/04/27/considerations-to-properly-use-open-'
-                . 'source-software-projects/',
+            . 'source-software-projects/',
             customSlug: 'ghi789',
             domain: 'example.com',
             tags: ['foo'],
         ), $relationResolver), '2019-01-01 00:00:30');
         $manager->persist($withDomainDuplicatingShortCode);
 
-        $withDomainAndSlugShortUrl = $this->setShortUrlDate(ShortUrl::create(
-            new ShortUrlCreation('https://google.com', customSlug: 'custom-with-domain', domain: 'some-domain.com'),
-        ), '2018-10-20');
+        $withDomainAndSlugShortUrl = $this->setShortUrlDate(
+            ShortUrl::create(
+                new ShortUrlCreation('https://google.com', customSlug: 'custom-with-domain', domain: 'some-domain.com'),
+            ),
+            '2018-10-20',
+        );
         $manager->persist($withDomainAndSlugShortUrl);
 
         $manager->flush();

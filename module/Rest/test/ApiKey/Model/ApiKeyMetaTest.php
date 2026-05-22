@@ -27,9 +27,13 @@ class ApiKeyMetaTest extends TestCase
     {
         yield 'name' => [null, 'the name', static fn (ApiKeyMeta $meta) => 'the name'];
         yield 'key' => ['the key', null, static fn (ApiKeyMeta $meta) => 'the key'];
-        yield 'generated key' => [null, null, static fn (ApiKeyMeta $meta) => sprintf(
-            '%s-****-****-****-************',
-            substr($meta->key, offset: 0, length: 8),
-        )];
+        yield 'generated key' => [
+            null,
+            null,
+            static fn (ApiKeyMeta $meta) => sprintf(
+                '%s-****-****-****-************',
+                substr($meta->key, offset: 0, length: 8),
+            ),
+        ];
     }
 }

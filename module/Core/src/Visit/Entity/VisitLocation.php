@@ -22,15 +22,14 @@ class VisitLocation extends AbstractEntity implements JsonSerializable
         public readonly float $longitude,
         public readonly string $timezone,
     ) {
-        $this->isEmpty = (
-            $countryCode === '' &&
-            $countryName === '' &&
-            $regionName === '' &&
-            $cityName === '' &&
-            $latitude === 0.0 &&
-            $longitude === 0.0 &&
-            $timezone === ''
-        );
+        $this->isEmpty =
+            $countryCode === ''
+            && $countryName === ''
+            && $regionName === ''
+            && $cityName === ''
+            && $latitude === 0.0
+            && $longitude === 0.0
+            && $timezone === '';
     }
 
     public static function fromLocation(Location|ImportedShlinkVisitLocation $location): self

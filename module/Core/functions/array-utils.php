@@ -38,7 +38,7 @@ function some(iterable $collection, callable $callback): bool
 function every(iterable $collection, callable $callback): bool
 {
     foreach ($collection as $key => $value) {
-        if (! $callback($value, $key)) {
+        if (!$callback($value, $key)) {
             return false;
         }
     }

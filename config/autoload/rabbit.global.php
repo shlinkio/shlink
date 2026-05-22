@@ -5,7 +5,6 @@ declare(strict_types=1);
 use Shlinkio\Shlink\Core\Config\EnvVars;
 
 return [
-
     // This config is used by shlink-common. Do not delete
     'rabbitmq' => [
         'enabled' => (bool) EnvVars::RABBITMQ_ENABLED->loadFromEnv(),
@@ -16,5 +15,4 @@ return [
         'password' => EnvVars::RABBITMQ_PASSWORD->loadFromEnv(),
         'vhost' => EnvVars::RABBITMQ_VHOST->loadFromEnv(),
     ],
-
 ];

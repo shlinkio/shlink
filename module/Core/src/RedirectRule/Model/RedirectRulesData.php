@@ -9,7 +9,5 @@ readonly class RedirectRulesData
     /**
      * @param RedirectRuleData[] $redirectRules
      */
-    public function __construct(public array $redirectRules)
-    {
-    }
+    public function __construct(public array $redirectRules) {}
 }

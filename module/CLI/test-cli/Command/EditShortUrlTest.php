@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace ShlinkioCliTest\Shlink\CLI\Command;
 
 use PHPUnit\Framework\Attributes\Test;

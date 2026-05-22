@@ -14,7 +14,6 @@ use Shlinkio\Shlink\Common\Middleware\RequestIdMiddleware;
 use Shlinkio\Shlink\Core\Geolocation\Middleware\IpGeolocationMiddleware;
 
 return [
-
     'middleware_pipeline' => [
         'error-handler' => [
             'middleware' => [
@@ -82,5 +81,4 @@ return [
             ],
         ],
     ],
-
 ];

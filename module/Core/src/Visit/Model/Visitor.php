@@ -31,8 +31,7 @@ final readonly class Visitor
         public bool $potentialBot,
         public Location|null $geolocation,
         public string|null $redirectUrl,
-    ) {
-    }
+    ) {}
 
     public static function fromParams(
         string $userAgent = '',

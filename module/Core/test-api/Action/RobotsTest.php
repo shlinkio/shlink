@@ -18,14 +18,14 @@ class RobotsTest extends ApiTestCase
         self::assertEquals(200, $resp->getStatusCode());
         self::assertEquals(
             <<<ROBOTS
-            # For more information about the robots.txt standard, see:
-            # https://www.robotstxt.org/orig.html
-            
-            User-agent: *
-            Allow: /abc123
-            Allow: /custom
-            Disallow: /
-            ROBOTS,
+                # For more information about the robots.txt standard, see:
+                # https://www.robotstxt.org/orig.html
+
+                User-agent: *
+                Allow: /abc123
+                Allow: /custom
+                Disallow: /
+                ROBOTS,
             $body,
         );
     }

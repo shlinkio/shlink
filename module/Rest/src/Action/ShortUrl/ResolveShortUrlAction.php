@@ -21,8 +21,7 @@ class ResolveShortUrlAction extends AbstractRestAction
     public function __construct(
         private readonly ShortUrlResolverInterface $urlResolver,
         private readonly ShortUrlDataTransformerInterface $transformer,
-    ) {
-    }
+    ) {}
 
     public function handle(Request $request): Response
     {

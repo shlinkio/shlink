@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace ShlinkioTest\Shlink\Core\RedirectRule\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -76,34 +75,40 @@ class ShortUrlRedirectRuleTest extends TestCase
 
     public static function provideConditionMappingCallbacks(): iterable
     {
-        yield 'json-serialized conditions' => [static fn (RedirectCondition $cond) => $cond->jsonSerialize(), [
+        yield 'json-serialized conditions' => [
+            static fn (RedirectCondition $cond) => $cond->jsonSerialize(),
             [
-                'type' => RedirectConditionType::LANGUAGE->value,
-                'matchKey' => null,
-                'matchValue' => 'en-UK',
+                [
+                    'type' => RedirectConditionType::LANGUAGE->value,
+                    'matchKey' => null,
+                    'matchValue' => 'en-UK',
+                ],
+                [
+                    'type' => RedirectConditionType::QUERY_PARAM->value,
+                    'matchKey' => 'foo',
+                    'matchValue' => 'bar',
+                ],
+                [
+                    'type' => RedirectConditionType::DEVICE->value,
+                    'matchKey' => null,
+                    'matchValue' => DeviceType::ANDROID->value,
+                ],
+                [
+                    'type' => RedirectConditionType::IP_ADDRESS->value,
+                    'matchKey' => null,
+                    'matchValue' => '1.2.3.*',
+                ],
             ],
+        ];
+        yield 'human-friendly conditions' => [
+            static fn (RedirectCondition $cond) => $cond->toHumanFriendly(),
             [
-                'type' => RedirectConditionType::QUERY_PARAM->value,
-                'matchKey' => 'foo',
-                'matchValue' => 'bar',
+                'en-UK language is accepted',
+                'query string contains foo=bar',
+                sprintf('device is %s', DeviceType::ANDROID->value),
+                'IP address matches 1.2.3.*',
             ],
-            [
-                'type' => RedirectConditionType::DEVICE->value,
-                'matchKey' => null,
-                'matchValue' => DeviceType::ANDROID->value,
-            ],
-            [
-                'type' => RedirectConditionType::IP_ADDRESS->value,
-                'matchKey' => null,
-                'matchValue' => '1.2.3.*',
-            ],
-        ]];
-        yield 'human-friendly conditions' => [static fn (RedirectCondition $cond) => $cond->toHumanFriendly(), [
-            'en-UK language is accepted',
-            'query string contains foo=bar',
-            sprintf('device is %s', DeviceType::ANDROID->value),
-            'IP address matches 1.2.3.*',
-        ]];
+        ];
     }
 
     /**

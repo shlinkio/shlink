@@ -21,17 +21,17 @@ use function sprintf;
     name: DeleteKeyCommand::NAME,
     description: 'Deletes an API key by name',
     help: <<<HELP
-    The <info>%command.name%</info> command allows you to delete an existing API key via its name.
+        The <info>%command.name%</info> command allows you to delete an existing API key via its name.
 
-    If no arguments are provided, you will be prompted to select one of the existing API keys.
+        If no arguments are provided, you will be prompted to select one of the existing API keys.
 
-        <info>%command.full_name%</info>
+            <info>%command.full_name%</info>
 
-    You can optionally pass the API key name to be disabled:
+        You can optionally pass the API key name to be disabled:
 
-        <info>%command.full_name% the_key_name</info>
+            <info>%command.full_name% the_key_name</info>
 
-    HELP,
+        HELP,
 )]
 class DeleteKeyCommand extends Command
 {
@@ -60,15 +60,14 @@ class DeleteKeyCommand extends Command
     public function __invoke(
         SymfonyStyle $io,
         InputInterface $input,
-        #[Argument(description: 'The API key to delete.')]
-        string|null $name = null,
+        #[Argument(description: 'The API key to delete.')] string|null $name = null,
     ): int {
         if ($name === null) {
             $io->warning('An API key name was not provided.');
             return Command::INVALID;
         }
 
-        if (! $this->shouldProceed($io, $input)) {
+        if (!$this->shouldProceed($io, $input)) {
             return Command::INVALID;
         }
 
@@ -84,7 +83,7 @@ class DeleteKeyCommand extends Command
 
     private function shouldProceed(SymfonyStyle $io, InputInterface $input): bool
     {
-        if (! $input->isInteractive()) {
+        if (!$input->isInteractive()) {
             return true;
         }
 

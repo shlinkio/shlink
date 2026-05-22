@@ -22,9 +22,9 @@ use function array_map;
 class UpdateGeoLiteDbTest extends TestCase
 {
     private UpdateGeoLiteDb $listener;
-    private MockObject & GeolocationDbUpdaterInterface $dbUpdater;
-    private MockObject & LoggerInterface $logger;
-    private MockObject & EventDispatcherInterface $eventDispatcher;
+    private MockObject&GeolocationDbUpdaterInterface $dbUpdater;
+    private MockObject&LoggerInterface $logger;
+    private MockObject&EventDispatcherInterface $eventDispatcher;
 
     protected function setUp(): void
     {
@@ -41,10 +41,13 @@ class UpdateGeoLiteDbTest extends TestCase
         $e = new RuntimeException();
 
         $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willThrowException($e);
-        $this->logger->expects($this->once())->method('error')->with(
-            'GeoLite2 database download failed. {e}',
-            ['e' => $e],
-        );
+        $this->logger
+            ->expects($this->once())
+            ->method('error')
+            ->with(
+                'GeoLite2 database download failed. {e}',
+                ['e' => $e],
+            );
         $this->logger->expects($this->never())->method('notice');
         $this->eventDispatcher->expects($this->never())->method('dispatch');
 
@@ -54,12 +57,18 @@ class UpdateGeoLiteDbTest extends TestCase
     #[Test, DataProvider('provideFlags')]
     public function noticeMessageIsPrintedWhenDownloadIsStarted(bool $oldDbExists, string $expectedMessage): void
     {
-        $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willReturnCallback(
-            static function (GeolocationDownloadProgressHandlerInterface $handler) use ($oldDbExists): GeolocationResult {
-                $handler->beforeDownload($oldDbExists);
-                return GeolocationResult::DB_IS_UP_TO_DATE;
-            },
-        );
+        $this->dbUpdater
+            ->expects($this->once())
+            ->method('checkDbUpdate')
+            ->withAnyParameters()
+            ->willReturnCallback(
+                static function (GeolocationDownloadProgressHandlerInterface $handler) use (
+                    $oldDbExists,
+                ): GeolocationResult {
+                    $handler->beforeDownload($oldDbExists);
+                    return GeolocationResult::DB_IS_UP_TO_DATE;
+                },
+            );
         $this->logger->expects($this->once())->method('notice')->with($expectedMessage);
         $this->logger->expects($this->never())->method('error');
         $this->eventDispatcher->expects($this->never())->method('dispatch');
@@ -80,22 +89,22 @@ class UpdateGeoLiteDbTest extends TestCase
         bool $oldDbExists,
         string|null $expectedMessage,
     ): void {
-        $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willReturnCallback(
-            static function (
-                GeolocationDownloadProgressHandlerInterface $handler,
-            ) use (
-                $total,
-                $downloaded,
-                $oldDbExists,
-            ): GeolocationResult {
-                // Invoke several times to ensure the log is printed only once
-                $handler->handleProgress($total, $downloaded, $oldDbExists);
-                $handler->handleProgress($total, $downloaded, $oldDbExists);
-                $handler->handleProgress($total, $downloaded, $oldDbExists);
+        $this->dbUpdater
+            ->expects($this->once())
+            ->method('checkDbUpdate')
+            ->withAnyParameters()
+            ->willReturnCallback(
+                static function (
+                    GeolocationDownloadProgressHandlerInterface $handler,
+                ) use ($total, $downloaded, $oldDbExists): GeolocationResult {
+                    // Invoke several times to ensure the log is printed only once
+                    $handler->handleProgress($total, $downloaded, $oldDbExists);
+                    $handler->handleProgress($total, $downloaded, $oldDbExists);
+                    $handler->handleProgress($total, $downloaded, $oldDbExists);
 
-                return GeolocationResult::DB_UPDATED;
-            },
-        );
+                    return GeolocationResult::DB_UPDATED;
+                },
+            );
         $logNoticeExpectation = $expectedMessage !== null ? $this->once() : $this->never();
         $this->logger->expects($logNoticeExpectation)->method('notice')->with($expectedMessage);
         $this->logger->expects($this->never())->method('error');
@@ -122,9 +131,12 @@ class UpdateGeoLiteDbTest extends TestCase
         int $expectedDispatches,
     ): void {
         $this->dbUpdater->expects($this->once())->method('checkDbUpdate')->withAnyParameters()->willReturn($result);
-        $this->eventDispatcher->expects($this->exactly($expectedDispatches))->method('dispatch')->with(
-            new GeoLiteDbCreated(),
-        );
+        $this->eventDispatcher
+            ->expects($this->exactly($expectedDispatches))
+            ->method('dispatch')
+            ->with(
+                new GeoLiteDbCreated(),
+            );
         $this->logger->expects($this->never())->method('warning');
 
         ($this->listener)();

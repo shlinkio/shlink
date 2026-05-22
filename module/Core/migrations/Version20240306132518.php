@@ -30,10 +30,15 @@ final class Version20240306132518 extends AbstractMigration
             'unsigned' => true,
             'notnull' => true,
         ]);
-        $table->addForeignKeyConstraint('short_urls', ['short_url_id'], ['id'], [
-            'onDelete' => 'CASCADE',
-            'onUpdate' => 'RESTRICT',
-        ]);
+        $table->addForeignKeyConstraint(
+            'short_urls',
+            ['short_url_id'],
+            ['id'],
+            [
+                'onDelete' => 'CASCADE',
+                'onUpdate' => 'RESTRICT',
+            ],
+        );
 
         $table->addColumn('potential_bot', Types::BOOLEAN, ['default' => false]);
 
@@ -54,12 +59,12 @@ final class Version20240306132518 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->skipIf(! $schema->hasTable('short_url_visits_counts'));
+        $this->skipIf(!$schema->hasTable('short_url_visits_counts'));
         $schema->dropTable('short_url_visits_counts');
     }
 
     public function isTransactional(): bool
     {
-        return ! ($this->connection->getDatabasePlatform() instanceof MySQLPlatform);
+        return !$this->connection->getDatabasePlatform() instanceof MySQLPlatform;
     }
 }

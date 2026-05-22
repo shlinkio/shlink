@@ -18,7 +18,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 class ListTagsCommandTest extends TestCase
 {
     private CommandTester $commandTester;
-    private MockObject & TagServiceInterface $tagService;
+    private MockObject&TagServiceInterface $tagService;
 
     protected function setUp(): void
     {
@@ -29,9 +29,13 @@ class ListTagsCommandTest extends TestCase
     #[Test]
     public function noTagsPrintsEmptyMessage(): void
     {
-        $this->tagService->expects($this->once())->method('tagsInfo')->withAnyParameters()->willReturn(
-            new Paginator(new ArrayAdapter([])),
-        );
+        $this->tagService
+            ->expects($this->once())
+            ->method('tagsInfo')
+            ->withAnyParameters()
+            ->willReturn(
+                new Paginator(new ArrayAdapter([])),
+            );
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
@@ -42,26 +46,30 @@ class ListTagsCommandTest extends TestCase
     #[Test]
     public function listOfTagsIsPrinted(): void
     {
-        $this->tagService->expects($this->once())->method('tagsInfo')->withAnyParameters()->willReturn(
-            new Paginator(new ArrayAdapter([
-                new TagInfo('foo', 10, 2),
-                new TagInfo('bar', 7, 32),
-            ])),
-        );
+        $this->tagService
+            ->expects($this->once())
+            ->method('tagsInfo')
+            ->withAnyParameters()
+            ->willReturn(
+                new Paginator(new ArrayAdapter([
+                    new TagInfo('foo', 10, 2),
+                    new TagInfo('bar', 7, 32),
+                ])),
+            );
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
 
         self::assertEquals(
             <<<OUTPUT
-            +------+-------------+---------------+
-            | Name | URLs amount | Visits amount |
-            +------+-------------+---------------+
-            | foo  | 10          | 2             |
-            | bar  | 7           | 32            |
-            +------+-------------+---------------+
-            
-            OUTPUT,
+                +------+-------------+---------------+
+                | Name | URLs amount | Visits amount |
+                +------+-------------+---------------+
+                | foo  | 10          | 2             |
+                | bar  | 7           | 32            |
+                +------+-------------+---------------+
+
+                OUTPUT,
             $output,
         );
     }

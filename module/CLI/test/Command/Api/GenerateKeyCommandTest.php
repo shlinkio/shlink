@@ -20,7 +20,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 class GenerateKeyCommandTest extends TestCase
 {
     private CommandTester $commandTester;
-    private MockObject & ApiKeyServiceInterface $apiKeyService;
+    private MockObject&ApiKeyServiceInterface $apiKeyService;
 
     protected function setUp(): void
     {
@@ -35,9 +35,13 @@ class GenerateKeyCommandTest extends TestCase
     #[Test]
     public function noExpirationDateIsDefinedIfNotProvided(): void
     {
-        $this->apiKeyService->expects($this->once())->method('create')->with(
-            $this->callback(static fn (ApiKeyMeta $meta) => $meta->expirationDate === null),
-        )->willReturn(ApiKey::create());
+        $this->apiKeyService
+            ->expects($this->once())
+            ->method('create')
+            ->with(
+                $this->callback(static fn (ApiKeyMeta $meta) => $meta->expirationDate === null),
+            )
+            ->willReturn(ApiKey::create());
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
@@ -48,9 +52,13 @@ class GenerateKeyCommandTest extends TestCase
     #[Test]
     public function expirationDateIsDefinedIfProvided(): void
     {
-        $this->apiKeyService->expects($this->once())->method('create')->with(
-            $this->callback(static fn (ApiKeyMeta $meta) => $meta->expirationDate instanceof Chronos),
-        )->willReturn(ApiKey::create());
+        $this->apiKeyService
+            ->expects($this->once())
+            ->method('create')
+            ->with(
+                $this->callback(static fn (ApiKeyMeta $meta) => $meta->expirationDate instanceof Chronos),
+            )
+            ->willReturn(ApiKey::create());
 
         $this->commandTester->execute([
             '--expiration-date' => '2016-01-01',
@@ -60,9 +68,13 @@ class GenerateKeyCommandTest extends TestCase
     #[Test]
     public function nameIsDefinedIfProvided(): void
     {
-        $this->apiKeyService->expects($this->once())->method('create')->with(
-            $this->callback(static fn (ApiKeyMeta $meta) => $meta->name === 'Alice'),
-        )->willReturn(ApiKey::create());
+        $this->apiKeyService
+            ->expects($this->once())
+            ->method('create')
+            ->with(
+                $this->callback(static fn (ApiKeyMeta $meta) => $meta->name === 'Alice'),
+            )
+            ->willReturn(ApiKey::create());
 
         $exitCode = $this->commandTester->execute([
             '--name' => 'Alice',

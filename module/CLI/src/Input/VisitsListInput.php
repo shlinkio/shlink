@@ -19,8 +19,13 @@ class VisitsListInput
     public string|null $endDate = null;
 
     #[Option(
-        'Output format ("' . VisitsListFormat::FULL->value . '", "' . VisitsListFormat::PAGINATED->value . '" or "'
-        . VisitsListFormat::CSV->value . '")',
+        'Output format ("'
+        . VisitsListFormat::FULL->value
+        . '", "'
+        . VisitsListFormat::PAGINATED->value
+        . '" or "'
+        . VisitsListFormat::CSV->value
+        . '")',
         shortcut: 'f',
     )]
     public VisitsListFormat $format = VisitsListFormat::FULL;

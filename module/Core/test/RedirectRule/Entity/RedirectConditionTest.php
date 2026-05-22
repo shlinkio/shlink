@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace ShlinkioTest\Shlink\Core\RedirectRule\Entity;
 
 use Cake\Chronos\Chronos;
@@ -158,6 +157,7 @@ class RedirectConditionTest extends TestCase
 
         self::assertEquals($expected, $result);
     }
+
     public static function provideVisitsWithCountry(): iterable
     {
         yield 'no location' => [null, 'US', false];
@@ -177,6 +177,7 @@ class RedirectConditionTest extends TestCase
 
         self::assertEquals($expected, $result);
     }
+
     public static function provideVisitsWithCity(): iterable
     {
         yield 'no location' => [null, 'New York', false];

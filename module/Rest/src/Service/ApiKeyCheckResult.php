@@ -8,9 +8,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 final readonly class ApiKeyCheckResult
 {
-    public function __construct(public ApiKey|null $apiKey = null)
-    {
-    }
+    public function __construct(public ApiKey|null $apiKey = null) {}
 
     public function isValid(): bool
     {
