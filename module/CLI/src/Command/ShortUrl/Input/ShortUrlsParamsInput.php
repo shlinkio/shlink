@@ -28,9 +28,7 @@ final class ShortUrlsParamsInput
     )]
     public bool $all = false;
 
-    // phpcs:disable PSR2.Classes.PropertyDeclaration.Multiple
     public int $itemsPerPage {
-        // phpcs:disable PSR2.Classes.PropertyDeclaration.ScopeMissing
         get => $this->all ? Paginator::ALL_ITEMS : ShortUrlsParams::DEFAULT_ITEMS_PER_PAGE;
     }
 
@@ -56,9 +54,7 @@ final class ShortUrlsParamsInput
     #[Option('If --tag is provided, returns only short URLs including ALL of them')]
     public bool $tagsAll = false;
 
-    // phpcs:disable PSR2.Classes.PropertyDeclaration.Multiple
     public TagsMode $tagsMode {
-        // phpcs:disable PSR2.Classes.PropertyDeclaration.ScopeMissing
         get => $this->tagsAll ? TagsMode::ALL : TagsMode::ANY;
     }
 
@@ -69,9 +65,7 @@ final class ShortUrlsParamsInput
     #[Option('If --exclude-tag is provided, returns only short URLs not including ANY of them')]
     public bool $excludeTagsAll = false;
 
-    // phpcs:disable PSR2.Classes.PropertyDeclaration.Multiple
     public TagsMode $excludeTagsMode {
-        // phpcs:disable PSR2.Classes.PropertyDeclaration.ScopeMissing
         get => $this->excludeTagsAll ? TagsMode::ALL : TagsMode::ANY;
     }
 

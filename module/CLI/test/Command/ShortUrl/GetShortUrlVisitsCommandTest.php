@@ -123,7 +123,6 @@ class GetShortUrlVisitsCommandTest extends TestCase
     {
         yield 'regular' => [
             VisitsListFormat::FULL,
-            // phpcs:disable Generic.Files.LineLength
             static fn (Chronos $date) => <<<OUTPUT
                 +---------------------------+---------------+------------+---------+---------+--------+--------+-------------+--------------+-----------------+
                 | Date                      | Potential bot | User agent | Referer | Country | Region | City   | Visited URL | Redirect URL | Type            |
@@ -132,7 +131,6 @@ class GetShortUrlVisitsCommandTest extends TestCase
                 +---------------------------+---------------+------------+------- Page 1 of 1 --------+--------+-------------+--------------+-----------------+
 
                 OUTPUT,
-            // phpcs:enable
         ];
         yield 'CSV' => [
             VisitsListFormat::CSV,

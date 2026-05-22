@@ -147,7 +147,6 @@ class ListShortUrlsCommandTest extends TestCase
         $shortCode = $shortUrl->getShortCode();
         $created = $shortUrl->dateCreated()->toAtomString();
 
-        // phpcs:disable Generic.Files.LineLength
         yield 'tags only' => [
             ['--show-tags' => true],
             <<<OUTPUT
@@ -214,8 +213,6 @@ class ListShortUrlsCommandTest extends TestCase
                 OUTPUT,
             $shortUrl,
         ];
-
-        // phpcs:enable
     }
 
     /**

@@ -56,7 +56,6 @@ class GetOrphanVisitsCommandTest extends TestCase
         $type = OrphanVisitType::BASE_URL->value;
 
         self::assertEquals(
-            // phpcs:disable Generic.Files.LineLength
             <<<OUTPUT
                 +---------------------------+---------------+------------+---------+---------+--------+--------+-------------+--------------+----------+
                 | Date                      | Potential bot | User agent | Referer | Country | Region | City   | Visited URL | Redirect URL | Type     |
@@ -65,7 +64,6 @@ class GetOrphanVisitsCommandTest extends TestCase
                 +---------------------------+---------------+------------+--- Page 1 of 1 ---+--------+--------+-------------+--------------+----------+
 
                 OUTPUT,
-            // phpcs:enable
             $output,
         );
     }
