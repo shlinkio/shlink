@@ -121,7 +121,8 @@ final class ShortUrlVisitsCountTracker
 
         // For engines without a specific UPSERT syntax, do a regular locked select followed by an insert or update
         $qb = $conn->createQueryBuilder();
-        $qb->select('id')
+        $qb
+            ->select('id')
             ->from('short_url_visits_counts')
             ->where($qb->expr()->and(
                 $qb->expr()->eq('short_url_id', ':short_url_id'),
@@ -140,7 +141,8 @@ final class ShortUrlVisitsCountTracker
         $visitsCountId = $qb->executeQuery()->fetchOne();
 
         $writeQb = !$visitsCountId
-            ? $conn->createQueryBuilder()
+            ? $conn
+                ->createQueryBuilder()
                 ->insert('short_url_visits_counts')
                 ->values([
                     'short_url_id' => ':short_url_id',
@@ -150,7 +152,8 @@ final class ShortUrlVisitsCountTracker
                 ->setParameter('short_url_id', $shortUrlId)
                 ->setParameter('potential_bot', $potentialBot ? '1' : '0')
                 ->setParameter('slot_id', $slotId)
-            : $conn->createQueryBuilder()
+            : $conn
+                ->createQueryBuilder()
                 ->update('short_url_visits_counts')
                 ->set('count', 'count + 1')
                 ->where($qb->expr()->eq('id', ':visits_count_id'))

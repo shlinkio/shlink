@@ -23,7 +23,8 @@ class ShlinkTableTest extends TestCase
         $footerTitle = 'Footer';
 
         $baseTable = $this->createMock(Table::class);
-        $baseTable->expects($this->once())
+        $baseTable
+            ->expects($this->once())
             ->method('setStyle')
             ->with(
                 $this->isInstanceOf(TableStyle::class),

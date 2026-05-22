@@ -110,7 +110,8 @@ final class OrphanVisitsCountTracker
 
         // For engines without a specific UPSERT syntax, do a regular locked select followed by an insert or update
         $qb = $conn->createQueryBuilder();
-        $qb->select('id')
+        $qb
+            ->select('id')
             ->from('orphan_visits_counts')
             ->where($qb->expr()->and(
                 $qb->expr()->eq('potential_bot', ':potential_bot'),
@@ -127,7 +128,8 @@ final class OrphanVisitsCountTracker
         $visitsCountId = $qb->executeQuery()->fetchOne();
 
         $writeQb = !$visitsCountId
-            ? $conn->createQueryBuilder()
+            ? $conn
+                ->createQueryBuilder()
                 ->insert('orphan_visits_counts')
                 ->values([
                     'potential_bot' => ':potential_bot',
@@ -135,7 +137,8 @@ final class OrphanVisitsCountTracker
                 ])
                 ->setParameter('potential_bot', $potentialBot ? '1' : '0')
                 ->setParameter('slot_id', $slotId)
-            : $conn->createQueryBuilder()
+            : $conn
+                ->createQueryBuilder()
                 ->update('orphan_visits_counts')
                 ->set('count', 'count + 1')
                 ->where($qb->expr()->eq('id', ':visits_count_id'))

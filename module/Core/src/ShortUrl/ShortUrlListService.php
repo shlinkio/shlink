@@ -23,8 +23,7 @@ readonly class ShortUrlListService implements ShortUrlListServiceInterface
     {
         $defaultDomain = $this->urlShortenerOptions->defaultDomain;
         $paginator = new Paginator(new ShortUrlRepositoryAdapter($this->repo, $params, $apiKey, $defaultDomain));
-        $paginator->setMaxPerPage($params->itemsPerPage)
-            ->setCurrentPage($params->page);
+        $paginator->setMaxPerPage($params->itemsPerPage)->setCurrentPage($params->page);
 
         return $paginator;
     }

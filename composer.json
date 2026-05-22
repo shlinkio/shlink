@@ -69,6 +69,7 @@
         "phpunit/php-code-coverage": "^13.0",
         "phpunit/phpcov": "^12.0",
         "phpunit/phpunit": "^13.0",
+        "shlinkio/shlink-mago-config": "^1.0",
         "shlinkio/shlink-test-utils": "^4.5",
         "symfony/var-dumper": "^8.0",
         "veewee/composer-run-parallel": "^1.4"

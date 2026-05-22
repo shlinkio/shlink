@@ -63,7 +63,8 @@ class VisitsStatsHelperTest extends TestCase
     {
         $callCount = 0;
         $visitsCountRepo = $this->createMock(ShortUrlVisitsCountRepository::class);
-        $visitsCountRepo->expects($this->exactly(2))
+        $visitsCountRepo
+            ->expects($this->exactly(2))
             ->method('countNonOrphanVisits')
             ->willReturnCallback(
                 static function (VisitsCountFiltering $options) use ($expectedCount, $apiKey, &$callCount) {
@@ -76,7 +77,8 @@ class VisitsStatsHelperTest extends TestCase
             );
 
         $orphanVisitsCountRepo = $this->createMock(OrphanVisitsCountRepository::class);
-        $orphanVisitsCountRepo->expects($this->exactly(2))
+        $orphanVisitsCountRepo
+            ->expects($this->exactly(2))
             ->method('countOrphanVisits')
             ->with(
                 $this->isInstanceOf(VisitsCountFiltering::class),
@@ -266,13 +268,15 @@ class VisitsStatsHelperTest extends TestCase
     {
         $list = array_map(static fn () => Visit::forBasePath(Visitor::empty()), range(0, 3));
         $repo = $this->createMock(VisitRepository::class);
-        $repo->expects($this->once())
+        $repo
+            ->expects($this->once())
             ->method('countOrphanVisits')
             ->with(
                 $this->isInstanceOf(OrphanVisitsCountFiltering::class),
             )
             ->willReturn(count($list));
-        $repo->expects($this->once())
+        $repo
+            ->expects($this->once())
             ->method('findOrphanVisits')
             ->with(
                 $this->isInstanceOf(OrphanVisitsListFiltering::class),
@@ -293,13 +297,15 @@ class VisitsStatsHelperTest extends TestCase
             range(0, 3),
         );
         $repo = $this->createMock(VisitRepository::class);
-        $repo->expects($this->once())
+        $repo
+            ->expects($this->once())
             ->method('countNonOrphanVisits')
             ->with(
                 $this->isInstanceOf(WithDOmainVisitsCountFiltering::class),
             )
             ->willReturn(count($list));
-        $repo->expects($this->once())
+        $repo
+            ->expects($this->once())
             ->method('findNonOrphanVisits')
             ->with(
                 $this->isInstanceOf(WithDOmainVisitsListFiltering::class),

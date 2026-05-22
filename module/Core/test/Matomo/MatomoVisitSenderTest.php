@@ -54,24 +54,28 @@ class MatomoVisitSenderTest extends TestCase
         $tracker->expects($this->once())->method('setUrl')->willReturn($tracker);
         $tracker->expects($this->once())->method('setUserAgent')->willReturn($tracker);
         $tracker->expects($this->once())->method('setUrlReferrer')->willReturn($tracker);
-        $tracker->expects($this->once())
+        $tracker
+            ->expects($this->once())
             ->method('doTrackPageView')
             ->with($visit->shortUrl?->title() ?? '');
-        $tracker->expects($this->once())
+        $tracker
+            ->expects($this->once())
             ->method('setForceVisitDateTime')
             ->with(
                 $visit->date->setTimezone('UTC')->toDateTimeString(),
             );
 
         if ($visit->isOrphan()) {
-            $tracker->expects($this->exactly(2))
+            $tracker
+                ->expects($this->exactly(2))
                 ->method('setCustomTrackingParameter')
                 ->willReturnMap([
                     ['type', $visit->type->value, $tracker],
                     ['orphan', 'true', $tracker],
                 ]);
         } else {
-            $tracker->expects($this->once())
+            $tracker
+                ->expects($this->once())
                 ->method('setCustomTrackingParameter')
                 ->with(
                     'type',
@@ -81,7 +85,8 @@ class MatomoVisitSenderTest extends TestCase
         }
 
         foreach ($invokedMethods as $invokedMethod => $args) {
-            $tracker->expects($this->once())
+            $tracker
+                ->expects($this->once())
                 ->method($invokedMethod)
                 ->with(...array_values($args))
                 ->willReturn(

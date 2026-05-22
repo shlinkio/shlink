@@ -68,10 +68,12 @@ class BodyParserMiddlewareTest extends TestCase
     {
         $body = new Stream('php://temp', 'wr');
         $body->write('{"foo": "bar", "bar": ["one", 5]}');
-        $request = new ServerRequest()->withMethod('PUT')
+        $request = new ServerRequest()
+            ->withMethod('PUT')
             ->withBody($body);
         $handler = $this->createMock(RequestHandlerInterface::class);
-        $handler->expects($this->once())
+        $handler
+            ->expects($this->once())
             ->method('handle')
             ->with(
                 $this->isInstanceOf(ServerRequestInterface::class),
@@ -93,7 +95,8 @@ class BodyParserMiddlewareTest extends TestCase
     {
         $body = new Stream('php://temp', 'wr');
         $body->write('{"foo": "bar", "bar": ["one');
-        $request = new ServerRequest()->withMethod('PUT')
+        $request = new ServerRequest()
+            ->withMethod('PUT')
             ->withBody($body);
 
         $handler = $this->createMock(RequestHandlerInterface::class);

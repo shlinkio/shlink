@@ -140,8 +140,7 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
     private function createPaginator(AdapterInterface $adapter, VisitsParams $params): Paginator
     {
         $paginator = new Paginator($adapter);
-        $paginator->setMaxPerPage($params->itemsPerPage)
-            ->setCurrentPage($params->page);
+        $paginator->setMaxPerPage($params->itemsPerPage)->setCurrentPage($params->page);
 
         return $paginator;
     }

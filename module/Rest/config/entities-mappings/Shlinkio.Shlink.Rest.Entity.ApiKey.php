@@ -13,34 +13,37 @@ use Shlinkio\Shlink\Rest\Entity\ApiKeyRole;
 return static function (ClassMetadata $metadata): void {
     $builder = new ClassMetadataBuilder($metadata);
 
-    $builder->setTable('api_keys')
-        ->setCustomRepositoryClass(ApiKey\Repository\ApiKeyRepository::class);
+    $builder->setTable('api_keys')->setCustomRepositoryClass(ApiKey\Repository\ApiKeyRepository::class);
 
-    $builder->createField('id', Types::BIGINT)
+    $builder
+        ->createField('id', Types::BIGINT)
         ->makePrimaryKey()
         ->generatedValue('IDENTITY')
         ->option('unsigned', true)
         ->build();
 
-    $builder->createField('key', Types::STRING)
+    $builder
+        ->createField('key', Types::STRING)
         ->columnName('`key`')
         ->unique()
         ->build();
 
-    $builder->createField('name', Types::STRING)
+    $builder
+        ->createField('name', Types::STRING)
         ->columnName('`name`')
         ->nullable()
         ->build();
 
-    $builder->createField('expirationDate', ChronosDateTimeType::CHRONOS_DATETIME)
+    $builder
+        ->createField('expirationDate', ChronosDateTimeType::CHRONOS_DATETIME)
         ->columnName('expiration_date')
         ->nullable()
         ->build();
 
-    $builder->createField('enabled', Types::BOOLEAN)
-        ->build();
+    $builder->createField('enabled', Types::BOOLEAN)->build();
 
-    $builder->createOneToMany('roles', ApiKeyRole::class)
+    $builder
+        ->createOneToMany('roles', ApiKeyRole::class)
         ->mappedBy('apiKey')
         ->setIndexBy('role')
         ->cascadePersist()

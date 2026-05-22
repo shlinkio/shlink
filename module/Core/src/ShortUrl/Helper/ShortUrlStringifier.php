@@ -21,7 +21,8 @@ readonly class ShortUrlStringifier implements ShortUrlStringifierInterface
     public function stringify(ShortUrl|ShortUrlIdentifier $shortUrl): string
     {
         $shortUrlIdentifier = $shortUrl instanceof ShortUrl ? ShortUrlIdentifier::fromShortUrl($shortUrl) : $shortUrl;
-        $uriWithoutShortCode = new Uri()->withScheme($this->urlShortenerOptions->schema)
+        $uriWithoutShortCode = new Uri()
+            ->withScheme($this->urlShortenerOptions->schema)
             ->withHost($this->resolveDomain($shortUrlIdentifier))
             ->withPath($this->basePath)
             ->__toString();

@@ -50,7 +50,8 @@ readonly class MatomoVisitSender implements MatomoVisitSenderInterface
     {
         $tracker = $this->trackerBuilder->buildMatomoTracker();
 
-        $tracker->setUrl($this->resolveUrlToTrack($visit))
+        $tracker
+            ->setUrl($this->resolveUrlToTrack($visit))
             ->setCustomTrackingParameter('type', $visit->type->value)
             ->setUserAgent($visit->userAgent)
             ->setUrlReferrer($visit->referer)
@@ -58,7 +59,8 @@ readonly class MatomoVisitSender implements MatomoVisitSenderInterface
 
         $location = $visit->visitLocation;
         if ($location !== null) {
-            $tracker->setCity($location->cityName)
+            $tracker
+                ->setCity($location->cityName)
                 ->setCountry(strtolower($location->countryCode))
                 ->setLatitude($location->latitude)
                 ->setLongitude($location->longitude);

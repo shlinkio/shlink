@@ -16,18 +16,21 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
 
     $builder->setTable('geolocation_db_updates');
 
-    $builder->createField('id', Types::BIGINT)
+    $builder
+        ->createField('id', Types::BIGINT)
         ->columnName('id')
         ->makePrimaryKey()
         ->generatedValue('IDENTITY')
         ->option('unsigned', true)
         ->build();
 
-    $builder->createField('dateCreated', ChronosDateTimeType::CHRONOS_DATETIME)
+    $builder
+        ->createField('dateCreated', ChronosDateTimeType::CHRONOS_DATETIME)
         ->columnName('date_created')
         ->build();
 
-    $builder->createField('dateUpdated', ChronosDateTimeType::CHRONOS_DATETIME)
+    $builder
+        ->createField('dateUpdated', ChronosDateTimeType::CHRONOS_DATETIME)
         ->columnName('date_updated')
         ->nullable()
         ->build();
@@ -36,20 +39,24 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
         'fieldName' => 'status',
         'type' => Types::STRING,
         'enumType' => GeolocationDbUpdateStatus::class,
-    ])->columnName('status')
+    ])
+        ->columnName('status')
         ->length(128)
         ->build();
 
-    fieldWithUtf8Charset($builder->createField('error', Types::STRING), $emConfig)->columnName('error')
+    fieldWithUtf8Charset($builder->createField('error', Types::STRING), $emConfig)
+        ->columnName('error')
         ->length(1024)
         ->nullable()
         ->build();
 
-    fieldWithUtf8Charset($builder->createField('reason', Types::STRING), $emConfig)->columnName('reason')
+    fieldWithUtf8Charset($builder->createField('reason', Types::STRING), $emConfig)
+        ->columnName('reason')
         ->length(1024)
         ->build();
 
-    fieldWithUtf8Charset($builder->createField('filesystemId', Types::STRING), $emConfig)->columnName('filesystem_id')
+    fieldWithUtf8Charset($builder->createField('filesystemId', Types::STRING), $emConfig)
+        ->columnName('filesystem_id')
         ->length(512)
         ->build();
 

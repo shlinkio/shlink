@@ -11,18 +11,17 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder = new ClassMetadataBuilder($metadata);
 
-    $builder->setTable('tags')
-        ->setCustomRepositoryClass(Tag\Repository\TagRepository::class);
+    $builder->setTable('tags')->setCustomRepositoryClass(Tag\Repository\TagRepository::class);
 
-    $builder->createField('id', Types::BIGINT)
+    $builder
+        ->createField('id', Types::BIGINT)
         ->columnName('id')
         ->makePrimaryKey()
         ->generatedValue('IDENTITY')
         ->option('unsigned', true)
         ->build();
 
-    fieldWithUtf8Charset($builder->createField('name', Types::STRING), $emConfig)->unique()
-        ->build();
+    fieldWithUtf8Charset($builder->createField('name', Types::STRING), $emConfig)->unique()->build();
 
     $builder->addInverseManyToMany('shortUrls', ShortUrl\Entity\ShortUrl::class, 'tags');
 };

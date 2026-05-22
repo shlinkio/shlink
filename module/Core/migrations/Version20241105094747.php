@@ -20,14 +20,16 @@ final class Version20241105094747 extends AbstractMigration
 
         // Append key to the name for all API keys that already have a name
         $qb = $this->connection->createQueryBuilder();
-        $qb->update('api_keys')
+        $qb
+            ->update('api_keys')
             ->set('name', 'CONCAT(name, ' . $this->connection->quote(' - ') . ', ' . $keyColumnName . ')')
             ->where($qb->expr()->isNotNull('name'));
         $qb->executeStatement();
 
         // Set plain key as name for all API keys without a name
         $qb = $this->connection->createQueryBuilder();
-        $qb->update('api_keys')
+        $qb
+            ->update('api_keys')
             ->set('name', $keyColumnName)
             ->where($qb->expr()->isNull('name'));
         $qb->executeStatement();

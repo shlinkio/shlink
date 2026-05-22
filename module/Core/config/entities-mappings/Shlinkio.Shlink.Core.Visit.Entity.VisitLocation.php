@@ -13,7 +13,8 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
 
     $builder->setTable('visit_locations');
 
-    $builder->createField('id', Types::BIGINT)
+    $builder
+        ->createField('id', Types::BIGINT)
         ->columnName('id')
         ->makePrimaryKey()
         ->generatedValue('IDENTITY')
@@ -29,22 +30,26 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
     ];
 
     foreach ($columns as $columnName => $fieldName) {
-        fieldWithUtf8Charset($builder->createField($fieldName, Types::STRING), $emConfig)->columnName($columnName)
+        fieldWithUtf8Charset($builder->createField($fieldName, Types::STRING), $emConfig)
+            ->columnName($columnName)
             ->nullable()
             ->build();
     }
 
-    $builder->createField('latitude', Types::FLOAT)
+    $builder
+        ->createField('latitude', Types::FLOAT)
         ->columnName('lat')
         ->nullable(false)
         ->build();
 
-    $builder->createField('longitude', Types::FLOAT)
+    $builder
+        ->createField('longitude', Types::FLOAT)
         ->columnName('lon')
         ->nullable(false)
         ->build();
 
-    $builder->createField('isEmpty', Types::BOOLEAN)
+    $builder
+        ->createField('isEmpty', Types::BOOLEAN)
         ->columnName('is_empty')
         ->option('default', false)
         ->nullable(false)

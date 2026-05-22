@@ -28,7 +28,8 @@ readonly class MatomoTrackerBuilder implements MatomoTrackerBuilderInterface
         // Create a new MatomoTracker on every request, because it infers request info during construction
         $tracker = new MatomoTracker($siteId, $this->options->baseUrl);
         // Token required to set the IP and location
-        $tracker->setTokenAuth($this->options->apiToken)
+        $tracker
+            ->setTokenAuth($this->options->apiToken)
             // Ensure params are not sent in the URL, for security reasons
             ->setRequestMethodNonBulk('POST')
             // Set a reasonable timeout

@@ -20,7 +20,8 @@ class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRe
     {
         $em = $this->getEntityManager();
         return $em->wrapInTransaction(static function () use ($apiKey, $em): ApiKey|null {
-            $firstResult = $em->createQueryBuilder()
+            $firstResult = $em
+                ->createQueryBuilder()
                 ->select('a.id')
                 ->from(ApiKey::class, 'a')
                 ->setMaxResults(1)
@@ -44,7 +45,8 @@ class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRe
     public function nameExists(string $name): bool
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('a.id')
+        $qb
+            ->select('a.id')
             ->from(ApiKey::class, 'a')
             ->setMaxResults(1);
 

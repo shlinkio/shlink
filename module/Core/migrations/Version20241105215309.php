@@ -25,7 +25,8 @@ final class Version20241105215309 extends AbstractMigration
         $result = $qb->executeQuery();
 
         $updateQb = $this->connection->createQueryBuilder();
-        $updateQb->update('api_keys')
+        $updateQb
+            ->update('api_keys')
             ->set($keyColumnName, ':encryptedKey')
             ->where($updateQb->expr()->eq($keyColumnName, ':plainTextKey'));
 

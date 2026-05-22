@@ -67,7 +67,8 @@ class ShortUrlVisitsActionTest extends TestCase
             ->willReturn(new Paginator(new ArrayAdapter([])));
 
         $response = $this->action->handle(
-            $this->requestWithApiKey()
+            $this
+                ->requestWithApiKey()
                 ->withAttribute('shortCode', $shortCode)
                 ->withQueryParams([
                     'endDate' => '2016-01-01 00:00:00',

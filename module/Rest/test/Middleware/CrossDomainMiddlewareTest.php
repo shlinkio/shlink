@@ -63,7 +63,8 @@ class CrossDomainMiddlewareTest extends TestCase
     public function optionsRequestIncludesMoreHeaders(): void
     {
         $originalResponse = new Response();
-        $request = new ServerRequest()->withMethod('OPTIONS')
+        $request = new ServerRequest()
+            ->withMethod('OPTIONS')
             ->withHeader('Origin', 'local')
             ->withHeader('Access-Control-Request-Headers', 'foo, bar, baz');
         $this->handler->expects($this->once())->method('handle')->willReturn($originalResponse);
@@ -89,7 +90,8 @@ class CrossDomainMiddlewareTest extends TestCase
         if ($allowHeader !== null) {
             $originalResponse = $originalResponse->withHeader('Allow', $allowHeader);
         }
-        $request = new ServerRequest()->withHeader('Origin', 'local')
+        $request = new ServerRequest()
+            ->withHeader('Origin', 'local')
             ->withMethod('OPTIONS');
         $this->handler->expects($this->once())->method('handle')->willReturn($originalResponse);
 
@@ -113,7 +115,8 @@ class CrossDomainMiddlewareTest extends TestCase
         int $expectedStatus,
     ): void {
         $originalResponse = new Response()->withStatus($status);
-        $request = new ServerRequest()->withMethod($method)
+        $request = new ServerRequest()
+            ->withMethod($method)
             ->withHeader('Origin', 'local');
         $this->handler->expects($this->once())->method('handle')->willReturn($originalResponse);
 
@@ -151,7 +154,8 @@ class CrossDomainMiddlewareTest extends TestCase
     public function credentialsAreAllowedIfConfiguredSo(bool $allowCredentials, string $method): void
     {
         $originalResponse = new Response();
-        $request = new ServerRequest()->withMethod($method)
+        $request = new ServerRequest()
+            ->withMethod($method)
             ->withHeader('Origin', 'local');
         $this->handler->expects($this->once())->method('handle')->willReturn($originalResponse);
 

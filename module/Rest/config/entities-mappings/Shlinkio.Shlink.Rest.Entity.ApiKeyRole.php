@@ -16,7 +16,8 @@ return static function (ClassMetadata $metadata): void {
 
     $builder->setTable('api_key_roles');
 
-    $builder->createField('id', Types::BIGINT)
+    $builder
+        ->createField('id', Types::BIGINT)
         ->makePrimaryKey()
         ->generatedValue('IDENTITY')
         ->option('unsigned', true)
@@ -26,17 +27,20 @@ return static function (ClassMetadata $metadata): void {
         'fieldName' => 'role',
         'type' => Types::STRING,
         'enumType' => Role::class,
-    ])->columnName('role_name')
+    ])
+        ->columnName('role_name')
         ->length(255)
         ->nullable(false)
         ->build();
 
-    $builder->createField('meta', Types::JSON)
+    $builder
+        ->createField('meta', Types::JSON)
         ->columnName('meta')
         ->nullable(false)
         ->build();
 
-    $builder->createManyToOne('apiKey', ApiKey::class)
+    $builder
+        ->createManyToOne('apiKey', ApiKey::class)
         ->addJoinColumn('api_key_id', 'id', false, false, 'CASCADE')
         ->cascadePersist()
         ->build();

@@ -382,7 +382,8 @@ class ImportedLinksProcessorTest extends TestCase
             );
 
         $visitRepo = $this->createMock(VisitRepository::class);
-        $visitRepo->expects($importOrphanVisits ? $this->once() : $this->never())
+        $visitRepo
+            ->expects($importOrphanVisits ? $this->once() : $this->never())
             ->method(
                 'findMostRecentOrphanVisit',
             )

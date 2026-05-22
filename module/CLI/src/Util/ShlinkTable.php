@@ -39,12 +39,12 @@ final class ShlinkTable
         string|null $headerTitle = null,
     ): void {
         $style = Table::getStyleDefinition(self::DEFAULT_STYLE_NAME);
-        $style->setFooterTitleFormat(self::TABLE_TITLE_STYLE)
-            ->setHeaderTitleFormat(self::TABLE_TITLE_STYLE);
+        $style->setFooterTitleFormat(self::TABLE_TITLE_STYLE)->setHeaderTitleFormat(self::TABLE_TITLE_STYLE);
         $tableRows = $this->withRowSeparators ? $this->addRowSeparators($rows) : $rows;
 
         $table = clone $this->baseTable;
-        $table->setStyle($style)
+        $table
+            ->setStyle($style)
             ->setHeaders($headers)
             ->setRows($tableRows)
             ->setFooterTitle($footerTitle)
