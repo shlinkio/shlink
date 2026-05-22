@@ -73,6 +73,7 @@ no-empty-loop = {
 }
 
 prefer-static-closure = { level = "warning" }
+array-style = { level = "warning" }
 prefer-early-continue = { max_allowed_statements = 2 }
 
 no-multi-assignments = { enabled = false }
