@@ -36,28 +36,28 @@ class ShortUrl extends AbstractEntity
 {
     /**
      * @param Collection<int, Tag> $tags
-     * @param Collection<int, Visit> & Selectable<int, Visit> $visits
-     * @param Collection<int, ShortUrlVisitsCount> & Selectable<int, ShortUrlVisitsCount> $visitsCounts
+     * @param Collection<int, Visit>&Selectable<int, Visit> $visits
+     * @param Collection<int, ShortUrlVisitsCount>&Selectable<int, ShortUrlVisitsCount> $visitsCounts
      * @param Collection<int, ShortUrlRedirectRule> $redirectRules
      */
     private function __construct(
-        private string $longUrl,
-        private string $shortCode,
-        private Chronos $dateCreated = new Chronos(),
-        private Collection $tags = new ArrayCollection(),
+        private(set) string $longUrl,
+        private(set) string $shortCode,
+        private(set) Chronos $dateCreated = new Chronos(),
+        private(set) Collection $tags = new ArrayCollection(),
         private Collection&Selectable $visits = new ArrayCollection(),
         private Collection&Selectable $visitsCounts = new ArrayCollection(),
-        private Chronos|null $validSince = null,
-        private Chronos|null $validUntil = null,
-        private int|null $maxVisits = null,
-        private Domain|null $domain = null,
+        private(set) Chronos|null $validSince = null,
+        private(set) Chronos|null $validUntil = null,
+        private(set) int|null $maxVisits = null,
+        private(set) Domain|null $domain = null,
         private bool $customSlugWasProvided = false,
         private int $shortCodeLength = 0,
         public readonly ApiKey|null $authorApiKey = null,
-        private string|null $title = null,
+        private(set) string|null $title = null,
         private bool $titleWasAutoResolved = false,
-        private bool $crawlable = false,
-        private bool $forwardQuery = true,
+        private(set) bool $crawlable = false,
+        private(set) bool $forwardQuery = true,
         private string|null $importSource = null,
         private string|null $importOriginalShortCode = null,
         private Collection $redirectRules = new ArrayCollection(),
@@ -170,31 +170,37 @@ class ShortUrl extends AbstractEntity
         }
     }
 
+    /** @deprecated Use property directly */
     public function getLongUrl(): string
     {
         return $this->longUrl;
     }
 
+    /** @deprecated Use property directly  */
     public function getShortCode(): string
     {
         return $this->shortCode;
     }
 
+    /** @deprecated Use property directly */
     public function getDomain(): Domain|null
     {
         return $this->domain;
     }
 
+    /** @deprecated Use property directly  */
     public function forwardQuery(): bool
     {
         return $this->forwardQuery;
     }
 
+    /** @deprecated Use property directly */
     public function title(): string|null
     {
         return $this->title;
     }
 
+    /** @deprecated Use property directly  */
     public function dateCreated(): Chronos
     {
         return $this->dateCreated;
