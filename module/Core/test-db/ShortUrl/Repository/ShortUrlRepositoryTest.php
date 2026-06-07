@@ -54,7 +54,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->flush();
 
         self::assertSame($regularOne, $this->repo->findOneWithDomainFallback(
-            ShortUrlIdentifier::fromShortCodeAndDomain($regularOne->getShortCode()),
+            ShortUrlIdentifier::fromShortCodeAndDomain($regularOne->shortCode),
             ShortUrlMode::STRICT,
         ));
         self::assertSame($regularOne, $this->repo->findOneWithDomainFallback(
@@ -70,22 +70,22 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             ShortUrlMode::STRICT,
         ));
         self::assertSame($regularOne, $this->repo->findOneWithDomainFallback(
-            ShortUrlIdentifier::fromShortCodeAndDomain($withDomainDuplicatingRegular->getShortCode()),
+            ShortUrlIdentifier::fromShortCodeAndDomain($withDomainDuplicatingRegular->shortCode),
             ShortUrlMode::STRICT,
         ));
         self::assertSame($withDomain, $this->repo->findOneWithDomainFallback(
-            ShortUrlIdentifier::fromShortCodeAndDomain($withDomain->getShortCode(), 'example.com'),
+            ShortUrlIdentifier::fromShortCodeAndDomain($withDomain->shortCode, 'example.com'),
             ShortUrlMode::STRICT,
         ));
         self::assertSame(
             $withDomainDuplicatingRegular,
             $this->repo->findOneWithDomainFallback(
-                ShortUrlIdentifier::fromShortCodeAndDomain($withDomainDuplicatingRegular->getShortCode(), 's.test'),
+                ShortUrlIdentifier::fromShortCodeAndDomain($withDomainDuplicatingRegular->shortCode, 's.test'),
                 ShortUrlMode::STRICT,
             ),
         );
         self::assertSame($regularOne, $this->repo->findOneWithDomainFallback(ShortUrlIdentifier::fromShortCodeAndDomain(
-            $withDomainDuplicatingRegular->getShortCode(),
+            $withDomainDuplicatingRegular->shortCode,
             'other-domain.com',
         ), ShortUrlMode::STRICT));
         self::assertNull($this->repo->findOneWithDomainFallback(
@@ -93,11 +93,11 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             ShortUrlMode::STRICT,
         ));
         self::assertNull($this->repo->findOneWithDomainFallback(
-            ShortUrlIdentifier::fromShortCodeAndDomain($withDomain->getShortCode()),
+            ShortUrlIdentifier::fromShortCodeAndDomain($withDomain->shortCode),
             ShortUrlMode::STRICT,
         ));
         self::assertNull($this->repo->findOneWithDomainFallback(
-            ShortUrlIdentifier::fromShortCodeAndDomain($withDomain->getShortCode(), 'other-domain.com'),
+            ShortUrlIdentifier::fromShortCodeAndDomain($withDomain->shortCode, 'other-domain.com'),
             ShortUrlMode::STRICT,
         ));
     }

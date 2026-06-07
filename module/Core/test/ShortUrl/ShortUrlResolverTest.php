@@ -42,7 +42,7 @@ class ShortUrlResolverTest extends TestCase
     public function shortCodeIsProperlyParsed(ApiKey|null $apiKey): void
     {
         $shortUrl = ShortUrl::withLongUrl('https://expected_url');
-        $shortCode = $shortUrl->getShortCode();
+        $shortCode = $shortUrl->shortCode;
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
 
         $this->repo
@@ -75,7 +75,7 @@ class ShortUrlResolverTest extends TestCase
     public function resolveEnabledShortUrlProperlyParsesShortCode(): void
     {
         $shortUrl = ShortUrl::withLongUrl('https://expected_url');
-        $shortCode = $shortUrl->getShortCode();
+        $shortCode = $shortUrl->shortCode;
 
         $this->repo
             ->expects($this->once())
@@ -119,7 +119,7 @@ class ShortUrlResolverTest extends TestCase
     #[Test, DataProvider('provideDisabledShortUrls')]
     public function resolveEnabledShortUrlThrowsExceptionIfUrlIsNotEnabled(ShortUrl $shortUrl): void
     {
-        $shortCode = $shortUrl->getShortCode();
+        $shortCode = $shortUrl->shortCode;
 
         $this->repo
             ->expects($this->once())

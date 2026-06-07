@@ -36,28 +36,28 @@ class ShortUrl extends AbstractEntity
 {
     /**
      * @param Collection<int, Tag> $tags
-     * @param Collection<int, Visit> & Selectable<int, Visit> $visits
-     * @param Collection<int, ShortUrlVisitsCount> & Selectable<int, ShortUrlVisitsCount> $visitsCounts
+     * @param Collection<int, Visit>&Selectable<int, Visit> $visits
+     * @param Collection<int, ShortUrlVisitsCount>&Selectable<int, ShortUrlVisitsCount> $visitsCounts
      * @param Collection<int, ShortUrlRedirectRule> $redirectRules
      */
     private function __construct(
-        private string $longUrl,
-        private string $shortCode,
-        private Chronos $dateCreated = new Chronos(),
-        private Collection $tags = new ArrayCollection(),
+        private(set) string $longUrl,
+        private(set) string $shortCode,
+        private(set) Chronos $dateCreated = new Chronos(),
+        private(set) Collection $tags = new ArrayCollection(),
         private Collection&Selectable $visits = new ArrayCollection(),
         private Collection&Selectable $visitsCounts = new ArrayCollection(),
-        private Chronos|null $validSince = null,
-        private Chronos|null $validUntil = null,
-        private int|null $maxVisits = null,
-        private Domain|null $domain = null,
+        private(set) Chronos|null $validSince = null,
+        private(set) Chronos|null $validUntil = null,
+        private(set) int|null $maxVisits = null,
+        private(set) Domain|null $domain = null,
         private bool $customSlugWasProvided = false,
         private int $shortCodeLength = 0,
         public readonly ApiKey|null $authorApiKey = null,
-        private string|null $title = null,
+        private(set) string|null $title = null,
         private bool $titleWasAutoResolved = false,
-        private bool $crawlable = false,
-        private bool $forwardQuery = true,
+        private(set) bool $crawlable = false,
+        private(set) bool $forwardQuery = true,
         private string|null $importSource = null,
         private string|null $importOriginalShortCode = null,
         private Collection $redirectRules = new ArrayCollection(),
@@ -91,8 +91,6 @@ class ShortUrl extends AbstractEntity
             shortCode: sprintf(
                 '%s%s',
                 $creation->pathPrefix ?? '',
-                // TODO Encapsulate Generating the random short code into ShortUrlCreation, when custom slug is not set,
-                //      then expose it as shortCode or something generic
                 $creation->customSlug ?? generateRandomShortCode($shortCodeLength, $creation->shortUrlMode),
             ),
             tags: $relationResolver->resolveTags($creation->tags),
@@ -168,36 +166,6 @@ class ShortUrl extends AbstractEntity
         if ($shortUrlEdit->forwardQuery !== null) {
             $this->forwardQuery = $shortUrlEdit->forwardQuery;
         }
-    }
-
-    public function getLongUrl(): string
-    {
-        return $this->longUrl;
-    }
-
-    public function getShortCode(): string
-    {
-        return $this->shortCode;
-    }
-
-    public function getDomain(): Domain|null
-    {
-        return $this->domain;
-    }
-
-    public function forwardQuery(): bool
-    {
-        return $this->forwardQuery;
-    }
-
-    public function title(): string|null
-    {
-        return $this->title;
-    }
-
-    public function dateCreated(): Chronos
-    {
-        return $this->dateCreated;
     }
 
     public function reachedVisits(int $visitsAmount): bool

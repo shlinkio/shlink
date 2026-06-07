@@ -32,12 +32,12 @@ final readonly class ShortUrlWithDeps
 
     public static function fromShortUrl(ShortUrl $shortUrl): self
     {
-        return new self($shortUrl, authority: $shortUrl->getDomain()?->authority);
+        return new self($shortUrl, authority: $shortUrl->domain?->authority);
     }
 
     public function toIdentifier(): ShortUrlIdentifier
     {
-        return ShortUrlIdentifier::fromShortCodeAndDomain($this->shortUrl->getShortCode(), $this->authority);
+        return ShortUrlIdentifier::fromShortCodeAndDomain($this->shortUrl->shortCode, $this->authority);
     }
 
     public function toArray(): array

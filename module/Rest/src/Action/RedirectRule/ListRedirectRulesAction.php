@@ -32,7 +32,7 @@ class ListRedirectRulesAction extends AbstractRestAction
         $rules = $this->ruleService->rulesForShortUrl($shortUrl);
 
         return new JsonResponse([
-            'defaultLongUrl' => $shortUrl->getLongUrl(),
+            'defaultLongUrl' => $shortUrl->longUrl,
             'redirectRules' => $rules,
         ]);
     }

@@ -37,7 +37,7 @@ class SetRedirectRulesAction extends AbstractRestAction
         $result = $this->ruleService->setRulesForShortUrl($shortUrl, $data);
 
         return new JsonResponse([
-            'defaultLongUrl' => $shortUrl->getLongUrl(),
+            'defaultLongUrl' => $shortUrl->longUrl,
             'redirectRules' => $result,
         ]);
     }

@@ -57,8 +57,8 @@ class PublishingUpdatesGeneratorTest extends TestCase
         self::assertEquals(
             [
                 'shortUrl' => [
-                    'shortCode' => $shortUrl->getShortCode(),
-                    'shortUrl' => 'http:/' . $shortUrl->getShortCode(),
+                    'shortCode' => $shortUrl->shortCode,
+                    'shortUrl' => 'http:/' . $shortUrl->shortCode,
                     'longUrl' => 'https://longUrl',
                     'dateCreated' => $this->now->toAtomString(),
                     'tags' => [],
@@ -141,8 +141,8 @@ class PublishingUpdatesGeneratorTest extends TestCase
         self::assertEquals(
             [
                 'shortUrl' => [
-                    'shortCode' => $shortUrl->getShortCode(),
-                    'shortUrl' => 'http:/' . $shortUrl->getShortCode(),
+                    'shortCode' => $shortUrl->shortCode,
+                    'shortUrl' => 'http:/' . $shortUrl->shortCode,
                     'longUrl' => 'https://longUrl',
                     'dateCreated' => $this->now->toAtomString(),
                     'tags' => [],

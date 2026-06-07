@@ -144,8 +144,8 @@ class ListShortUrlsCommandTest extends TestCase
             apiKey: ApiKey::fromMeta(ApiKeyMeta::fromParams(name: 'my api key')),
             tags: ['foo', 'bar', 'baz'],
         ));
-        $shortCode = $shortUrl->getShortCode();
-        $created = $shortUrl->dateCreated()->toAtomString();
+        $shortCode = $shortUrl->shortCode;
+        $created = $shortUrl->dateCreated->toAtomString();
 
         yield 'tags only' => [
             ['--show-tags' => true],

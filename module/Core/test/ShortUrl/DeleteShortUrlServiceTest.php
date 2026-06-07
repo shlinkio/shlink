@@ -39,7 +39,7 @@ class DeleteShortUrlServiceTest extends TestCase
         $shortUrl = ShortUrl::createFake()->setVisits(new ArrayCollection(
             array_map(static fn () => Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::empty()), range(0, 10)),
         ));
-        $this->shortCode = $shortUrl->getShortCode();
+        $this->shortCode = $shortUrl->shortCode;
 
         $this->em = $this->createMock(EntityManagerInterface::class);
 

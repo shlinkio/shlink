@@ -51,7 +51,7 @@ class CreateShortUrlCommand extends Command
             );
 
             $io->writeln([
-                sprintf('Processed long URL: <info>%s</info>', $result->shortUrl->getLongUrl()),
+                sprintf('Processed long URL: <info>%s</info>', $result->shortUrl->longUrl),
                 sprintf('Generated short URL: <info>%s</info>', $this->stringifier->stringify($result->shortUrl)),
             ]);
             return self::SUCCESS;
