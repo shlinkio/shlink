@@ -57,7 +57,7 @@ class MatomoVisitSenderTest extends TestCase
         $tracker
             ->expects($this->once())
             ->method('doTrackPageView')
-            ->with($visit->shortUrl?->title() ?? '');
+            ->with($visit->shortUrl->title ?? '');
         $tracker
             ->expects($this->once())
             ->method('setForceVisitDateTime')

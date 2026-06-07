@@ -77,7 +77,7 @@ readonly class MatomoVisitSender implements MatomoVisitSenderInterface
         }
 
         // Send the short URL title or an empty document title to avoid different actions to be created by matomo
-        $tracker->doTrackPageView($visit->shortUrl?->title() ?? '');
+        $tracker->doTrackPageView($visit->shortUrl->title ?? '');
     }
 
     private function resolveUrlToTrack(Visit $visit): string

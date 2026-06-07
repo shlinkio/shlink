@@ -157,7 +157,7 @@ class ImportedLinksProcessorTest extends TestCase
                 $this->isInstanceOf(ShortUrl::class),
             )
             ->willReturnCallback(static function (ShortUrl $shortUrl): void {
-                if ($shortUrl->getShortCode() === 'baz') {
+                if ($shortUrl->shortCode === 'baz') {
                     throw new RuntimeException('Whatever error');
                 }
             });

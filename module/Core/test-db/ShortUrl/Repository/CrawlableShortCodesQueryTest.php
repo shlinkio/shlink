@@ -41,10 +41,10 @@ class CrawlableShortCodesQueryTest extends DatabaseTestCase
         $results = [...($this->query)()];
 
         self::assertCount(3, $results);
-        self::assertContains($shortUrl1->getShortCode(), $results);
-        self::assertContains($shortUrl3->getShortCode(), $results);
-        self::assertContains($shortUrl4->getShortCode(), $results);
-        self::assertNotContains($shortUrl2->getShortCode(), $results);
-        self::assertNotContains($shortUrl5->getShortCode(), $results);
+        self::assertContains($shortUrl1->shortCode, $results);
+        self::assertContains($shortUrl3->shortCode, $results);
+        self::assertContains($shortUrl4->shortCode, $results);
+        self::assertNotContains($shortUrl2->shortCode, $results);
+        self::assertNotContains($shortUrl5->shortCode, $results);
     }
 }

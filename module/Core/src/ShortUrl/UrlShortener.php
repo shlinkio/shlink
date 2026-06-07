@@ -81,10 +81,8 @@ readonly class UrlShortener implements UrlShortenerInterface
         );
 
         if (!$couldBeMadeUnique) {
-            $domain = $shortUrlToBeCreated->getDomain();
-            $domainAuthority = $domain?->authority;
-
-            throw NonUniqueSlugException::fromSlug($shortUrlToBeCreated->getShortCode(), $domainAuthority);
+            $domainAuthority = $shortUrlToBeCreated->domain?->authority;
+            throw NonUniqueSlugException::fromSlug($shortUrlToBeCreated->shortCode, $domainAuthority);
         }
     }
 }

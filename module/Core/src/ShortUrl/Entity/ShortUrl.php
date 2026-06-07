@@ -91,8 +91,6 @@ class ShortUrl extends AbstractEntity
             shortCode: sprintf(
                 '%s%s',
                 $creation->pathPrefix ?? '',
-                // TODO Encapsulate Generating the random short code into ShortUrlCreation, when custom slug is not set,
-                //      then expose it as shortCode or something generic
                 $creation->customSlug ?? generateRandomShortCode($shortCodeLength, $creation->shortUrlMode),
             ),
             tags: $relationResolver->resolveTags($creation->tags),
@@ -168,42 +166,6 @@ class ShortUrl extends AbstractEntity
         if ($shortUrlEdit->forwardQuery !== null) {
             $this->forwardQuery = $shortUrlEdit->forwardQuery;
         }
-    }
-
-    /** @deprecated Use property directly */
-    public function getLongUrl(): string
-    {
-        return $this->longUrl;
-    }
-
-    /** @deprecated Use property directly  */
-    public function getShortCode(): string
-    {
-        return $this->shortCode;
-    }
-
-    /** @deprecated Use property directly */
-    public function getDomain(): Domain|null
-    {
-        return $this->domain;
-    }
-
-    /** @deprecated Use property directly  */
-    public function forwardQuery(): bool
-    {
-        return $this->forwardQuery;
-    }
-
-    /** @deprecated Use property directly */
-    public function title(): string|null
-    {
-        return $this->title;
-    }
-
-    /** @deprecated Use property directly  */
-    public function dateCreated(): Chronos
-    {
-        return $this->dateCreated;
     }
 
     public function reachedVisits(int $visitsAmount): bool

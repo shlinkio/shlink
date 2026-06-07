@@ -666,7 +666,7 @@ class VisitRepositoryTest extends DatabaseTestCase
             tags: $tags,
         ), $this->relationResolver);
         $domain = is_string($withDomain) ? $withDomain : 'example.com';
-        $shortCode = $shortUrl->getShortCode();
+        $shortCode = $shortUrl->shortCode;
         $this->getEntityManager()->persist($shortUrl);
 
         $this->createVisitsForShortUrl($shortUrl, $visitsAmount);

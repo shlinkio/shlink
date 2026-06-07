@@ -107,7 +107,7 @@ class ListShortUrlsCommand extends Command
         }
         if ($params->showDomain) {
             $columnsMap['Domain'] = static fn (array $_, ShortUrl $shortUrl): string => (
-                $shortUrl->getDomain()->authority ?? Domain::DEFAULT_AUTHORITY
+                $shortUrl->domain->authority ?? Domain::DEFAULT_AUTHORITY
             );
         }
         if ($params->showApiKey) {

@@ -53,10 +53,10 @@ class ShortUrlTest extends TestCase
     public function regenerateShortCodeProperlyChangesTheValueOnValidShortUrls(
         ShortUrl $shortUrl,
     ): void {
-        $firstShortCode = $shortUrl->getShortCode();
+        $firstShortCode = $shortUrl->shortCode;
 
         $shortUrl->regenerateShortCode(ShortUrlMode::STRICT);
-        $secondShortCode = $shortUrl->getShortCode();
+        $secondShortCode = $shortUrl->shortCode;
 
         self::assertNotEquals($firstShortCode, $secondShortCode);
     }
@@ -80,7 +80,7 @@ class ShortUrlTest extends TestCase
             new ShortUrlCreation('https://longUrl', shortCodeLength: $length ?? DEFAULT_SHORT_CODES_LENGTH),
         );
 
-        self::assertEquals($expectedLength, strlen($shortUrl->getShortCode()));
+        self::assertEquals($expectedLength, strlen($shortUrl->shortCode));
     }
 
     public static function provideLengths(): iterable
@@ -102,7 +102,7 @@ class ShortUrlTest extends TestCase
             pathPrefix: $pathPrefix,
             shortCodeLength: 5,
         ));
-        $shortCode = $shortUrl->getShortCode();
+        $shortCode = $shortUrl->shortCode;
 
         if (strlen($expectedPrefix) > 0) {
             self::assertStringStartsWith($expectedPrefix, $shortCode);
@@ -116,7 +116,7 @@ class ShortUrlTest extends TestCase
         $range = range(1, 1000); // Use a "big" number to reduce false negatives
         $allFor = static fn (ShortUrlMode $mode): bool => every($range, static function () use ($mode): bool {
             $shortUrl = ShortUrl::create(new ShortUrlCreation('https://foo', shortUrlMode: $mode));
-            $shortCode = $shortUrl->getShortCode();
+            $shortCode = $shortUrl->shortCode;
 
             return $shortCode === strtolower($shortCode);
         });

@@ -57,7 +57,7 @@ class SetRedirectRulesActionTest extends TestCase
 
         self::assertEquals(
             [
-                'defaultLongUrl' => $shortUrl->getLongUrl(),
+                'defaultLongUrl' => $shortUrl->longUrl,
                 'redirectRules' => $redirectRules,
             ],
             $payload,

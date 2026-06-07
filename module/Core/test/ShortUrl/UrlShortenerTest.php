@@ -74,7 +74,7 @@ class UrlShortenerTest extends TestCase
             $thereIsError = true;
         });
 
-        self::assertEquals($longUrl, $result->shortUrl->getLongUrl());
+        self::assertEquals($longUrl, $result->shortUrl->longUrl);
         self::assertEquals($expectDispatchError, $thereIsError);
     }
 

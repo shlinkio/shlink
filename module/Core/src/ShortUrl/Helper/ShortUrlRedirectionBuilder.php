@@ -27,7 +27,7 @@ readonly class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderI
         string|null $extraPath = null,
     ): string {
         $uri = new Uri($this->redirectionResolver->resolveLongUrl($shortUrl, $request));
-        $shouldForwardQuery = $shortUrl->forwardQuery();
+        $shouldForwardQuery = $shortUrl->forwardQuery;
         $baseQueryString = $uri->getQuery();
         $basePath = $uri->getPath();
 

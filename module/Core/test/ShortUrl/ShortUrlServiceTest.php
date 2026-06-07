@@ -82,7 +82,7 @@ class ShortUrlServiceTest extends TestCase
             $until,
         );
         self::assertEquals($shortUrlEdit->maxVisits, $maxVisits);
-        self::assertEquals($shortUrlEdit->longUrl ?? $originalLongUrl, $shortUrl->getLongUrl());
+        self::assertEquals($shortUrlEdit->longUrl ?? $originalLongUrl, $shortUrl->longUrl);
     }
 
     public static function provideShortUrlEdits(): iterable

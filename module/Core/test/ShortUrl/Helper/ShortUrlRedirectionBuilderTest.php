@@ -49,7 +49,7 @@ class ShortUrlRedirectionBuilderTest extends TestCase
                 $shortUrl,
                 $request,
             )
-            ->willReturn($shortUrl->getLongUrl());
+            ->willReturn($shortUrl->longUrl);
 
         $result = $this->redirectionBuilder->buildShortUrlRedirect($shortUrl, $request, $extraPath);
 
@@ -143,7 +143,7 @@ class ShortUrlRedirectionBuilderTest extends TestCase
                 $shortUrl,
                 $request,
             )
-            ->willReturn($shortUrl->getLongUrl());
+            ->willReturn($shortUrl->longUrl);
 
         $result = $this->redirectionBuilder->buildShortUrlRedirect($shortUrl, $request);
 

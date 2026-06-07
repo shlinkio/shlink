@@ -9,9 +9,9 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
-use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortCodeUniquenessHelper;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
 
@@ -19,47 +19,42 @@ class ShortCodeUniquenessHelperTest extends TestCase
 {
     private ShortCodeUniquenessHelper $helper;
     private MockObject&ShortUrlRepositoryInterface $repo;
-    private MockObject&ShortUrl $shortUrl;
 
     protected function setUp(): void
     {
         $this->repo = $this->createMock(ShortUrlRepositoryInterface::class);
         $this->helper = new ShortCodeUniquenessHelper($this->repo, new UrlShortenerOptions());
-
-        $this->shortUrl = $this->createMock(ShortUrl::class);
-        $this->shortUrl->method('getShortCode')->willReturn('abc123');
     }
 
     #[Test, DataProvider('provideDomains')]
-    public function shortCodeIsRegeneratedIfAlreadyInUse(Domain|null $domain, string|null $expectedAuthority): void
+    public function shortCodeIsRegeneratedIfAlreadyInUse(string|null $domain, string|null $expectedAuthority): void
     {
+        $shortUrl = $this->shortUrl($domain);
+        $initialShortCode = $shortUrl->shortCode;
+
         $callIndex = 0;
         $expectedCalls = 3;
         $this->repo
             ->expects($this->exactly($expectedCalls))
             ->method('shortCodeIsInUseWithLock')
-            ->with(
-                ShortUrlIdentifier::fromShortCodeAndDomain('abc123', $expectedAuthority),
-            )
+            ->with($this->callback(
+                static fn (ShortUrlIdentifier $identifier) => $identifier->domain === $expectedAuthority,
+            ))
             ->willReturnCallback(static function () use (&$callIndex, $expectedCalls) {
                 $callIndex++;
                 return $callIndex < $expectedCalls;
             });
-        $this->shortUrl->method('getDomain')->willReturn($domain);
-        $this->shortUrl
-            ->expects($this->exactly($expectedCalls - 1))
-            ->method('regenerateShortCode')
-            ->with();
 
-        $result = $this->helper->ensureShortCodeUniqueness($this->shortUrl, false);
+        $result = $this->helper->ensureShortCodeUniqueness($shortUrl, hasCustomSlug: false);
 
         self::assertTrue($result);
+        self::assertNotEquals($initialShortCode, $shortUrl->shortCode);
     }
 
     public static function provideDomains(): iterable
     {
         yield 'no domain' => [null, null];
-        yield 'domain' => [Domain::withAuthority($authority = 's.test'), $authority];
+        yield 'domain' => [$authority = 's.test', $authority];
     }
 
     #[Test]
@@ -68,15 +63,18 @@ class ShortCodeUniquenessHelperTest extends TestCase
         $this->repo
             ->expects($this->once())
             ->method('shortCodeIsInUseWithLock')
-            ->with(
-                ShortUrlIdentifier::fromShortCodeAndDomain('abc123'),
-            )
             ->willReturn(true);
-        $this->shortUrl->method('getDomain')->willReturn(null);
-        $this->shortUrl->expects($this->never())->method('regenerateShortCode');
 
-        $result = $this->helper->ensureShortCodeUniqueness($this->shortUrl, true);
+        $shortUrl = $this->shortUrl();
+        $initialShortCode = $shortUrl->shortCode;
+        $result = $this->helper->ensureShortCodeUniqueness($shortUrl, hasCustomSlug: true);
 
         self::assertFalse($result);
+        self::assertEquals($initialShortCode, $shortUrl->shortCode);
+    }
+
+    private function shortUrl(string|null $domain = null): ShortUrl
+    {
+        return ShortUrl::create(new ShortUrlCreation('https://example.com', domain: $domain));
     }
 }

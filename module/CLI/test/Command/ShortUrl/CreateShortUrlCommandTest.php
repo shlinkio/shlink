@@ -82,7 +82,7 @@ class CreateShortUrlCommandTest extends TestCase
             );
         $this->stringifier->method('stringify')->willReturnMap([[$shortUrl, 'stringified_short_url']]);
 
-        $this->commandTester->setInputs([$shortUrl->getLongUrl()]);
+        $this->commandTester->setInputs([$shortUrl->longUrl]);
         $this->commandTester->execute([]);
     }
 

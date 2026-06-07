@@ -21,6 +21,6 @@ readonly class ShortUrlRedirectionResolver implements ShortUrlRedirectionResolve
             }
         }
 
-        return $shortUrl->getLongUrl();
+        return $shortUrl->longUrl;
     }
 }

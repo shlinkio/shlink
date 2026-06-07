@@ -166,10 +166,10 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
         $result = $this->repo->findList(new ShortUrlsListFiltering(orderBy: Ordering::fromFieldAsc('longUrl')));
 
         self::assertCount(count($urls), $result);
-        self::assertEquals('https://a', $result[0]->shortUrl->getLongUrl());
-        self::assertEquals('https://b', $result[1]->shortUrl->getLongUrl());
-        self::assertEquals('https://c', $result[2]->shortUrl->getLongUrl());
-        self::assertEquals('https://z', $result[3]->shortUrl->getLongUrl());
+        self::assertEquals('https://a', $result[0]->shortUrl->longUrl);
+        self::assertEquals('https://b', $result[1]->shortUrl->longUrl);
+        self::assertEquals('https://c', $result[2]->shortUrl->longUrl);
+        self::assertEquals('https://z', $result[3]->shortUrl->longUrl);
     }
 
     #[Test]
