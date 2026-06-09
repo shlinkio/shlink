@@ -32,6 +32,7 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
         ->createField('longUrlHash', Types::BINARY)
         ->columnName('long_url_hash')
         ->length(32)
+        ->nullable(false)
         ->build();
 
     $builder->addIndex(['long_url_hash'], 'IDX_long_url_hash');
