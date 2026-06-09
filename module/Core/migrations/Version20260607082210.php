@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace ShlinkMigrations;
 
-use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -22,9 +21,19 @@ final class Version20260607082210 extends AbstractMigration
         $qb
             ->select('id', 'original_url')
             ->from('short_urls');
+        $shortUrlsResult = $qb->executeQuery();
 
-        $result = $qb->executeQuery();
-        while ($row = $result->fetchAssociative()) {
+        $iteration = 0;
+        $this->connection->beginTransaction();
+
+        while ($row = $shortUrlsResult->fetchAssociative()) {
+            // Every few updates, commit the transaction and begin a new one
+            if (($iteration % 2000) === 0) {
+                $this->connection->commit();
+                $this->connection->beginTransaction();
+            }
+            $iteration++;
+
             $updateQb = $this->connection->createQueryBuilder();
             $updateQb
                 ->update('short_urls')
@@ -37,10 +46,14 @@ final class Version20260607082210 extends AbstractMigration
                 ->setMaxResults(1)
                 ->executeStatement();
         }
+
+        // Commit any pending update that is still pending
+        $this->connection->commit();
     }
 
     public function isTransactional(): bool
     {
-        return !$this->connection->getDatabasePlatform() instanceof MySQLPlatform;
+        // This migration should not be transactional, as it handles internal batched transactions
+        return false;
     }
 }
