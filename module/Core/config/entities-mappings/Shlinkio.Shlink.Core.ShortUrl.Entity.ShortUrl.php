@@ -28,6 +28,15 @@ return static function (ClassMetadata $metadata, array $emConfig): void {
         ->length(2048)
         ->build();
 
+    $builder
+        ->createField('longUrlHash', Types::BINARY)
+        ->columnName('long_url_hash')
+        ->length(32)
+        ->nullable(false)
+        ->build();
+
+    $builder->addIndex(['long_url_hash'], 'IDX_long_url_hash');
+
     $shortCodeField = fieldWithUtf8Charset(
         $builder->createField('shortCode', Types::STRING),
         $emConfig,

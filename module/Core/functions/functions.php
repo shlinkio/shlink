@@ -22,6 +22,8 @@ use function array_map;
 use function array_pad;
 use function array_reduce;
 use function explode;
+use function hash;
+use function hex2bin;
 use function implode;
 use function is_array;
 use function mb_strtolower;
@@ -262,4 +264,13 @@ function geolocationFromRequest(ServerRequestInterface $request): Location|null
     }
 
     return $geolocation;
+}
+
+/**
+ * Generate a SHA256 hash of a string and then convert it to binary
+ */
+function stringToBinHash(string $value): string
+{
+    // @phpstan-ignore-next-line return.type
+    return hex2bin(hash('sha256', $value));
 }

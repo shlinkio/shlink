@@ -30,10 +30,13 @@ use function array_map;
 use function count;
 use function Shlinkio\Shlink\Common\normalizeDate;
 use function Shlinkio\Shlink\Core\generateRandomShortCode;
+use function Shlinkio\Shlink\Core\stringToBinHash;
 use function sprintf;
 
 class ShortUrl extends AbstractEntity
 {
+    private(set) string $longUrlHash;
+
     /**
      * @param Collection<int, Tag> $tags
      * @param Collection<int, Visit>&Selectable<int, Visit> $visits
@@ -41,7 +44,13 @@ class ShortUrl extends AbstractEntity
      * @param Collection<int, ShortUrlRedirectRule> $redirectRules
      */
     private function __construct(
-        private(set) string $longUrl,
+        private(set) string $longUrl {
+            get => $this->longUrl;
+            set(string $value) {
+                $this->longUrl = $value;
+                $this->longUrlHash = stringToBinHash($value);
+            }
+        },
         private(set) string $shortCode,
         private(set) Chronos $dateCreated = new Chronos(),
         private(set) Collection $tags = new ArrayCollection(),
