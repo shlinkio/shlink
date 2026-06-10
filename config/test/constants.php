@@ -32,4 +32,18 @@ const CHROMEOS_USER_AGENT =
     'Mozilla/5.0 (X11; CrOS x86_64 16181.61.0) AppleWebKit/537.36 (KHTML, like Gecko) '
     . 'Chrome/134.0.6998.198 Safari/537.36';
 
+const BROWSER_CHROME_USER_AGENT =
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+    . 'Chrome/146.0.0.0 Safari/537.36';
+
+const BROWSER_FIREFOX_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0';
+
+const BROWSER_SAFARI_USER_AGENT =
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 15_7_4) AppleWebKit/605.1.15 '
+    . '(KHTML, like Gecko) Version/26.0 Safari/605.1.15';
+
+const BROWSER_OPERA_USER_AGENT =
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+    . 'Chrome/146.0.0.0 Safari/537.36 OPR/128.0.0.0';
+
 const DYNAMIC_ENV_VARS_FILE = __DIR__ . '/../../config/test/dynamic_test_env.php';
