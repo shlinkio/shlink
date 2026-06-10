@@ -20,15 +20,19 @@ final class Version20260607082210 extends AbstractMigration
         $qb = $this->connection->createQueryBuilder();
         $qb
             ->select('id', 'original_url')
-            ->from('short_urls');
+            ->from('short_urls')
+            // If this migration times out, this will ensure it can be rerun, and it will continue where it was left, so
+            // it can be run multiple times until all short URLs have been processed
+            ->where($qb->expr()->eq('long_url_hash', ':longUrlHash'))
+            ->setParameters(['longUrlHash' => '']);
         $shortUrlsResult = $qb->executeQuery();
 
-        $iteration = 0;
+        $iteration = 1;
         $this->connection->beginTransaction();
 
         while ($row = $shortUrlsResult->fetchAssociative()) {
             // Every few updates, commit the transaction and begin a new one
-            if (($iteration % 2000) === 0) {
+            if (($iteration % 10_000) === 0) {
                 $this->connection->commit();
                 $this->connection->beginTransaction();
             }

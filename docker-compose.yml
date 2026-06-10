@@ -127,7 +127,7 @@ services:
     shlink_db_maria:
         container_name: shlink_db_maria
         user: 1000:1000
-        image: mariadb:10.7
+        image: mariadb:12.3
         ports:
             - "3308:3306"
         volumes:

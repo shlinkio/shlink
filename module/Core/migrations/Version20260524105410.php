@@ -26,7 +26,7 @@ final class Version20260524105410 extends AbstractMigration
 
         $shortUrls->addColumn(self::COLUMN_NAME, Types::BINARY, [
             'length' => 32,
-            'notnull' => false, // Temporarily nullable until values have been filled
+            'default' => '', // Temporary value until they have been filled by next migration
         ]);
         $shortUrls->addIndex([self::COLUMN_NAME], self::INDEX_NAME);
     }
