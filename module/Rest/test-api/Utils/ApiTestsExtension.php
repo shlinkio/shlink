@@ -20,6 +20,6 @@ class ApiTestsExtension implements Extension
 
     public static function restartRRServer(): void
     {
-        (new Process(['bin/rr', 'reset', '-c=config/roadrunner/.rr.test.yml']))->mustRun();
+        new Process(['bin/rr', 'reset', '-c=config/roadrunner/.rr.test.yml'])->mustRun();
     }
 }
