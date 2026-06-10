@@ -18,7 +18,8 @@ class MercureInfoTest extends ApiTestCase
         self::assertEquals(501, $resp->getStatusCode());
     }
 
-    #[Test, WithEnvVars([
+    #[Test]
+    #[WithEnvVars([
         EnvVars::MERCURE_ENABLED->value => true,
         EnvVars::MERCURE_PUBLIC_HUB_URL->value => 'https://mercure.example.com',
         EnvVars::MERCURE_JWT_SECRET->value => 'mercure_jwt_key_long_enough_to_avoid_error',

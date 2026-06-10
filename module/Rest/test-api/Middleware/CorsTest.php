@@ -77,7 +77,8 @@ class CorsTest extends ApiTestCase
         yield 'health route' => ['/health', 'GET'];
     }
 
-    #[Test, WithEnvVars([
+    #[Test]
+    #[WithEnvVars([
         EnvVars::CORS_MAX_AGE->value => 5000,
         EnvVars::CORS_ALLOW_CREDENTIALS->value => true,
         EnvVars::CORS_ALLOW_ORIGIN->value => 'example.com,localhost:8000',
