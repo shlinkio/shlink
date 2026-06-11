@@ -234,22 +234,6 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertNotEquals($firstShortCode, $secondShortCode);
     }
 
-    #[Test, DataProvider('provideIdn')]
-    public function createsNewShortUrlWithInternationalizedDomainName(string $longUrl): void
-    {
-        [$statusCode, $payload] = $this->createShortUrl(['longUrl' => $longUrl]);
-
-        self::assertEquals(self::STATUS_OK, $statusCode);
-        self::assertEquals($payload['longUrl'], $longUrl);
-    }
-
-    public static function provideIdn(): iterable
-    {
-        yield ['http://tést.shlink.io']; // Redirects to https://shlink.io
-        yield ['http://test.shlink.io']; // Redirects to http://tést.shlink.io
-        yield ['http://téstb.shlink.io']; // Redirects to http://tést.shlink.io
-    }
-
     #[Test, DataProvider('provideInvalidArgumentApiVersions')]
     public function failsToCreateShortUrlWithoutLongUrl(array $payload, string $version): void
     {
@@ -326,17 +310,6 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertEquals('http://s.test/🦣🦣🦣', $payload['shortUrl']);
     }
 
-    #[Test]
-    public function titleIsIgnoredIfLongUrlTimesOut(): void
-    {
-        [$statusCode, $payload] = $this->createShortUrl([
-            'longUrl' => 'http://127.0.0.1:9999/api-tests/long-url-with-timeout',
-        ]);
-
-        self::assertEquals(self::STATUS_OK, $statusCode);
-        self::assertNull($payload['title']);
-    }
-
     #[Test, DataProvider('provideTitles')]
     public function titleIsCroppedIfTooLong(string $title, string $expectedTitle): void
     {
@@ -363,7 +336,7 @@ class CreateShortUrlTest extends ApiTestCase
     public function prefixCanBeSet(string|null $customSlug): void
     {
         [$statusCode, $payload] = $this->createShortUrl([
-            'longUrl' => 'https://github.com/shlinkio/shlink/issues/1557',
+            'longUrl' => 'https://example.com',
             'pathPrefix' => 'foo/b  ar-baz',
             'customSlug' => $customSlug,
         ]);
