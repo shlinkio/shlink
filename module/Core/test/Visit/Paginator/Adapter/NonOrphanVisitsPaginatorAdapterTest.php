@@ -20,7 +20,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class NonOrphanVisitsPaginatorAdapterTest extends TestCase
 {
     private NonOrphanVisitsPaginatorAdapter $adapter;
-    private MockObject & VisitRepositoryInterface $repo;
+    private MockObject&VisitRepositoryInterface $repo;
     private WithDomainVisitsParams $params;
     private ApiKey $apiKey;
 
@@ -37,9 +37,13 @@ class NonOrphanVisitsPaginatorAdapterTest extends TestCase
     public function countDelegatesToRepository(): void
     {
         $expectedCount = 5;
-        $this->repo->expects($this->once())->method('countNonOrphanVisits')->with(
-            new WithDomainVisitsCountFiltering($this->params->dateRange, $this->params->excludeBots, $this->apiKey),
-        )->willReturn($expectedCount);
+        $this->repo
+            ->expects($this->once())
+            ->method('countNonOrphanVisits')
+            ->with(
+                new WithDomainVisitsCountFiltering($this->params->dateRange, $this->params->excludeBots, $this->apiKey),
+            )
+            ->willReturn($expectedCount);
 
         $result = $this->adapter->getNbResults();
 
@@ -55,13 +59,17 @@ class NonOrphanVisitsPaginatorAdapterTest extends TestCase
     {
         $visitor = Visitor::empty();
         $list = [Visit::forRegularNotFound($visitor), Visit::forInvalidShortUrl($visitor)];
-        $this->repo->expects($this->once())->method('findNonOrphanVisits')->with(new WithDomainVisitsListFiltering(
-            $this->params->dateRange,
-            $this->params->excludeBots,
-            $this->apiKey,
-            limit: $limit,
-            offset: $offset,
-        ))->willReturn($list);
+        $this->repo
+            ->expects($this->once())
+            ->method('findNonOrphanVisits')
+            ->with(new WithDomainVisitsListFiltering(
+                $this->params->dateRange,
+                $this->params->excludeBots,
+                $this->apiKey,
+                limit: $limit,
+                offset: $offset,
+            ))
+            ->willReturn($list);
 
         $result = $this->adapter->getSlice($offset, $limit);
 

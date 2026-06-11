@@ -10,20 +10,19 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
-use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
 
 class OverrideDomainMiddleware implements MiddlewareInterface
 {
-    public function __construct(private DomainServiceInterface $domainService)
-    {
-    }
+    public const string REQUEST_ATTRIBUTE = 'domain';
+
+    public function __construct(private readonly DomainServiceInterface $domainService) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
-        if (! $apiKey->hasRole(Role::DOMAIN_SPECIFIC)) {
+        if (!$apiKey->hasRole(Role::DOMAIN_SPECIFIC)) {
             return $handler->handle($request);
         }
 
@@ -34,11 +33,16 @@ class OverrideDomainMiddleware implements MiddlewareInterface
         if ($requestMethod === RequestMethodInterface::METHOD_POST) {
             /** @var array $payload */
             $payload = $request->getParsedBody();
-            $payload[ShortUrlInputFilter::DOMAIN] = $domain->authority;
+            $payload[self::REQUEST_ATTRIBUTE] = $domain->authority;
 
             return $handler->handle($request->withParsedBody($payload));
         }
 
-        return $handler->handle($request->withAttribute(ShortUrlInputFilter::DOMAIN, $domain->authority));
+        return $handler->handle($request->withAttribute(self::REQUEST_ATTRIBUTE, $domain->authority));
+    }
+
+    public static function domainFromRequest(ServerRequestInterface $request): string|null
+    {
+        return $request->getAttribute(self::REQUEST_ATTRIBUTE);
     }
 }

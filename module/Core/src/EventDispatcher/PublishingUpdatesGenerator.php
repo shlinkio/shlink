@@ -11,9 +11,7 @@ use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 
 final readonly class PublishingUpdatesGenerator implements PublishingUpdatesGeneratorInterface
 {
-    public function __construct(private ShortUrlDataTransformerInterface $shortUrlTransformer)
-    {
-    }
+    public function __construct(private ShortUrlDataTransformerInterface $shortUrlTransformer) {}
 
     public function newVisitUpdate(Visit $visit): Update
     {
@@ -33,7 +31,7 @@ final readonly class PublishingUpdatesGenerator implements PublishingUpdatesGene
     public function newShortUrlVisitUpdate(Visit $visit): Update
     {
         $shortUrl = $visit->shortUrl;
-        $topic = Topic::newShortUrlVisit($shortUrl?->getShortCode());
+        $topic = Topic::newShortUrlVisit($shortUrl?->shortCode);
 
         return Update::forTopicAndPayload($topic, [
             'shortUrl' => $this->transformShortUrl($shortUrl),

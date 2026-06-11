@@ -20,7 +20,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class UpdateTagActionTest extends TestCase
 {
     private UpdateTagAction $action;
-    private MockObject & TagServiceInterface $tagService;
+    private MockObject&TagServiceInterface $tagService;
 
     protected function setUp(): void
     {
@@ -53,10 +53,14 @@ class UpdateTagActionTest extends TestCase
             'oldName' => 'foo',
             'newName' => 'bar',
         ]);
-        $this->tagService->expects($this->once())->method('renameTag')->with(
-            Renaming::fromNames('foo', 'bar'),
-            $this->isInstanceOf(ApiKey::class),
-        )->willReturn(new Tag('bar'));
+        $this->tagService
+            ->expects($this->once())
+            ->method('renameTag')
+            ->with(
+                Renaming::fromNames('foo', 'bar'),
+                $this->isInstanceOf(ApiKey::class),
+            )
+            ->willReturn(new Tag('bar'));
 
         $resp = $this->action->handle($request);
 

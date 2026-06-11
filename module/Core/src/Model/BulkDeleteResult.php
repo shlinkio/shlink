@@ -6,9 +6,7 @@ namespace Shlinkio\Shlink\Core\Model;
 
 final class BulkDeleteResult
 {
-    public function __construct(public readonly int $affectedItems)
-    {
-    }
+    public function __construct(public readonly int $affectedItems) {}
 
     public function toArray(string $fieldName): array
     {

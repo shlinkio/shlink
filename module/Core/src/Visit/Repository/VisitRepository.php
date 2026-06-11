@@ -57,7 +57,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         // Since they are not provided by the caller, it's reasonably safe
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(Visit::class, 'v')
-           ->where($qb->expr()->eq('v.shortUrl', $shortUrlId));
+            ->where($qb->expr()->eq('v.shortUrl', $shortUrlId));
 
         if ($filtering->excludeBots) {
             $qb->andWhere($qb->expr()->eq('v.potentialBot', 'false'));
@@ -89,10 +89,11 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
 
         // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later.
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->from(Visit::class, 'v')
-           ->join('v.shortUrl', 's')
-           ->join('s.tags', 't')
-           ->where($qb->expr()->eq('t.name', $conn->quote($tag)));
+        $qb
+            ->from(Visit::class, 'v')
+            ->join('v.shortUrl', 's')
+            ->join('s.tags', 't')
+            ->where($qb->expr()->eq('t.name', $conn->quote($tag)));
 
         if ($filtering->excludeBots) {
             $qb->andWhere($qb->expr()->eq('v.potentialBot', 'false'));
@@ -103,7 +104,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
             $qb->andWhere($qb->expr()->isNull('s.domain'));
         } elseif ($domain !== null) {
             $qb->join('s.domain', 'd')
-               ->andWhere($qb->expr()->eq('d.authority', $conn->quote($domain)));
+                ->andWhere($qb->expr()->eq('d.authority', $conn->quote($domain)));
         }
 
         $this->applyDatesInline($qb, $filtering->dateRange);
@@ -134,13 +135,13 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later.
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(Visit::class, 'v')
-           ->join('v.shortUrl', 's');
+            ->join('v.shortUrl', 's');
 
         if ($domain === Domain::DEFAULT_AUTHORITY) {
             $qb->where($qb->expr()->isNull('s.domain'));
         } else {
             $qb->join('s.domain', 'd')
-               ->where($qb->expr()->eq('d.authority', $this->getEntityManager()->getConnection()->quote($domain)));
+                ->where($qb->expr()->eq('d.authority', $this->getEntityManager()->getConnection()->quote($domain)));
         }
 
         if ($filtering->excludeBots) {
@@ -229,7 +230,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
             $qb->andWhere($qb->expr()->isNull('s.domain'));
         } elseif ($domain !== null) {
             $qb->join('s.domain', 'd')
-               ->andWhere($qb->expr()->eq('d.authority', $conn->quote($domain)));
+                ->andWhere($qb->expr()->eq('d.authority', $conn->quote($domain)));
         }
 
         $this->applySpecification($qb, $apiKey?->inlinedSpec(), 'v');
@@ -270,24 +271,26 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         // TODO Order by date and ID, not just by ID (order by date DESC, id DESC).
         //      That ensures imported visits are properly ordered even if inserted in wrong chronological order.
 
-        $qb->select('v.id')
-           ->orderBy('v.id', 'DESC')
-           // Falling back to values that will behave as no limit/offset, but will work around MS SQL not allowing
-           // order on sub-queries without offset
-           ->setMaxResults($limit ?? PHP_INT_MAX)
-           ->setFirstResult($offset ?? 0);
+        $qb
+            ->select('v.id')
+            ->orderBy('v.id', 'DESC')
+            // Falling back to values that will behave as no limit/offset, but will work around MS SQL not allowing
+            // order on sub-queries without offset
+            ->setMaxResults($limit ?? PHP_INT_MAX)
+            ->setFirstResult($offset ?? 0);
         $subQuery = $qb->getQuery()->getSQL();
 
         // A native query builder needs to be used here, because DQL and ORM query builders do not support
         // sub-queries at "from" and "join" level.
         // If no sub-query is used, then performance drops dramatically while the "offset" grows.
         $nativeQb = $this->getEntityManager()->getConnection()->createQueryBuilder();
-        $nativeQb->select('v.id AS visit_id', 'v.*', 'vl.*')
-                 ->from('visits', 'v')
-                 // @phpstan-ignore-next-line
-                 ->join('v', '(' . $subQuery . ')', 'sq', $nativeQb->expr()->eq('sq.id_0', 'v.id'))
-                 ->leftJoin('v', 'visit_locations', 'vl', $nativeQb->expr()->eq('v.visit_location_id', 'vl.id'))
-                 ->orderBy('v.id', 'DESC');
+        $nativeQb
+            ->select('v.id AS visit_id', 'v.*', 'vl.*')
+            ->from('visits', 'v')
+            // @phpstan-ignore-next-line
+            ->join('v', '(' . $subQuery . ')', 'sq', $nativeQb->expr()->eq('sq.id_0', 'v.id'))
+            ->leftJoin('v', 'visit_locations', 'vl', $nativeQb->expr()->eq('v.visit_location_id', 'vl.id'))
+            ->orderBy('v.id', 'DESC');
 
         $rsm = new ResultSetMappingBuilder($this->getEntityManager());
         $rsm->addRootEntityFromClassMetadata(Visit::class, 'v', ['id' => 'visit_id']);
@@ -301,11 +304,11 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
     public function findMostRecentOrphanVisit(): Visit|null
     {
         $dql = <<<DQL
-            SELECT v
-              FROM Shlinkio\Shlink\Core\Visit\Entity\Visit AS v
-             WHERE v.shortUrl IS NULL
-          ORDER BY v.id DESC
-        DQL;
+                SELECT v
+                  FROM Shlinkio\Shlink\Core\Visit\Entity\Visit AS v
+                 WHERE v.shortUrl IS NULL
+              ORDER BY v.id DESC
+            DQL;
 
         $query = $this->getEntityManager()->createQuery($dql);
         $query->setMaxResults(1);

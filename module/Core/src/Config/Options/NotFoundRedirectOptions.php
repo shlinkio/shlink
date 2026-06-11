@@ -13,8 +13,7 @@ final readonly class NotFoundRedirectOptions implements NotFoundRedirectConfigIn
         public string|null $invalidShortUrlRedirect = null,
         public string|null $regular404Redirect = null,
         public string|null $baseUrlRedirect = null,
-    ) {
-    }
+    ) {}
 
     public static function fromEnv(): self
     {

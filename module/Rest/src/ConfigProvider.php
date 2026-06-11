@@ -35,7 +35,7 @@ class ConfigProvider
 
     private static function buildUnversionedHealthRouteFromExistingRoutes(array $routes): array|null
     {
-        $healthRoutes = array_filter($routes, fn (array $route) => $route['path'] === '/health');
+        $healthRoutes = array_filter($routes, static fn (array $route) => $route['path'] === '/health');
         $healthRoute = reset($healthRoutes);
         if ($healthRoute === false) {
             return null;

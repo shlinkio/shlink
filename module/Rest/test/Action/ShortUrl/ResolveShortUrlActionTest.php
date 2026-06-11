@@ -19,14 +19,17 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class ResolveShortUrlActionTest extends TestCase
 {
     private ResolveShortUrlAction $action;
-    private MockObject & ShortUrlResolverInterface $urlResolver;
+    private MockObject&ShortUrlResolverInterface $urlResolver;
 
     protected function setUp(): void
     {
         $this->urlResolver = $this->createMock(ShortUrlResolverInterface::class);
-        $this->action = new ResolveShortUrlAction($this->urlResolver, new ShortUrlDataTransformer(
-            new ShortUrlStringifier(),
-        ));
+        $this->action = new ResolveShortUrlAction(
+            $this->urlResolver,
+            new ShortUrlDataTransformer(
+                new ShortUrlStringifier(),
+            ),
+        );
     }
 
     #[Test]
@@ -34,12 +37,18 @@ class ResolveShortUrlActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $apiKey = ApiKey::create();
-        $this->urlResolver->expects($this->once())->method('resolveShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
-            $apiKey,
-        )->willReturn(ShortUrl::withLongUrl('http://domain.com/foo/bar'));
+        $this->urlResolver
+            ->expects($this->once())
+            ->method('resolveShortUrl')
+            ->with(
+                ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+                $apiKey,
+            )
+            ->willReturn(ShortUrl::withLongUrl('http://domain.com/foo/bar'));
 
-        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode)->withAttribute(ApiKey::class, $apiKey);
+        $request = new ServerRequest()
+            ->withAttribute('shortCode', $shortCode)
+            ->withAttribute(ApiKey::class, $apiKey);
         $response = $this->action->handle($request);
 
         self::assertEquals(200, $response->getStatusCode());

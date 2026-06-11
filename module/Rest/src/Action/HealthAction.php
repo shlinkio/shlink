@@ -20,9 +20,7 @@ class HealthAction extends AbstractRestAction
     public const string ROUTE_PATH = '/health';
     protected const array ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
-    public function __construct(private readonly EntityManagerInterface $em, private readonly AppOptions $options)
-    {
-    }
+    public function __construct(private readonly EntityManagerInterface $em, private readonly AppOptions $options) {}
 
     /**
      * Handles a request and produces a response.
@@ -40,13 +38,17 @@ class HealthAction extends AbstractRestAction
         }
 
         $statusCode = $connected ? self::STATUS_OK : self::STATUS_SERVICE_UNAVAILABLE;
-        return new JsonResponse([
-            'status' => $connected ? self::STATUS_PASS : self::STATUS_FAIL,
-            'version' => $this->options->version,
-            'links' => [
-                'about' => 'https://shlink.io',
-                'project' => 'https://github.com/shlinkio/shlink',
+        return new JsonResponse(
+            [
+                'status' => $connected ? self::STATUS_PASS : self::STATUS_FAIL,
+                'version' => $this->options->version,
+                'links' => [
+                    'about' => 'https://shlink.io',
+                    'project' => 'https://github.com/shlinkio/shlink',
+                ],
             ],
-        ], $statusCode, ['Content-type' => self::HEALTH_CONTENT_TYPE]);
+            $statusCode,
+            ['Content-type' => self::HEALTH_CONTENT_TYPE],
+        );
     }
 }

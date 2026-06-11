@@ -7,7 +7,6 @@ namespace Shlinkio\Shlink;
 use Laminas\ConfigAggregator;
 use Laminas\Diactoros;
 use Mezzio;
-use Mezzio\ProblemDetails;
 use Shlinkio\Shlink\Core\Config\EnvVars;
 
 return new ConfigAggregator\ConfigAggregator(
@@ -15,7 +14,8 @@ return new ConfigAggregator\ConfigAggregator(
         Mezzio\ConfigProvider::class,
         Mezzio\Router\ConfigProvider::class,
         Mezzio\Router\FastRouteRouter\ConfigProvider::class,
-        ProblemDetails\ConfigProvider::class,
+        Mezzio\ProblemDetails\ConfigProvider::class,
+        Mezzio\Valinor\ConfigProvider::class,
         Diactoros\ConfigProvider::class,
         Common\ConfigProvider::class,
         Config\ConfigProvider::class,

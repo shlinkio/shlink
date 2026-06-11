@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
+use CuyZ\Valinor\MapperBuilder;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -21,15 +24,15 @@ use Symfony\Component\Console\Tester\CommandTester;
 class EditShortUrlCommandTest extends TestCase
 {
     private CommandTester $commandTester;
-    private MockObject & ShortUrlServiceInterface $shortUrlService;
-    private MockObject & ShortUrlStringifierInterface $stringifier;
+    private MockObject&ShortUrlServiceInterface $shortUrlService;
+    private MockObject&ShortUrlStringifierInterface $stringifier;
 
     protected function setUp(): void
     {
         $this->shortUrlService = $this->createMock(ShortUrlServiceInterface::class);
         $this->stringifier = $this->createMock(ShortUrlStringifierInterface::class);
 
-        $command = new EditShortUrlCommand($this->shortUrlService, $this->stringifier);
+        $command = new EditShortUrlCommand($this->shortUrlService, $this->stringifier, new MapperBuilder()->mapper());
         $this->commandTester = CliTestUtils::testerForCommand($command);
     }
 
@@ -37,12 +40,16 @@ class EditShortUrlCommandTest extends TestCase
     public function successMessageIsPrintedIfNoErrorOccurs(): void
     {
         $newLongUrl = 'https://example.com';
-        $this->shortUrlService->expects($this->once())->method('updateShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain('foobar'),
-            $this->callback(static fn (ShortUrlEdition $edition): bool => $edition->longUrl === $newLongUrl),
-        )->willReturn(
-            ShortUrl::createFake(),
-        );
+        $this->shortUrlService
+            ->expects($this->once())
+            ->method('updateShortUrl')
+            ->with(
+                ShortUrlIdentifier::fromShortCodeAndDomain('foobar'),
+                $this->callback(static fn (ShortUrlEdition $edition): bool => $edition->longUrl === $newLongUrl),
+            )
+            ->willReturn(
+                ShortUrl::createFake(),
+            );
         $this->stringifier->expects($this->once())->method('stringify')->willReturn('https://s.test/foo');
 
         $this->commandTester->execute(['short-code' => 'foobar', '--long-url' => $newLongUrl]);

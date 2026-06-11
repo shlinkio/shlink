@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Core\Crawling\CrawlingHelperInterface;
 
 class RobotsActionTest extends TestCase
 {
-    private MockObject & CrawlingHelperInterface $helper;
+    private MockObject&CrawlingHelperInterface $helper;
 
     protected function setUp(): void
     {
@@ -43,60 +43,60 @@ class RobotsActionTest extends TestCase
     public static function provideShortCodes(): iterable
     {
         yield 'three short codes' => [['foo', 'bar', 'baz'], new RobotsOptions(), <<<ROBOTS
-        # For more information about the robots.txt standard, see:
-        # https://www.robotstxt.org/orig.html
+                # For more information about the robots.txt standard, see:
+                # https://www.robotstxt.org/orig.html
 
-        User-agent: *
-        Allow: /foo
-        Allow: /bar
-        Allow: /baz
-        Disallow: /
-        ROBOTS];
+                User-agent: *
+                Allow: /foo
+                Allow: /bar
+                Allow: /baz
+                Disallow: /
+                ROBOTS];
         yield 'five short codes' => [['foo', 'bar', 'some', 'thing', 'baz'], new RobotsOptions(), <<<ROBOTS
-        # For more information about the robots.txt standard, see:
-        # https://www.robotstxt.org/orig.html
+                # For more information about the robots.txt standard, see:
+                # https://www.robotstxt.org/orig.html
 
-        User-agent: *
-        Allow: /foo
-        Allow: /bar
-        Allow: /some
-        Allow: /thing
-        Allow: /baz
-        Disallow: /
-        ROBOTS];
+                User-agent: *
+                Allow: /foo
+                Allow: /bar
+                Allow: /some
+                Allow: /thing
+                Allow: /baz
+                Disallow: /
+                ROBOTS];
         yield 'no short codes' => [[], new RobotsOptions(), <<<ROBOTS
-        # For more information about the robots.txt standard, see:
-        # https://www.robotstxt.org/orig.html
+                # For more information about the robots.txt standard, see:
+                # https://www.robotstxt.org/orig.html
 
-        User-agent: *
-        Disallow: /
-        ROBOTS];
+                User-agent: *
+                Disallow: /
+                ROBOTS];
         yield 'three short codes and allow all short urls' => [
             ['foo', 'bar', 'some'],
             new RobotsOptions(allowAllShortUrls: true),
             <<<ROBOTS
-            # For more information about the robots.txt standard, see:
-            # https://www.robotstxt.org/orig.html
+                # For more information about the robots.txt standard, see:
+                # https://www.robotstxt.org/orig.html
 
-            User-agent: *
-            Disallow: /rest/
-            ROBOTS,
+                User-agent: *
+                Disallow: /rest/
+                ROBOTS,
         ];
         yield 'no short codes and allow all short urls' => [[], new RobotsOptions(allowAllShortUrls: true), <<<ROBOTS
-        # For more information about the robots.txt standard, see:
-        # https://www.robotstxt.org/orig.html
+                # For more information about the robots.txt standard, see:
+                # https://www.robotstxt.org/orig.html
 
-        User-agent: *
-        Disallow: /rest/
-        ROBOTS];
+                User-agent: *
+                Disallow: /rest/
+                ROBOTS];
         yield 'allow user agents' => [[], new RobotsOptions(userAgents: ['foo', 'bar']), <<<ROBOTS
-        # For more information about the robots.txt standard, see:
-        # https://www.robotstxt.org/orig.html
+                # For more information about the robots.txt standard, see:
+                # https://www.robotstxt.org/orig.html
 
-        User-agent: foo
-        User-agent: bar
-        Disallow: /
-        ROBOTS];
+                User-agent: foo
+                User-agent: bar
+                Disallow: /
+                ROBOTS];
     }
 
     private function action(RobotsOptions $options): RobotsAction

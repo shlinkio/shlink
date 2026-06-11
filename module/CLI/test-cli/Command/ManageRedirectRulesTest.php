@@ -27,7 +27,7 @@ class ManageRedirectRulesTest extends CliTestCase
         ]);
 
         self::assertStringContainsString('The priority must be a numeric positive value', $output);
-        self::assertStringContainsString('The input is not valid', $output);
+        self::assertStringContainsString('Provided value does not match a loose URI pattern', $output);
         self::assertStringContainsString('The value is mandatory', $output);
     }
 }

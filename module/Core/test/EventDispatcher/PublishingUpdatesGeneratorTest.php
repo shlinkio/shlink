@@ -43,46 +43,49 @@ class PublishingUpdatesGeneratorTest extends TestCase
     #[Test, DataProvider('provideMethod')]
     public function visitIsProperlySerializedIntoUpdate(string $method, string $expectedTopic, string|null $title): void
     {
-        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'customSlug' => 'foo',
-            'longUrl' => 'https://longUrl',
-            'title' => $title,
-        ]));
+        $shortUrl = ShortUrl::create(new ShortUrlCreation(
+            longUrl: 'https://longUrl',
+            customSlug: 'foo',
+            title: $title,
+        ));
         $visit = Visit::forValidShortUrl($shortUrl, Visitor::empty());
 
         /** @var Update $update */
         $update = $this->generator->{$method}($visit);
 
         self::assertEquals($expectedTopic, $update->topic);
-        self::assertEquals([
-            'shortUrl' => [
-                'shortCode' => $shortUrl->getShortCode(),
-                'shortUrl' => 'http:/' . $shortUrl->getShortCode(),
-                'longUrl' => 'https://longUrl',
-                'dateCreated' => $this->now->toAtomString(),
-                'tags' => [],
-                'meta' => [
-                    'validSince' => null,
-                    'validUntil' => null,
-                    'maxVisits' => null,
+        self::assertEquals(
+            [
+                'shortUrl' => [
+                    'shortCode' => $shortUrl->shortCode,
+                    'shortUrl' => 'http:/' . $shortUrl->shortCode,
+                    'longUrl' => 'https://longUrl',
+                    'dateCreated' => $this->now->toAtomString(),
+                    'tags' => [],
+                    'meta' => [
+                        'validSince' => null,
+                        'validUntil' => null,
+                        'maxVisits' => null,
+                    ],
+                    'domain' => null,
+                    'title' => $title,
+                    'crawlable' => false,
+                    'forwardQuery' => true,
+                    'visitsSummary' => VisitsSummary::fromTotalAndNonBots(0, 0),
+                    'hasRedirectRules' => false,
                 ],
-                'domain' => null,
-                'title' => $title,
-                'crawlable' => false,
-                'forwardQuery' => true,
-                'visitsSummary' => VisitsSummary::fromTotalAndNonBots(0, 0),
-                'hasRedirectRules' => false,
+                'visit' => [
+                    'referer' => '',
+                    'userAgent' => '',
+                    'visitLocation' => null,
+                    'date' => $visit->date->toAtomString(),
+                    'potentialBot' => false,
+                    'visitedUrl' => '',
+                    'redirectUrl' => null,
+                ],
             ],
-            'visit' => [
-                'referer' => '',
-                'userAgent' => '',
-                'visitLocation' => null,
-                'date' => $visit->date->toAtomString(),
-                'potentialBot' => false,
-                'visitedUrl' => '',
-                'redirectUrl' => null,
-            ],
-        ], $update->payload);
+            $update->payload,
+        );
     }
 
     public static function provideMethod(): iterable
@@ -97,18 +100,21 @@ class PublishingUpdatesGeneratorTest extends TestCase
         $update = $this->generator->newOrphanVisitUpdate($orphanVisit);
 
         self::assertEquals('https://shlink.io/new-orphan-visit', $update->topic);
-        self::assertEquals([
-            'visit' => [
-                'referer' => '',
-                'userAgent' => '',
-                'visitLocation' => null,
-                'date' => $orphanVisit->date->toAtomString(),
-                'potentialBot' => false,
-                'visitedUrl' => $orphanVisit->visitedUrl,
-                'type' => $orphanVisit->type->value,
-                'redirectUrl' => null,
+        self::assertEquals(
+            [
+                'visit' => [
+                    'referer' => '',
+                    'userAgent' => '',
+                    'visitLocation' => null,
+                    'date' => $orphanVisit->date->toAtomString(),
+                    'potentialBot' => false,
+                    'visitedUrl' => $orphanVisit->visitedUrl,
+                    'type' => $orphanVisit->type->value,
+                    'redirectUrl' => null,
+                ],
             ],
-        ], $update->payload);
+            $update->payload,
+        );
     }
 
     public static function provideOrphanVisits(): iterable
@@ -123,32 +129,37 @@ class PublishingUpdatesGeneratorTest extends TestCase
     #[Test]
     public function shortUrlIsProperlySerializedIntoUpdate(): void
     {
-        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'customSlug' => 'foo',
-            'longUrl' => 'https://longUrl',
-            'title' => 'The title',
-        ]));
+        $shortUrl = ShortUrl::create(new ShortUrlCreation(
+            longUrl: 'https://longUrl',
+            customSlug: 'foo',
+            title: 'The title',
+        ));
 
         $update = $this->generator->newShortUrlUpdate($shortUrl);
 
         self::assertEquals(Topic::NEW_SHORT_URL->value, $update->topic);
-        self::assertEquals(['shortUrl' => [
-            'shortCode' => $shortUrl->getShortCode(),
-            'shortUrl' => 'http:/' . $shortUrl->getShortCode(),
-            'longUrl' => 'https://longUrl',
-            'dateCreated' => $this->now->toAtomString(),
-            'tags' => [],
-            'meta' => [
-                'validSince' => null,
-                'validUntil' => null,
-                'maxVisits' => null,
+        self::assertEquals(
+            [
+                'shortUrl' => [
+                    'shortCode' => $shortUrl->shortCode,
+                    'shortUrl' => 'http:/' . $shortUrl->shortCode,
+                    'longUrl' => 'https://longUrl',
+                    'dateCreated' => $this->now->toAtomString(),
+                    'tags' => [],
+                    'meta' => [
+                        'validSince' => null,
+                        'validUntil' => null,
+                        'maxVisits' => null,
+                    ],
+                    'domain' => null,
+                    'title' => 'The title',
+                    'crawlable' => false,
+                    'forwardQuery' => true,
+                    'visitsSummary' => VisitsSummary::fromTotalAndNonBots(0, 0),
+                    'hasRedirectRules' => false,
+                ],
             ],
-            'domain' => null,
-            'title' => 'The title',
-            'crawlable' => false,
-            'forwardQuery' => true,
-            'visitsSummary' => VisitsSummary::fromTotalAndNonBots(0, 0),
-            'hasRedirectRules' => false,
-        ]], $update->payload);
+            $update->payload,
+        );
     }
 }

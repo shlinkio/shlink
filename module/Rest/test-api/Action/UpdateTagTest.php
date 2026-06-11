@@ -40,10 +40,12 @@ class UpdateTagTest extends ApiTestCase
     {
         $expectedDetail = 'Tag with name "invalid_tag" could not be found';
 
-        $resp = $this->callApiWithKey(self::METHOD_PUT, sprintf('/rest/v%s/tags', $version), [RequestOptions::JSON => [
-            'oldName' => 'invalid_tag',
-            'newName' => 'foo',
-        ]]);
+        $resp = $this->callApiWithKey(self::METHOD_PUT, sprintf('/rest/v%s/tags', $version), [
+            RequestOptions::JSON => [
+                'oldName' => 'invalid_tag',
+                'newName' => 'foo',
+            ],
+        ]);
         $payload = $this->getJsonResponsePayload($resp);
 
         self::assertEquals(self::STATUS_NOT_FOUND, $resp->getStatusCode());
@@ -65,10 +67,12 @@ class UpdateTagTest extends ApiTestCase
     {
         $expectedDetail = 'You cannot rename tag foo to bar, because it already exists';
 
-        $resp = $this->callApiWithKey(self::METHOD_PUT, sprintf('/rest/v%s/tags', $version), [RequestOptions::JSON => [
-            'oldName' => 'foo',
-            'newName' => 'bar',
-        ]]);
+        $resp = $this->callApiWithKey(self::METHOD_PUT, sprintf('/rest/v%s/tags', $version), [
+            RequestOptions::JSON => [
+                'oldName' => 'foo',
+                'newName' => 'bar',
+            ],
+        ]);
         $payload = $this->getJsonResponsePayload($resp);
 
         self::assertEquals(self::STATUS_CONFLICT, $resp->getStatusCode());
@@ -88,10 +92,12 @@ class UpdateTagTest extends ApiTestCase
     #[Test]
     public function tagIsProperlyRenamedWhenRenamingToItself(): void
     {
-        $resp = $this->callApiWithKey(self::METHOD_PUT, '/tags', [RequestOptions::JSON => [
-            'oldName' => 'foo',
-            'newName' => 'foo',
-        ]]);
+        $resp = $this->callApiWithKey(self::METHOD_PUT, '/tags', [
+            RequestOptions::JSON => [
+                'oldName' => 'foo',
+                'newName' => 'foo',
+            ],
+        ]);
 
         self::assertEquals(self::STATUS_NO_CONTENT, $resp->getStatusCode());
     }

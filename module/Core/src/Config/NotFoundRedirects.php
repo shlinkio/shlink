@@ -12,8 +12,7 @@ final readonly class NotFoundRedirects implements JsonSerializable
         public string|null $baseUrlRedirect,
         public string|null $regular404Redirect,
         public string|null $invalidShortUrlRedirect,
-    ) {
-    }
+    ) {}
 
     public static function withRedirects(
         string|null $baseUrlRedirect,

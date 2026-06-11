@@ -39,9 +39,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
 {
-    public function __construct(private EntityManagerInterface $em, private UrlShortenerOptions $options)
-    {
-    }
+    public function __construct(private EntityManagerInterface $em, private UrlShortenerOptions $options) {}
 
     public function getVisitsStats(ApiKey|null $apiKey = null): VisitsStats
     {
@@ -72,7 +70,7 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
     ): Paginator {
         /** @var ShortUrlRepository $repo */
         $repo = $this->em->getRepository(ShortUrl::class);
-        if (! $repo->shortCodeIsInUse($identifier, $apiKey?->spec())) {
+        if (!$repo->shortCodeIsInUse($identifier, $apiKey?->spec())) {
             throw ShortUrlNotFoundException::fromNotFound($identifier);
         }
 
@@ -90,7 +88,7 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
     {
         /** @var TagRepository $tagRepo */
         $tagRepo = $this->em->getRepository(Tag::class);
-        if (! $tagRepo->tagExists($tag, $apiKey)) {
+        if (!$tagRepo->tagExists($tag, $apiKey)) {
             throw TagNotFoundException::fromTag($tag);
         }
 
@@ -105,7 +103,7 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
     {
         /** @var DomainRepository $domainRepo */
         $domainRepo = $this->em->getRepository(Domain::class);
-        if ($domain !== Domain::DEFAULT_AUTHORITY && ! $domainRepo->domainExists($domain, $apiKey)) {
+        if ($domain !== Domain::DEFAULT_AUTHORITY && !$domainRepo->domainExists($domain, $apiKey)) {
             throw DomainNotFoundException::fromAuthority($domain);
         }
 
@@ -142,8 +140,7 @@ readonly class VisitsStatsHelper implements VisitsStatsHelperInterface
     private function createPaginator(AdapterInterface $adapter, VisitsParams $params): Paginator
     {
         $paginator = new Paginator($adapter);
-        $paginator->setMaxPerPage($params->itemsPerPage)
-                  ->setCurrentPage($params->page);
+        $paginator->setMaxPerPage($params->itemsPerPage)->setCurrentPage($params->page);
 
         return $paginator;
     }

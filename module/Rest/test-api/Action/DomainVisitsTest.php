@@ -21,9 +21,14 @@ class DomainVisitsTest extends ApiTestCase
         bool $excludeBots,
         int $expectedVisitsAmount,
     ): void {
-        $resp = $this->callApiWithKey(self::METHOD_GET, sprintf('/domains/%s/visits', $domain), [
-            RequestOptions::QUERY => $excludeBots ? ['excludeBots' => true] : [],
-        ], $apiKey);
+        $resp = $this->callApiWithKey(
+            self::METHOD_GET,
+            sprintf('/domains/%s/visits', $domain),
+            [
+                RequestOptions::QUERY => $excludeBots ? ['excludeBots' => true] : [],
+            ],
+            $apiKey,
+        );
         $payload = $this->getJsonResponsePayload($resp);
 
         self::assertEquals(self::STATUS_OK, $resp->getStatusCode());

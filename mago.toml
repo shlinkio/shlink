@@ -1,0 +1,59 @@
+#:schema https://mago.carthage.software/1.27.1/schema.json
+# Welcome to Mago!
+# For full documentation, see https://mago.carthage.software/tools/overview
+version = "1"
+php-version = "8.4.0"
+extends = "vendor/shlinkio/shlink-mago-config/mago.toml"
+
+[source]
+workspace = "."
+paths = ["bin", "config", "module"]
+excludes = ["vendor"]
+
+[source.glob]
+literal-separator = true
+
+[linter.rules]
+no-literal-password = {
+    exclude = [
+        "config/test",
+        "module/CLI/test",
+        "module/CLI/test-cli",
+        "module/Core/test",
+        "module/Core/test-api",
+        "module/Core/test-db",
+        "module/Rest/test",
+        "module/Rest/test-api",
+        "module/Rest/test-db"
+    ]
+}
+no-empty-catch-clause = {
+    exclude = [
+        "module/CLI/test",
+        "module/CLI/test-cli",
+        "module/Core/test",
+        "module/Core/test-api",
+        "module/Core/test-db",
+        "module/Rest/test",
+        "module/Rest/test-api",
+        "module/Rest/test-db"
+    ]
+}
+no-empty-loop = {
+    exclude = [
+        "module/CLI/test",
+        "module/CLI/test-cli",
+        "module/Core/test",
+        "module/Core/test-api",
+        "module/Core/test-db",
+        "module/Rest/test",
+        "module/Rest/test-api",
+        "module/Rest/test-db"
+    ]
+}
+ambiguous-function-call = {
+    exclude = [
+        "module/Core/functions",
+        "module/Core/config/entities-mappings"
+    ]
+}

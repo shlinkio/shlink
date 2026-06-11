@@ -12,10 +12,11 @@ final class Version20240331111447 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $visitsQb = $this->connection->createQueryBuilder();
-        $visitsQb->select('COUNT(id)')
-                 ->from('visits')
-                 ->where($visitsQb->expr()->isNull('short_url_id'))
-                 ->andWhere($visitsQb->expr()->eq('potential_bot', ':potential_bot'));
+        $visitsQb
+            ->select('COUNT(id)')
+            ->from('visits')
+            ->where($visitsQb->expr()->isNull('short_url_id'))
+            ->andWhere($visitsQb->expr()->eq('potential_bot', ':potential_bot'));
 
         $botsCount = $visitsQb->setParameter('potential_bot', '1')->executeQuery()->fetchOne();
         $nonBotsCount = $visitsQb->setParameter('potential_bot', '0')->executeQuery()->fetchOne();
@@ -30,7 +31,8 @@ final class Version20240331111447 extends AbstractMigration
 
     private function insertCount(string|int $count, bool $potentialBot): void
     {
-        $this->connection->createQueryBuilder()
+        $this->connection
+            ->createQueryBuilder()
             ->insert('orphan_visits_counts')
             ->values([
                 'count' => ':count',

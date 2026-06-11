@@ -45,7 +45,7 @@ final class IpAddressUtils
 
         $ipAddressParts = explode('.', $ipAddress);
 
-        return some($groups, function (string $group) use ($ip, $ipAddressParts): bool {
+        return some($groups, static function (string $group) use ($ip, $ipAddressParts): bool {
             $range = self::candidateToRange($group, $ipAddressParts);
             return $range !== null && $range->contains($ip);
         });
@@ -76,7 +76,7 @@ final class IpAddressUtils
         // Replace wildcard parts with the corresponding ones from the remote address
         return Factory::parseRangeString(
             implode('.', array_map(
-                fn (string $part, int $index) => $part === '*' ? $ipAddressParts[$index] : $part,
+                static fn (string $part, int $index) => $part === '*' ? $ipAddressParts[$index] : $part,
                 $octets,
                 $keys,
             )),

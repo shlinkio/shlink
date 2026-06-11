@@ -21,7 +21,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 class ListDomainsCommandTest extends TestCase
 {
     private CommandTester $commandTester;
-    private MockObject & DomainServiceInterface $domainService;
+    private MockObject&DomainServiceInterface $domainService;
 
     protected function setUp(): void
     {
@@ -39,14 +39,18 @@ class ListDomainsCommandTest extends TestCase
             'https://foo.com/baz-domain/invalid',
         ));
 
-        $this->domainService->expects($this->once())->method('listDomains')->with()->willReturn([
-            DomainItem::forDefaultDomain('foo.com', new NotFoundRedirectOptions(
-                invalidShortUrlRedirect: 'https://foo.com/default/invalid',
-                baseUrlRedirect: 'https://foo.com/default/base',
-            )),
-            DomainItem::forNonDefaultDomain(Domain::withAuthority('bar.com')),
-            DomainItem::forNonDefaultDomain($bazDomain),
-        ]);
+        $this->domainService
+            ->expects($this->once())
+            ->method('listDomains')
+            ->with()
+            ->willReturn([
+                DomainItem::forDefaultDomain('foo.com', new NotFoundRedirectOptions(
+                    invalidShortUrlRedirect: 'https://foo.com/default/invalid',
+                    baseUrlRedirect: 'https://foo.com/default/base',
+                )),
+                DomainItem::forNonDefaultDomain(Domain::withAuthority('bar.com')),
+                DomainItem::forNonDefaultDomain($bazDomain),
+            ]);
 
         $this->commandTester->execute($input);
 
@@ -57,33 +61,33 @@ class ListDomainsCommandTest extends TestCase
     public static function provideInputsAndOutputs(): iterable
     {
         $withoutRedirectsOutput = <<<OUTPUT
-        +---------+------------+
-        | Domain  | Is default |
-        +---------+------------+
-        | foo.com | Yes        |
-        | bar.com | No         |
-        | baz.com | No         |
-        +---------+------------+
+            +---------+------------+
+            | Domain  | Is default |
+            +---------+------------+
+            | foo.com | Yes        |
+            | bar.com | No         |
+            | baz.com | No         |
+            +---------+------------+
 
-        OUTPUT;
+            OUTPUT;
         $withRedirectsOutput = <<<OUTPUT
-        +---------+------------+---------------------------------------------------------+
-        | Domain  | Is default | "Not found" redirects                                   |
-        +---------+------------+---------------------------------------------------------+
-        | foo.com | Yes        | * Base URL: https://foo.com/default/base                |
-        |         |            | * Regular 404: N/A                                      |
-        |         |            | * Invalid short URL: https://foo.com/default/invalid    |
-        +---------+------------+---------------------------------------------------------+
-        | bar.com | No         | * Base URL: N/A                                         |
-        |         |            | * Regular 404: N/A                                      |
-        |         |            | * Invalid short URL: N/A                                |
-        +---------+------------+---------------------------------------------------------+
-        | baz.com | No         | * Base URL: N/A                                         |
-        |         |            | * Regular 404: https://foo.com/baz-domain/regular       |
-        |         |            | * Invalid short URL: https://foo.com/baz-domain/invalid |
-        +---------+------------+---------------------------------------------------------+
+            +---------+------------+---------------------------------------------------------+
+            | Domain  | Is default | "Not found" redirects                                   |
+            +---------+------------+---------------------------------------------------------+
+            | foo.com | Yes        | * Base URL: https://foo.com/default/base                |
+            |         |            | * Regular 404: N/A                                      |
+            |         |            | * Invalid short URL: https://foo.com/default/invalid    |
+            +---------+------------+---------------------------------------------------------+
+            | bar.com | No         | * Base URL: N/A                                         |
+            |         |            | * Regular 404: N/A                                      |
+            |         |            | * Invalid short URL: N/A                                |
+            +---------+------------+---------------------------------------------------------+
+            | baz.com | No         | * Base URL: N/A                                         |
+            |         |            | * Regular 404: https://foo.com/baz-domain/regular       |
+            |         |            | * Invalid short URL: https://foo.com/baz-domain/invalid |
+            +---------+------------+---------------------------------------------------------+
 
-        OUTPUT;
+            OUTPUT;
 
         yield 'no args' => [[], $withoutRedirectsOutput];
         yield 'no show redirects' => [['--show-redirects' => false], $withoutRedirectsOutput];

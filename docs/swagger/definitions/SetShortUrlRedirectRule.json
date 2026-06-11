@@ -25,7 +25,8 @@
               "geolocation-country-code",
               "geolocation-city-name",
               "before-date",
-              "after-date"
+              "after-date",
+              "browser"
             ],
             "description": "The type of the condition, which will determine the logic used to match it"
           },

@@ -47,15 +47,18 @@ class VisitLocationTest extends TestCase
             longitude: 2,
         ));
 
-        self::assertEquals([
-            'countryCode' => $location->countryCode,
-            'countryName' => $location->countryName,
-            'regionName' => $location->regionName,
-            'cityName' => $location->cityName,
-            'latitude' => $location->latitude,
-            'longitude' => $location->longitude,
-            'timezone' => $location->timezone,
-            'isEmpty' => $location->isEmpty,
-        ], $location->jsonSerialize());
+        self::assertEquals(
+            [
+                'countryCode' => $location->countryCode,
+                'countryName' => $location->countryName,
+                'regionName' => $location->regionName,
+                'cityName' => $location->cityName,
+                'latitude' => $location->latitude,
+                'longitude' => $location->longitude,
+                'timezone' => $location->timezone,
+                'isEmpty' => $location->isEmpty,
+            ],
+            $location->jsonSerialize(),
+        );
     }
 }

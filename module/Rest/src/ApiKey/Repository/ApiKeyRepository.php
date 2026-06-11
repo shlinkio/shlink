@@ -19,8 +19,9 @@ class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRe
     public function createInitialApiKey(string $apiKey): ApiKey|null
     {
         $em = $this->getEntityManager();
-        return $em->wrapInTransaction(function () use ($apiKey, $em): ApiKey|null {
-            $firstResult = $em->createQueryBuilder()
+        return $em->wrapInTransaction(static function () use ($apiKey, $em): ApiKey|null {
+            $firstResult = $em
+                ->createQueryBuilder()
                 ->select('a.id')
                 ->from(ApiKey::class, 'a')
                 ->setMaxResults(1)
@@ -44,9 +45,10 @@ class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRe
     public function nameExists(string $name): bool
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('a.id')
-           ->from(ApiKey::class, 'a')
-           ->setMaxResults(1);
+        $qb
+            ->select('a.id')
+            ->from(ApiKey::class, 'a')
+            ->setMaxResults(1);
 
         $this->queryBuilderByName($qb, $name);
 
@@ -74,6 +76,6 @@ class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRe
     private function queryBuilderByName(QueryBuilder $qb, string $name): void
     {
         $qb->where($qb->expr()->eq('a.name', ':name'))
-           ->setParameter('name', $name);
+            ->setParameter('name', $name);
     }
 }

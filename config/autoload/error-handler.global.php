@@ -9,7 +9,6 @@ use Shlinkio\Shlink\Common\Logger;
 use function Shlinkio\Shlink\Core\toProblemDetailsType;
 
 return [
-
     'problem-details' => [
         'default_types_map' => [
             404 => toProblemDetailsType('not-found'),
@@ -31,5 +30,4 @@ return [
             ],
         ],
     ],
-
 ];

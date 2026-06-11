@@ -26,10 +26,10 @@ use Shlinkio\Shlink\Core\ShortUrl\UrlShortener;
 class UrlShortenerTest extends TestCase
 {
     private UrlShortener $urlShortener;
-    private MockObject & ShortUrlTitleResolutionHelperInterface $titleResolutionHelper;
-    private MockObject & ShortCodeUniquenessHelperInterface $shortCodeHelper;
-    private MockObject & EventDispatcherInterface $dispatcher;
-    private MockObject & ShortUrlRepositoryInterface $repo;
+    private MockObject&ShortUrlTitleResolutionHelperInterface $titleResolutionHelper;
+    private MockObject&ShortCodeUniquenessHelperInterface $shortCodeHelper;
+    private MockObject&EventDispatcherInterface $dispatcher;
+    private MockObject&ShortUrlRepositoryInterface $repo;
 
     protected function setUp(): void
     {
@@ -37,8 +37,8 @@ class UrlShortenerTest extends TestCase
         $this->shortCodeHelper = $this->createMock(ShortCodeUniquenessHelperInterface::class);
 
         $em = $this->createStub(EntityManagerInterface::class);
-        $em->method('persist')->willReturnCallback(fn (ShortUrl $shortUrl) => $shortUrl->setId('10'));
-        $em->method('wrapInTransaction')->willReturnCallback(fn (callable $callback) => $callback());
+        $em->method('persist')->willReturnCallback(static fn (ShortUrl $shortUrl) => $shortUrl->setId('10'));
+        $em->method('wrapInTransaction')->willReturnCallback(static fn (callable $callback) => $callback());
 
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->repo = $this->createMock(ShortUrlRepositoryInterface::class);
@@ -57,43 +57,51 @@ class UrlShortenerTest extends TestCase
     public function urlIsProperlyShortened(bool $expectDispatchError, callable $dispatchBehavior): void
     {
         $longUrl = 'http://foobar.com/12345/hello?foo=bar';
-        $meta = ShortUrlCreation::fromRawData(['longUrl' => $longUrl]);
-        $this->titleResolutionHelper->expects($this->once())->method('processTitle')->with(
-            $meta,
-        )->willReturnArgument(0);
+        $meta = new ShortUrlCreation($longUrl);
+        $this->titleResolutionHelper
+            ->expects($this->once())
+            ->method('processTitle')
+            ->with(
+                $meta,
+            )
+            ->willReturnArgument(0);
         $this->shortCodeHelper->method('ensureShortCodeUniqueness')->willReturn(true);
         $this->dispatcher->expects($this->once())->method('dispatch')->willReturnCallback($dispatchBehavior);
 
         $result = $this->urlShortener->shorten($meta);
         $thereIsError = false;
-        $result->onEventDispatchingError(function () use (&$thereIsError): void {
+        $result->onEventDispatchingError(static function () use (&$thereIsError): void {
             $thereIsError = true;
         });
 
-        self::assertEquals($longUrl, $result->shortUrl->getLongUrl());
+        self::assertEquals($longUrl, $result->shortUrl->longUrl);
         self::assertEquals($expectDispatchError, $thereIsError);
     }
 
     public static function provideDispatchBehavior(): iterable
     {
-        yield 'no dispatch error' => [false, static function (): void {
-        }];
-        yield 'dispatch error' => [true, static function (): void {
-            throw new ServiceNotFoundException();
-        }];
+        yield 'no dispatch error' => [false, static function (): void {}];
+        yield 'dispatch error' => [
+            true,
+            static function (): void {
+                throw new ServiceNotFoundException();
+            },
+        ];
     }
 
     #[Test]
     public function exceptionIsThrownWhenNonUniqueSlugIsProvided(): void
     {
-        $meta = ShortUrlCreation::fromRawData(
-            ['customSlug' => 'custom-slug', 'longUrl' => 'http://foobar.com/12345/hello?foo=bar'],
-        );
+        $meta = new ShortUrlCreation(longUrl: 'http://foobar.com/12345/hello?foo=bar', customSlug: 'custom-slug');
 
         $this->shortCodeHelper->expects($this->once())->method('ensureShortCodeUniqueness')->willReturn(false);
-        $this->titleResolutionHelper->expects($this->once())->method('processTitle')->with(
-            $meta,
-        )->willReturnArgument(0);
+        $this->titleResolutionHelper
+            ->expects($this->once())
+            ->method('processTitle')
+            ->with(
+                $meta,
+            )
+            ->willReturnArgument(0);
 
         $this->expectException(NonUniqueSlugException::class);
 
@@ -116,54 +124,42 @@ class UrlShortenerTest extends TestCase
     {
         $url = 'http://foo.com';
 
-        yield [ShortUrlCreation::fromRawData(['findIfExists' => true, 'longUrl' => $url]), ShortUrl::withLongUrl(
-            $url,
-        )];
-        yield [ShortUrlCreation::fromRawData(
-            ['findIfExists' => true, 'customSlug' => 'foo', 'longUrl' => $url],
-        ), ShortUrl::withLongUrl($url)];
+        yield [new ShortUrlCreation($url, findIfExists: true), ShortUrl::withLongUrl($url)];
+        yield [new ShortUrlCreation($url, customSlug: 'foo', findIfExists: true), ShortUrl::withLongUrl($url)];
         yield [
-            ShortUrlCreation::fromRawData(['findIfExists' => true, 'longUrl' => $url, 'tags' => ['foo', 'bar']]),
-            ShortUrl::create(ShortUrlCreation::fromRawData(['longUrl' => $url, 'tags' => ['foo', 'bar']])),
+            new ShortUrlCreation($url, findIfExists: true, tags: ['foo', 'bar']),
+            ShortUrl::create(new ShortUrlCreation($url, tags: ['foo', 'bar'])),
         ];
         yield [
-            ShortUrlCreation::fromRawData(['findIfExists' => true, 'maxVisits' => 3, 'longUrl' => $url]),
-            ShortUrl::create(ShortUrlCreation::fromRawData(['maxVisits' => 3, 'longUrl' => $url])),
+            new ShortUrlCreation($url, maxVisits: 3, findIfExists: true),
+            ShortUrl::create(new ShortUrlCreation($url, maxVisits: 3)),
         ];
         yield [
-            ShortUrlCreation::fromRawData(
-                ['findIfExists' => true, 'validSince' => Chronos::parse('2017-01-01'), 'longUrl' => $url],
+            new ShortUrlCreation($url, validSince: Chronos::parse('2017-01-01'), findIfExists: true),
+            ShortUrl::create(new ShortUrlCreation($url, validSince: Chronos::parse('2017-01-01'))),
+        ];
+        yield [
+            new ShortUrlCreation($url, validUntil: Chronos::parse('2017-01-01'), findIfExists: true),
+            ShortUrl::create(new ShortUrlCreation($url, validUntil: Chronos::parse('2017-01-01'))),
+        ];
+        yield [
+            new ShortUrlCreation($url, findIfExists: true, domain: 'example.com'),
+            ShortUrl::create(new ShortUrlCreation($url, domain: 'example.com')),
+        ];
+        yield [
+            new ShortUrlCreation(
+                longUrl: $url,
+                validUntil: Chronos::parse('2017-01-01'),
+                maxVisits: 4,
+                findIfExists: true,
+                tags: ['baz', 'foo', 'bar'],
             ),
-            ShortUrl::create(
-                ShortUrlCreation::fromRawData(['validSince' => Chronos::parse('2017-01-01'), 'longUrl' => $url]),
-            ),
-        ];
-        yield [
-            ShortUrlCreation::fromRawData(
-                ['findIfExists' => true, 'validUntil' => Chronos::parse('2017-01-01'), 'longUrl' => $url],
-            ),
-            ShortUrl::create(
-                ShortUrlCreation::fromRawData(['validUntil' => Chronos::parse('2017-01-01'), 'longUrl' => $url]),
-            ),
-        ];
-        yield [
-            ShortUrlCreation::fromRawData(['findIfExists' => true, 'domain' => 'example.com', 'longUrl' => $url]),
-            ShortUrl::create(ShortUrlCreation::fromRawData(['domain' => 'example.com', 'longUrl' => $url])),
-        ];
-        yield [
-            ShortUrlCreation::fromRawData([
-                'findIfExists' => true,
-                'validUntil' => Chronos::parse('2017-01-01'),
-                'maxVisits' => 4,
-                'longUrl' => $url,
-                'tags' => ['baz', 'foo', 'bar'],
-            ]),
-            ShortUrl::create(ShortUrlCreation::fromRawData([
-                'validUntil' => Chronos::parse('2017-01-01'),
-                'maxVisits' => 4,
-                'longUrl' => $url,
-                'tags' => ['foo', 'bar', 'baz'],
-            ])),
+            ShortUrl::create(new ShortUrlCreation(
+                longUrl: $url,
+                validUntil: Chronos::parse('2017-01-01'),
+                maxVisits: 4,
+                tags: ['foo', 'bar', 'baz'],
+            )),
         ];
     }
 }

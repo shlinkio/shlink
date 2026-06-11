@@ -17,7 +17,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 class DeleteOrphanVisitsCommandTest extends TestCase
 {
     private CommandTester $commandTester;
-    private MockObject & VisitsDeleterInterface $deleter;
+    private MockObject&VisitsDeleterInterface $deleter;
 
     protected function setUp(): void
     {

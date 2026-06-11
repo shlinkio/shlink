@@ -19,7 +19,7 @@ use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
 class RoleResolverTest extends TestCase
 {
     private RoleResolver $resolver;
-    private MockObject & DomainServiceInterface $domainService;
+    private MockObject&DomainServiceInterface $domainService;
 
     protected function setUp(): void
     {
@@ -33,9 +33,13 @@ class RoleResolverTest extends TestCase
         array $expectedRoles,
         int $expectedDomainCalls,
     ): void {
-        $this->domainService->expects($this->exactly($expectedDomainCalls))->method('getOrCreate')->with(
-            'example.com',
-        )->willReturn(self::domainWithId(Domain::withAuthority('example.com')));
+        $this->domainService
+            ->expects($this->exactly($expectedDomainCalls))
+            ->method('getOrCreate')
+            ->with(
+                'example.com',
+            )
+            ->willReturn(self::domainWithId(Domain::withAuthority('example.com')));
 
         $result = [...$this->resolver->determineRoles($input)];
 
@@ -52,7 +56,7 @@ class RoleResolverTest extends TestCase
             0,
         ];
         yield 'domain role only' => [
-            (function (): ApiKeyInput {
+            (static function (): ApiKeyInput {
                 $input = new ApiKeyInput();
                 $input->domain = 'example.com';
 
@@ -62,7 +66,7 @@ class RoleResolverTest extends TestCase
             1,
         ];
         yield 'author role only' => [
-            (function (): ApiKeyInput {
+            (static function (): ApiKeyInput {
                 $input = new ApiKeyInput();
                 $input->authorOnly = true;
 
@@ -72,7 +76,7 @@ class RoleResolverTest extends TestCase
             0,
         ];
         yield 'all roles' => [
-            (function (): ApiKeyInput {
+            (static function (): ApiKeyInput {
                 $input = new ApiKeyInput();
                 $input->domain = 'example.com';
                 $input->authorOnly = true;

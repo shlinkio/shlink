@@ -32,8 +32,7 @@ class GetShortUrlVisitsCommand extends Command
         #[Argument('The short code which visits we want to get'), Ask('Which short code do you want to use?')]
         string $shortCode,
         #[MapInput] VisitsListInput $input,
-        #[Option('The domain for the short code', shortcut: 'd')]
-        string|null $domain = null,
+        #[Option('The domain for the short code', shortcut: 'd')] string|null $domain = null,
     ): int {
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, $domain);
         $dateRange = $input->dateRange();

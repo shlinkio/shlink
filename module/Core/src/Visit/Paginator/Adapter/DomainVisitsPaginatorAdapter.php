@@ -22,8 +22,7 @@ class DomainVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
         private readonly string $domain,
         private readonly VisitsParams $params,
         private readonly ApiKey|null $apiKey,
-    ) {
-    }
+    ) {}
 
     protected function doCount(): int
     {

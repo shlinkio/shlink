@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\ShortUrl\Input;
 
-use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlEdition;
-use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Symfony\Component\Console\Attribute\Option;
 
-use function array_unique;
+use function array_filter;
+use function get_object_vars;
 
 /**
  * Common input used for short URL creation and edition
@@ -48,44 +47,11 @@ final class ShortUrlDataInput
     )]
     public bool|null $noForwardQuery = null;
 
-    public function toArray(): array
+    public function toArray(string|null $longUrl): array
     {
-        $data = [];
-
-        // Avoid setting arguments that were not explicitly provided.
-        // This is important when editing short URLs and should not make a difference when creating.
-        if ($this->validSince !== null) {
-            $data[ShortUrlInputFilter::VALID_SINCE] = $this->validSince;
-        }
-        if ($this->validUntil !== null) {
-            $data[ShortUrlInputFilter::VALID_UNTIL] = $this->validUntil;
-        }
-        if ($this->maxVisits !== null) {
-            $data[ShortUrlInputFilter::MAX_VISITS] = $this->maxVisits;
-        }
-        if ($this->tags !== null) {
-            $data[ShortUrlInputFilter::TAGS] = array_unique($this->tags);
-        }
-        if ($this->title !== null) {
-            $data[ShortUrlInputFilter::TITLE] = $this->title;
-        }
-        if ($this->crawlable !== null) {
-            $data[ShortUrlInputFilter::CRAWLABLE] = $this->crawlable;
-        }
-        if ($this->noForwardQuery !== null) {
-            $data[ShortUrlInputFilter::FORWARD_QUERY] = !$this->noForwardQuery;
-        }
-
-        return $data;
-    }
-
-    public function toShortUrlEdition(string|null $longUrl): ShortUrlEdition
-    {
-        $data = $this->toArray();
-        if ($longUrl !== null) {
-            $data[ShortUrlInputFilter::LONG_URL] = $longUrl;
-        }
-
-        return ShortUrlEdition::fromRawData($data);
+        return [
+            ...array_filter(get_object_vars($this), static fn (mixed $value) => $value !== null),
+            'longUrl' => $longUrl,
+        ];
     }
 }

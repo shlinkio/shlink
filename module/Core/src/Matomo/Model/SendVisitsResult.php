@@ -12,9 +12,7 @@ final readonly class SendVisitsResult implements Countable
      * @param int<0, max> $successfulVisits
      * @param int<0, max> $failedVisits
      */
-    public function __construct(public int $successfulVisits = 0, public int $failedVisits = 0)
-    {
-    }
+    public function __construct(public int $successfulVisits = 0, public int $failedVisits = 0) {}
 
     public function hasSuccesses(): bool
     {

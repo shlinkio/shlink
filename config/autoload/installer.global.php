@@ -8,7 +8,6 @@ use Shlinkio\Shlink\Installer\Config\Option;
 use Shlinkio\Shlink\Installer\Util\InstallationCommand;
 
 return [
-
     'installer' => [
         'enabled_options' => [
             Option\Server\RuntimeConfigOption::class,
@@ -102,5 +101,4 @@ return [
             ],
         ],
     ],
-
 ];

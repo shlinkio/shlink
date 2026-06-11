@@ -17,7 +17,7 @@ use Throwable;
 
 class CloseDbConnectionEventListenerTest extends TestCase
 {
-    private MockObject & ReopeningEntityManagerInterface $em;
+    private MockObject&ReopeningEntityManagerInterface $em;
 
     protected function setUp(): void
     {
@@ -37,7 +37,7 @@ class CloseDbConnectionEventListenerTest extends TestCase
         $eventListener = new CloseDbConnectionEventListener($this->em, $wrapped);
 
         try {
-            ($eventListener)(new stdClass());
+            $eventListener(new stdClass());
         } catch (Throwable) {
             // Ignore exceptions
         }

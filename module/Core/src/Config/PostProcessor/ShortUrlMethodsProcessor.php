@@ -35,9 +35,10 @@ class ShortUrlMethodsProcessor
             return $config;
         }
 
-        $redirectStatus = RedirectStatus::tryFrom(
-            $config['redirects']['redirect_status_code'] ?? 0,
-        ) ?? DEFAULT_REDIRECT_STATUS_CODE;
+        $redirectStatus =
+            RedirectStatus::tryFrom(
+                $config['redirects']['redirect_status_code'] ?? 0,
+            ) ?? DEFAULT_REDIRECT_STATUS_CODE;
         $redirectRoute['allowed_methods'] = $redirectStatus->allowedHttpMethods();
 
         $config['routes'] = [...$rest, $redirectRoute];

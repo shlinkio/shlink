@@ -11,16 +11,14 @@ use Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepositoryInterface;
 
 readonly class ShortCodeUniquenessHelper implements ShortCodeUniquenessHelperInterface
 {
-    public function __construct(private ShortUrlRepositoryInterface $repo, private UrlShortenerOptions $options)
-    {
-    }
+    public function __construct(private ShortUrlRepositoryInterface $repo, private UrlShortenerOptions $options) {}
 
     public function ensureShortCodeUniqueness(ShortUrl $shortUrlToBeCreated, bool $hasCustomSlug): bool
     {
         $identifier = ShortUrlIdentifier::fromShortUrl($shortUrlToBeCreated);
         $otherShortUrlsExist = $this->repo->shortCodeIsInUseWithLock($identifier);
 
-        if (! $otherShortUrlsExist) {
+        if (!$otherShortUrlsExist) {
             return true;
         }
 

@@ -13,6 +13,5 @@ class VisitsCountFiltering
         public readonly DateRange|null $dateRange = null,
         public readonly bool $excludeBots = false,
         public readonly ApiKey|null $apiKey = null,
-    ) {
-    }
+    ) {}
 }

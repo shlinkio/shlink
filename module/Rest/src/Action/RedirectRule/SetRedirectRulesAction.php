@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\RedirectRule;
 
+use CuyZ\Valinor\Mapper\TreeMapper;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -22,8 +23,8 @@ class SetRedirectRulesAction extends AbstractRestAction
     public function __construct(
         private readonly ShortUrlResolverInterface $urlResolver,
         private readonly ShortUrlRedirectRuleServiceInterface $ruleService,
-    ) {
-    }
+        private readonly TreeMapper $treeMapper,
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
@@ -31,12 +32,12 @@ class SetRedirectRulesAction extends AbstractRestAction
             ShortUrlIdentifier::fromApiRequest($request),
             AuthenticationMiddleware::apiKeyFromRequest($request),
         );
-        $data = RedirectRulesData::fromRawData((array) $request->getParsedBody());
+        $data = $this->treeMapper->map(RedirectRulesData::class, (array) $request->getParsedBody());
 
         $result = $this->ruleService->setRulesForShortUrl($shortUrl, $data);
 
         return new JsonResponse([
-            'defaultLongUrl' => $shortUrl->getLongUrl(),
+            'defaultLongUrl' => $shortUrl->longUrl,
             'redirectRules' => $result,
         ]);
     }

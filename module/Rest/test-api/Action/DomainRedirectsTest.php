@@ -31,7 +31,9 @@ class DomainRedirectsTest extends ApiTestCase
         yield 'no domain' => [[]];
         yield 'empty domain' => [['domain' => '']];
         yield 'null domain' => [['domain' => null]];
-        yield 'invalid domain' => [['domain' => '192.168.1.1']];
+        yield 'invalid domain' => [['domain' => 'not a domain']];
+        yield 'invalid IP' => [['domain' => '540.38.386.0']];
+        yield 'invalid port' => [['domain' => 'example.com:888888']];
     }
 
     #[Test, DataProvider('provideRequests')]
@@ -48,39 +50,51 @@ class DomainRedirectsTest extends ApiTestCase
 
     public static function provideRequests(): iterable
     {
-        yield 'new domain' => [[
-            'domain' => 'my-new-domain.com',
-            'regular404Redirect' => 'foo.com',
-        ], [
-            'baseUrlRedirect' => null,
-            'regular404Redirect' => 'foo.com',
-            'invalidShortUrlRedirect' => null,
-        ]];
-        yield 'default domain' => [[
-            'domain' => 's.test',
-            'regular404Redirect' => 'foo-for-default.com',
-        ], [
-            'baseUrlRedirect' => null,
-            'regular404Redirect' => 'foo-for-default.com',
-            'invalidShortUrlRedirect' => null,
-        ]];
-        yield 'existing domain with redirects' => [[
-            'domain' => 'detached-with-redirects.com',
-            'baseUrlRedirect' => null,
-            'invalidShortUrlRedirect' => 'foo.com',
-        ], [
-            'baseUrlRedirect' => null,
-            'regular404Redirect' => 'bar.com',
-            'invalidShortUrlRedirect' => 'foo.com',
-        ]];
-        yield 'existing domain with no redirects' => [[
-            'domain' => 'example.com',
-            'baseUrlRedirect' => null,
-            'invalidShortUrlRedirect' => 'foo.com',
-        ], [
-            'baseUrlRedirect' => null,
-            'regular404Redirect' => null,
-            'invalidShortUrlRedirect' => 'foo.com',
-        ]];
+        yield 'new domain' => [
+            [
+                'domain' => 'my-new-domain.com',
+                'regular404Redirect' => 'foo.com',
+            ],
+            [
+                'baseUrlRedirect' => null,
+                'regular404Redirect' => 'foo.com',
+                'invalidShortUrlRedirect' => null,
+            ],
+        ];
+        yield 'default domain' => [
+            [
+                'domain' => 's.test',
+                'regular404Redirect' => 'foo-for-default.com',
+            ],
+            [
+                'baseUrlRedirect' => null,
+                'regular404Redirect' => 'foo-for-default.com',
+                'invalidShortUrlRedirect' => null,
+            ],
+        ];
+        yield 'existing domain with redirects' => [
+            [
+                'domain' => 'detached-with-redirects.com',
+                'baseUrlRedirect' => null,
+                'invalidShortUrlRedirect' => 'foo.com',
+            ],
+            [
+                'baseUrlRedirect' => null,
+                'regular404Redirect' => 'bar.com',
+                'invalidShortUrlRedirect' => 'foo.com',
+            ],
+        ];
+        yield 'existing domain with no redirects' => [
+            [
+                'domain' => 'example.com',
+                'baseUrlRedirect' => null,
+                'invalidShortUrlRedirect' => 'foo.com',
+            ],
+            [
+                'baseUrlRedirect' => null,
+                'regular404Redirect' => null,
+                'invalidShortUrlRedirect' => 'foo.com',
+            ],
+        ];
     }
 }

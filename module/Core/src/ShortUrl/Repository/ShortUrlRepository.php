@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Repository;
 
 use Doctrine\DBAL\LockMode;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
@@ -18,6 +19,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 
 use function count;
+use function Shlinkio\Shlink\Core\stringToBinHash;
 use function strtolower;
 
 /** @extends EntitySpecificationRepository<ShortUrl> */
@@ -35,27 +37,29 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         //       Investigate if the case-insensitive check can be done natively by the DB engine.
 
         $qb = $this->createQueryBuilder('s');
-        $qb->where($qb->expr()->eq($isStrict ? 's.shortCode' : 'LOWER(s.shortCode)', ':shortCode'))
-           ->setParameter('shortCode', $isStrict ? $identifier->shortCode : strtolower($identifier->shortCode))
-           ->setMaxResults(1);
+        $qb
+            ->where($qb->expr()->eq($isStrict ? 's.shortCode' : 'LOWER(s.shortCode)', ':shortCode'))
+            ->setParameter('shortCode', $isStrict ? $identifier->shortCode : strtolower($identifier->shortCode))
+            ->setMaxResults(1);
 
         // If $domain is null, do not join with domains nor do $qb->expr()->eq('d.authority', ':domain')
         $domain = $identifier->domain;
         if ($domain === null) {
             $qb->andWhere($qb->expr()->isNull('s.domain'));
         } else {
-            $qb->leftJoin('s.domain', 'd')
-               ->andWhere($qb->expr()->orX(
-                   $qb->expr()->isNull('s.domain'),
-                   $qb->expr()->eq('d.authority', ':domain'),
-               ))
-               ->setParameter('domain', $domain)
-               // Since we order by domain, we will have first the URL matching provided domain, followed by the one
-               // with no domain (if any), so it is safe to fetch 1 max result, and we will get:
-               //  * The short URL matching both the short code and the domain, or
-               //  * The short URL matching the short code but without any domain, or
-               //  * No short URL at all
-               ->orderBy('s.domain', $ordering);
+            $qb
+                ->leftJoin('s.domain', 'd')
+                ->andWhere($qb->expr()->orX(
+                    $qb->expr()->isNull('s.domain'),
+                    $qb->expr()->eq('d.authority', ':domain'),
+                ))
+                ->setParameter('domain', $domain)
+                // Since we order by domain, we will have first the URL matching provided domain, followed by the one
+                // with no domain (if any), so it is safe to fetch 1 max result, and we will get:
+                //  * The short URL matching both the short code and the domain, or
+                //  * The short URL matching the short code but without any domain, or
+                //  * No short URL at all
+                ->orderBy('s.domain', $ordering);
         }
 
         return $qb->getQuery()->getOneOrNullResult();
@@ -100,11 +104,12 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     private function createFindOneQueryBuilder(ShortUrlIdentifier $identifier, Specification|null $spec): QueryBuilder
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->from(ShortUrl::class, 's')
-           ->where($qb->expr()->isNotNull('s.shortCode'))
-           ->andWhere($qb->expr()->eq('s.shortCode', ':slug'))
-           ->setParameter('slug', $identifier->shortCode)
-           ->setMaxResults(1);
+        $qb
+            ->from(ShortUrl::class, 's')
+            ->where($qb->expr()->isNotNull('s.shortCode'))
+            ->andWhere($qb->expr()->eq('s.shortCode', ':slug'))
+            ->setParameter('slug', $identifier->shortCode)
+            ->setMaxResults(1);
 
         $this->whereDomainIs($qb, $identifier->domain);
 
@@ -117,33 +122,39 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
-        $qb->select('s')
-           ->from(ShortUrl::class, 's')
-           ->where($qb->expr()->eq('s.longUrl', ':longUrl'))
-           ->setParameter('longUrl', $creation->longUrl)
-           ->setMaxResults(1)
-           ->orderBy('s.id');
+        $qb
+            ->select('s')
+            ->from(ShortUrl::class, 's')
+            ->where($qb->expr()->eq('s.longUrlHash', ':longUrlHash'))
+            ->setParameter('longUrlHash', stringToBinHash($creation->longUrl), Types::BINARY)
+            ->setMaxResults(1)
+            ->orderBy('s.id');
 
         if ($creation->hasCustomSlug()) {
-            $qb->andWhere($qb->expr()->eq('s.shortCode', ':slug'))
-               ->setParameter('slug', $creation->customSlug);
+            $qb
+                ->andWhere($qb->expr()->eq('s.shortCode', ':slug'))
+                ->setParameter('slug', $creation->customSlug);
         }
         if ($creation->hasMaxVisits()) {
-            $qb->andWhere($qb->expr()->eq('s.maxVisits', ':maxVisits'))
-               ->setParameter('maxVisits', $creation->maxVisits);
+            $qb
+                ->andWhere($qb->expr()->eq('s.maxVisits', ':maxVisits'))
+                ->setParameter('maxVisits', $creation->maxVisits);
         }
         if ($creation->hasValidSince()) {
-            $qb->andWhere($qb->expr()->eq('s.validSince', ':validSince'))
-               ->setParameter('validSince', $creation->validSince, ChronosDateTimeType::CHRONOS_DATETIME);
+            $qb
+                ->andWhere($qb->expr()->eq('s.validSince', ':validSince'))
+                ->setParameter('validSince', $creation->validSince, ChronosDateTimeType::CHRONOS_DATETIME);
         }
         if ($creation->hasValidUntil()) {
-            $qb->andWhere($qb->expr()->eq('s.validUntil', ':validUntil'))
-               ->setParameter('validUntil', $creation->validUntil, ChronosDateTimeType::CHRONOS_DATETIME);
+            $qb
+                ->andWhere($qb->expr()->eq('s.validUntil', ':validUntil'))
+                ->setParameter('validUntil', $creation->validUntil, ChronosDateTimeType::CHRONOS_DATETIME);
         }
         if ($creation->hasDomain()) {
-            $qb->join('s.domain', 'd')
-               ->andWhere($qb->expr()->eq('d.authority', ':domain'))
-               ->setParameter('domain', $creation->domain);
+            $qb
+                ->join('s.domain', 'd')
+                ->andWhere($qb->expr()->eq('d.authority', ':domain'))
+                ->setParameter('domain', $creation->domain);
         }
 
         $apiKey = $creation->apiKey;
@@ -161,10 +172,11 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
 
         // If tags where provided, we need an extra join to see the amount of tags that every short URL has, so that we
         // can discard those that also have more tags, making sure only those fully matching are included.
-        $qb->join('s.tags', 't')
-           ->groupBy('s')
-           ->having($qb->expr()->eq('COUNT(t.id)', ':tagsAmount'))
-           ->setParameter('tagsAmount', $tagsAmount);
+        $qb
+            ->join('s.tags', 't')
+            ->groupBy('s')
+            ->having($qb->expr()->eq('COUNT(t.id)', ':tagsAmount'))
+            ->setParameter('tagsAmount', $tagsAmount);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
@@ -174,18 +186,19 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         foreach ($tags as $index => $tag) {
             $alias = 't_' . $index;
             $qb->join('s.tags', $alias, Join::WITH, $alias . '.name = :tag' . $index)
-               ->setParameter('tag' . $index, $tag);
+                ->setParameter('tag' . $index, $tag);
         }
     }
 
     public function findOneByImportedUrl(ImportedShlinkUrl $url): ShortUrl|null
     {
         $qb = $this->createQueryBuilder('s');
-        $qb->andWhere($qb->expr()->eq('s.importOriginalShortCode', ':shortCode'))
-           ->setParameter('shortCode', $url->shortCode)
-           ->andWhere($qb->expr()->eq('s.importSource', ':importSource'))
-           ->setParameter('importSource', $url->source->value)
-           ->setMaxResults(1);
+        $qb
+            ->andWhere($qb->expr()->eq('s.importOriginalShortCode', ':shortCode'))
+            ->setParameter('shortCode', $url->shortCode)
+            ->andWhere($qb->expr()->eq('s.importSource', ':importSource'))
+            ->setParameter('importSource', $url->source->value)
+            ->setMaxResults(1);
 
         $this->whereDomainIs($qb, $url->domain);
 
@@ -195,9 +208,10 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     private function whereDomainIs(QueryBuilder $qb, string|null $domain): void
     {
         if ($domain !== null) {
-            $qb->join('s.domain', 'd')
-               ->andWhere($qb->expr()->eq('d.authority', ':authority'))
-               ->setParameter('authority', $domain);
+            $qb
+                ->join('s.domain', 'd')
+                ->andWhere($qb->expr()->eq('d.authority', ':authority'))
+                ->setParameter('authority', $domain);
         } else {
             $qb->andWhere($qb->expr()->isNull('s.domain'));
         }

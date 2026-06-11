@@ -12,8 +12,7 @@ final readonly class LockConfig
         public string $lockName,
         public bool $isBlocking,
         public float $ttl = self::DEFAULT_TTL,
-    ) {
-    }
+    ) {}
 
     public static function blocking(string $lockName): self
     {

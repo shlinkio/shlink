@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Core\Util;
 
 use Fig\Http\Message\RequestMethodInterface;
@@ -24,8 +26,10 @@ enum RedirectStatus: int
      */
     public function allowedHttpMethods(): array|null
     {
-        return contains($this, [self::STATUS_301, self::STATUS_302])
-            ? [RequestMethodInterface::METHOD_GET]
-            : Route::HTTP_METHOD_ANY;
+        return (
+            contains($this, [self::STATUS_301, self::STATUS_302])
+                ? [RequestMethodInterface::METHOD_GET]
+                : Route::HTTP_METHOD_ANY
+        );
     }
 }

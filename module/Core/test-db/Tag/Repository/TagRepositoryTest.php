@@ -73,8 +73,10 @@ class TagRepositoryTest extends DatabaseTestCase
 
         [$firstUrlTags] = array_chunk($names, 3);
         $secondUrlTags = [$names[0]];
-        $metaWithTags = static fn (array $tags, ApiKey|null $apiKey) => ShortUrlCreation::fromRawData(
-            ['longUrl' => 'https://longUrl', 'tags' => $tags, 'apiKey' => $apiKey],
+        $metaWithTags = static fn (array $tags, ApiKey|null $apiKey) => new ShortUrlCreation(
+            'https://longUrl',
+            apiKey: $apiKey,
+            tags: $tags,
         );
 
         $shortUrl = ShortUrl::create($metaWithTags($firstUrlTags, $apiKey), $this->relationResolver);
@@ -119,33 +121,53 @@ class TagRepositoryTest extends DatabaseTestCase
 
         yield 'no filter' => [null, $defaultList];
         yield 'empty filter' => [new TagsListFiltering(), $defaultList];
-        yield 'limit' => [new TagsListFiltering(2), [
-            ['another', 0, 0, 0],
-            ['bar', 3, 3, 2],
-        ]];
-        yield 'offset' => [new TagsListFiltering(null, 3), [
-            ['foo', 2, 4, 3],
-        ]];
-        yield 'limit and offset' => [new TagsListFiltering(2, 1), [
-            ['bar', 3, 3, 2],
-            ['baz', 1, 3, 2],
-        ]];
-        yield 'search term' => [new TagsListFiltering(null, null, 'ba'), [
-            ['bar', 3, 3, 2],
-            ['baz', 1, 3, 2],
-        ]];
+        yield 'limit' => [
+            new TagsListFiltering(2),
+            [
+                ['another', 0, 0, 0],
+                ['bar', 3, 3, 2],
+            ],
+        ];
+        yield 'offset' => [
+            new TagsListFiltering(null, 3),
+            [
+                ['foo', 2, 4, 3],
+            ],
+        ];
+        yield 'limit and offset' => [
+            new TagsListFiltering(2, 1),
+            [
+                ['bar', 3, 3, 2],
+                ['baz', 1, 3, 2],
+            ],
+        ];
+        yield 'search term' => [
+            new TagsListFiltering(null, null, 'ba'),
+            [
+                ['bar', 3, 3, 2],
+                ['baz', 1, 3, 2],
+            ],
+        ];
         yield 'ASC ordering' => [
             new TagsListFiltering(null, null, null, Ordering::fromFieldAsc(OrderableField::TAG->value)),
             $defaultList,
         ];
-        yield 'DESC ordering' => [new TagsListFiltering(null, null, null, Ordering::fromFieldDesc(
-            OrderableField::TAG->value,
-        )), [
-            ['foo', 2, 4, 3],
-            ['baz', 1, 3, 2],
-            ['bar', 3, 3, 2],
-            ['another', 0, 0, 0],
-        ]];
+        yield 'DESC ordering' => [
+            new TagsListFiltering(
+                null,
+                null,
+                null,
+                Ordering::fromFieldDesc(
+                    OrderableField::TAG->value,
+                ),
+            ),
+            [
+                ['foo', 2, 4, 3],
+                ['baz', 1, 3, 2],
+                ['bar', 3, 3, 2],
+                ['another', 0, 0, 0],
+            ],
+        ];
         yield 'short URLs count ASC ordering' => [
             new TagsListFiltering(null, null, null, Ordering::fromFieldAsc(OrderableField::SHORT_URLS_COUNT->value)),
             [
@@ -191,20 +213,38 @@ class TagRepositoryTest extends DatabaseTestCase
                 ['another', 0, 0, 0],
             ],
         ];
-        yield 'api key' => [new TagsListFiltering(null, null, null, null, ApiKey::fromMeta(
-            ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()),
-        )), [
-            ['bar', 2, 3, 2],
-            ['baz', 1, 3, 2],
-            ['foo', 1, 3, 2],
-        ]];
-        yield 'combined' => [new TagsListFiltering(1, null, null, Ordering::fromFieldDesc(
-            OrderableField::SHORT_URLS_COUNT->value,
-        ), ApiKey::fromMeta(
-            ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()),
-        )), [
-            ['bar', 2, 3, 2],
-        ]];
+        yield 'api key' => [
+            new TagsListFiltering(
+                null,
+                null,
+                null,
+                null,
+                ApiKey::fromMeta(
+                    ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()),
+                ),
+            ),
+            [
+                ['bar', 2, 3, 2],
+                ['baz', 1, 3, 2],
+                ['foo', 1, 3, 2],
+            ],
+        ];
+        yield 'combined' => [
+            new TagsListFiltering(
+                1,
+                null,
+                null,
+                Ordering::fromFieldDesc(
+                    OrderableField::SHORT_URLS_COUNT->value,
+                ),
+                ApiKey::fromMeta(
+                    ApiKeyMeta::withRoles(RoleDefinition::forAuthoredShortUrls()),
+                ),
+            ),
+            [
+                ['bar', 2, 3, 2],
+            ],
+        ];
     }
 
     #[Test]
@@ -227,15 +267,14 @@ class TagRepositoryTest extends DatabaseTestCase
 
         [$firstUrlTags, $secondUrlTags] = array_chunk($names, 3);
 
-        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(
-            ['apiKey' => $authorApiKey, 'longUrl' => 'https://longUrl', 'tags' => $firstUrlTags],
-        ), $this->relationResolver);
+        $shortUrl = ShortUrl::create(
+            new ShortUrlCreation(longUrl: 'https://longUrl', apiKey: $authorApiKey, tags: $firstUrlTags),
+            $this->relationResolver,
+        );
         $this->getEntityManager()->persist($shortUrl);
 
         $shortUrl2 = ShortUrl::create(
-            ShortUrlCreation::fromRawData(
-                ['domain' => $domain->authority, 'longUrl' => 'https://longUrl', 'tags' => $secondUrlTags],
-            ),
+            new ShortUrlCreation('https://longUrl', domain: $domain->authority, tags: $secondUrlTags),
             $this->relationResolver,
         );
         $this->getEntityManager()->persist($shortUrl2);

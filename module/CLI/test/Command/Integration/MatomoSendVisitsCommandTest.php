@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ShlinkioTest\Shlink\CLI\Command\Integration;
 
 use Exception;
@@ -18,7 +20,7 @@ use Symfony\Component\Console\Command\Command;
 
 class MatomoSendVisitsCommandTest extends TestCase
 {
-    private MockObject & MatomoVisitSenderInterface $visitSender;
+    private MockObject&MatomoVisitSenderInterface $visitSender;
 
     protected function setUp(): void
     {
@@ -57,9 +59,12 @@ class MatomoSendVisitsCommandTest extends TestCase
     #[TestWith([false])]
     public function canCancelExecutionInInteractiveMode(bool $interactive): void
     {
-        $this->visitSender->expects($this->exactly($interactive ? 0 : 1))->method('sendVisitsInDateRange')->willReturn(
-            new SendVisitsResult(),
-        );
+        $this->visitSender
+            ->expects($this->exactly($interactive ? 0 : 1))
+            ->method('sendVisitsInDateRange')
+            ->willReturn(
+                new SendVisitsResult(),
+            );
         $this->executeCommand(['n'], ['interactive' => $interactive]);
     }
 
@@ -83,19 +88,22 @@ class MatomoSendVisitsCommandTest extends TestCase
     #[Test]
     public function printsResultOfSendingVisits(): void
     {
-        $this->visitSender->expects($this->once())->method('sendVisitsInDateRange')->willReturnCallback(
-            function (DateRange $_, MatomoSendVisitsCommand $command): SendVisitsResult {
-                // Call it a few times for an easier match of its result in the command putput
-                $command->success(0);
-                $command->success(1);
-                $command->success(2);
-                $command->error(3, new Exception('Error'));
-                $command->success(4);
-                $command->error(5, new Exception('Error'));
+        $this->visitSender
+            ->expects($this->once())
+            ->method('sendVisitsInDateRange')
+            ->willReturnCallback(
+                static function (DateRange $_, MatomoSendVisitsCommand $command): SendVisitsResult {
+                    // Call it a few times for an easier match of its result in the command putput
+                    $command->success(0);
+                    $command->success(1);
+                    $command->success(2);
+                    $command->error(3, new Exception('Error'));
+                    $command->success(4);
+                    $command->error(5, new Exception('Error'));
 
-                return new SendVisitsResult();
-            },
-        );
+                    return new SendVisitsResult();
+                },
+            );
 
         [$output] = $this->executeCommand(['y']);
 

@@ -6,7 +6,6 @@ use Mezzio\Router\FastRouteRouter;
 use Shlinkio\Shlink\Core\Config\EnvVars;
 
 return [
-
     'router' => [
         'base_path' => EnvVars::BASE_PATH->loadFromEnv(),
 
@@ -17,5 +16,4 @@ return [
             FastRouteRouter::CONFIG_CACHE_FILE => 'data/cache/fastroute_cached_routes.php',
         ],
     ],
-
 ];

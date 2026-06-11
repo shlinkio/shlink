@@ -28,7 +28,7 @@ use ShlinkioTest\Shlink\Core\Util\ApiKeyDataProviders;
 class TagServiceTest extends TestCase
 {
     private TagService $service;
-    private MockObject & TagRepository $repo;
+    private MockObject&TagRepository $repo;
 
     protected function setUp(): void
     {
@@ -58,9 +58,13 @@ class TagServiceTest extends TestCase
     ): void {
         $expected = [new TagInfo('foo', 1, 1), new TagInfo('bar', 3, 10)];
 
-        $this->repo->expects($this->once())->method('findTagsWithInfo')->with($expectedFiltering)->willReturn(
-            $expected,
-        );
+        $this->repo
+            ->expects($this->once())
+            ->method('findTagsWithInfo')
+            ->with($expectedFiltering)
+            ->willReturn(
+                $expected,
+            );
         $this->repo->expects($this->exactly($countCalls))->method('matchSingleScalarResult')->willReturn(2);
 
         $result = $this->service->tagsInfo($params, $apiKey);
@@ -132,7 +136,10 @@ class TagServiceTest extends TestCase
         $expected = new Tag('foo');
 
         $this->repo->expects($this->once())->method('findOneBy')->willReturn($expected);
-        $this->repo->expects($this->exactly($count > 0 ? 0 : 1))->method('count')->willReturn($count);
+        $this->repo
+            ->expects($this->exactly($count > 0 ? 0 : 1))
+            ->method('count')
+            ->willReturn($count);
 
         $tag = $this->service->renameTag(Renaming::fromNames($oldName, $newName));
 

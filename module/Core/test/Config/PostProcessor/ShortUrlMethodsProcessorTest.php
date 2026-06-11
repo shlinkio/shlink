@@ -30,71 +30,95 @@ class ShortUrlMethodsProcessorTest extends TestCase
 
     public static function provideConfigs(): iterable
     {
-        $buildConfigWithStatus = static fn (int $status, array|null $expectedAllowedMethods) => [[
-            'routes' => [
+        $buildConfigWithStatus = static fn (int $status, array|null $expectedAllowedMethods) => [
+            [
+                'routes' => [
+                    ['name' => 'foo'],
+                    ['name' => 'bar'],
+                    ['name' => RedirectAction::class],
+                ],
+                'redirects' => [
+                    'redirect_status_code' => $status,
+                ],
+            ],
+            [
                 ['name' => 'foo'],
                 ['name' => 'bar'],
-                ['name' => RedirectAction::class],
+                [
+                    'name' => RedirectAction::class,
+                    'allowed_methods' => $expectedAllowedMethods,
+                ],
             ],
-            'redirects' => [
-                'redirect_status_code' => $status,
-            ],
-        ], [
-            ['name' => 'foo'],
-            ['name' => 'bar'],
-            [
-                'name' => RedirectAction::class,
-                'allowed_methods' => $expectedAllowedMethods,
-            ],
-        ]];
+        ];
 
         yield 'empty config' => [[], null];
         yield 'empty routes' => [['routes' => []], []];
-        yield 'no redirects route' => [['routes' => $routes = [
-            ['name' => 'foo'],
-            ['name' => 'bar'],
-        ]], $routes];
-        yield 'one redirects route' => [['routes' => [
-            ['name' => 'foo'],
-            ['name' => 'bar'],
-            ['name' => RedirectAction::class],
-        ]], [
-            ['name' => 'foo'],
-            ['name' => 'bar'],
+        yield 'no redirects route' => [
             [
-                'name' => RedirectAction::class,
-                'allowed_methods' => ['GET'],
+                'routes' =>
+                    $routes = [
+                        ['name' => 'foo'],
+                        ['name' => 'bar'],
+                    ],
             ],
-        ]];
-        yield 'one redirects route in different location' => [['routes' => [
+            $routes,
+        ];
+        yield 'one redirects route' => [
             [
-                'name' => RedirectAction::class,
-                'allowed_methods' => ['POST'],
+                'routes' => [
+                    ['name' => 'foo'],
+                    ['name' => 'bar'],
+                    ['name' => RedirectAction::class],
+                ],
             ],
-            ['name' => 'foo'],
-            ['name' => 'bar'],
-        ]], [
-            ['name' => 'foo'],
-            ['name' => 'bar'],
             [
-                'name' => RedirectAction::class,
-                'allowed_methods' => ['GET'],
+                ['name' => 'foo'],
+                ['name' => 'bar'],
+                [
+                    'name' => RedirectAction::class,
+                    'allowed_methods' => ['GET'],
+                ],
             ],
-        ]];
-        yield 'multiple redirects routes' => [['routes' => [
-            ['name' => RedirectAction::class],
-            ['name' => 'foo'],
-            ['name' => 'bar'],
-            ['name' => RedirectAction::class],
-            ['name' => RedirectAction::class],
-        ]], [
-            ['name' => 'foo'],
-            ['name' => 'bar'],
+        ];
+        yield 'one redirects route in different location' => [
             [
-                'name' => RedirectAction::class,
-                'allowed_methods' => ['GET'],
+                'routes' => [
+                    [
+                        'name' => RedirectAction::class,
+                        'allowed_methods' => ['POST'],
+                    ],
+                    ['name' => 'foo'],
+                    ['name' => 'bar'],
+                ],
             ],
-        ]];
+            [
+                ['name' => 'foo'],
+                ['name' => 'bar'],
+                [
+                    'name' => RedirectAction::class,
+                    'allowed_methods' => ['GET'],
+                ],
+            ],
+        ];
+        yield 'multiple redirects routes' => [
+            [
+                'routes' => [
+                    ['name' => RedirectAction::class],
+                    ['name' => 'foo'],
+                    ['name' => 'bar'],
+                    ['name' => RedirectAction::class],
+                    ['name' => RedirectAction::class],
+                ],
+            ],
+            [
+                ['name' => 'foo'],
+                ['name' => 'bar'],
+                [
+                    'name' => RedirectAction::class,
+                    'allowed_methods' => ['GET'],
+                ],
+            ],
+        ];
         yield 'one redirects route with invalid status code' => $buildConfigWithStatus(500, ['GET']);
         yield 'one redirects route with 302 status code' => $buildConfigWithStatus(302, ['GET']);
         yield 'one redirects route with 301 status code' => $buildConfigWithStatus(301, ['GET']);

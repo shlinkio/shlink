@@ -19,8 +19,7 @@ readonly class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderI
     public function __construct(
         private TrackingOptions $trackingOptions,
         private ShortUrlRedirectionResolverInterface $redirectionResolver,
-    ) {
-    }
+    ) {}
 
     public function buildShortUrlRedirect(
         ShortUrl $shortUrl,
@@ -28,7 +27,7 @@ readonly class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderI
         string|null $extraPath = null,
     ): string {
         $uri = new Uri($this->redirectionResolver->resolveLongUrl($shortUrl, $request));
-        $shouldForwardQuery = $shortUrl->forwardQuery();
+        $shouldForwardQuery = $shortUrl->forwardQuery;
         $baseQueryString = $uri->getQuery();
         $basePath = $uri->getPath();
 
@@ -38,7 +37,9 @@ readonly class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderI
         $currentQuery = Query::parse($request->getUri()->getQuery());
 
         return $uri
-            ->withQuery($shouldForwardQuery ? $this->resolveQuery($baseQueryString, $currentQuery) : $baseQueryString)
+            ->withQuery(
+                $shouldForwardQuery ? $this->resolveQuery($baseQueryString, $currentQuery) : $baseQueryString,
+            )
             ->withPath($this->resolvePath($basePath, $extraPath))
             ->__toString();
     }

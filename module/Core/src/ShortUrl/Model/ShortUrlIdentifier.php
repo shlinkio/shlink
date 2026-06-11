@@ -11,9 +11,7 @@ use function sprintf;
 
 final readonly class ShortUrlIdentifier
 {
-    private function __construct(public string $shortCode, public string|null $domain = null)
-    {
-    }
+    private function __construct(public string $shortCode, public string|null $domain = null) {}
 
     public static function fromApiRequest(ServerRequestInterface $request): self
     {
@@ -33,8 +31,8 @@ final readonly class ShortUrlIdentifier
 
     public static function fromShortUrl(ShortUrl $shortUrl): self
     {
-        $domain = $shortUrl->getDomain()?->authority;
-        return new self($shortUrl->getShortCode(), $domain);
+        $domain = $shortUrl->domain?->authority;
+        return new self($shortUrl->shortCode, $domain);
     }
 
     public static function fromShortCodeAndDomain(string $shortCode, string|null $domain = null): self

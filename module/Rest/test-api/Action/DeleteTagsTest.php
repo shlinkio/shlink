@@ -16,9 +16,14 @@ class DeleteTagsTest extends ApiTestCase
     #[Test, DataProvider('provideNonAdminApiKeys')]
     public function anErrorIsReturnedWithNonAdminApiKeys(string $apiKey, string $version, string $expectedType): void
     {
-        $resp = $this->callApiWithKey(self::METHOD_DELETE, sprintf('/rest/v%s/tags', $version), [
-            RequestOptions::QUERY => ['tags' => ['foo']],
-        ], $apiKey);
+        $resp = $this->callApiWithKey(
+            self::METHOD_DELETE,
+            sprintf('/rest/v%s/tags', $version),
+            [
+                RequestOptions::QUERY => ['tags' => ['foo']],
+            ],
+            $apiKey,
+        );
         $payload = $this->getJsonResponsePayload($resp);
 
         self::assertEquals(self::STATUS_FORBIDDEN, $resp->getStatusCode());

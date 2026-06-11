@@ -21,8 +21,7 @@ class OrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
         private readonly OrphanVisitsParams $params,
         private readonly ApiKey|null $apiKey,
         private readonly UrlShortenerOptions $options,
-    ) {
-    }
+    ) {}
 
     protected function doCount(): int
     {

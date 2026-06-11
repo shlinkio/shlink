@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Util;
 
 use Closure;
-use Shlinkio\Shlink\CLI\Command\Util\LockConfig;
 use Symfony\Component\Console\Helper\DebugFormatterHelper;
 use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
@@ -18,13 +17,15 @@ use function str_replace;
 
 class ProcessRunner implements ProcessRunnerInterface
 {
+    private const int TIMEOUT = 1_200; // 20 minutes
+
     private Closure $createProcess;
 
-    public function __construct(private ProcessHelper $helper, callable|null $createProcess = null)
+    public function __construct(private readonly ProcessHelper $helper, callable|null $createProcess = null)
     {
         $this->createProcess = $createProcess !== null
             ? $createProcess(...)
-            : static fn (array $cmd) => new Process($cmd, timeout: LockConfig::DEFAULT_TTL);
+            : static fn (array $cmd) => new Process($cmd, timeout: self::TIMEOUT);
     }
 
     public function run(OutputInterface $output, array $cmd): void
@@ -35,7 +36,6 @@ class ProcessRunner implements ProcessRunnerInterface
 
         /** @var DebugFormatterHelper $formatter */
         $formatter = $this->helper->getHelperSet()?->get('debug_formatter') ?? new DebugFormatterHelper();
-        /** @var Process $process */
         $process = ($this->createProcess)($cmd);
 
         if ($output->isVeryVerbose()) {
@@ -48,10 +48,12 @@ class ProcessRunner implements ProcessRunnerInterface
         $process->mustRun($callback);
 
         if ($output->isVeryVerbose()) {
-            $message = $process->isSuccessful() ? 'Command ran successfully' : sprintf(
-                '%s Command did not run successfully',
-                $process->getExitCode(),
-            );
+            $message = $process->isSuccessful()
+                ? 'Command ran successfully'
+                : sprintf(
+                    '%s Command did not run successfully',
+                    $process->getExitCode(),
+                );
             $output->write($formatter->stop(spl_object_hash($process), $message, $process->isSuccessful()));
         }
     }

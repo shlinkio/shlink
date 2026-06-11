@@ -13,22 +13,24 @@ use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
 return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder = new ClassMetadataBuilder($metadata);
 
-    $builder->setTable(determineTableName('redirect_conditions', $emConfig));
+    $builder->setTable('redirect_conditions');
 
-    $builder->createField('id', Types::BIGINT)
-            ->columnName('id')
-            ->makePrimaryKey()
-            ->generatedValue('IDENTITY')
-            ->option('unsigned', true)
-            ->build();
+    $builder
+        ->createField('id', Types::BIGINT)
+        ->columnName('id')
+        ->makePrimaryKey()
+        ->generatedValue('IDENTITY')
+        ->option('unsigned', true)
+        ->build();
 
-    (new FieldBuilder($builder, [
+    new FieldBuilder($builder, [
         'fieldName' => 'type',
         'type' => Types::STRING,
         'enumType' => RedirectConditionType::class,
-    ]))->columnName('type')
-       ->length(255)
-       ->build();
+    ])
+        ->columnName('type')
+        ->length(255)
+        ->build();
 
     fieldWithUtf8Charset($builder->createField('matchKey', Types::STRING), $emConfig)
         ->columnName('match_key')

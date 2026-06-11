@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [5.1.0] - 2026-06-11
+### Added
+* [#2585](https://github.com/shlinkio/shlink/issues/2585) Add new browser condition for dynamic redirects system.
+
+  This condition accepts the values `chrome`, `firefox`, `edge`, `safari`, `opera` and `android_browser`, to redirect to different places based on specific known web browsers.
+
+* [#2583](https://github.com/shlinkio/shlink/issues/2583) Support redis clusters with sentinels which have their own ACL authentication.
+
+### Changed
+* [#2487](https://github.com/shlinkio/shlink/issues/2487) Create a new `long_url_hash` column, which is an indexed binary sha256 hash of the long URL. Use it when checking if a URL exists for a particular long URL, improving performance thanks to the index.
+* [#2555](https://github.com/shlinkio/shlink/issues/2555) Update docker image to PHP 8.5.
+* [#2590](https://github.com/shlinkio/shlink/issues/2590) Migrate to `cuyz/valinor` for request input mapping, filtering and validation.
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* *Nothing*
+
+
 ## [5.0.2] - 2026-04-16
 ### Added
 * *Nothing*

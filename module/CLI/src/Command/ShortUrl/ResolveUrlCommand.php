@@ -39,7 +39,7 @@ class ResolveUrlCommand extends Command
 
         try {
             $url = $this->urlResolver->resolveShortUrl($identifier);
-            $io->writeln(sprintf('Long URL: <info>%s</info>', $url->getLongUrl()));
+            $io->writeln(sprintf('Long URL: <info>%s</info>', $url->longUrl));
             return self::SUCCESS;
         } catch (ShortUrlNotFoundException $e) {
             $io->error($e->getMessage());

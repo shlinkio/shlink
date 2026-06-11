@@ -38,7 +38,7 @@ use function Shlinkio\Shlink\Config\env;
     } else {
         $requestIdMiddleware = $container->get(RequestIdMiddleware::class);
         $container->get(RoadRunnerTaskConsumerToListener::class)->listenForTasks(
-            fn (string $requestId) => $requestIdMiddleware->setCurrentRequestId($requestId),
+            $requestIdMiddleware->setCurrentRequestId(...),
         );
     }
 })();

@@ -21,8 +21,7 @@ class MercureInfoAction extends AbstractRestAction
     public function __construct(
         private readonly JwtProviderInterface $jwtProvider,
         private readonly array $mercureConfig,
-    ) {
-    }
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

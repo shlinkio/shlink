@@ -13,7 +13,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class CliTestUtils
 {
-    public static function createCommandStub(string $name): Stub & Command
+    public static function createCommandStub(string $name): Stub&Command
     {
         static $generator = null;
 

@@ -13,16 +13,14 @@ use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 
 readonly class VisitToLocationHelper implements VisitToLocationHelperInterface
 {
-    public function __construct(private IpLocationResolverInterface $ipLocationResolver)
-    {
-    }
+    public function __construct(private IpLocationResolverInterface $ipLocationResolver) {}
 
     /**
      * @throws IpCannotBeLocatedException
      */
     public function resolveVisitLocation(Visit $visit): Location
     {
-        if (! $visit->hasRemoteAddr()) {
+        if (!$visit->hasRemoteAddr()) {
             throw IpCannotBeLocatedException::forEmptyAddress();
         }
 

@@ -26,8 +26,7 @@ readonly class UrlShortener implements UrlShortenerInterface
         private ShortCodeUniquenessHelperInterface $shortCodeHelper,
         private EventDispatcherInterface $eventDispatcher,
         private ShortUrlRepositoryInterface $repo,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws NonUniqueSlugException
@@ -67,7 +66,7 @@ readonly class UrlShortener implements UrlShortenerInterface
 
     private function findExistingShortUrlIfExists(ShortUrlCreation $creation): ShortUrl|null
     {
-        if (! $creation->findIfExists) {
+        if (!$creation->findIfExists) {
             return null;
         }
 
@@ -81,11 +80,9 @@ readonly class UrlShortener implements UrlShortenerInterface
             $meta->hasCustomSlug(),
         );
 
-        if (! $couldBeMadeUnique) {
-            $domain = $shortUrlToBeCreated->getDomain();
-            $domainAuthority = $domain?->authority;
-
-            throw NonUniqueSlugException::fromSlug($shortUrlToBeCreated->getShortCode(), $domainAuthority);
+        if (!$couldBeMadeUnique) {
+            $domainAuthority = $shortUrlToBeCreated->domain?->authority;
+            throw NonUniqueSlugException::fromSlug($shortUrlToBeCreated->shortCode, $domainAuthority);
         }
     }
 }

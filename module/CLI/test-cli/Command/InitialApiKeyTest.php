@@ -17,9 +17,9 @@ class InitialApiKeyTest extends CliTestCase
 
         self::assertEquals(
             <<<OUT
-            Other API keys already exist. Initial API key creation skipped.
+                Other API keys already exist. Initial API key creation skipped.
 
-            OUT,
+                OUT,
             $output,
         );
     }

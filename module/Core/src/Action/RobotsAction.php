@@ -18,9 +18,10 @@ use const PHP_EOL;
 
 readonly class RobotsAction implements RequestHandlerInterface, StatusCodeInterface
 {
-    public function __construct(private CrawlingHelperInterface $crawlingHelper, private RobotsOptions $robotsOptions)
-    {
-    }
+    public function __construct(
+        private CrawlingHelperInterface $crawlingHelper,
+        private RobotsOptions $robotsOptions,
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
@@ -31,11 +32,11 @@ readonly class RobotsAction implements RequestHandlerInterface, StatusCodeInterf
     private function buildRobots(): iterable
     {
         yield <<<ROBOTS
-        # For more information about the robots.txt standard, see:
-        # https://www.robotstxt.org/orig.html
+            # For more information about the robots.txt standard, see:
+            # https://www.robotstxt.org/orig.html
 
 
-        ROBOTS;
+            ROBOTS;
 
         $userAgents = $this->robotsOptions->hasUserAgents() ? $this->robotsOptions->userAgents : ['*'];
         foreach ($userAgents as $userAgent) {

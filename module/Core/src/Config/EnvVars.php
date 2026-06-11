@@ -102,7 +102,7 @@ enum EnvVars: string
     private function loadFromFileEnv(): string|int|bool|null
     {
         $file = env(sprintf('%s_FILE', $this->value));
-        if ($file === null || ! is_file($file)) {
+        if ($file === null || !is_file($file)) {
             return null;
         }
 
@@ -116,20 +116,14 @@ enum EnvVars: string
             self::APP_ENV => 'prod',
             self::MEMORY_LIMIT => '512M',
             self::TIMEZONE => date_default_timezone_get(),
-
             self::DEFAULT_SHORT_CODES_LENGTH => DEFAULT_SHORT_CODES_LENGTH,
             self::SHORT_URL_MODE => ShortUrlMode::STRICT->value,
             self::IS_HTTPS_ENABLED, self::AUTO_RESOLVE_TITLES => true,
-            self::MULTI_SEGMENT_SLUGS_ENABLED,
-            self::SHORT_URL_TRAILING_SLASH => false,
+            self::MULTI_SEGMENT_SLUGS_ENABLED, self::SHORT_URL_TRAILING_SLASH => false,
             self::DEFAULT_DOMAIN, self::BASE_PATH => '',
             self::CACHE_NAMESPACE => 'Shlink',
             self::REDIRECT_EXTRA_PATH_MODE => ExtraPathMode::DEFAULT->value,
-
-            self::REDIS_PUB_SUB_ENABLED,
-            self::MATOMO_ENABLED,
-            self::ROBOTS_ALLOW_ALL_SHORT_URLS => false,
-
+            self::REDIS_PUB_SUB_ENABLED, self::MATOMO_ENABLED, self::ROBOTS_ALLOW_ALL_SHORT_URLS => false,
             self::DB_NAME => 'shlink',
             self::DB_HOST => self::DB_UNIX_SOCKET->loadFromEnv(),
             self::DB_DRIVER => 'sqlite',
@@ -139,29 +133,23 @@ enum EnvVars: string
                 default => '3306',
             },
             self::DB_USE_ENCRYPTION => false,
-
             self::MERCURE_ENABLED => self::MERCURE_PUBLIC_HUB_URL->existsInEnv(),
             self::MERCURE_INTERNAL_HUB_URL => self::MERCURE_PUBLIC_HUB_URL->loadFromEnv(),
-
             self::RABBITMQ_ENABLED, self::RABBITMQ_USE_SSL => false,
             self::RABBITMQ_PORT => 5672,
             self::RABBITMQ_VHOST => '/',
-
             self::REDIRECT_STATUS_CODE => DEFAULT_REDIRECT_STATUS_CODE->value,
             self::REDIRECT_CACHE_LIFETIME => DEFAULT_REDIRECT_CACHE_LIFETIME,
-
             self::ANONYMIZE_REMOTE_ADDR, self::TRACK_ORPHAN_VISITS => true,
             self::DISABLE_TRACKING,
             self::DISABLE_IP_TRACKING,
             self::DISABLE_REFERRER_TRACKING,
-            self::DISABLE_UA_TRACKING => false,
-
+            self::DISABLE_UA_TRACKING,
+                => false,
             self::CORS_ALLOW_ORIGIN => '*',
             self::CORS_ALLOW_CREDENTIALS => false,
             self::CORS_MAX_AGE => 3600,
-
             self::LOGS_FORMAT => 'console',
-
             default => null,
         };
     }

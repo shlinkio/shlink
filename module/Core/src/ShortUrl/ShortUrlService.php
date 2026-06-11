@@ -20,8 +20,7 @@ readonly class ShortUrlService implements ShortUrlServiceInterface
         private ShortUrlResolverInterface $urlResolver,
         private ShortUrlTitleResolutionHelperInterface $titleResolutionHelper,
         private ShortUrlRelationResolverInterface $relationResolver,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws ShortUrlNotFoundException
@@ -31,7 +30,7 @@ readonly class ShortUrlService implements ShortUrlServiceInterface
         ShortUrlEdition $shortUrlEdit,
         ApiKey|null $apiKey = null,
     ): ShortUrl {
-        if ($shortUrlEdit->longUrlWasProvided()) {
+        if ($shortUrlEdit->longUrl !== null) {
             $shortUrlEdit = $this->titleResolutionHelper->processTitle($shortUrlEdit);
         }
 

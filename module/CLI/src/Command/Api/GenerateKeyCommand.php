@@ -17,8 +17,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+use function Shlinkio\Shlink\Common\normalizeOptionalDate;
 use function Shlinkio\Shlink\Core\arrayToString;
-use function Shlinkio\Shlink\Core\normalizeOptionalDate;
 use function sprintf;
 
 #[AsCommand(
@@ -65,10 +65,13 @@ class GenerateKeyCommand extends Command
             $io->warning('Save the key in a secure location. You will not be able to get it afterwards.');
         }
 
-        if (! ApiKey::isAdmin($apiKey)) {
+        if (!ApiKey::isAdmin($apiKey)) {
             ShlinkTable::default($io)->render(
                 ['Role name', 'Role metadata'],
-                $apiKey->mapRoles(fn (Role $role, array $meta) => [$role->value, arrayToString($meta, indentSize: 0)]),
+                $apiKey->mapRoles(static fn (Role $role, array $meta) => [
+                    $role->value,
+                    arrayToString($meta, indentSize: 0),
+                ]),
                 headerTitle: 'Roles',
             );
         }

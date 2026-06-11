@@ -21,8 +21,7 @@ class ListDomainsAction extends AbstractRestAction
     public function __construct(
         private readonly DomainServiceInterface $domainService,
         private readonly NotFoundRedirectOptions $options,
-    ) {
-    }
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

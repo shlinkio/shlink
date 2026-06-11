@@ -4,74 +4,32 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\Domain\Request;
 
+use Shlinkio\Shlink\Common\ObjectMapper\HostAndPortConverter;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirectConfigInterface;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
-use Shlinkio\Shlink\Core\Domain\Validation\DomainRedirectsInputFilter;
-use Shlinkio\Shlink\Core\Exception\ValidationException;
+use Shlinkio\Shlink\Core\Util\NoValue;
 
-use function array_key_exists;
-
-class DomainRedirectsRequest
+final readonly class DomainRedirectsRequest
 {
-    private string $authority;
-    private string|null $baseUrlRedirect = null;
-    private bool $baseUrlRedirectWasProvided = false;
-    private string|null $regular404Redirect = null;
-    private bool $regular404RedirectWasProvided = false;
-    private string|null $invalidShortUrlRedirect = null;
-    private bool $invalidShortUrlRedirectWasProvided = false;
+    public string $authority;
 
-    private function __construct()
-    {
-    }
-
-    public static function fromRawData(array $payload): self
-    {
-        $instance = new self();
-        $instance->validateAndInit($payload);
-        return $instance;
-    }
-
-    /**
-     * @throws ValidationException
-     */
-    private function validateAndInit(array $payload): void
-    {
-        $inputFilter = DomainRedirectsInputFilter::withData($payload);
-        if (! $inputFilter->isValid()) {
-            throw ValidationException::fromInputFilter($inputFilter);
-        }
-
-        $this->baseUrlRedirectWasProvided = array_key_exists(
-            DomainRedirectsInputFilter::BASE_URL_REDIRECT,
-            $payload,
-        );
-        $this->regular404RedirectWasProvided = array_key_exists(
-            DomainRedirectsInputFilter::REGULAR_404_REDIRECT,
-            $payload,
-        );
-        $this->invalidShortUrlRedirectWasProvided = array_key_exists(
-            DomainRedirectsInputFilter::INVALID_SHORT_URL_REDIRECT,
-            $payload,
-        );
-
-        $this->authority = $inputFilter->getValue(DomainRedirectsInputFilter::DOMAIN);
-        $this->baseUrlRedirect = $inputFilter->getValue(DomainRedirectsInputFilter::BASE_URL_REDIRECT);
-        $this->regular404Redirect = $inputFilter->getValue(DomainRedirectsInputFilter::REGULAR_404_REDIRECT);
-        $this->invalidShortUrlRedirect = $inputFilter->getValue(DomainRedirectsInputFilter::INVALID_SHORT_URL_REDIRECT);
-    }
-
-    public function authority(): string
-    {
-        return $this->authority;
+    public function __construct(
+        #[HostAndPortConverter] string $domain,
+        private NoValue|string|null $baseUrlRedirect = NoValue::NO_VALUE,
+        private NoValue|string|null $regular404Redirect = NoValue::NO_VALUE,
+        private NoValue|string|null $invalidShortUrlRedirect = NoValue::NO_VALUE,
+    ) {
+        $this->authority = $domain;
     }
 
     public function toNotFoundRedirects(NotFoundRedirectConfigInterface|null $defaults = null): NotFoundRedirects
     {
         return NotFoundRedirects::withRedirects(
-            $this->baseUrlRedirectWasProvided ? $this->baseUrlRedirect : $defaults?->baseUrlRedirect,
-            $this->regular404RedirectWasProvided ? $this->regular404Redirect : $defaults?->regular404Redirect,
-            $this->invalidShortUrlRedirectWasProvided
+            $this->baseUrlRedirect !== NoValue::NO_VALUE ? $this->baseUrlRedirect : $defaults?->baseUrlRedirect,
+            $this->regular404Redirect !== NoValue::NO_VALUE
+                ? $this->regular404Redirect
+                : $defaults?->regular404Redirect,
+            $this->invalidShortUrlRedirect !== NoValue::NO_VALUE
                 ? $this->invalidShortUrlRedirect
                 : $defaults?->invalidShortUrlRedirect,
         );

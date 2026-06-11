@@ -15,8 +15,7 @@ final class TagsListFiltering
         public readonly string|null $searchTerm = null,
         public readonly Ordering|null $orderBy = null,
         public readonly ApiKey|null $apiKey = null,
-    ) {
-    }
+    ) {}
 
     public static function fromRangeAndParams(int $limit, int $offset, TagsParams $params, ApiKey|null $apiKey): self
     {

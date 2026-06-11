@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkMigrations;
 
-use Doctrine\DBAL\Platforms\MySQLPlatform;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Types;
@@ -28,10 +28,15 @@ final class Version20240224115725 extends AbstractMigration
             'unsigned' => true,
             'notnull' => true,
         ]);
-        $redirectRules->addForeignKeyConstraint('short_urls', ['short_url_id'], ['id'], [
-            'onDelete' => 'CASCADE',
-            'onUpdate' => 'RESTRICT',
-        ]);
+        $redirectRules->addForeignKeyConstraint(
+            'short_urls',
+            ['short_url_id'],
+            ['id'],
+            [
+                'onDelete' => 'CASCADE',
+                'onUpdate' => 'RESTRICT',
+            ],
+        );
 
         $redirectConditions = $this->createTableWithId($schema, 'redirect_conditions');
 
@@ -49,19 +54,29 @@ final class Version20240224115725 extends AbstractMigration
             'unsigned' => true,
             'notnull' => true,
         ]);
-        $joinTable->addForeignKeyConstraint('redirect_conditions', ['redirect_condition_id'], ['id'], [
-            'onDelete' => 'CASCADE',
-            'onUpdate' => 'RESTRICT',
-        ]);
+        $joinTable->addForeignKeyConstraint(
+            'redirect_conditions',
+            ['redirect_condition_id'],
+            ['id'],
+            [
+                'onDelete' => 'CASCADE',
+                'onUpdate' => 'RESTRICT',
+            ],
+        );
 
         $joinTable->addColumn('short_url_redirect_rule_id', Types::BIGINT, [
             'unsigned' => true,
             'notnull' => true,
         ]);
-        $joinTable->addForeignKeyConstraint('short_url_redirect_rules', ['short_url_redirect_rule_id'], ['id'], [
-            'onDelete' => 'CASCADE',
-            'onUpdate' => 'RESTRICT',
-        ]);
+        $joinTable->addForeignKeyConstraint(
+            'short_url_redirect_rules',
+            ['short_url_redirect_rule_id'],
+            ['id'],
+            [
+                'onDelete' => 'CASCADE',
+                'onUpdate' => 'RESTRICT',
+            ],
+        );
 
         $joinTable->setPrimaryKey(['redirect_condition_id', 'short_url_redirect_rule_id']);
     }
@@ -81,7 +96,7 @@ final class Version20240224115725 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->skipIf(! $schema->hasTable('short_url_redirect_rules'), 'Columns do not exist');
+        $this->skipIf(!$schema->hasTable('short_url_redirect_rules'), 'Columns do not exist');
 
         $schema->dropTable('redirect_conditions_in_short_url_redirect_rules');
         $schema->dropTable('short_url_redirect_rules');
@@ -90,6 +105,6 @@ final class Version20240224115725 extends AbstractMigration
 
     public function isTransactional(): bool
     {
-        return ! ($this->connection->getDatabasePlatform() instanceof MySQLPlatform);
+        return !$this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform;
     }
 }

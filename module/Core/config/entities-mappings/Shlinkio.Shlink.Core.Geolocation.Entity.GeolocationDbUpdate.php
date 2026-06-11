@@ -14,31 +14,35 @@ use Shlinkio\Shlink\Core\Geolocation\Entity\GeolocationDbUpdateStatus;
 return static function (ClassMetadata $metadata, array $emConfig): void {
     $builder = new ClassMetadataBuilder($metadata);
 
-    $builder->setTable(determineTableName('geolocation_db_updates', $emConfig));
+    $builder->setTable('geolocation_db_updates');
 
-    $builder->createField('id', Types::BIGINT)
-            ->columnName('id')
-            ->makePrimaryKey()
-            ->generatedValue('IDENTITY')
-            ->option('unsigned', true)
-            ->build();
+    $builder
+        ->createField('id', Types::BIGINT)
+        ->columnName('id')
+        ->makePrimaryKey()
+        ->generatedValue('IDENTITY')
+        ->option('unsigned', true)
+        ->build();
 
-    $builder->createField('dateCreated', ChronosDateTimeType::CHRONOS_DATETIME)
-            ->columnName('date_created')
-            ->build();
+    $builder
+        ->createField('dateCreated', ChronosDateTimeType::CHRONOS_DATETIME)
+        ->columnName('date_created')
+        ->build();
 
-    $builder->createField('dateUpdated', ChronosDateTimeType::CHRONOS_DATETIME)
-            ->columnName('date_updated')
-            ->nullable()
-            ->build();
+    $builder
+        ->createField('dateUpdated', ChronosDateTimeType::CHRONOS_DATETIME)
+        ->columnName('date_updated')
+        ->nullable()
+        ->build();
 
-    (new FieldBuilder($builder, [
+    new FieldBuilder($builder, [
         'fieldName' => 'status',
         'type' => Types::STRING,
         'enumType' => GeolocationDbUpdateStatus::class,
-    ]))->columnName('status')
-       ->length(128)
-       ->build();
+    ])
+        ->columnName('status')
+        ->length(128)
+        ->build();
 
     fieldWithUtf8Charset($builder->createField('error', Types::STRING), $emConfig)
         ->columnName('error')

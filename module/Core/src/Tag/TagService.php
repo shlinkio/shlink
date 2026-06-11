@@ -20,9 +20,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 readonly class TagService implements TagServiceInterface
 {
-    public function __construct(private ORM\EntityManagerInterface $em, private TagRepositoryInterface $repo)
-    {
-    }
+    public function __construct(private ORM\EntityManagerInterface $em, private TagRepositoryInterface $repo) {}
 
     /** @inheritDoc */
     public function listTags(TagsParams $params, ApiKey|null $apiKey = null): Paginator
@@ -44,8 +42,7 @@ readonly class TagService implements TagServiceInterface
     private function createPaginator(AdapterInterface $adapter, TagsParams $params): Paginator
     {
         $paginator = new Paginator($adapter);
-        $paginator->setMaxPerPage($params->itemsPerPage)
-                  ->setCurrentPage($params->page);
+        $paginator->setMaxPerPage($params->itemsPerPage)->setCurrentPage($params->page);
 
         return $paginator;
     }

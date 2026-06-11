@@ -8,9 +8,7 @@ use Shlinkio\Shlink\Core\Config\EnvVars;
 
 final readonly class RabbitMqOptions
 {
-    public function __construct(public bool $enabled = false)
-    {
-    }
+    public function __construct(public bool $enabled = false) {}
 
     public static function fromEnv(): self
     {

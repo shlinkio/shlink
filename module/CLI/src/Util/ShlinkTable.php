@@ -15,9 +15,7 @@ final class ShlinkTable
     private const string DEFAULT_STYLE_NAME = 'default';
     private const string TABLE_TITLE_STYLE = '<options=bold> %s </>';
 
-    private function __construct(private readonly Table $baseTable, private readonly bool $withRowSeparators = false)
-    {
-    }
+    private function __construct(private readonly Table $baseTable, private readonly bool $withRowSeparators = false) {}
 
     public static function default(OutputInterface $output): self
     {
@@ -41,17 +39,17 @@ final class ShlinkTable
         string|null $headerTitle = null,
     ): void {
         $style = Table::getStyleDefinition(self::DEFAULT_STYLE_NAME);
-        $style->setFooterTitleFormat(self::TABLE_TITLE_STYLE)
-              ->setHeaderTitleFormat(self::TABLE_TITLE_STYLE);
+        $style->setFooterTitleFormat(self::TABLE_TITLE_STYLE)->setHeaderTitleFormat(self::TABLE_TITLE_STYLE);
         $tableRows = $this->withRowSeparators ? $this->addRowSeparators($rows) : $rows;
 
         $table = clone $this->baseTable;
-        $table->setStyle($style)
-              ->setHeaders($headers)
-              ->setRows($tableRows)
-              ->setFooterTitle($footerTitle)
-              ->setHeaderTitle($headerTitle)
-              ->render();
+        $table
+            ->setStyle($style)
+            ->setHeaders($headers)
+            ->setRows($tableRows)
+            ->setFooterTitle($footerTitle)
+            ->setHeaderTitle($headerTitle)
+            ->render();
     }
 
     private function addRowSeparators(array $rows): array

@@ -13,8 +13,7 @@ final readonly class DeleteShortUrlsOptions
     public function __construct(
         public int $visitsThreshold = DEFAULT_DELETE_SHORT_URL_THRESHOLD,
         public bool $checkVisitsThreshold = true,
-    ) {
-    }
+    ) {}
 
     public static function fromEnv(): self
     {

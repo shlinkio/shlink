@@ -22,7 +22,7 @@ class ExpiredShortUrlsRepository extends EntitySpecificationRepository implement
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->delete(ShortUrl::class, 's');
 
-        return $this->applyConditions($qb, $conditions, fn () => (int) $qb->getQuery()->execute());
+        return $this->applyConditions($qb, $conditions, static fn () => (int) $qb->getQuery()->execute());
     }
 
     /** @inheritDoc */
@@ -30,9 +30,9 @@ class ExpiredShortUrlsRepository extends EntitySpecificationRepository implement
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('COUNT(s.id)')
-           ->from(ShortUrl::class, 's');
+            ->from(ShortUrl::class, 's');
 
-        return $this->applyConditions($qb, $conditions, fn () => (int) $qb->getQuery()->getSingleScalarResult());
+        return $this->applyConditions($qb, $conditions, static fn () => (int) $qb->getQuery()->getSingleScalarResult());
     }
 
     /**
@@ -43,16 +43,15 @@ class ExpiredShortUrlsRepository extends EntitySpecificationRepository implement
         ExpiredShortUrlsConditions $conditions,
         callable $getResultFromQueryBuilder,
     ): int {
-        if (! $conditions->hasConditions()) {
+        if (!$conditions->hasConditions()) {
             return 0;
         }
 
         if ($conditions->pastValidUntil) {
-            $qb
-                ->where($qb->expr()->andX(
-                    $qb->expr()->isNotNull('s.validUntil'),
-                    $qb->expr()->lt('s.validUntil', ':now'),
-                ))
+            $qb->where($qb->expr()->andX(
+                $qb->expr()->isNotNull('s.validUntil'),
+                $qb->expr()->lt('s.validUntil', ':now'),
+            ))
                 ->setParameter('now', Chronos::now()->toDateTimeString());
         }
 

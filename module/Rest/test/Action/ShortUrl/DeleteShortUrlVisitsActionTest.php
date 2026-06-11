@@ -19,7 +19,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class DeleteShortUrlVisitsActionTest extends TestCase
 {
     private DeleteShortUrlVisitsAction $action;
-    private MockObject & ShortUrlVisitsDeleterInterface $deleter;
+    private MockObject&ShortUrlVisitsDeleterInterface $deleter;
 
     protected function setUp(): void
     {
@@ -31,13 +31,18 @@ class DeleteShortUrlVisitsActionTest extends TestCase
     public function visitsAreDeletedForShortUrl(int $visitsCount): void
     {
         $apiKey = ApiKey::create();
-        $request = ServerRequestFactory::fromGlobals()->withAttribute(ApiKey::class, $apiKey)
-                                                      ->withAttribute('shortCode', 'foo');
+        $request = ServerRequestFactory::fromGlobals()
+            ->withAttribute(ApiKey::class, $apiKey)
+            ->withAttribute('shortCode', 'foo');
 
-        $this->deleter->expects($this->once())->method('deleteShortUrlVisits')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain('foo'),
-            $apiKey,
-        )->willReturn(new BulkDeleteResult($visitsCount));
+        $this->deleter
+            ->expects($this->once())
+            ->method('deleteShortUrlVisits')
+            ->with(
+                ShortUrlIdentifier::fromShortCodeAndDomain('foo'),
+                $apiKey,
+            )
+            ->willReturn(new BulkDeleteResult($visitsCount));
 
         /** @var JsonResponse $resp */
         $resp = $this->action->handle($request);

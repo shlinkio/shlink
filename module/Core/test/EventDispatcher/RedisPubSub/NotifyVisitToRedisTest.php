@@ -25,10 +25,10 @@ use Throwable;
 
 class NotifyVisitToRedisTest extends TestCase
 {
-    private MockObject & PublishingHelperInterface $helper;
-    private MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator;
-    private MockObject & EntityManagerInterface $em;
-    private MockObject & LoggerInterface $logger;
+    private MockObject&PublishingHelperInterface $helper;
+    private MockObject&PublishingUpdatesGeneratorInterface $updatesGenerator;
+    private MockObject&EntityManagerInterface $em;
+    private MockObject&LoggerInterface $logger;
 
     protected function setUp(): void
     {
@@ -54,17 +54,28 @@ class NotifyVisitToRedisTest extends TestCase
     public function printsDebugMessageInCaseOfError(Throwable $e): void
     {
         $visitId = '123';
-        $this->em->expects($this->once())->method('find')->with(Visit::class, $visitId)->willReturn(
-            Visit::forBasePath(Visitor::empty()),
-        );
-        $this->updatesGenerator->expects($this->once())->method('newOrphanVisitUpdate')->with(
-            $this->isInstanceOf(Visit::class),
-        )->willReturn(Update::forTopicAndPayload('', []));
+        $this->em
+            ->expects($this->once())
+            ->method('find')
+            ->with(Visit::class, $visitId)
+            ->willReturn(
+                Visit::forBasePath(Visitor::empty()),
+            );
+        $this->updatesGenerator
+            ->expects($this->once())
+            ->method('newOrphanVisitUpdate')
+            ->with(
+                $this->isInstanceOf(Visit::class),
+            )
+            ->willReturn(Update::forTopicAndPayload('', []));
         $this->helper->expects($this->once())->method('publishUpdate')->withAnyParameters()->willThrowException($e);
-        $this->logger->expects($this->once())->method('debug')->with(
-            'Error while trying to notify {name} with new visit. {e}',
-            ['e' => $e, 'name' => 'Redis pub/sub'],
-        );
+        $this->logger
+            ->expects($this->once())
+            ->method('debug')
+            ->with(
+                'Error while trying to notify {name} with new visit. {e}',
+                ['e' => $e, 'name' => 'Redis pub/sub'],
+            );
 
         $this->createListener()(new UrlVisited($visitId));
     }

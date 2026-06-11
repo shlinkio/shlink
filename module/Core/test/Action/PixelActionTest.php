@@ -21,8 +21,8 @@ use const Shlinkio\Shlink\REDIRECT_URL_REQUEST_ATTRIBUTE;
 class PixelActionTest extends TestCase
 {
     private PixelAction $action;
-    private MockObject & ShortUrlResolverInterface $urlResolver;
-    private MockObject & RequestTrackerInterface $requestTracker;
+    private MockObject&ShortUrlResolverInterface $urlResolver;
+    private MockObject&RequestTrackerInterface $requestTracker;
 
     protected function setUp(): void
     {
@@ -37,15 +37,22 @@ class PixelActionTest extends TestCase
     {
         $shortCode = 'abc123';
         $shortUrl = ShortUrl::withLongUrl('http://domain.com/foo/bar');
-        $request = (new ServerRequest())->withAttribute('shortCode', $shortCode);
+        $request = new ServerRequest()->withAttribute('shortCode', $shortCode);
 
-        $this->urlResolver->expects($this->once())->method('resolveEnabledShortUrl')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''),
-        )->willReturn($shortUrl);
-        $this->requestTracker->expects($this->once())->method('trackIfApplicable')->with(
-            $shortUrl,
-            $request->withAttribute(REDIRECT_URL_REQUEST_ATTRIBUTE, null),
-        );
+        $this->urlResolver
+            ->expects($this->once())
+            ->method('resolveEnabledShortUrl')
+            ->with(
+                ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, ''),
+            )
+            ->willReturn($shortUrl);
+        $this->requestTracker
+            ->expects($this->once())
+            ->method('trackIfApplicable')
+            ->with(
+                $shortUrl,
+                $request->withAttribute(REDIRECT_URL_REQUEST_ATTRIBUTE, null),
+            );
 
         $response = $this->action->process($request, $this->createStub(RequestHandlerInterface::class));
 

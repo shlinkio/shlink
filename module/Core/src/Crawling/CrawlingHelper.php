@@ -8,9 +8,7 @@ use Shlinkio\Shlink\Core\ShortUrl\Repository\CrawlableShortCodesQueryInterface;
 
 readonly class CrawlingHelper implements CrawlingHelperInterface
 {
-    public function __construct(private CrawlableShortCodesQueryInterface $query)
-    {
-    }
+    public function __construct(private CrawlableShortCodesQueryInterface $query) {}
 
     public function listCrawlableShortCodes(): iterable
     {

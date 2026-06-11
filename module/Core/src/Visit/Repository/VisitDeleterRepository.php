@@ -27,9 +27,10 @@ class VisitDeleterRepository extends EntitySpecificationRepository implements Vi
     private function deleteByShortUrl(string $entityName, ShortUrl $shortUrl): int
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->delete($entityName, 'v')
-           ->where($qb->expr()->eq('v.shortUrl', ':shortUrl'))
-           ->setParameter('shortUrl', $shortUrl);
+        $qb
+            ->delete($entityName, 'v')
+            ->where($qb->expr()->eq('v.shortUrl', ':shortUrl'))
+            ->setParameter('shortUrl', $shortUrl);
 
         return $qb->getQuery()->execute();
     }
@@ -37,12 +38,12 @@ class VisitDeleterRepository extends EntitySpecificationRepository implements Vi
     public function deleteOrphanVisits(): int
     {
         $em = $this->getEntityManager();
-        return $em->wrapInTransaction(function () use ($em): int {
+        return $em->wrapInTransaction(static function () use ($em): int {
             $em->createQueryBuilder()->delete(OrphanVisitsCount::class, 'v')->getQuery()->execute();
 
             $qb = $em->createQueryBuilder();
             $qb->delete(Visit::class, 'v')
-               ->where($qb->expr()->isNull('v.shortUrl'));
+                ->where($qb->expr()->isNull('v.shortUrl'));
 
             return $qb->getQuery()->execute();
         });

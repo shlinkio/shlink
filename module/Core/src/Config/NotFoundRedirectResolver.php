@@ -23,8 +23,7 @@ class NotFoundRedirectResolver implements NotFoundRedirectResolverInterface
     public function __construct(
         private readonly RedirectResponseHelperInterface $redirectResponseHelper,
         private readonly LoggerInterface $logger,
-    ) {
-    }
+    ) {}
 
     public function resolveRedirectResponse(
         NotFoundType $notFoundType,
@@ -65,10 +64,7 @@ class NotFoundRedirectResolver implements NotFoundRedirectResolverInterface
         $replacePlaceholders = static function (
             callable $modifier,
             string $value,
-        ) use (
-            $path,
-            $domain,
-        ): string {
+        ) use ($path, $domain): string {
             $value = str_replace(urlencode(self::DOMAIN_PLACEHOLDER), $modifier($domain), $value);
             return str_replace(urlencode(self::ORIGINAL_PATH_PLACEHOLDER), $modifier($path), $value);
         };

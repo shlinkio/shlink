@@ -23,9 +23,13 @@ class ShlinkTableTest extends TestCase
         $footerTitle = 'Footer';
 
         $baseTable = $this->createMock(Table::class);
-        $baseTable->expects($this->once())->method('setStyle')->with(
-            $this->isInstanceOf(TableStyle::class),
-        )->willReturnSelf();
+        $baseTable
+            ->expects($this->once())
+            ->method('setStyle')
+            ->with(
+                $this->isInstanceOf(TableStyle::class),
+            )
+            ->willReturnSelf();
         $baseTable->expects($this->once())->method('setHeaders')->with($headers)->willReturnSelf();
         $baseTable->expects($this->once())->method('setRows')->with($rows)->willReturnSelf();
         $baseTable->expects($this->once())->method('setFooterTitle')->with($footerTitle)->willReturnSelf();

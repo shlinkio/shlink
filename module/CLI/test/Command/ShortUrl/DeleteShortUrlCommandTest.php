@@ -22,7 +22,7 @@ use const PHP_EOL;
 class DeleteShortUrlCommandTest extends TestCase
 {
     private CommandTester $commandTester;
-    private MockObject & DeleteShortUrlServiceInterface $service;
+    private MockObject&DeleteShortUrlServiceInterface $service;
 
     protected function setUp(): void
     {
@@ -34,10 +34,13 @@ class DeleteShortUrlCommandTest extends TestCase
     public function successMessageIsPrintedIfUrlIsProperlyDeleted(): void
     {
         $shortCode = 'abc123';
-        $this->service->expects($this->once())->method('deleteByShortCode')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
-            $this->isFalse(),
-        );
+        $this->service
+            ->expects($this->once())
+            ->method('deleteByShortCode')
+            ->with(
+                ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+                $this->isFalse(),
+            );
 
         $this->commandTester->execute(['short-code' => $shortCode]);
         $output = $this->commandTester->getDisplay();
@@ -53,10 +56,14 @@ class DeleteShortUrlCommandTest extends TestCase
     {
         $shortCode = 'abc123';
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
-        $this->service->expects($this->once())->method('deleteByShortCode')->with(
-            $identifier,
-            $this->isFalse(),
-        )->willThrowException(Exception\ShortUrlNotFoundException::fromNotFound($identifier));
+        $this->service
+            ->expects($this->once())
+            ->method('deleteByShortCode')
+            ->with(
+                $identifier,
+                $this->isFalse(),
+            )
+            ->willThrowException(Exception\ShortUrlNotFoundException::fromNotFound($identifier));
 
         $this->commandTester->execute(['short-code' => $shortCode]);
         $output = $this->commandTester->getDisplay();
@@ -75,26 +82,33 @@ class DeleteShortUrlCommandTest extends TestCase
     ): void {
         $shortCode = 'abc123';
         $identifier = ShortUrlIdentifier::fromShortCodeAndDomain($shortCode);
-        $this->service->expects($this->exactly($expectedDeleteCalls))->method('deleteByShortCode')->with(
-            $identifier,
-            $this->isBool(),
-        )->willReturnCallback(function ($_, bool $ignoreThreshold) use ($shortCode): void {
-            if (!$ignoreThreshold) {
-                throw Exception\DeleteShortUrlException::fromVisitsThreshold(
-                    10,
-                    ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
-                );
-            }
-        });
+        $this->service
+            ->expects($this->exactly($expectedDeleteCalls))
+            ->method('deleteByShortCode')
+            ->with(
+                $identifier,
+                $this->isBool(),
+            )
+            ->willReturnCallback(static function ($_, bool $ignoreThreshold) use ($shortCode): void {
+                if (!$ignoreThreshold) {
+                    throw Exception\DeleteShortUrlException::fromVisitsThreshold(
+                        10,
+                        ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+                    );
+                }
+            });
         $this->commandTester->setInputs($retryAnswer);
 
         $this->commandTester->execute(['short-code' => $shortCode]);
         $output = $this->commandTester->getDisplay();
 
-        self::assertStringContainsString(sprintf(
-            'Impossible to delete short URL with short code "%s", since it has more than "10" visits.',
-            $shortCode,
-        ), $output);
+        self::assertStringContainsString(
+            sprintf(
+                'Impossible to delete short URL with short code "%s", since it has more than "10" visits.',
+                $shortCode,
+            ),
+            $output,
+        );
         self::assertStringContainsString($expectedMessage, $output);
     }
 
@@ -109,22 +123,29 @@ class DeleteShortUrlCommandTest extends TestCase
     public function deleteIsNotRetriedWhenThresholdIsReachedAndQuestionIsDeclined(): void
     {
         $shortCode = 'abc123';
-        $this->service->expects($this->once())->method('deleteByShortCode')->with(
-            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
-            $this->isFalse(),
-        )->willThrowException(Exception\DeleteShortUrlException::fromVisitsThreshold(
-            10,
-            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
-        ));
+        $this->service
+            ->expects($this->once())
+            ->method('deleteByShortCode')
+            ->with(
+                ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+                $this->isFalse(),
+            )
+            ->willThrowException(Exception\DeleteShortUrlException::fromVisitsThreshold(
+                10,
+                ShortUrlIdentifier::fromShortCodeAndDomain($shortCode),
+            ));
         $this->commandTester->setInputs(['no']);
 
         $this->commandTester->execute(['short-code' => $shortCode]);
         $output = $this->commandTester->getDisplay();
 
-        self::assertStringContainsString(sprintf(
-            'Impossible to delete short URL with short code "%s", since it has more than "10" visits.',
-            $shortCode,
-        ), $output);
+        self::assertStringContainsString(
+            sprintf(
+                'Impossible to delete short URL with short code "%s", since it has more than "10" visits.',
+                $shortCode,
+            ),
+            $output,
+        );
         self::assertStringContainsString('Short URL was not deleted.', $output);
     }
 }

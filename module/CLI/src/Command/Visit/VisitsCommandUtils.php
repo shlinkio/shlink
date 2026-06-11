@@ -95,7 +95,7 @@ class VisitsCommandUtils
             'Redirect URL',
             'Type',
         ];
-        $rows = array_map(function (Visit $visit) {
+        $rows = array_map(static function (Visit $visit) {
             $visitLocation = $visit->visitLocation;
 
             return [

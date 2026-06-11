@@ -6,8 +6,8 @@ namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
-use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
+use Shlinkio\Shlink\Rest\Middleware\ShortUrl\OverrideDomainMiddleware;
 
 class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
 {
@@ -20,11 +20,11 @@ class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
         $longUrl = $query['longUrl'] ?? null;
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);
 
-        return ShortUrlCreation::fromRawData([
-            ShortUrlInputFilter::LONG_URL => $longUrl,
-            ShortUrlInputFilter::API_KEY => $apiKey,
+        return $this->mapShortUrlCreation([
+            'longUrl' => $longUrl,
+            'apiKey' => $apiKey,
             // This will usually be null, unless this API key enforces one specific domain
-            ShortUrlInputFilter::DOMAIN => $request->getAttribute(ShortUrlInputFilter::DOMAIN),
-        ], $this->urlShortenerOptions);
+            'domain' => OverrideDomainMiddleware::domainFromRequest($request),
+        ]);
     }
 }

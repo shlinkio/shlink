@@ -39,20 +39,20 @@ return (static function (): array {
     $useStreamForShlinkLogger = $isDev || env('SHLINK_RUNTIME') !== null;
 
     return [
-
         'logger' => [
-            'Shlink' => $useStreamForShlinkLogger ? [
-                'type' => LoggerType::STREAM->value,
-                'destination' => 'php://stderr',
-                ...$buildCommonConfig(),
-            ] : [
-                'type' => LoggerType::FILE->value,
-                ...$buildCommonConfig(),
-            ],
+            'Shlink' => $useStreamForShlinkLogger
+                ? [
+                    'type' => LoggerType::STREAM->value,
+                    'destination' => 'php://stderr',
+                    ...$buildCommonConfig(),
+                ] : [
+                    'type' => LoggerType::FILE->value,
+                    ...$buildCommonConfig(),
+                ],
             'Access' => [
                 'type' => LoggerType::STREAM->value,
                 'destination' => 'php://stderr',
-                ...$buildCommonConfig(! runningInRoadRunner()),
+                ...$buildCommonConfig(!runningInRoadRunner()),
             ],
         ],
 
@@ -75,6 +75,5 @@ return (static function (): array {
         ConfigAbstractFactory::class => [
             RequestIdProvider::class => [RequestIdMiddleware::class],
         ],
-
     ];
 })();

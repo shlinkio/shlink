@@ -20,10 +20,10 @@ use function sprintf;
 return (static function (): array {
     $dropDomainMiddleware = Middleware\ShortUrl\DropDefaultDomainFromRequestMiddleware::class;
     $overrideDomainMiddleware = Middleware\ShortUrl\OverrideDomainMiddleware::class;
+    $shortUrlOptionsPayloadMiddleware = Middleware\ShortUrl\ShortUrlOptionsPayloadMiddleware::class;
     $shortUrlRouteSuffix = EnvVars::SHORT_URL_TRAILING_SLASH->loadFromEnv() ? '[/]' : '';
 
     return [
-
         // The order of the routes defined here matters. Changing it might cause path conflicts
         'routes' => [
             // Rest
@@ -51,11 +51,12 @@ return (static function (): array {
                 Action\ShortUrl\CreateShortUrlAction::getRouteDef([
                     $dropDomainMiddleware,
                     $overrideDomainMiddleware,
-                    Middleware\ShortUrl\DefaultShortCodesLengthMiddleware::class,
+                    $shortUrlOptionsPayloadMiddleware,
                 ]),
                 Action\ShortUrl\SingleStepCreateShortUrlAction::getRouteDef([
                     Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::class,
                     $overrideDomainMiddleware,
+                    $shortUrlOptionsPayloadMiddleware,
                 ]),
                 Action\ShortUrl\EditShortUrlAction::getRouteDef([$dropDomainMiddleware]),
                 Action\ShortUrl\DeleteShortUrlAction::getRouteDef([$dropDomainMiddleware]),
@@ -106,6 +107,5 @@ return (static function (): array {
                 'allowed_methods' => [RequestMethodInterface::METHOD_GET],
             ],
         ],
-
     ];
 })();

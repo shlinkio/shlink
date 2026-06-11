@@ -18,7 +18,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class TagVisitsActionTest extends TestCase
 {
     private TagVisitsAction $action;
-    private MockObject & VisitsStatsHelperInterface $visitsHelper;
+    private MockObject&VisitsStatsHelperInterface $visitsHelper;
 
     protected function setUp(): void
     {
@@ -31,11 +31,15 @@ class TagVisitsActionTest extends TestCase
     {
         $tag = 'foo';
         $apiKey = ApiKey::create();
-        $this->visitsHelper->expects($this->once())->method('visitsForTag')->with(
-            $tag,
-            $this->isInstanceOf(VisitsParams::class),
-            $apiKey,
-        )->willReturn(new Paginator(new ArrayAdapter([])));
+        $this->visitsHelper
+            ->expects($this->once())
+            ->method('visitsForTag')
+            ->with(
+                $tag,
+                $this->isInstanceOf(VisitsParams::class),
+                $apiKey,
+            )
+            ->willReturn(new Paginator(new ArrayAdapter([])));
 
         $response = $this->action->handle(
             ServerRequestFactory::fromGlobals()->withAttribute('tag', $tag)->withAttribute(ApiKey::class, $apiKey),

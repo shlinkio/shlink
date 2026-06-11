@@ -25,10 +25,10 @@ use Throwable;
 
 class NotifyNewShortUrlToRedisTest extends TestCase
 {
-    private MockObject & PublishingHelperInterface $helper;
-    private MockObject & PublishingUpdatesGeneratorInterface $updatesGenerator;
-    private MockObject & EntityManagerInterface $em;
-    private MockObject & LoggerInterface $logger;
+    private MockObject&PublishingHelperInterface $helper;
+    private MockObject&PublishingUpdatesGeneratorInterface $updatesGenerator;
+    private MockObject&EntityManagerInterface $em;
+    private MockObject&LoggerInterface $logger;
 
     protected function setUp(): void
     {
@@ -55,17 +55,28 @@ class NotifyNewShortUrlToRedisTest extends TestCase
     {
         $shortUrlId = '123';
         $update = Update::forTopicAndPayload(Topic::NEW_SHORT_URL->value, []);
-        $this->em->expects($this->once())->method('find')->with(ShortUrl::class, $shortUrlId)->willReturn(
-            ShortUrl::withLongUrl('https://longUrl'),
-        );
-        $this->updatesGenerator->expects($this->once())->method('newShortUrlUpdate')->with(
-            $this->isInstanceOf(ShortUrl::class),
-        )->willReturn($update);
+        $this->em
+            ->expects($this->once())
+            ->method('find')
+            ->with(ShortUrl::class, $shortUrlId)
+            ->willReturn(
+                ShortUrl::withLongUrl('https://longUrl'),
+            );
+        $this->updatesGenerator
+            ->expects($this->once())
+            ->method('newShortUrlUpdate')
+            ->with(
+                $this->isInstanceOf(ShortUrl::class),
+            )
+            ->willReturn($update);
         $this->helper->expects($this->once())->method('publishUpdate')->with($update)->willThrowException($e);
-        $this->logger->expects($this->once())->method('debug')->with(
-            'Error while trying to notify {name} with new short URL. {e}',
-            ['e' => $e, 'name' => 'Redis pub/sub'],
-        );
+        $this->logger
+            ->expects($this->once())
+            ->method('debug')
+            ->with(
+                'Error while trying to notify {name} with new short URL. {e}',
+                ['e' => $e, 'name' => 'Redis pub/sub'],
+            );
 
         $this->createListener()(new ShortUrlCreated($shortUrlId));
     }

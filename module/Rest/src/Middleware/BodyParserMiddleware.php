@@ -24,7 +24,7 @@ class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterfac
 
         // In requests that do not allow body or if the body has already been parsed, continue to next middleware
         if (
-            ! empty($currentParams)
+            !empty($currentParams)
             || contains($method, [
                 self::METHOD_GET,
                 self::METHOD_HEAD,

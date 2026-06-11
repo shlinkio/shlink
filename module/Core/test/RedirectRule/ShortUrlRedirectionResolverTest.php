@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ShlinkioTest\Shlink\Core\RedirectRule;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -15,7 +17,6 @@ use Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule;
 use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectionResolver;
 use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectRuleServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
-use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 
 use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
 use const ShlinkioTest\Shlink\ANDROID_USER_AGENT;
@@ -25,7 +26,7 @@ use const ShlinkioTest\Shlink\WINDOWS_USER_AGENT;
 class ShortUrlRedirectionResolverTest extends TestCase
 {
     private ShortUrlRedirectionResolver $resolver;
-    private ShortUrlRedirectRuleServiceInterface & MockObject $ruleService;
+    private ShortUrlRedirectRuleServiceInterface&MockObject $ruleService;
 
     protected function setUp(): void
     {
@@ -39,17 +40,25 @@ class ShortUrlRedirectionResolverTest extends TestCase
         RedirectCondition|null $condition,
         string $expectedUrl,
     ): void {
-        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'longUrl' => 'https://example.com/foo/bar',
-        ]));
+        $shortUrl = ShortUrl::withLongUrl('https://example.com/foo/bar');
 
-        $this->ruleService->expects($this->once())->method('rulesForShortUrl')->with($shortUrl)->willReturn(
-            $condition !== null ? [
-                new ShortUrlRedirectRule($shortUrl, 1, 'https://example.com/from-rule', new ArrayCollection([
-                    $condition,
-                ])),
-            ] : [],
-        );
+        $this->ruleService
+            ->expects($this->once())
+            ->method('rulesForShortUrl')
+            ->with($shortUrl)
+            ->willReturn(
+                $condition !== null
+                    ? [
+                        new ShortUrlRedirectRule(
+                            $shortUrl,
+                            1,
+                            'https://example.com/from-rule',
+                            new ArrayCollection([
+                                $condition,
+                            ]),
+                        ),
+                    ] : [],
+            );
 
         $result = $this->resolver->resolveLongUrl($shortUrl, $request);
 

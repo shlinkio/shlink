@@ -19,7 +19,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 class DisableKeyCommandTest extends TestCase
 {
     private CommandTester $commandTester;
-    private MockObject & ApiKeyServiceInterface $apiKeyService;
+    private MockObject&ApiKeyServiceInterface $apiKeyService;
 
     protected function setUp(): void
     {
@@ -45,9 +45,13 @@ class DisableKeyCommandTest extends TestCase
     {
         $apiKey = 'abcd1234';
         $expectedMessage = 'API key "abcd1234" does not exist.';
-        $this->apiKeyService->expects($this->once())->method('disableByName')->with($apiKey)->willThrowException(
-            new InvalidArgumentException($expectedMessage),
-        );
+        $this->apiKeyService
+            ->expects($this->once())
+            ->method('disableByName')
+            ->with($apiKey)
+            ->willThrowException(
+                new InvalidArgumentException($expectedMessage),
+            );
 
         $exitCode = $this->commandTester->execute(['name' => $apiKey]);
         $output = $this->commandTester->getDisplay();
@@ -72,11 +76,14 @@ class DisableKeyCommandTest extends TestCase
     {
         $name = 'the key to delete';
         $this->apiKeyService->expects($this->once())->method('disableByName')->with($name);
-        $this->apiKeyService->expects($this->once())->method('listKeys')->willReturn([
-            ApiKey::fromMeta(ApiKeyMeta::fromParams(name: 'foo')),
-            ApiKey::fromMeta(ApiKeyMeta::fromParams(name: $name)),
-            ApiKey::fromMeta(ApiKeyMeta::fromParams(name: 'bar')),
-        ]);
+        $this->apiKeyService
+            ->expects($this->once())
+            ->method('listKeys')
+            ->willReturn([
+                ApiKey::fromMeta(ApiKeyMeta::fromParams(name: 'foo')),
+                ApiKey::fromMeta(ApiKeyMeta::fromParams(name: $name)),
+                ApiKey::fromMeta(ApiKeyMeta::fromParams(name: 'bar')),
+            ]);
 
         $this->commandTester->setInputs([$name]);
         $exitCode = $this->commandTester->execute([]);

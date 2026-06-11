@@ -18,7 +18,7 @@ use Shlinkio\Shlink\Rest\Middleware\CrossDomainMiddleware;
 
 class CrossDomainMiddlewareTest extends TestCase
 {
-    private MockObject & RequestHandlerInterface $handler;
+    private MockObject&RequestHandlerInterface $handler;
 
     protected function setUp(): void
     {
@@ -28,7 +28,7 @@ class CrossDomainMiddlewareTest extends TestCase
     #[Test]
     public function nonCrossDomainRequestsAreNotAffected(): void
     {
-        $originalResponse = (new Response())->withStatus(404);
+        $originalResponse = new Response()->withStatus(404);
         $this->handler->expects($this->once())->method('handle')->willReturn($originalResponse);
 
         $response = $this->middleware()->process(new ServerRequest(), $this->handler);
@@ -90,8 +90,9 @@ class CrossDomainMiddlewareTest extends TestCase
         if ($allowHeader !== null) {
             $originalResponse = $originalResponse->withHeader('Allow', $allowHeader);
         }
-        $request = new ServerRequest()->withHeader('Origin', 'local')
-                                      ->withMethod('OPTIONS');
+        $request = new ServerRequest()
+            ->withHeader('Origin', 'local')
+            ->withMethod('OPTIONS');
         $this->handler->expects($this->once())->method('handle')->willReturn($originalResponse);
 
         $response = $this->middleware()->process($request, $this->handler);
@@ -114,8 +115,9 @@ class CrossDomainMiddlewareTest extends TestCase
         int $expectedStatus,
     ): void {
         $originalResponse = new Response()->withStatus($status);
-        $request = new ServerRequest()->withMethod($method)
-                                      ->withHeader('Origin', 'local');
+        $request = new ServerRequest()
+            ->withMethod($method)
+            ->withHeader('Origin', 'local');
         $this->handler->expects($this->once())->method('handle')->willReturn($originalResponse);
 
         $response = $this->middleware()->process($request, $this->handler);

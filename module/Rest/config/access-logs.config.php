@@ -9,7 +9,6 @@ use Laminas\Stdlib\ArrayUtils\MergeReplaceKey;
 use Shlinkio\Shlink\Common\Middleware\AccessLogMiddleware;
 
 return [
-
     'access_logs' => [
         'ignored_path_prefixes' => [
             Action\HealthAction::ROUTE_PATH,
@@ -23,5 +22,4 @@ return [
             [AccessLogMiddleware::LOGGER_SERVICE_NAME, 'config.access_logs.ignored_path_prefixes'],
         ),
     ],
-
 ];

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core;
 
+use CuyZ\Valinor\MapperBuilder;
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -19,8 +20,13 @@ use Symfony\Component\Lock;
 use const Shlinkio\Shlink\LOCAL_LOCK_FACTORY;
 
 return [
-
     'dependencies' => [
+        'delegators' => [
+            MapperBuilder::class => [
+                ObjectMapper\MapperBuilderWithCacheDelegatorFactory::class,
+            ],
+        ],
+
         'factories' => [
             ErrorHandler\NotFoundTypeResolverMiddleware::class => ConfigAbstractFactory::class,
             ErrorHandler\NotFoundTrackerMiddleware::class => ConfigAbstractFactory::class,
@@ -262,5 +268,4 @@ return [
 
         Crawling\CrawlingHelper::class => [ShortUrl\Repository\CrawlableShortCodesQuery::class],
     ],
-
 ];

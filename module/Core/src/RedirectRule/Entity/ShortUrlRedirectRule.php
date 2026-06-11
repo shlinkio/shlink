@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Core\RedirectRule\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -22,8 +24,7 @@ class ShortUrlRedirectRule extends AbstractEntity implements JsonSerializable
         private readonly int $priority,
         public readonly string $longUrl,
         private Collection $conditions = new ArrayCollection(),
-    ) {
-    }
+    ) {}
 
     public function withPriority(int $newPriority): self
     {
@@ -40,9 +41,12 @@ class ShortUrlRedirectRule extends AbstractEntity implements JsonSerializable
      */
     public function matchesRequest(ServerRequestInterface $request): bool
     {
-        return $this->conditions->count() > 0 && every(
-            $this->conditions,
-            static fn (RedirectCondition $condition) => $condition->matchesRequest($request),
+        return (
+            $this->conditions->count() > 0
+            && every(
+                $this->conditions,
+                static fn (RedirectCondition $condition) => $condition->matchesRequest($request),
+            )
         );
     }
 

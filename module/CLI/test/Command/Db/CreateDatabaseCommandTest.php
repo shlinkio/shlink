@@ -29,12 +29,12 @@ use Symfony\Component\Lock\SharedLockInterface;
 class CreateDatabaseCommandTest extends TestCase
 {
     private CommandTester $commandTester;
-    private MockObject & ProcessRunnerInterface $processHelper;
-    private MockObject & Connection $regularConn;
-    private Stub & ClassMetadataFactory $metadataFactory;
+    private MockObject&ProcessRunnerInterface $processHelper;
+    private MockObject&Connection $regularConn;
+    private Stub&ClassMetadataFactory $metadataFactory;
     /** @var MockObject&AbstractSchemaManager<SQLitePlatform> */
-    private MockObject & AbstractSchemaManager $schemaManager;
-    private Stub & Driver $driver;
+    private MockObject&AbstractSchemaManager $schemaManager;
+    private Stub&Driver $driver;
 
     protected function setUp(): void
     {
@@ -107,11 +107,17 @@ class CreateDatabaseCommandTest extends TestCase
         $this->metadataFactory->method('getAllMetadata')->willReturn([$metadata]);
         $this->schemaManager->expects($this->never())->method('createDatabase');
         $this->schemaManager->expects($this->once())->method('listTableNames')->willReturn($tables);
-        $this->processHelper->expects($this->once())->method('run')->with($this->isInstanceOf(OutputInterface::class), [
-            CreateDatabaseCommand::SCRIPT,
-            CreateDatabaseCommand::COMMAND,
-            '--no-interaction',
-        ]);
+        $this->processHelper
+            ->expects($this->once())
+            ->method('run')
+            ->with(
+                $this->isInstanceOf(OutputInterface::class),
+                [
+                    CreateDatabaseCommand::SCRIPT,
+                    CreateDatabaseCommand::COMMAND,
+                    '--no-interaction',
+                ],
+            );
 
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();

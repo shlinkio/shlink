@@ -34,7 +34,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
 
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->delete(Tag::class, 't')
-           ->where($qb->expr()->in('t.name', $names));
+            ->where($qb->expr()->in('t.name', $names));
 
         return $qb->getQuery()->execute();
     }
@@ -49,19 +49,21 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         $apiKey = $filtering?->apiKey;
         $conn = $this->getEntityManager()->getConnection();
 
-        $applyApiKeyToNativeQb = static fn (NativeQueryBuilder $qb) =>
-            $apiKey?->mapRoles(static fn (Role $role, array $meta) => match ($role) {
-                Role::DOMAIN_SPECIFIC => $qb->andWhere(
-                    $qb->expr()->eq('s.domain_id', $conn->quote(Role::domainIdFromMeta($meta))),
-                ),
-                Role::AUTHORED_SHORT_URLS => $qb->andWhere(
-                    $qb->expr()->eq('s.author_api_key_id', $conn->quote($apiKey->getId())),
-                ),
-                default => $qb,
-            });
+        $applyApiKeyToNativeQb = static fn (NativeQueryBuilder $qb) => $apiKey?->mapRoles(static fn (
+            Role $role,
+            array $meta,
+        ) => match ($role) {
+            Role::DOMAIN_SPECIFIC => $qb->andWhere(
+                $qb->expr()->eq('s.domain_id', $conn->quote(Role::domainIdFromMeta($meta))),
+            ),
+            Role::AUTHORED_SHORT_URLS => $qb->andWhere(
+                $qb->expr()->eq('s.author_api_key_id', $conn->quote($apiKey->getId())),
+            ),
+            default => $qb,
+        });
 
         // For non-restricted API keys, we'll return tags which are not linked to any short URL
-        $joiningMethod = ! ApiKey::isShortUrlRestricted($apiKey) ? 'leftJoin' : 'join';
+        $joiningMethod = !ApiKey::isShortUrlRestricted($apiKey) ? 'leftJoin' : 'join';
         $tagsSubQb = $conn->createQueryBuilder();
         $tagsSubQb
             ->select('t.id AS tag_id', 't.name AS tag', 'COUNT(DISTINCT s.id) AS short_urls_count')
@@ -78,12 +80,15 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         $buildVisitsSubQb = static function (bool $excludeBots, string $aggregateAlias) use ($conn) {
             $visitsSubQb = $conn->createQueryBuilder();
             $commonJoinCondition = $visitsSubQb->expr()->eq('sc.short_url_id', 'st.short_url_id');
-            $visitsJoin = ! $excludeBots
+            $visitsJoin = !$excludeBots
                 ? $commonJoinCondition
-                : $visitsSubQb->expr()->and(
-                    $commonJoinCondition,
-                    $visitsSubQb->expr()->eq('sc.potential_bot', $conn->quote('0')),
-                )->__toString();
+                : $visitsSubQb
+                    ->expr()
+                    ->and(
+                        $commonJoinCondition,
+                        $visitsSubQb->expr()->eq('sc.potential_bot', $conn->quote('0')),
+                    )
+                    ->__toString();
 
             return $visitsSubQb
                 ->select('st.tag_id AS tag_id', 'SUM(sc.count) AS ' . $aggregateAlias)

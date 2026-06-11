@@ -23,6 +23,6 @@ class SimpleShortUrlRelationResolver implements ShortUrlRelationResolverInterfac
      */
     public function resolveTags(array $tags): Collections\Collection
     {
-        return new Collections\ArrayCollection(array_map(fn (string $tag) => new Tag($tag), $tags));
+        return new Collections\ArrayCollection(array_map(static fn (string $tag) => new Tag($tag), $tags));
     }
 }

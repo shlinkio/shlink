@@ -19,12 +19,11 @@ readonly class SendVisitToMatomo
         private LoggerInterface $logger,
         private MatomoOptions $matomoOptions,
         private MatomoVisitSenderInterface $visitSender,
-    ) {
-    }
+    ) {}
 
     public function __invoke(UrlVisited $visitLocated): void
     {
-        if (! $this->matomoOptions->enabled) {
+        if (!$this->matomoOptions->enabled) {
             return;
         }
 

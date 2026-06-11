@@ -26,16 +26,15 @@ readonly class IpGeolocationMiddleware implements MiddlewareInterface
         private DbUpdaterInterface $dbUpdater,
         private LoggerInterface $logger,
         private TrackingOptions $trackingOptions,
-    ) {
-    }
+    ) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (! $this->trackingOptions->isGeolocationRelevant()) {
+        if (!$this->trackingOptions->isGeolocationRelevant()) {
             return $handler->handle($request);
         }
 
-        if (! $this->dbUpdater->databaseFileExists()) {
+        if (!$this->dbUpdater->databaseFileExists()) {
             $this->logger->warning('Tried to geolocate IP address, but a GeoLite2 db was not found.');
             return $handler->handle($request);
         }

@@ -7,8 +7,6 @@ namespace Shlinkio\Shlink\Core\Tag\Model;
 use Shlinkio\Shlink\Core\Model\AbstractInfinitePaginableListParams;
 use Shlinkio\Shlink\Core\Model\Ordering;
 
-use function Shlinkio\Shlink\Common\parseOrderBy;
-
 final class TagsParams extends AbstractInfinitePaginableListParams
 {
     private function __construct(
@@ -24,7 +22,7 @@ final class TagsParams extends AbstractInfinitePaginableListParams
     {
         return new self(
             $query['searchTerm'] ?? null,
-            isset($query['orderBy']) ? Ordering::fromTuple(parseOrderBy($query['orderBy'])) : Ordering::none(),
+            Ordering::fromOptionalString($query['orderBy'] ?? null),
             isset($query['page']) ? (int) $query['page'] : null,
             isset($query['itemsPerPage']) ? (int) $query['itemsPerPage'] : null,
         );

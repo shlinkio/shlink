@@ -7,7 +7,6 @@ namespace Shlinkio\Shlink\Rest;
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 
 return [
-
     'auth' => [
         'routes_without_api_key' => [
             Action\HealthAction::class,
@@ -32,5 +31,4 @@ return [
             'config.auth.routes_with_query_api_key',
         ],
     ],
-
 ];

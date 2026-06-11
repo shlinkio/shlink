@@ -9,12 +9,10 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
-use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Exception\ShortCodeCannotBeRegeneratedException;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
-use Shlinkio\Shlink\Core\ShortUrl\Model\Validation\ShortUrlInputFilter;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl;
 use Shlinkio\Shlink\Importer\Sources\ImportSource;
 
@@ -42,9 +40,7 @@ class ShortUrlTest extends TestCase
     public static function provideInvalidShortUrls(): iterable
     {
         yield 'with custom slug' => [
-            ShortUrl::create(
-                ShortUrlCreation::fromRawData(['customSlug' => 'custom-slug', 'longUrl' => 'https://longUrl']),
-            ),
+            ShortUrl::create(new ShortUrlCreation('https://longUrl', customSlug: 'custom-slug')),
             'The short code cannot be regenerated on ShortUrls where a custom slug was provided.',
         ];
         yield 'already persisted' => [
@@ -57,10 +53,10 @@ class ShortUrlTest extends TestCase
     public function regenerateShortCodeProperlyChangesTheValueOnValidShortUrls(
         ShortUrl $shortUrl,
     ): void {
-        $firstShortCode = $shortUrl->getShortCode();
+        $firstShortCode = $shortUrl->shortCode;
 
         $shortUrl->regenerateShortCode(ShortUrlMode::STRICT);
-        $secondShortCode = $shortUrl->getShortCode();
+        $secondShortCode = $shortUrl->shortCode;
 
         self::assertNotEquals($firstShortCode, $secondShortCode);
     }
@@ -74,20 +70,23 @@ class ShortUrlTest extends TestCase
         )];
     }
 
+    /**
+     * @param int<4, max>|null $length
+     */
     #[Test, DataProvider('provideLengths')]
     public function shortCodesHaveExpectedLength(int|null $length, int $expectedLength): void
     {
-        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(
-            [ShortUrlInputFilter::SHORT_CODE_LENGTH => $length, 'longUrl' => 'https://longUrl'],
-        ));
+        $shortUrl = ShortUrl::create(
+            new ShortUrlCreation('https://longUrl', shortCodeLength: $length ?? DEFAULT_SHORT_CODES_LENGTH),
+        );
 
-        self::assertEquals($expectedLength, strlen($shortUrl->getShortCode()));
+        self::assertEquals($expectedLength, strlen($shortUrl->shortCode));
     }
 
     public static function provideLengths(): iterable
     {
         yield [null, DEFAULT_SHORT_CODES_LENGTH];
-        yield from array_map(fn (int $value) => [$value, $value], range(4, 10));
+        yield from array_map(static fn (int $value) => [$value, $value], range(4, 10));
     }
 
     #[Test]
@@ -98,12 +97,12 @@ class ShortUrlTest extends TestCase
         string $expectedPrefix,
         int $expectedShortCodeLength,
     ): void {
-        $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData([
-            'longUrl' => 'https://longUrl',
-            ShortUrlInputFilter::SHORT_CODE_LENGTH => 5,
-            ShortUrlInputFilter::PATH_PREFIX => $pathPrefix,
-        ]));
-        $shortCode = $shortUrl->getShortCode();
+        $shortUrl = ShortUrl::create(new ShortUrlCreation(
+            longUrl: 'https://longUrl',
+            pathPrefix: $pathPrefix,
+            shortCodeLength: 5,
+        ));
+        $shortCode = $shortUrl->shortCode;
 
         if (strlen($expectedPrefix) > 0) {
             self::assertStringStartsWith($expectedPrefix, $shortCode);
@@ -116,11 +115,8 @@ class ShortUrlTest extends TestCase
     {
         $range = range(1, 1000); // Use a "big" number to reduce false negatives
         $allFor = static fn (ShortUrlMode $mode): bool => every($range, static function () use ($mode): bool {
-            $shortUrl = ShortUrl::create(ShortUrlCreation::fromRawData(
-                [ShortUrlInputFilter::LONG_URL => 'https://foo'],
-                new UrlShortenerOptions(mode: $mode),
-            ));
-            $shortCode = $shortUrl->getShortCode();
+            $shortUrl = ShortUrl::create(new ShortUrlCreation('https://foo', shortUrlMode: $mode));
+            $shortCode = $shortUrl->shortCode;
 
             return $shortCode === strtolower($shortCode);
         });

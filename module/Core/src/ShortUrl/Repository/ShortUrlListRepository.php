@@ -31,7 +31,8 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
     {
         $buildVisitsSubQuery = function (string $alias, bool $excludingBots): string {
             $vqb = $this->getEntityManager()->createQueryBuilder();
-            $vqb->select('COALESCE(SUM(' . $alias . '.count), 0)')
+            $vqb
+                ->select('COALESCE(SUM(' . $alias . '.count), 0)')
                 ->from(ShortUrlVisitsCount::class, $alias)
                 ->where($vqb->expr()->eq($alias . '.shortUrl', 's'));
 
@@ -43,23 +44,24 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
         };
 
         $qb = $this->createListQueryBuilder($filtering);
-        $qb->select(
-            'DISTINCT s AS shortUrl, d.authority',
-            '(' . $buildVisitsSubQuery('v', excludingBots: false) . ') AS ' . OrderableField::VISITS->value,
-            '(' . $buildVisitsSubQuery('v2', excludingBots: true) . ') AS ' . OrderableField::NON_BOT_VISITS->value,
-            // This is added only to have a consistent order by title between database engines
-            'COALESCE(s.title, \'\') AS title',
-        )
-           ->setMaxResults($filtering->limit)
-           ->setFirstResult($filtering->offset)
-           // This param is used in one of the sub-queries, but needs to set in the parent query
-           ->setParameter('potentialBot', false);
+        $qb
+            ->select(
+                'DISTINCT s AS shortUrl, d.authority',
+                '(' . $buildVisitsSubQuery('v', excludingBots: false) . ') AS ' . OrderableField::VISITS->value,
+                '(' . $buildVisitsSubQuery('v2', excludingBots: true) . ') AS ' . OrderableField::NON_BOT_VISITS->value,
+                // This is added only to have a consistent order by title between database engines
+                'COALESCE(s.title, \'\') AS title',
+            )
+            ->setMaxResults($filtering->limit)
+            ->setFirstResult($filtering->offset)
+            // This param is used in one of the sub-queries, but needs to set in the parent query
+            ->setParameter('potentialBot', false);
 
         $this->processOrderByForList($qb, $filtering);
 
         /** @var array{shortUrl: ShortUrl, visits: string, nonBotVisits: string, authority: string|null}[] $result */
         $result = $qb->getQuery()->getResult();
-        return map($result, static fn (array $s) => ShortUrlWithDeps::fromArray($s));
+        return map($result, ShortUrlWithDeps::fromArray(...));
     }
 
     private function processOrderByForList(QueryBuilder $qb, ShortUrlsListFiltering $filtering): void
@@ -71,7 +73,8 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
             $fieldName === null => ['s.dateCreated', 'DESC'],
             $fieldName === OrderableField::VISITS->value,
             $fieldName === OrderableField::NON_BOT_VISITS->value,
-            $fieldName === OrderableField::TITLE->value => [$fieldName, $direction],
+            $fieldName === OrderableField::TITLE->value,
+                => [$fieldName, $direction],
             default => ['s.' . $fieldName, $direction],
         };
 
@@ -89,9 +92,10 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
     private function createListQueryBuilder(ShortUrlsCountFiltering $filtering): QueryBuilder
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->from(ShortUrl::class, 's')
-           ->leftJoin('s.domain', 'd')
-           ->where('1=1');
+        $qb
+            ->from(ShortUrl::class, 's')
+            ->leftJoin('s.domain', 'd')
+            ->where('1=1');
 
         $dateRange = $filtering->dateRange;
         if ($dateRange?->startDate !== null) {
@@ -109,7 +113,7 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
         $excludeTags = $filtering->excludeTags;
         $excludeTagsMode = $filtering->excludeTagsMode;
 
-        if (! empty($searchTerm)) {
+        if (!empty($searchTerm)) {
             // Left join with tags only if no tags were provided. In case of tags, an inner join will be done later
             if (empty($tags)) {
                 $qb->leftJoin('s.tags', 't');
@@ -134,10 +138,10 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
             }
 
             $qb->andWhere($qb->expr()->orX(...$conditions))
-               ->setParameter('searchPattern', '%' . $searchTerm . '%');
+                ->setParameter('searchPattern', '%' . $searchTerm . '%');
         }
 
-        if (! empty($tags)) {
+        if (!empty($tags)) {
             if ($tagsMode === TagsMode::ANY) {
                 $qb->join('s.tags', 't')->andWhere($qb->expr()->in('t.name', $tags));
             } else {
@@ -145,10 +149,10 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
             }
         }
 
-        if (! empty($excludeTags)) {
+        if (!empty($excludeTags)) {
             $subQb = $this->getEntityManager()->createQueryBuilder();
             $subQb->select('s2.id')
-                  ->from(ShortUrl::class, 's2');
+                ->from(ShortUrl::class, 's2');
 
             if ($excludeTagsMode === TagsMode::ANY) {
                 $subQb->join('s2.tags', 't2')->andWhere($qb->expr()->in('t2.name', $excludeTags));
@@ -163,7 +167,7 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
             $qb->andWhere($qb->expr()->isNull('s.domain'));
         } elseif ($filtering->domain !== null) {
             $qb->andWhere($qb->expr()->eq('d.authority', ':domain'))
-               ->setParameter('domain', $filtering->domain);
+                ->setParameter('domain', $filtering->domain);
         }
 
         if ($filtering->excludeMaxVisitsReached) {
@@ -180,11 +184,10 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
         }
 
         if ($filtering->excludePastValidUntil) {
-            $qb
-                ->andWhere($qb->expr()->orX(
-                    $qb->expr()->isNull('s.validUntil'),
-                    $qb->expr()->gte('s.validUntil', ':minValidUntil'),
-                ))
+            $qb->andWhere($qb->expr()->orX(
+                $qb->expr()->isNull('s.validUntil'),
+                $qb->expr()->gte('s.validUntil', ':minValidUntil'),
+            ))
                 ->setParameter('minValidUntil', Chronos::now()->toDateTimeString());
         }
 

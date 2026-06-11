@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkMigrations;
 
-use Doctrine\DBAL\Platforms\MySQLPlatform;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -21,7 +21,7 @@ final class Version20241105215309 extends AbstractMigration
 
         $qb = $this->connection->createQueryBuilder();
         $qb->select($keyColumnName)
-           ->from('api_keys');
+            ->from('api_keys');
         $result = $qb->executeQuery();
 
         $updateQb = $this->connection->createQueryBuilder();
@@ -40,6 +40,6 @@ final class Version20241105215309 extends AbstractMigration
 
     public function isTransactional(): bool
     {
-        return ! ($this->connection->getDatabasePlatform() instanceof MySQLPlatform);
+        return !$this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform;
     }
 }

@@ -6,6 +6,4 @@ namespace Shlinkio\Shlink\Core\Exception;
 
 use InvalidArgumentException as SplInvalidArgumentException;
 
-class InvalidArgumentException extends SplInvalidArgumentException implements ExceptionInterface
-{
-}
+class InvalidArgumentException extends SplInvalidArgumentException implements ExceptionInterface {}

@@ -33,14 +33,18 @@ return (static function (): array {
     };
     $driverOptions = match ($driver) {
         'mssql' => ['TrustServerCertificate' => 'true'],
-        'maria', 'mysql' => ! $useEncryption ? [] : [
-            1007 => true, // PDO::MYSQL_ATTR_SSL_KEY: Require using SSL
-            1014 => false, // PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT: Trust any certificate
-        ],
-        'postgres' =>  ! $useEncryption ? [] : [
-            'sslmode' => 'require', // Require connections to be encrypted
-            'sslrootcert' => '', // Allow any certificate
-        ],
+        'maria', 'mysql' => !$useEncryption
+            ? []
+            : [
+                1007 => true, // PDO::MYSQL_ATTR_SSL_KEY: Require using SSL
+                1014 => false, // PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT: Trust any certificate
+            ],
+        'postgres' => !$useEncryption
+            ? []
+            : [
+                'sslmode' => 'require', // Require connections to be encrypted
+                'sslrootcert' => '', // Allow any certificate
+            ],
         default => [],
     };
     $connection = match ($driver) {
@@ -62,7 +66,6 @@ return (static function (): array {
     };
 
     return [
-
         'entity_manager' => [
             'orm' => [
                 'proxies_dir' => 'data/proxies',
@@ -75,6 +78,5 @@ return (static function (): array {
             ],
             'connection' => $connection,
         ],
-
     ];
 })();

@@ -31,13 +31,14 @@ $isE2eTest = $isApiTest || $isCliTest;
 
 $coverageType = env('GENERATE_COVERAGE');
 $generateCoverage = $coverageType === 'yes';
-$coverage = $isE2eTest && $generateCoverage ? CoverageHelper::createCoverageForDirectories(
-    [
-        __DIR__ . '/../../module/Core/src',
-        __DIR__ . '/../../module/' . ($isApiTest ? 'Rest' : 'CLI') . '/src',
-    ],
-    __DIR__ . '/../../build/coverage-' . $testEnv,
-) : null;
+$coverage = $isE2eTest && $generateCoverage
+    ? CoverageHelper::createCoverageForDirectories(
+        [
+            __DIR__ . '/../../module/Core/src',
+            __DIR__ . '/../../module/' . ($isApiTest ? 'Rest' : 'CLI') . '/src',
+        ],
+        __DIR__ . '/../../build/coverage-' . $testEnv,
+    ) : null;
 
 $buildDbConnection = static function (): array {
     $driver = env('DB_DRIVER', 'sqlite');
@@ -88,7 +89,6 @@ $buildTestLoggerConfig = static fn (string $filename) => [
 ];
 
 return [
-
     'debug' => true,
     ConfigAggregator::ENABLE_CACHE => false,
     FastRouteRouter::CONFIG_CACHE_ENABLED => false,
@@ -106,12 +106,14 @@ return [
         ],
     ],
 
-    'middleware_pipeline' => !$isApiTest ? [] : [
-        'capture_code_coverage' => [
-            'middleware' => new CoverageMiddleware($coverage),
-            'priority' => 9999,
+    'middleware_pipeline' => !$isApiTest
+        ? []
+        : [
+            'capture_code_coverage' => [
+                'middleware' => new CoverageMiddleware($coverage),
+                'priority' => 9999,
+            ],
         ],
-    ],
 
     'dependencies' => [
         'services' => [
@@ -123,11 +125,12 @@ return [
         'factories' => [
             TestUtils\Helper\TestHelper::class => InvokableFactory::class,
         ],
-        'delegators' => $isCliTest ? [
-            Application::class => [
-                new CliCoverageDelegator($coverage),
-            ],
-        ] : [],
+        'delegators' => $isCliTest
+            ? [
+                Application::class => [
+                    new CliCoverageDelegator($coverage),
+                ],
+            ] : [],
     ],
 
     'entity_manager' => [
@@ -145,5 +148,4 @@ return [
         'Shlink' => $buildTestLoggerConfig('shlink.log'),
         'Access' => $buildTestLoggerConfig('access.log'),
     ],
-
 ];

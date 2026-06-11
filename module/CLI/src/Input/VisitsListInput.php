@@ -8,7 +8,7 @@ use Shlinkio\Shlink\Common\Util\DateRange;
 use Symfony\Component\Console\Attribute\Option;
 
 use function Shlinkio\Shlink\Common\buildDateRange;
-use function Shlinkio\Shlink\Core\normalizeOptionalDate;
+use function Shlinkio\Shlink\Common\normalizeOptionalDate;
 
 class VisitsListInput
 {
@@ -19,8 +19,13 @@ class VisitsListInput
     public string|null $endDate = null;
 
     #[Option(
-        'Output format ("' . VisitsListFormat::FULL->value . '", "' . VisitsListFormat::PAGINATED->value . '" or "'
-        . VisitsListFormat::CSV->value . '")',
+        'Output format ("'
+        . VisitsListFormat::FULL->value
+        . '", "'
+        . VisitsListFormat::PAGINATED->value
+        . '" or "'
+        . VisitsListFormat::CSV->value
+        . '")',
         shortcut: 'f',
     )]
     public VisitsListFormat $format = VisitsListFormat::FULL;

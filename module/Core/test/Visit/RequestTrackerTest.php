@@ -26,8 +26,8 @@ class RequestTrackerTest extends TestCase
     private const string LONG_URL = 'https://domain.com/foo/bar?some=thing';
 
     private RequestTracker $requestTracker;
-    private MockObject & VisitsTrackerInterface $visitsTracker;
-    private MockObject & NotFoundType $notFoundType;
+    private MockObject&VisitsTrackerInterface $visitsTracker;
+    private MockObject&NotFoundType $notFoundType;
     private ServerRequestInterface $request;
 
     protected function setUp(): void
@@ -88,10 +88,13 @@ class RequestTrackerTest extends TestCase
     public function trackingHappensOverShortUrlsWhenRequestMeetsConditions(): void
     {
         $shortUrl = ShortUrl::withLongUrl(self::LONG_URL);
-        $this->visitsTracker->expects($this->once())->method('track')->with(
-            $shortUrl,
-            $this->isInstanceOf(Visitor::class),
-        );
+        $this->visitsTracker
+            ->expects($this->once())
+            ->method('track')
+            ->with(
+                $shortUrl,
+                $this->isInstanceOf(Visitor::class),
+            );
         $this->notFoundType->expects($this->never())->method('isBaseUrl');
         $this->notFoundType->expects($this->never())->method('isRegularNotFound');
         $this->notFoundType->expects($this->never())->method('isInvalidShortUrl');
@@ -103,10 +106,13 @@ class RequestTrackerTest extends TestCase
     public function trackingHappensOverShortUrlsWhenRemoteAddressIsInvalid(): void
     {
         $shortUrl = ShortUrl::withLongUrl(self::LONG_URL);
-        $this->visitsTracker->expects($this->once())->method('track')->with(
-            $shortUrl,
-            $this->isInstanceOf(Visitor::class),
-        );
+        $this->visitsTracker
+            ->expects($this->once())
+            ->method('track')
+            ->with(
+                $shortUrl,
+                $this->isInstanceOf(Visitor::class),
+            );
         $this->notFoundType->expects($this->never())->method('isBaseUrl');
         $this->notFoundType->expects($this->never())->method('isRegularNotFound');
         $this->notFoundType->expects($this->never())->method('isInvalidShortUrl');
@@ -123,9 +129,12 @@ class RequestTrackerTest extends TestCase
         $this->notFoundType->expects($this->once())->method('isBaseUrl')->willReturn(true);
         $this->notFoundType->expects($this->never())->method('isRegularNotFound');
         $this->notFoundType->expects($this->never())->method('isInvalidShortUrl');
-        $this->visitsTracker->expects($this->once())->method('trackBaseUrlVisit')->with(
-            $this->isInstanceOf(Visitor::class),
-        );
+        $this->visitsTracker
+            ->expects($this->once())
+            ->method('trackBaseUrlVisit')
+            ->with(
+                $this->isInstanceOf(Visitor::class),
+            );
         $this->visitsTracker->expects($this->never())->method('trackRegularNotFoundVisit');
         $this->visitsTracker->expects($this->never())->method('trackInvalidShortUrlVisit');
 
@@ -139,9 +148,12 @@ class RequestTrackerTest extends TestCase
         $this->notFoundType->expects($this->once())->method('isRegularNotFound')->willReturn(true);
         $this->notFoundType->expects($this->never())->method('isInvalidShortUrl');
         $this->visitsTracker->expects($this->never())->method('trackBaseUrlVisit');
-        $this->visitsTracker->expects($this->once())->method('trackRegularNotFoundVisit')->with(
-            $this->isInstanceOf(Visitor::class),
-        );
+        $this->visitsTracker
+            ->expects($this->once())
+            ->method('trackRegularNotFoundVisit')
+            ->with(
+                $this->isInstanceOf(Visitor::class),
+            );
         $this->visitsTracker->expects($this->never())->method('trackInvalidShortUrlVisit');
 
         $this->requestTracker->trackNotFoundIfApplicable($this->request);
@@ -155,9 +167,12 @@ class RequestTrackerTest extends TestCase
         $this->notFoundType->expects($this->once())->method('isInvalidShortUrl')->willReturn(true);
         $this->visitsTracker->expects($this->never())->method('trackBaseUrlVisit');
         $this->visitsTracker->expects($this->never())->method('trackRegularNotFoundVisit');
-        $this->visitsTracker->expects($this->once())->method('trackInvalidShortUrlVisit')->with(
-            $this->isInstanceOf(Visitor::class),
-        );
+        $this->visitsTracker
+            ->expects($this->once())
+            ->method('trackInvalidShortUrlVisit')
+            ->with(
+                $this->isInstanceOf(Visitor::class),
+            );
 
         $this->requestTracker->trackNotFoundIfApplicable($this->request);
     }

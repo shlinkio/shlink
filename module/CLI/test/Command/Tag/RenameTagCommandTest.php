@@ -18,7 +18,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 class RenameTagCommandTest extends TestCase
 {
     private CommandTester $commandTester;
-    private MockObject & TagServiceInterface $tagService;
+    private MockObject&TagServiceInterface $tagService;
 
     protected function setUp(): void
     {
@@ -31,9 +31,13 @@ class RenameTagCommandTest extends TestCase
     {
         $oldName = 'foo';
         $newName = 'bar';
-        $this->tagService->expects($this->once())->method('renameTag')->with(
-            Renaming::fromNames($oldName, $newName),
-        )->willThrowException(TagNotFoundException::fromTag('foo'));
+        $this->tagService
+            ->expects($this->once())
+            ->method('renameTag')
+            ->with(
+                Renaming::fromNames($oldName, $newName),
+            )
+            ->willThrowException(TagNotFoundException::fromTag('foo'));
 
         $this->commandTester->execute([
             'old-name' => $oldName,
@@ -49,9 +53,13 @@ class RenameTagCommandTest extends TestCase
     {
         $oldName = 'foo';
         $newName = 'bar';
-        $this->tagService->expects($this->once())->method('renameTag')->with(
-            Renaming::fromNames($oldName, $newName),
-        )->willReturn(new Tag($newName));
+        $this->tagService
+            ->expects($this->once())
+            ->method('renameTag')
+            ->with(
+                Renaming::fromNames($oldName, $newName),
+            )
+            ->willReturn(new Tag($newName));
 
         $this->commandTester->execute([
             'old-name' => $oldName,

@@ -47,7 +47,6 @@ return (static function (): array {
     }
 
     return [
-
         'events' => [
             'regular' => $regularEvents,
             'async' => $asyncEvents,
@@ -173,6 +172,5 @@ return (static function (): array {
                 MatomoOptions::class,
             ],
         ],
-
     ];
 })();

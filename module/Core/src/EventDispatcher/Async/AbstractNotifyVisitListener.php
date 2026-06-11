@@ -25,12 +25,11 @@ abstract class AbstractNotifyVisitListener extends AbstractAsyncListener
         private readonly EntityManagerInterface $em,
         private readonly LoggerInterface $logger,
         private readonly RealTimeUpdatesOptions $realTimeUpdatesOptions,
-    ) {
-    }
+    ) {}
 
     public function __invoke(UrlVisited $visitLocated): void
     {
-        if (! $this->isEnabled()) {
+        if (!$this->isEnabled()) {
             return;
         }
 
@@ -64,9 +63,11 @@ abstract class AbstractNotifyVisitListener extends AbstractAsyncListener
     protected function determineUpdatesForVisit(Visit $visit): array
     {
         if ($visit->isOrphan()) {
-            return $this->realTimeUpdatesOptions->isTopicEnabled(Topic::NEW_ORPHAN_VISIT)
-                ? [$this->updatesGenerator->newOrphanVisitUpdate($visit)]
-                : [];
+            return (
+                $this->realTimeUpdatesOptions->isTopicEnabled(Topic::NEW_ORPHAN_VISIT)
+                    ? [$this->updatesGenerator->newOrphanVisitUpdate($visit)]
+                    : []
+            );
         }
 
         $topics = [];

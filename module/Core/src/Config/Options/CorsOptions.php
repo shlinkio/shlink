@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Core\Config\Options;
 
 use Psr\Http\Message\RequestInterface;
@@ -23,9 +25,10 @@ final readonly class CorsOptions
         public int $maxAge = 3600,
     ) {
         $lowerCaseAllowOrigins = strtolower($allowOrigins);
-        $this->allowOrigins = $lowerCaseAllowOrigins === '*' || $lowerCaseAllowOrigins === self::ORIGIN_PATTERN
-            ? $lowerCaseAllowOrigins
-            : splitByComma($lowerCaseAllowOrigins);
+        $this->allowOrigins =
+            $lowerCaseAllowOrigins === '*' || $lowerCaseAllowOrigins === self::ORIGIN_PATTERN
+                ? $lowerCaseAllowOrigins
+                : splitByComma($lowerCaseAllowOrigins);
     }
 
     public static function fromEnv(): self

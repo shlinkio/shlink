@@ -20,11 +20,11 @@ class OrphanVisitsCountRepository extends EntitySpecificationRepository implemen
 
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('COALESCE(SUM(vc.count), 0)')
-           ->from(OrphanVisitsCount::class, 'vc');
+            ->from(OrphanVisitsCount::class, 'vc');
 
         if ($filtering->excludeBots) {
             $qb->andWhere($qb->expr()->eq('vc.potentialBot', ':potentialBot'))
-               ->setParameter('potentialBot', false);
+                ->setParameter('potentialBot', false);
         }
 
         return (int) $qb->getQuery()->getSingleScalarResult();

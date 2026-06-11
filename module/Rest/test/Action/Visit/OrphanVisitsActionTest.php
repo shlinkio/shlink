@@ -24,7 +24,7 @@ use function count;
 class OrphanVisitsActionTest extends TestCase
 {
     private OrphanVisitsAction $action;
-    private MockObject & VisitsStatsHelperInterface $visitsHelper;
+    private MockObject&VisitsStatsHelperInterface $visitsHelper;
 
     protected function setUp(): void
     {
@@ -37,9 +37,13 @@ class OrphanVisitsActionTest extends TestCase
     {
         $visitor = Visitor::empty();
         $visits = [Visit::forInvalidShortUrl($visitor), Visit::forRegularNotFound($visitor)];
-        $this->visitsHelper->expects($this->once())->method('orphanVisits')->with(
-            $this->isInstanceOf(OrphanVisitsParams::class),
-        )->willReturn(new Paginator(new ArrayAdapter($visits)));
+        $this->visitsHelper
+            ->expects($this->once())
+            ->method('orphanVisits')
+            ->with(
+                $this->isInstanceOf(OrphanVisitsParams::class),
+            )
+            ->willReturn(new Paginator(new ArrayAdapter($visits)));
         $visitsAmount = count($visits);
 
         /** @var JsonResponse $response */

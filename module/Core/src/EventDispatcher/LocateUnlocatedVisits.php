@@ -18,8 +18,7 @@ readonly class LocateUnlocatedVisits implements VisitGeolocationHelperInterface
     public function __construct(
         private VisitLocatorInterface $locator,
         private VisitToLocationHelperInterface $visitToLocation,
-    ) {
-    }
+    ) {}
 
     public function __invoke(GeoLiteDbCreated $event): void
     {
@@ -34,7 +33,5 @@ readonly class LocateUnlocatedVisits implements VisitGeolocationHelperInterface
         return $this->visitToLocation->resolveVisitLocation($visit);
     }
 
-    public function onVisitLocated(VisitLocation $visitLocation, Visit $visit): void
-    {
-    }
+    public function onVisitLocated(VisitLocation $visitLocation, Visit $visit): void {}
 }

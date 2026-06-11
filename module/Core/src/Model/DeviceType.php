@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Shlinkio\Shlink\Core\Model;
 
 use donatj\UserAgent\Platforms;
-use donatj\UserAgent\UserAgentParser;
+
+use function Shlinkio\Shlink\Core\parseUserAgent;
 
 enum DeviceType: string
 {
@@ -22,8 +25,7 @@ enum DeviceType: string
      */
     public static function matchFromUserAgent(string $userAgent): array
     {
-        static $uaParser = new UserAgentParser();
-        $ua = $uaParser->parse($userAgent);
+        $ua = parseUserAgent($userAgent);
 
         return match ($ua->platform()) {
             Platforms::IPHONE, Platforms::IPAD => [self::IOS, self::MOBILE], // iPhone and iPad (except iPadOS 13+)

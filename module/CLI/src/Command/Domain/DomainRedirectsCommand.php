@@ -46,7 +46,7 @@ class DomainRedirectsCommand extends Command
         /** @var string[] $availableDomains */
         $availableDomains = array_map(
             static fn (DomainItem $item) => $item->toString(),
-            array_filter($this->domainService->listDomains(), static fn (DomainItem $item) => ! $item->isDefault),
+            array_filter($this->domainService->listDomains(), static fn (DomainItem $item) => !$item->isDefault),
         );
         if (empty($availableDomains)) {
             $input->setArgument('domain', $askNewDomain());

@@ -16,9 +16,7 @@ class GlobalVisitsAction extends AbstractRestAction
     protected const string ROUTE_PATH = '/visits';
     protected const array ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
-    public function __construct(private readonly VisitsStatsHelperInterface $statsHelper)
-    {
-    }
+    public function __construct(private readonly VisitsStatsHelperInterface $statsHelper) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
