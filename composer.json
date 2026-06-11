@@ -62,7 +62,6 @@
         "carthage-software/mago": "^1.30",
         "devizzent/cebe-php-openapi": "^1.1.2",
         "devster/ubench": "^2.1",
-        "ergebnis/phpunit-slow-test-detector": "^2.24",
         "phpstan/phpstan": "^2.2",
         "phpstan/phpstan-doctrine": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0.5",
