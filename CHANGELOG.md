@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [5.1.1] - 2026-06-11
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#2619](https://github.com/shlinkio/shlink/issues/2619) Fix `Character not in repertoire: 7 ERROR: invalid byte sequence for encoding "UTF8": 0xb7 CONTEXT: unnamed portal parameter $1` error when running `Version20260607082210` migration in Postgres, due to the missing explicitly set type.
+
+
 ## [5.1.0] - 2026-06-11
 ### Added
 * [#2585](https://github.com/shlinkio/shlink/issues/2585) Add new browser condition for dynamic redirects system.
