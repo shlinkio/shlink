@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [5.1.0] - 2026-06-11
 ### Added
 * [#2585](https://github.com/shlinkio/shlink/issues/2585) Add new browser condition for dynamic redirects system.
 
