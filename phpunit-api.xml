@@ -23,4 +23,11 @@
             <directory>./module/Rest/src</directory>
         </include>
     </source>
+
+    <extensions>
+        <bootstrap class="Ergebnis\PHPUnit\SlowTestDetector\Extension">
+            <parameter name="maximum-count" value="15" />
+            <parameter name="maximum-duration" value="1000" />
+        </bootstrap>
+    </extensions>
 </phpunit>
