@@ -10,4 +10,7 @@ return [
     // URL shortener
     EnvVars::DEFAULT_DOMAIN->value => 's.test',
     EnvVars::IS_HTTPS_ENABLED->value => false,
+
+    // Disable title auto-resolution, as it slows down API and CLI tests
+    EnvVars::AUTO_RESOLVE_TITLES->value => false,
 ];
