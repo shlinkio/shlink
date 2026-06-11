@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
 
 use function hash;
@@ -46,6 +47,8 @@ final class Version20260607082210 extends AbstractMigration
                 ->setParameters([
                     'id' => $row['id'],
                     'binHash' => hex2bin(hash('sha256', $row['original_url'])),
+                ], [
+                    'binHash' => Types::BINARY,
                 ])
                 ->setMaxResults(1)
                 ->executeStatement();
