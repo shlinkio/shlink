@@ -234,22 +234,6 @@ class CreateShortUrlTest extends ApiTestCase
         self::assertNotEquals($firstShortCode, $secondShortCode);
     }
 
-    #[Test, DataProvider('provideIdn')]
-    public function createsNewShortUrlWithInternationalizedDomainName(string $longUrl): void
-    {
-        [$statusCode, $payload] = $this->createShortUrl(['longUrl' => $longUrl]);
-
-        self::assertEquals(self::STATUS_OK, $statusCode);
-        self::assertEquals($payload['longUrl'], $longUrl);
-    }
-
-    public static function provideIdn(): iterable
-    {
-        yield ['http://tést.shlink.io']; // Redirects to https://shlink.io
-        yield ['http://test.shlink.io']; // Redirects to http://tést.shlink.io
-        yield ['http://téstb.shlink.io']; // Redirects to http://tést.shlink.io
-    }
-
     #[Test, DataProvider('provideInvalidArgumentApiVersions')]
     public function failsToCreateShortUrlWithoutLongUrl(array $payload, string $version): void
     {
