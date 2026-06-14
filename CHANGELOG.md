@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [5.1.2] - 2026-06-14
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#2622](https://github.com/shlinkio/shlink/issues/2622) Fix clearing entity cache on startup silently failing when using redis/valkey.
+
+
 ## [5.1.1] - 2026-06-11
 ### Added
 * *Nothing*
