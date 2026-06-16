@@ -77,7 +77,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           extensions-cache-key: tests-extensions-${{ matrix.php-version }}
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           path: build
       - run: mv build/coverage-unit/coverage-unit.cov build/coverage-unit.cov
@@ -95,7 +95,7 @@ jobs:
       - upload-coverage
     runs-on: ubuntu-24.04
     steps:
-      - uses: geekyeggo/delete-artifact@v5
+      - uses: geekyeggo/delete-artifact@v6
         with:
           name: |
             coverage-*
