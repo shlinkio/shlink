@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [5.1.3] - 2026-06-16
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#2625](https://github.com/shlinkio/shlink/issues/2625) Fix `PDO::connect(): Unable to set local cert chain file 1` error when setting `DB_USE_ENCRYPTION=true` with MySQL and PHP 8.5.
+
+
 ## [5.1.2] - 2026-06-14
 ### Added
 * *Nothing*
