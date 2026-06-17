@@ -36,7 +36,8 @@ return (static function (): array {
         'maria', 'mysql' => !$useEncryption
             ? []
             : [
-                1014 => false, // PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT: Trust any certificate
+                Pdo\Mysql::ATTR_SSL_CA => '', // Require connections to be encrypted
+                Pdo\Mysql::ATTR_SSL_VERIFY_SERVER_CERT => false, // Allow any certificate
             ],
         'postgres' => !$useEncryption
             ? []

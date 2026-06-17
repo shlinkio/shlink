@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#2625](https://github.com/shlinkio/shlink/issues/2625) Fix MySQL connections failing with `[3159] Connections using insecure transport are prohibited` when `DB_USE_ENCRYPTION=true` against a server requiring TLS.
+
+
 ## [5.1.3] - 2026-06-16
 ### Added
 * *Nothing*
