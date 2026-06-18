@@ -19,7 +19,7 @@ jobs:
           extensions-cache-key: publish-swagger-spec-extensions-${{ matrix.php-version }}
           install-deps: 'no'
       - run: ./build.sh ${GITHUB_REF#refs/tags/v}
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: dist-files-${{ matrix.php-version }}
           path: build
@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           path: build
       - name: Publish release with assets
@@ -45,6 +45,6 @@ jobs:
     needs: ['publish']
     runs-on: ubuntu-24.04
     steps:
-      - uses: geekyeggo/delete-artifact@v5
+      - uses: geekyeggo/delete-artifact@v6
         with:
           name: dist-files-*

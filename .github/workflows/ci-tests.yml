@@ -32,7 +32,7 @@ jobs:
         if: ${{ inputs.test-group == 'api' }}
         run: ./vendor/bin/rr get --no-interaction --no-config --location bin/ && chmod +x bin/rr
       - run: composer test:${{ inputs.test-group }}:ci
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         if: ${{ matrix.php-version == '8.4' }}
         with:
           name: coverage-${{ inputs.test-group }}

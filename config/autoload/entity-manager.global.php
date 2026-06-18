@@ -33,11 +33,17 @@ return (static function (): array {
     };
     $driverOptions = match ($driver) {
         'mssql' => ['TrustServerCertificate' => 'true'],
-        'maria', 'mysql' => !$useEncryption
-            ? []
-            : [
+        'maria', 'mysql' => match (true) {
+            !$useEncryption => [],
+            PHP_VERSION_ID < 80_500 => [
+                1007 => true, // PDO::MYSQL_ATTR_SSL_KEY: Require using SSL
                 1014 => false, // PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT: Trust any certificate
             ],
+            default => [
+                1008 => '', // Pdo\Mysql::ATTR_SSL_CA: Require connections to be encrypted
+                1013 => false, // Pdo\Mysql::ATTR_SSL_VERIFY_SERVER_CERT: Trust any certificate
+            ],
+        },
         'postgres' => !$useEncryption
             ? []
             : [
