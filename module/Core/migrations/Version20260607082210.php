@@ -18,6 +18,13 @@ final class Version20260607082210 extends AbstractMigration
 {
     public function up(Schema $schema): void
     {
+        do {
+            $resultsFound = $this->processBatch();
+        } while ($resultsFound);
+    }
+
+    public function processBatch(): bool
+    {
         $qb = $this->connection->createQueryBuilder();
         $qb
             ->select('id', 'original_url')
@@ -25,37 +32,33 @@ final class Version20260607082210 extends AbstractMigration
             // If this migration times out, this will ensure it can be rerun, and it will continue where it was left, so
             // it can be run multiple times until all short URLs have been processed
             ->where($qb->expr()->eq('long_url_hash', ':longUrlHash'))
-            ->setParameters(['longUrlHash' => '']);
+            ->setParameters(['longUrlHash' => ''])
+            ->setMaxResults(10_000);
         $shortUrlsResult = $qb->executeQuery();
 
-        $iteration = 1;
-        $this->connection->beginTransaction();
+        return $this->connection->transactional(function () use ($shortUrlsResult) {
+            $resultsFound = false;
 
-        while ($row = $shortUrlsResult->fetchAssociative()) {
-            // Every few updates, commit the transaction and begin a new one
-            if (($iteration % 10_000) === 0) {
-                $this->connection->commit();
-                $this->connection->beginTransaction();
+            while ($row = $shortUrlsResult->fetchAssociative()) {
+                $resultsFound = true;
+
+                $updateQb = $this->connection->createQueryBuilder();
+                $updateQb
+                    ->update('short_urls')
+                    ->set('long_url_hash', ':binHash')
+                    ->where($updateQb->expr()->eq('id', ':id'))
+                    ->setParameters([
+                        'id' => $row['id'],
+                        'binHash' => hex2bin(hash('sha256', $row['original_url'])),
+                    ], [
+                        'binHash' => Types::BINARY,
+                    ])
+                    ->setMaxResults(1)
+                    ->executeStatement();
             }
-            $iteration++;
 
-            $updateQb = $this->connection->createQueryBuilder();
-            $updateQb
-                ->update('short_urls')
-                ->set('long_url_hash', ':binHash')
-                ->where($updateQb->expr()->eq('id', ':id'))
-                ->setParameters([
-                    'id' => $row['id'],
-                    'binHash' => hex2bin(hash('sha256', $row['original_url'])),
-                ], [
-                    'binHash' => Types::BINARY,
-                ])
-                ->setMaxResults(1)
-                ->executeStatement();
-        }
-
-        // Commit any pending update that is still pending
-        $this->connection->commit();
+            return $resultsFound;
+        });
     }
 
     public function isTransactional(): bool
