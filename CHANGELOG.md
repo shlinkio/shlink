@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [5.1.5] - 2026-06-22
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#2634](https://github.com/shlinkio/shlink/issues/2634) Improve performance of Version20260607082210 migration by fetching short URLs in batches.
+
+
 ## [5.1.4] - 2026-06-18
 ### Added
 * *Nothing*
