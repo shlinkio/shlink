@@ -19,6 +19,7 @@ A PHP-based self-hosted URL shortener that can be used to serve shortened URLs u
 - [Self-hosted](#self-hosted)
     - [Download](#download)
     - [Configure](#configure)
+- [Managed hosting](#managed-hosting)
 - [Using shlink](#using-shlink)
 - [Contributing](#contributing)
 
@@ -77,6 +78,12 @@ Despite how you built the project, you now need to configure it, by following th
 * Recursively grant write permissions to the `data` directory. Shlink uses it to cache some information.
 * Set up the application by running the `vendor/bin/shlink-installer install` script. It is a command line tool that will guide you through the installation process. **Take into account that this tool has to be run directly on the server where you plan to host Shlink. Do not run it before uploading/moving it there.**
 * Generate your first API key by running `bin/cli api-key:generate`. You will need the key in order to interact with Shlink's API.
+
+## Managed hosting
+
+If you would rather not run and maintain the server yourself, [Zenith](https://zenith.hosting/host/shlink) deploys and manages a Shlink instance for you, with storage, backups and a free subdomain included. A share of every subscription goes back to Shlink.
+
+[![Deploy with Zenith](https://cdn.zenith.hosting/buttons/deploy-with-zenith.svg)](https://zenith.hosting/host/shlink)
 
 ## Using shlink
 
