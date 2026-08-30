@@ -18,12 +18,13 @@ final class Version20260607082210 extends AbstractMigration
 {
     public function up(Schema $schema): void
     {
+        $defaultHash = '0x';
         do {
-            $resultsFound = $this->processBatch();
+            $resultsFound = $this->processBatch($defaultHash);
         } while ($resultsFound);
     }
 
-    public function processBatch(): bool
+    public function processBatch(string $defaultHash): bool
     {
         $qb = $this->connection->createQueryBuilder();
         $qb
@@ -32,7 +33,7 @@ final class Version20260607082210 extends AbstractMigration
             // If this migration times out, this will ensure it can be rerun, and it will continue where it was left, so
             // it can be run multiple times until all short URLs have been processed
             ->where($qb->expr()->eq('long_url_hash', ':longUrlHash'))
-            ->setParameters(['longUrlHash' => ''])
+            ->setParameters(['longUrlHash' => $defaultHash], ['longUrlHash' => Types::BINARY])
             ->setMaxResults(10_000);
         $shortUrlsResult = $qb->executeQuery();
 
