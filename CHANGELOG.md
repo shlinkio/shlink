@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [5.1.6] - 2026-09-06
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#2649](https://github.com/shlinkio/shlink/issues/2649) Fix migrations running when updating to Shlink 5.1.x while using Microsoft SQL database.
+
+
 ## [5.1.5] - 2026-06-22
 ### Added
 * *Nothing*
