@@ -8,7 +8,7 @@ extends = "vendor/shlinkio/shlink-mago-config/mago.toml"
 [source]
 workspace = "."
 paths = ["bin", "config", "module"]
-excludes = ["vendor"]
+includes = ["vendor"]
 
 [source.glob]
 literal-separator = true
@@ -57,3 +57,6 @@ ambiguous-function-call = {
         "module/Core/config/entities-mappings"
     ]
 }
+
+[analyzer]
+baseline = "mago-analyze-baseline.toml"

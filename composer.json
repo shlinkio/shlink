@@ -18,6 +18,7 @@
         "ext-pdo": "*",
         "akrabat/ip-address-middleware": "^2.6",
         "cakephp/chronos": "^3.5",
+        "cuyz/valinor": "~2.5.0",
         "doctrine/dbal": "^4.4",
         "doctrine/migrations": "^3.9",
         "doctrine/orm": "^3.6",
@@ -59,17 +60,13 @@
         "symfony/string": "^8.1"
     },
     "require-dev": {
-        "carthage-software/mago": "^1.30",
+        "carthage-software/mago": "^1.45",
         "devizzent/cebe-php-openapi": "^1.1.2",
         "devster/ubench": "^2.1",
-        "phpstan/phpstan": "^2.2",
-        "phpstan/phpstan-doctrine": "^2.0",
-        "phpstan/phpstan-phpunit": "^2.0.5",
-        "phpstan/phpstan-symfony": "^2.0",
         "phpunit/php-code-coverage": "^13.0",
         "phpunit/phpcov": "^12.0",
         "phpunit/phpunit": "^13.0",
-        "shlinkio/shlink-mago-config": "^1.0",
+        "shlinkio/shlink-mago-config": "^1.1",
         "shlinkio/shlink-test-utils": "^4.5",
         "symfony/var-dumper": "^8.1",
         "veewee/composer-run-parallel": "^1.5"
@@ -103,7 +100,7 @@
     },
     "scripts": {
         "ci": [
-            "@parallel cs stan openapi:validate test:unit:ci test:db:sqlite:ci test:db:postgres test:db:mysql test:db:maria test:db:ms",
+            "@parallel cs analyze openapi:validate test:unit:ci test:db:sqlite:ci test:db:postgres test:db:mysql test:db:maria test:db:ms",
             "@parallel test:api:ci test:cli:ci"
         ],
         "lint": "mago lint",
@@ -112,7 +109,7 @@
         "format:check": "mago format --check",
         "cs": ["@lint", "@format:check"],
         "cs:fix": ["@lint:fix", "@format"],
-        "stan": ["@putenv APP_ENV=test", "phpstan analyse"],
+        "analyze": ["@putenv APP_ENV=test", "mago analyze"],
         "test": [
             "@parallel test:unit test:db",
             "@parallel test:api test:cli"

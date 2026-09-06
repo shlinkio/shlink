@@ -16,7 +16,7 @@ CHANGELOG.md export-ignore
 docker-compose.yml export-ignore
 indocker export-ignore
 mago.toml export-ignore
+mago-analyze-baseline.toml export-ignore
 phpunit.xml.dist export-ignore
 phpunit-api.xml export-ignore
 phpunit-db.xml export-ignore
-phpstan.neon

@@ -28,7 +28,7 @@ jobs:
     strategy:
       matrix:
         php-version: ['8.4']
-        command: ['cs', 'stan', 'openapi:validate']
+        command: ['lint', 'format:check', 'analyze', 'openapi:validate']
     steps:
       - uses: actions/checkout@v5
       - uses: './.github/actions/ci-setup'
@@ -86,7 +86,7 @@ jobs:
       - run: mv build/coverage-cli/coverage-cli.cov build/coverage-cli.cov
       - run: vendor/bin/phpcov merge build --clover build/clover.xml
       - name: Publish coverage
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           files: ./build/clover.xml
 

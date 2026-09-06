@@ -18,9 +18,10 @@ vendor
 docs
 indocker
 docker-*
-phpstan.neon
 php*xml*
 **/test*
 build*
 **/.*
 !config/roadrunner/.rr.yml
+mago.toml
+mago-analyze-baseline.toml

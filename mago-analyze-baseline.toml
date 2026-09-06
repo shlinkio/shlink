@@ -1,0 +1,2773 @@
+variant = "loose"
+
+[[issues]]
+file = "bin/roadrunner-worker.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "bin/roadrunner-worker.php"
+code = "no-valid-catch-type-found"
+message = "None of the types specified in the `catch` declaration are valid catchable exceptions."
+count = 1
+
+[[issues]]
+file = "bin/roadrunner-worker.php"
+code = "non-existent-catch-type"
+message = 'Attempting to catch an undefined class or interface: `Shlinkio\Shlink\Throwable`.'
+count = 1
+
+[[issues]]
+file = "config/autoload/cache.global.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "config/autoload/cache.global.php"
+code = "mixed-operand"
+message = "Right operand in `&&` operation has `mixed` type."
+count = 1
+
+[[issues]]
+file = "config/autoload/entity-manager.global.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "config/autoload/entity-manager.global.php"
+code = "mixed-operand"
+message = "Casting `mixed` to `bool`."
+count = 1
+
+[[issues]]
+file = "config/autoload/ip-address.global.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\splitByComma`: expected `null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "config/autoload/ip-address.global.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "config/autoload/logger.global.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "config/autoload/rabbit.global.php"
+code = "mixed-operand"
+message = "Casting `mixed` to `bool`."
+count = 2
+
+[[issues]]
+file = "config/cli-config.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager::__construct`: expected `Doctrine\ORM\EntityManagerInterface`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "config/cli-config.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "config/container.php"
+code = "mixed-argument"
+message = '''Invalid argument type for argument #1 of `Laminas\ServiceManager\ServiceManager::__construct`: expected `array{'abstract_factories'?: array<array-key, Laminas\ServiceManager\Factory\AbstractFactoryInterface|class-string<Laminas\ServiceManager\Factory\AbstractFactoryInterface>>, 'aliases'?: array<string, string>, 'delegators'?: !Laminas\ServiceManager\ServiceManager::DelegatorsConfiguration, 'factories'?: !Laminas\ServiceManager\ServiceManager::FactoriesConfiguration, 'initializers'?: !Laminas\ServiceManager\ServiceManager::InitializersConfiguration, 'invokables'?: array<string, class-string>, 'lazy_services'?: array{'class_map'?: array<string, class-string>, 'proxies_namespace'?: non-empty-string, 'proxies_target_dir'?: non-empty-string, 'write_proxy_files'?: bool}, 'services'?: array<string, mixed>, 'shared'?: array<string, bool>, 'shared_by_default'?: bool, ...<string, mixed>}`, but found `mixed`.'''
+count = 1
+
+[[issues]]
+file = "config/container.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #1 of `date_default_timezone_set`: expected `string`, but found `mixed`."
+count = 1
+
+[[issues]]
+file = "config/container.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #2 of `ini_set`: expected `bool|float|int|null|string`, but found `mixed`."
+count = 1
+
+[[issues]]
+file = "config/container.php"
+code = "mixed-array-access"
+message = "Unsafe array access on type `mixed`."
+count = 1
+
+[[issues]]
+file = "config/container.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "config/test/bootstrap_api_tests.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase::setApiClient`: expected `GuzzleHttp\ClientInterface`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "config/test/bootstrap_api_tests.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `Shlinkio\Shlink\TestUtils\Helper\TestHelper::seedFixtures`: expected `array<array-key, mixed>`, but found `nonnull`.'
+count = 1
+
+[[issues]]
+file = "config/test/bootstrap_api_tests.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "config/test/bootstrap_cli_tests.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `Shlinkio\Shlink\TestUtils\Helper\TestHelper::seedFixtures`: expected `array<array-key, mixed>`, but found `nonnull`.'
+count = 1
+
+[[issues]]
+file = "config/test/bootstrap_cli_tests.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "config/test/bootstrap_db_tests.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase::setEntityManager`: expected `Doctrine\ORM\EntityManagerInterface`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "config/test/test_config.global.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #1 of `{closure:config/test/test_config.global.php:46:23}`: expected `string`, but found `mixed`."
+count = 1
+
+[[issues]]
+file = "config/test/test_config.global.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #2 of `sprintf`: expected `Stringable|null|scalar`, but found `mixed`."
+count = 1
+
+[[issues]]
+file = "config/test/test_config.global.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 4
+
+[[issues]]
+file = "config/test/test_config.global.php"
+code = "mixed-operand"
+message = "Invalid right operand: type `mixed` cannot be reliably used in string concatenation."
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Command/Api/DeleteKeyCommand.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "module/CLI/src/Command/Api/DisableKeyCommand.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "module/CLI/src/Command/Api/ListKeysCommand.php"
+code = "redundant-null-coalesce"
+message = "Redundant null coalesce: left-hand side can never be `null` or undefined."
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Command/Config/ReadEnvVarCommand.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Config\formatEnvVarValue`: expected `array<array-key, int>|array<array-key, string>|bool|int|null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Command/Config/ReadEnvVarCommand.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #2 of `sprintf`: expected `Stringable|null|scalar`, but found `mixed`."
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Command/Config/ReadEnvVarCommand.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Command/Db/CreateDatabaseCommand.php"
+code = "deprecated-method"
+message = 'Call to deprecated method: `Doctrine\DBAL\Schema\AbstractSchemaManager::listTableNames`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Command/Domain/DomainRedirectsCommand.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\Config\NotFoundRedirects::withRedirects`: expected `null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Command/Domain/DomainRedirectsCommand.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #1 of `str_contains`: expected `string`, but found `mixed`."
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Command/Domain/DomainRedirectsCommand.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `Shlinkio\Shlink\Core\Config\NotFoundRedirects::withRedirects`: expected `null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Command/Domain/DomainRedirectsCommand.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #3 of `Shlinkio\Shlink\Core\Config\NotFoundRedirects::withRedirects`: expected `null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Command/Domain/DomainRedirectsCommand.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "module/CLI/src/Command/Domain/DomainRedirectsCommand.php"
+code = "mixed-return-statement"
+message = "Could not infer a precise return type for function `{closure:module/CLI/src/Command/Domain/DomainRedirectsCommand.php:70:16}`. Saw type `mixed`."
+count = 2
+
+[[issues]]
+file = "module/CLI/src/Command/Domain/DomainRedirectsCommand.php"
+code = "redundant-docblock-type"
+message = "Redundant docblock type for variable `$availableDomains`."
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Command/ShortUrl/CreateShortUrlCommand.php"
+code = "redundant-logical-operation"
+message = "Redundant `&&` operation: left operand is evaluated and right operand is always falsy."
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Command/ShortUrl/DeleteExpiredShortUrlsCommand.php"
+code = "redundant-condition"
+message = "Redundant condition"
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Command/ShortUrl/ListShortUrlsCommand.php"
+code = "invalid-array-element-key"
+message = "Cannot use spread operator on an iterable with key type `mixed`."
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Command/ShortUrl/ListShortUrlsCommand.php"
+code = "less-specific-nested-return-statement"
+message = '''Returned type `array{'API Key Name'?: (closure(array<array-key, mixed>, Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl): null|string), 'Date created': (closure(array<array-key, mixed>): mixed), 'Domain'?: (closure(array<array-key, mixed>, Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl): string), 'Long URL': (closure(array<array-key, mixed>): mixed), 'Short Code': (closure(array<array-key, mixed>): mixed), 'Short URL': (closure(array<array-key, mixed>): mixed), 'Tags'?: (closure(array<array-key, mixed>): string), 'Title': (closure(array<array-key, mixed>): mixed), 'Visits count': (closure(array<array-key, mixed>): mixed)}` is less specific than the declared return type `array<string, (callable(array<array-key, mixed>, Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl): null|string)>` for function `Shlinkio\Shlink\CLI\Command\ShortUrl\ListShortUrlsCommand::resolveColumnsMap` due to nested 'mixed'.'''
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Command/ShortUrl/ListShortUrlsCommand.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #2 of `implode`: expected `array<array-key, Stringable|null|scalar>|null`, but found `mixed`."
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Command/ShortUrl/ListShortUrlsCommand.php"
+code = "mixed-property-access"
+message = "Attempting to access a property on a non-object type (`mixed`)."
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Command/Visit/VisitsCommandUtils.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `League\Csv\Writer::insertAll`: expected `League\Csv\TabularData|League\Csv\TabularDataProvider|iterable<mixed, mixed>`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Command/Visit/VisitsCommandUtils.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `League\Csv\Writer::insertOne`: expected `array<array-key, mixed>`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Command/Visit/VisitsCommandUtils.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\CLI\Util\ShlinkTable::render`: expected `array<array-key, mixed>`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Command/Visit/VisitsCommandUtils.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `Shlinkio\Shlink\CLI\Util\ShlinkTable::render`: expected `array<array-key, mixed>`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Command/Visit/VisitsCommandUtils.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 4
+
+[[issues]]
+file = "module/CLI/src/Factory/ApplicationFactory.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `Symfony\Component\Console\CommandLoader\ContainerCommandLoader::__construct`: expected `array<array-key, mixed>`, but found `nonnull`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Factory/ApplicationFactory.php"
+code = "mixed-array-access"
+message = "Unsafe array access on type `mixed`."
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Factory/ApplicationFactory.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Factory/ApplicationFactory.php"
+code = "mixed-assignment"
+message = "Assigning `nonnull` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/CLI/src/RedirectRule/RedirectRuleHandler.php"
+code = "invalid-argument"
+message = 'Invalid argument type for argument #2 of `Shlinkio\Shlink\Core\ArrayUtils\map`: expected `(callable(Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule, string|unknown-ref(Shlinkio\Shlink\Core\ArrayUtils\number)): list{string, string, string})`, but found `(closure(Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule, float|int|string): list{string, string, string})`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/RedirectRule/RedirectRuleHandler.php"
+code = "invalid-operand"
+message = "Invalid type for left operand."
+count = 1
+
+[[issues]]
+file = "module/CLI/src/RedirectRule/RedirectRuleHandler.php"
+code = "less-specific-nested-argument-type"
+message = "Argument type mismatch for argument #1 of `array_flip`: expected `array<truthy-string, ('V.array_flip() extends array-key)>`, but provided type `array<truthy-string, mixed>` is less specific."
+count = 1
+
+[[issues]]
+file = "module/CLI/src/RedirectRule/RedirectRuleHandler.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #3 of `Shlinkio\Shlink\CLI\RedirectRule\RedirectRuleHandler::manageRules`: expected `array<array-key, Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 3
+
+[[issues]]
+file = "module/CLI/src/RedirectRule/RedirectRuleHandler.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\CLI\RedirectRule\RedirectRuleHandlerAction::from`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/RedirectRule/RedirectRuleHandler.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\Model\Browser::from`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/RedirectRule/RedirectRuleHandler.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\Model\DeviceType::from`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/RedirectRule/RedirectRuleHandler.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType::from`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/RedirectRule/RedirectRuleHandler.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #2 of `sprintf`: expected `Stringable|null|scalar`, but found `mixed`."
+count = 1
+
+[[issues]]
+file = "module/CLI/src/RedirectRule/RedirectRuleHandler.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "module/CLI/src/RedirectRule/RedirectRuleHandler.php"
+code = "mixed-operand"
+message = "Left operand in binary operation has type `mixed`."
+count = 1
+
+[[issues]]
+file = "module/CLI/src/RedirectRule/RedirectRuleHandler.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\CLI\RedirectRule\RedirectRuleHandler::askLongUrl`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/RedirectRule/RedirectRuleHandler.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\CLI\RedirectRule\RedirectRuleHandler::askMandatory`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/RedirectRule/RedirectRuleHandler.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\CLI\RedirectRule\RedirectRuleHandler::askOptional`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/RedirectRule/RedirectRuleHandler.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\CLI\RedirectRule\RedirectRuleHandler::askPriority`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/RedirectRule/RedirectRuleHandler.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\CLI\RedirectRule\RedirectRuleHandler::askRule`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/RedirectRule/RedirectRuleHandler.php"
+code = "template-constraint-violation"
+message = "Argument type mismatch for template `V`."
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Util/ProcessRunner.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #1 of `Symfony\Component\Process\Process::__construct`: expected `array<array-key, string>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Util/ProcessRunner.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #1 of `spl_object_hash`: expected `object`, but found `mixed`."
+count = 2
+
+[[issues]]
+file = "module/CLI/src/Util/ProcessRunner.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `Symfony\Component\Console\Helper\ProcessHelper::wrapCallback`: expected `Symfony\Component\Process\Process`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Util/ProcessRunner.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #2 of `sprintf`: expected `Stringable|null|scalar`, but found `mixed`."
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Util/ProcessRunner.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #3 of `Symfony\Component\Console\Helper\DebugFormatterHelper::stop`: expected `bool`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Util/ProcessRunner.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #3 of `str_replace`: expected `array<array-key, string>|string`, but found `mixed`."
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Util/ProcessRunner.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Util/ProcessRunner.php"
+code = "mixed-method-access"
+message = "Attempting to access a method on a non-object type (`mixed`)."
+count = 5
+
+[[issues]]
+file = "module/CLI/src/Util/ProcessRunner.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #2 of `Symfony\Component\Console\Helper\DebugFormatterHelper::start`: expected `string`, but possibly received `array<array-key, string>|string`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/src/Util/ShlinkTable.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/CLI/test/ApiKey/RoleResolverTest.php"
+code = "deprecated-class"
+message = 'Class `Shlinkio\Shlink\CLI\ApiKey\RoleResolver` is deprecated and should no longer be used.'
+count = 1
+
+[[issues]]
+file = "module/CLI/test/ApiKey/RoleResolverTest.php"
+code = "invalid-array-element-key"
+message = "Cannot use spread operator on an iterable with key type `mixed`."
+count = 2
+
+[[issues]]
+file = "module/CLI/test/Command/Api/ListKeysCommandTest.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Rest\Entity\ApiKey::registerRole`: expected `Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/test/Command/Api/ListKeysCommandTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/CLI/test/Command/Config/ReadEnvVarCommandTest.php"
+code = "deprecated-class"
+message = 'Use of deprecated class `Monolog\Test\TestCase` in `extends` clause'
+count = 1
+
+[[issues]]
+file = "module/CLI/test/Command/Db/CreateDatabaseCommandTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `PHPUnit\Framework\MockObject\MockObject&Doctrine\DBAL\Schema\AbstractSchemaManager` is being assigned to property `$schemaManager` (PHPUnit\Framework\MockObject\MockObject&Doctrine\DBAL\Schema\AbstractSchemaManager<Doctrine\DBAL\Platforms\SQLitePlatform>).'
+count = 1
+
+[[issues]]
+file = "module/CLI/test/Command/ShortUrl/ListShortUrlsCommandTest.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #12 of `Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams::__construct`: expected `array<array-key, string>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "module/CLI/test/Command/ShortUrl/ListShortUrlsCommandTest.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #4 of `Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams::__construct`: expected `array<array-key, string>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "module/CLI/test/RedirectRule/RedirectRuleHandlerTest.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #4 of `Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule::__construct`: expected `Doctrine\Common\Collections\Collection<int, Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition>`, but provided type `Doctrine\Common\Collections\ArrayCollection<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "module/CLI/test/RedirectRule/RedirectRuleHandlerTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "module/CLI/test/RedirectRule/RedirectRuleHandlerTest.php"
+code = "mixed-operand"
+message = "Cannot reliably increment a `mixed` operand."
+count = 2
+
+[[issues]]
+file = "module/CLI/test/RedirectRule/RedirectRuleHandlerTest.php"
+code = "redundant-comparison"
+message = "Redundant `<` comparison: left-hand side is always less than right-hand side."
+count = 1
+
+[[issues]]
+file = "module/CLI/test/RedirectRule/RedirectRuleHandlerTest.php"
+code = "redundant-logical-operation"
+message = "Redundant `&&` operation: left operand is always truthy and right operand is evaluated."
+count = 1
+
+[[issues]]
+file = "module/CLI/test/Util/CliTestUtils.php"
+code = "invalid-return-statement"
+message = 'Invalid return type for function `ShlinkioTest\Shlink\CLI\Util\CliTestUtils::createCommandStub`: expected `PHPUnit\Framework\MockObject\Stub&Symfony\Component\Console\Command\Command`, but found `PHPUnit\Framework\MockObject\MockObject|PHPUnit\Framework\MockObject\Stub`.'
+count = 1
+
+[[issues]]
+file = "module/Core/functions/array-utils.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `callable`: expected `string|unknown-ref(Shlinkio\Shlink\Core\ArrayUtils\number)`, but found `mixed`.'
+count = 2
+
+[[issues]]
+file = "module/Core/functions/array-utils.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 5
+
+[[issues]]
+file = "module/Core/functions/array-utils.php"
+code = "non-existent-class-like"
+message = 'Cannot find class, interface, enum, or type alias `Shlinkio\Shlink\Core\ArrayUtils\number`.'
+count = 2
+
+[[issues]]
+file = "module/Core/functions/functions.php"
+code = "falsable-return-statement"
+message = '''Function `Shlinkio\Shlink\Core\stringToBinHash` is declared to return `string` but possibly returns 'false' (inferred as `false|string`).'''
+count = 1
+
+[[issues]]
+file = "module/Core/functions/functions.php"
+code = "invalid-argument"
+message = "Invalid argument type for argument #2 of `array_reduce`: expected `(callable(string, array-key): string)`, but found `(closure(string, string): truthy-string)`."
+count = 1
+
+[[issues]]
+file = "module/Core/functions/functions.php"
+code = "invalid-return-statement"
+message = 'Invalid return type for function `Shlinkio\Shlink\Core\stringToBinHash`: expected `string`, but found `false|string`.'
+count = 1
+
+[[issues]]
+file = "module/Core/functions/functions.php"
+code = "invalid-type-cast"
+message = "Casting `mixed` to `float`."
+count = 1
+
+[[issues]]
+file = "module/Core/functions/functions.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Cake\Chronos\Chronos::parse`: expected `Cake\Chronos\ChronosDate|Cake\Chronos\ChronosTime|DateTimeInterface|int|null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/functions/functions.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #6 of `sprintf`: expected `Stringable|null|scalar`, but found `mixed`."
+count = 1
+
+[[issues]]
+file = "module/Core/functions/functions.php"
+code = "mixed-array-access"
+message = "Unsafe array access on type `nonnull`."
+count = 1
+
+[[issues]]
+file = "module/Core/functions/functions.php"
+code = "mixed-array-assignment"
+message = "Unsafe array assignment on type `mixed`."
+count = 1
+
+[[issues]]
+file = "module/Core/functions/functions.php"
+code = "mixed-array-assignment"
+message = "Unsafe array assignment on type `nonnull`."
+count = 1
+
+[[issues]]
+file = "module/Core/functions/functions.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "module/Core/functions/functions.php"
+code = "mixed-assignment"
+message = "Assigning `nonnull` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/functions/functions.php"
+code = "mixed-method-access"
+message = "Attempting to access a method on a non-object type (`nonnull`)."
+count = 1
+
+[[issues]]
+file = "module/Core/functions/functions.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\enumSide`. Saw type `nonnull`.'
+count = 1
+
+[[issues]]
+file = "module/Core/functions/functions.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\generateRandomShortCode`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/functions/functions.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\geolocationFromRequest`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/functions/functions.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\ipAddressFromRequest`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/functions/functions.php"
+code = "possibly-invalid-argument"
+message = "Possible argument type mismatch for argument #1 of `mb_strtolower`: expected `string`, but possibly received `array<array-key, string>|null|string`."
+count = 1
+
+[[issues]]
+file = "module/Core/functions/functions.php"
+code = "possibly-invalid-argument"
+message = "Possible argument type mismatch for argument #2 of `str_repeat`: expected `non-negative-int`, but possibly received `int`."
+count = 1
+
+[[issues]]
+file = "module/Core/functions/functions.php"
+code = "possibly-null-argument"
+message = "Argument #1 of function `mb_strtolower` is possibly `null`, but parameter type `string` does not accept it."
+count = 1
+
+[[issues]]
+file = "module/Core/functions/functions.php"
+code = "possibly-null-argument"
+message = "Argument #3 of function `preg_replace` is possibly `null`, but parameter type `array<array-key, string>|string` does not accept it."
+count = 1
+
+[[issues]]
+file = "module/Core/functions/functions.php"
+code = "possibly-null-operand"
+message = "Left operand in `>=` comparison might be `null` (type `float|null`)."
+count = 1
+
+[[issues]]
+file = "module/Core/functions/functions.php"
+code = "possibly-static-access-on-interface"
+message = "Potential static method call on interface `BackedEnum` via `class-string`."
+count = 1
+
+[[issues]]
+file = "module/Core/migrations/Version20240224115725.php"
+code = "deprecated-method"
+message = 'Call to deprecated method: `Doctrine\DBAL\Schema\Table::setPrimaryKey`.'
+count = 2
+
+[[issues]]
+file = "module/Core/migrations/Version20240226214216.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "module/Core/migrations/Version20240227080629.php"
+code = "deprecated-method"
+message = 'Call to deprecated method: `Doctrine\DBAL\Schema\Table::setPrimaryKey`.'
+count = 1
+
+[[issues]]
+file = "module/Core/migrations/Version20240306132518.php"
+code = "deprecated-method"
+message = 'Call to deprecated method: `Doctrine\DBAL\Schema\Table::setPrimaryKey`.'
+count = 1
+
+[[issues]]
+file = "module/Core/migrations/Version20240318084804.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `ShlinkMigrations\Version20240318084804::insertCount`: expected `int|string`, but found `truthy-mixed`.'
+count = 2
+
+[[issues]]
+file = "module/Core/migrations/Version20240318084804.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `ShlinkMigrations\Version20240318084804::insertCount`: expected `int|string`, but found `mixed`.'
+count = 2
+
+[[issues]]
+file = "module/Core/migrations/Version20240318084804.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 3
+
+[[issues]]
+file = "module/Core/migrations/Version20240318084804.php"
+code = "mixed-operand"
+message = "Left operand in `>` comparison has `mixed` type."
+count = 2
+
+[[issues]]
+file = "module/Core/migrations/Version20240331111103.php"
+code = "deprecated-method"
+message = 'Call to deprecated method: `Doctrine\DBAL\Schema\Table::setPrimaryKey`.'
+count = 1
+
+[[issues]]
+file = "module/Core/migrations/Version20240331111447.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `ShlinkMigrations\Version20240331111447::insertCount`: expected `int|string`, but found `mixed`.'
+count = 2
+
+[[issues]]
+file = "module/Core/migrations/Version20240331111447.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "module/Core/migrations/Version20240331111447.php"
+code = "mixed-operand"
+message = "Left operand in `>` comparison has `mixed` type."
+count = 2
+
+[[issues]]
+file = "module/Core/migrations/Version20241105094747.php"
+code = "deprecated-method"
+message = 'Call to deprecated method: `Doctrine\DBAL\Connection::quoteIdentifier`.'
+count = 1
+
+[[issues]]
+file = "module/Core/migrations/Version20241105215309.php"
+code = "deprecated-method"
+message = 'Call to deprecated method: `Doctrine\DBAL\Connection::quoteIdentifier`.'
+count = 1
+
+[[issues]]
+file = "module/Core/migrations/Version20241105215309.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #2 of `hash`: expected `string`, but found `truthy-mixed`."
+count = 1
+
+[[issues]]
+file = "module/Core/migrations/Version20241105215309.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/migrations/Version20241212131058.php"
+code = "deprecated-method"
+message = 'Call to deprecated method: `Doctrine\DBAL\Schema\Table::setPrimaryKey`.'
+count = 1
+
+[[issues]]
+file = "module/Core/migrations/Version20260607082210.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #2 of `hash`: expected `string`, but found `mixed`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Action/RobotsAction.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #3 of `GuzzleHttp\Psr7\Response::__construct`: expected `Psr\Http\Message\StreamInterface|null|resource|string`, but possibly received `iterable<mixed, mixed>`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/EnvVars.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #1 of `file_get_contents`: expected `string`, but found `nonnull`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/EnvVars.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #1 of `is_file`: expected `string`, but found `nonnull`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/EnvVars.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/EnvVars.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\Config\EnvVars::defaultValue`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/NotFoundRedirectResolver.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #2 of `str_replace`: expected `array<array-key, string>|string`, but found `mixed`."
+count = 2
+
+[[issues]]
+file = "module/Core/src/Config/Options/CorsOptions.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\Config\Options\CorsOptions::__construct`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/CorsOptions.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `Shlinkio\Shlink\Core\Config\Options\CorsOptions::__construct`: expected `bool`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/CorsOptions.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #3 of `Shlinkio\Shlink\Core\Config\Options\CorsOptions::__construct`: expected `int`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/CorsOptions.php"
+code = "mixed-property-type-coercion"
+message = "A value with a less specific type `array<array-key, mixed>|string('*')|string('<origin>')` is being assigned to property `$allowOrigins` (array<array-key, string>|string('*')|string('<origin>'))."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/DeleteShortUrlsOptions.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/NotFoundRedirectOptions.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\Config\Options\NotFoundRedirectOptions::__construct`: expected `null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/NotFoundRedirectOptions.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `Shlinkio\Shlink\Core\Config\Options\NotFoundRedirectOptions::__construct`: expected `null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/NotFoundRedirectOptions.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #3 of `Shlinkio\Shlink\Core\Config\Options\NotFoundRedirectOptions::__construct`: expected `null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/RabbitMqOptions.php"
+code = "mixed-operand"
+message = "Casting `mixed` to `bool`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/RealTimeUpdatesOptions.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #2 of `Shlinkio\Shlink\Core\Config\Options\RealTimeUpdatesOptions::validateTopics`: expected `array<array-key, string>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/RealTimeUpdatesOptions.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\splitByComma`: expected `null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/RealTimeUpdatesOptions.php"
+code = "mixed-property-type-coercion"
+message = "A value with a less specific type `array<array-key, mixed>` is being assigned to property `$enabledTopics` (array<array-key, string>)."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/RedirectOptions.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #3 of `Shlinkio\Shlink\Core\Config\Options\RedirectOptions::__construct`: expected `null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/RobotsOptions.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #2 of `Shlinkio\Shlink\Core\Config\Options\RobotsOptions::__construct`: expected `array<array-key, string>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/RobotsOptions.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\splitByComma`: expected `null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/RobotsOptions.php"
+code = "mixed-operand"
+message = "Casting `mixed` to `bool`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/TrackingOptions.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #8 of `Shlinkio\Shlink\Core\Config\Options\TrackingOptions::__construct`: expected `array<array-key, string>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/TrackingOptions.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\splitByComma`: expected `null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/TrackingOptions.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #3 of `Shlinkio\Shlink\Core\Config\Options\TrackingOptions::__construct`: expected `null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/TrackingOptions.php"
+code = "mixed-operand"
+message = "Casting `mixed` to `bool`."
+count = 6
+
+[[issues]]
+file = "module/Core/src/Config/Options/UrlShortenerOptions.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\Config\Options\ExtraPathMode::tryFrom`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/UrlShortenerOptions.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions::__construct`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/UrlShortenerOptions.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode::tryFrom`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/UrlShortenerOptions.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/Options/UrlShortenerOptions.php"
+code = "mixed-operand"
+message = "Casting `mixed` to `bool`."
+count = 4
+
+[[issues]]
+file = "module/Core/src/Config/PostProcessor/BasePathPrefixer.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #2 of `array_map`: expected `array<('K.array_map() extends array-key), array<array-key, mixed>>`, but found `nonnull`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/PostProcessor/BasePathPrefixer.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #3 of `Shlinkio\Shlink\Core\Config\PostProcessor\BasePathPrefixer::prefixPathsWithBasePath`: expected `string`, but found `nonnull`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/PostProcessor/BasePathPrefixer.php"
+code = "mixed-assignment"
+message = "Assigning `nonnull` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/PostProcessor/BasePathPrefixer.php"
+code = "mixed-operand"
+message = "Invalid right operand: type `nonnull` cannot be reliably used in string concatenation."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/PostProcessor/MultiSegmentSlugProcessor.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #2 of `array_map`: expected `array<('K.array_map() extends array-key), array<array-key, mixed>>`, but found `nonnull`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/PostProcessor/MultiSegmentSlugProcessor.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #3 of `str_replace`: expected `array<array-key, string>|string`, but found `mixed`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/PostProcessor/MultiSegmentSlugProcessor.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/PostProcessor/MultiSegmentSlugProcessor.php"
+code = "mixed-operand"
+message = "Casting `mixed` to `bool`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/PostProcessor/ShortUrlMethodsProcessor.php"
+code = "invalid-iterator"
+message = "The expression provided to `foreach` is not iterable. It resolved to type `nonnull`, which is not iterable."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/PostProcessor/ShortUrlMethodsProcessor.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\Util\RedirectStatus::tryFrom`: expected `int`, but found `nonnull`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/PostProcessor/ShortUrlMethodsProcessor.php"
+code = "mixed-array-access"
+message = "Unsafe array access on type `mixed`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/PostProcessor/ShortUrlMethodsProcessor.php"
+code = "mixed-array-assignment"
+message = "Unsafe array assignment on type `nonnull`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Config/PostProcessor/ShortUrlMethodsProcessor.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "module/Core/src/Config/PostProcessor/ShortUrlMethodsProcessor.php"
+code = "mixed-assignment"
+message = "Assigning `nonnull` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Domain/Repository/DomainRepository.php"
+code = "invalid-destructuring-source"
+message = "Invalid destructuring assignment: Cannot unpack type `mixed` into variables."
+count = 2
+
+[[issues]]
+file = "module/Core/src/Domain/Repository/DomainRepository.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryTrait::applySpecification`: expected `Happyr\DoctrineSpecification\Filter\Filter|Happyr\DoctrineSpecification\Query\QueryModifier`, but found `mixed`.'
+count = 2
+
+[[issues]]
+file = "module/Core/src/Domain/Repository/DomainRepository.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #3 of `Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryTrait::applySpecification`: expected `null|string`, but found `mixed`.'
+count = 2
+
+[[issues]]
+file = "module/Core/src/Domain/Repository/DomainRepository.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 4
+
+[[issues]]
+file = "module/Core/src/Domain/Repository/DomainRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\Domain\Repository\DomainRepository::findDomains`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Domain/Repository/DomainRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\Domain\Repository\DomainRepository::findOneByAuthority`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Domain/Repository/DomainRepository.php"
+code = "possibly-null-argument"
+message = 'Argument #1 of method `Shlinkio\Shlink\Core\ShortUrl\Spec\BelongsToApiKey::__construct` is possibly `null`, but parameter type `Shlinkio\Shlink\Rest\Entity\ApiKey` does not accept it.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/ErrorHandler/NotFoundTemplateHandler.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Laminas\Diactoros\Response\HtmlResponse::__construct`: expected `Psr\Http\Message\StreamInterface|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/ErrorHandler/NotFoundTemplateHandler.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/src/EventDispatcher/Event/ShortUrlCreated.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated::__construct`: expected `string`, but found `nonnull`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/EventDispatcher/Event/UrlVisited.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\EventDispatcher\Event\UrlVisited::__construct`: expected `string`, but found `nonnull`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/EventDispatcher/Event/UrlVisited.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `Shlinkio\Shlink\Core\EventDispatcher\Event\UrlVisited::__construct`: expected `null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/EventDispatcher/Matomo/SendVisitToMatomo.php"
+code = "redundant-docblock-type"
+message = "Redundant docblock type for variable `$visit`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Exception/DeleteShortUrlException.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\Exception\DeleteShortUrlException::getVisitsThreshold`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Exception/DomainNotFoundException.php"
+code = "property-type-coercion"
+message = "A value of a less specific type `array<array-key, mixed>` is being assigned to property `$additional` (array<string, mixed>)."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Exception/IpCannotBeLocatedException.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #3 of `Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException::__construct`: expected `int`, but possibly received `int|string`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Exception/TagConflictException.php"
+code = "property-type-coercion"
+message = "A value of a less specific type `array<array-key, mixed>` is being assigned to property `$additional` (array<string, mixed>)."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Geolocation/Entity/GeolocationDbUpdate.php"
+code = "unused-property"
+message = "Property `$dateCreated` is never used."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Geolocation/Entity/GeolocationDbUpdate.php"
+code = "unused-property"
+message = "Property `$filesystemId` is never used."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Geolocation/Entity/GeolocationDbUpdate.php"
+code = "write-only-property"
+message = "Property `$error` is written to but never read."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Importer/ShortUrlImporting.php"
+code = "invalid-argument"
+message = 'Invalid argument type for argument #2 of `Shlinkio\Shlink\Core\ArrayUtils\map`: expected `(callable(Shlinkio\Shlink\Importer\Model\ImportedShlinkRedirectRule, string|unknown-ref(Shlinkio\Shlink\Core\ArrayUtils\number)): Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule)`, but found `(closure(Shlinkio\Shlink\Importer\Model\ImportedShlinkRedirectRule, float|int|string): Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule)`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Matomo/MatomoOptions.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `Shlinkio\Shlink\Core\Matomo\MatomoOptions::__construct`: expected `null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Matomo/MatomoOptions.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #3 of `Shlinkio\Shlink\Core\Matomo\MatomoOptions::__construct`: expected `int|null|numeric-string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Matomo/MatomoOptions.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #4 of `Shlinkio\Shlink\Core\Matomo\MatomoOptions::__construct`: expected `null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Matomo/MatomoOptions.php"
+code = "mixed-operand"
+message = "Casting `mixed` to `bool`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Matomo/MatomoVisitSender.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\Matomo\VisitSendingProgressTrackerInterface::error`: expected `int`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Matomo/MatomoVisitSender.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\Matomo\VisitSendingProgressTrackerInterface::success`: expected `int`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Matomo/MatomoVisitSender.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Model/Renaming.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\Model\Renaming::fromNames`: expected `string`, but found `nonnull`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Model/Renaming.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `Shlinkio\Shlink\Core\Model\Renaming::fromNames`: expected `string`, but found `nonnull`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Paginator/Adapter/AbstractCacheableCountPaginatorAdapter.php"
+code = "invalid-return-statement"
+message = 'Invalid return type for function `Shlinkio\Shlink\Core\Paginator\Adapter\AbstractCacheableCountPaginatorAdapter::getNbResults`: expected `non-negative-int`, but found `int`.'
+count = 2
+
+[[issues]]
+file = "module/Core/src/RedirectRule/Entity/RedirectCondition.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/src/RedirectRule/ShortUrlRedirectRuleService.php"
+code = "invalid-argument"
+message = 'Invalid argument type for argument #2 of `Shlinkio\Shlink\Core\ArrayUtils\map`: expected `(callable(Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule, string|unknown-ref(Shlinkio\Shlink\Core\ArrayUtils\number)): Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule)`, but found `(closure(Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule, float|int|string): Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule)`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/RedirectRule/ShortUrlRedirectRuleService.php"
+code = "invalid-operand"
+message = "Invalid type for left operand."
+count = 1
+
+[[issues]]
+file = "module/Core/src/RedirectRule/ShortUrlRedirectRuleService.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #4 of `Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule::__construct`: expected `Doctrine\Common\Collections\Collection<int, Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition>`, but provided type `Doctrine\Common\Collections\ArrayCollection<array-key, Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition>` is less specific.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/RedirectRule/ShortUrlRedirectRuleService.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule::__construct`: expected `int`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Entity/ShortUrl.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #7 of `Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation::__construct`: expected `array<array-key, string>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Entity/ShortUrl.php"
+code = "unused-property"
+message = "Property `$visitsCounts` is never used."
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Entity/ShortUrl.php"
+code = "write-only-property"
+message = "Property `$importOriginalShortCode` is written to but never read."
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Helper/ShortUrlTitleResolutionHelper.php"
+code = "invalid-return-statement"
+message = '''Invalid return type for function `Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelper::processTitle`: expected `('T.shlinkio\shlink\core\shorturl\helper\shorturltitleresolutionhelper::processtitle() extends Shlinkio\Shlink\Core\ShortUrl\Helper\TitleResolutionModelInterface)`, but found `('T.shlinkio\shlink\core\shorturl\helper\shorturltitleresolutionhelper::processtitle() extends Shlinkio\Shlink\Core\ShortUrl\Helper\TitleResolutionModelInterface)|Shlinkio\Shlink\Core\ShortUrl\Helper\TitleResolutionModelInterface&static`.'''
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Helper/ShortUrlTitleResolutionHelper.php"
+code = "reference-to-undefined-variable"
+message = "Reference created from a previously undefined variable `$charsetFromMetaMatches`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Helper/ShortUrlTitleResolutionHelper.php"
+code = "reference-to-undefined-variable"
+message = "Reference created from a previously undefined variable `$charsetMatches`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Helper/ShortUrlTitleResolutionHelper.php"
+code = "reference-to-undefined-variable"
+message = "Reference created from a previously undefined variable `$titleMatches`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Model/ShortUrlEdition.php"
+code = "invalid-property-assignment-value"
+message = 'Invalid type for property `$maxVisits`: expected `int|null`, but got `enum(Shlinkio\Shlink\Core\Util\NoValue)|null|positive-int`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Model/ShortUrlEdition.php"
+code = "invalid-property-assignment-value"
+message = 'Invalid type for property `$title`: expected `null|string`, but got `enum(Shlinkio\Shlink\Core\Util\NoValue)|null|string`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Model/ShortUrlEdition.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `Shlinkio\Shlink\Common\normalizeOptionalDate`: expected `Cake\Chronos\Chronos|DateTimeInterface|null|string`, but possibly received `DateTimeInterface|enum(Shlinkio\Shlink\Core\Util\NoValue)|null|string`.'
+count = 2
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Model/ShortUrlEdition.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #4 of `Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlEdition::__construct`: expected `enum(Shlinkio\Shlink\Core\Util\NoValue)|null|positive-int`, but possibly received `int|null`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Model/ShortUrlIdentifier.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier::__construct`: expected `string`, but found `mixed`.'
+count = 2
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Model/ShortUrlIdentifier.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier::__construct`: expected `null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Model/ShortUrlIdentifier.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 3
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Paginator/Adapter/ShortUrlRepositoryAdapter.php"
+code = "invalid-return-statement"
+message = 'Invalid return type for function `Shlinkio\Shlink\Core\ShortUrl\Paginator\Adapter\ShortUrlRepositoryAdapter::getNbResults`: expected `non-negative-int`, but found `int`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Repository/CrawlableShortCodesQuery.php"
+code = "invalid-destructuring-source"
+message = "Invalid destructuring assignment: Cannot unpack type `mixed` into variables."
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Repository/CrawlableShortCodesQuery.php"
+code = "invalid-yield-value-type"
+message = "Invalid value type yielded; expected `string`, but found `mixed`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Repository/CrawlableShortCodesQuery.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Repository/ShortUrlListRepository.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Repository/ShortUrlListRepository.php"
+code = "possibly-null-argument"
+message = 'Argument #2 of method `Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryTrait::applySpecification` is possibly `null`, but parameter type `Happyr\DoctrineSpecification\Filter\Filter|Happyr\DoctrineSpecification\Query\QueryModifier` does not accept it.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Repository/ShortUrlListRepository.php"
+code = "possibly-null-property-access"
+message = "Attempting to access a property on a possibly `null` value."
+count = 2
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Repository/ShortUrlRepository.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Repository/ShortUrlRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository::findOneByImportedUrl`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Repository/ShortUrlRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository::findOneMatching`. Saw type `mixed`.'
+count = 2
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Repository/ShortUrlRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository::findOneWithDomainFallback`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Repository/ShortUrlRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository::findOne`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Repository/ShortUrlRepository.php"
+code = "possibly-null-argument"
+message = 'Argument #2 of method `Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryTrait::applySpecification` is possibly `null`, but parameter type `Happyr\DoctrineSpecification\Filter\Filter|Happyr\DoctrineSpecification\Query\QueryModifier` does not accept it.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Resolver/PersistenceShortUrlRelationResolver.php"
+code = "less-specific-return-statement"
+message = 'Returned type `Doctrine\Common\Collections\ArrayCollection<array-key, Shlinkio\Shlink\Core\Tag\Entity\Tag>` is less specific than the declared return type `Doctrine\Common\Collections\Collection<int, Shlinkio\Shlink\Core\Tag\Entity\Tag>` for function `Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver::resolveTags`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Resolver/PersistenceShortUrlRelationResolver.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Resolver/PersistenceShortUrlRelationResolver.php"
+code = "mixed-method-access"
+message = "Attempting to access a method on a non-object type (`mixed`)."
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Resolver/PersistenceShortUrlRelationResolver.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `array<array-key, mixed>` is being assigned to property `$domainLocks` (array<string, Symfony\Component\Lock\SharedLockInterface>).'
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Resolver/PersistenceShortUrlRelationResolver.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `array<array-key, mixed>` is being assigned to property `$tagLocks` (array<string, Symfony\Component\Lock\SharedLockInterface>).'
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Resolver/PersistenceShortUrlRelationResolver.php"
+code = "redundant-docblock-type"
+message = "Redundant docblock type for variable `$existingDomain`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Resolver/PersistenceShortUrlRelationResolver.php"
+code = "redundant-docblock-type"
+message = "Redundant docblock type for variable `$existingTag`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Resolver/SimpleShortUrlRelationResolver.php"
+code = "less-specific-return-statement"
+message = 'Returned type `Doctrine\Common\Collections\ArrayCollection<array-key, Shlinkio\Shlink\Core\Tag\Entity\Tag>` is less specific than the declared return type `Doctrine\Common\Collections\Collection<int, Shlinkio\Shlink\Core\Tag\Entity\Tag>` for function `Shlinkio\Shlink\Core\ShortUrl\Resolver\SimpleShortUrlRelationResolver::resolveTags`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/Spec/BelongsToApiKeyInlined.php"
+code = "incompatible-parameter-name"
+message = 'Parameter #2 of `Shlinkio\Shlink\Core\ShortUrl\Spec\BelongsToApiKeyInlined::getfilter()` is named `$dqlAlias` but parent `Happyr\DoctrineSpecification\Filter\Filter::getfilter()` names it `$context`'
+count = 1
+
+[[issues]]
+file = "module/Core/src/ShortUrl/UrlShortener.php"
+code = "redundant-docblock-type"
+message = "Redundant docblock type for variable `$newShortUrl`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Tag/Entity/Tag.php"
+code = "write-only-property"
+message = "Property `$shortUrls` is written to but never read."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Tag/Model/TagInfo.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\Tag\Model\TagInfo::__construct`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Tag/Model/TagsParams.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\Model\Ordering::fromOptionalString`: expected `null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Tag/Model/TagsParams.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\Tag\Model\TagsParams::__construct`: expected `null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Tag/Paginator/Adapter/AbstractTagsPaginatorAdapter.php"
+code = "invalid-return-statement"
+message = 'Invalid return type for function `Shlinkio\Shlink\Core\Tag\Paginator\Adapter\AbstractTagsPaginatorAdapter::getNbResults`: expected `non-negative-int`, but found `int`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Tag/Paginator/Adapter/TagsPaginatorAdapter.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\Tag\Paginator\Adapter\TagsPaginatorAdapter::getSlice`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Tag/Repository/TagRepository.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Doctrine\DBAL\Connection::quote`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Tag/Repository/TagRepository.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #2 of `array_map`: expected `array<('K.array_map() extends array-key), array<array-key, mixed>>`, but found `mixed`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Tag/Repository/TagRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\Tag\Repository\TagRepository::deleteByName`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Tag/Repository/TagRepository.php"
+code = "possible-method-access-on-null"
+message = "Attempting to call a method on `null`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Tag/TagService.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `Shlinkio\Shlink\Common\Paginator\Paginator::setMaxPerPage`: expected `int(-1)|positive-int`, but possibly received `int`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Util/DoctrineBatchHelper.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Util/IpAddressUtils.php"
+code = "less-specific-nested-argument-type"
+message = "Argument type mismatch for argument #2 of `implode`: expected `array<array-key, Stringable|null|scalar>|null`, but provided type `non-empty-list<mixed>` is less specific."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Entity/ShortUrlVisitsCount.php"
+code = "unused-property"
+message = "Property `$potentialBot` is never used."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Entity/ShortUrlVisitsCount.php"
+code = "unused-property"
+message = "Property `$shortUrl` is never used."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Geolocation/VisitLocator.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\Visit\Geolocation\VisitGeolocationHelperInterface::geolocateVisit`: expected `Shlinkio\Shlink\Core\Visit\Entity\Visit`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Geolocation/VisitLocator.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\Visit\Geolocation\VisitLocator::locateVisit`: expected `Shlinkio\Shlink\Core\Visit\Entity\Visit`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Geolocation/VisitLocator.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Listener/OrphanVisitsCountTracker.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Listener/ShortUrlVisitsCountTracker.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Model/OrphanVisitsParams.php"
+code = "avoid-catching-error"
+message = "Avoid catching 'Error' class instances."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Model/OrphanVisitsParams.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams::parseType`: expected `string`, but found `nonnull`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Model/OrphanVisitsParams.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Model/Visitor.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #6 of `Shlinkio\Shlink\Core\Visit\Model\Visitor::fromParams`: expected `null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Model/WithDomainVisitsParams.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #5 of `Shlinkio\Shlink\Core\Visit\Model\WithDomainVisitsParams::__construct`: expected `null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/ShortUrlVisitsCountRepository.php"
+code = "possibly-null-argument"
+message = 'Argument #2 of method `Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryTrait::applySpecification` is possibly `null`, but parameter type `Happyr\DoctrineSpecification\Filter\Filter|Happyr\DoctrineSpecification\Query\QueryModifier` does not accept it.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/VisitDeleterRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\Visit\Repository\VisitDeleterRepository::deleteByShortUrl`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/VisitDeleterRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\Visit\Repository\VisitDeleterRepository::deleteOrphanVisits`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/VisitDeleterRepository.php"
+code = "mixed-return-statement"
+message = "Could not infer a precise return type for function `{closure:module/Core/src/Visit/Repository/VisitDeleterRepository.php:41:39}`. Saw type `mixed`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/VisitIterationRepository.php"
+code = "less-specific-nested-return-statement"
+message = '''Returned type `iterable<mixed, mixed>` is less specific than the declared return type `iterable<mixed, Shlinkio\Shlink\Core\Visit\Entity\Visit>` for function `Shlinkio\Shlink\Core\Visit\Repository\VisitIterationRepository::findAllVisits` due to nested 'mixed'.'''
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/VisitIterationRepository.php"
+code = "less-specific-nested-return-statement"
+message = '''Returned type `iterable<mixed, mixed>` is less specific than the declared return type `iterable<mixed, Shlinkio\Shlink\Core\Visit\Entity\Visit>` for function `Shlinkio\Shlink\Core\Visit\Repository\VisitIterationRepository::findUnlocatedVisits` due to nested 'mixed'.'''
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/VisitIterationRepository.php"
+code = "less-specific-nested-return-statement"
+message = '''Returned type `iterable<mixed, mixed>` is less specific than the declared return type `iterable<mixed, Shlinkio\Shlink\Core\Visit\Entity\Visit>` for function `Shlinkio\Shlink\Core\Visit\Repository\VisitIterationRepository::findVisitsWithEmptyLocation` due to nested 'mixed'.'''
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/VisitIterationRepository.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 3
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/VisitIterationRepository.php"
+code = "mixed-assignment"
+message = "Assigning `nonnull` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/VisitIterationRepository.php"
+code = "mixed-method-access"
+message = "Attempting to access a method on a non-object type (`mixed`)."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/VisitIterationRepository.php"
+code = "possibly-null-property-access"
+message = "Attempting to access a property on a possibly `null` value."
+count = 2
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/VisitRepository.php"
+code = "array-to-string-conversion"
+message = "Potential array in middle operand of string concatenation."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/VisitRepository.php"
+code = "less-specific-nested-return-statement"
+message = '''Returned type `array<array-key, mixed>` is less specific than the declared return type `array<array-key, Shlinkio\Shlink\Core\Visit\Entity\Visit>` for function `Shlinkio\Shlink\Core\Visit\Repository\VisitRepository::findNonOrphanVisits` due to nested 'mixed'.'''
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/VisitRepository.php"
+code = "less-specific-nested-return-statement"
+message = '''Returned type `array<array-key, mixed>` is less specific than the declared return type `array<array-key, Shlinkio\Shlink\Core\Visit\Entity\Visit>` for function `Shlinkio\Shlink\Core\Visit\Repository\VisitRepository::findOrphanVisits` due to nested 'mixed'.'''
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/VisitRepository.php"
+code = "less-specific-nested-return-statement"
+message = '''Returned type `array<array-key, mixed>` is less specific than the declared return type `array<array-key, Shlinkio\Shlink\Core\Visit\Entity\Visit>` for function `Shlinkio\Shlink\Core\Visit\Repository\VisitRepository::findVisitsByDomain` due to nested 'mixed'.'''
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/VisitRepository.php"
+code = "less-specific-nested-return-statement"
+message = '''Returned type `array<array-key, mixed>` is less specific than the declared return type `array<array-key, Shlinkio\Shlink\Core\Visit\Entity\Visit>` for function `Shlinkio\Shlink\Core\Visit\Repository\VisitRepository::findVisitsByShortCode` due to nested 'mixed'.'''
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/VisitRepository.php"
+code = "less-specific-nested-return-statement"
+message = '''Returned type `array<array-key, mixed>` is less specific than the declared return type `array<array-key, Shlinkio\Shlink\Core\Visit\Entity\Visit>` for function `Shlinkio\Shlink\Core\Visit\Repository\VisitRepository::findVisitsByTag` due to nested 'mixed'.'''
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/VisitRepository.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Doctrine\DBAL\Connection::quote`: expected `string`, but found `mixed`.'
+count = 2
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/VisitRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\Visit\Repository\VisitRepository::findMostRecentOrphanVisit`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/VisitRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\Visit\Repository\VisitRepository::resolveVisitsWithNativeQuery`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/VisitRepository.php"
+code = "possible-method-access-on-null"
+message = "Attempting to call a method on `null`."
+count = 2
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/VisitRepository.php"
+code = "possibly-null-argument"
+message = 'Argument #2 of method `Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryTrait::applySpecification` is possibly `null`, but parameter type `Happyr\DoctrineSpecification\Filter\Filter|Happyr\DoctrineSpecification\Query\QueryModifier` does not accept it.'
+count = 3
+
+[[issues]]
+file = "module/Core/src/Visit/Repository/VisitRepository.php"
+code = "possibly-null-property-access"
+message = "Attempting to access a property on a possibly `null` value."
+count = 2
+
+[[issues]]
+file = "module/Core/src/Visit/RequestTracker.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/VisitsStatsHelper.php"
+code = "docblock-type-mismatch"
+message = "Docblock type mismatch for variable `$visitsCountRepo`."
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/VisitsStatsHelper.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `Shlinkio\Shlink\Common\Paginator\Paginator::setMaxPerPage`: expected `int(-1)|positive-int`, but possibly received `int`.'
+count = 1
+
+[[issues]]
+file = "module/Core/src/Visit/VisitsTracker.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #1 of `Shlinkio\Shlink\Core\Visit\VisitsTracker::trackVisit`: expected `(callable(Shlinkio\Shlink\Core\Visit\Model\Visitor): Shlinkio\Shlink\Core\Visit\Entity\Visit)`, but provided type `(callable(...mixed=): mixed)` is less specific.'
+count = 1
+
+[[issues]]
+file = "module/Core/test-api/Action/RedirectTest.php"
+code = "invalid-array-element-key"
+message = "Invalid array key type."
+count = 1
+
+[[issues]]
+file = "module/Core/test-api/Action/RedirectTest.php"
+code = "invalid-iterator"
+message = "The expression provided to `foreach` is not iterable. It resolved to type `mixed`, which is not iterable."
+count = 1
+
+[[issues]]
+file = "module/Core/test-api/Action/RedirectTest.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #2 of `sprintf`: expected `Stringable|null|scalar`, but found `mixed`."
+count = 1
+
+[[issues]]
+file = "module/Core/test-api/Action/RedirectTest.php"
+code = "mixed-array-access"
+message = "Unsafe array access on type `mixed`."
+count = 3
+
+[[issues]]
+file = "module/Core/test-api/Action/RedirectTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 3
+
+[[issues]]
+file = "module/Core/test-db/Domain/Repository/DomainRepositoryTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `Doctrine\ORM\EntityRepository<Shlinkio\Shlink\Core\Domain\Entity\Domain>` is being assigned to property `$repo` (Shlinkio\Shlink\Core\Domain\Repository\DomainRepository).'
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/ShortUrl/Repository/CrawlableShortCodesQueryTest.php"
+code = "invalid-argument"
+message = '''Invalid argument type for argument #2 of `Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase::createRepository`: expected `class-string<'TRepo.shlinkio\shlink\testutils\dbtest\databasetestcase::createrepository() extends Doctrine\Persistence\ObjectRepository<('TEntity.shlinkio\shlink\testutils\dbtest\databasetestcase::createrepository() extends object)>>|null`, but found `class-string('Shlinkio\Shlink\Core\ShortUrl\Repository\CrawlableShortCodesQuery')`.'''
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/ShortUrl/Repository/CrawlableShortCodesQueryTest.php"
+code = "invalid-array-element-key"
+message = "Cannot use spread operator on an iterable with key type `mixed`."
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/ShortUrl/Repository/CrawlableShortCodesQueryTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `Doctrine\Persistence\ObjectRepository<Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl>` is being assigned to property `$query` (Shlinkio\Shlink\Core\ShortUrl\Repository\CrawlableShortCodesQuery).'
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/ShortUrl/Repository/DeleteExpiredShortUrlsRepositoryTest.php"
+code = "invalid-argument"
+message = '''Invalid argument type for argument #2 of `Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase::createRepository`: expected `class-string<'TRepo.shlinkio\shlink\testutils\dbtest\databasetestcase::createrepository() extends Doctrine\Persistence\ObjectRepository<('TEntity.shlinkio\shlink\testutils\dbtest\databasetestcase::createrepository() extends object)>>|null`, but found `class-string('Shlinkio\Shlink\Core\ShortUrl\Repository\ExpiredShortUrlsRepository')`.'''
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/ShortUrl/Repository/DeleteExpiredShortUrlsRepositoryTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `Doctrine\Persistence\ObjectRepository<Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl>` is being assigned to property `$repository` (Shlinkio\Shlink\Core\ShortUrl\Repository\ExpiredShortUrlsRepository).'
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/ShortUrl/Repository/ShortUrlListRepositoryTest.php"
+code = "invalid-argument"
+message = '''Invalid argument type for argument #2 of `Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase::createRepository`: expected `class-string<'TRepo.shlinkio\shlink\testutils\dbtest\databasetestcase::createrepository() extends Doctrine\Persistence\ObjectRepository<('TEntity.shlinkio\shlink\testutils\dbtest\databasetestcase::createrepository() extends object)>>|null`, but found `class-string('Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlListRepository')`.'''
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/ShortUrl/Repository/ShortUrlListRepositoryTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `Doctrine\Persistence\ObjectRepository<Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl>` is being assigned to property `$repo` (Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlListRepository).'
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/ShortUrl/Repository/ShortUrlRepositoryTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `Doctrine\ORM\EntityRepository<Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl>` is being assigned to property `$repo` (Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository).'
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/Tag/Paginator/Adapter/TagsPaginatorAdapterTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `Doctrine\ORM\EntityRepository<Shlinkio\Shlink\Core\Tag\Entity\Tag>` is being assigned to property `$repo` (Shlinkio\Shlink\Core\Tag\Repository\TagRepository).'
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/Tag/Repository/TagRepositoryTest.php"
+code = "invalid-destructuring-source"
+message = "Invalid destructuring assignment: Cannot unpack type `mixed` into variables."
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/Tag/Repository/TagRepositoryTest.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #3 of `Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation::__construct`: expected `array<array-key, string>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/Tag/Repository/TagRepositoryTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 4
+
+[[issues]]
+file = "module/Core/test-db/Tag/Repository/TagRepositoryTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `Doctrine\ORM\EntityRepository<Shlinkio\Shlink\Core\Tag\Entity\Tag>` is being assigned to property `$repo` (Shlinkio\Shlink\Core\Tag\Repository\TagRepository).'
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/Visit/Listener/OrphanVisitsCountTrackerTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `Doctrine\ORM\EntityRepository<Shlinkio\Shlink\Core\Visit\Entity\OrphanVisitsCount>` is being assigned to property `$repo` (Shlinkio\Shlink\Core\Visit\Repository\OrphanVisitsCountRepository).'
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/Visit/Listener/ShortUrlVisitsCountTrackerTest.php"
+code = "docblock-type-mismatch"
+message = "Docblock type mismatch for variable `$result`."
+count = 2
+
+[[issues]]
+file = "module/Core/test-db/Visit/Listener/ShortUrlVisitsCountTrackerTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `Doctrine\ORM\EntityRepository<Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount>` is being assigned to property `$repo` (Shlinkio\Shlink\Core\Visit\Repository\ShortUrlVisitsCountRepository).'
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/Visit/Repository/VisitDeleterRepositoryTest.php"
+code = "invalid-argument"
+message = '''Invalid argument type for argument #2 of `Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase::createRepository`: expected `class-string<'TRepo.shlinkio\shlink\testutils\dbtest\databasetestcase::createrepository() extends Doctrine\Persistence\ObjectRepository<('TEntity.shlinkio\shlink\testutils\dbtest\databasetestcase::createrepository() extends object)>>|null`, but found `class-string('Shlinkio\Shlink\Core\Visit\Repository\VisitDeleterRepository')`.'''
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/Visit/Repository/VisitDeleterRepositoryTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `Doctrine\ORM\EntityRepository<Shlinkio\Shlink\Core\Visit\Entity\OrphanVisitsCount>` is being assigned to property `$orphanVisitsCountRepo` (Shlinkio\Shlink\Core\Visit\Repository\OrphanVisitsCountRepository).'
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/Visit/Repository/VisitDeleterRepositoryTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `Doctrine\ORM\EntityRepository<Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount>` is being assigned to property `$visitsCountRepo` (Shlinkio\Shlink\Core\Visit\Repository\ShortUrlVisitsCountRepository).'
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/Visit/Repository/VisitDeleterRepositoryTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `Doctrine\Persistence\ObjectRepository<Shlinkio\Shlink\Core\Visit\Entity\Visit>` is being assigned to property `$repo` (Shlinkio\Shlink\Core\Visit\Repository\VisitDeleterRepository).'
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/Visit/Repository/VisitIterationRepositoryTest.php"
+code = "invalid-argument"
+message = '''Invalid argument type for argument #2 of `Shlinkio\Shlink\TestUtils\DbTest\DatabaseTestCase::createRepository`: expected `class-string<'TRepo.shlinkio\shlink\testutils\dbtest\databasetestcase::createrepository() extends Doctrine\Persistence\ObjectRepository<('TEntity.shlinkio\shlink\testutils\dbtest\databasetestcase::createrepository() extends object)>>|null`, but found `class-string('Shlinkio\Shlink\Core\Visit\Repository\VisitIterationRepository')`.'''
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/Visit/Repository/VisitIterationRepositoryTest.php"
+code = "invalid-array-element-key"
+message = "Cannot use spread operator on an iterable with key type `mixed`."
+count = 6
+
+[[issues]]
+file = "module/Core/test-db/Visit/Repository/VisitIterationRepositoryTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `Doctrine\Persistence\ObjectRepository<Shlinkio\Shlink\Core\Visit\Entity\Visit>` is being assigned to property `$repo` (Shlinkio\Shlink\Core\Visit\Repository\VisitIterationRepository).'
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/Visit/Repository/VisitRepositoryTest.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #3 of `Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation::__construct`: expected `array<array-key, string>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/Visit/Repository/VisitRepositoryTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `Doctrine\ORM\EntityRepository<Shlinkio\Shlink\Core\Visit\Entity\OrphanVisitsCount>` is being assigned to property `$orphanCountRepo` (Shlinkio\Shlink\Core\Visit\Repository\OrphanVisitsCountRepository).'
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/Visit/Repository/VisitRepositoryTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `Doctrine\ORM\EntityRepository<Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount>` is being assigned to property `$countRepo` (Shlinkio\Shlink\Core\Visit\Repository\ShortUrlVisitsCountRepository).'
+count = 1
+
+[[issues]]
+file = "module/Core/test-db/Visit/Repository/VisitRepositoryTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `Doctrine\ORM\EntityRepository<Shlinkio\Shlink\Core\Visit\Entity\Visit>` is being assigned to property `$repo` (Shlinkio\Shlink\Core\Visit\Repository\VisitRepository).'
+count = 1
+
+[[issues]]
+file = "module/Core/test/Config/PostProcessor/BasePathPrefixerTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "module/Core/test/Crawling/CrawlingHelperTest.php"
+code = "invalid-array-element-key"
+message = "Cannot use spread operator on an iterable with key type `mixed`."
+count = 1
+
+[[issues]]
+file = "module/Core/test/EventDispatcher/PublishingUpdatesGeneratorTest.php"
+code = "string-member-selector"
+message = "This member selector uses a non-literal string type (`string`); its specific value cannot be statically determined."
+count = 1
+
+[[issues]]
+file = "module/Core/test/EventDispatcher/RabbitMq/NotifyVisitToRabbitMqTest.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `PHPUnit\Framework\MockObject\InvocationStubber::method`: expected `PHPUnit\Framework\Constraint\Constraint|PHPUnit\Framework\MockObject\Runtime\PropertyHook|non-empty-string`, but possibly received `string`.'
+count = 1
+
+[[issues]]
+file = "module/Core/test/Geolocation/GeolocationDbUpdaterTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/test/Geolocation/GeolocationDbUpdaterTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `PHPUnit\Framework\MockObject\MockObject&Doctrine\ORM\EntityRepository` is being assigned to property `$repo` (PHPUnit\Framework\MockObject\MockObject&Doctrine\ORM\EntityRepository<Shlinkio\Shlink\Core\Geolocation\Entity\GeolocationDbUpdate>).'
+count = 1
+
+[[issues]]
+file = "module/Core/test/Geolocation/Middleware/IpGeolocationMiddlewareTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 3
+
+[[issues]]
+file = "module/Core/test/Importer/ImportedLinksProcessorTest.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #8 of `Shlinkio\Shlink\Importer\Model\ImportedShlinkUrl::__construct`: expected `iterable<mixed, Shlinkio\Shlink\Importer\Model\ImportedShlinkVisit>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "module/Core/test/RedirectRule/Entity/ShortUrlRedirectRuleTest.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #1 of `ShlinkioTest\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRuleTest::createRule`: expected `Doctrine\Common\Collections\ArrayCollection<int, Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition>`, but provided type `Doctrine\Common\Collections\ArrayCollection<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "module/Core/test/ShortUrl/Entity/ShortUrlTest.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `PHPUnit\Framework\Assert::assertStringStartsWith`: expected `non-empty-string`, but possibly received `string`.'
+count = 1
+
+[[issues]]
+file = "module/Core/test/ShortUrl/Helper/ShortCodeUniquenessHelperTest.php"
+code = "redundant-comparison"
+message = "Redundant `<` comparison: left-hand side is always less than right-hand side."
+count = 1
+
+[[issues]]
+file = "module/Core/test/ShortUrl/Paginator/Adapter/ShortUrlRepositoryAdapterTest.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #2 of `Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams::__construct`: expected `array<array-key, string>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 2
+
+[[issues]]
+file = "module/Core/test/ShortUrl/Resolver/PersistenceShortUrlRelationResolverTest.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #1 of `Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver::resolveTags`: expected `array<array-key, string>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "module/Core/test/ShortUrl/Resolver/PersistenceShortUrlRelationResolverTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/test/ShortUrl/ShortUrlResolverTest.php"
+code = "string-member-selector"
+message = "This member selector uses a non-literal string type (`string`); its specific value cannot be statically determined."
+count = 1
+
+[[issues]]
+file = "module/Core/test/ShortUrl/ShortUrlServiceTest.php"
+code = "invalid-destructuring-source"
+message = "Invalid destructuring assignment: Cannot unpack type `mixed` into variables."
+count = 1
+
+[[issues]]
+file = "module/Core/test/ShortUrl/ShortUrlServiceTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 3
+
+[[issues]]
+file = "module/Core/test/ShortUrl/Transformer/ShortUrlDataTransformerTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "module/Core/test/Util/DoctrineBatchHelperTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Core/test/Visit/Geolocation/VisitLocatorTest.php"
+code = "string-member-selector"
+message = "This member selector uses a non-literal string type (`string`); its specific value cannot be statically determined."
+count = 2
+
+[[issues]]
+file = "module/Core/test/Visit/Model/VisitorTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 3
+
+[[issues]]
+file = "module/Core/test/Visit/VisitsTrackerTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 3
+
+[[issues]]
+file = "module/Core/test/Visit/VisitsTrackerTest.php"
+code = "string-member-selector"
+message = "This member selector uses a non-literal string type (`string`); its specific value cannot be statically determined."
+count = 3
+
+[[issues]]
+file = "module/Rest/src/Action/MercureInfoAction.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Cake\Chronos\Chronos::addDays`: expected `int`, but found `nonnull`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Action/MercureInfoAction.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #2 of `sprintf`: expected `Stringable|null|scalar`, but found `nonnull`."
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Action/MercureInfoAction.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Action/MercureInfoAction.php"
+code = "mixed-assignment"
+message = "Assigning `nonnull` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Action/RedirectRule/SetRedirectRulesAction.php"
+code = "invalid-type-cast"
+message = "Casting type `null` to `array` will produce an empty array."
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Action/RedirectRule/SetRedirectRulesAction.php"
+code = "invalid-type-cast"
+message = "Object of type `object` cast to `array`. Property visibility (public, protected, private) affects the resulting array."
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Action/ShortUrl/CreateShortUrlAction.php"
+code = "invalid-type-cast"
+message = "Casting type `null` to `array` will produce an empty array."
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Action/ShortUrl/CreateShortUrlAction.php"
+code = "invalid-type-cast"
+message = "Object of type `object` cast to `array`. Property visibility (public, protected, private) affects the resulting array."
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Action/ShortUrl/EditShortUrlAction.php"
+code = "invalid-type-cast"
+message = "Casting type `null` to `array` will produce an empty array."
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Action/ShortUrl/EditShortUrlAction.php"
+code = "invalid-type-cast"
+message = "Object of type `object` cast to `array`. Property visibility (public, protected, private) affects the resulting array."
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Action/ShortUrl/SingleStepCreateShortUrlAction.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Action/Tag/DeleteTagsAction.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\Tag\TagServiceInterface::deleteTags`: expected `array<array-key, string>`, but found `nonnull`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Action/Tag/DeleteTagsAction.php"
+code = "mixed-assignment"
+message = "Assigning `nonnull` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Action/Visit/DomainVisitsAction.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Action/Visit/DomainVisitsAction.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Rest\Action\Visit\DomainVisitsAction::resolveDomainParam`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Action/Visit/TagVisitsAction.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface::visitsForTag`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Action/Visit/TagVisitsAction.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/src/ApiKey/Model/ApiKeyMeta.php"
+code = "possibly-null-argument"
+message = 'Argument #2 of method `Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta::__construct` is possibly `null`, but parameter type `string` does not accept it.'
+count = 1
+
+[[issues]]
+file = "module/Rest/src/ApiKey/Repository/ApiKeyRepository.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/src/ApiKey/Repository/ApiKeyRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Rest\ApiKey\Repository\ApiKeyRepository::deleteByName`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/src/ApiKey/Role.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Rest\ApiKey\Role::domainAuthorityFromMeta`. Saw type `nonnull`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/src/ApiKey/Role.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Rest\ApiKey\Role::domainIdFromMeta`. Saw type `nonnull`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/src/ConfigProvider.php"
+code = "invalid-destructuring-source"
+message = "Invalid destructuring assignment: Cannot unpack type `mixed` into variables."
+count = 1
+
+[[issues]]
+file = "module/Rest/src/ConfigProvider.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #3 of `sprintf`: expected `Stringable|null|scalar`, but found `mixed`."
+count = 2
+
+[[issues]]
+file = "module/Rest/src/ConfigProvider.php"
+code = "mixed-array-assignment"
+message = "Unsafe array assignment on type `mixed`."
+count = 2
+
+[[issues]]
+file = "module/Rest/src/ConfigProvider.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 3
+
+[[issues]]
+file = "module/Rest/src/ConfigProvider.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Rest\ConfigProvider::buildUnversionedHealthRouteFromExistingRoutes`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Entity/ApiKey.php"
+code = "redundant-docblock-type"
+message = "Redundant docblock type for variable `$apiKeyRole`."
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Exception/MissingAuthenticationException.php"
+code = "less-specific-nested-argument-type"
+message = "Argument type mismatch for argument #2 of `implode`: expected `array<array-key, Stringable|null|scalar>|null`, but provided type `array<array-key, mixed>` is less specific."
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Middleware/AuthenticationMiddleware.php"
+code = "mixed-assignment"
+message = "Assigning `nonnull` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Middleware/AuthenticationMiddleware.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware::apiKeyFromRequest`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Middleware/AuthenticationMiddleware.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware::getApiKeyFromRequest`. Saw type `truthy-mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Middleware/CrossDomainMiddleware.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #1 of `Laminas\Diactoros\Response\EmptyResponse::withHeaders`: expected `array<non-empty-string, array<array-key, string>>`, but provided type `array<array-key, array<array-key, string>>` is less specific.'
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Middleware/ShortUrl/CreateShortUrlContentNegotiationMiddleware.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #1 of `strtolower`: expected `string`, but found `nonnull`."
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Middleware/ShortUrl/CreateShortUrlContentNegotiationMiddleware.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Middleware/ShortUrl/CreateShortUrlContentNegotiationMiddleware.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Rest\Middleware\ShortUrl\CreateShortUrlContentNegotiationMiddleware::determineBody`. Saw type `nonnull`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/src/Middleware/ShortUrl/OverrideDomainMiddleware.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Rest\Middleware\ShortUrl\OverrideDomainMiddleware::domainFromRequest`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/test-api/Action/CreateShortUrlTest.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\TestUtils\ApiTest\ApiTestCase::callShortUrl`: expected `string`, but found `mixed`.'
+count = 4
+
+[[issues]]
+file = "module/Rest/test-api/Action/CreateShortUrlTest.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertStringStartsWith`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/test-api/Action/CreateShortUrlTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 11
+
+[[issues]]
+file = "module/Rest/test-api/Action/CreateShortUrlTest.php"
+code = "mixed-operand"
+message = "Invalid right operand: type `mixed` cannot be reliably used in string concatenation."
+count = 1
+
+[[issues]]
+file = "module/Rest/test-api/Action/DeleteOrphanVisitsTest.php"
+code = "mixed-array-access"
+message = "Unsafe array access on type `mixed`."
+count = 4
+
+[[issues]]
+file = "module/Rest/test-api/Action/DeleteOrphanVisitsTest.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `ShlinkioApiTest\Shlink\Rest\Action\DeleteOrphanVisitsTest::getOrphanVisits`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/test-api/Action/DeleteOrphanVisitsTest.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `ShlinkioApiTest\Shlink\Rest\Action\DeleteOrphanVisitsTest::getTotalVisits`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/test-api/Action/DeleteShortUrlVisitsTest.php"
+code = "mixed-array-access"
+message = "Unsafe array access on type `mixed`."
+count = 4
+
+[[issues]]
+file = "module/Rest/test-api/Action/DeleteShortUrlVisitsTest.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `ShlinkioApiTest\Shlink\Rest\Action\DeleteShortUrlVisitsTest::getOrphanVisits`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/test-api/Action/DeleteShortUrlVisitsTest.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `ShlinkioApiTest\Shlink\Rest\Action\DeleteShortUrlVisitsTest::getTotalVisits`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/test-api/Action/DomainVisitsTest.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertArrayHasKey`: expected `ArrayAccess<array-key, mixed>|array<array-key, mixed>`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/test-api/Action/DomainVisitsTest.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertCount`: expected `Countable|iterable<mixed, mixed>`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/test-api/Action/DomainVisitsTest.php"
+code = "mixed-array-access"
+message = "Unsafe array access on type `mixed`."
+count = 1
+
+[[issues]]
+file = "module/Rest/test-api/Action/EditShortUrlTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/test-api/Action/EditShortUrlTest.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `ShlinkioApiTest\Shlink\Rest\Action\EditShortUrlTest::findShortUrlMetaByShortCode`. Saw type `nonnull`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/test-api/Action/GlobalVisitsTest.php"
+code = "mixed-array-access"
+message = "Unsafe array access on type `mixed`."
+count = 4
+
+[[issues]]
+file = "module/Rest/test-api/Action/NonOrphanVisitsTest.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertCount`: expected `Countable|iterable<mixed, mixed>`, but found `nonnull`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/test-api/Action/OrphanVisitsTest.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertCount`: expected `Countable|iterable<mixed, mixed>`, but found `nonnull`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/test-api/Action/OrphanVisitsTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/test-api/Action/OrphanVisitsTest.php"
+code = "mixed-assignment"
+message = "Assigning `nonnull` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/test-api/Action/ShortUrlVisitsTest.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertCount`: expected `Countable|iterable<mixed, mixed>`, but found `nonnull`.'
+count = 2
+
+[[issues]]
+file = "module/Rest/test-api/Action/TagVisitsTest.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertArrayHasKey`: expected `ArrayAccess<array-key, mixed>|array<array-key, mixed>`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/test-api/Action/TagVisitsTest.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertCount`: expected `Countable|iterable<mixed, mixed>`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/test-api/Action/TagVisitsTest.php"
+code = "mixed-array-access"
+message = "Unsafe array access on type `mixed`."
+count = 1
+
+[[issues]]
+file = "module/Rest/test-api/Action/TagsStatsTest.php"
+code = "mixed-array-access"
+message = "Unsafe array access on type `mixed`."
+count = 2
+
+[[issues]]
+file = "module/Rest/test-api/Action/TagsStatsTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/test-api/Fixtures/ShortUrlsFixture.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #1 of `Shlinkio\Shlink\Core\ShortUrl\Resolver\PersistenceShortUrlRelationResolver::__construct`: expected `Doctrine\ORM\EntityManagerInterface`, but provided type `Doctrine\Persistence\ObjectManager` is less specific.'
+count = 1
+
+[[issues]]
+file = "module/Rest/test-db/ApiKey/Repository/ApiKeyRepositoryTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `Doctrine\ORM\EntityRepository<Shlinkio\Shlink\Rest\Entity\ApiKey>` is being assigned to property `$repo` (Shlinkio\Shlink\Rest\ApiKey\Repository\ApiKeyRepository).'
+count = 1
+
+[[issues]]
+file = "module/Rest/test/Action/Domain/ListDomainsActionTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/test/Action/HealthActionTest.php"
+code = "mixed-array-access"
+message = "Unsafe array access on type `mixed`."
+count = 6
+
+[[issues]]
+file = "module/Rest/test/Action/HealthActionTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "module/Rest/test/Action/MercureInfoActionTest.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `Cake\Chronos\Chronos::parse`: expected `Cake\Chronos\ChronosDate|Cake\Chronos\ChronosTime|DateTimeInterface|int|null|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/test/Action/MercureInfoActionTest.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertArrayHasKey`: expected `ArrayAccess<array-key, mixed>|array<array-key, mixed>`, but found `mixed`.'
+count = 3
+
+[[issues]]
+file = "module/Rest/test/Action/MercureInfoActionTest.php"
+code = "mixed-array-access"
+message = "Unsafe array access on type `mixed`."
+count = 2
+
+[[issues]]
+file = "module/Rest/test/Action/MercureInfoActionTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/test/Action/RedirectRule/ListRedirectRulesActionTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/test/Action/RedirectRule/SetRedirectRulesActionTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/test/Action/ShortUrl/CreateShortUrlActionTest.php"
+code = "mixed-array-access"
+message = "Unsafe array access on type `mixed`."
+count = 1
+
+[[issues]]
+file = "module/Rest/test/Action/ShortUrl/CreateShortUrlActionTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/test/Action/ShortUrl/DeleteShortUrlVisitsActionTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/test/Action/ShortUrl/ListShortUrlsActionTest.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertArrayHasKey`: expected `ArrayAccess<array-key, mixed>|array<array-key, mixed>`, but found `mixed`.'
+count = 2
+
+[[issues]]
+file = "module/Rest/test/Action/ShortUrl/ListShortUrlsActionTest.php"
+code = "mixed-array-access"
+message = "Unsafe array access on type `mixed`."
+count = 3
+
+[[issues]]
+file = "module/Rest/test/Action/ShortUrl/ListShortUrlsActionTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/test/Action/Tag/ListTagsActionTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/test/Action/Tag/TagsStatsActionTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/test/Action/Visit/DeleteOrphanVisitsActionTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/test/Action/Visit/GlobalVisitsActionTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/test/Action/Visit/NonOrphanVisitsActionTest.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertArrayHasKey`: expected `ArrayAccess<array-key, mixed>|array<array-key, mixed>`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/test/Action/Visit/NonOrphanVisitsActionTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/test/Action/Visit/OrphanVisitsActionTest.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertCount`: expected `Countable|iterable<mixed, mixed>`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/test/Action/Visit/OrphanVisitsActionTest.php"
+code = "mixed-array-access"
+message = "Unsafe array access on type `mixed`."
+count = 2
+
+[[issues]]
+file = "module/Rest/test/Action/Visit/OrphanVisitsActionTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/test/ApiKey/Model/ApiKeyMetaTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "module/Rest/test/Exception/MissingAuthenticationExceptionTest.php"
+code = "less-specific-nested-argument-type"
+message = "Argument type mismatch for argument #2 of `implode`: expected `array<array-key, Stringable|null|scalar>|null`, but provided type `array<array-key, mixed>` is less specific."
+count = 1
+
+[[issues]]
+file = "module/Rest/test/Middleware/AuthenticationMiddlewareTest.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `Mezzio\Router\Route::__construct`: expected `non-empty-string`, but possibly received `string`.'
+count = 1
+
+[[issues]]
+file = "module/Rest/test/Middleware/ShortUrl/ShortUrlOptionsPayloadMiddlewareTest.php"
+code = "invalid-type-cast"
+message = "Casting type `null` to `array` will produce an empty array."
+count = 1
+
+[[issues]]
+file = "module/Rest/test/Middleware/ShortUrl/ShortUrlOptionsPayloadMiddlewareTest.php"
+code = "invalid-type-cast"
+message = "Object of type `object` cast to `array`. Property visibility (public, protected, private) affects the resulting array."
+count = 1
+
+[[issues]]
+file = "module/Rest/test/Service/ApiKeyServiceTest.php"
+code = "redundant-comparison"
+message = "Redundant `<` comparison: left-hand side is always less than right-hand side."
+count = 1
