@@ -18,6 +18,7 @@
         "ext-pdo": "*",
         "akrabat/ip-address-middleware": "^2.6",
         "cakephp/chronos": "^3.5",
+        "cuyz/valinor": "~2.5.0",
         "doctrine/dbal": "^4.4",
         "doctrine/migrations": "^3.9",
         "doctrine/orm": "^3.6",
