@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkMigrations;
 
 use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
+use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
@@ -24,11 +25,17 @@ final class Version20260524105410 extends AbstractMigration
             return;
         }
 
-        $shortUrls->addColumn(self::COLUMN_NAME, Types::BINARY, [
-            'length' => 32,
-            'default' => '', // Temporary value until they have been filled by next migration
-        ]);
-        $shortUrls->addIndex([self::COLUMN_NAME], self::INDEX_NAME);
+        if ($this->connection->getDatabasePlatform() instanceof SQLServerPlatform) {
+            $this->addSql('ALTER TABLE short_urls ADD ' . self::COLUMN_NAME . ' VARBINARY(32) NOT NULL DEFAULT (0x00)');
+            $this->addSql('CREATE INDEX ' . self::INDEX_NAME . ' ON short_urls(' . self::COLUMN_NAME . ')');
+        } else {
+            $shortUrls->addColumn(self::COLUMN_NAME, Types::BINARY, [
+                'length' => 32,
+                // Temporary default value until the column can be filled by the next migration
+                'default' => '',
+            ]);
+            $shortUrls->addIndex([self::COLUMN_NAME], self::INDEX_NAME);
+        }
     }
 
     public function down(Schema $schema): void
