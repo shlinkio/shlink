@@ -13,9 +13,10 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        php-version: ['8.4', '8.5']
+        php-version: ['8.4', '8.5', '8.6']
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # rr get-binary picks this env automatically
+    continue-on-error: ${{ matrix.php-version == '8.6' }}
     steps:
       - uses: actions/checkout@v5
       - name: Start postgres database server
