@@ -13,9 +13,10 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        php-version: ['8.4', '8.5']
+        php-version: ['8.4', '8.5', '8.6']
     env:
       LC_ALL: C
+    continue-on-error: ${{ matrix.php-version == '8.6' }}
     steps:
       - uses: actions/checkout@v5
       - name: Install MSSQL ODBC

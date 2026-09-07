@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
 use Doctrine\Common\Collections\Selectable;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
@@ -186,7 +187,7 @@ class ShortUrl extends AbstractEntity
     {
         $criteria = Criteria::create()
             ->where(Criteria::expr()->eq('type', VisitType::IMPORTED))
-            ->orderBy(['id' => 'DESC'])
+            ->orderBy(['id' => Order::Descending])
             ->setMaxResults(1);
         $visit = $this->visits->matching($criteria)->last();
 
