@@ -8,4 +8,4 @@ The only exception is when a major version has just been released and the securi
 
 ## Reporting a Vulnerability
 
-Do not report potential vulnerabilities as public issues. Instead, do it through https://github.com/shlinkio/shlink/security
+Do not report potential vulnerabilities as public issues. ~Instead, do it through https://github.com/shlinkio/shlink/security~ Every single report this project has received was AI slop, so I have disabled the capability.
