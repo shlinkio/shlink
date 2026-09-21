@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
-use function spl_object_hash;
+use function spl_object_id;
 use function sprintf;
 use function str_replace;
 
@@ -19,8 +19,12 @@ class ProcessRunner implements ProcessRunnerInterface
 {
     private const int TIMEOUT = 1_200; // 20 minutes
 
+    /** @var Closure(string[] $cmd): Process */
     private Closure $createProcess;
 
+    /**
+     * @param null|(callable(string[] $cmd): Process) $createProcess
+     */
     public function __construct(private readonly ProcessHelper $helper, callable|null $createProcess = null)
     {
         $this->createProcess = $createProcess !== null
@@ -28,6 +32,9 @@ class ProcessRunner implements ProcessRunnerInterface
             : static fn (array $cmd) => new Process($cmd, timeout: self::TIMEOUT);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function run(OutputInterface $output, array $cmd): void
     {
         if ($output instanceof ConsoleOutputInterface) {
@@ -40,7 +47,10 @@ class ProcessRunner implements ProcessRunnerInterface
 
         if ($output->isVeryVerbose()) {
             $output->write(
-                $formatter->start(spl_object_hash($process), str_replace('<', '\\<', $process->getCommandLine())),
+                $formatter->start(
+                    (string) spl_object_id($process),
+                    str_replace('<', '\\<', $process->getCommandLine()),
+                ),
             );
         }
 
@@ -54,7 +64,7 @@ class ProcessRunner implements ProcessRunnerInterface
                     '%s Command did not run successfully',
                     $process->getExitCode(),
                 );
-            $output->write($formatter->stop(spl_object_hash($process), $message, $process->isSuccessful()));
+            $output->write($formatter->stop((string) spl_object_id($process), $message, $process->isSuccessful()));
         }
     }
 }

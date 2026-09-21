@@ -19,6 +19,9 @@ readonly class PhpProcessRunner implements ProcessRunnerInterface
         $this->phpBinary = $phpFinder->find(includeArgs: false) ?: 'php';
     }
 
+    /**
+     * @inheritDoc
+     */
     public function run(OutputInterface $output, array $cmd): void
     {
         $this->wrappedProcessRunner->run($output, [$this->phpBinary, ...$cmd]);
