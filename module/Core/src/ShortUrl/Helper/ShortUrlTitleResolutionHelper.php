@@ -117,10 +117,12 @@ readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionH
         }
 
         return (
-            $this->encodeToUtf8WithMbString($titleInOriginalEncoding, $pageCharset) ?? $this->encodeToUtf8WithIconv(
+            $this->encodeToUtf8WithMbString($titleInOriginalEncoding, $pageCharset)
+            ?? $this->encodeToUtf8WithIconv(
                 $titleInOriginalEncoding,
                 $pageCharset,
-            ) ?? $titleInOriginalEncoding
+            )
+            ?? $titleInOriginalEncoding
         );
     }
 

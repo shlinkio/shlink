@@ -34,12 +34,13 @@ class ShortUrlsCountFiltering
         public readonly TagsMode $excludeTagsMode = TagsMode::ANY,
         string|null $apiKeyName = null,
     ) {
-        $this->searchIncludesDefaultDomain = !empty($searchTerm)
-        && !empty($defaultDomain)
-        && str_contains(
-            strtolower($defaultDomain),
-            strtolower($searchTerm),
-        );
+        $this->searchIncludesDefaultDomain =
+            !empty($searchTerm)
+            && !empty($defaultDomain)
+            && str_contains(
+                strtolower($defaultDomain),
+                strtolower($searchTerm),
+            );
 
         // Filtering by API key name is only allowed if the API key used in the request is an admin one, or it matches
         // the API key name

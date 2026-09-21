@@ -8,5 +8,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 interface ProcessRunnerInterface
 {
+    /**
+     * @param string[] $cmd
+     */
     public function run(OutputInterface $output, array $cmd): void;
 }
