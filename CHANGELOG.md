@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [5.1.7] - 2026-09-21
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#2658](https://github.com/shlinkio/shlink/issues/2658) Fix redis connections left open sometimes.
+
+
 ## [5.1.6] - 2026-09-06
 ### Added
 * *Nothing*

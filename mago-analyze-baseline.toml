@@ -451,54 +451,6 @@ message = 'Argument type mismatch for argument #1 of `Symfony\Component\Process\
 count = 1
 
 [[issues]]
-file = "module/CLI/src/Util/ProcessRunner.php"
-code = "mixed-argument"
-message = "Invalid argument type for argument #1 of `spl_object_hash`: expected `object`, but found `mixed`."
-count = 2
-
-[[issues]]
-file = "module/CLI/src/Util/ProcessRunner.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `Symfony\Component\Console\Helper\ProcessHelper::wrapCallback`: expected `Symfony\Component\Process\Process`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "module/CLI/src/Util/ProcessRunner.php"
-code = "mixed-argument"
-message = "Invalid argument type for argument #2 of `sprintf`: expected `Stringable|null|scalar`, but found `mixed`."
-count = 1
-
-[[issues]]
-file = "module/CLI/src/Util/ProcessRunner.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #3 of `Symfony\Component\Console\Helper\DebugFormatterHelper::stop`: expected `bool`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "module/CLI/src/Util/ProcessRunner.php"
-code = "mixed-argument"
-message = "Invalid argument type for argument #3 of `str_replace`: expected `array<array-key, string>|string`, but found `mixed`."
-count = 1
-
-[[issues]]
-file = "module/CLI/src/Util/ProcessRunner.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "module/CLI/src/Util/ProcessRunner.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 5
-
-[[issues]]
-file = "module/CLI/src/Util/ProcessRunner.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #2 of `Symfony\Component\Console\Helper\DebugFormatterHelper::start`: expected `string`, but possibly received `array<array-key, string>|string`.'
-count = 1
-
-[[issues]]
 file = "module/CLI/src/Util/ShlinkTable.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
@@ -644,12 +596,6 @@ count = 1
 
 [[issues]]
 file = "module/Core/functions/functions.php"
-code = "mixed-array-access"
-message = "Unsafe array access on type `nonnull`."
-count = 1
-
-[[issues]]
-file = "module/Core/functions/functions.php"
 code = "mixed-array-assignment"
 message = "Unsafe array assignment on type `mixed`."
 count = 1
@@ -723,7 +669,7 @@ count = 1
 [[issues]]
 file = "module/Core/functions/functions.php"
 code = "possibly-null-argument"
-message = "Argument #3 of function `preg_replace` is possibly `null`, but parameter type `array<array-key, string>|string` does not accept it."
+message = "Argument #3 of function `preg_replace` is possibly `null`, but parameter type `array<('K.preg_replace() extends array-key), string>|string` does not accept it."
 count = 1
 
 [[issues]]
@@ -1100,15 +1046,9 @@ count = 1
 
 [[issues]]
 file = "module/Core/src/Config/PostProcessor/ShortUrlMethodsProcessor.php"
-code = "mixed-array-assignment"
-message = "Unsafe array assignment on type `nonnull`."
-count = 1
-
-[[issues]]
-file = "module/Core/src/Config/PostProcessor/ShortUrlMethodsProcessor.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 2
+count = 1
 
 [[issues]]
 file = "module/Core/src/Config/PostProcessor/ShortUrlMethodsProcessor.php"
@@ -1453,12 +1393,6 @@ message = 'Argument #2 of method `Happyr\DoctrineSpecification\Repository\Entity
 count = 1
 
 [[issues]]
-file = "module/Core/src/ShortUrl/Repository/ShortUrlListRepository.php"
-code = "possibly-null-property-access"
-message = "Attempting to access a property on a possibly `null` value."
-count = 2
-
-[[issues]]
 file = "module/Core/src/ShortUrl/Repository/ShortUrlRepository.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
@@ -1765,12 +1699,6 @@ message = "Attempting to access a method on a non-object type (`mixed`)."
 count = 1
 
 [[issues]]
-file = "module/Core/src/Visit/Repository/VisitIterationRepository.php"
-code = "possibly-null-property-access"
-message = "Attempting to access a property on a possibly `null` value."
-count = 2
-
-[[issues]]
 file = "module/Core/src/Visit/Repository/VisitRepository.php"
 code = "array-to-string-conversion"
 message = "Potential array in middle operand of string concatenation."
@@ -1808,12 +1736,6 @@ count = 1
 
 [[issues]]
 file = "module/Core/src/Visit/Repository/VisitRepository.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `Doctrine\DBAL\Connection::quote`: expected `string`, but found `mixed`.'
-count = 2
-
-[[issues]]
-file = "module/Core/src/Visit/Repository/VisitRepository.php"
 code = "mixed-return-statement"
 message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\Visit\Repository\VisitRepository::findMostRecentOrphanVisit`. Saw type `mixed`.'
 count = 1
@@ -1826,21 +1748,9 @@ count = 1
 
 [[issues]]
 file = "module/Core/src/Visit/Repository/VisitRepository.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 2
-
-[[issues]]
-file = "module/Core/src/Visit/Repository/VisitRepository.php"
 code = "possibly-null-argument"
 message = 'Argument #2 of method `Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryTrait::applySpecification` is possibly `null`, but parameter type `Happyr\DoctrineSpecification\Filter\Filter|Happyr\DoctrineSpecification\Query\QueryModifier` does not accept it.'
 count = 3
-
-[[issues]]
-file = "module/Core/src/Visit/Repository/VisitRepository.php"
-code = "possibly-null-property-access"
-message = "Attempting to access a property on a possibly `null` value."
-count = 2
 
 [[issues]]
 file = "module/Core/src/Visit/RequestTracker.php"
@@ -2116,12 +2026,6 @@ count = 1
 file = "module/Core/test/RedirectRule/Entity/ShortUrlRedirectRuleTest.php"
 code = "less-specific-argument"
 message = 'Argument type mismatch for argument #1 of `ShlinkioTest\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRuleTest::createRule`: expected `Doctrine\Common\Collections\ArrayCollection<int, Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition>`, but provided type `Doctrine\Common\Collections\ArrayCollection<array-key, mixed>` is less specific.'
-count = 1
-
-[[issues]]
-file = "module/Core/test/ShortUrl/Entity/ShortUrlTest.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PHPUnit\Framework\Assert::assertStringStartsWith`: expected `non-empty-string`, but possibly received `string`.'
 count = 1
 
 [[issues]]
