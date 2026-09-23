@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#XXXX](https://github.com/shlinkio/shlink/issues/XXXX) Escape values that could be interpreted as spreadsheet formulas when exporting visits in CSV format, to address [CVE-2026-18738](https://nvd.nist.gov/vuln/detail/CVE-2026-18738).
+
+
 ## [5.1.7] - 2026-09-21
 ### Added
 * *Nothing*
