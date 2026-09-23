@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* [#XXXX](https://github.com/shlinkio/shlink/issues/XXXX) Escape values that could be interpreted as spreadsheet formulas when exporting visits in CSV format, to address [CVE-2026-18738](https://nvd.nist.gov/vuln/detail/CVE-2026-18738).
+* [#2665](https://github.com/shlinkio/shlink/pull/2665) Escape values that could be interpreted as spreadsheet formulas when exporting visits in CSV format, to address [CVE-2026-18738](https://nvd.nist.gov/vuln/detail/CVE-2026-18738).
 
 
 ## [5.1.7] - 2026-09-21
