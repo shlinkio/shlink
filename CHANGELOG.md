@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Fixed
 * [#2658](https://github.com/shlinkio/shlink/issues/2658) Fix redis connections left open sometimes.
+* [#2666](https://github.com/shlinkio/shlink/pull/2666) Escape values that could be interpreted as spreadsheet formulas when exporting visits in CSV format, to address
 
 
 ## [5.1.6] - 2026-09-06
