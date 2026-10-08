@@ -16,6 +16,7 @@ use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
+use Shlinkio\Shlink\Core\Geolocation\CloudflareGeolocationResolver;
 use Shlinkio\Shlink\Core\Geolocation\Middleware\IpGeolocationMiddleware;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
@@ -131,6 +132,77 @@ class IpGeolocationMiddlewareTest extends TestCase
         $this->middleware()->process($request, $this->handler);
     }
 
+    #[Test]
+    public function locationIsResolvedFromCloudflareHeadersWhenTrusted(): void
+    {
+        $this->dbUpdater->expects($this->never())->method('databaseFileExists');
+        $this->ipLocationResolver->expects($this->never())->method('resolveIpLocation');
+        $this->logger->expects($this->never())->method('warning');
+
+        $request = ServerRequestFactory::fromGlobals()
+            ->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, '1.2.3.4')
+            ->withHeader(CloudflareGeolocationResolver::COUNTRY_HEADER, 'US')
+            ->withHeader(CloudflareGeolocationResolver::CITY_HEADER, 'Austin');
+        $this->handler
+            ->expects($this->once())
+            ->method('handle')
+            ->with($this->callback(
+                static function (ServerRequestInterface $req): bool {
+                    $location = $req->getAttribute(Location::class);
+                    if (!$location instanceof Location) {
+                        return false;
+                    }
+
+                    Assert::assertEquals('US', $location->countryCode);
+                    Assert::assertEquals('Austin', $location->city);
+                    return true;
+                },
+            ));
+
+        $this->middleware(trustCloudflareHeaders: true)->process($request, $this->handler);
+    }
+
+    #[Test]
+    #[TestWith([true, null], 'trusted, no header')]
+    #[TestWith([true, 'XX'], 'trusted, unknown country')]
+    #[TestWith([false, 'US'], 'not trusted')]
+    public function locationIsResolvedFromIpAddressWhenCloudflareHeadersAreNotUsable(
+        bool $trustCloudflareHeaders,
+        string|null $countryHeader,
+    ): void {
+        $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(true);
+        $this->ipLocationResolver
+            ->expects($this->once())
+            ->method('resolveIpLocation')
+            ->with('1.2.3.4')
+            ->willReturn(
+                new Location(countryCode: 'ES'),
+            );
+        $this->logger->expects($this->never())->method('warning');
+
+        $request = ServerRequestFactory::fromGlobals()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, '1.2.3.4');
+        if ($countryHeader !== null) {
+            $request = $request->withHeader(CloudflareGeolocationResolver::COUNTRY_HEADER, $countryHeader);
+        }
+
+        $this->handler
+            ->expects($this->once())
+            ->method('handle')
+            ->with($this->callback(
+                static function (ServerRequestInterface $req): bool {
+                    $location = $req->getAttribute(Location::class);
+                    if (!$location instanceof Location) {
+                        return false;
+                    }
+
+                    Assert::assertEquals('ES', $location->countryCode);
+                    return true;
+                },
+            ));
+
+        $this->middleware(trustCloudflareHeaders: $trustCloudflareHeaders)->process($request, $this->handler);
+    }
+
     /**
      * @param non-empty-string $loggerMethod
      */
@@ -177,13 +249,19 @@ class IpGeolocationMiddlewareTest extends TestCase
         $this->middleware()->process($request, $this->handler);
     }
 
-    private function middleware(bool $disableTracking = false): IpGeolocationMiddleware
-    {
+    private function middleware(
+        bool $disableTracking = false,
+        bool $trustCloudflareHeaders = false,
+    ): IpGeolocationMiddleware {
         return new IpGeolocationMiddleware(
             $this->ipLocationResolver,
             $this->dbUpdater,
             $this->logger,
-            new TrackingOptions(disableTracking: $disableTracking),
+            new TrackingOptions(
+                disableTracking: $disableTracking,
+                trustCloudflareGeolocationHeaders: $trustCloudflareHeaders,
+            ),
+            new CloudflareGeolocationResolver(),
         );
     }
 }

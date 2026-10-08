@@ -11,6 +11,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
+use Shlinkio\Shlink\Core\Geolocation\CloudflareGeolocationResolver;
 use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
 use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
 use Shlinkio\Shlink\IpGeolocation\Model\Location;
@@ -26,12 +27,20 @@ readonly class IpGeolocationMiddleware implements MiddlewareInterface
         private DbUpdaterInterface $dbUpdater,
         private LoggerInterface $logger,
         private TrackingOptions $trackingOptions,
+        private CloudflareGeolocationResolver $cloudflareGeolocationResolver,
     ) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!$this->trackingOptions->isGeolocationRelevant()) {
             return $handler->handle($request);
+        }
+
+        if ($this->trackingOptions->trustCloudflareGeolocationHeaders) {
+            $location = $this->cloudflareGeolocationResolver->resolveFromRequest($request);
+            if ($location !== null) {
+                return $handler->handle($request->withAttribute(Location::class, $location));
+            }
         }
 
         if (!$this->dbUpdater->databaseFileExists()) {

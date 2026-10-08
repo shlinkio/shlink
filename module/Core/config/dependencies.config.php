@@ -113,6 +113,7 @@ return [
             EventDispatcher\PublishingUpdatesGenerator::class => ConfigAbstractFactory::class,
 
             Geolocation\GeolocationDbUpdater::class => ConfigAbstractFactory::class,
+            Geolocation\CloudflareGeolocationResolver::class => InvokableFactory::class,
             Geolocation\Middleware\IpGeolocationMiddleware::class => ConfigAbstractFactory::class,
 
             Importer\ImportedLinksProcessor::class => ConfigAbstractFactory::class,
@@ -256,6 +257,7 @@ return [
             DbUpdater::class,
             'Logger_Shlink',
             Config\Options\TrackingOptions::class,
+            Geolocation\CloudflareGeolocationResolver::class,
         ],
 
         Importer\ImportedLinksProcessor::class => [
