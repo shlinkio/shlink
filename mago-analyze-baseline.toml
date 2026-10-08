@@ -946,7 +946,7 @@ count = 1
 file = "module/Core/src/Config/Options/TrackingOptions.php"
 code = "mixed-operand"
 message = "Casting `mixed` to `bool`."
-count = 6
+count = 7
 
 [[issues]]
 file = "module/Core/src/Config/Options/UrlShortenerOptions.php"
@@ -2014,7 +2014,7 @@ count = 1
 file = "module/Core/test/Geolocation/Middleware/IpGeolocationMiddlewareTest.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 3
+count = 5
 
 [[issues]]
 file = "module/Core/test/Importer/ImportedLinksProcessorTest.php"

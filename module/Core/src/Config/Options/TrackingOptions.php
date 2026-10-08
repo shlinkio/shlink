@@ -33,6 +33,8 @@ final readonly class TrackingOptions
         public bool $disableUaTracking = false,
         // A list of IP addresses, patterns or CIDR blocks from which tracking is disabled by default
         public array $disableTrackingFrom = [],
+        // If true, visits will be geolocated from the location headers set by Cloudflare
+        public bool $trustCloudflareGeolocationHeaders = false,
     ) {}
 
     public static function fromEnv(): self
@@ -46,6 +48,7 @@ final readonly class TrackingOptions
             disableReferrerTracking: (bool) EnvVars::DISABLE_REFERRER_TRACKING->loadFromEnv(),
             disableUaTracking: (bool) EnvVars::DISABLE_UA_TRACKING->loadFromEnv(),
             disableTrackingFrom: splitByComma(EnvVars::DISABLE_TRACKING_FROM->loadFromEnv()),
+            trustCloudflareGeolocationHeaders: (bool) EnvVars::TRUST_CLOUDFLARE_GEOLOCATION_HEADERS->loadFromEnv(),
         );
     }
 

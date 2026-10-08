@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+### Added
+* [#2646](https://github.com/shlinkio/shlink/issues/2646) Allow visits to be geolocated from Cloudflare's visitor location headers, as an alternative to the GeoLite2 database.
+
+    This can be enabled via the new `TRUST_CLOUDFLARE_GEOLOCATION_HEADERS` env var. If the `CF-IPCountry` header is missing or unknown, Shlink falls back to the GeoLite2 database. Only enable it if Shlink cannot be reached without going through Cloudflare, as these headers could be spoofed otherwise.
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* *Nothing*
+
+
 ## [5.1.7] - 2026-09-21
 ### Added
 * *Nothing*
