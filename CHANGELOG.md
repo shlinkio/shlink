@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ## [Unreleased]
 ### Added
 * [#2671](https://github.com/shlinkio/shlink/issues/2671) Add support for Mercure 1.0.
+* [#2646](https://github.com/shlinkio/shlink/issues/2646) Allow visits to be geolocated from Cloudflare's visitor location headers, as an alternative to the GeoLite2 database.
+
+    This can be enabled via the new `TRUST_CLOUDFLARE_GEOLOCATION_HEADERS` env var. If the `CF-IPCountry` header is missing or unknown, Shlink falls back to the GeoLite2 database. Only enable it if Shlink cannot be reached without going through Cloudflare, as these headers could be spoofed otherwise.
 
 ### Changed
 * *Nothing*
