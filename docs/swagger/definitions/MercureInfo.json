@@ -16,7 +16,7 @@
         },
         "version": {
             "type": "string",
-            "enum": ["v0", "v1"],
+            "enum": ["legacy", "stable"],
             "description": "Indicates the version of the mercure hub that has been configured, so that consumers know how to subscribe"
         }
     }
