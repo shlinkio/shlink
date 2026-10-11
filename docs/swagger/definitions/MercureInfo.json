@@ -18,6 +18,10 @@
             "type": "string",
             "enum": ["legacy", "stable"],
             "description": "Indicates the version of the mercure hub that has been configured, so that consumers know how to subscribe"
+        },
+        "authCookieName": {
+            "type": "string",
+            "description": "The name of the cookie where subscribers need to set the JWT"
         }
     }
 }
