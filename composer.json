@@ -46,7 +46,7 @@
         "shlinkio/shlink-config": "^4.1.0",
         "shlinkio/shlink-event-dispatcher": "^4.4.0",
         "shlinkio/shlink-importer": "^5.8",
-        "shlinkio/shlink-installer": "dev-develop#0aff783 as 10.2.0",
+        "shlinkio/shlink-installer": "dev-develop#5bd25ec as 10.2.0",
         "shlinkio/shlink-ip-geolocation": "^5.0.0",
         "shlinkio/shlink-json": "^1.3",
         "spiral/roadrunner": "^2025.1",
