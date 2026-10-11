@@ -40,6 +40,7 @@ class MercureInfoAction extends AbstractRestAction
             'token' => $jwt,
             'jwtExpiration' => $expiresAt->toAtomString(),
             'version' => $this->mercureOptions->version->value,
+            'authCookieName' => $this->mercureOptions->authCookieName,
         ]);
     }
 }

@@ -40,8 +40,8 @@ class MercureInfoActionTest extends TestCase
     }
 
     #[Test]
-    #[TestWith([MercureVersion::v0])]
-    #[TestWith([MercureVersion::v1])]
+    #[TestWith([MercureVersion::LEGACY])]
+    #[TestWith([MercureVersion::STABLE])]
     public function returnsExpectedInfoWhenEverythingIsOk(MercureVersion $version): void
     {
         $this->provider->expects($this->once())->method('buildSubscriptionToken')->willReturn('abc.123');

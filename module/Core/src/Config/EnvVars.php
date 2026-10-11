@@ -43,6 +43,7 @@ enum EnvVars: string
     case MERCURE_INTERNAL_HUB_URL = 'MERCURE_INTERNAL_HUB_URL';
     case MERCURE_JWT_SECRET = 'MERCURE_JWT_SECRET';
     case MERCURE_VERSION = 'MERCURE_VERSION';
+    case MERCURE_AUTH_COOKIE_NAME = 'MERCURE_AUTH_COOKIE_NAME';
     case RABBITMQ_ENABLED = 'RABBITMQ_ENABLED';
     case RABBITMQ_HOST = 'RABBITMQ_HOST';
     case RABBITMQ_PORT = 'RABBITMQ_PORT';
@@ -136,7 +137,7 @@ enum EnvVars: string
             },
             self::DB_USE_ENCRYPTION => false,
             self::MERCURE_ENABLED => self::MERCURE_PUBLIC_HUB_URL->existsInEnv(),
-            self::MERCURE_VERSION => MercureVersion::v0->value,
+            self::MERCURE_VERSION => MercureVersion::LEGACY->value,
             self::MERCURE_INTERNAL_HUB_URL => self::MERCURE_PUBLIC_HUB_URL->loadFromEnv(),
             self::RABBITMQ_ENABLED, self::RABBITMQ_USE_SSL => false,
             self::RABBITMQ_PORT => 5672,
