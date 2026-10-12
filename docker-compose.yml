@@ -186,9 +186,7 @@ services:
             MERCURE_PUBLISHER_JWT_KEY: mercure_jwt_key_long_enough_to_avoid_error
             MERCURE_SUBSCRIBER_JWT_KEY: mercure_jwt_key_long_enough_to_avoid_error
             MERCURE_TRUSTED_ISSUERS: Shlink # Value of the JWT iss claim
-            MERCURE_EXTRA_DIRECTIVES: |
-                cookie_name mercure_access_token
-                cors_origins https://app.shlink.io http://localhost:3000 http://127.0.0.1:3000 http://localhost:3002 http://127.0.0.1:3002 http://localhost:3005 http://127.0.0.1:3005
+            MERCURE_EXTRA_DIRECTIVES: "cors_origins https://app.shlink.io http://localhost:3000 http://127.0.0.1:3000 http://localhost:3002 http://127.0.0.1:3002 http://localhost:3005 http://127.0.0.1:3005"
 
     shlink_mercure_0:
         container_name: shlink_mercure_0
