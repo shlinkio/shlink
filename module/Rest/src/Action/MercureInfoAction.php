@@ -9,6 +9,7 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Mercure\JwtProviderInterface;
+use Shlinkio\Shlink\Common\Mercure\MercureOptions;
 use Shlinkio\Shlink\Rest\Exception\MercureException;
 
 use function sprintf;
@@ -20,24 +21,25 @@ class MercureInfoAction extends AbstractRestAction
 
     public function __construct(
         private readonly JwtProviderInterface $jwtProvider,
-        private readonly array $mercureConfig,
+        private readonly MercureOptions $mercureOptions,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $hubUrl = $this->mercureConfig['public_hub_url'] ?? null;
+        $hubUrl = $this->mercureOptions->publicHubUrl;
         if ($hubUrl === null) {
             throw MercureException::mercureNotConfigured();
         }
 
-        $days = $this->mercureConfig['jwt_days_duration'] ?? 1;
-        $expiresAt = Chronos::now()->addDays($days);
+        // Make subscription tokens expire in 1 day
+        $expiresAt = Chronos::now()->addDays(1);
         $jwt = $this->jwtProvider->buildSubscriptionToken($expiresAt);
 
         return new JsonResponse([
             'mercureHubUrl' => sprintf('%s/.well-known/mercure', $hubUrl),
             'token' => $jwt,
             'jwtExpiration' => $expiresAt->toAtomString(),
+            'version' => $this->mercureOptions->version->value,
         ]);
     }
 }

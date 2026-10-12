@@ -13,6 +13,11 @@
         "jwtExpiration": {
             "type": "string",
             "description": "The date (in ISO-8601 format) in which the JWT will expire"
+        },
+        "version": {
+            "type": "string",
+            "enum": ["legacy", "stable"],
+            "description": "Indicates the version of the mercure hub that has been configured, so that consumers know how to subscribe"
         }
     }
 }

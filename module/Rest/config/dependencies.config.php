@@ -12,6 +12,7 @@ use Mezzio\Router\Middleware\ImplicitOptionsMiddleware;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Doctrine\EntityRepositoryFactory;
 use Shlinkio\Shlink\Common\Mercure\LcobucciJwtProvider;
+use Shlinkio\Shlink\Common\Mercure\MercureOptions;
 use Shlinkio\Shlink\Core\Config;
 use Shlinkio\Shlink\Core\Domain\DomainService;
 use Shlinkio\Shlink\Core\RedirectRule;
@@ -68,7 +69,7 @@ return [
         ApiKeyService::class => ['em', ApiKeyRepository::class],
 
         Action\HealthAction::class => ['em', Config\Options\AppOptions::class],
-        Action\MercureInfoAction::class => [LcobucciJwtProvider::class, 'config.mercure'],
+        Action\MercureInfoAction::class => [LcobucciJwtProvider::class, MercureOptions::class],
         Action\ShortUrl\CreateShortUrlAction::class => [
             ShortUrl\UrlShortener::class,
             ShortUrlDataTransformer::class,

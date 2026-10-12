@@ -40,6 +40,7 @@ return [
             Option\Mercure\MercurePublicUrlConfigOption::class,
             Option\Mercure\MercureInternalUrlConfigOption::class,
             Option\Mercure\MercureJwtSecretConfigOption::class,
+            Option\Mercure\MercureVersionConfigOption::class,
             Option\UrlShortener\GeoLiteLicenseKeyConfigOption::class,
             Option\UrlShortener\RedirectStatusCodeConfigOption::class,
             Option\UrlShortener\RedirectCacheLifeTimeConfigOption::class,

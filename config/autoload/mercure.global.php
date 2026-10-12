@@ -16,6 +16,7 @@ return [
         'internal_hub_url' => EnvVars::MERCURE_INTERNAL_HUB_URL->loadFromEnv(),
         'jwt_secret' => EnvVars::MERCURE_JWT_SECRET->loadFromEnv(),
         'jwt_issuer' => 'Shlink',
+        'version' => EnvVars::MERCURE_VERSION->loadFromEnv(),
     ],
 
     'dependencies' => [

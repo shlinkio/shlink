@@ -27,7 +27,8 @@
                         "example": {
                             "mercureHubUrl": "https://example.com/.well-known/mercure",
                             "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJTaGxpbmsiLCJpYXQiOjE1ODY2ODY3MzIsImV4cCI6MTU4Njk0NTkzMiwibWVyY3VyZSI6eyJzdWJzY3JpYmUiOltdfX0.P-519lgU7dFz0bbNlRG1CXyqugGbaHon4kw6fu4QBdQ",
-                            "jwtExpiration":  "2020-04-15T12:18:52+02:00"
+                            "jwtExpiration":  "2020-04-15T12:18:52+02:00",
+                            "version": "stable"
                         }
                     }
                 }

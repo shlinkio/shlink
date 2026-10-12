@@ -42,7 +42,7 @@ class MapperBuilderWithCacheDelegatorFactoryTest extends TestCase
     {
         putenv(EnvVars::APP_ENV->value . '=' . $env);
 
-        $builder = (new MapperBuilderWithCacheDelegatorFactory())($this->container, '', fn () => $this->baseBuilder);
+        $builder = new MapperBuilderWithCacheDelegatorFactory()($this->container, '', fn () => $this->baseBuilder);
         $reflection = new ReflectionObject($builder);
         /** @var Settings $settings */
         $settings = $reflection->getProperty('settings')->getValue($builder);
@@ -56,7 +56,7 @@ class MapperBuilderWithCacheDelegatorFactoryTest extends TestCase
     {
         putenv(EnvVars::APP_ENV->value . '=prod');
 
-        $builder = (new MapperBuilderWithCacheDelegatorFactory())($this->container, '', fn () => $this->baseBuilder);
+        $builder = new MapperBuilderWithCacheDelegatorFactory()($this->container, '', fn () => $this->baseBuilder);
         $reflection = new ReflectionObject($builder);
         /** @var Settings $settings */
         $settings = $reflection->getProperty('settings')->getValue($builder);

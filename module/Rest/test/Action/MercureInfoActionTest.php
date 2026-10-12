@@ -8,11 +8,13 @@ use Cake\Chronos\Chronos;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Mercure\JwtProviderInterface;
+use Shlinkio\Shlink\Common\Mercure\MercureOptions;
+use Shlinkio\Shlink\Common\Mercure\MercureVersion;
 use Shlinkio\Shlink\Rest\Action\MercureInfoAction;
 use Shlinkio\Shlink\Rest\Exception\MercureException;
 
@@ -25,39 +27,29 @@ class MercureInfoActionTest extends TestCase
         $this->provider = $this->createMock(JwtProviderInterface::class);
     }
 
-    #[Test, DataProvider('provideNoHostConfigs')]
-    public function throwsExceptionWhenConfigDoesNotHavePublicHost(array $mercureConfig): void
+    #[Test]
+    public function throwsExceptionWhenConfigDoesNotHavePublicHost(): void
     {
         $this->provider->expects($this->never())->method('buildSubscriptionToken');
 
-        $action = new MercureInfoAction($this->provider, $mercureConfig);
+        $action = new MercureInfoAction($this->provider, new MercureOptions());
 
         $this->expectException(MercureException::class);
 
         $action->handle(ServerRequestFactory::fromGlobals());
     }
 
-    public static function provideNoHostConfigs(): iterable
-    {
-        yield 'host not defined' => [[]];
-        yield 'host is null' => [['public_hub_url' => null]];
-    }
-
-    public function provideValidConfigs(): iterable
-    {
-        yield 'days not defined' => [['public_hub_url' => 'http://foobar.com']];
-        yield 'days defined' => [['public_hub_url' => 'http://foobar.com', 'jwt_days_duration' => 20]];
-    }
-
-    #[Test, DataProvider('provideDays')]
-    public function returnsExpectedInfoWhenEverythingIsOk(int|null $days): void
+    #[Test]
+    #[TestWith([MercureVersion::LEGACY])]
+    #[TestWith([MercureVersion::STABLE])]
+    public function returnsExpectedInfoWhenEverythingIsOk(MercureVersion $version): void
     {
         $this->provider->expects($this->once())->method('buildSubscriptionToken')->willReturn('abc.123');
 
-        $action = new MercureInfoAction($this->provider, [
-            'public_hub_url' => 'http://foobar.com',
-            'jwt_days_duration' => $days,
-        ]);
+        $action = new MercureInfoAction($this->provider, new MercureOptions(
+            publicHubUrl: 'http://foobar.com',
+            version: $version,
+        ));
 
         /** @var JsonResponse $resp */
         $resp = $action->handle(ServerRequestFactory::fromGlobals());
@@ -68,15 +60,10 @@ class MercureInfoActionTest extends TestCase
         self::assertArrayHasKey('token', $payload);
         self::assertArrayHasKey('jwtExpiration', $payload);
         self::assertEquals(
-            Chronos::now()->addDays($days ?? 1)->startOfDay(),
+            Chronos::now()->addDays(1)->startOfDay(),
             Chronos::parse($payload['jwtExpiration'])->startOfDay(),
         );
-    }
-
-    public static function provideDays(): iterable
-    {
-        yield 'days not defined' => [null];
-        yield 'days defined' => [10];
+        self::assertEquals($version->value, $payload['version']);
     }
 
     #[Test, AllowMockObjectsWithoutExpectations]

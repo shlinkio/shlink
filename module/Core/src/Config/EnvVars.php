@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Config;
 
+use Shlinkio\Shlink\Common\Mercure\MercureVersion;
 use Shlinkio\Shlink\Core\Config\Options\ExtraPathMode;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
 
@@ -41,6 +42,7 @@ enum EnvVars: string
     case MERCURE_PUBLIC_HUB_URL = 'MERCURE_PUBLIC_HUB_URL';
     case MERCURE_INTERNAL_HUB_URL = 'MERCURE_INTERNAL_HUB_URL';
     case MERCURE_JWT_SECRET = 'MERCURE_JWT_SECRET';
+    case MERCURE_VERSION = 'MERCURE_VERSION';
     case RABBITMQ_ENABLED = 'RABBITMQ_ENABLED';
     case RABBITMQ_HOST = 'RABBITMQ_HOST';
     case RABBITMQ_PORT = 'RABBITMQ_PORT';
@@ -134,6 +136,7 @@ enum EnvVars: string
             },
             self::DB_USE_ENCRYPTION => false,
             self::MERCURE_ENABLED => self::MERCURE_PUBLIC_HUB_URL->existsInEnv(),
+            self::MERCURE_VERSION => MercureVersion::LEGACY->value,
             self::MERCURE_INTERNAL_HUB_URL => self::MERCURE_PUBLIC_HUB_URL->loadFromEnv(),
             self::RABBITMQ_ENABLED, self::RABBITMQ_USE_SSL => false,
             self::RABBITMQ_PORT => 5672,

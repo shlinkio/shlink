@@ -167,8 +167,10 @@ class ShortUrl extends AbstractEntity
         if (
             $this->title === null
             || $shortUrlEdit->titleWasProvided
-            || ($this->titleWasAutoResolved
-            && $shortUrlEdit->titleWasAutoResolved)
+            || (
+                $this->titleWasAutoResolved
+                && $shortUrlEdit->titleWasAutoResolved
+            )
         ) {
             $this->title = $shortUrlEdit->title;
             $this->titleWasAutoResolved = $shortUrlEdit->titleWasAutoResolved;
