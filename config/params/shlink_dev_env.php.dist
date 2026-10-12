@@ -65,7 +65,6 @@ return [
     EnvVars::MERCURE_INTERNAL_HUB_URL->value => 'http://shlink_mercure_proxy',
     EnvVars::MERCURE_JWT_SECRET->value => 'mercure_jwt_key_long_enough_to_avoid_error',
     EnvVars::MERCURE_VERSION->value => 'stable',
-    EnvVars::MERCURE_AUTH_COOKIE_NAME->value => 'mercure_access_token',
 
     // RabbitMQ
     EnvVars::RABBITMQ_ENABLED->value => true,

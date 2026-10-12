@@ -523,18 +523,6 @@ message = "Cannot reliably increment a `mixed` operand."
 count = 2
 
 [[issues]]
-file = "module/CLI/test/RedirectRule/RedirectRuleHandlerTest.php"
-code = "redundant-comparison"
-message = "Redundant `<` comparison: left-hand side is always less than right-hand side."
-count = 1
-
-[[issues]]
-file = "module/CLI/test/RedirectRule/RedirectRuleHandlerTest.php"
-code = "redundant-logical-operation"
-message = "Redundant `&&` operation: left operand is always truthy and right operand is evaluated."
-count = 1
-
-[[issues]]
 file = "module/CLI/test/Util/CliTestUtils.php"
 code = "invalid-return-statement"
 message = 'Invalid return type for function `ShlinkioTest\Shlink\CLI\Util\CliTestUtils::createCommandStub`: expected `PHPUnit\Framework\MockObject\Stub&Symfony\Component\Console\Command\Command`, but found `PHPUnit\Framework\MockObject\MockObject|PHPUnit\Framework\MockObject\Stub`.'
@@ -1293,7 +1281,7 @@ count = 2
 [[issues]]
 file = "module/Core/src/Domain/Repository/DomainRepository.php"
 code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryTrait::applySpecification`: expected `Happyr\DoctrineSpecification\Filter\Filter|Happyr\DoctrineSpecification\Query\QueryModifier`, but found `mixed`.'
+message = 'Invalid argument type for argument #2 of `Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryTrait::applySpecification`: expected `Happyr\DoctrineSpecification\Filter\Filter|Happyr\DoctrineSpecification\Query\QueryModifier|null`, but found `mixed`.'
 count = 2
 
 [[issues]]
@@ -1615,12 +1603,6 @@ message = "Assigning `mixed` type to a variable may lead to unexpected behavior.
 count = 1
 
 [[issues]]
-file = "module/Core/src/ShortUrl/Repository/ShortUrlListRepository.php"
-code = "possibly-null-argument"
-message = 'Argument #2 of method `Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryTrait::applySpecification` is possibly `null`, but parameter type `Happyr\DoctrineSpecification\Filter\Filter|Happyr\DoctrineSpecification\Query\QueryModifier` does not accept it.'
-count = 1
-
-[[issues]]
 file = "module/Core/src/ShortUrl/Repository/ShortUrlRepository.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
@@ -1648,12 +1630,6 @@ count = 1
 file = "module/Core/src/ShortUrl/Repository/ShortUrlRepository.php"
 code = "mixed-return-statement"
 message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\ShortUrl\Repository\ShortUrlRepository::findOne`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "module/Core/src/ShortUrl/Repository/ShortUrlRepository.php"
-code = "possibly-null-argument"
-message = 'Argument #2 of method `Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryTrait::applySpecification` is possibly `null`, but parameter type `Happyr\DoctrineSpecification\Filter\Filter|Happyr\DoctrineSpecification\Query\QueryModifier` does not accept it.'
 count = 1
 
 [[issues]]
@@ -1750,12 +1726,6 @@ count = 1
 file = "module/Core/src/Tag/Paginator/Adapter/TagsPaginatorAdapter.php"
 code = "mixed-return-statement"
 message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\Tag\Paginator\Adapter\TagsPaginatorAdapter::getSlice`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "module/Core/src/Tag/Repository/TagRepository.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `Doctrine\DBAL\Connection::quote`: expected `string`, but found `mixed`.'
 count = 1
 
 [[issues]]
@@ -1867,12 +1837,6 @@ message = 'Invalid argument type for argument #5 of `Shlinkio\Shlink\Core\Visit\
 count = 1
 
 [[issues]]
-file = "module/Core/src/Visit/Repository/ShortUrlVisitsCountRepository.php"
-code = "possibly-null-argument"
-message = 'Argument #2 of method `Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryTrait::applySpecification` is possibly `null`, but parameter type `Happyr\DoctrineSpecification\Filter\Filter|Happyr\DoctrineSpecification\Query\QueryModifier` does not accept it.'
-count = 1
-
-[[issues]]
 file = "module/Core/src/Visit/Repository/VisitDeleterRepository.php"
 code = "mixed-return-statement"
 message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\Visit\Repository\VisitDeleterRepository::deleteByShortUrl`. Saw type `mixed`.'
@@ -1973,12 +1937,6 @@ file = "module/Core/src/Visit/Repository/VisitRepository.php"
 code = "mixed-return-statement"
 message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\Visit\Repository\VisitRepository::resolveVisitsWithNativeQuery`. Saw type `mixed`.'
 count = 1
-
-[[issues]]
-file = "module/Core/src/Visit/Repository/VisitRepository.php"
-code = "possibly-null-argument"
-message = 'Argument #2 of method `Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryTrait::applySpecification` is possibly `null`, but parameter type `Happyr\DoctrineSpecification\Filter\Filter|Happyr\DoctrineSpecification\Query\QueryModifier` does not accept it.'
-count = 3
 
 [[issues]]
 file = "module/Core/src/Visit/RequestTracker.php"
@@ -2254,12 +2212,6 @@ count = 1
 file = "module/Core/test/RedirectRule/Entity/ShortUrlRedirectRuleTest.php"
 code = "less-specific-argument"
 message = 'Argument type mismatch for argument #1 of `ShlinkioTest\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRuleTest::createRule`: expected `Doctrine\Common\Collections\ArrayCollection<int, Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition>`, but provided type `Doctrine\Common\Collections\ArrayCollection<array-key, mixed>` is less specific.'
-count = 1
-
-[[issues]]
-file = "module/Core/test/ShortUrl/Helper/ShortCodeUniquenessHelperTest.php"
-code = "redundant-comparison"
-message = "Redundant `<` comparison: left-hand side is always less than right-hand side."
 count = 1
 
 [[issues]]
@@ -2872,10 +2824,4 @@ count = 1
 file = "module/Rest/test/Middleware/ShortUrl/ShortUrlOptionsPayloadMiddlewareTest.php"
 code = "invalid-type-cast"
 message = "Object of type `object` cast to `array`. Property visibility (public, protected, private) affects the resulting array."
-count = 1
-
-[[issues]]
-file = "module/Rest/test/Service/ApiKeyServiceTest.php"
-code = "redundant-comparison"
-message = "Redundant `<` comparison: left-hand side is always less than right-hand side."
 count = 1

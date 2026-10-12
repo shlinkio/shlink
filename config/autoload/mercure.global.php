@@ -17,7 +17,6 @@ return [
         'jwt_secret' => EnvVars::MERCURE_JWT_SECRET->loadFromEnv(),
         'jwt_issuer' => 'Shlink',
         'version' => EnvVars::MERCURE_VERSION->loadFromEnv(),
-        'auth_cookie_name' => EnvVars::MERCURE_AUTH_COOKIE_NAME->loadFromEnv(),
     ],
 
     'dependencies' => [
