@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace ShlinkioDbTest\Shlink\Core\ShortUrl\Repository;
 
 use Cake\Chronos\Chronos;
+use Doctrine\DBAL\Exception\TableNotFoundException;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -100,6 +103,95 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             ShortUrlIdentifier::fromShortCodeAndDomain($withDomain->shortCode, 'other-domain.com'),
             ShortUrlMode::STRICT,
         ));
+    }
+
+    #[Test]
+    #[DataProvider('provideMissingShortCodes')]
+    public function findOneWithDomainFallbackReturnsNullForInvalidEncoding(
+        string $shortCode,
+        ShortUrlMode $mode,
+        string|null $domain,
+    ): void {
+        $shortUrl = ShortUrl::create(new ShortUrlCreation('https://example.com', customSlug: 'Foo'));
+        $this->getEntityManager()->persist($shortUrl);
+        $this->getEntityManager()->flush();
+
+        $connection = $this->getEntityManager()->getConnection();
+        $transactionLevel = $connection->getTransactionNestingLevel();
+
+        self::assertNull($this->repo->findOneWithDomainFallback(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, $domain),
+            $mode,
+        ));
+
+        // A failed Postgres query must not leave the caller's transaction aborted or roll back its work.
+        self::assertSame($transactionLevel, $connection->getTransactionNestingLevel());
+        self::assertSame($shortUrl, $this->repo->findOneWithDomainFallback(
+            ShortUrlIdentifier::fromShortCodeAndDomain('Foo', $domain),
+            $mode,
+        ));
+    }
+
+    public static function provideMissingShortCodes(): iterable
+    {
+        foreach ([ShortUrlMode::STRICT, ShortUrlMode::LOOSE] as $mode) {
+            foreach ([null, 'example.com', 'other-domain.com'] as $domain) {
+                foreach ([
+                    "\xC0",
+                    "\xFF",
+                    "Foo\xC0",
+                    "\xE2\x81",
+                    "\xED\xA0\x80",
+                    'unknown',
+                    '不存在',
+                    "\xE2\x81\xA3",
+                ] as $shortCode) {
+                    yield [$shortCode, $mode, $domain];
+                }
+            }
+        }
+    }
+
+    #[Test]
+    public function findOneWithDomainFallbackPreservesMultibyteSlugs(): void
+    {
+        $regular = ShortUrl::create(new ShortUrlCreation('https://example.com', customSlug: 'Café-東京'));
+        $withDomain = ShortUrl::create(new ShortUrlCreation(
+            'https://example.com/domain',
+            customSlug: 'Café-東京',
+            domain: 'example.com',
+        ));
+        $this->getEntityManager()->persist($regular);
+        $this->getEntityManager()->persist($withDomain);
+        $this->getEntityManager()->flush();
+
+        foreach ([ShortUrlMode::STRICT, ShortUrlMode::LOOSE] as $mode) {
+            self::assertSame($withDomain, $this->repo->findOneWithDomainFallback(
+                ShortUrlIdentifier::fromShortCodeAndDomain('Café-東京', 'example.com'),
+                $mode,
+            ));
+            self::assertSame($regular, $this->repo->findOneWithDomainFallback(
+                ShortUrlIdentifier::fromShortCodeAndDomain('Café-東京', 'other-domain.com'),
+                $mode,
+            ));
+        }
+    }
+
+    #[Test]
+    public function findOneWithDomainFallbackDoesNotHideUnrelatedDatabaseErrors(): void
+    {
+        $connection = $this->getEntityManager()->getConnection();
+        if (!$connection->getDatabasePlatform() instanceof PostgreSQLPlatform) {
+            self::markTestSkipped('Postgres transactional DDL is needed to restore the table after this test.');
+        }
+
+        $connection->executeStatement('ALTER TABLE short_urls RENAME TO short_urls_unavailable');
+
+        $this->expectException(TableNotFoundException::class);
+        $this->repo->findOneWithDomainFallback(
+            ShortUrlIdentifier::fromShortCodeAndDomain('Foo'),
+            ShortUrlMode::STRICT,
+        );
     }
 
     #[Test]

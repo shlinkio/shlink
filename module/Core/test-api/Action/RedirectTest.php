@@ -19,6 +19,64 @@ use const ShlinkioTest\Shlink\WINDOWS_USER_AGENT;
 
 class RedirectTest extends ApiTestCase
 {
+    #[Test, DataProvider('provideUnknownShortCodes')]
+    public function unknownShortCodesFollowNotFoundHandling(string $shortCode, bool $configureRedirect): void
+    {
+        $redirect = 'https://example.com/not-found';
+        if ($configureRedirect) {
+            $response = $this->callApiWithKey(self::METHOD_PATCH, '/domains/redirects', [
+                RequestOptions::JSON => [
+                    'domain' => 's.test',
+                    'invalidShortUrlRedirect' => $redirect,
+                ],
+            ]);
+            self::assertEquals(self::STATUS_OK, $response->getStatusCode());
+        }
+
+        $response = $this->callShortUrl($shortCode, [RequestOptions::HEADERS => ['Host' => 's.test']]);
+
+        self::assertEquals(
+            $configureRedirect ? self::STATUS_FOUND : self::STATUS_NOT_FOUND,
+            $response->getStatusCode(),
+        );
+        self::assertEquals($configureRedirect ? $redirect : '', $response->getHeaderLine('Location'));
+    }
+
+    public static function provideUnknownShortCodes(): iterable
+    {
+        foreach ([false, true] as $configureRedirect) {
+            foreach ([
+                '%C0',
+                '%FF',
+                'abc123%C0',
+                '%E2%81',
+                '%ED%A0%80',
+                'unknown',
+                '%E2%81%A3',
+                '%E6%9D%B1%E4%BA%AC',
+            ] as $shortCode) {
+                yield [$shortCode, $configureRedirect];
+            }
+        }
+    }
+
+    #[Test]
+    #[TestWith(['Café-東京', 'Caf%C3%A9-%E6%9D%B1%E4%BA%AC'])]
+    #[TestWith(['percent%slug', 'percent%25slug'])]
+    public function encodedCustomSlugsStillRedirect(string $slug, string $encodedSlug): void
+    {
+        $longUrl = 'https://example.com/valid';
+        $created = $this->callApiWithKey(self::METHOD_POST, '/short-urls', [
+            RequestOptions::JSON => ['longUrl' => $longUrl, 'customSlug' => $slug],
+        ]);
+        self::assertEquals(self::STATUS_OK, $created->getStatusCode());
+
+        $response = $this->callShortUrl($encodedSlug);
+
+        self::assertEquals(self::STATUS_FOUND, $response->getStatusCode());
+        self::assertEquals($longUrl, $response->getHeaderLine('Location'));
+    }
+
     #[Test, DataProvider('provideRequestOptions')]
     public function properRedirectHappensBasedOnRedirectRules(array $options, string $expectedRedirect): void
     {
