@@ -1,4 +1,4 @@
-FROM php:8.5-alpine3.22
+FROM php:8.5-alpine3.24
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
 ENV PDO_SQLSRV_VERSION='5.13.0'
