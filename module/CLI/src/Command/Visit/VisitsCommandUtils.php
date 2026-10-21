@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Visit;
 
+use League\Csv\EscapeFormula;
 use League\Csv\Writer;
 use Shlinkio\Shlink\CLI\Input\VisitsListFormat;
 use Shlinkio\Shlink\CLI\Input\VisitsListInput;
@@ -48,6 +49,7 @@ class VisitsCommandUtils
 
             [$rows, $headers] = self::resolveRowsAndHeaders($paginator);
             $csv = Writer::fromString();
+            $csv->addFormatter(new EscapeFormula()->escapeRecord(...));
             if ($page === 1) {
                 $csv->insertOne($headers);
             }
