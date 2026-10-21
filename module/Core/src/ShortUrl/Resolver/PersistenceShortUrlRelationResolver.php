@@ -114,7 +114,6 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
     }
 
     /**
-     * /**
      * @param array<string, SharedLockInterface> $locks
      */
     private function releaseLock(array &$locks, string $name): void
@@ -134,6 +133,9 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
         $this->releaseLocks($this->domainLocks);
     }
 
+    /**
+     * @param array<string, SharedLockInterface> $locks
+     */
     private function releaseLocks(array &$locks): void
     {
         foreach ($locks as $tagLock) {

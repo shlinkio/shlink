@@ -259,18 +259,6 @@ message = "Redundant `&&` operation: left operand is evaluated and right operand
 count = 1
 
 [[issues]]
-file = "module/CLI/src/Command/ShortUrl/DeleteExpiredShortUrlsCommand.php"
-code = "redundant-condition"
-message = "Redundant condition"
-count = 1
-
-[[issues]]
-file = "module/CLI/src/Command/ShortUrl/ListShortUrlsCommand.php"
-code = "invalid-array-element-key"
-message = "Cannot use spread operator on an iterable with key type `mixed`."
-count = 1
-
-[[issues]]
 file = "module/CLI/src/Command/ShortUrl/ListShortUrlsCommand.php"
 code = "less-specific-nested-return-statement"
 message = '''Returned type `array{'API Key Name'?: (closure(array<array-key, mixed>, Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl): null|string), 'Date created': (closure(array<array-key, mixed>): mixed), 'Domain'?: (closure(array<array-key, mixed>, Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl): string), 'Long URL': (closure(array<array-key, mixed>): mixed), 'Short Code': (closure(array<array-key, mixed>): mixed), 'Short URL': (closure(array<array-key, mixed>): mixed), 'Tags'?: (closure(array<array-key, mixed>): string), 'Title': (closure(array<array-key, mixed>): mixed), 'Visits count': (closure(array<array-key, mixed>): mixed)}` is less specific than the declared return type `array<string, (callable(array<array-key, mixed>, Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl): null|string)>` for function `Shlinkio\Shlink\CLI\Command\ShortUrl\ListShortUrlsCommand::resolveColumnsMap` due to nested 'mixed'.'''
@@ -285,7 +273,7 @@ count = 1
 [[issues]]
 file = "module/CLI/src/Command/ShortUrl/ListShortUrlsCommand.php"
 code = "mixed-property-access"
-message = "Attempting to access a property on a non-object type (`mixed`)."
+message = "Attempting to access property `$total` on a non-object type (`mixed`)."
 count = 1
 
 [[issues]]
@@ -464,6 +452,24 @@ count = 1
 
 [[issues]]
 file = "module/CLI/test/ApiKey/RoleResolverTest.php"
+code = "deprecated-property"
+message = 'Use of deprecated property `Shlinkio\Shlink\CLI\Command\Api\Input\ApiKeyInput::$authorOnly`.'
+count = 2
+
+[[issues]]
+file = "module/CLI/test/ApiKey/RoleResolverTest.php"
+code = "deprecated-property"
+message = 'Use of deprecated property `Shlinkio\Shlink\CLI\Command\Api\Input\ApiKeyInput::$domain`.'
+count = 3
+
+[[issues]]
+file = "module/CLI/test/ApiKey/RoleResolverTest.php"
+code = "deprecated-property"
+message = 'Use of deprecated property `Shlinkio\Shlink\CLI\Command\Api\Input\ApiKeyInput::$noOrphanVisits`.'
+count = 1
+
+[[issues]]
+file = "module/CLI/test/ApiKey/RoleResolverTest.php"
 code = "invalid-array-element-key"
 message = "Cannot use spread operator on an iterable with key type `mixed`."
 count = 2
@@ -529,10 +535,22 @@ message = 'Invalid return type for function `ShlinkioTest\Shlink\CLI\Util\CliTes
 count = 1
 
 [[issues]]
+file = "module/CLI/test/Util/CliTestUtils.php"
+code = "named-argument-not-allowed"
+message = 'Named arguments are not allowed for `PHPUnit\Framework\MockObject\Generator\Generator::testDouble`.'
+count = 3
+
+[[issues]]
 file = "module/Core/functions/array-utils.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #2 of `callable`: expected `string|unknown-ref(Shlinkio\Shlink\Core\ArrayUtils\number)`, but found `mixed`.'
 count = 2
+
+[[issues]]
+file = "module/Core/functions/array-utils.php"
+code = "mixed-array-index"
+message = '''Invalid index type `mixed` used in array assignment on `array<array-key, ('R.shlinkio\shlink\core\arrayutils\map() extends mixed)>`.'''
+count = 1
 
 [[issues]]
 file = "module/Core/functions/array-utils.php"
@@ -608,20 +626,8 @@ count = 1
 
 [[issues]]
 file = "module/Core/functions/functions.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`nonnull`)."
-count = 1
-
-[[issues]]
-file = "module/Core/functions/functions.php"
 code = "mixed-return-statement"
 message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\enumSide`. Saw type `nonnull`.'
-count = 1
-
-[[issues]]
-file = "module/Core/functions/functions.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\generateRandomShortCode`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
@@ -737,6 +743,12 @@ file = "module/Core/migrations/Version20240224115725.php"
 code = "deprecated-method"
 message = 'Call to deprecated method: `Doctrine\DBAL\Schema\Table::setPrimaryKey`.'
 count = 2
+
+[[issues]]
+file = "module/Core/migrations/Version20240226214216.php"
+code = "mixed-array-index"
+message = "Invalid index type `mixed` used in array assignment on `array<array-key, int(2)|int(3)>`."
+count = 1
 
 [[issues]]
 file = "module/Core/migrations/Version20240226214216.php"
@@ -1640,30 +1652,6 @@ count = 1
 
 [[issues]]
 file = "module/Core/src/ShortUrl/Resolver/PersistenceShortUrlRelationResolver.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "module/Core/src/ShortUrl/Resolver/PersistenceShortUrlRelationResolver.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 1
-
-[[issues]]
-file = "module/Core/src/ShortUrl/Resolver/PersistenceShortUrlRelationResolver.php"
-code = "property-type-coercion"
-message = 'A value of a less specific type `array<array-key, mixed>` is being assigned to property `$domainLocks` (array<string, Symfony\Component\Lock\SharedLockInterface>).'
-count = 1
-
-[[issues]]
-file = "module/Core/src/ShortUrl/Resolver/PersistenceShortUrlRelationResolver.php"
-code = "property-type-coercion"
-message = 'A value of a less specific type `array<array-key, mixed>` is being assigned to property `$tagLocks` (array<string, Symfony\Component\Lock\SharedLockInterface>).'
-count = 1
-
-[[issues]]
-file = "module/Core/src/ShortUrl/Resolver/PersistenceShortUrlRelationResolver.php"
 code = "redundant-docblock-type"
 message = "Redundant docblock type for variable `$existingDomain`."
 count = 1
@@ -1887,7 +1875,7 @@ count = 1
 [[issues]]
 file = "module/Core/src/Visit/Repository/VisitIterationRepository.php"
 code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
+message = "Attempting to call method `getId()` on a non-object type (`mixed`)."
 count = 1
 
 [[issues]]
@@ -1964,12 +1952,6 @@ count = 1
 
 [[issues]]
 file = "module/Core/test-api/Action/RedirectTest.php"
-code = "invalid-array-element-key"
-message = "Invalid array key type."
-count = 1
-
-[[issues]]
-file = "module/Core/test-api/Action/RedirectTest.php"
 code = "invalid-iterator"
 message = "The expression provided to `foreach` is not iterable. It resolved to type `mixed`, which is not iterable."
 count = 1
@@ -1985,6 +1967,12 @@ file = "module/Core/test-api/Action/RedirectTest.php"
 code = "mixed-array-access"
 message = "Unsafe array access on type `mixed`."
 count = 3
+
+[[issues]]
+file = "module/Core/test-api/Action/RedirectTest.php"
+code = "mixed-array-index"
+message = "Possibly invalid array key type."
+count = 1
 
 [[issues]]
 file = "module/Core/test-api/Action/RedirectTest.php"
