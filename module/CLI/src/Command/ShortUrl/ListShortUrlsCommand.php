@@ -49,11 +49,12 @@ class ListShortUrlsCommand extends Command
             $result = $this->renderPage($io, $columnsMap, $params, $paramsInput->all);
             $paramsInput->page += 1;
 
-            $continue = $result->hasNextPage()
-            && $io->confirm(
-                sprintf('Continue with page <options=bold>%s</>?', $paramsInput->page),
-                default: false,
-            );
+            $continue =
+                $result->hasNextPage()
+                && $io->confirm(
+                    sprintf('Continue with page <options=bold>%s</>?', $paramsInput->page),
+                    default: false,
+                );
         } while ($continue);
 
         $io->newLine();

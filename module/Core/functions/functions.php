@@ -42,10 +42,7 @@ use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
 
 function generateRandomShortCode(int $length, ShortUrlMode $mode = ShortUrlMode::STRICT): string
 {
-    static $nanoIdClient;
-    if ($nanoIdClient === null) {
-        $nanoIdClient = new NanoidClient();
-    }
+    static $nanoIdClient = new NanoidClient();
 
     $alphabet = $mode === ShortUrlMode::STRICT
         ? '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
