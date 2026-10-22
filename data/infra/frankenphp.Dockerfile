@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:1-php8.5-alpine
+FROM dunglas/frankenphp:1.13.2-php8.5-alpine
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
 ENV PDO_SQLSRV_VERSION='5.13.0'
