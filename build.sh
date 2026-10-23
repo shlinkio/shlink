@@ -20,7 +20,6 @@ rm -rf "${builtContent}"
 mkdir -p "${builtContent}"
 rsync -av * "${builtContent}" \
     --exclude=*docker* \
-    --exclude=Dockerfile \
     --include=.htaccess \
     --include=config/roadrunner/.rr.yml \
     --exclude-from=./.dockerignore

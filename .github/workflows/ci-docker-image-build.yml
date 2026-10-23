@@ -3,10 +3,22 @@ name: Test docker image build
 on:
   pull_request:
     paths:
-      - 'Dockerfile'
+      - 'docker/**'
+      - '.dockerignore'
+      - 'composer.json'
+      - '.github/workflows/ci-docker-image-build.yml'
+      - '.github/workflows/publish-docker-image.yml'
+
+permissions:
+  contents: read
 
 jobs:
   build-docker-image:
+    strategy:
+      fail-fast: false
+      matrix:
+        distro: [alpine, debian]
     uses: shlinkio/github-actions/.github/workflows/docker-image-build-ci.yml@main
     with:
+      dockerfile: docker/${{ matrix.distro }}/Dockerfile
       platforms: 'linux/arm64/v8,linux/amd64'

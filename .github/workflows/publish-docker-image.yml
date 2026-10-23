@@ -5,22 +5,34 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: read
+
 jobs:
   build-image:
     strategy:
+      fail-fast: false
       matrix:
         include:
-          - runtime: 'rr'
-            platforms: 'linux/arm64/v8,linux/amd64'
-          - runtime: 'rr'
-            tag-suffix: 'roadrunner'
-            platforms: 'linux/arm64/v8,linux/amd64'
+          - distro: alpine
+            tag-suffix: ''
+          - distro: alpine
+            tag-suffix: roadrunner
+          - distro: alpine
+            tag-suffix: alpine
+          - distro: alpine
+            tag-suffix: roadrunner-alpine
+          - distro: debian
+            tag-suffix: debian
+          - distro: debian
+            tag-suffix: roadrunner-debian
     uses: shlinkio/github-actions/.github/workflows/docker-publish-image.yml@main
     secrets: inherit
     with:
       image-name: shlinkio/shlink
+      dockerfile: docker/${{ matrix.distro }}/Dockerfile
       version-arg-name: SHLINK_VERSION
-      platforms: ${{ matrix.platforms }}
+      platforms: 'linux/arm64/v8,linux/amd64'
       tags-suffix: ${{ matrix.tag-suffix }}
       extra-build-args: |
-        SHLINK_RUNTIME=${{ matrix.runtime }}
+        SHLINK_RUNTIME=rr
