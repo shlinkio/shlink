@@ -12,6 +12,8 @@
 
 A PHP-based self-hosted URL shortener that can be used to serve shortened URLs under your own domain.
 
+[![Deploy to Railyard](https://app.railyard.run/deploy/badge)](https://app.railyard.run/deploy?repo=https://github.com/shlinkio/shlink)
+
 ## Table of Contents
 
 - [Full documentation](#full-documentation)
