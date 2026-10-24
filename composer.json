@@ -60,7 +60,7 @@
         "symfony/string": "^8.1"
     },
     "require-dev": {
-        "carthage-software/mago": "^1.45",
+        "carthage-software/mago": "~1.58.2",
         "devizzent/cebe-php-openapi": "^1.1.2",
         "devster/ubench": "^2.1",
         "phpunit/php-code-coverage": "^13.0",
