@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * *Nothing*
 
 ### Fixed
-* *Nothing*
+* [#2657](https://github.com/shlinkio/shlink/issues/2657) Fix 500 error returned when visiting a short URL with invalid UTF-8 bytes in the short code while using Postgres.
 
 
 ## [5.1.8] - 2026-10-21
