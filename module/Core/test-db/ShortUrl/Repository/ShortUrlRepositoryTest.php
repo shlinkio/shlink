@@ -11,6 +11,7 @@ use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
@@ -119,6 +120,12 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         ));
     }
 
+    /** @return iterable<array{string, ShortUrlMode, string|null}> */
+    public static function provideMissingShortCodes(): iterable
+    {
+        return self::provideShortCodeLookups(['unknown', '不存在', "\xE2\x81\xA3"]);
+    }
+
     #[Test, DataProvider('provideMalformedShortCodes')]
     public function findOneWithDomainFallbackPreservesDatabaseEncodingHandling(
         string $shortCode,
@@ -137,12 +144,6 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, $domain),
             $mode,
         ));
-    }
-
-    /** @return iterable<array{string, ShortUrlMode, string|null}> */
-    public static function provideMissingShortCodes(): iterable
-    {
-        return self::provideShortCodeLookups(['unknown', '不存在', "\xE2\x81\xA3"]);
     }
 
     /** @return iterable<array{string, ShortUrlMode, string|null}> */
@@ -166,8 +167,8 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         }
     }
 
-    #[Test]
-    public function malformedLookupsPreservePostgresTransactionsAndEarlierWrites(): void
+    #[Test, TestWith([false]), TestWith([true])]
+    public function malformedLookupsPreservePostgresTransactionsAndEarlierWrites(bool $nestedTransaction): void
     {
         $connection = $this->getEntityManager()->getConnection();
         if (!$connection->getDatabasePlatform() instanceof PostgreSQLPlatform) {
@@ -178,35 +179,33 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($shortUrl);
         $this->getEntityManager()->flush();
 
-        foreach ([false, true] as $nestedTransaction) {
-            if ($nestedTransaction) {
-                $connection->beginTransaction();
-            }
+        if ($nestedTransaction) {
+            $connection->beginTransaction();
+        }
 
-            try {
-                $transactionLevel = $connection->getTransactionNestingLevel();
-                foreach (self::provideMalformedShortCodes() as [$shortCode, $mode, $domain]) {
-                    self::assertNull($this->repo->findOneWithDomainFallback(
-                        ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, $domain),
-                        $mode,
-                    ));
-                    self::assertSame($transactionLevel, $connection->getTransactionNestingLevel());
-                    // Query again to prove the transaction is usable and the caller's earlier insert survived.
-                    self::assertSame($shortUrl, $this->repo->findOneWithDomainFallback(
-                        ShortUrlIdentifier::fromShortCodeAndDomain('Foo', $domain),
-                        $mode,
-                    ));
-                }
-            } finally {
-                if ($nestedTransaction) {
-                    $connection->rollBack();
-                }
+        try {
+            $transactionLevel = $connection->getTransactionNestingLevel();
+            foreach (self::provideMalformedShortCodes() as [$shortCode, $mode, $domain]) {
+                self::assertNull($this->repo->findOneWithDomainFallback(
+                    ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, $domain),
+                    $mode,
+                ));
+                self::assertSame($transactionLevel, $connection->getTransactionNestingLevel());
+                // Query again to prove the transaction is usable and the caller's earlier insert survived.
+                self::assertSame($shortUrl, $this->repo->findOneWithDomainFallback(
+                    ShortUrlIdentifier::fromShortCodeAndDomain('Foo', $domain),
+                    $mode,
+                ));
+            }
+        } finally {
+            if ($nestedTransaction) {
+                $connection->rollBack();
             }
         }
     }
 
-    #[Test]
-    public function findOneWithDomainFallbackPreservesMultibyteSlugs(): void
+    #[Test, DataProvider('provideShortUrlModes')]
+    public function findOneWithDomainFallbackPreservesMultibyteSlugs(ShortUrlMode $mode): void
     {
         $regular = ShortUrl::create(new ShortUrlCreation('https://example.com', customSlug: 'Café-東京'));
         $withDomain = ShortUrl::create(new ShortUrlCreation(
@@ -218,18 +217,27 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         $this->getEntityManager()->persist($withDomain);
         $this->getEntityManager()->flush();
 
-        foreach ([ShortUrlMode::STRICT, ShortUrlMode::LOOSE] as $mode) {
-            self::assertSame($withDomain, $this->repo->findOneWithDomainFallback(
-                ShortUrlIdentifier::fromShortCodeAndDomain('Café-東京', 'example.com'),
-                $mode,
-            ));
-            self::assertSame($regular, $this->repo->findOneWithDomainFallback(
-                ShortUrlIdentifier::fromShortCodeAndDomain('Café-東京', 'other-domain.com'),
-                $mode,
-            ));
-        }
+        self::assertSame($withDomain, $this->repo->findOneWithDomainFallback(
+            ShortUrlIdentifier::fromShortCodeAndDomain('Café-東京', 'example.com'),
+            $mode,
+        ));
+        self::assertSame($regular, $this->repo->findOneWithDomainFallback(
+            ShortUrlIdentifier::fromShortCodeAndDomain('Café-東京', 'other-domain.com'),
+            $mode,
+        ));
     }
 
+    /** @return iterable<array{ShortUrlMode}> */
+    public static function provideShortUrlModes(): iterable
+    {
+        yield [ShortUrlMode::STRICT];
+        yield [ShortUrlMode::LOOSE];
+    }
+
+    /**
+     * A deliberately missing table must raise a schema error rather than be reported as a missing short URL.
+     * This proves the invalid-encoding handler does not hide unrelated database failures.
+     */
     #[Test]
     public function missingTablesAreNotReportedAsMissingShortUrls(): void
     {
