@@ -70,7 +70,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         try {
             // Postgres needs a savepoint so a rejected parameter does not abort the caller's transaction.
             return $isPostgres && $connection->isTransactionActive()
-                ? $connection->transactional(static fn (Connection $_connection) => $query->getOneOrNullResult())
+                ? $connection->transactional(static fn (Connection $_) => $query->getOneOrNullResult())
                 : $query->getOneOrNullResult();
         } catch (DriverException $e) {
             // SQLSTATE 22021 (character_not_in_repertoire): invalid encoding cannot match a stored short code.

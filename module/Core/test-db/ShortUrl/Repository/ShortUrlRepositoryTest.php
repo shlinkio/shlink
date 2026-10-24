@@ -204,7 +204,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         }
     }
 
-    #[Test, DataProvider('provideShortUrlModes')]
+    #[Test, TestWith([ShortUrlMode::STRICT]), TestWith([ShortUrlMode::LOOSE])]
     public function findOneWithDomainFallbackPreservesMultibyteSlugs(ShortUrlMode $mode): void
     {
         $regular = ShortUrl::create(new ShortUrlCreation('https://example.com', customSlug: 'Café-東京'));
@@ -225,13 +225,6 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
             ShortUrlIdentifier::fromShortCodeAndDomain('Café-東京', 'other-domain.com'),
             $mode,
         ));
-    }
-
-    /** @return iterable<array{ShortUrlMode}> */
-    public static function provideShortUrlModes(): iterable
-    {
-        yield [ShortUrlMode::STRICT];
-        yield [ShortUrlMode::LOOSE];
     }
 
     /**
