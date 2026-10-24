@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\ShortUrl\Repository;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\DBAL\LockMode;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Types\Types;
@@ -29,8 +31,9 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
     {
         // When ordering DESC, Postgres puts nulls at the beginning while the rest of supported DB engines put them at
         // the bottom
-        $dbPlatform = $this->getEntityManager()->getConnection()->getDatabasePlatform();
-        $ordering = $dbPlatform instanceof PostgreSQLPlatform ? 'ASC' : 'DESC';
+        $connection = $this->getEntityManager()->getConnection();
+        $isPostgres = $connection->getDatabasePlatform() instanceof PostgreSQLPlatform;
+        $ordering = $isPostgres ? 'ASC' : 'DESC';
         $isStrict = $shortUrlMode === ShortUrlMode::STRICT;
 
         // FIXME The `LOWER(s.shortCode)` condition in non-strict mode drops performance dramatically.
@@ -62,7 +65,21 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
                 ->orderBy('s.domain', $ordering);
         }
 
-        return $qb->getQuery()->getOneOrNullResult();
+        $query = $qb->getQuery();
+
+        try {
+            // Postgres needs a savepoint so a rejected parameter does not abort the caller's transaction.
+            return $isPostgres && $connection->isTransactionActive()
+                ? $connection->transactional(static fn (Connection $_) => $query->getOneOrNullResult())
+                : $query->getOneOrNullResult();
+        } catch (DriverException $e) {
+            // SQLSTATE 22021 (character_not_in_repertoire): invalid encoding cannot match a stored short code.
+            if (!$isPostgres || $e->getSQLState() !== '22021') {
+                throw $e;
+            }
+
+            return null;
+        }
     }
 
     public function findOne(ShortUrlIdentifier $identifier, Specification|null $spec = null): ShortUrl|null
