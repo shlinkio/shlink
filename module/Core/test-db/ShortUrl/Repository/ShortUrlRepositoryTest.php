@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace ShlinkioDbTest\Shlink\Core\ShortUrl\Repository;
 
 use Cake\Chronos\Chronos;
+use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
+use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
@@ -105,48 +107,99 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
         ));
     }
 
-    #[Test]
-    #[DataProvider('provideMissingShortCodes')]
-    public function findOneWithDomainFallbackReturnsNullForInvalidEncoding(
+    #[Test, DataProvider('provideMissingShortCodes')]
+    public function findOneWithDomainFallbackReturnsNullForMissingShortCodes(
         string $shortCode,
         ShortUrlMode $mode,
         string|null $domain,
     ): void {
-        $shortUrl = ShortUrl::create(new ShortUrlCreation('https://example.com', customSlug: 'Foo'));
-        $this->getEntityManager()->persist($shortUrl);
-        $this->getEntityManager()->flush();
+        self::assertNull($this->repo->findOneWithDomainFallback(
+            ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, $domain),
+            $mode,
+        ));
+    }
 
-        $connection = $this->getEntityManager()->getConnection();
-        $transactionLevel = $connection->getTransactionNestingLevel();
+    #[Test, DataProvider('provideMalformedShortCodes')]
+    public function findOneWithDomainFallbackPreservesDatabaseEncodingHandling(
+        string $shortCode,
+        ShortUrlMode $mode,
+        string|null $domain,
+    ): void {
+        $platform = $this->getEntityManager()->getConnection()->getDatabasePlatform();
+        if ($platform instanceof SQLServerPlatform) {
+            // PDO_SQLSRV already rejects malformed input before SQL execution. Preserve its specific driver error.
+            $this->expectException(DriverException::class);
+            $this->expectExceptionCode(-7);
+            $this->expectExceptionMessage('SQLSTATE[IMSSP]');
+        }
 
         self::assertNull($this->repo->findOneWithDomainFallback(
             ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, $domain),
             $mode,
         ));
-
-        // A failed Postgres query must not leave the caller's transaction aborted or roll back its work.
-        self::assertSame($transactionLevel, $connection->getTransactionNestingLevel());
-        self::assertSame($shortUrl, $this->repo->findOneWithDomainFallback(
-            ShortUrlIdentifier::fromShortCodeAndDomain('Foo', $domain),
-            $mode,
-        ));
     }
 
+    /** @return iterable<array{string, ShortUrlMode, string|null}> */
     public static function provideMissingShortCodes(): iterable
+    {
+        return self::provideShortCodeLookups(['unknown', '不存在', "\xE2\x81\xA3"]);
+    }
+
+    /** @return iterable<array{string, ShortUrlMode, string|null}> */
+    public static function provideMalformedShortCodes(): iterable
+    {
+        return self::provideShortCodeLookups(["\xC0", "\xFF", "Foo\xC0", "\xE2\x81", "\xED\xA0\x80"]);
+    }
+
+    /**
+     * @param list<string> $shortCodes
+     * @return iterable<array{string, ShortUrlMode, string|null}>
+     */
+    private static function provideShortCodeLookups(array $shortCodes): iterable
     {
         foreach ([ShortUrlMode::STRICT, ShortUrlMode::LOOSE] as $mode) {
             foreach ([null, 'example.com', 'other-domain.com'] as $domain) {
-                foreach ([
-                    "\xC0",
-                    "\xFF",
-                    "Foo\xC0",
-                    "\xE2\x81",
-                    "\xED\xA0\x80",
-                    'unknown',
-                    '不存在',
-                    "\xE2\x81\xA3",
-                ] as $shortCode) {
+                foreach ($shortCodes as $shortCode) {
                     yield [$shortCode, $mode, $domain];
+                }
+            }
+        }
+    }
+
+    #[Test]
+    public function malformedLookupsPreservePostgresTransactionsAndEarlierWrites(): void
+    {
+        $connection = $this->getEntityManager()->getConnection();
+        if (!$connection->getDatabasePlatform() instanceof PostgreSQLPlatform) {
+            self::markTestSkipped('Transaction recovery after SQLSTATE 22021 is specific to Postgres.');
+        }
+
+        $shortUrl = ShortUrl::create(new ShortUrlCreation('https://example.com', customSlug: 'Foo'));
+        $this->getEntityManager()->persist($shortUrl);
+        $this->getEntityManager()->flush();
+
+        foreach ([false, true] as $nestedTransaction) {
+            if ($nestedTransaction) {
+                $connection->beginTransaction();
+            }
+
+            try {
+                $transactionLevel = $connection->getTransactionNestingLevel();
+                foreach (self::provideMalformedShortCodes() as [$shortCode, $mode, $domain]) {
+                    self::assertNull($this->repo->findOneWithDomainFallback(
+                        ShortUrlIdentifier::fromShortCodeAndDomain($shortCode, $domain),
+                        $mode,
+                    ));
+                    self::assertSame($transactionLevel, $connection->getTransactionNestingLevel());
+                    // Query again to prove the transaction is usable and the caller's earlier insert survived.
+                    self::assertSame($shortUrl, $this->repo->findOneWithDomainFallback(
+                        ShortUrlIdentifier::fromShortCodeAndDomain('Foo', $domain),
+                        $mode,
+                    ));
+                }
+            } finally {
+                if ($nestedTransaction) {
+                    $connection->rollBack();
                 }
             }
         }
@@ -178,13 +231,14 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     }
 
     #[Test]
-    public function findOneWithDomainFallbackDoesNotHideUnrelatedDatabaseErrors(): void
+    public function missingTablesAreNotReportedAsMissingShortUrls(): void
     {
         $connection = $this->getEntityManager()->getConnection();
         if (!$connection->getDatabasePlatform() instanceof PostgreSQLPlatform) {
             self::markTestSkipped('Postgres transactional DDL is needed to restore the table after this test.');
         }
 
+        // A real schema error must escape the encoding-error catch, rather than become a missing short URL.
         $connection->executeStatement('ALTER TABLE short_urls RENAME TO short_urls_unavailable');
 
         $this->expectException(TableNotFoundException::class);
