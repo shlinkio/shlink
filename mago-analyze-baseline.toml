@@ -279,7 +279,7 @@ count = 1
 [[issues]]
 file = "module/CLI/src/Command/Visit/VisitsCommandUtils.php"
 code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `League\Csv\Writer::insertAll`: expected `League\Csv\TabularData|League\Csv\TabularDataProvider|iterable<mixed, mixed>`, but found `mixed`.'
+message = 'Invalid argument type for argument #1 of `League\Csv\Writer::insertAll`: expected `League\Csv\TabularData<object>|League\Csv\TabularDataProvider|iterable<mixed, mixed>`, but found `mixed`.'
 count = 1
 
 [[issues]]
