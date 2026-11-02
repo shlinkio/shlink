@@ -639,7 +639,7 @@ count = 1
 [[issues]]
 file = "module/Core/functions/functions.php"
 code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\ipAddressFromRequest`. Saw type `mixed`.'
+message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Geolocation\ipAddressFromRequest`. Saw type `mixed`.'
 count = 1
 
 [[issues]]

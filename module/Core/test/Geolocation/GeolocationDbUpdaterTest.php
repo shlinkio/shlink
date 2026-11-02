@@ -20,9 +20,9 @@ use Shlinkio\Shlink\Core\Geolocation\Entity\GeolocationDbUpdate;
 use Shlinkio\Shlink\Core\Geolocation\GeolocationDbUpdater;
 use Shlinkio\Shlink\Core\Geolocation\GeolocationDownloadProgressHandlerInterface;
 use Shlinkio\Shlink\Core\Geolocation\GeolocationResult;
-use Shlinkio\Shlink\IpGeolocation\Exception\DbUpdateException;
-use Shlinkio\Shlink\IpGeolocation\Exception\MissingLicenseException;
-use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
+use Shlinkio\Shlink\Geolocation\Exception\DbUpdateException;
+use Shlinkio\Shlink\Geolocation\Exception\MissingLicenseException;
+use Shlinkio\Shlink\Geolocation\GeoLite2\DbUpdaterInterface;
 use Symfony\Component\Lock;
 use Throwable;
 

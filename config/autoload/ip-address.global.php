@@ -8,7 +8,7 @@ use Shlinkio\Shlink\Core\Config\EnvVars;
 
 use function Shlinkio\Shlink\Core\splitByComma;
 
-use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
+use const Shlinkio\Shlink\Geolocation\IP_ADDRESS_REQUEST_ATTRIBUTE;
 
 return (static function (): array {
     $trustedProxies = EnvVars::TRUSTED_PROXIES->loadFromEnv();

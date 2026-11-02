@@ -17,24 +17,24 @@ use RuntimeException;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\Geolocation\Middleware\IpGeolocationMiddleware;
-use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
-use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
-use Shlinkio\Shlink\IpGeolocation\Model\Location;
-use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
+use Shlinkio\Shlink\Geolocation\Exception\LocationResolutionException;
+use Shlinkio\Shlink\Geolocation\GeoLite2\DbUpdaterInterface;
+use Shlinkio\Shlink\Geolocation\Model\Location;
+use Shlinkio\Shlink\Geolocation\Resolver\LocationResolverInterface;
 use Throwable;
 
-use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
+use const Shlinkio\Shlink\Geolocation\IP_ADDRESS_REQUEST_ATTRIBUTE;
 
 class IpGeolocationMiddlewareTest extends TestCase
 {
-    private MockObject&IpLocationResolverInterface $ipLocationResolver;
+    private MockObject&LocationResolverInterface $ipLocationResolver;
     private MockObject&DbUpdaterInterface $dbUpdater;
     private MockObject&LoggerInterface $logger;
     private MockObject&RequestHandlerInterface $handler;
 
     protected function setUp(): void
     {
-        $this->ipLocationResolver = $this->createMock(IpLocationResolverInterface::class);
+        $this->ipLocationResolver = $this->createMock(LocationResolverInterface::class);
         $this->dbUpdater = $this->createMock(DbUpdaterInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->handler = $this->createMock(RequestHandlerInterface::class);
@@ -44,7 +44,7 @@ class IpGeolocationMiddlewareTest extends TestCase
     public function geolocationIsSkippedIfTrackingIsDisabled(): void
     {
         $this->dbUpdater->expects($this->never())->method('databaseFileExists');
-        $this->ipLocationResolver->expects($this->never())->method('resolveIpLocation');
+        $this->ipLocationResolver->expects($this->never())->method('resolveRequestLocation');
         $this->logger->expects($this->never())->method('warning');
 
         $request = ServerRequestFactory::fromGlobals();
@@ -56,7 +56,7 @@ class IpGeolocationMiddlewareTest extends TestCase
     #[Test]
     public function warningIsLoggedIfGeoLiteDbDoesNotExist(): void
     {
-        $this->ipLocationResolver->expects($this->never())->method('resolveIpLocation');
+        $this->ipLocationResolver->expects($this->never())->method('resolveRequestLocation');
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(false);
         $this->logger
             ->expects($this->once())
@@ -77,7 +77,7 @@ class IpGeolocationMiddlewareTest extends TestCase
     public function emptyLocationIsReturnedIfIpAddressIsNotLocatable(string|null $ipAddress): void
     {
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(true);
-        $this->ipLocationResolver->expects($this->never())->method('resolveIpLocation');
+        $this->ipLocationResolver->expects($this->never())->method('resolveRequestLocation');
         $this->logger->expects($this->never())->method('warning');
 
         $request = ServerRequestFactory::fromGlobals()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, $ipAddress);
@@ -102,17 +102,16 @@ class IpGeolocationMiddlewareTest extends TestCase
     #[Test]
     public function locationIsResolvedFromIpAddress(): void
     {
+        $request = ServerRequestFactory::fromGlobals()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, '1.2.3.4');
+
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(true);
         $this->ipLocationResolver
             ->expects($this->once())
-            ->method('resolveIpLocation')
-            ->with('1.2.3.4')
-            ->willReturn(
-                new Location(countryCode: 'ES'),
-            );
+            ->method('resolveRequestLocation')
+            ->with($request)
+            ->willReturn(new Location(countryCode: 'ES'));
         $this->logger->expects($this->never())->method('warning');
 
-        $request = ServerRequestFactory::fromGlobals()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, '1.2.3.4');
         $this->handler
             ->expects($this->once())
             ->method('handle')
@@ -136,7 +135,7 @@ class IpGeolocationMiddlewareTest extends TestCase
      */
     #[Test]
     #[TestWith([
-        new WrongIpException(),
+        new LocationResolutionException(),
         'warning',
         'Tried to locate IP address, but it seems to be wrong. {e}',
     ])]
@@ -150,15 +149,16 @@ class IpGeolocationMiddlewareTest extends TestCase
         string $loggerMethod,
         string $expectedLoggedMessage,
     ): void {
+        $request = ServerRequestFactory::fromGlobals()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, '1.2.3.4');
+
         $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(true);
         $this->ipLocationResolver
             ->expects($this->once())
-            ->method('resolveIpLocation')
-            ->with('1.2.3.4')
+            ->method('resolveRequestLocation')
+            ->with($request)
             ->willThrowException($exception);
         $this->logger->expects($this->once())->method($loggerMethod)->with($expectedLoggedMessage, ['e' => $exception]);
 
-        $request = ServerRequestFactory::fromGlobals()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, '1.2.3.4');
         $this->handler
             ->expects($this->once())
             ->method('handle')

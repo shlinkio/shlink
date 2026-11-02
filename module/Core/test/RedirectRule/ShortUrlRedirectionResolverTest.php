@@ -18,7 +18,7 @@ use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectionResolver;
 use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectRuleServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 
-use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
+use const Shlinkio\Shlink\Geolocation\IP_ADDRESS_REQUEST_ATTRIBUTE;
 use const ShlinkioTest\Shlink\ANDROID_USER_AGENT;
 use const ShlinkioTest\Shlink\IOS_USER_AGENT;
 use const ShlinkioTest\Shlink\WINDOWS_USER_AGENT;

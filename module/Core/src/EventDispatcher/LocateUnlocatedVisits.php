@@ -11,7 +11,7 @@ use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitGeolocationHelperInterface;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitLocatorInterface;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitToLocationHelperInterface;
-use Shlinkio\Shlink\IpGeolocation\Model\Location;
+use Shlinkio\Shlink\Geolocation\Model\Location;
 
 readonly class LocateUnlocatedVisits implements VisitGeolocationHelperInterface
 {

@@ -20,8 +20,6 @@ const DEFAULT_REDIRECT_CACHE_VISIBILITY = 'private';
 
 const LOCAL_LOCK_FACTORY = 'Shlinkio\Shlink\LocalLockFactory';
 
-const IP_ADDRESS_REQUEST_ATTRIBUTE = 'remote_address';
-
 const REDIRECT_URL_REQUEST_ATTRIBUTE = 'redirect_url';
 
 /**

@@ -14,10 +14,10 @@ use Shlinkio\Shlink\Core\Model\Browser;
 use Shlinkio\Shlink\Core\Model\DeviceType;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition;
 use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectConditionType;
+use Shlinkio\Shlink\Geolocation\Model\Location;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkRedirectCondition;
-use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
-use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
+use const Shlinkio\Shlink\Geolocation\IP_ADDRESS_REQUEST_ATTRIBUTE;
 use const ShlinkioTest\Shlink\ANDROID_USER_AGENT;
 use const ShlinkioTest\Shlink\BROWSER_CHROME_USER_AGENT;
 use const ShlinkioTest\Shlink\BROWSER_FIREFOX_USER_AGENT;

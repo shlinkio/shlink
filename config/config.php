@@ -20,7 +20,7 @@ return new ConfigAggregator\ConfigAggregator(
         Common\ConfigProvider::class,
         Config\ConfigProvider::class,
         Importer\ConfigProvider::class,
-        IpGeolocation\ConfigProvider::class,
+        Geolocation\ConfigProvider::class,
         EventDispatcher\ConfigProvider::class,
         Core\ConfigProvider::class,
         CLI\ConfigProvider::class,

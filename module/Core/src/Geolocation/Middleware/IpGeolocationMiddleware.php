@@ -11,18 +11,18 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
-use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
-use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
-use Shlinkio\Shlink\IpGeolocation\Model\Location;
-use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
+use Shlinkio\Shlink\Geolocation\Exception\LocationResolutionException;
+use Shlinkio\Shlink\Geolocation\GeoLite2\DbUpdaterInterface;
+use Shlinkio\Shlink\Geolocation\Model\Location;
+use Shlinkio\Shlink\Geolocation\Resolver\LocationResolverInterface;
 use Throwable;
 
-use function Shlinkio\Shlink\Core\ipAddressFromRequest;
+use function Shlinkio\Shlink\Geolocation\ipAddressFromRequest;
 
 readonly class IpGeolocationMiddleware implements MiddlewareInterface
 {
     public function __construct(
-        private IpLocationResolverInterface $ipLocationResolver,
+        private LocationResolverInterface $ipLocationResolver,
         private DbUpdaterInterface $dbUpdater,
         private LoggerInterface $logger,
         private TrackingOptions $trackingOptions,
@@ -39,17 +39,19 @@ readonly class IpGeolocationMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        $location = $this->geolocateIpAddress(ipAddressFromRequest($request));
+        $location = $this->geolocateIpAddress($request);
         return $handler->handle($request->withAttribute(Location::class, $location));
     }
 
-    private function geolocateIpAddress(string|null $ipAddress): Location
+    private function geolocateIpAddress(ServerRequestInterface $request): Location
     {
+        $ipAddress = ipAddressFromRequest($request);
+
         try {
             return $ipAddress === null || $ipAddress === IpAddress::LOCALHOST
                 ? Location::empty()
-                : $this->ipLocationResolver->resolveIpLocation($ipAddress);
-        } catch (WrongIpException $e) {
+                : $this->ipLocationResolver->resolveRequestLocation($request);
+        } catch (LocationResolutionException $e) {
             $this->logger->warning('Tried to locate IP address, but it seems to be wrong. {e}', ['e' => $e]);
             return Location::empty();
         } catch (Throwable $e) {

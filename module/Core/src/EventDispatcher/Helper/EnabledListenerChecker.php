@@ -9,7 +9,7 @@ use Shlinkio\Shlink\Core\Config\Options\RabbitMqOptions;
 use Shlinkio\Shlink\Core\EventDispatcher;
 use Shlinkio\Shlink\Core\Matomo\MatomoOptions;
 use Shlinkio\Shlink\EventDispatcher\Listener\EnabledListenerCheckerInterface;
-use Shlinkio\Shlink\IpGeolocation\GeoLite2\GeoLite2Options;
+use Shlinkio\Shlink\Geolocation\GeoLite2\GeoLite2Options;
 
 readonly class EnabledListenerChecker implements EnabledListenerCheckerInterface
 {

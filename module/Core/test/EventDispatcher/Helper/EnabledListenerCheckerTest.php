@@ -19,7 +19,7 @@ use Shlinkio\Shlink\Core\EventDispatcher\RedisPubSub\NotifyNewShortUrlToRedis;
 use Shlinkio\Shlink\Core\EventDispatcher\RedisPubSub\NotifyVisitToRedis;
 use Shlinkio\Shlink\Core\EventDispatcher\UpdateGeoLiteDb;
 use Shlinkio\Shlink\Core\Matomo\MatomoOptions;
-use Shlinkio\Shlink\IpGeolocation\GeoLite2\GeoLite2Options;
+use Shlinkio\Shlink\Geolocation\GeoLite2\GeoLite2Options;
 
 class EnabledListenerCheckerTest extends TestCase
 {
