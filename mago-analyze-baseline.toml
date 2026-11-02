@@ -638,12 +638,6 @@ count = 1
 
 [[issues]]
 file = "module/Core/functions/functions.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Geolocation\ipAddressFromRequest`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "module/Core/functions/functions.php"
 code = "possibly-invalid-argument"
 message = "Possible argument type mismatch for argument #1 of `mb_strtolower`: expected `string`, but possibly received `array<array-key, string>|null|string`."
 count = 1
