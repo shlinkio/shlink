@@ -236,6 +236,8 @@ function enumToString(string $enum): string
 /**
  * Split provided string by comma and return a list of the results.
  * An empty array is returned if provided value is empty
+ *
+ * @return string[]
  */
 function splitByComma(string|null $value): array
 {
