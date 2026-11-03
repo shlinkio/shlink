@@ -17,7 +17,6 @@ use RuntimeException;
 use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\Geolocation\Middleware\GeolocationMiddleware;
 use Shlinkio\Shlink\Geolocation\Exception\LocationResolutionException;
-use Shlinkio\Shlink\Geolocation\GeoLite2\DbUpdaterInterface;
 use Shlinkio\Shlink\Geolocation\Model\Location;
 use Shlinkio\Shlink\Geolocation\Resolver\LocationResolverInterface;
 use Throwable;
@@ -27,14 +26,12 @@ use const Shlinkio\Shlink\Geolocation\IP_ADDRESS_REQUEST_ATTRIBUTE;
 class GeolocationMiddlewareTest extends TestCase
 {
     private MockObject&LocationResolverInterface $ipLocationResolver;
-    private MockObject&DbUpdaterInterface $dbUpdater;
     private MockObject&LoggerInterface $logger;
     private MockObject&RequestHandlerInterface $handler;
 
     protected function setUp(): void
     {
         $this->ipLocationResolver = $this->createMock(LocationResolverInterface::class);
-        $this->dbUpdater = $this->createMock(DbUpdaterInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->handler = $this->createMock(RequestHandlerInterface::class);
     }
@@ -42,7 +39,6 @@ class GeolocationMiddlewareTest extends TestCase
     #[Test]
     public function geolocationIsSkippedIfTrackingIsDisabled(): void
     {
-        $this->dbUpdater->expects($this->never())->method('databaseFileExists');
         $this->ipLocationResolver->expects($this->never())->method('resolveRequestLocation');
         $this->logger->expects($this->never())->method('warning');
 
@@ -53,29 +49,10 @@ class GeolocationMiddlewareTest extends TestCase
     }
 
     #[Test]
-    public function warningIsLoggedIfGeoLiteDbDoesNotExist(): void
-    {
-        $this->ipLocationResolver->expects($this->never())->method('resolveRequestLocation');
-        $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(false);
-        $this->logger
-            ->expects($this->once())
-            ->method('warning')
-            ->with(
-                'Tried to geolocate IP address, but a GeoLite2 db was not found.',
-            );
-
-        $request = ServerRequestFactory::fromGlobals();
-        $this->handler->expects($this->once())->method('handle')->with($request);
-
-        $this->middleware()->process($request, $this->handler);
-    }
-
-    #[Test]
     public function locationIsResolvedFromIpAddress(): void
     {
         $request = ServerRequestFactory::fromGlobals()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, '1.2.3.4');
 
-        $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(true);
         $this->ipLocationResolver
             ->expects($this->once())
             ->method('resolveRequestLocation')
@@ -122,7 +99,6 @@ class GeolocationMiddlewareTest extends TestCase
     ): void {
         $request = ServerRequestFactory::fromGlobals()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, '1.2.3.4');
 
-        $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(true);
         $this->ipLocationResolver
             ->expects($this->once())
             ->method('resolveRequestLocation')
@@ -152,7 +128,6 @@ class GeolocationMiddlewareTest extends TestCase
     {
         return new GeolocationMiddleware(
             $this->ipLocationResolver,
-            $this->dbUpdater,
             $this->logger,
             new TrackingOptions(disableTracking: $disableTracking),
         );

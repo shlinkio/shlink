@@ -253,7 +253,6 @@ return [
         ],
         Geolocation\Middleware\GeolocationMiddleware::class => [
             LocationResolverInterface::class,
-            DbUpdater::class,
             'Logger_Shlink',
             Config\Options\TrackingOptions::class,
         ],

@@ -11,7 +11,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
 use Shlinkio\Shlink\Geolocation\Exception\LocationResolutionException;
-use Shlinkio\Shlink\Geolocation\GeoLite2\DbUpdaterInterface;
 use Shlinkio\Shlink\Geolocation\Model\Location;
 use Shlinkio\Shlink\Geolocation\Resolver\LocationResolverInterface;
 use Throwable;
@@ -20,7 +19,6 @@ readonly class GeolocationMiddleware implements MiddlewareInterface
 {
     public function __construct(
         private LocationResolverInterface $ipLocationResolver,
-        private DbUpdaterInterface $dbUpdater,
         private LoggerInterface $logger,
         private TrackingOptions $trackingOptions,
     ) {}
@@ -28,11 +26,6 @@ readonly class GeolocationMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!$this->trackingOptions->isGeolocationRelevant()) {
-            return $handler->handle($request);
-        }
-
-        if (!$this->dbUpdater->databaseFileExists()) {
-            $this->logger->warning('Tried to geolocate IP address, but a GeoLite2 db was not found.');
             return $handler->handle($request);
         }
 
