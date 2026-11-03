@@ -9,15 +9,12 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
-use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
 use Shlinkio\Shlink\Geolocation\Exception\LocationResolutionException;
 use Shlinkio\Shlink\Geolocation\GeoLite2\DbUpdaterInterface;
 use Shlinkio\Shlink\Geolocation\Model\Location;
 use Shlinkio\Shlink\Geolocation\Resolver\LocationResolverInterface;
 use Throwable;
-
-use function Shlinkio\Shlink\Geolocation\ipAddressFromRequest;
 
 readonly class IpGeolocationMiddleware implements MiddlewareInterface
 {
@@ -45,14 +42,10 @@ readonly class IpGeolocationMiddleware implements MiddlewareInterface
 
     private function geolocateIpAddress(ServerRequestInterface $request): Location
     {
-        $ipAddress = ipAddressFromRequest($request);
-
         try {
-            return $ipAddress === null || $ipAddress === IpAddress::LOCALHOST
-                ? Location::empty()
-                : $this->ipLocationResolver->resolveRequestLocation($request);
+            return $this->ipLocationResolver->resolveRequestLocation($request);
         } catch (LocationResolutionException $e) {
-            $this->logger->warning('Tried to locate IP address, but it seems to be wrong. {e}', ['e' => $e]);
+            $this->logger->warning('Tried to geolocate visitor, but it was not possible. {e}', ['e' => $e]);
             return Location::empty();
         } catch (Throwable $e) {
             $this->logger->error('An unexpected error occurred while trying to locate IP address. {e}', ['e' => $e]);

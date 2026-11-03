@@ -14,7 +14,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
-use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\Geolocation\Middleware\IpGeolocationMiddleware;
 use Shlinkio\Shlink\Geolocation\Exception\LocationResolutionException;
@@ -72,34 +71,6 @@ class IpGeolocationMiddlewareTest extends TestCase
     }
 
     #[Test]
-    #[TestWith([null])]
-    #[TestWith([IpAddress::LOCALHOST])]
-    public function emptyLocationIsReturnedIfIpAddressIsNotLocatable(string|null $ipAddress): void
-    {
-        $this->dbUpdater->expects($this->once())->method('databaseFileExists')->willReturn(true);
-        $this->ipLocationResolver->expects($this->never())->method('resolveRequestLocation');
-        $this->logger->expects($this->never())->method('warning');
-
-        $request = ServerRequestFactory::fromGlobals()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, $ipAddress);
-        $this->handler
-            ->expects($this->once())
-            ->method('handle')
-            ->with($this->callback(
-                static function (ServerRequestInterface $req): bool {
-                    $location = $req->getAttribute(Location::class);
-                    if (!$location instanceof Location) {
-                        return false;
-                    }
-
-                    Assert::assertEmpty($location->countryCode);
-                    return true;
-                },
-            ));
-
-        $this->middleware()->process($request, $this->handler);
-    }
-
-    #[Test]
     public function locationIsResolvedFromIpAddress(): void
     {
         $request = ServerRequestFactory::fromGlobals()->withAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE, '1.2.3.4');
@@ -137,7 +108,7 @@ class IpGeolocationMiddlewareTest extends TestCase
     #[TestWith([
         new LocationResolutionException(),
         'warning',
-        'Tried to locate IP address, but it seems to be wrong. {e}',
+        'Tried to geolocate visitor, but it was not possible. {e}',
     ])]
     #[TestWith([
         new RuntimeException('Unknown'),
