@@ -16,7 +16,7 @@ use Shlinkio\Shlink\Geolocation\Model\Location;
 use Shlinkio\Shlink\Geolocation\Resolver\LocationResolverInterface;
 use Throwable;
 
-readonly class IpGeolocationMiddleware implements MiddlewareInterface
+readonly class GeolocationMiddleware implements MiddlewareInterface
 {
     public function __construct(
         private LocationResolverInterface $ipLocationResolver,

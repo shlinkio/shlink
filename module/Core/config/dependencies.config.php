@@ -113,7 +113,7 @@ return [
             EventDispatcher\PublishingUpdatesGenerator::class => ConfigAbstractFactory::class,
 
             Geolocation\GeolocationDbUpdater::class => ConfigAbstractFactory::class,
-            Geolocation\Middleware\IpGeolocationMiddleware::class => ConfigAbstractFactory::class,
+            Geolocation\Middleware\GeolocationMiddleware::class => ConfigAbstractFactory::class,
 
             Importer\ImportedLinksProcessor::class => ConfigAbstractFactory::class,
 
@@ -251,7 +251,7 @@ return [
             Config\Options\TrackingOptions::class,
             'em',
         ],
-        Geolocation\Middleware\IpGeolocationMiddleware::class => [
+        Geolocation\Middleware\GeolocationMiddleware::class => [
             LocationResolverInterface::class,
             DbUpdater::class,
             'Logger_Shlink',

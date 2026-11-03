@@ -15,7 +15,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
-use Shlinkio\Shlink\Core\Geolocation\Middleware\IpGeolocationMiddleware;
+use Shlinkio\Shlink\Core\Geolocation\Middleware\GeolocationMiddleware;
 use Shlinkio\Shlink\Geolocation\Exception\LocationResolutionException;
 use Shlinkio\Shlink\Geolocation\GeoLite2\DbUpdaterInterface;
 use Shlinkio\Shlink\Geolocation\Model\Location;
@@ -24,7 +24,7 @@ use Throwable;
 
 use const Shlinkio\Shlink\Geolocation\IP_ADDRESS_REQUEST_ATTRIBUTE;
 
-class IpGeolocationMiddlewareTest extends TestCase
+class GeolocationMiddlewareTest extends TestCase
 {
     private MockObject&LocationResolverInterface $ipLocationResolver;
     private MockObject&DbUpdaterInterface $dbUpdater;
@@ -148,9 +148,9 @@ class IpGeolocationMiddlewareTest extends TestCase
         $this->middleware()->process($request, $this->handler);
     }
 
-    private function middleware(bool $disableTracking = false): IpGeolocationMiddleware
+    private function middleware(bool $disableTracking = false): GeolocationMiddleware
     {
-        return new IpGeolocationMiddleware(
+        return new GeolocationMiddleware(
             $this->ipLocationResolver,
             $this->dbUpdater,
             $this->logger,
