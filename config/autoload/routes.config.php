@@ -8,7 +8,7 @@ use Fig\Http\Message\RequestMethodInterface;
 use RKA\Middleware\IpAddress;
 use Shlinkio\Shlink\Core\Action as CoreAction;
 use Shlinkio\Shlink\Core\Config\EnvVars;
-use Shlinkio\Shlink\Core\Geolocation\Middleware\IpGeolocationMiddleware;
+use Shlinkio\Shlink\Core\Geolocation\Middleware\GeolocationMiddleware;
 use Shlinkio\Shlink\Core\ShortUrl\Middleware\TrimTrailingSlashMiddleware;
 use Shlinkio\Shlink\Rest\Action;
 use Shlinkio\Shlink\Rest\ConfigProvider;
@@ -90,7 +90,7 @@ return (static function (): array {
                 'path' => '/{shortCode}/track',
                 'middleware' => [
                     IpAddress::class,
-                    IpGeolocationMiddleware::class,
+                    GeolocationMiddleware::class,
                     CoreAction\PixelAction::class,
                 ],
                 'allowed_methods' => [RequestMethodInterface::METHOD_GET],
@@ -100,7 +100,7 @@ return (static function (): array {
                 'path' => sprintf('/{shortCode}%s', $shortUrlRouteSuffix),
                 'middleware' => [
                     IpAddress::class,
-                    IpGeolocationMiddleware::class,
+                    GeolocationMiddleware::class,
                     TrimTrailingSlashMiddleware::class,
                     CoreAction\RedirectAction::class,
                 ],

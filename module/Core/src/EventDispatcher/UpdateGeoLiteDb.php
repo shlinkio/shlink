@@ -14,7 +14,6 @@ use Throwable;
 
 use function sprintf;
 
-/** @todo Rename to UpdateGeolocationDb */
 readonly class UpdateGeoLiteDb
 {
     public function __construct(

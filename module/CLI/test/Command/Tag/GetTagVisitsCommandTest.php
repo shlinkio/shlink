@@ -16,7 +16,7 @@ use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 use Shlinkio\Shlink\Core\Visit\VisitsStatsHelperInterface;
-use Shlinkio\Shlink\IpGeolocation\Model\Location;
+use Shlinkio\Shlink\Geolocation\Model\Location;
 use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Tester\CommandTester;
 

@@ -15,7 +15,7 @@ use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlMode;
-use Shlinkio\Shlink\IpGeolocation\Model\Location;
+use Shlinkio\Shlink\Geolocation\Model\Location;
 
 use function array_keys;
 use function array_map;
@@ -37,8 +37,6 @@ use function str_repeat;
 use function str_replace;
 use function strtolower;
 use function trim;
-
-use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
 
 function generateRandomShortCode(int $length, ShortUrlMode $mode = ShortUrlMode::STRICT): string
 {
@@ -238,6 +236,8 @@ function enumToString(string $enum): string
 /**
  * Split provided string by comma and return a list of the results.
  * An empty array is returned if provided value is empty
+ *
+ * @return string[]
  */
 function splitByComma(string|null $value): array
 {
@@ -246,11 +246,6 @@ function splitByComma(string|null $value): array
     }
 
     return array_map(trim(...), explode(',', $value));
-}
-
-function ipAddressFromRequest(ServerRequestInterface $request): string|null
-{
-    return $request->getAttribute(IP_ADDRESS_REQUEST_ATTRIBUTE);
 }
 
 function geolocationFromRequest(ServerRequestInterface $request): Location|null

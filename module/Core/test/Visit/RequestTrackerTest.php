@@ -19,7 +19,7 @@ use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\RequestTracker;
 use Shlinkio\Shlink\Core\Visit\VisitsTrackerInterface;
 
-use const Shlinkio\Shlink\IP_ADDRESS_REQUEST_ATTRIBUTE;
+use const Shlinkio\Shlink\Geolocation\IP_ADDRESS_REQUEST_ATTRIBUTE;
 
 class RequestTrackerTest extends TestCase
 {

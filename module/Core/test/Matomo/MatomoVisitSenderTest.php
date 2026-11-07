@@ -22,7 +22,7 @@ use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitIterationRepositoryInterface;
-use Shlinkio\Shlink\IpGeolocation\Model\Location;
+use Shlinkio\Shlink\Geolocation\Model\Location;
 
 use function array_values;
 
@@ -109,16 +109,16 @@ class MatomoVisitSenderTest extends TestCase
                     countryName: 'countryName',
                     regionName: 'regionName',
                     city: 'city',
-                    latitude: 123,
-                    longitude: 456,
+                    latitude: 80.0,
+                    longitude: 120.0,
                     timeZone: 'timeZone',
                 ))),
             '1.2.3.4',
             [
                 'setCity' => ['city'],
                 'setCountry' => ['us'],
-                'setLatitude' => [123],
-                'setLongitude' => [456],
+                'setLatitude' => [80.0],
+                'setLongitude' => [120.0],
                 'setIp' => ['1.2.3.4'],
             ],
         ];

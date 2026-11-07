@@ -6,8 +6,8 @@ namespace Shlinkio\Shlink\Core\Visit\Entity;
 
 use JsonSerializable;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
+use Shlinkio\Shlink\Geolocation\Model\Location;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisitLocation;
-use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 class VisitLocation extends AbstractEntity implements JsonSerializable
 {

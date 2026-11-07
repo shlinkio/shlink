@@ -20,8 +20,8 @@ use Shlinkio\Shlink\Core\Visit\Geolocation\VisitGeolocationHelperInterface;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitLocatorInterface;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitToLocationHelperInterface;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
-use Shlinkio\Shlink\IpGeolocation\Exception\WrongIpException;
-use Shlinkio\Shlink\IpGeolocation\Model\Location;
+use Shlinkio\Shlink\Geolocation\Exception\LocationResolutionException;
+use Shlinkio\Shlink\Geolocation\Model\Location;
 use ShlinkioTest\Shlink\CLI\Util\CliTestUtils;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\RuntimeException;
@@ -157,7 +157,7 @@ class LocateVisitsCommandTest extends TestCase
             ->expects($this->once())
             ->method('resolveVisitLocation')
             ->willThrowException(
-                IpCannotBeLocatedException::forError(WrongIpException::fromIpAddress('1.2.3.4')),
+                IpCannotBeLocatedException::forError(LocationResolutionException::fromIpAddress('1.2.3.4')),
             );
         $this->downloadDbCommand->method('run')->willReturn(Command::SUCCESS);
 

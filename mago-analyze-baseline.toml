@@ -43,6 +43,12 @@ message = "Casting `mixed` to `bool`."
 count = 1
 
 [[issues]]
+file = "config/autoload/geolocation.global.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
 file = "config/autoload/ip-address.global.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\splitByComma`: expected `null|string`, but found `mixed`.'
@@ -638,12 +644,6 @@ count = 1
 
 [[issues]]
 file = "module/Core/functions/functions.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `Shlinkio\Shlink\Core\ipAddressFromRequest`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "module/Core/functions/functions.php"
 code = "possibly-invalid-argument"
 message = "Possible argument type mismatch for argument #1 of `mb_strtolower`: expected `string`, but possibly received `array<array-key, string>|null|string`."
 count = 1
@@ -1075,12 +1075,6 @@ message = 'Invalid argument type for argument #3 of `Shlinkio\Shlink\Core\Config
 count = 1
 
 [[issues]]
-file = "module/Core/src/Config/Options/CorsOptions.php"
-code = "mixed-property-type-coercion"
-message = "A value with a less specific type `array<array-key, mixed>|string('*')|string('<origin>')` is being assigned to property `$allowOrigins` (array<array-key, string>|string('*')|string('<origin>'))."
-count = 1
-
-[[issues]]
 file = "module/Core/src/Config/Options/DeleteShortUrlsOptions.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
@@ -1136,12 +1130,6 @@ count = 1
 
 [[issues]]
 file = "module/Core/src/Config/Options/RobotsOptions.php"
-code = "less-specific-nested-argument-type"
-message = 'Argument type mismatch for argument #2 of `Shlinkio\Shlink\Core\Config\Options\RobotsOptions::__construct`: expected `array<array-key, string>`, but provided type `array<array-key, mixed>` is less specific.'
-count = 1
-
-[[issues]]
-file = "module/Core/src/Config/Options/RobotsOptions.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #1 of `Shlinkio\Shlink\Core\splitByComma`: expected `null|string`, but found `mixed`.'
 count = 1
@@ -1150,12 +1138,6 @@ count = 1
 file = "module/Core/src/Config/Options/RobotsOptions.php"
 code = "mixed-operand"
 message = "Casting `mixed` to `bool`."
-count = 1
-
-[[issues]]
-file = "module/Core/src/Config/Options/TrackingOptions.php"
-code = "less-specific-nested-argument-type"
-message = 'Argument type mismatch for argument #8 of `Shlinkio\Shlink\Core\Config\Options\TrackingOptions::__construct`: expected `array<array-key, string>`, but provided type `array<array-key, mixed>` is less specific.'
 count = 1
 
 [[issues]]
@@ -2185,10 +2167,10 @@ message = 'A value of a less specific type `PHPUnit\Framework\MockObject\MockObj
 count = 1
 
 [[issues]]
-file = "module/Core/test/Geolocation/Middleware/IpGeolocationMiddlewareTest.php"
+file = "module/Core/test/Geolocation/Middleware/GeolocationMiddlewareTest.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 3
+count = 2
 
 [[issues]]
 file = "module/Core/test/Importer/ImportedLinksProcessorTest.php"

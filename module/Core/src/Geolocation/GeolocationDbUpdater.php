@@ -8,9 +8,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\Core\Geolocation\Entity\GeolocationDbUpdate;
-use Shlinkio\Shlink\IpGeolocation\Exception\DbUpdateException;
-use Shlinkio\Shlink\IpGeolocation\Exception\MissingLicenseException;
-use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdaterInterface;
+use Shlinkio\Shlink\Geolocation\Exception\DbUpdateException;
+use Shlinkio\Shlink\Geolocation\Exception\MissingLicenseException;
+use Shlinkio\Shlink\Geolocation\GeoLite2\DbUpdaterInterface;
 use Symfony\Component\Lock\LockFactory;
 use Throwable;
 

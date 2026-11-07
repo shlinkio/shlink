@@ -12,9 +12,9 @@ use Shlinkio\Shlink\Common\Doctrine\EntityRepositoryFactory;
 use Shlinkio\Shlink\Core\Config\Options\NotFoundRedirectOptions;
 use Shlinkio\Shlink\Core\Geolocation\GeolocationDbUpdater;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
+use Shlinkio\Shlink\Geolocation\GeoLite2\DbUpdater;
+use Shlinkio\Shlink\Geolocation\Resolver\LocationResolverInterface;
 use Shlinkio\Shlink\Importer\ImportedLinksProcessorInterface;
-use Shlinkio\Shlink\IpGeolocation\GeoLite2\DbUpdater;
-use Shlinkio\Shlink\IpGeolocation\Resolver\IpLocationResolverInterface;
 use Symfony\Component\Lock;
 
 use const Shlinkio\Shlink\LOCAL_LOCK_FACTORY;
@@ -113,7 +113,7 @@ return [
             EventDispatcher\PublishingUpdatesGenerator::class => ConfigAbstractFactory::class,
 
             Geolocation\GeolocationDbUpdater::class => ConfigAbstractFactory::class,
-            Geolocation\Middleware\IpGeolocationMiddleware::class => ConfigAbstractFactory::class,
+            Geolocation\Middleware\GeolocationMiddleware::class => ConfigAbstractFactory::class,
 
             Importer\ImportedLinksProcessor::class => ConfigAbstractFactory::class,
 
@@ -171,7 +171,7 @@ return [
             Config\Options\UrlShortenerOptions::class,
         ],
         Visit\Geolocation\VisitLocator::class => ['em', Visit\Repository\VisitIterationRepository::class],
-        Visit\Geolocation\VisitToLocationHelper::class => [IpLocationResolverInterface::class],
+        Visit\Geolocation\VisitToLocationHelper::class => [LocationResolverInterface::class],
         Visit\VisitsStatsHelper::class => ['em', Config\Options\UrlShortenerOptions::class],
         Tag\TagService::class => ['em', Tag\Repository\TagRepository::class],
         ShortUrl\DeleteShortUrlService::class => [
@@ -251,9 +251,8 @@ return [
             Config\Options\TrackingOptions::class,
             'em',
         ],
-        Geolocation\Middleware\IpGeolocationMiddleware::class => [
-            IpLocationResolverInterface::class,
-            DbUpdater::class,
+        Geolocation\Middleware\GeolocationMiddleware::class => [
+            LocationResolverInterface::class,
             'Logger_Shlink',
             Config\Options\TrackingOptions::class,
         ],

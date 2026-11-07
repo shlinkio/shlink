@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Core\Matomo\MatomoOptions;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitLocator;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitToLocationHelper;
 use Shlinkio\Shlink\EventDispatcher\Listener\EnabledListenerCheckerInterface;
-use Shlinkio\Shlink\IpGeolocation\GeoLite2\GeoLite2Options;
+use Shlinkio\Shlink\Geolocation\GeoLite2\GeoLite2Options;
 
 use function Shlinkio\Shlink\Config\runningInRoadRunner;
 

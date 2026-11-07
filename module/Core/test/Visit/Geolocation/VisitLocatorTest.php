@@ -18,7 +18,7 @@ use Shlinkio\Shlink\Core\Visit\Geolocation\VisitGeolocationHelperInterface;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitLocator;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitIterationRepositoryInterface;
-use Shlinkio\Shlink\IpGeolocation\Model\Location;
+use Shlinkio\Shlink\Geolocation\Model\Location;
 
 use function array_map;
 use function count;

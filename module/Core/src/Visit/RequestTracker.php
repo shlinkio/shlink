@@ -15,7 +15,7 @@ use Shlinkio\Shlink\Core\Util\IpAddressUtils;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 
-use function Shlinkio\Shlink\Core\ipAddressFromRequest;
+use function Shlinkio\Shlink\Geolocation\ipAddressFromRequest;
 
 readonly class RequestTracker implements RequestTrackerInterface, RequestMethodInterface
 {

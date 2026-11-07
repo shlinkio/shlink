@@ -8,8 +8,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
+use Shlinkio\Shlink\Geolocation\Model\Location;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisitLocation;
-use Shlinkio\Shlink\IpGeolocation\Model\Location;
 
 class VisitLocationTest extends TestCase
 {

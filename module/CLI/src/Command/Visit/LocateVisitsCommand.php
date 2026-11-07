@@ -14,7 +14,7 @@ use Shlinkio\Shlink\Core\Visit\Geolocation\VisitGeolocationHelperInterface;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitLocatorInterface;
 use Shlinkio\Shlink\Core\Visit\Geolocation\VisitToLocationHelperInterface;
 use Shlinkio\Shlink\Core\Visit\Model\UnlocatableIpType;
-use Shlinkio\Shlink\IpGeolocation\Model\Location;
+use Shlinkio\Shlink\Geolocation\Model\Location;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
