@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Rest\Action;
 use Cake\Chronos\Chronos;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
@@ -22,6 +23,7 @@ class MercureInfoActionTest extends TestCase
 {
     private MockObject&JwtProviderInterface $provider;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->provider = $this->createMock(JwtProviderInterface::class);

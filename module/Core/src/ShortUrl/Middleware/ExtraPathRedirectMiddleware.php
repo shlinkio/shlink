@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\ShortUrl\Middleware;
 
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -38,6 +39,7 @@ readonly class ExtraPathRedirectMiddleware implements MiddlewareInterface
         private UrlShortenerOptions $urlShortenerOptions,
     ) {}
 
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         /** @var NotFoundType|null $notFoundType */

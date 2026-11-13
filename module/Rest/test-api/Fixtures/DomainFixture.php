@@ -6,11 +6,13 @@ namespace ShlinkioApiTest\Shlink\Rest\Fixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
+use Override;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 
 class DomainFixture extends AbstractFixture
 {
+    #[Override]
     public function load(ObjectManager $manager): void
     {
         $domain = Domain::withAuthority('example.com');

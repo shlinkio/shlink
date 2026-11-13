@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Middleware\Mercure;
 
 use Mezzio\ProblemDetails\ProblemDetailsResponseFactory;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -16,6 +17,7 @@ class NotConfiguredMercureErrorHandler implements MiddlewareInterface
 {
     public function __construct(private ProblemDetailsResponseFactory $respFactory, private LoggerInterface $logger) {}
 
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         try {

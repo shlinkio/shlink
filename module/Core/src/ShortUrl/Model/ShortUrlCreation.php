@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Model;
 
 use Cake\Chronos\Chronos;
 use DateTimeInterface;
+use Override;
 use Shlinkio\Shlink\Common\ObjectMapper\HostAndPortConverter;
 use Shlinkio\Shlink\Common\ObjectMapper\LooseUriConverter;
 use Shlinkio\Shlink\Common\ObjectMapper\MappingError;
@@ -85,6 +86,7 @@ final readonly class ShortUrlCreation implements TitleResolutionModelInterface
         return $value;
     }
 
+    #[Override]
     public function withResolvedTitle(string $title): static
     {
         // TODO Use clone with once PHP 8.4 is no longer supported
@@ -139,6 +141,7 @@ final readonly class ShortUrlCreation implements TitleResolutionModelInterface
         return $this->domain !== null;
     }
 
+    #[Override]
     public function hasTitle(): bool
     {
         return $this->title !== null;

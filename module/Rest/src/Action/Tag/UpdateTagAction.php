@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Action\Tag;
 
 use Laminas\Diactoros\Response\EmptyResponse;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Model\Renaming;
@@ -19,6 +20,7 @@ class UpdateTagAction extends AbstractRestAction
 
     public function __construct(private readonly TagServiceInterface $tagService) {}
 
+    #[Override]
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         /** @var array $body */

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Util;
 
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -18,6 +19,7 @@ class PhpProcessRunnerTest extends TestCase
     private MockObject&ProcessRunnerInterface $wrapped;
     private MockObject&PhpExecutableFinder $executableFinder;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->wrapped = $this->createMock(ProcessRunnerInterface::class);

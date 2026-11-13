@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Visit;
 
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -19,6 +20,7 @@ class DeleteOrphanVisitsCommandTest extends TestCase
     private CommandTester $commandTester;
     private MockObject&VisitsDeleterInterface $deleter;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->deleter = $this->createMock(VisitsDeleterInterface::class);

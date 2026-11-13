@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Visit\Entity;
 
 use Cake\Chronos\Chronos;
 use JsonSerializable;
+use Override;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Common\Util\IpAddress;
@@ -143,6 +144,7 @@ class Visit extends AbstractEntity implements JsonSerializable
         return $this->type;
     }
 
+    #[Override]
     public function jsonSerialize(): array
     {
         $base = [

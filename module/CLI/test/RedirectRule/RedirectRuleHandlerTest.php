@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\RedirectRule;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Override;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -35,6 +36,7 @@ class RedirectRuleHandlerTest extends TestCase
     /** @var ShortUrlRedirectRule[] */
     private array $rules;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->io = $this->createMock(StyleInterface::class);

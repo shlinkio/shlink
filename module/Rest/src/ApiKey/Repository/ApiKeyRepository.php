@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Rest\ApiKey\Repository;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
+use Override;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
@@ -16,6 +17,7 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRepositoryInterface
 {
     /** @inheritDoc */
+    #[Override]
     public function createInitialApiKey(string $apiKey): ApiKey|null
     {
         $em = $this->getEntityManager();
@@ -42,6 +44,7 @@ class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRe
     }
 
     /** @inheritDoc */
+    #[Override]
     public function nameExists(string $name): bool
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
@@ -60,6 +63,7 @@ class ApiKeyRepository extends EntitySpecificationRepository implements ApiKeyRe
     }
 
     /** @inheritDoc */
+    #[Override]
     public function deleteByName(string $name): int
     {
         $qb = $this->getEntityManager()->createQueryBuilder();

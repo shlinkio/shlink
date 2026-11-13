@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\Action;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -30,6 +31,7 @@ class RedirectActionTest extends TestCase
     private MockObject&RequestTrackerInterface $requestTracker;
     private MockObject&RedirectResponseHelperInterface $redirectRespHelper;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->urlResolver = $this->createMock(ShortUrlResolverInterface::class);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
 use Laminas\Diactoros\Response\JsonResponse;
+use Override;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
@@ -23,6 +24,7 @@ class ResolveShortUrlAction extends AbstractRestAction
         private readonly ShortUrlDataTransformerInterface $transformer,
     ) {}
 
+    #[Override]
     public function handle(Request $request): Response
     {
         $url = $this->urlResolver->resolveShortUrl(

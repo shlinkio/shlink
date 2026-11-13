@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Middleware\ShortUrl;
 
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -18,6 +19,7 @@ readonly class ShortUrlOptionsPayloadMiddleware implements MiddlewareInterface
 {
     public function __construct(private UrlShortenerOptions $urlShortenerOptions) {}
 
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         /** @var array $body */

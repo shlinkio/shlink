@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Visit;
 
 use Doctrine\ORM;
+use Override;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\UrlVisited;
@@ -20,6 +21,7 @@ readonly class VisitsTracker implements VisitsTrackerInterface
         private TrackingOptions $options,
     ) {}
 
+    #[Override]
     public function track(ShortUrl $shortUrl, Visitor $visitor): Visit|null
     {
         return $this->trackVisit(
@@ -28,6 +30,7 @@ readonly class VisitsTracker implements VisitsTrackerInterface
         );
     }
 
+    #[Override]
     public function trackInvalidShortUrlVisit(Visitor $visitor): Visit|null
     {
         return $this->trackOrphanVisit(
@@ -36,6 +39,7 @@ readonly class VisitsTracker implements VisitsTrackerInterface
         );
     }
 
+    #[Override]
     public function trackBaseUrlVisit(Visitor $visitor): Visit|null
     {
         return $this->trackOrphanVisit(
@@ -44,6 +48,7 @@ readonly class VisitsTracker implements VisitsTrackerInterface
         );
     }
 
+    #[Override]
     public function trackRegularNotFoundVisit(Visitor $visitor): Visit|null
     {
         return $this->trackOrphanVisit(

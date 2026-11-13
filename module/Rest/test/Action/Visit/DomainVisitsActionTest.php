@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\Visit;
 
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -23,6 +24,7 @@ class DomainVisitsActionTest extends TestCase
     private DomainVisitsAction $action;
     private MockObject&VisitsStatsHelperInterface $visitsHelper;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->visitsHelper = $this->createMock(VisitsStatsHelperInterface::class);

@@ -8,6 +8,7 @@ use CuyZ\Valinor\Cache\FileSystemCache;
 use CuyZ\Valinor\Cache\FileWatchingCache;
 use CuyZ\Valinor\Library\Settings;
 use CuyZ\Valinor\MapperBuilder;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\Stub;
@@ -24,12 +25,14 @@ class MapperBuilderWithCacheDelegatorFactoryTest extends TestCase
     private ContainerInterface&Stub $container;
     private MapperBuilder $baseBuilder;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->container = $this->createStub(ContainerInterface::class);
         $this->baseBuilder = new MapperBuilder();
     }
 
+    #[Override]
     protected function tearDown(): void
     {
         putenv(EnvVars::APP_ENV->value);

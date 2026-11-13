@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\EventDispatcher;
 
+use Override;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\GeoLiteDbCreated;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
@@ -28,10 +29,12 @@ readonly class LocateUnlocatedVisits implements VisitGeolocationHelperInterface
     /**
      * @throws IpCannotBeLocatedException
      */
+    #[Override]
     public function geolocateVisit(Visit $visit): Location
     {
         return $this->visitToLocation->resolveVisitLocation($visit);
     }
 
+    #[Override]
     public function onVisitLocated(VisitLocation $visitLocation, Visit $visit): void {}
 }

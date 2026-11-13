@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioDbTest\Shlink\Core\Visit\Repository;
 
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
@@ -23,6 +24,7 @@ class VisitDeleterRepositoryTest extends DatabaseTestCase
     private ShortUrlVisitsCountRepository $visitsCountRepo;
     private OrphanVisitsCountRepository $orphanVisitsCountRepo;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->repo = $this->createRepository(Visit::class, VisitDeleterRepository::class);

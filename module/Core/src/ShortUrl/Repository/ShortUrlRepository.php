@@ -13,6 +13,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Happyr\DoctrineSpecification\Specification\Specification;
+use Override;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
@@ -27,6 +28,7 @@ use function strtolower;
 /** @extends EntitySpecificationRepository<ShortUrl> */
 class ShortUrlRepository extends EntitySpecificationRepository implements ShortUrlRepositoryInterface
 {
+    #[Override]
     public function findOneWithDomainFallback(ShortUrlIdentifier $identifier, ShortUrlMode $shortUrlMode): ShortUrl|null
     {
         // When ordering DESC, Postgres puts nulls at the beginning while the rest of supported DB engines put them at
@@ -82,6 +84,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         }
     }
 
+    #[Override]
     public function findOne(ShortUrlIdentifier $identifier, Specification|null $spec = null): ShortUrl|null
     {
         $qb = $this->createFindOneQueryBuilder($identifier, $spec);
@@ -90,11 +93,13 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         return $qb->getQuery()->getOneOrNullResult();
     }
 
+    #[Override]
     public function shortCodeIsInUse(ShortUrlIdentifier $identifier, Specification|null $spec = null): bool
     {
         return $this->doShortCodeIsInUse($identifier, $spec, null);
     }
 
+    #[Override]
     public function shortCodeIsInUseWithLock(ShortUrlIdentifier $identifier, Specification|null $spec = null): bool
     {
         return $this->doShortCodeIsInUse($identifier, $spec, LockMode::PESSIMISTIC_WRITE);
@@ -135,6 +140,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         return $qb;
     }
 
+    #[Override]
     public function findOneMatching(ShortUrlCreation $creation): ShortUrl|null
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
@@ -207,6 +213,7 @@ class ShortUrlRepository extends EntitySpecificationRepository implements ShortU
         }
     }
 
+    #[Override]
     public function findOneByImportedUrl(ImportedShlinkUrl $url): ShortUrl|null
     {
         $qb = $this->createQueryBuilder('s');

@@ -8,11 +8,13 @@ use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
+use Override;
 
 final class Version20241124112257 extends AbstractMigration
 {
     private const string COLUMN_NAME = 'redirect_url';
 
+    #[Override]
     public function up(Schema $schema): void
     {
         $visits = $schema->getTable('visits');
@@ -25,6 +27,7 @@ final class Version20241124112257 extends AbstractMigration
         ]);
     }
 
+    #[Override]
     public function down(Schema $schema): void
     {
         $visits = $schema->getTable('visits');
@@ -32,6 +35,7 @@ final class Version20241124112257 extends AbstractMigration
         $visits->dropColumn(self::COLUMN_NAME);
     }
 
+    #[Override]
     public function isTransactional(): bool
     {
         return !$this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform;

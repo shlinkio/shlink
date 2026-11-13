@@ -7,6 +7,7 @@ namespace ShlinkMigrations;
 use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Override;
 
 use function hash;
 
@@ -15,6 +16,7 @@ use function hash;
  */
 final class Version20241105215309 extends AbstractMigration
 {
+    #[Override]
     public function up(Schema $schema): void
     {
         $keyColumnName = $this->connection->quoteIdentifier('key');
@@ -38,6 +40,7 @@ final class Version20241105215309 extends AbstractMigration
         }
     }
 
+    #[Override]
     public function isTransactional(): bool
     {
         return !$this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform;

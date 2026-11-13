@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\EventDispatcher\Helper;
 
+use Override;
 use Shlinkio\Shlink\Common\Mercure\MercureOptions;
 use Shlinkio\Shlink\Core\Config\Options\RabbitMqOptions;
 use Shlinkio\Shlink\Core\EventDispatcher;
@@ -21,6 +22,7 @@ readonly class EnabledListenerChecker implements EnabledListenerCheckerInterface
         private MatomoOptions $matomoOptions,
     ) {}
 
+    #[Override]
     public function shouldRegisterListener(string $event, string $listener, bool $isAsync): bool
     {
         if (!$isAsync) {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Tag\Paginator\Adapter;
 
 use Happyr\DoctrineSpecification\Spec;
+use Override;
 use Pagerfanta\Adapter\AdapterInterface;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Model\TagsParams;
@@ -24,6 +25,7 @@ abstract class AbstractTagsPaginatorAdapter implements AdapterInterface
         protected ApiKey|null $apiKey,
     ) {}
 
+    #[Override]
     public function getNbResults(): int
     {
         $conditions = [

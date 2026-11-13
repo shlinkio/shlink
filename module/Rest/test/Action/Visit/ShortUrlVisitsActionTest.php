@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\Visit;
 
 use Cake\Chronos\Chronos;
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -24,6 +25,7 @@ class ShortUrlVisitsActionTest extends TestCase
     private ShortUrlVisitsAction $action;
     private MockObject&VisitsStatsHelperInterface $visitsHelper;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->visitsHelper = $this->createMock(VisitsStatsHelperInterface::class);

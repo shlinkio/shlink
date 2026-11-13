@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Visit;
 
+use Override;
 use Shlinkio\Shlink\Core\Model\BulkDeleteResult;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitDeleterRepositoryInterface;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
@@ -13,6 +14,7 @@ readonly class VisitsDeleter implements VisitsDeleterInterface
 {
     public function __construct(private VisitDeleterRepositoryInterface $repository) {}
 
+    #[Override]
     public function deleteOrphanVisits(ApiKey|null $apiKey = null): BulkDeleteResult
     {
         $affectedItems = $apiKey?->hasRole(Role::NO_ORPHAN_VISITS) ? 0 : $this->repository->deleteOrphanVisits();

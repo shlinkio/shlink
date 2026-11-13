@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\Domain;
 
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -23,6 +24,7 @@ class ListDomainsActionTest extends TestCase
     private MockObject&DomainServiceInterface $domainService;
     private NotFoundRedirectOptions $options;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->domainService = $this->createMock(DomainServiceInterface::class);

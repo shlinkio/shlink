@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Visit;
 
+use Override;
 use Shlinkio\Shlink\CLI\Command\Util\CommandUtils;
 use Shlinkio\Shlink\CLI\Command\Util\LockConfig;
 use Shlinkio\Shlink\Common\Util\IpAddress;
@@ -121,6 +122,7 @@ class LocateVisitsCommand extends Command implements VisitGeolocationHelperInter
     /**
      * @throws IpCannotBeLocatedException
      */
+    #[Override]
     public function geolocateVisit(Visit $visit): Location
     {
         $ipAddr = $visit->remoteAddr ?? '?';
@@ -143,6 +145,7 @@ class LocateVisitsCommand extends Command implements VisitGeolocationHelperInter
         }
     }
 
+    #[Override]
     public function onVisitLocated(VisitLocation $visitLocation, Visit $visit): void
     {
         if (!$visitLocation->isEmpty) {

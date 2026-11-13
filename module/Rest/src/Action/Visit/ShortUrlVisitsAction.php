@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\Visit;
 
+use Override;
 use Pagerfanta\Pagerfanta;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
@@ -14,6 +15,7 @@ class ShortUrlVisitsAction extends AbstractListVisitsAction
 {
     protected const string ROUTE_PATH = '/short-urls/{shortCode}/visits';
 
+    #[Override]
     protected function getVisitsPaginator(Request $request, ApiKey $apiKey): Pagerfanta
     {
         $params = VisitsParams::fromRawData($request->getQueryParams());

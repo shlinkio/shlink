@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Tag\Paginator\Adapter;
 
 use Happyr\DoctrineSpecification\Spec;
+use Override;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 use Shlinkio\Shlink\Rest\ApiKey\Spec\WithApiKeySpecsEnsuringJoin;
 
 /** @extends AbstractTagsPaginatorAdapter<Tag> */
 class TagsPaginatorAdapter extends AbstractTagsPaginatorAdapter
 {
+    #[Override]
     public function getSlice(int $offset, int $length): iterable
     {
         $conditions = [

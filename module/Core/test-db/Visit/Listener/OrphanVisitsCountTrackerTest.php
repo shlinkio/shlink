@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioDbTest\Shlink\Core\Visit\Listener;
 
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Core\Visit\Entity\OrphanVisitsCount;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
@@ -18,6 +19,7 @@ class OrphanVisitsCountTrackerTest extends DatabaseTestCase
 {
     private OrphanVisitsCountRepository $repo;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(OrphanVisitsCount::class);

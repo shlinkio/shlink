@@ -8,6 +8,7 @@ use Doctrine\DBAL\Query\QueryBuilder as NativeQueryBuilder;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
 use Happyr\DoctrineSpecification\Spec;
+use Override;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 use Shlinkio\Shlink\Core\Tag\Model\OrderableField;
 use Shlinkio\Shlink\Core\Tag\Model\TagInfo;
@@ -26,6 +27,7 @@ use const PHP_INT_MAX;
 /** @extends EntitySpecificationRepository<Tag> */
 class TagRepository extends EntitySpecificationRepository implements TagRepositoryInterface
 {
+    #[Override]
     public function deleteByName(array $names): int
     {
         if (empty($names)) {
@@ -42,6 +44,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
     /**
      * @return TagInfo[]
      */
+    #[Override]
     public function findTagsWithInfo(TagsListFiltering|null $filtering = null): array
     {
         $orderField = OrderableField::toValidField($filtering?->orderBy?->field);
@@ -139,6 +142,7 @@ class TagRepository extends EntitySpecificationRepository implements TagReposito
         );
     }
 
+    #[Override]
     public function tagExists(string $tag, ApiKey|null $apiKey = null): bool
     {
         $result = (int) $this->matchSingleScalarResult(Spec::andX(

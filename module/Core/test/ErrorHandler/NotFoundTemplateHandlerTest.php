@@ -9,6 +9,7 @@ use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Uri;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -24,6 +25,7 @@ class NotFoundTemplateHandlerTest extends TestCase
     private NotFoundTemplateHandler $handler;
     private bool $readFileCalled;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->readFileCalled = false;

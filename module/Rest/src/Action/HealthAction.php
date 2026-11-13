@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Rest\Action;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Laminas\Diactoros\Response\JsonResponse;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Config\Options\AppOptions;
@@ -27,6 +28,7 @@ class HealthAction extends AbstractRestAction
      *
      * May call other collaborating code to generate the response.
      */
+    #[Override]
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         try {

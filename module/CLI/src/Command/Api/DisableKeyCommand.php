@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Api;
 
+use Override;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 use Shlinkio\Shlink\Rest\Service\ApiKeyServiceInterface;
@@ -42,6 +43,7 @@ class DisableKeyCommand extends Command
         parent::__construct();
     }
 
+    #[Override]
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
         $name = $input->getArgument('name');

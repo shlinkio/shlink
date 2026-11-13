@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\RedirectRule;
 
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -25,6 +26,7 @@ class ManageRedirectRulesCommandTest extends TestCase
     private RedirectRuleHandlerInterface&MockObject $ruleHandler;
     private CommandTester $commandTester;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->shortUrlResolver = $this->createMock(ShortUrlResolverInterface::class);

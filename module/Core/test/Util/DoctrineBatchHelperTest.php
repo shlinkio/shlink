@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Util;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -17,6 +18,7 @@ class DoctrineBatchHelperTest extends TestCase
     private DoctrineBatchHelper $helper;
     private MockObject&EntityManagerInterface $em;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManagerInterface::class);

@@ -9,6 +9,7 @@ use Doctrine\DBAL\Result;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
+use Override;
 
 use function hash;
 use function hex2bin;
@@ -18,6 +19,7 @@ use function hex2bin;
  */
 final class Version20260607082210 extends AbstractMigration
 {
+    #[Override]
     public function up(Schema $schema): void
     {
         $isMicrosoftSQL = $this->connection->getDatabasePlatform() instanceof SQLServerPlatform;
@@ -82,6 +84,7 @@ final class Version20260607082210 extends AbstractMigration
         return $qb->executeQuery();
     }
 
+    #[Override]
     public function isTransactional(): bool
     {
         // This migration should not be transactional, as it handles internal batched transactions

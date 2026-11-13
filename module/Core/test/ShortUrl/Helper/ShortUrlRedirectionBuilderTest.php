@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl\Helper;
 
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Uri;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
@@ -23,6 +24,7 @@ class ShortUrlRedirectionBuilderTest extends TestCase
     private ShortUrlRedirectionBuilder $redirectionBuilder;
     private ShortUrlRedirectionResolverInterface&MockObject $redirectionResolver;
 
+    #[Override]
     protected function setUp(): void
     {
         $trackingOptions = new TrackingOptions(disableTrackParam: 'foobar');

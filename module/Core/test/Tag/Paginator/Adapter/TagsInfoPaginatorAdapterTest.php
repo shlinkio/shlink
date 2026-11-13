@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Tag\Paginator\Adapter;
 
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -16,6 +17,7 @@ class TagsInfoPaginatorAdapterTest extends TestCase
     private TagsInfoPaginatorAdapter $adapter;
     private MockObject&TagRepositoryInterface $repo;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->repo = $this->createMock(TagRepositoryInterface::class);

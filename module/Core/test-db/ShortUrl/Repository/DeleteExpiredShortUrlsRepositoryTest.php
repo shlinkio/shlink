@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioDbTest\Shlink\Core\ShortUrl\Repository;
 
 use Cake\Chronos\Chronos;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -19,6 +20,7 @@ class DeleteExpiredShortUrlsRepositoryTest extends DatabaseTestCase
 {
     private ExpiredShortUrlsRepository $repository;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->repository = $this->createRepository(ShortUrl::class, ExpiredShortUrlsRepository::class);

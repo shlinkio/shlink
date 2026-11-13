@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Rest\Middleware;
 use Fig\Http\Message\RequestMethodInterface;
 use Fig\Http\Message\StatusCodeInterface;
 use Mezzio\Router\RouteResult;
+use Override;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -29,6 +30,7 @@ class AuthenticationMiddleware implements MiddlewareInterface, StatusCodeInterfa
         private readonly array $routesWithQueryApiKey,
     ) {}
 
+    #[Override]
     public function process(Request $request, RequestHandlerInterface $handler): Response
     {
         /** @var RouteResult|null $routeResult */

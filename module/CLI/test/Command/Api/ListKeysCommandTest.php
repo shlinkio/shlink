@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Api;
 
 use Cake\Chronos\Chronos;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -23,6 +24,7 @@ class ListKeysCommandTest extends TestCase
     private CommandTester $commandTester;
     private MockObject&ApiKeyServiceInterface $apiKeyService;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->apiKeyService = $this->createMock(ApiKeyServiceInterface::class);

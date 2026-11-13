@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\RedirectRule;
 
+use Override;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 
@@ -11,6 +12,7 @@ readonly class ShortUrlRedirectionResolver implements ShortUrlRedirectionResolve
 {
     public function __construct(private ShortUrlRedirectRuleServiceInterface $ruleService) {}
 
+    #[Override]
     public function resolveLongUrl(ShortUrl $shortUrl, ServerRequestInterface $request): string
     {
         $rules = $this->ruleService->rulesForShortUrl($shortUrl);

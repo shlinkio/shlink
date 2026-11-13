@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioDbTest\Shlink\Rest\ApiKey\Repository;
 
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Repository\ApiKeyRepository;
@@ -14,6 +15,7 @@ class ApiKeyRepositoryTest extends DatabaseTestCase
 {
     private ApiKeyRepository $repo;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(ApiKey::class);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
+use Override;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -23,6 +24,7 @@ class LocateUnlocatedVisitsTest extends TestCase
     private MockObject&VisitLocatorInterface $locator;
     private MockObject&VisitToLocationHelperInterface $visitToLocation;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->locator = $this->createMock(VisitLocatorInterface::class);

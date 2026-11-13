@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Visit\Model;
 
+use Override;
 use Shlinkio\Shlink\Common\Util\DateRange;
 
 class WithDomainVisitsParams extends VisitsParams
@@ -18,6 +19,7 @@ class WithDomainVisitsParams extends VisitsParams
         parent::__construct($dateRange, $page, $itemsPerPage, $excludeBots);
     }
 
+    #[Override]
     public static function fromRawData(array $query): self
     {
         $visitsParams = VisitsParams::fromRawData($query);

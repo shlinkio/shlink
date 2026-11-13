@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Config\PostProcessor;
 
 use Mezzio\Router\Route;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -15,6 +16,7 @@ class ShortUrlMethodsProcessorTest extends TestCase
 {
     private ShortUrlMethodsProcessor $processor;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->processor = new ShortUrlMethodsProcessor();

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Visit\Repository;
 
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
+use Override;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
@@ -13,6 +14,7 @@ use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 class ShortUrlVisitsCountRepository extends EntitySpecificationRepository implements
     ShortUrlVisitsCountRepositoryInterface
 {
+    #[Override]
     public function countNonOrphanVisits(VisitsCountFiltering $filtering): int
     {
         $qb = $this->getEntityManager()->createQueryBuilder();

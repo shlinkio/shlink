@@ -9,6 +9,7 @@ use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Platforms\SQLServerPlatform;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
@@ -31,6 +32,7 @@ class ShortUrlRepositoryTest extends DatabaseTestCase
     private ShortUrlRepository $repo;
     private PersistenceShortUrlRelationResolver $relationResolver;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(ShortUrl::class);

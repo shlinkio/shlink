@@ -8,17 +8,20 @@ use Cake\Chronos\Chronos;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Override;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
 
 class VisitsFixture extends AbstractFixture implements DependentFixtureInterface
 {
+    #[Override]
     public function getDependencies(): array
     {
         return [ShortUrlsFixture::class];
     }
 
+    #[Override]
     public function load(ObjectManager $manager): void
     {
         /** @var ShortUrl $abcShortUrl */

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Config;
 
 use Monolog\Test\TestCase;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\CLI\Command\Config\ReadEnvVarCommand;
 use Shlinkio\Shlink\Core\Config\EnvVars;
@@ -17,6 +18,7 @@ class ReadEnvVarCommandTest extends TestCase
     private CommandTester $commandTester;
     private string $envVarValue = 'the_env_var_value';
 
+    #[Override]
     protected function setUp(): void
     {
         $this->commandTester = CliTestUtils::testerForCommand(new ReadEnvVarCommand(fn () => $this->envVarValue));

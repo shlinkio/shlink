@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Visit;
 
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
@@ -25,6 +26,7 @@ class DownloadGeoLiteDbCommandTest extends TestCase
     private CommandTester $commandTester;
     private MockObject&GeolocationDbUpdaterInterface $dbUpdater;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->dbUpdater = $this->createMock(GeolocationDbUpdaterInterface::class);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest;
 
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -14,6 +15,7 @@ class ConfigProviderTest extends TestCase
 {
     private ConfigProvider $configProvider;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->configProvider = new ConfigProvider();

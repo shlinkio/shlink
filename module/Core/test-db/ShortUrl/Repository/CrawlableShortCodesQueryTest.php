@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioDbTest\Shlink\Core\ShortUrl\Repository;
 
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
@@ -14,6 +15,7 @@ class CrawlableShortCodesQueryTest extends DatabaseTestCase
 {
     private CrawlableShortCodesQuery $query;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->query = $this->createRepository(ShortUrl::class, CrawlableShortCodesQuery::class);

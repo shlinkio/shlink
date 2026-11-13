@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Action;
 
 use Fig\Http\Message\RequestMethodInterface;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface;
@@ -25,6 +26,7 @@ abstract class AbstractTrackingAction implements MiddlewareInterface, RequestMet
         private readonly RequestTrackerInterface $requestTracker,
     ) {}
 
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $identifier = ShortUrlIdentifier::fromRedirectRequest($request);

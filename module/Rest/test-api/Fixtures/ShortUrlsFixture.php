@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Override;
 use ReflectionObject;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
@@ -16,11 +17,13 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ShortUrlsFixture extends AbstractFixture implements DependentFixtureInterface
 {
+    #[Override]
     public function getDependencies(): array
     {
         return [ApiKeyFixture::class, TagsFixture::class];
     }
 
+    #[Override]
     public function load(ObjectManager $manager): void
     {
         $relationResolver = new PersistenceShortUrlRelationResolver($manager); // @phpstan-ignore-line

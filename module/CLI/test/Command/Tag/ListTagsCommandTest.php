@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
+use Override;
 use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,6 +21,7 @@ class ListTagsCommandTest extends TestCase
     private CommandTester $commandTester;
     private MockObject&TagServiceInterface $tagService;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->tagService = $this->createMock(TagServiceInterface::class);

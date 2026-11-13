@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\ApiKey;
 
+use Override;
 use Shlinkio\Shlink\CLI\Command\Api\Input\ApiKeyInput;
 use Shlinkio\Shlink\CLI\Exception\InvalidRoleConfigException;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
@@ -18,6 +19,7 @@ readonly class RoleResolver implements RoleResolverInterface
         private UrlShortenerOptions $urlShortenerOptions,
     ) {}
 
+    #[Override]
     public function determineRoles(ApiKeyInput $input): iterable
     {
         $domainAuthority = $input->domain;

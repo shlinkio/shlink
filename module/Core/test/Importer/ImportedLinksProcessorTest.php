@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Core\Importer;
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Override;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -54,6 +55,7 @@ class ImportedLinksProcessorTest extends TestCase
     private MockObject&StyleInterface $io;
     private MockObject&ShortUrlRedirectRuleServiceInterface $redirectRuleService;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManagerInterface::class);

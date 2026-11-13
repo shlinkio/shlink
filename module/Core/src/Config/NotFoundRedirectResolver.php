@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Config;
 
 use Laminas\Diactoros\Exception\InvalidArgumentException;
 use Laminas\Diactoros\Uri;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
@@ -25,6 +26,7 @@ class NotFoundRedirectResolver implements NotFoundRedirectResolverInterface
         private readonly LoggerInterface $logger,
     ) {}
 
+    #[Override]
     public function resolveRedirectResponse(
         NotFoundType $notFoundType,
         NotFoundRedirectConfigInterface $config,

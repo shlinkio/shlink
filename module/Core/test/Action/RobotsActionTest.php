@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Action;
 
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -17,6 +18,7 @@ class RobotsActionTest extends TestCase
 {
     private MockObject&CrawlingHelperInterface $helper;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->helper = $this->createMock(CrawlingHelperInterface::class);

@@ -7,6 +7,7 @@ namespace ShlinkMigrations;
 use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Override;
 
 /**
  * Fix an incorrectly generated unique index in Microsoft SQL, on short_urls table, for short_code + domain_id columns.
@@ -18,6 +19,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20250215100756 extends AbstractMigration
 {
+    #[Override]
     public function up(Schema $schema): void
     {
         $this->skipIf(!$this->isMicrosoftSql());
@@ -27,6 +29,7 @@ final class Version20250215100756 extends AbstractMigration
         $shortUrls->dropIndex('unique_short_code_plus_domain');
     }
 
+    #[Override]
     public function postUp(Schema $schema): void
     {
         // The only way to get the index properly generated is by hardcoding the SQL.

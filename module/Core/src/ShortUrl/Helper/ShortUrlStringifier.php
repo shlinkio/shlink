@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\ShortUrl\Helper;
 
 use Laminas\Diactoros\Uri;
+use Override;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
@@ -18,6 +19,7 @@ readonly class ShortUrlStringifier implements ShortUrlStringifierInterface
         private string $basePath = '',
     ) {}
 
+    #[Override]
     public function stringify(ShortUrl|ShortUrlIdentifier $shortUrl): string
     {
         $shortUrlIdentifier = $shortUrl instanceof ShortUrl ? ShortUrlIdentifier::fromShortUrl($shortUrl) : $shortUrl;

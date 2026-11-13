@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\Visit\Geolocation;
 
 use Doctrine\ORM\EntityManager;
 use Exception;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -32,6 +33,7 @@ class VisitLocatorTest extends TestCase
     private MockObject&EntityManager $em;
     private MockObject&VisitIterationRepositoryInterface $repo;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManager::class);
@@ -68,11 +70,13 @@ class VisitLocatorTest extends TestCase
         $this->em->expects($this->exactly((int) floor(count($unlocatedVisits) / 200) + 1))->method('clear');
 
         $this->visitService->{$serviceMethodName}(new class implements VisitGeolocationHelperInterface {
+            #[Override]
             public function geolocateVisit(Visit $visit): Location
             {
                 return Location::empty();
             }
 
+            #[Override]
             public function onVisitLocated(VisitLocation $visitLocation, Visit $visit): void {}
         });
     }
@@ -112,6 +116,7 @@ class VisitLocatorTest extends TestCase
             new class($isNonLocatableAddress) implements VisitGeolocationHelperInterface {
                 public function __construct(private readonly bool $isNonLocatableAddress) {}
 
+                #[Override]
                 public function geolocateVisit(Visit $visit): Location
                 {
                     throw $this->isNonLocatableAddress
@@ -119,6 +124,7 @@ class VisitLocatorTest extends TestCase
                         : IpCannotBeLocatedException::forError(new Exception(''));
                 }
 
+                #[Override]
                 public function onVisitLocated(VisitLocation $visitLocation, Visit $visit): void {}
             },
         );

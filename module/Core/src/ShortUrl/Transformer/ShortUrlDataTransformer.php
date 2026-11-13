@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\ShortUrl\Transformer;
 
+use Override;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifierInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
@@ -13,6 +14,7 @@ readonly class ShortUrlDataTransformer implements ShortUrlDataTransformerInterfa
 {
     public function __construct(private ShortUrlStringifierInterface $stringifier) {}
 
+    #[Override]
     public function transform(ShortUrlWithDeps|ShortUrl $shortUrl): array
     {
         $shortUrlIdentifier = $shortUrl instanceof ShortUrl

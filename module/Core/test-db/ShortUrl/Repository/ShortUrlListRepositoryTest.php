@@ -6,6 +6,7 @@ namespace ShlinkioDbTest\Shlink\Core\ShortUrl\Repository;
 
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use ReflectionObject;
 use Shlinkio\Shlink\Common\Util\DateRange;
@@ -37,6 +38,7 @@ class ShortUrlListRepositoryTest extends DatabaseTestCase
     private ShortUrlListRepository $repo;
     private PersistenceShortUrlRelationResolver $relationResolver;
 
+    #[Override]
     protected function setUp(): void
     {
         $em = $this->getEntityManager();

@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\Visit;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Laminas\Stdlib\ArrayUtils;
+use Override;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\DataProviderExternal;
@@ -52,6 +53,7 @@ class VisitsStatsHelperTest extends TestCase
     private VisitsStatsHelper $helper;
     private MockObject&EntityManagerInterface $em;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManagerInterface::class);

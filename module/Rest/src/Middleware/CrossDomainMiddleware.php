@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Rest\Middleware;
 
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\EmptyResponse;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -18,6 +19,7 @@ readonly class CrossDomainMiddleware implements MiddlewareInterface, RequestMeth
 {
     public function __construct(private CorsOptions $options) {}
 
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $response = $handler->handle($request);

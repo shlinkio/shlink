@@ -6,9 +6,11 @@ namespace ShlinkMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Override;
 
 final class Version20240331111447 extends AbstractMigration
 {
+    #[Override]
     public function up(Schema $schema): void
     {
         $visitsQb = $this->connection->createQueryBuilder();

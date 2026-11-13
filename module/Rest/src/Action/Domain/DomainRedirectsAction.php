@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Rest\Action\Domain;
 
 use CuyZ\Valinor\Mapper\TreeMapper;
 use Laminas\Diactoros\Response\JsonResponse;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Domain\DomainServiceInterface;
@@ -23,6 +24,7 @@ class DomainRedirectsAction extends AbstractRestAction
         private readonly TreeMapper $mapper,
     ) {}
 
+    #[Override]
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         /** @var array $body */

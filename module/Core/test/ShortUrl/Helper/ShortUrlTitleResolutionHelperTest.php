@@ -11,6 +11,7 @@ use GuzzleHttp\RequestOptions;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\Stream;
+use Override;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
@@ -29,6 +30,7 @@ class ShortUrlTitleResolutionHelperTest extends TestCase
     private MockObject&ClientInterface $httpClient;
     private MockObject&LoggerInterface $logger;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->httpClient = $this->createMock(ClientInterface::class);

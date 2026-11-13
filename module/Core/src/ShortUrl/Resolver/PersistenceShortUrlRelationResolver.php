@@ -8,6 +8,7 @@ use Doctrine\Common\Collections;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
+use Override;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
@@ -38,6 +39,7 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
         $this->em->getEventManager()->addEventListener(Events::postFlush, $this);
     }
 
+    #[Override]
     public function resolveDomain(string|null $domain): Domain|null
     {
         if ($domain === null || $domain === $this->options->defaultDomain) {
@@ -67,6 +69,7 @@ class PersistenceShortUrlRelationResolver implements ShortUrlRelationResolverInt
      * @param string[] $tags
      * @return Collection<int, Tag>
      */
+    #[Override]
     public function resolveTags(array $tags): Collections\Collection
     {
         if (empty($tags)) {

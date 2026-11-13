@@ -6,12 +6,14 @@ namespace ShlinkMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Override;
 
 /**
  * Create initial entries in the short_url_visits_counts table for existing visits
  */
 final class Version20240318084804 extends AbstractMigration
 {
+    #[Override]
     public function up(Schema $schema): void
     {
         $qb = $this->connection->createQueryBuilder();

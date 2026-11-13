@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Rest\Middleware\Mercure;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
 use Mezzio\ProblemDetails\ProblemDetailsResponseFactory;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -22,6 +23,7 @@ class NotConfiguredMercureErrorHandlerTest extends TestCase
     private MockObject&LoggerInterface $logger;
     private MockObject&RequestHandlerInterface $handler;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->respFactory = $this->createMock(ProblemDetailsResponseFactory::class);

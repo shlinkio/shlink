@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioCliTest\Shlink\CLI\Command;
 
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\CLI\Command\ShortUrl\ListShortUrlsCommand;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
@@ -22,6 +23,7 @@ class ImportShortUrlsTest extends CliTestCase
 {
     private false|string|null $tempCsvFile = null;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->tempCsvFile = tempnam(sys_get_temp_dir(), 'shlink_csv');
@@ -45,6 +47,7 @@ class ImportShortUrlsTest extends CliTestCase
         fclose($handle);
     }
 
+    #[Override]
     protected function tearDown(): void
     {
         if (is_string($this->tempCsvFile)) {

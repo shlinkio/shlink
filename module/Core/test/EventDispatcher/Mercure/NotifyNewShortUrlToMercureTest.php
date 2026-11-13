@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\EventDispatcher\Mercure;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -25,6 +26,7 @@ class NotifyNewShortUrlToMercureTest extends TestCase
     private MockObject&EntityManagerInterface $em;
     private MockObject&LoggerInterface $logger;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->helper = $this->createMock(PublishingHelperInterface::class);

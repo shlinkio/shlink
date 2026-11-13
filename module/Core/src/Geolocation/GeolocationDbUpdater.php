@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Geolocation;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Override;
 use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\Core\Geolocation\Entity\GeolocationDbUpdate;
@@ -31,6 +32,7 @@ readonly class GeolocationDbUpdater implements GeolocationDbUpdaterInterface
     /**
      * @throws GeolocationDbUpdateFailedException
      */
+    #[Override]
     public function checkDbUpdate(
         GeolocationDownloadProgressHandlerInterface|null $downloadProgressHandler = null,
     ): GeolocationResult {

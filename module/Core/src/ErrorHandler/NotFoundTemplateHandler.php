@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\ErrorHandler;
 use Closure;
 use Fig\Http\Message\StatusCodeInterface;
 use Laminas\Diactoros\Response;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -30,6 +31,7 @@ class NotFoundTemplateHandler implements RequestHandlerInterface
             : static fn (string $file) => file_get_contents($file);
     }
 
+    #[Override]
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         /** @var NotFoundType $notFoundType */

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Matomo;
 
 use MatomoTracker;
+use Override;
 use Shlinkio\Shlink\Core\Exception\RuntimeException;
 
 readonly class MatomoTrackerBuilder implements MatomoTrackerBuilderInterface
@@ -16,6 +17,7 @@ readonly class MatomoTrackerBuilder implements MatomoTrackerBuilderInterface
     /**
      * @throws RuntimeException If there's any missing matomo parameter
      */
+    #[Override]
     public function buildMatomoTracker(): MatomoTracker
     {
         $siteId = $this->options->siteId();

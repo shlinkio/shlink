@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Repository;
 use Cake\Chronos\Chronos;
 use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
+use Override;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ExpiredShortUrlsConditions;
 use Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount;
@@ -17,6 +18,7 @@ use function sprintf;
 class ExpiredShortUrlsRepository extends EntitySpecificationRepository implements ExpiredShortUrlsRepositoryInterface
 {
     /** @inheritDoc */
+    #[Override]
     public function delete(ExpiredShortUrlsConditions $conditions): int
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
@@ -26,6 +28,7 @@ class ExpiredShortUrlsRepository extends EntitySpecificationRepository implement
     }
 
     /** @inheritDoc */
+    #[Override]
     public function dryCount(ExpiredShortUrlsConditions $conditions): int
     {
         $qb = $this->getEntityManager()->createQueryBuilder();

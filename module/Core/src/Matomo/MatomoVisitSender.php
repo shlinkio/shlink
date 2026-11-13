@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Matomo;
 
+use Override;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Matomo\Model\SendVisitsResult;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
@@ -24,6 +25,7 @@ readonly class MatomoVisitSender implements MatomoVisitSenderInterface
     /**
      * Sends all visits in provided date range to matomo, and returns the amount of affected visits
      */
+    #[Override]
     public function sendVisitsInDateRange(
         DateRange $dateRange,
         VisitSendingProgressTrackerInterface|null $progressTracker = null,
@@ -46,6 +48,7 @@ readonly class MatomoVisitSender implements MatomoVisitSenderInterface
         return new SendVisitsResult($successfulVisits, $failedVisits);
     }
 
+    #[Override]
     public function sendVisit(Visit $visit, string|null $originalIpAddress = null): void
     {
         $tracker = $this->trackerBuilder->buildMatomoTracker();

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioDbTest\Shlink\Core\Tag\Paginator\Adapter;
 
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
@@ -18,6 +19,7 @@ class TagsPaginatorAdapterTest extends DatabaseTestCase
 {
     private TagRepository $repo;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(Tag::class);

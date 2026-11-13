@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\EventDispatcher\Mercure;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
@@ -30,6 +31,7 @@ class NotifyVisitToMercureTest extends TestCase
     private MockObject&EntityManagerInterface $em;
     private MockObject&LoggerInterface $logger;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->helper = $this->createMock(PublishingHelperInterface::class);

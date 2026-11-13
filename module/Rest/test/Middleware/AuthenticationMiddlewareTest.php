@@ -10,6 +10,7 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -33,6 +34,7 @@ class AuthenticationMiddlewareTest extends TestCase
     private MockObject&ApiKeyServiceInterface $apiKeyService;
     private MockObject&RequestHandlerInterface $handler;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->apiKeyService = $this->createMock(ApiKeyServiceInterface::class);

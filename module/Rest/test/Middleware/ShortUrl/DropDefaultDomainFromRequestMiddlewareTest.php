@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Middleware\ShortUrl;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -21,6 +22,7 @@ class DropDefaultDomainFromRequestMiddlewareTest extends TestCase
     private DropDefaultDomainFromRequestMiddleware $middleware;
     private MockObject&RequestHandlerInterface $next;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->next = $this->createMock(RequestHandlerInterface::class);

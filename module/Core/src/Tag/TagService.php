@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Tag;
 
 use Doctrine\ORM;
+use Override;
 use Pagerfanta\Adapter\AdapterInterface;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Exception\ForbiddenTagOperationException;
@@ -23,12 +24,14 @@ readonly class TagService implements TagServiceInterface
     public function __construct(private ORM\EntityManagerInterface $em, private TagRepositoryInterface $repo) {}
 
     /** @inheritDoc */
+    #[Override]
     public function listTags(TagsParams $params, ApiKey|null $apiKey = null): Paginator
     {
         return $this->createPaginator(new TagsPaginatorAdapter($this->repo, $params, $apiKey), $params);
     }
 
     /** @inheritDoc */
+    #[Override]
     public function tagsInfo(TagsParams $params, ApiKey|null $apiKey = null): Paginator
     {
         return $this->createPaginator(new TagsInfoPaginatorAdapter($this->repo, $params, $apiKey), $params);
@@ -48,6 +51,7 @@ readonly class TagService implements TagServiceInterface
     }
 
     /** @inheritDoc */
+    #[Override]
     public function deleteTags(array $tagNames, ApiKey|null $apiKey = null): void
     {
         if (ApiKey::isShortUrlRestricted($apiKey)) {
@@ -58,6 +62,7 @@ readonly class TagService implements TagServiceInterface
     }
 
     /** @inheritDoc */
+    #[Override]
     public function renameTag(Renaming $renaming, ApiKey|null $apiKey = null): Tag
     {
         if (ApiKey::isShortUrlRestricted($apiKey)) {

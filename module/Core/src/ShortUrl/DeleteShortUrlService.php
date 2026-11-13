@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\ShortUrl;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Override;
 use Shlinkio\Shlink\Core\Config\Options\DeleteShortUrlsOptions;
 use Shlinkio\Shlink\Core\Exception;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -26,6 +27,7 @@ readonly class DeleteShortUrlService implements DeleteShortUrlServiceInterface
      * @throws Exception\ShortUrlNotFoundException
      * @throws Exception\DeleteShortUrlException
      */
+    #[Override]
     public function deleteByShortCode(
         ShortUrlIdentifier $identifier,
         bool $ignoreThreshold = false,
@@ -53,11 +55,13 @@ readonly class DeleteShortUrlService implements DeleteShortUrlServiceInterface
         );
     }
 
+    #[Override]
     public function deleteExpiredShortUrls(ExpiredShortUrlsConditions $conditions): int
     {
         return $this->expiredShortUrlsRepository->delete($conditions);
     }
 
+    #[Override]
     public function countExpiredShortUrls(ExpiredShortUrlsConditions $conditions): int
     {
         return $this->expiredShortUrlsRepository->dryCount($conditions);

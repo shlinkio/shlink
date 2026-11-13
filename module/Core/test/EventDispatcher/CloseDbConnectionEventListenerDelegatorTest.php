@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -16,6 +17,7 @@ class CloseDbConnectionEventListenerDelegatorTest extends TestCase
     private CloseDbConnectionEventListenerDelegator $delegator;
     private MockObject&ContainerInterface $container;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->container = $this->createMock(ContainerInterface::class);

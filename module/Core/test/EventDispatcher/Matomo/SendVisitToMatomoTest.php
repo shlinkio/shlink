@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\EventDispatcher\Matomo;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -24,6 +25,7 @@ class SendVisitToMatomoTest extends TestCase
     private MockObject&LoggerInterface $logger;
     private MockObject&MatomoVisitSenderInterface $visitSender;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManagerInterface::class);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -21,6 +22,7 @@ class DeleteShortUrlVisitsCommandTest extends TestCase
     private CommandTester $commandTester;
     private MockObject&ShortUrlVisitsDeleterInterface $deleter;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->deleter = $this->createMock(ShortUrlVisitsDeleterInterface::class);

@@ -6,6 +6,7 @@ namespace ShlinkioDbTest\Shlink\Core\Domain\Repository;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
@@ -22,6 +23,7 @@ class DomainRepositoryTest extends DatabaseTestCase
 {
     private DomainRepository $repo;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(Domain::class);
@@ -139,11 +141,13 @@ class DomainRepositoryTest extends DatabaseTestCase
             new class($domain) implements ShortUrlRelationResolverInterface {
                 public function __construct(private Domain $domain) {}
 
+                #[Override]
                 public function resolveDomain(string|null $domain): Domain
                 {
                     return $this->domain;
                 }
 
+                #[Override]
                 public function resolveTags(array $tags): Collection
                 {
                     return new ArrayCollection();

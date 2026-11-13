@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\Visit;
 
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,6 +21,7 @@ class DeleteOrphanVisitsActionTest extends TestCase
     private DeleteOrphanVisitsAction $action;
     private MockObject&VisitsDeleterInterface $deleter;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->deleter = $this->createMock(VisitsDeleterInterface::class);

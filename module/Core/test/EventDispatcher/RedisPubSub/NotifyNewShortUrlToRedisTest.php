@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Core\EventDispatcher\RedisPubSub;
 use Doctrine\ORM\EntityManagerInterface;
 use DomainException;
 use Exception;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -30,6 +31,7 @@ class NotifyNewShortUrlToRedisTest extends TestCase
     private MockObject&EntityManagerInterface $em;
     private MockObject&LoggerInterface $logger;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->helper = $this->createMock(PublishingHelperInterface::class);

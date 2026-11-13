@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Visit\Repository;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
+use Override;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -31,12 +32,14 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
     /**
      * @return Visit[]
      */
+    #[Override]
     public function findVisitsByShortCode(ShortUrlIdentifier $identifier, VisitsListFiltering $filtering): array
     {
         $qb = $this->createVisitsByShortCodeQueryBuilder($identifier, $filtering);
         return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit, $filtering->offset);
     }
 
+    #[Override]
     public function countVisitsByShortCode(ShortUrlIdentifier $identifier, VisitsCountFiltering $filtering): int
     {
         $qb = $this->createVisitsByShortCodeQueryBuilder($identifier, $filtering);
@@ -69,12 +72,14 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         return $qb;
     }
 
+    #[Override]
     public function findVisitsByTag(string $tag, WithDomainVisitsListFiltering $filtering): array
     {
         $qb = $this->createVisitsByTagQueryBuilder($tag, $filtering);
         return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit, $filtering->offset);
     }
 
+    #[Override]
     public function countVisitsByTag(string $tag, WithDomainVisitsCountFiltering $filtering): int
     {
         $qb = $this->createVisitsByTagQueryBuilder($tag, $filtering);
@@ -116,12 +121,14 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
     /**
      * @return Visit[]
      */
+    #[Override]
     public function findVisitsByDomain(string $domain, VisitsListFiltering $filtering): array
     {
         $qb = $this->createVisitsByDomainQueryBuilder($domain, $filtering);
         return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit, $filtering->offset);
     }
 
+    #[Override]
     public function countVisitsByDomain(string $domain, VisitsCountFiltering $filtering): int
     {
         $qb = $this->createVisitsByDomainQueryBuilder($domain, $filtering);
@@ -154,6 +161,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         return $qb;
     }
 
+    #[Override]
     public function findOrphanVisits(OrphanVisitsListFiltering $filtering): array
     {
         if ($filtering->apiKey?->hasRole(Role::NO_ORPHAN_VISITS)) {
@@ -164,6 +172,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit, $filtering->offset);
     }
 
+    #[Override]
     public function countOrphanVisits(OrphanVisitsCountFiltering $filtering): int
     {
         if ($filtering->apiKey?->hasRole(Role::NO_ORPHAN_VISITS)) {
@@ -200,12 +209,14 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
     /**
      * @return Visit[]
      */
+    #[Override]
     public function findNonOrphanVisits(WithDomainVisitsListFiltering $filtering): array
     {
         $qb = $this->createNonOrphanVisitsQueryBuilder($filtering);
         return $this->resolveVisitsWithNativeQuery($qb, $filtering->limit, $filtering->offset);
     }
 
+    #[Override]
     public function countNonOrphanVisits(WithDomainVisitsCountFiltering $filtering): int
     {
         $qb = $this->createNonOrphanVisitsQueryBuilder($filtering);
@@ -301,6 +312,7 @@ class VisitRepository extends EntitySpecificationRepository implements VisitRepo
         return $this->getEntityManager()->createNativeQuery($nativeQb->getSQL(), $rsm)->getResult();
     }
 
+    #[Override]
     public function findMostRecentOrphanVisit(): Visit|null
     {
         $dql = <<<DQL

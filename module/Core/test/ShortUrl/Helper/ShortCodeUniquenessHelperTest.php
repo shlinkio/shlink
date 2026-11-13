@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\ShortUrl\Helper;
 
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,6 +21,7 @@ class ShortCodeUniquenessHelperTest extends TestCase
     private ShortCodeUniquenessHelper $helper;
     private MockObject&ShortUrlRepositoryInterface $repo;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->repo = $this->createMock(ShortUrlRepositoryInterface::class);

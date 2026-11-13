@@ -9,6 +9,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
+use Override;
 
 use function in_array;
 
@@ -27,6 +28,7 @@ final class Version20240220214031 extends AbstractMigration
         'short_urls' => ['original_url'],
     ];
 
+    #[Override]
     public function up(Schema $schema): void
     {
         $textType = Type::getType(Types::TEXT);
@@ -50,11 +52,13 @@ final class Version20240220214031 extends AbstractMigration
         }
     }
 
+    #[Override]
     public function down(Schema $schema): void
     {
         // Can't revert from TEXT to STRING, as it's bigger
     }
 
+    #[Override]
     public function isTransactional(): bool
     {
         return !$this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform;

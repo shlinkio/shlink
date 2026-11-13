@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use Cake\Chronos\Chronos;
+use Override;
 use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -32,6 +33,7 @@ class GetShortUrlVisitsCommandTest extends TestCase
     private CommandTester $commandTester;
     private MockObject&VisitsStatsHelperInterface $visitsHelper;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->visitsHelper = $this->createMock(VisitsStatsHelperInterface::class);

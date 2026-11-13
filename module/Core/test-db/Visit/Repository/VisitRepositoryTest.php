@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioDbTest\Shlink\Core\Visit\Repository;
 
 use Cake\Chronos\Chronos;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
@@ -44,6 +45,7 @@ class VisitRepositoryTest extends DatabaseTestCase
     private OrphanVisitsCountRepository $orphanCountRepo;
     private PersistenceShortUrlRelationResolver $relationResolver;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(Visit::class);

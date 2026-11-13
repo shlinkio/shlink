@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\ShortUrl\Helper;
 
+use Override;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
@@ -13,6 +14,7 @@ readonly class ShortCodeUniquenessHelper implements ShortCodeUniquenessHelperInt
 {
     public function __construct(private ShortUrlRepositoryInterface $repo, private UrlShortenerOptions $options) {}
 
+    #[Override]
     public function ensureShortCodeUniqueness(ShortUrl $shortUrlToBeCreated, bool $hasCustomSlug): bool
     {
         $identifier = ShortUrlIdentifier::fromShortUrl($shortUrlToBeCreated);

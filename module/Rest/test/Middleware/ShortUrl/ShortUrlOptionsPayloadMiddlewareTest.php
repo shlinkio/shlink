@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Middleware\ShortUrl;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -21,6 +22,7 @@ class ShortUrlOptionsPayloadMiddlewareTest extends TestCase
     private ShortUrlOptionsPayloadMiddleware $middleware;
     private MockObject&RequestHandlerInterface $handler;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->handler = $this->createMock(RequestHandlerInterface::class);

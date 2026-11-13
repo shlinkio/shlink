@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\Visit;
 
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -26,6 +27,7 @@ class OrphanVisitsActionTest extends TestCase
     private OrphanVisitsAction $action;
     private MockObject&VisitsStatsHelperInterface $visitsHelper;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->visitsHelper = $this->createMock(VisitsStatsHelperInterface::class);

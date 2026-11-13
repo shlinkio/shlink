@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\Visit;
 
+use Override;
 use Pagerfanta\Pagerfanta;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Core\Visit\Model\WithDomainVisitsParams;
@@ -13,6 +14,7 @@ class TagVisitsAction extends AbstractListVisitsAction
 {
     protected const string ROUTE_PATH = '/tags/{tag}/visits';
 
+    #[Override]
     protected function getVisitsPaginator(Request $request, ApiKey $apiKey): Pagerfanta
     {
         $params = WithDomainVisitsParams::fromRawData($request->getQueryParams());

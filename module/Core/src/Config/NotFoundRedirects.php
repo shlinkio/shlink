@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Config;
 
 use JsonSerializable;
+use Override;
 
 final readonly class NotFoundRedirects implements JsonSerializable
 {
@@ -32,6 +33,7 @@ final readonly class NotFoundRedirects implements JsonSerializable
         return new self($config->baseUrlRedirect, $config->regular404Redirect, $config->invalidShortUrlRedirect);
     }
 
+    #[Override]
     public function jsonSerialize(): array
     {
         return [

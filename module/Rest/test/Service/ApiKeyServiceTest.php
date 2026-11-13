@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Service;
 
 use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManager;
+use Override;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -32,6 +33,7 @@ class ApiKeyServiceTest extends TestCase
     private MockObject&EntityManager $em;
     private MockObject&ApiKeyRepositoryInterface $repo;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManager::class);

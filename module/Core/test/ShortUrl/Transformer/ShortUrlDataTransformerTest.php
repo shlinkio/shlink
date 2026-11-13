@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\ShortUrl\Transformer;
 
 use Cake\Chronos\Chronos;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -19,6 +20,7 @@ class ShortUrlDataTransformerTest extends TestCase
 {
     private ShortUrlDataTransformer $transformer;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->transformer = new ShortUrlDataTransformer(new ShortUrlStringifier());

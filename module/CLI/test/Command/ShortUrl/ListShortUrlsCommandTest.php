@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use Cake\Chronos\Chronos;
 use CuyZ\Valinor\MapperBuilder;
+use Override;
 use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -32,6 +33,7 @@ class ListShortUrlsCommandTest extends TestCase
     private CommandTester $commandTester;
     private MockObject&ShortUrlListServiceInterface $shortUrlService;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->shortUrlService = $this->createMock(ShortUrlListServiceInterface::class);

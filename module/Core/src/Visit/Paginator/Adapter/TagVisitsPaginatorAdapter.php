@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Visit\Paginator\Adapter;
 
+use Override;
 use Shlinkio\Shlink\Core\Paginator\Adapter\AbstractCacheableCountPaginatorAdapter;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Model\WithDomainVisitsParams;
@@ -22,6 +23,7 @@ class TagVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
         private readonly ApiKey|null $apiKey,
     ) {}
 
+    #[Override]
     public function getSlice(int $offset, int $length): iterable
     {
         return $this->visitRepository->findVisitsByTag(
@@ -37,6 +39,7 @@ class TagVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapter
         );
     }
 
+    #[Override]
     protected function doCount(): int
     {
         return $this->visitRepository->countVisitsByTag(

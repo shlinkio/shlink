@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl;
 
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Collections\ArrayCollection;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\DataProviderExternal;
 use PHPUnit\Framework\Attributes\Test;
@@ -32,6 +33,7 @@ class ShortUrlResolverTest extends TestCase
     private ShortUrlResolver $urlResolver;
     private MockObject&ShortUrlRepository $repo;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->repo = $this->createMock(ShortUrlRepository::class);

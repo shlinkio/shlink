@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,6 +21,7 @@ class DeleteExpiredShortUrlsCommandTest extends TestCase
     private CommandTester $commandTester;
     private MockObject&DeleteShortUrlServiceInterface $service;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->service = $this->createMock(DeleteShortUrlServiceInterface::class);

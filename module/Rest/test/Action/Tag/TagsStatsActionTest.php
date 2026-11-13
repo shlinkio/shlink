@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -24,6 +25,7 @@ class TagsStatsActionTest extends TestCase
     private TagsStatsAction $action;
     private MockObject&TagServiceInterface $tagService;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->tagService = $this->createMock(TagServiceInterface::class);

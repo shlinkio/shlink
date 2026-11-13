@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Visit\Entity;
 
 use JsonSerializable;
+use Override;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Geolocation\Model\Location;
 use Shlinkio\Shlink\Importer\Model\ImportedShlinkVisitLocation;
@@ -45,6 +46,7 @@ class VisitLocation extends AbstractEntity implements JsonSerializable
         );
     }
 
+    #[Override]
     public function jsonSerialize(): array
     {
         return [

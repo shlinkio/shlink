@@ -9,12 +9,14 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
+use Override;
 
 /**
  * Create new tables needed for the dynamic rule-based redirections
  */
 final class Version20240224115725 extends AbstractMigration
 {
+    #[Override]
     public function up(Schema $schema): void
     {
         $this->skipIf($schema->hasTable('short_url_redirect_rules'), 'New columns already exist');
@@ -94,6 +96,7 @@ final class Version20240224115725 extends AbstractMigration
         return $table;
     }
 
+    #[Override]
     public function down(Schema $schema): void
     {
         $this->skipIf(!$schema->hasTable('short_url_redirect_rules'), 'Columns do not exist');
@@ -103,6 +106,7 @@ final class Version20240224115725 extends AbstractMigration
         $schema->dropTable('redirect_conditions');
     }
 
+    #[Override]
     public function isTransactional(): bool
     {
         return !$this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform;

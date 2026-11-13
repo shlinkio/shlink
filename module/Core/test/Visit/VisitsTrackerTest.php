@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Visit;
 
 use Doctrine\ORM\EntityManager;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -22,6 +23,7 @@ class VisitsTrackerTest extends TestCase
     private MockObject&EntityManager $em;
     private MockObject&EventDispatcherInterface $eventDispatcher;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManager::class);

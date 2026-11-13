@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\EventDispatcher\Event;
 
 use JsonSerializable;
+use Override;
 use Shlinkio\Shlink\EventDispatcher\Util\JsonUnserializable;
 
 final readonly class UrlVisited implements JsonSerializable, JsonUnserializable
@@ -14,11 +15,13 @@ final readonly class UrlVisited implements JsonSerializable, JsonUnserializable
         public string|null $originalIpAddress = null,
     ) {}
 
+    #[Override]
     public function jsonSerialize(): array
     {
         return ['visitId' => $this->visitId, 'originalIpAddress' => $this->originalIpAddress];
     }
 
+    #[Override]
     public static function fromPayload(array $payload): self
     {
         return new self($payload['visitId'] ?? '', $payload['originalIpAddress'] ?? null);

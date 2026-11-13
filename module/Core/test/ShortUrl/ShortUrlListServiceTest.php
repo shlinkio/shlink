@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\ShortUrl;
 
+use Override;
 use PHPUnit\Framework\Attributes\DataProviderExternal;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -23,6 +24,7 @@ class ShortUrlListServiceTest extends TestCase
     private ShortUrlListService $service;
     private MockObject&ShortUrlListRepositoryInterface $repo;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->repo = $this->createMock(ShortUrlListRepositoryInterface::class);

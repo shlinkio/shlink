@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use CuyZ\Valinor\MapperBuilder;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -25,6 +26,7 @@ class CreateShortUrlActionTest extends TestCase
     private MockObject&UrlShortener $urlShortener;
     private MockObject&ShortUrlDataTransformerInterface $transformer;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->urlShortener = $this->createMock(UrlShortener::class);

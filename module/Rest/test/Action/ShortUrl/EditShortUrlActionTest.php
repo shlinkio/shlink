@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use CuyZ\Valinor\MapperBuilder;
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -21,6 +22,7 @@ class EditShortUrlActionTest extends TestCase
     private EditShortUrlAction $action;
     private MockObject&ShortUrlServiceInterface $shortUrlService;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->shortUrlService = $this->createMock(ShortUrlServiceInterface::class);

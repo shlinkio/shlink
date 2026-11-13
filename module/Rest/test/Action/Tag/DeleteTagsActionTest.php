@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\Tag;
 
 use Laminas\Diactoros\ServerRequest;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -18,6 +19,7 @@ class DeleteTagsActionTest extends TestCase
     private DeleteTagsAction $action;
     private MockObject&TagServiceInterface $tagService;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->tagService = $this->createMock(TagServiceInterface::class);

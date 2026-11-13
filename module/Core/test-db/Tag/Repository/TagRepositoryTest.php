@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioDbTest\Shlink\Core\Tag\Repository;
 
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
@@ -30,6 +31,7 @@ class TagRepositoryTest extends DatabaseTestCase
     private TagRepository $repo;
     private PersistenceShortUrlRelationResolver $relationResolver;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(Tag::class);

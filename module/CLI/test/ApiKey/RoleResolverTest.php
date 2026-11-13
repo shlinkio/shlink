@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\ApiKey;
 
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -21,6 +22,7 @@ class RoleResolverTest extends TestCase
     private RoleResolver $resolver;
     private MockObject&DomainServiceInterface $domainService;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->domainService = $this->createMock(DomainServiceInterface::class);

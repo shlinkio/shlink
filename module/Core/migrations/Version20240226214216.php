@@ -6,12 +6,14 @@ namespace ShlinkMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Override;
 
 /**
  * Migrate data from device_long_urls to short_url_redirect_rules
  */
 final class Version20240226214216 extends AbstractMigration
 {
+    #[Override]
     public function up(Schema $schema): void
     {
         $this->skipIf(!$schema->hasTable('device_long_urls'));

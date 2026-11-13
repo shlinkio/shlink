@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
 use CuyZ\Valinor\Mapper\TreeMapper;
 use Laminas\Diactoros\Response\JsonResponse;
+use Override;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Common\Paginator\Util\PagerfantaUtils;
@@ -26,6 +27,7 @@ class ListShortUrlsAction extends AbstractRestAction
         private readonly TreeMapper $mapper,
     ) {}
 
+    #[Override]
     public function handle(Request $request): Response
     {
         $shortUrls = $this->shortUrlService->listShortUrls(

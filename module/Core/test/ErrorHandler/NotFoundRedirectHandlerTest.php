@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\ErrorHandler;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -31,6 +32,7 @@ class NotFoundRedirectHandlerTest extends TestCase
     private MockObject&RequestHandlerInterface $next;
     private ServerRequestInterface $req;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->redirectOptions = new NotFoundRedirectOptions();

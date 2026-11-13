@@ -9,6 +9,7 @@ use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Uri;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
+use Override;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -32,6 +33,7 @@ class NotFoundRedirectResolverTest extends TestCase
     private MockObject&RedirectResponseHelperInterface $helper;
     private MockObject&LoggerInterface $logger;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->helper = $this->createMock(RedirectResponseHelperInterface::class);

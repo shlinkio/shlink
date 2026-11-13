@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Api;
 
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -18,6 +19,7 @@ class RenameApiKeyCommandTest extends TestCase
     private CommandTester $commandTester;
     private MockObject&ApiKeyServiceInterface $apiKeyService;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->apiKeyService = $this->createMock(ApiKeyServiceInterface::class);

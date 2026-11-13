@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Override;
 use Shlinkio\Shlink\Common\Exception\InvalidArgumentException;
 use Shlinkio\Shlink\Core\Model\Renaming;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
@@ -20,6 +21,7 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
     public function __construct(private EntityManagerInterface $em, private ApiKeyRepositoryInterface $repo) {}
 
     /** @inheritDoc */
+    #[Override]
     public function create(ApiKeyMeta $apiKeyMeta): ApiKey
     {
         return $this->em->wrapInTransaction(function () use ($apiKeyMeta) {
@@ -53,11 +55,13 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
         ));
     }
 
+    #[Override]
     public function createInitial(string $key): ApiKey|null
     {
         return $this->repo->createInitialApiKey($key);
     }
 
+    #[Override]
     public function check(string $key): ApiKeyCheckResult
     {
         $apiKey = $this->findByKey($key);
@@ -65,6 +69,7 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
     }
 
     /** @inheritDoc */
+    #[Override]
     public function deleteByName(string $apiKeyName): void
     {
         $affectedResults = $this->repo->deleteByName($apiKeyName);
@@ -74,6 +79,7 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
     }
 
     /** @inheritDoc */
+    #[Override]
     public function disableByName(string $apiKeyName): ApiKey
     {
         $apiKey = $this->repo->findOneBy(['name' => $apiKeyName]);
@@ -95,6 +101,7 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
     /**
      * @return ApiKey[]
      */
+    #[Override]
     public function listKeys(bool $enabledOnly = false): array
     {
         $conditions = $enabledOnly ? ['enabled' => true] : [];
@@ -102,6 +109,7 @@ readonly class ApiKeyService implements ApiKeyServiceInterface
     }
 
     /** @inheritDoc */
+    #[Override]
     public function renameApiKey(Renaming $apiKeyRenaming): ApiKey
     {
         $apiKey = $this->repo->findOneBy(['name' => $apiKeyRenaming->oldName]);

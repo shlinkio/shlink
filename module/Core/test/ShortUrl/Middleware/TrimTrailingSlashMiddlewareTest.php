@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl\Middleware;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -20,6 +21,7 @@ class TrimTrailingSlashMiddlewareTest extends TestCase
 {
     private MockObject&RequestHandlerInterface $requestHandler;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->requestHandler = $this->createMock(RequestHandlerInterface::class);

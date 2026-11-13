@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Domain;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Override;
 use Shlinkio\Shlink\Core\Config\EmptyNotFoundRedirectConfig;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
@@ -28,6 +29,7 @@ readonly class DomainService implements DomainServiceInterface
     /**
      * @return DomainItem[]
      */
+    #[Override]
     public function listDomains(ApiKey|null $apiKey = null): array
     {
         [$default, $domains] = $this->defaultDomainAndRest($apiKey);
@@ -69,6 +71,7 @@ readonly class DomainService implements DomainServiceInterface
     /**
      * @throws DomainNotFoundException
      */
+    #[Override]
     public function getDomain(string $domainId): Domain
     {
         $domain = $this->em->find(Domain::class, $domainId);
@@ -79,6 +82,7 @@ readonly class DomainService implements DomainServiceInterface
         return $domain;
     }
 
+    #[Override]
     public function findByAuthority(string $authority, ApiKey|null $apiKey = null): Domain|null
     {
         return $this->repo->findOneByAuthority($authority, $apiKey);
@@ -87,6 +91,7 @@ readonly class DomainService implements DomainServiceInterface
     /**
      * @throws DomainNotFoundException
      */
+    #[Override]
     public function getOrCreate(string $authority, ApiKey|null $apiKey = null): Domain
     {
         $domain = $this->getPersistedDomain($authority, $apiKey);
@@ -98,6 +103,7 @@ readonly class DomainService implements DomainServiceInterface
     /**
      * @throws DomainNotFoundException
      */
+    #[Override]
     public function configureNotFoundRedirects(
         string $authority,
         NotFoundRedirects $notFoundRedirects,

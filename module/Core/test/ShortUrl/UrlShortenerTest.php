@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl;
 use Cake\Chronos\Chronos;
 use Doctrine\ORM\EntityManagerInterface;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Override;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -31,6 +32,7 @@ class UrlShortenerTest extends TestCase
     private MockObject&EventDispatcherInterface $dispatcher;
     private MockObject&ShortUrlRepositoryInterface $repo;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->titleResolutionHelper = $this->createMock(ShortUrlTitleResolutionHelperInterface::class);

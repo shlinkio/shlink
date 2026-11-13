@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Config\PostProcessor;
 
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -16,11 +17,13 @@ class MultiSegmentSlugProcessorTest extends TestCase
 {
     private MultiSegmentSlugProcessor $processor;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->processor = new MultiSegmentSlugProcessor();
     }
 
+    #[Override]
     protected function tearDown(): void
     {
         putenv(EnvVars::MULTI_SEGMENT_SLUGS_ENABLED->value);

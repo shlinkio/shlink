@@ -8,6 +8,7 @@ use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
+use Override;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 
 /**
@@ -17,6 +18,7 @@ final class Version20241212131058 extends AbstractMigration
 {
     private const string TABLE_NAME = 'geolocation_db_updates';
 
+    #[Override]
     public function up(Schema $schema): void
     {
         $this->skipIf($schema->hasTable(self::TABLE_NAME));
@@ -51,12 +53,14 @@ final class Version20241212131058 extends AbstractMigration
         $table->addIndex(['filesystem_id'], 'IDX_geolocation_status_filesystem');
     }
 
+    #[Override]
     public function down(Schema $schema): void
     {
         $this->skipIf(!$schema->hasTable(self::TABLE_NAME));
         $schema->dropTable(self::TABLE_NAME);
     }
 
+    #[Override]
     public function isTransactional(): bool
     {
         return !$this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform;

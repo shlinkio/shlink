@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Visit\Paginator\Adapter;
 
+use Override;
 use Shlinkio\Shlink\Core\Paginator\Adapter\AbstractCacheableCountPaginatorAdapter;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
@@ -23,6 +24,7 @@ class ShortUrlVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdap
         private readonly ApiKey|null $apiKey,
     ) {}
 
+    #[Override]
     public function getSlice(int $offset, int $length): iterable
     {
         return $this->visitRepository->findVisitsByShortCode(
@@ -37,6 +39,7 @@ class ShortUrlVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdap
         );
     }
 
+    #[Override]
     protected function doCount(): int
     {
         return $this->visitRepository->countVisitsByShortCode(

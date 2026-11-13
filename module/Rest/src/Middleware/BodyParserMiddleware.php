@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Rest\Middleware;
 
 use Fig\Http\Message\RequestMethodInterface;
 use JsonException;
+use Override;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
@@ -17,6 +18,7 @@ use function Shlinkio\Shlink\Json\json_decode;
 
 class BodyParserMiddleware implements MiddlewareInterface, RequestMethodInterface
 {
+    #[Override]
     public function process(Request $request, RequestHandlerInterface $handler): Response
     {
         $method = $request->getMethod();
