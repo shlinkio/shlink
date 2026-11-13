@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Visit;
 
+use League\Csv\EscapeFormula;
 use League\Csv\Writer;
 use Shlinkio\Shlink\CLI\Input\VisitsListFormat;
 use Shlinkio\Shlink\CLI\Input\VisitsListInput;
@@ -20,12 +21,8 @@ class VisitsCommandUtils
     /**
      * @param Paginator<Visit> $paginator
      */
-    public static function renderOutput(
-        OutputInterface $output,
-        VisitsListInput $inputData,
-        Paginator $paginator,
-        callable|null $mapExtraFields = null,
-    ): void {
+    public static function renderOutput(OutputInterface $output, VisitsListInput $inputData, Paginator $paginator): void
+    {
         if ($inputData->format !== VisitsListFormat::FULL) {
             // Avoid running out of memory by loading visits in chunks
             $paginator->setMaxPerPage(1000);
@@ -48,6 +45,7 @@ class VisitsCommandUtils
 
             [$rows, $headers] = self::resolveRowsAndHeaders($paginator);
             $csv = Writer::fromString();
+            $csv->addFormatter(new EscapeFormula()->escapeRecord(...));
             if ($page === 1) {
                 $csv->insertOne($headers);
             }

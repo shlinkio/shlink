@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#2671](https://github.com/shlinkio/shlink/issues/2671) Add support for Mercure 1.0.
 
 ### Changed
-* *Nothing*
+* [#2666](https://github.com/shlinkio/shlink/pull/2666) Escape values that could be interpreted as spreadsheet formulas when exporting visits in CSV format.
 
 ### Deprecated
 * *Nothing*

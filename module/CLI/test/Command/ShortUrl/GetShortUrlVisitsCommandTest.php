@@ -119,6 +119,34 @@ class GetShortUrlVisitsCommandTest extends TestCase
         self::assertEquals($getExpectedOutput($visit->date), $output);
     }
 
+    #[Test]
+    public function formulasAreEscapedInCsvOutput(): void
+    {
+        $maliciousVisit = Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::fromParams('=1+1', '@SUM(A1)'));
+        $regularVisit = Visit::forValidShortUrl(
+            ShortUrl::createFake(),
+            Visitor::fromParams('Mozilla/5.0', 'https://example.com'),
+        );
+        $shortCode = 'abc123';
+        $this->visitsHelper
+            ->expects($this->once())
+            ->method('visitsForShortUrl')
+            ->willReturn(new Paginator(new ArrayAdapter([$maliciousVisit, $regularVisit])));
+
+        $this->commandTester->execute(['short-code' => $shortCode, '--format' => VisitsListFormat::CSV->value]);
+        $output = $this->commandTester->getDisplay();
+
+        self::assertEquals(
+            <<<OUTPUT
+                Date,"Potential bot","User agent",Referer,Country,Region,City,"Visited URL","Redirect URL",Type
+                {$maliciousVisit->date->toAtomString()},,'=1+1,'@SUM(A1),Unknown,Unknown,Unknown,,Unknown,valid_short_url
+                {$regularVisit->date->toAtomString()},,Mozilla/5.0,https://example.com,Unknown,Unknown,Unknown,,Unknown,valid_short_url
+
+                OUTPUT,
+            $output,
+        );
+    }
+
     public static function provideOutput(): iterable
     {
         yield 'regular' => [
