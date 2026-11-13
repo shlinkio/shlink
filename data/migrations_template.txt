@@ -7,19 +7,23 @@ namespace <namespace>;
 use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Override;
 
 final class <className> extends AbstractMigration
 {
+    #[Override]
     public function up(Schema $schema): void
     {
 <up>
     }
 
+    #[Override]
     public function down(Schema $schema): void
     {
 <down>
     }
 
+    #[Override]
     public function isTransactional(): bool
     {
         return !$this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform;
