@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use Closure;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Override;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -40,6 +41,7 @@ class GeolocationDbUpdaterTest extends TestCase
     /** @var GeolocationDownloadProgressHandlerInterface&object{beforeDownloadCalled: bool, handleProgressCalled: bool} */
     private GeolocationDownloadProgressHandlerInterface $progressHandler;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->dbUpdater = $this->createMock(DbUpdaterInterface::class);
@@ -57,11 +59,13 @@ class GeolocationDbUpdaterTest extends TestCase
                 public bool $handleProgressCalled = false,
             ) {}
 
+            #[Override]
             public function beforeDownload(bool $olderDbExists): void
             {
                 $this->beforeDownloadCalled = true;
             }
 
+            #[Override]
             public function handleProgress(int $total, int $downloaded, bool $olderDbExists): void
             {
                 $this->handleProgressCalled = true;

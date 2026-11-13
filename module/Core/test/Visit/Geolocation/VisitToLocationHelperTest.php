@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Visit\Geolocation;
 
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -21,6 +22,7 @@ class VisitToLocationHelperTest extends TestCase
     private VisitToLocationHelper $helper;
     private MockObject&LocationResolverInterface $ipLocationResolver;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->ipLocationResolver = $this->createMock(LocationResolverInterface::class);

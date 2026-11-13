@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\Matomo;
 
 use Exception;
 use MatomoTracker;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -32,6 +33,7 @@ class MatomoVisitSenderTest extends TestCase
     private Stub&VisitIterationRepositoryInterface $visitIterationRepository;
     private MatomoVisitSender $visitSender;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->trackerBuilder = $this->createMock(MatomoTrackerBuilderInterface::class);

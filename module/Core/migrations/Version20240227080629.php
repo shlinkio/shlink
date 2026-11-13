@@ -8,18 +8,21 @@ use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
+use Override;
 
 /**
  * Drop device_long_urls table
  */
 final class Version20240227080629 extends AbstractMigration
 {
+    #[Override]
     public function up(Schema $schema): void
     {
         $this->skipIf(!$schema->hasTable('device_long_urls'));
         $schema->dropTable('device_long_urls');
     }
 
+    #[Override]
     public function down(Schema $schema): void
     {
         $this->skipIf($schema->hasTable('device_long_urls'));
@@ -52,6 +55,7 @@ final class Version20240227080629 extends AbstractMigration
         $table->addUniqueIndex(['device_type', 'short_url_id'], 'UQ_device_type_per_short_url');
     }
 
+    #[Override]
     public function isTransactional(): bool
     {
         return !$this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Tag\Model;
 
 use JsonSerializable;
+use Override;
 use Shlinkio\Shlink\Core\Visit\Model\VisitsSummary;
 
 final readonly class TagInfo implements JsonSerializable
@@ -30,6 +31,7 @@ final readonly class TagInfo implements JsonSerializable
         );
     }
 
+    #[Override]
     public function jsonSerialize(): array
     {
         return [

@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl\Resolver;
 
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -24,6 +25,7 @@ class PersistenceShortUrlRelationResolverTest extends TestCase
     private PersistenceShortUrlRelationResolver $resolver;
     private MockObject&EntityManagerInterface $em;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManagerInterface::class);

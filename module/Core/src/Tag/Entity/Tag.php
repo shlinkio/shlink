@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Tag\Entity;
 
 use Doctrine\Common\Collections;
 use JsonSerializable;
+use Override;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 
@@ -24,6 +25,7 @@ class Tag extends AbstractEntity implements JsonSerializable
         $this->name = $name;
     }
 
+    #[Override]
     public function jsonSerialize(): string
     {
         return $this->name;

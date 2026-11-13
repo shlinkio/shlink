@@ -7,6 +7,7 @@ namespace ShlinkMigrations;
 use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Override;
 
 /**
  * Make the redirect_condition match_value column nullable, so that we can support new valueless-query-param and
@@ -14,11 +15,13 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20250722060208 extends AbstractMigration
 {
+    #[Override]
     public function up(Schema $schema): void
     {
         $schema->getTable('redirect_conditions')->getColumn('match_value')->setNotnull(false);
     }
 
+    #[Override]
     public function isTransactional(): bool
     {
         return !$this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform;

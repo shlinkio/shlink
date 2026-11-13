@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Domain;
 
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -23,6 +24,7 @@ class ListDomainsCommandTest extends TestCase
     private CommandTester $commandTester;
     private MockObject&DomainServiceInterface $domainService;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->domainService = $this->createMock(DomainServiceInterface::class);

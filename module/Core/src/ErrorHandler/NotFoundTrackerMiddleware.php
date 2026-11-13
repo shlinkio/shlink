@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\ErrorHandler;
 
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -16,6 +17,7 @@ readonly class NotFoundTrackerMiddleware implements MiddlewareInterface
 {
     public function __construct(private RequestTrackerInterface $requestTracker) {}
 
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $response = $handler->handle($request);

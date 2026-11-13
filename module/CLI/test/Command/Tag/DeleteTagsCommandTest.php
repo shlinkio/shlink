@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Tag;
 
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -17,6 +18,7 @@ class DeleteTagsCommandTest extends TestCase
     private CommandTester $commandTester;
     private MockObject&TagServiceInterface $tagService;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->tagService = $this->createMock(TagServiceInterface::class);

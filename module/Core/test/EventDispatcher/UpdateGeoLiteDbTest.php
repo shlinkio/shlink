@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -26,6 +27,7 @@ class UpdateGeoLiteDbTest extends TestCase
     private MockObject&LoggerInterface $logger;
     private MockObject&EventDispatcherInterface $eventDispatcher;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->dbUpdater = $this->createMock(GeolocationDbUpdaterInterface::class);

@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Middleware\ShortUrl;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -26,6 +27,7 @@ class OverrideDomainMiddlewareTest extends TestCase
     private MockObject&ApiKey $apiKey;
     private MockObject&RequestHandlerInterface $handler;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->apiKey = $this->createMock(ApiKey::class);

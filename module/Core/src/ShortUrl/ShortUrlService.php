@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\ShortUrl;
 
 use Doctrine\ORM;
+use Override;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlTitleResolutionHelperInterface;
@@ -25,6 +26,7 @@ readonly class ShortUrlService implements ShortUrlServiceInterface
     /**
      * @throws ShortUrlNotFoundException
      */
+    #[Override]
     public function updateShortUrl(
         ShortUrlIdentifier $identifier,
         ShortUrlEdition $shortUrlEdit,

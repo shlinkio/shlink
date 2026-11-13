@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Spec;
 use Happyr\DoctrineSpecification\Filter\Filter;
 use Happyr\DoctrineSpecification\Spec;
 use Happyr\DoctrineSpecification\Specification\BaseSpecification;
+use Override;
 
 class BelongsToDomain extends BaseSpecification
 {
@@ -15,6 +16,7 @@ class BelongsToDomain extends BaseSpecification
         parent::__construct();
     }
 
+    #[Override]
     protected function getSpec(): Filter
     {
         return Spec::eq('domain', $this->domainId, $this->dqlAlias);

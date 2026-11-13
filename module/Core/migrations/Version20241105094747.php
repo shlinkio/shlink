@@ -7,6 +7,7 @@ namespace ShlinkMigrations;
 use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Override;
 
 /**
  * In preparation to start hashing API keys, move all plain-text keys to the `name` column for all keys without name,
@@ -14,6 +15,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20241105094747 extends AbstractMigration
 {
+    #[Override]
     public function up(Schema $schema): void
     {
         $keyColumnName = $this->connection->quoteIdentifier('key');
@@ -35,6 +37,7 @@ final class Version20241105094747 extends AbstractMigration
         $qb->executeStatement();
     }
 
+    #[Override]
     public function isTransactional(): bool
     {
         return !$this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform;

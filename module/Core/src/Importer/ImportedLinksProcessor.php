@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Importer;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Override;
 use Shlinkio\Shlink\Core\Exception\NonUniqueSlugException;
 use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectRuleServiceInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -36,6 +37,7 @@ readonly class ImportedLinksProcessor implements ImportedLinksProcessorInterface
         private ShortUrlRedirectRuleServiceInterface $redirectRuleService,
     ) {}
 
+    #[Override]
     public function process(StyleInterface $io, ImportResult $result, ImportParams $params): void
     {
         $io->title('Importing short URLs');

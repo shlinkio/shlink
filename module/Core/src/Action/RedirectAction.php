@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Action;
 
+use Override;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -23,6 +24,7 @@ class RedirectAction extends AbstractTrackingAction
         parent::__construct($urlResolver, $requestTracker);
     }
 
+    #[Override]
     protected function createSuccessResp(ShortUrl $shortUrl, ServerRequestInterface $request): Response
     {
         $longUrl = $this->redirectionBuilder->buildShortUrlRedirect($shortUrl, $request);

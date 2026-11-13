@@ -57,6 +57,9 @@ ambiguous-function-call = {
         "module/Core/config/entities-mappings"
     ]
 }
+no-duplicate-match-arm = {
+    exclude = ["module/Core/src/Config/EnvVars.php"]
+}
 
 [analyzer]
 baseline = "mago-analyze-baseline.toml"

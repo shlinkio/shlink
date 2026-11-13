@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Domain;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Override;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -29,6 +30,7 @@ class DomainServiceTest extends TestCase
     private Stub&EntityManagerInterface $em;
     private MockObject&DomainRepositoryInterface $repo;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->em = $this->createStub(EntityManagerInterface::class);

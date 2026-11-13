@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Visit;
 
+use Override;
 use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
@@ -26,6 +27,7 @@ class GetOrphanVisitsCommandTest extends TestCase
     private CommandTester $commandTester;
     private MockObject&VisitsStatsHelperInterface $visitsHelper;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->visitsHelper = $this->createMock(VisitsStatsHelperInterface::class);

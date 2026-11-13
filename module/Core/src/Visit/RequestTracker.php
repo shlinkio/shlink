@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Visit;
 
 use Fig\Http\Message\RequestMethodInterface;
 use Mezzio\Router\Middleware\ImplicitHeadMiddleware;
+use Override;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\ErrorHandler\Model\NotFoundType;
@@ -24,6 +25,7 @@ readonly class RequestTracker implements RequestTrackerInterface, RequestMethodI
         private TrackingOptions $trackingOptions,
     ) {}
 
+    #[Override]
     public function trackIfApplicable(ShortUrl $shortUrl, ServerRequestInterface $request): Visit|null
     {
         if (!$this->shouldTrackRequest($request)) {
@@ -33,6 +35,7 @@ readonly class RequestTracker implements RequestTrackerInterface, RequestMethodI
         return $this->visitsTracker->track($shortUrl, Visitor::fromRequest($request));
     }
 
+    #[Override]
     public function trackNotFoundIfApplicable(ServerRequestInterface $request): Visit|null
     {
         if (!$this->shouldTrackRequest($request)) {

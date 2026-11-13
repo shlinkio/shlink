@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Override;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Rest\ApiKey\Model\ApiKeyMeta;
 use Shlinkio\Shlink\Rest\ApiKey\Model\RoleDefinition;
@@ -15,11 +16,13 @@ use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class ApiKeyFixture extends AbstractFixture implements DependentFixtureInterface
 {
+    #[Override]
     public function getDependencies(): array
     {
         return [DomainFixture::class];
     }
 
+    #[Override]
     public function load(ObjectManager $manager): void
     {
         $manager->persist($this->buildApiKey('valid_api_key', enabled: true));

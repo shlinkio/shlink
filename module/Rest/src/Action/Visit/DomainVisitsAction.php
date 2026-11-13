@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\Visit;
 
+use Override;
 use Pagerfanta\Pagerfanta;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
@@ -23,6 +24,7 @@ class DomainVisitsAction extends AbstractListVisitsAction
         parent::__construct($visitsHelper);
     }
 
+    #[Override]
     protected function getVisitsPaginator(Request $request, ApiKey $apiKey): Pagerfanta
     {
         $params = VisitsParams::fromRawData($request->getQueryParams());

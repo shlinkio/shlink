@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -17,6 +18,7 @@ class DeleteShortUrlActionTest extends TestCase
     private DeleteShortUrlAction $action;
     private MockObject&DeleteShortUrlServiceInterface $service;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->service = $this->createMock(DeleteShortUrlServiceInterface::class);

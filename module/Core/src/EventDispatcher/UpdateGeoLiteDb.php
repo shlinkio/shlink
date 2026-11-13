@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\EventDispatcher;
 
+use Override;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\GeoLiteDbCreated;
@@ -32,6 +33,7 @@ readonly class UpdateGeoLiteDb
                         private bool $messageLogged = false,
                     ) {}
 
+                    #[Override]
                     public function beforeDownload(bool $olderDbExists): void
                     {
                         $this->logger->notice(
@@ -39,6 +41,7 @@ readonly class UpdateGeoLiteDb
                         );
                     }
 
+                    #[Override]
                     public function handleProgress(int $total, int $downloaded, bool $olderDbExists): void
                     {
                         if ($this->messageLogged || $total > $downloaded) {

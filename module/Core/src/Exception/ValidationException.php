@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Exception;
 use Fig\Http\Message\StatusCodeInterface;
 use Mezzio\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
 use Mezzio\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
+use Override;
 use Throwable;
 
 use function array_keys;
@@ -46,6 +47,7 @@ class ValidationException extends InvalidArgumentException implements ProblemDet
         return $e;
     }
 
+    #[Override]
     public function __toString(): string
     {
         return sprintf(

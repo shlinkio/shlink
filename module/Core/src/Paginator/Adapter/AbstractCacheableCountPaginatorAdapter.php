@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Paginator\Adapter;
 
+use Override;
 use Pagerfanta\Adapter\AdapterInterface;
 
 /**
@@ -14,6 +15,7 @@ abstract class AbstractCacheableCountPaginatorAdapter implements AdapterInterfac
 {
     private int|null $count = null;
 
+    #[Override]
     final public function getNbResults(): int
     {
         // Since a new adapter instance is created every time visits are fetched, it is reasonably safe to internally

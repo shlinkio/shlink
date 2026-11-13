@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\EventDispatcher\Helper;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -17,6 +18,7 @@ class RequestIdProviderTest extends TestCase
     private RequestIdProvider $provider;
     private RequestIdMiddleware $middleware;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->middleware = new RequestIdMiddleware();

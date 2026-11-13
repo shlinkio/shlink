@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\RedirectRule;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Override;
 use Shlinkio\Shlink\Common\ObjectMapper\LooseUriConverter;
 use Shlinkio\Shlink\Common\ObjectMapper\MappingError;
 use Shlinkio\Shlink\Core\Exception\InvalidArgumentException;
@@ -36,6 +37,7 @@ use const STR_PAD_LEFT;
 
 class RedirectRuleHandler implements RedirectRuleHandlerInterface
 {
+    #[Override]
     public function manageRules(StyleInterface $io, ShortUrl $shortUrl, array $rules): array|null
     {
         $amountOfRules = count($rules);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Geolocation\Middleware;
 
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -23,6 +24,7 @@ readonly class GeolocationMiddleware implements MiddlewareInterface
         private TrackingOptions $trackingOptions,
     ) {}
 
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!$this->trackingOptions->isGeolocationRelevant()) {

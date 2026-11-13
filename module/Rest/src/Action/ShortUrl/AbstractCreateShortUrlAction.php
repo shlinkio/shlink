@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
 use CuyZ\Valinor\Mapper\TreeMapper;
 use Laminas\Diactoros\Response\JsonResponse;
+use Override;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
@@ -22,6 +23,7 @@ abstract class AbstractCreateShortUrlAction extends AbstractRestAction
         private readonly TreeMapper $treeMapper,
     ) {}
 
+    #[Override]
     public function handle(Request $request): Response
     {
         $shortUrlMeta = $this->buildShortUrlData($request);

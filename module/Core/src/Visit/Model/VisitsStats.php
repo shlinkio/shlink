@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Visit\Model;
 
 use JsonSerializable;
+use Override;
 
 final readonly class VisitsStats implements JsonSerializable
 {
@@ -27,6 +28,7 @@ final readonly class VisitsStats implements JsonSerializable
         );
     }
 
+    #[Override]
     public function jsonSerialize(): array
     {
         return [

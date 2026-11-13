@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Util;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Override;
 use Throwable;
 
 /**
@@ -20,6 +21,7 @@ class DoctrineBatchHelper implements DoctrineBatchHelperInterface
      * @return iterable<T>
      * @throws Throwable
      */
+    #[Override]
     public function wrapIterable(iterable $resultSet, int $batchSize): iterable
     {
         $iteration = 0;

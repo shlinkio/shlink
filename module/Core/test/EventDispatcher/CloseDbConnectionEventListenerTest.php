@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
 use Doctrine\DBAL\Connection;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -19,6 +20,7 @@ class CloseDbConnectionEventListenerTest extends TestCase
 {
     private MockObject&ReopeningEntityManagerInterface $em;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->em = $this->createMock(ReopeningEntityManagerInterface::class);

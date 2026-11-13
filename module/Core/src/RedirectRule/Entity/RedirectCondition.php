@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\RedirectRule\Entity;
 
 use Cake\Chronos\Chronos;
 use JsonSerializable;
+use Override;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Model\Browser;
@@ -237,6 +238,7 @@ class RedirectCondition extends AbstractEntity implements JsonSerializable
         return $browser !== null && $browser->value === $this->matchValue;
     }
 
+    #[Override]
     public function jsonSerialize(): array
     {
         return [

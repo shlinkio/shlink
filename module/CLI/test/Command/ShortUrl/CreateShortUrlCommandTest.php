@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use CuyZ\Valinor\MapperBuilder;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Override;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -31,6 +32,7 @@ class CreateShortUrlCommandTest extends TestCase
     private MockObject&UrlShortenerInterface $urlShortener;
     private Stub&ShortUrlStringifierInterface $stringifier;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->urlShortener = $this->createMock(UrlShortenerInterface::class);

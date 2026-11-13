@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\RedirectRule;
 use Doctrine\Common\Collections\ArrayCollection;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -25,6 +26,7 @@ class ListRedirectRulesActionTest extends TestCase
     private ShortUrlRedirectRuleServiceInterface&MockObject $ruleService;
     private ListRedirectRulesAction $action;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->urlResolver = $this->createMock(ShortUrlResolverInterface::class);

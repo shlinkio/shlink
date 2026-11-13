@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Domain\Repository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
+use Override;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\Domain\Spec\IsDomain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -20,6 +21,7 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
     /**
      * @return Domain[]
      */
+    #[Override]
     public function findDomains(ApiKey|null $apiKey = null): array
     {
         $qb = $this->createQueryBuilder('d');
@@ -40,6 +42,7 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
         return $qb->getQuery()->getResult();
     }
 
+    #[Override]
     public function findOneByAuthority(string $authority, ApiKey|null $apiKey = null): Domain|null
     {
         $qb = $this->createDomainQueryBuilder($authority, $apiKey);
@@ -48,6 +51,7 @@ class DomainRepository extends EntitySpecificationRepository implements DomainRe
         return $qb->getQuery()->getOneOrNullResult();
     }
 
+    #[Override]
     public function domainExists(string $authority, ApiKey|null $apiKey = null): bool
     {
         $qb = $this->createDomainQueryBuilder($authority, $apiKey);

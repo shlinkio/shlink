@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Domain\Spec;
 use Happyr\DoctrineSpecification\Filter\Filter;
 use Happyr\DoctrineSpecification\Spec;
 use Happyr\DoctrineSpecification\Specification\BaseSpecification;
+use Override;
 
 class IsDomain extends BaseSpecification
 {
@@ -15,6 +16,7 @@ class IsDomain extends BaseSpecification
         parent::__construct($context);
     }
 
+    #[Override]
     protected function getSpec(): Filter
     {
         return Spec::eq('id', $this->domainId);

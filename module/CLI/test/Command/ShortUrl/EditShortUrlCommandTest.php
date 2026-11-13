@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\ShortUrl;
 
 use CuyZ\Valinor\MapperBuilder;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -27,6 +28,7 @@ class EditShortUrlCommandTest extends TestCase
     private MockObject&ShortUrlServiceInterface $shortUrlService;
     private MockObject&ShortUrlStringifierInterface $stringifier;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->shortUrlService = $this->createMock(ShortUrlServiceInterface::class);

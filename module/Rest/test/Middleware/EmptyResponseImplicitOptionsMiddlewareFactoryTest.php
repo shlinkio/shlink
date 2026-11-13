@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Middleware;
 
 use Laminas\Diactoros\Response\EmptyResponse;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -15,6 +16,7 @@ class EmptyResponseImplicitOptionsMiddlewareFactoryTest extends TestCase
 {
     private EmptyResponseImplicitOptionsMiddlewareFactory $factory;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->factory = new EmptyResponseImplicitOptionsMiddlewareFactory();

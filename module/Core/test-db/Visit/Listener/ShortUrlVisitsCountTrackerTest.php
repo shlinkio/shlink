@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioDbTest\Shlink\Core\Visit\Listener;
 
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount;
@@ -19,6 +20,7 @@ class ShortUrlVisitsCountTrackerTest extends DatabaseTestCase
 {
     private ShortUrlVisitsCountRepository $repo;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->repo = $this->getEntityManager()->getRepository(ShortUrlVisitsCount::class);

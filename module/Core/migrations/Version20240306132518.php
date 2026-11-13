@@ -8,12 +8,14 @@ use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
+use Override;
 
 /**
  * Create the new short_url_visits_counts table that will track visit counts per short URL
  */
 final class Version20240306132518 extends AbstractMigration
 {
+    #[Override]
     public function up(Schema $schema): void
     {
         $this->skipIf($schema->hasTable('short_url_visits_counts'));
@@ -57,12 +59,14 @@ final class Version20240306132518 extends AbstractMigration
         $table->addUniqueIndex(['short_url_id', 'potential_bot', 'slot_id'], 'UQ_slot_per_short_url');
     }
 
+    #[Override]
     public function down(Schema $schema): void
     {
         $this->skipIf(!$schema->hasTable('short_url_visits_counts'));
         $schema->dropTable('short_url_visits_counts');
     }
 
+    #[Override]
     public function isTransactional(): bool
     {
         return !$this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform;

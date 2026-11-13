@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\RedirectRule;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Override;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\RedirectCondition;
 use Shlinkio\Shlink\Core\RedirectRule\Entity\ShortUrlRedirectRule;
 use Shlinkio\Shlink\Core\RedirectRule\Model\RedirectRulesData;
@@ -19,6 +20,7 @@ readonly class ShortUrlRedirectRuleService implements ShortUrlRedirectRuleServic
     public function __construct(private EntityManagerInterface $em) {}
 
     /** @inheritDoc */
+    #[Override]
     public function rulesForShortUrl(ShortUrl $shortUrl): array
     {
         return $this->em->getRepository(ShortUrlRedirectRule::class)->findBy(
@@ -28,6 +30,7 @@ readonly class ShortUrlRedirectRuleService implements ShortUrlRedirectRuleServic
     }
 
     /** @inheritDoc */
+    #[Override]
     public function setRulesForShortUrl(ShortUrl $shortUrl, RedirectRulesData $data): array
     {
         $rules = [];
@@ -47,6 +50,7 @@ readonly class ShortUrlRedirectRuleService implements ShortUrlRedirectRuleServic
     }
 
     /** @inheritDoc */
+    #[Override]
     public function saveRulesForShortUrl(ShortUrl $shortUrl, array $rules): void
     {
         $normalizedAndDetachedRules = map($rules, function (ShortUrlRedirectRule $rule, int|string|float $priority) {

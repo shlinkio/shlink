@@ -9,6 +9,7 @@ use Fig\Http\Message\RequestMethodInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\RequestOptions;
 use Laminas\Stdlib\ErrorHandler;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Log\LoggerInterface;
@@ -52,6 +53,7 @@ readonly class ShortUrlTitleResolutionHelper implements ShortUrlTitleResolutionH
      * @param T $data
      * @return T
      */
+    #[Override]
     public function processTitle(TitleResolutionModelInterface $data): TitleResolutionModelInterface
     {
         if (!$this->options->autoResolveTitles || $data->hasTitle()) {

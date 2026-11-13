@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Core\RedirectRule;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -25,6 +26,7 @@ class ShortUrlRedirectRuleServiceTest extends TestCase
     private EntityManagerInterface&MockObject $em;
     private ShortUrlRedirectRuleService $ruleService;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManagerInterface::class);

@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Spec;
 use Happyr\DoctrineSpecification\Filter\Filter;
 use Happyr\DoctrineSpecification\Spec;
 use Happyr\DoctrineSpecification\Specification\BaseSpecification;
+use Override;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class BelongsToApiKey extends BaseSpecification
@@ -16,6 +17,7 @@ class BelongsToApiKey extends BaseSpecification
         parent::__construct($context);
     }
 
+    #[Override]
     protected function getSpec(): Filter
     {
         return Spec::eq('authorApiKey', $this->apiKey);

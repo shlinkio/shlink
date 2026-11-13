@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Visit\Model;
 
 use JsonSerializable;
+use Override;
 
 final class VisitsSummary implements JsonSerializable
 {
@@ -15,6 +16,7 @@ final class VisitsSummary implements JsonSerializable
         return new self($total, $nonBots);
     }
 
+    #[Override]
     public function jsonSerialize(): array
     {
         return [

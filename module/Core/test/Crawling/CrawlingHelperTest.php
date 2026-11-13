@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Crawling;
 
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -15,6 +16,7 @@ class CrawlingHelperTest extends TestCase
     private CrawlingHelper $helper;
     private MockObject&CrawlableShortCodesQueryInterface $query;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->query = $this->createMock(CrawlableShortCodesQueryInterface::class);

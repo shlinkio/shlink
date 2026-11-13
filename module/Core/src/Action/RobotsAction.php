@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Action;
 
 use Fig\Http\Message\StatusCodeInterface;
 use GuzzleHttp\Psr7\Response;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -23,6 +24,7 @@ readonly class RobotsAction implements RequestHandlerInterface, StatusCodeInterf
         private RobotsOptions $robotsOptions,
     ) {}
 
+    #[Override]
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         // @phpstan-ignore-next-line The "Response" phpdoc is wrong

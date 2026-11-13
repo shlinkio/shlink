@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\CLI\Command\Integration;
 
 use Exception;
+use Override;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
@@ -22,6 +23,7 @@ class MatomoSendVisitsCommandTest extends TestCase
 {
     private MockObject&MatomoVisitSenderInterface $visitSender;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->visitSender = $this->createMock(MatomoVisitSenderInterface::class);

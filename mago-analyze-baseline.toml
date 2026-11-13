@@ -1821,7 +1821,7 @@ count = 1
 [[issues]]
 file = "module/Core/src/Visit/Repository/VisitDeleterRepository.php"
 code = "mixed-return-statement"
-message = "Could not infer a precise return type for function `{closure:module/Core/src/Visit/Repository/VisitDeleterRepository.php:41:39}`. Saw type `mixed`."
+message = "Could not infer a precise return type for function `{closure:module/Core/src/Visit/Repository/VisitDeleterRepository.php:44:39}`. Saw type `mixed`."
 count = 1
 
 [[issues]]

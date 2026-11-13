@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\ShortUrl;
 
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,6 +21,7 @@ class ShortUrlVisitsDeleterTest extends TestCase
     private MockObject&VisitDeleterRepositoryInterface $repository;
     private MockObject&ShortUrlResolverInterface $resolver;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(VisitDeleterRepositoryInterface::class);

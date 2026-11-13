@@ -9,6 +9,7 @@ use CuyZ\Valinor\Mapper\Tree\Message\MessageBuilder;
 use CuyZ\Valinor\Mapper\Tree\Message\Messages;
 use CuyZ\Valinor\Mapper\Tree\Message\NodeMessage;
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -21,6 +22,7 @@ class MapValidationMiddlewareTest extends TestCase
 {
     private MapValidationMiddleware $middleware;
 
+    #[Override]
     public function setUp(): void
     {
         $this->middleware = new MapValidationMiddleware();
@@ -40,6 +42,7 @@ class MapValidationMiddlewareTest extends TestCase
     public function convertsMappingErrorsToValidationExceptions(): void
     {
         $e = new class extends RuntimeException implements MappingError {
+            #[Override]
             public function messages(): Messages
             {
                 // @phpstan-ignore-next-line
@@ -67,11 +70,13 @@ class MapValidationMiddlewareTest extends TestCase
                 );
             }
 
+            #[Override]
             public function type(): string
             {
                 return '';
             }
 
+            #[Override]
             public function source(): mixed
             {
                 return '';

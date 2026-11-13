@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Visit\Repository;
 
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
+use Override;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\Visit\Entity\OrphanVisitsCount;
 use Shlinkio\Shlink\Core\Visit\Entity\ShortUrlVisitsCount;
@@ -13,6 +14,7 @@ use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 /** @extends EntitySpecificationRepository<Visit> */
 class VisitDeleterRepository extends EntitySpecificationRepository implements VisitDeleterRepositoryInterface
 {
+    #[Override]
     public function deleteShortUrlVisits(ShortUrl $shortUrl): int
     {
         return $this->getEntityManager()->wrapInTransaction(function () use ($shortUrl): int {
@@ -35,6 +37,7 @@ class VisitDeleterRepository extends EntitySpecificationRepository implements Vi
         return $qb->getQuery()->execute();
     }
 
+    #[Override]
     public function deleteOrphanVisits(): int
     {
         $em = $this->getEntityManager();

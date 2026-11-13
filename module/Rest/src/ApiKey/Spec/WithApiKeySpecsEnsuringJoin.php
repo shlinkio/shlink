@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Rest\ApiKey\Spec;
 use Happyr\DoctrineSpecification\Spec;
 use Happyr\DoctrineSpecification\Specification\BaseSpecification;
 use Happyr\DoctrineSpecification\Specification\Specification;
+use Override;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class WithApiKeySpecsEnsuringJoin extends BaseSpecification
@@ -18,6 +19,7 @@ class WithApiKeySpecsEnsuringJoin extends BaseSpecification
         parent::__construct();
     }
 
+    #[Override]
     protected function getSpec(): Specification
     {
         return $this->apiKey === null || !ApiKey::isShortUrlRestricted($this->apiKey)

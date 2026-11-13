@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Visit;
 
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -19,6 +20,7 @@ class VisitsDeleterTest extends TestCase
     private VisitsDeleter $visitsDeleter;
     private MockObject&VisitDeleterRepositoryInterface $repo;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->repo = $this->createMock(VisitDeleterRepositoryInterface::class);

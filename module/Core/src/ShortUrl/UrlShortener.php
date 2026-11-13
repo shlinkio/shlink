@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\ShortUrl;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Override;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Shlinkio\Shlink\Core\EventDispatcher\Event\ShortUrlCreated;
@@ -31,6 +32,7 @@ readonly class UrlShortener implements UrlShortenerInterface
     /**
      * @throws NonUniqueSlugException
      */
+    #[Override]
     public function shorten(ShortUrlCreation $creation): UrlShorteningResult
     {
         // First, check if a short URL exists for all provided params

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Visit\Geolocation;
 
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use Shlinkio\Shlink\Common\Util\IpAddress;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
@@ -21,6 +22,7 @@ readonly class VisitToLocationHelper implements VisitToLocationHelperInterface
     /**
      * @throws IpCannotBeLocatedException
      */
+    #[Override]
     public function resolveVisitLocation(Visit $visit): Location
     {
         if (!$visit->hasRemoteAddr()) {

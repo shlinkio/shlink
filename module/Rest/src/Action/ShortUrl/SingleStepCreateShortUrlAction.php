@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
+use Override;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Rest\Middleware\AuthenticationMiddleware;
@@ -14,6 +15,7 @@ class SingleStepCreateShortUrlAction extends AbstractCreateShortUrlAction
     protected const string ROUTE_PATH = '/short-urls/shorten';
     protected const array ROUTE_ALLOWED_METHODS = [self::METHOD_GET];
 
+    #[Override]
     protected function buildShortUrlData(Request $request): ShortUrlCreation
     {
         $query = $request->getQueryParams();

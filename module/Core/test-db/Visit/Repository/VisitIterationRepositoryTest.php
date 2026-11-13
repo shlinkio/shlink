@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioDbTest\Shlink\Core\Visit\Repository;
 
 use Cake\Chronos\Chronos;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Shlinkio\Shlink\Common\Util\DateRange;
@@ -23,6 +24,7 @@ class VisitIterationRepositoryTest extends DatabaseTestCase
 {
     private VisitIterationRepository $repo;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->repo = $this->createRepository(Visit::class, VisitIterationRepository::class);

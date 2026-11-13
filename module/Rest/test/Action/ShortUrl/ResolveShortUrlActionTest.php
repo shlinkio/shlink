@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Rest\Action\ShortUrl;
 
 use Laminas\Diactoros\ServerRequest;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -21,6 +22,7 @@ class ResolveShortUrlActionTest extends TestCase
     private ResolveShortUrlAction $action;
     private MockObject&ShortUrlResolverInterface $urlResolver;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->urlResolver = $this->createMock(ShortUrlResolverInterface::class);

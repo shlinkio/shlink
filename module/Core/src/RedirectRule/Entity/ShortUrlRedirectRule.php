@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\RedirectRule\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use JsonSerializable;
+use Override;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -65,6 +66,7 @@ class ShortUrlRedirectRule extends AbstractEntity implements JsonSerializable
         return $this->conditions->map($callback(...))->toArray();
     }
 
+    #[Override]
     public function jsonSerialize(): array
     {
         return [

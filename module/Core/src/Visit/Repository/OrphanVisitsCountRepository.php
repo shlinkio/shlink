@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Visit\Repository;
 
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
+use Override;
 use Shlinkio\Shlink\Core\Visit\Entity\OrphanVisitsCount;
 use Shlinkio\Shlink\Core\Visit\Persistence\VisitsCountFiltering;
 use Shlinkio\Shlink\Rest\ApiKey\Role;
@@ -12,6 +13,7 @@ use Shlinkio\Shlink\Rest\ApiKey\Role;
 /** @extends EntitySpecificationRepository<OrphanVisitsCount> */
 class OrphanVisitsCountRepository extends EntitySpecificationRepository implements OrphanVisitsCountRepositoryInterface
 {
+    #[Override]
     public function countOrphanVisits(VisitsCountFiltering $filtering): int
     {
         if ($filtering->apiKey?->hasRole(Role::NO_ORPHAN_VISITS)) {

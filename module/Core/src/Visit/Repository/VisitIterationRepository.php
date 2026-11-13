@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Core\Visit\Repository;
 
 use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
+use Override;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
@@ -19,6 +20,7 @@ class VisitIterationRepository extends EntitySpecificationRepository implements 
     /**
      * @return iterable<Visit>
      */
+    #[Override]
     public function findUnlocatedVisits(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
@@ -33,6 +35,7 @@ class VisitIterationRepository extends EntitySpecificationRepository implements 
     /**
      * @return iterable<Visit>
      */
+    #[Override]
     public function findVisitsWithEmptyLocation(int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
@@ -50,6 +53,7 @@ class VisitIterationRepository extends EntitySpecificationRepository implements 
     /**
      * @return iterable<Visit>
      */
+    #[Override]
     public function findAllVisits(DateRange|null $dateRange = null, int $blockSize = self::DEFAULT_BLOCK_SIZE): iterable
     {
         $qb = $this->createQueryBuilder('v');

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\EventDispatcher;
 
+use Override;
 use Shlinkio\Shlink\Common\UpdatePublishing\Update;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 use Shlinkio\Shlink\Core\ShortUrl\Transformer\ShortUrlDataTransformerInterface;
@@ -13,6 +14,7 @@ final readonly class PublishingUpdatesGenerator implements PublishingUpdatesGene
 {
     public function __construct(private ShortUrlDataTransformerInterface $shortUrlTransformer) {}
 
+    #[Override]
     public function newVisitUpdate(Visit $visit): Update
     {
         return Update::forTopicAndPayload(Topic::NEW_VISIT->value, [
@@ -21,6 +23,7 @@ final readonly class PublishingUpdatesGenerator implements PublishingUpdatesGene
         ]);
     }
 
+    #[Override]
     public function newOrphanVisitUpdate(Visit $visit): Update
     {
         return Update::forTopicAndPayload(Topic::NEW_ORPHAN_VISIT->value, [
@@ -28,6 +31,7 @@ final readonly class PublishingUpdatesGenerator implements PublishingUpdatesGene
         ]);
     }
 
+    #[Override]
     public function newShortUrlVisitUpdate(Visit $visit): Update
     {
         $shortUrl = $visit->shortUrl;
@@ -39,6 +43,7 @@ final readonly class PublishingUpdatesGenerator implements PublishingUpdatesGene
         ]);
     }
 
+    #[Override]
     public function newShortUrlUpdate(ShortUrl $shortUrl): Update
     {
         return Update::forTopicAndPayload(Topic::NEW_SHORT_URL->value, [

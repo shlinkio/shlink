@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Tag;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\DataProviderExternal;
 use PHPUnit\Framework\Attributes\Test;
@@ -30,6 +31,7 @@ class TagServiceTest extends TestCase
     private TagService $service;
     private MockObject&TagRepository $repo;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->repo = $this->createMock(TagRepository::class);

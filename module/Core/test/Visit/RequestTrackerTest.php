@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Core\Visit;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\ServerRequestFactory;
 use Mezzio\Router\Middleware\ImplicitHeadMiddleware;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -30,6 +31,7 @@ class RequestTrackerTest extends TestCase
     private MockObject&NotFoundType $notFoundType;
     private ServerRequestInterface $request;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->visitsTracker = $this->createMock(VisitsTrackerInterface::class);

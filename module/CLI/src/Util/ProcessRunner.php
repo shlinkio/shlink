@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\CLI\Util;
 
 use Closure;
+use Override;
 use Symfony\Component\Console\Helper\DebugFormatterHelper;
 use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
@@ -35,6 +36,7 @@ class ProcessRunner implements ProcessRunnerInterface
     /**
      * @inheritDoc
      */
+    #[Override]
     public function run(OutputInterface $output, array $cmd): void
     {
         if ($output instanceof ConsoleOutputInterface) {

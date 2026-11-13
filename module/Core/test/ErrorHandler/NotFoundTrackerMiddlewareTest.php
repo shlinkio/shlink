@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\ErrorHandler;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -25,6 +26,7 @@ class NotFoundTrackerMiddlewareTest extends TestCase
     private MockObject&RequestHandlerInterface $handler;
     private MockObject&RequestTrackerInterface $requestTracker;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->handler = $this->createMock(RequestHandlerInterface::class);

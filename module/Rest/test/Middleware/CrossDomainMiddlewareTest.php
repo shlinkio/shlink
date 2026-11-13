@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Rest\Middleware;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
@@ -20,6 +21,7 @@ class CrossDomainMiddlewareTest extends TestCase
 {
     private MockObject&RequestHandlerInterface $handler;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->handler = $this->createMock(RequestHandlerInterface::class);

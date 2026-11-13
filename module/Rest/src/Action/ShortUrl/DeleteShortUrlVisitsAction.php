@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
 use Laminas\Diactoros\Response\JsonResponse;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
@@ -19,6 +20,7 @@ class DeleteShortUrlVisitsAction extends AbstractRestAction
 
     public function __construct(private readonly ShortUrlVisitsDeleterInterface $deleter) {}
 
+    #[Override]
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $identifier = ShortUrlIdentifier::fromApiRequest($request);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Visit\Paginator\Adapter;
 
+use Override;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Paginator\Adapter\AbstractCacheableCountPaginatorAdapter;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
@@ -23,6 +24,7 @@ class OrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
         private readonly UrlShortenerOptions $options,
     ) {}
 
+    #[Override]
     protected function doCount(): int
     {
         return $this->repo->countOrphanVisits(new OrphanVisitsCountFiltering(
@@ -35,6 +37,7 @@ class OrphanVisitsPaginatorAdapter extends AbstractCacheableCountPaginatorAdapte
         ));
     }
 
+    #[Override]
     public function getSlice(int $offset, int $length): iterable
     {
         return $this->repo->findOrphanVisits(new OrphanVisitsListFiltering(

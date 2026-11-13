@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Visit\Paginator\Adapter;
 
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -20,6 +21,7 @@ class ShortUrlVisitsPaginatorAdapterTest extends TestCase
 {
     private MockObject&VisitRepositoryInterface $repo;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->repo = $this->createMock(VisitRepositoryInterface::class);

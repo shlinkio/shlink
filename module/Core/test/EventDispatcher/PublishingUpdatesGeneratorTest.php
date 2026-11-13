@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\EventDispatcher;
 
 use Cake\Chronos\Chronos;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -25,6 +26,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
     private PublishingUpdatesGenerator $generator;
     private Chronos $now;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->now = Chronos::now();
@@ -35,6 +37,7 @@ class PublishingUpdatesGeneratorTest extends TestCase
         );
     }
 
+    #[Override]
     protected function tearDown(): void
     {
         Chronos::setTestNow();

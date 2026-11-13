@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Visit;
 
+use Override;
 use Shlinkio\Shlink\Core\Exception\GeolocationDbUpdateFailedException;
 use Shlinkio\Shlink\Core\Geolocation\GeolocationDbUpdaterInterface;
 use Shlinkio\Shlink\Core\Geolocation\GeolocationDownloadProgressHandlerInterface;
@@ -85,12 +86,14 @@ class DownloadGeoLiteDbCommand extends Command implements GeolocationDownloadPro
         return $olderDbExists ? self::INVALID : self::FAILURE;
     }
 
+    #[Override]
     public function beforeDownload(bool $olderDbExists): void
     {
         $this->io->text(sprintf('<fg=blue>%s GeoLite2 db file...</>', $olderDbExists ? 'Updating' : 'Downloading'));
         $this->progressBar = new ProgressBar($this->io);
     }
 
+    #[Override]
     public function handleProgress(int $total, int $downloaded, bool $olderDbExists): void
     {
         $this->progressBar?->setMaxSteps($total);

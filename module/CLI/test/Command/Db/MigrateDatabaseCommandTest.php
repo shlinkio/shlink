@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Db;
 
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -20,6 +21,7 @@ class MigrateDatabaseCommandTest extends TestCase
     private CommandTester $commandTester;
     private MockObject&ProcessRunnerInterface $processHelper;
 
+    #[Override]
     protected function setUp(): void
     {
         $locker = $this->createStub(LockFactory::class);

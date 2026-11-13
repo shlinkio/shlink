@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\ShortUrl;
 
+use Override;
 use Shlinkio\Shlink\Common\Paginator\Paginator;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
@@ -19,6 +20,7 @@ readonly class ShortUrlListService implements ShortUrlListServiceInterface
     ) {}
 
     /** @inheritDoc */
+    #[Override]
     public function listShortUrls(ShortUrlsParams $params, ApiKey|null $apiKey = null): Paginator
     {
         $defaultDomain = $this->urlShortenerOptions->defaultDomain;

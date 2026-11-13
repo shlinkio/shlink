@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Rest\Action;
 
 use Cake\Chronos\Chronos;
 use Laminas\Diactoros\Response\JsonResponse;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Common\Mercure\JwtProviderInterface;
@@ -24,6 +25,7 @@ class MercureInfoAction extends AbstractRestAction
         private readonly MercureOptions $mercureOptions,
     ) {}
 
+    #[Override]
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $hubUrl = $this->mercureOptions->publicHubUrl;

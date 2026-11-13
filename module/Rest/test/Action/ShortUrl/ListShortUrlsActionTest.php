@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use CuyZ\Valinor\MapperBuilder;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -27,6 +28,7 @@ class ListShortUrlsActionTest extends TestCase
     private ListShortUrlsAction $action;
     private MockObject&ShortUrlListServiceInterface $service;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->service = $this->createMock(ShortUrlListServiceInterface::class);

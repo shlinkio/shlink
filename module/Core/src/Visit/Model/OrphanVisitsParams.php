@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\Visit\Model;
 
+use Override;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Exception\ValidationException;
 use ValueError;
@@ -24,6 +25,7 @@ final class OrphanVisitsParams extends WithDomainVisitsParams
         parent::__construct($dateRange, $page, $itemsPerPage, $excludeBots, $domain);
     }
 
+    #[Override]
     public static function fromRawData(array $query): self
     {
         $visitsParams = WithDomainVisitsParams::fromRawData($query);

@@ -6,12 +6,14 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Spec;
 
 use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Filter\Filter;
+use Override;
 use Shlinkio\Shlink\Rest\Entity\ApiKey;
 
 class BelongsToApiKeyInlined implements Filter
 {
     public function __construct(private ApiKey $apiKey) {}
 
+    #[Override]
     public function getFilter(QueryBuilder $qb, string $dqlAlias): string
     {
         // Parameters in this query need to be inlined, not bound, as we need to use it as sub-query later

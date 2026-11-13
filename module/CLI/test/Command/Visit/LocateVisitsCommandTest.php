@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\CLI\Command\Visit;
 
+use Override;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -42,6 +43,7 @@ class LocateVisitsCommandTest extends TestCase
     private Stub&Lock\LockInterface $lock;
     private Stub&Command $downloadDbCommand;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->visitService = $this->createMock(VisitLocatorInterface::class);

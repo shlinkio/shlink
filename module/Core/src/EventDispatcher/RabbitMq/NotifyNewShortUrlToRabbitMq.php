@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\EventDispatcher\RabbitMq;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Override;
 use Psr\Log\LoggerInterface;
 use Shlinkio\Shlink\Common\UpdatePublishing\PublishingHelperInterface;
 use Shlinkio\Shlink\Core\Config\Options\RabbitMqOptions;
@@ -26,11 +27,13 @@ class NotifyNewShortUrlToRabbitMq extends AbstractNotifyNewShortUrlListener
         parent::__construct($rabbitMqHelper, $updatesGenerator, $em, $logger, $realTimeUpdatesOptions);
     }
 
+    #[Override]
     protected function isEnabled(): bool
     {
         return $this->options->enabled;
     }
 
+    #[Override]
     protected function getRemoteSystem(): RemoteSystem
     {
         return RemoteSystem::RABBIT_MQ;

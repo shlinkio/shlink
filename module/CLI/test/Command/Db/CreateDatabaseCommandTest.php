@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Exception;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -36,6 +37,7 @@ class CreateDatabaseCommandTest extends TestCase
     private MockObject&AbstractSchemaManager $schemaManager;
     private Stub&Driver $driver;
 
+    #[Override]
     protected function setUp(): void
     {
         $locker = $this->createStub(LockFactory::class);

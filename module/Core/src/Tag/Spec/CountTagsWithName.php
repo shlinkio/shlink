@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\Tag\Spec;
 use Happyr\DoctrineSpecification\Spec;
 use Happyr\DoctrineSpecification\Specification\BaseSpecification;
 use Happyr\DoctrineSpecification\Specification\Specification;
+use Override;
 
 class CountTagsWithName extends BaseSpecification
 {
@@ -15,6 +16,7 @@ class CountTagsWithName extends BaseSpecification
         parent::__construct();
     }
 
+    #[Override]
     protected function getSpec(): Specification
     {
         return Spec::countOf(

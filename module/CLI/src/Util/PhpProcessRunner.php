@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Util;
 
+use Override;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\PhpExecutableFinder;
 
@@ -22,6 +23,7 @@ readonly class PhpProcessRunner implements ProcessRunnerInterface
     /**
      * @inheritDoc
      */
+    #[Override]
     public function run(OutputInterface $output, array $cmd): void
     {
         $this->wrappedProcessRunner->run($output, [$this->phpBinary, ...$cmd]);

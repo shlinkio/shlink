@@ -8,6 +8,7 @@ use CuyZ\Valinor\MapperBuilder;
 use Doctrine\Common\Collections\ArrayCollection;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -26,6 +27,7 @@ class SetRedirectRulesActionTest extends TestCase
     private ShortUrlRedirectRuleServiceInterface&MockObject $ruleService;
     private SetRedirectRulesAction $action;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->urlResolver = $this->createMock(ShortUrlResolverInterface::class);

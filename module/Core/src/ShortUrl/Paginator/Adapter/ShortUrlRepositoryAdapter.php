@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\ShortUrl\Paginator\Adapter;
 
+use Override;
 use Pagerfanta\Adapter\AdapterInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlsParams;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlWithDeps;
@@ -22,6 +23,7 @@ readonly class ShortUrlRepositoryAdapter implements AdapterInterface
         private string $defaultDomain,
     ) {}
 
+    #[Override]
     public function getSlice(int $offset, int $length): iterable
     {
         return $this->repository->findList(ShortUrlsListFiltering::fromLimitsAndParams(
@@ -33,6 +35,7 @@ readonly class ShortUrlRepositoryAdapter implements AdapterInterface
         ));
     }
 
+    #[Override]
     public function getNbResults(): int
     {
         return $this->repository->countList(

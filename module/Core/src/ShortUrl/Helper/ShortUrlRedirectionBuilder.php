@@ -7,6 +7,7 @@ namespace Shlinkio\Shlink\Core\ShortUrl\Helper;
 use GuzzleHttp\Psr7\Query;
 use GuzzleHttp\Psr7\Uri;
 use Laminas\Stdlib\ArrayUtils;
+use Override;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Config\Options\TrackingOptions;
 use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectionResolverInterface;
@@ -21,6 +22,7 @@ readonly class ShortUrlRedirectionBuilder implements ShortUrlRedirectionBuilderI
         private ShortUrlRedirectionResolverInterface $redirectionResolver,
     ) {}
 
+    #[Override]
     public function buildShortUrlRedirect(
         ShortUrl $shortUrl,
         ServerRequestInterface $request,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Core\ShortUrl;
 
+use Override;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
 use Shlinkio\Shlink\Core\Exception\ShortUrlNotFoundException;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -21,6 +22,7 @@ readonly class ShortUrlResolver implements ShortUrlResolverInterface
     /**
      * @throws ShortUrlNotFoundException
      */
+    #[Override]
     public function resolveShortUrl(ShortUrlIdentifier $identifier, ApiKey|null $apiKey = null): ShortUrl
     {
         $shortUrl = $this->repo->findOne($identifier, $apiKey?->spec());
@@ -34,6 +36,7 @@ readonly class ShortUrlResolver implements ShortUrlResolverInterface
     /**
      * @throws ShortUrlNotFoundException
      */
+    #[Override]
     public function resolveEnabledShortUrl(ShortUrlIdentifier $identifier): ShortUrl
     {
         $shortUrl = $this->resolvePublicShortUrl($identifier);
@@ -47,6 +50,7 @@ readonly class ShortUrlResolver implements ShortUrlResolverInterface
     /**
      * @throws ShortUrlNotFoundException
      */
+    #[Override]
     public function resolvePublicShortUrl(ShortUrlIdentifier $identifier): ShortUrl
     {
         $shortUrl = $this->repo->findOneWithDomainFallback($identifier, $this->urlShortenerOptions->mode);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Domain\Entity;
 
 use JsonSerializable;
+use Override;
 use Shlinkio\Shlink\Common\Entity\AbstractEntity;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirectConfigInterface;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
@@ -25,6 +26,7 @@ class Domain extends AbstractEntity implements JsonSerializable, NotFoundRedirec
         return new self($authority);
     }
 
+    #[Override]
     public function jsonSerialize(): string
     {
         return $this->authority;

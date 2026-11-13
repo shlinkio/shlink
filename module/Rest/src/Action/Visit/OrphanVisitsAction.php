@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\Rest\Action\Visit;
 
+use Override;
 use Pagerfanta\Pagerfanta;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Visit\Model\OrphanVisitsParams;
@@ -13,6 +14,7 @@ class OrphanVisitsAction extends AbstractListVisitsAction
 {
     protected const string ROUTE_PATH = '/visits/orphan';
 
+    #[Override]
     protected function getVisitsPaginator(ServerRequestInterface $request, ApiKey $apiKey): Pagerfanta
     {
         $orphanParams = OrphanVisitsParams::fromRawData($request->getQueryParams());

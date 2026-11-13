@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\ShortUrl\Resolver;
 
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -15,6 +16,7 @@ class SimpleShortUrlRelationResolverTest extends TestCase
 {
     private SimpleShortUrlRelationResolver $resolver;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->resolver = new SimpleShortUrlRelationResolver();

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Matomo\Model;
 
 use Countable;
+use Override;
 
 final readonly class SendVisitsResult implements Countable
 {
@@ -24,6 +25,7 @@ final readonly class SendVisitsResult implements Countable
         return $this->failedVisits > 0;
     }
 
+    #[Override]
     public function count(): int
     {
         return $this->successfulVisits + $this->failedVisits;

@@ -7,9 +7,11 @@ namespace ShlinkMigrations;
 use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Override;
 
 final class Version20241125213106 extends AbstractMigration
 {
+    #[Override]
     public function up(Schema $schema): void
     {
         $this->skipIf(!$this->isMsSql());

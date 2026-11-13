@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ShlinkioTest\Shlink\Core\Geolocation\Middleware;
 
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
@@ -29,6 +30,7 @@ class GeolocationMiddlewareTest extends TestCase
     private MockObject&LoggerInterface $logger;
     private MockObject&RequestHandlerInterface $handler;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->ipLocationResolver = $this->createMock(LocationResolverInterface::class);

@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\ErrorHandler;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,6 +21,7 @@ class NotFoundTypeResolverMiddlewareTest extends TestCase
     private NotFoundTypeResolverMiddleware $middleware;
     private MockObject&RequestHandlerInterface $handler;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->middleware = new NotFoundTypeResolverMiddleware('');

@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequest;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -22,6 +23,7 @@ class HealthActionTest extends TestCase
     private HealthAction $action;
     private MockObject&Connection $conn;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->conn = $this->createMock(Connection::class);

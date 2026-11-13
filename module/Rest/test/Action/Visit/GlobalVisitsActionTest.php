@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Rest\Action\Visit;
 
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -19,6 +20,7 @@ class GlobalVisitsActionTest extends TestCase
     private GlobalVisitsAction $action;
     private MockObject&VisitsStatsHelperInterface $helper;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->helper = $this->createMock(VisitsStatsHelperInterface::class);

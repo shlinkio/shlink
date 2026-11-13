@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Domain\Model;
 
 use JsonSerializable;
+use Override;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirectConfigInterface;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
@@ -27,6 +28,7 @@ final readonly class DomainItem implements JsonSerializable
         return new self($defaultDomain, $config, true);
     }
 
+    #[Override]
     public function jsonSerialize(): array
     {
         return [

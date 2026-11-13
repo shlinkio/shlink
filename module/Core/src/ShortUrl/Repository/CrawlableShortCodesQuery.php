@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\ShortUrl\Repository;
 
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
+use Override;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
 
 /** @extends EntitySpecificationRepository<ShortUrl> */
@@ -13,6 +14,7 @@ class CrawlableShortCodesQuery extends EntitySpecificationRepository implements 
     /**
      * @return iterable<string>
      */
+    #[Override]
     public function __invoke(): iterable
     {
         $blockSize = 1000;

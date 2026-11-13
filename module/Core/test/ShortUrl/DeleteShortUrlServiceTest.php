@@ -6,6 +6,7 @@ namespace ShlinkioTest\Shlink\Core\ShortUrl;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Override;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -34,6 +35,7 @@ class DeleteShortUrlServiceTest extends TestCase
     private MockObject&ExpiredShortUrlsRepository $expiredShortUrlsRepository;
     private string $shortCode;
 
+    #[Override]
     protected function setUp(): void
     {
         $shortUrl = ShortUrl::createFake()->setVisits(new ArrayCollection(

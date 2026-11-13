@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\Visit\Geolocation;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Override;
 use Shlinkio\Shlink\Core\Exception\IpCannotBeLocatedException;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
@@ -18,16 +19,19 @@ readonly class VisitLocator implements VisitLocatorInterface
         private VisitIterationRepositoryInterface $repo,
     ) {}
 
+    #[Override]
     public function locateUnlocatedVisits(VisitGeolocationHelperInterface $helper): void
     {
         $this->locateVisits($this->repo->findUnlocatedVisits(), $helper);
     }
 
+    #[Override]
     public function locateVisitsWithEmptyLocation(VisitGeolocationHelperInterface $helper): void
     {
         $this->locateVisits($this->repo->findVisitsWithEmptyLocation(), $helper);
     }
 
+    #[Override]
     public function locateAllVisits(VisitGeolocationHelperInterface $helper): void
     {
         $this->locateVisits($this->repo->findAllVisits(), $helper);

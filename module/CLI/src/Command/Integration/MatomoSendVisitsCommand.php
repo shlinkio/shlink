@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shlinkio\Shlink\CLI\Command\Integration;
 
+use Override;
 use Shlinkio\Shlink\Core\Matomo\MatomoOptions;
 use Shlinkio\Shlink\Core\Matomo\MatomoVisitSenderInterface;
 use Shlinkio\Shlink\Core\Matomo\VisitSendingProgressTrackerInterface;
@@ -108,11 +109,13 @@ class MatomoSendVisitsCommand extends Command implements VisitSendingProgressTra
         return self::SUCCESS;
     }
 
+    #[Override]
     public function success(int $index): void
     {
         $this->io->write('.');
     }
 
+    #[Override]
     public function error(int $index, Throwable $e): void
     {
         $this->io->write('<error>E</error>');

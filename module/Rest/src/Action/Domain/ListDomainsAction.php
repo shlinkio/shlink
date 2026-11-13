@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Action\Domain;
 
 use Laminas\Diactoros\Response\JsonResponse;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\Config\NotFoundRedirects;
@@ -23,6 +24,7 @@ class ListDomainsAction extends AbstractRestAction
         private readonly NotFoundRedirectOptions $options,
     ) {}
 
+    #[Override]
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);

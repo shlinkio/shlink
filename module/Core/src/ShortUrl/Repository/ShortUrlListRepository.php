@@ -8,6 +8,7 @@ use Cake\Chronos\Chronos;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepository;
+use Override;
 use Shlinkio\Shlink\Common\Doctrine\Type\ChronosDateTimeType;
 use Shlinkio\Shlink\Core\Domain\Entity\Domain;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -27,6 +28,7 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
     /**
      * @return ShortUrlWithDeps[]
      */
+    #[Override]
     public function findList(ShortUrlsListFiltering $filtering): array
     {
         $buildVisitsSubQuery = function (string $alias, bool $excludingBots): string {
@@ -81,6 +83,7 @@ class ShortUrlListRepository extends EntitySpecificationRepository implements Sh
         $qb->orderBy($sort, $order);
     }
 
+    #[Override]
     public function countList(ShortUrlsCountFiltering $filtering): int
     {
         $qb = $this->createListQueryBuilder($filtering);

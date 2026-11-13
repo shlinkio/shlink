@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Action\RedirectRule;
 
 use Laminas\Diactoros\Response\JsonResponse;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\RedirectRule\ShortUrlRedirectRuleServiceInterface;
@@ -23,6 +24,7 @@ class ListRedirectRulesAction extends AbstractRestAction
         private readonly ShortUrlRedirectRuleServiceInterface $ruleService,
     ) {}
 
+    #[Override]
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $shortUrl = $this->urlResolver->resolveShortUrl(

@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Rest\Middleware\ShortUrl;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Response\JsonResponse;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -21,6 +22,7 @@ class CreateShortUrlContentNegotiationMiddleware implements MiddlewareInterface
     private const string PLAIN_TEXT = 'text';
     private const string JSON = 'json';
 
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $response = $handler->handle($request);

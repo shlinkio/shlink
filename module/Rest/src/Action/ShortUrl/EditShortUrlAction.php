@@ -6,6 +6,7 @@ namespace Shlinkio\Shlink\Rest\Action\ShortUrl;
 
 use CuyZ\Valinor\Mapper\TreeMapper;
 use Laminas\Diactoros\Response\JsonResponse;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlEdition;
@@ -26,6 +27,7 @@ class EditShortUrlAction extends AbstractRestAction
         private readonly TreeMapper $treeMapper,
     ) {}
 
+    #[Override]
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $body = (array) $request->getParsedBody();

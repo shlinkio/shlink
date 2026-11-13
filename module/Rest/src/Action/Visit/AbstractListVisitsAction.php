@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Rest\Action\Visit;
 
 use Laminas\Diactoros\Response\JsonResponse;
+use Override;
 use Pagerfanta\Pagerfanta;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -21,6 +22,7 @@ abstract class AbstractListVisitsAction extends AbstractRestAction
 
     public function __construct(protected readonly VisitsStatsHelperInterface $visitsHelper) {}
 
+    #[Override]
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $apiKey = AuthenticationMiddleware::apiKeyFromRequest($request);

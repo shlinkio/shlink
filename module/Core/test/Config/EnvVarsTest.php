@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioTest\Shlink\Core\Config;
 
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
@@ -14,6 +15,7 @@ use function putenv;
 
 class EnvVarsTest extends TestCase
 {
+    #[Override]
     protected function setUp(): void
     {
         putenv(EnvVars::BASE_PATH->value . '=the_base_path');
@@ -23,6 +25,7 @@ class EnvVarsTest extends TestCase
         putenv(EnvVars::DB_PASSWORD->value . '_FILE=' . $envFilePath);
     }
 
+    #[Override]
     protected function tearDown(): void
     {
         putenv(EnvVars::BASE_PATH->value);

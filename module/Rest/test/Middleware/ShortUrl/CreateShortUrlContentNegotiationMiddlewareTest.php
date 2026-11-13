@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Rest\Middleware\ShortUrl;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequest;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,6 +21,7 @@ class CreateShortUrlContentNegotiationMiddlewareTest extends TestCase
     private CreateShortUrlContentNegotiationMiddleware $middleware;
     private MockObject&RequestHandlerInterface $requestHandler;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->middleware = new CreateShortUrlContentNegotiationMiddleware();

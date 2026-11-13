@@ -6,10 +6,12 @@ namespace ShlinkioApiTest\Shlink\Rest\Fixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
+use Override;
 use Shlinkio\Shlink\Core\Tag\Entity\Tag;
 
 class TagsFixture extends AbstractFixture
 {
+    #[Override]
     public function load(ObjectManager $manager): void
     {
         $manager->persist(new Tag('foo'));

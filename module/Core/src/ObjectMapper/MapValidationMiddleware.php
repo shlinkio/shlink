@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shlinkio\Shlink\Core\ObjectMapper;
 
 use CuyZ\Valinor\Mapper\MappingError;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -16,6 +17,7 @@ use Shlinkio\Shlink\Core\Exception\ValidationException;
  */
 class MapValidationMiddleware implements MiddlewareInterface
 {
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         try {

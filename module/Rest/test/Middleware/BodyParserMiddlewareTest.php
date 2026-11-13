@@ -7,6 +7,7 @@ namespace ShlinkioTest\Shlink\Rest\Middleware;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
+use Override;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -21,6 +22,7 @@ class BodyParserMiddlewareTest extends TestCase
 {
     private BodyParserMiddleware $middleware;
 
+    #[Override]
     protected function setUp(): void
     {
         $this->middleware = new BodyParserMiddleware();
