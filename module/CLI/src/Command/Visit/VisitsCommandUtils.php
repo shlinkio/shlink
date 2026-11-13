@@ -21,12 +21,8 @@ class VisitsCommandUtils
     /**
      * @param Paginator<Visit> $paginator
      */
-    public static function renderOutput(
-        OutputInterface $output,
-        VisitsListInput $inputData,
-        Paginator $paginator,
-        callable|null $mapExtraFields = null,
-    ): void {
+    public static function renderOutput(OutputInterface $output, VisitsListInput $inputData, Paginator $paginator): void
+    {
         if ($inputData->format !== VisitsListFormat::FULL) {
             // Avoid running out of memory by loading visits in chunks
             $paginator->setMaxPerPage(1000);

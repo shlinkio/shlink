@@ -146,7 +146,7 @@ class GetShortUrlVisitsCommandTest extends TestCase
             $output,
         );
     }
-    
+
     public static function provideOutput(): iterable
     {
         yield 'regular' => [
