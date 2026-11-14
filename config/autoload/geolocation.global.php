@@ -19,7 +19,7 @@ return (static function (): array {
     // GeoLite2 strategy only.
     // This ensures backwards compatibility with Shlink instances before GEOLOCATION_STRATEGIES was introduced.
     if ($geoliteLicense !== null && empty($geolocationResolvers)) {
-        $geolocationResolvers[] = [GeolocationStrategy::GEOLITE2];
+        $geolocationResolvers = [GeolocationStrategy::GEOLITE2];
     }
 
     return [
