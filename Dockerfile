@@ -1,4 +1,4 @@
-FROM php:8.5-alpine3.24 AS base
+FROM php:8.5.13-alpine3.24@sha256:84fc457d13037edc7bea1194702474beff5aa8986d094c536b92b6de39cd19dc AS base
 
 ARG SHLINK_VERSION=latest
 ENV SHLINK_VERSION=${SHLINK_VERSION}
@@ -38,7 +38,7 @@ RUN if [ $(uname -m) == "x86_64" ]; then \
 # Install shlink
 FROM base AS builder
 COPY . .
-COPY --from=composer:2 /usr/bin/composer ./composer.phar
+COPY --from=composer:2@sha256:8c47c745534c6717c94a307e6f7b73e5b93f37c7679fe9faf50ff54eb12be32f /usr/bin/composer ./composer.phar
 RUN apk add --no-cache git && \
     php composer.phar install --no-dev --prefer-dist --optimize-autoloader --no-progress --no-interaction && \
     php composer.phar clear-cache && \
