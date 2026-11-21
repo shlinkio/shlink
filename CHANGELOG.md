@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [5.1.9] - 2026-11-21
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#2705](https://github.com/shlinkio/shlink/issues/2705) Update docker images to PHP 8.5.13, addressing latest security issues.
+
+
 ## [5.1.8] - 2026-10-21
 ### Added
 * *Nothing*
