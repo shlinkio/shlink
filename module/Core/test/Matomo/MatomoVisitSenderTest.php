@@ -14,6 +14,7 @@ use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
+use Shlinkio\Shlink\Core\Matomo\MatomoOptions;
 use Shlinkio\Shlink\Core\Matomo\MatomoTrackerBuilderInterface;
 use Shlinkio\Shlink\Core\Matomo\MatomoVisitSender;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -41,6 +42,7 @@ class MatomoVisitSenderTest extends TestCase
 
         $this->visitSender = new MatomoVisitSender(
             $this->trackerBuilder,
+            new MatomoOptions(),
             new ShortUrlStringifier(new UrlShortenerOptions(defaultDomain: 's2.test')),
             $this->visitIterationRepository,
         );
@@ -66,25 +68,6 @@ class MatomoVisitSenderTest extends TestCase
             ->with(
                 $visit->date->setTimezone('UTC')->toDateTimeString(),
             );
-
-        if ($visit->isOrphan()) {
-            $tracker
-                ->expects($this->exactly(2))
-                ->method('setCustomTrackingParameter')
-                ->willReturnMap([
-                    ['type', $visit->type->value, $tracker],
-                    ['orphan', 'true', $tracker],
-                ]);
-        } else {
-            $tracker
-                ->expects($this->once())
-                ->method('setCustomTrackingParameter')
-                ->with(
-                    'type',
-                    $visit->type->value,
-                )
-                ->willReturn($tracker);
-        }
 
         foreach ($invokedMethods as $invokedMethod => $args) {
             $tracker

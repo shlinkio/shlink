@@ -100,7 +100,7 @@
     },
     "scripts": {
         "ci": [
-            "@parallel cs analyze openapi:validate test:unit:ci test:db:sqlite:ci test:db:postgres test:db:mysql test:db:maria test:db:ms",
+            "@parallel lint format:check analyze openapi:validate test:unit:ci test:db:sqlite:ci test:db:postgres test:db:mysql test:db:maria test:db:ms",
             "@parallel test:api:ci test:cli:ci"
         ],
         "lint": "mago lint",

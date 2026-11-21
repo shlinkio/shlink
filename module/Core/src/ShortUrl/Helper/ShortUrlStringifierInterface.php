@@ -9,5 +9,13 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 
 interface ShortUrlStringifierInterface
 {
+    /**
+     * Stringify a short URL to its fully qualified URI representation
+     */
     public function stringify(ShortUrl|ShortUrlIdentifier $shortUrl): string;
+
+    /**
+     * Resolve the domain authority of a short URL, or the default domain
+     */
+    public function domain(ShortUrl|ShortUrlIdentifier $shortUrlIdentifier): string;
 }

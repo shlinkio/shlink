@@ -8,6 +8,7 @@ use Override;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Matomo\Model\SendVisitsResult;
 use Shlinkio\Shlink\Core\ShortUrl\Helper\ShortUrlStringifier;
+use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlIdentifier;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitIterationRepositoryInterface;
 use Throwable;
@@ -18,6 +19,7 @@ readonly class MatomoVisitSender implements MatomoVisitSenderInterface
 {
     public function __construct(
         private MatomoTrackerBuilderInterface $trackerBuilder,
+        private MatomoOptions $matomoOptions,
         private ShortUrlStringifier $shortUrlStringifier,
         private VisitIterationRepositoryInterface $visitIterationRepository,
     ) {}
@@ -55,10 +57,26 @@ readonly class MatomoVisitSender implements MatomoVisitSenderInterface
 
         $tracker
             ->setUrl($this->resolveUrlToTrack($visit))
-            ->setCustomTrackingParameter('type', $visit->type->value)
             ->setUserAgent($visit->userAgent)
             ->setUrlReferrer($visit->referer)
             ->setForceVisitDateTime($visit->date->setTimezone('UTC')->toDateTimeString());
+
+        // Track custom information if it has been configured
+        if ($this->matomoOptions->visitTypeDimensionId !== null) {
+            $tracker->setCustomDimension($this->matomoOptions->visitTypeDimensionId, $visit->type->value);
+        }
+        if ($this->matomoOptions->isOrphanDimensionId !== null) {
+            $tracker->setCustomDimension(
+                $this->matomoOptions->isOrphanDimensionId,
+                $visit->isOrphan() ? 'true' : 'false',
+            );
+        }
+        if ($this->matomoOptions->visitDomainDimensionId !== null) {
+            $tracker->setCustomDimension(
+                $this->matomoOptions->visitDomainDimensionId,
+                $this->resolveDomainToTrack($visit),
+            );
+        }
 
         $location = $visit->visitLocation;
         if ($location !== null) {
@@ -75,10 +93,6 @@ readonly class MatomoVisitSender implements MatomoVisitSenderInterface
             $tracker->setIp($ip);
         }
 
-        if ($visit->isOrphan()) {
-            $tracker->setCustomTrackingParameter('orphan', 'true');
-        }
-
         // Send the short URL title or an empty document title to avoid different actions to be created by matomo
         $tracker->doTrackPageView($visit->shortUrl->title ?? '');
     }
@@ -91,5 +105,11 @@ readonly class MatomoVisitSender implements MatomoVisitSenderInterface
         }
 
         return $this->shortUrlStringifier->stringify($shortUrl);
+    }
+
+    private function resolveDomainToTrack(Visit $visit): string
+    {
+        $shortUrl = $visit->shortUrl;
+        return $this->shortUrlStringifier->domain($shortUrl ?? ShortUrlIdentifier::fromShortCodeAndDomain(''));
     }
 }

@@ -20,12 +20,13 @@ readonly class ShortUrlStringifier implements ShortUrlStringifierInterface
     ) {}
 
     #[Override]
+    /** @inheritDoc */
     public function stringify(ShortUrl|ShortUrlIdentifier $shortUrl): string
     {
         $shortUrlIdentifier = $shortUrl instanceof ShortUrl ? ShortUrlIdentifier::fromShortUrl($shortUrl) : $shortUrl;
         $uriWithoutShortCode = new Uri()
             ->withScheme($this->urlShortenerOptions->schema)
-            ->withHost($this->resolveDomain($shortUrlIdentifier))
+            ->withHost($this->domain($shortUrlIdentifier))
             ->withPath($this->basePath)
             ->__toString();
 
@@ -33,8 +34,13 @@ readonly class ShortUrlStringifier implements ShortUrlStringifierInterface
         return sprintf('%s/%s', $uriWithoutShortCode, $shortUrlIdentifier->shortCode);
     }
 
-    private function resolveDomain(ShortUrlIdentifier $shortUrlIdentifier): string
+    #[Override]
+    /** @inheritDoc */
+    public function domain(ShortUrl|ShortUrlIdentifier $shortUrlIdentifier): string
     {
-        return $shortUrlIdentifier->domain ?? $this->urlShortenerOptions->defaultDomain;
+        $authority = $shortUrlIdentifier instanceof ShortUrl
+            ? $shortUrlIdentifier->domain?->authority
+            : $shortUrlIdentifier->domain;
+        return $authority ?? $this->urlShortenerOptions->defaultDomain;
     }
 }
