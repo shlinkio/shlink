@@ -28,10 +28,17 @@ final readonly class MatomoOptions
             baseUrl: EnvVars::MATOMO_BASE_URL->loadFromEnv(),
             siteId: EnvVars::MATOMO_SITE_ID->loadFromEnv(),
             apiToken: EnvVars::MATOMO_API_TOKEN->loadFromEnv(),
-            visitTypeDimensionId: (int) EnvVars::MATOMO_VISIT_TYPE_DIMENSION_ID->loadFromEnv(),
-            isOrphanDimensionId: (int) EnvVars::MATOMO_IS_ORPHAN_DIMENSION_ID->loadFromEnv(),
-            visitDomainDimensionId: (int) EnvVars::MATOMO_VISIT_DOMAIN_DIMENSION_ID->loadFromEnv(),
+            visitTypeDimensionId: self::optionalIntEnvVar(EnvVars::MATOMO_VISIT_TYPE_DIMENSION_ID),
+            isOrphanDimensionId: self::optionalIntEnvVar(EnvVars::MATOMO_IS_ORPHAN_DIMENSION_ID),
+            visitDomainDimensionId: self::optionalIntEnvVar(EnvVars::MATOMO_VISIT_DOMAIN_DIMENSION_ID),
         );
+    }
+
+    private static function optionalIntEnvVar(EnvVars $envVar): int|null
+    {
+        // @mago-expect analysis:mixed-assignment
+        $value = $envVar->loadFromEnv();
+        return $value === null ? null : (int) $value;
     }
 
     public function siteId(): int|null
