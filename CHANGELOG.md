@@ -21,6 +21,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 * [#2657](https://github.com/shlinkio/shlink/issues/2657) Fix 500 error returned when visiting a short URL with invalid UTF-8 bytes in the short code while using Postgres.
 
 
+## [5.1.9] - 2026-11-21
+### Added
+* *Nothing*
+
+### Changed
+* *Nothing*
+
+### Deprecated
+* *Nothing*
+
+### Removed
+* *Nothing*
+
+### Fixed
+* [#2705](https://github.com/shlinkio/shlink/issues/2705) Update docker images to PHP 8.5.13, addressing latest security issues.
+
+
 ## [5.1.8] - 2026-10-21
 ### Added
 * *Nothing*
