@@ -133,6 +133,7 @@ return [
         Matomo\MatomoTrackerBuilder::class => [Matomo\MatomoOptions::class],
         Matomo\MatomoVisitSender::class => [
             Matomo\MatomoTrackerBuilder::class,
+            Matomo\MatomoOptions::class,
             ShortUrlStringifier::class,
             Visit\Repository\VisitIterationRepository::class,
         ],

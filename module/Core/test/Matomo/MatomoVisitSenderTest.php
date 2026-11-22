@@ -14,6 +14,7 @@ use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Shlinkio\Shlink\Common\Util\DateRange;
 use Shlinkio\Shlink\Core\Config\Options\UrlShortenerOptions;
+use Shlinkio\Shlink\Core\Matomo\MatomoOptions;
 use Shlinkio\Shlink\Core\Matomo\MatomoTrackerBuilderInterface;
 use Shlinkio\Shlink\Core\Matomo\MatomoVisitSender;
 use Shlinkio\Shlink\Core\ShortUrl\Entity\ShortUrl;
@@ -22,28 +23,23 @@ use Shlinkio\Shlink\Core\ShortUrl\Model\ShortUrlCreation;
 use Shlinkio\Shlink\Core\Visit\Entity\Visit;
 use Shlinkio\Shlink\Core\Visit\Entity\VisitLocation;
 use Shlinkio\Shlink\Core\Visit\Model\Visitor;
+use Shlinkio\Shlink\Core\Visit\Model\VisitType;
 use Shlinkio\Shlink\Core\Visit\Repository\VisitIterationRepositoryInterface;
 use Shlinkio\Shlink\Geolocation\Model\Location;
 
 use function array_values;
+use function count;
 
 class MatomoVisitSenderTest extends TestCase
 {
     private MockObject&MatomoTrackerBuilderInterface $trackerBuilder;
     private Stub&VisitIterationRepositoryInterface $visitIterationRepository;
-    private MatomoVisitSender $visitSender;
 
     #[Override]
     protected function setUp(): void
     {
         $this->trackerBuilder = $this->createMock(MatomoTrackerBuilderInterface::class);
         $this->visitIterationRepository = $this->createStub(VisitIterationRepositoryInterface::class);
-
-        $this->visitSender = new MatomoVisitSender(
-            $this->trackerBuilder,
-            new ShortUrlStringifier(new UrlShortenerOptions(defaultDomain: 's2.test')),
-            $this->visitIterationRepository,
-        );
     }
 
     /**
@@ -67,25 +63,6 @@ class MatomoVisitSenderTest extends TestCase
                 $visit->date->setTimezone('UTC')->toDateTimeString(),
             );
 
-        if ($visit->isOrphan()) {
-            $tracker
-                ->expects($this->exactly(2))
-                ->method('setCustomTrackingParameter')
-                ->willReturnMap([
-                    ['type', $visit->type->value, $tracker],
-                    ['orphan', 'true', $tracker],
-                ]);
-        } else {
-            $tracker
-                ->expects($this->once())
-                ->method('setCustomTrackingParameter')
-                ->with(
-                    'type',
-                    $visit->type->value,
-                )
-                ->willReturn($tracker);
-        }
-
         foreach ($invokedMethods as $invokedMethod => $args) {
             $tracker
                 ->expects($this->once())
@@ -98,7 +75,7 @@ class MatomoVisitSenderTest extends TestCase
 
         $this->trackerBuilder->expects($this->once())->method('buildMatomoTracker')->willReturn($tracker);
 
-        $this->visitSender->sendVisit($visit, $originalIpAddress);
+        $this->visitSender()->sendVisit($visit, $originalIpAddress);
     }
 
     public static function provideTrackerMethods(): iterable
@@ -134,16 +111,16 @@ class MatomoVisitSenderTest extends TestCase
     #[Test, DataProvider('provideUrlsToTrack')]
     public function properUrlIsTracked(Visit $visit, string $expectedTrackedUrl): void
     {
-        $tracker = $this->createStub(MatomoTracker::class);
-        $tracker->method('setUrl')->willReturn($tracker);
-        $tracker->method('setUserAgent')->willReturn($tracker);
-        $tracker->method('setUrlReferrer')->willReturn($tracker);
-        $tracker->method('setCustomTrackingParameter')->willReturn($tracker);
-        $tracker->method('doTrackPageView');
+        $tracker = $this->createMock(MatomoTracker::class);
+        $tracker->expects($this->once())->method('setUrl')->with($expectedTrackedUrl)->willReturn($tracker);
+        $tracker->expects($this->once())->method('setUserAgent')->willReturn($tracker);
+        $tracker->expects($this->once())->method('setUrlReferrer')->willReturn($tracker);
+        $tracker->expects($this->once())->method('doTrackPageView');
+        $tracker->expects($this->never())->method('setCustomDimension');
 
         $this->trackerBuilder->expects($this->once())->method('buildMatomoTracker')->willReturn($tracker);
 
-        $this->visitSender->sendVisit($visit);
+        $this->visitSender()->sendVisit($visit);
     }
 
     public static function provideUrlsToTrack(): iterable
@@ -183,7 +160,6 @@ class MatomoVisitSenderTest extends TestCase
         $tracker->method('setUrl')->willReturn($tracker);
         $tracker->method('setUserAgent')->willReturn($tracker);
         $tracker->method('setUrlReferrer')->willReturn($tracker);
-        $tracker->method('setCustomTrackingParameter')->willReturn($tracker);
 
         $callCount = 0;
         $this->trackerBuilder
@@ -201,12 +177,114 @@ class MatomoVisitSenderTest extends TestCase
                 },
             );
 
-        $result = $this->visitSender->sendVisitsInDateRange($dateRange);
+        $result = $this->visitSender()->sendVisitsInDateRange($dateRange);
 
         self::assertEquals(2, $result->successfulVisits);
         self::assertEquals(1, $result->failedVisits);
         self::assertCount(3, $result);
         self::assertTrue($result->hasSuccesses());
         self::assertTrue($result->hasFailures());
+    }
+
+    #[Test, DataProvider('provideOptionsWithDimensions')]
+    public function customDimensionsAreSetWHenConfigured(
+        Visit $visit,
+        MatomoOptions $options,
+        array $customDimensionCalls,
+    ): void {
+        $tracker = $this->createMock(MatomoTracker::class);
+        $tracker->expects($this->once())->method('setUrl')->willReturn($tracker);
+        $tracker->expects($this->once())->method('setUserAgent')->willReturn($tracker);
+        $tracker->expects($this->once())->method('setUrlReferrer')->willReturn($tracker);
+        $tracker->expects($this->once())->method('doTrackPageView');
+
+        $index = 0;
+        $tracker
+            ->expects($this->exactly(count($customDimensionCalls)))
+            ->method('setCustomDimension')
+            ->willReturnCallback(static function (...$args) use ($customDimensionCalls, &$index) {
+                self::assertSame($customDimensionCalls[$index++], $args);
+            });
+
+        $this->trackerBuilder->expects($this->once())->method('buildMatomoTracker')->willReturn($tracker);
+
+        $this->visitSender($options)->sendVisit($visit);
+    }
+
+    public static function provideOptionsWithDimensions(): iterable
+    {
+        yield [
+            Visit::forBasePath(Visitor::botInstance()),
+            new MatomoOptions(visitTypeDimensionId: 1),
+            [
+                [1, VisitType::BASE_URL->value],
+            ],
+        ];
+        yield [
+            Visit::forBasePath(Visitor::botInstance()),
+            new MatomoOptions(isOrphanDimensionId: 2),
+            [
+                [2, 'true'],
+            ],
+        ];
+        yield [
+            Visit::forValidShortUrl(ShortUrl::createFake(), Visitor::botInstance()),
+            new MatomoOptions(isOrphanDimensionId: 2),
+            [
+                [2, 'false'],
+            ],
+        ];
+        yield [
+            Visit::forBasePath(Visitor::botInstance()),
+            new MatomoOptions(visitDomainDimensionId: 5),
+            [
+                [5, 's2.test'],
+            ],
+        ];
+        yield [
+            Visit::forValidShortUrl(
+                ShortUrl::create(new ShortUrlCreation(longUrl: 'https://example.com', domain: 's3.test')),
+                Visitor::botInstance(),
+            ),
+            new MatomoOptions(visitDomainDimensionId: 5),
+            [
+                [5, 's3.test'],
+            ],
+        ];
+        yield [
+            Visit::forBasePath(Visitor::botInstance()),
+            new MatomoOptions(visitTypeDimensionId: 1, isOrphanDimensionId: 5),
+            [
+                [1, VisitType::BASE_URL->value],
+                [5, 'true'],
+            ],
+        ];
+        yield [
+            Visit::forBasePath(Visitor::botInstance()),
+            new MatomoOptions(isOrphanDimensionId: 5, visitDomainDimensionId: 3),
+            [
+                [5, 'true'],
+                [3, 's2.test'],
+            ],
+        ];
+        yield [
+            Visit::forBasePath(Visitor::botInstance()),
+            new MatomoOptions(visitTypeDimensionId: 1, isOrphanDimensionId: 5, visitDomainDimensionId: 3),
+            [
+                [1, VisitType::BASE_URL->value],
+                [5, 'true'],
+                [3, 's2.test'],
+            ],
+        ];
+    }
+
+    private function visitSender(MatomoOptions $options = new MatomoOptions()): MatomoVisitSender
+    {
+        return new MatomoVisitSender(
+            $this->trackerBuilder,
+            $options,
+            new ShortUrlStringifier(new UrlShortenerOptions(defaultDomain: 's2.test')),
+            $this->visitIterationRepository,
+        );
     }
 }
