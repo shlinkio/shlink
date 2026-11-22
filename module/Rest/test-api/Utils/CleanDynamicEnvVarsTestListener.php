@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioApiTest\Shlink\Rest\Utils;
 
+use Override;
 use PHPUnit\Event\Test\Finished;
 use PHPUnit\Event\Test\FinishedSubscriber;
 
@@ -17,6 +18,7 @@ use const ShlinkioTest\Shlink\DYNAMIC_ENV_VARS_FILE;
  */
 class CleanDynamicEnvVarsTestListener implements FinishedSubscriber
 {
+    #[Override]
     public function notify(Finished $event): void
     {
         if (file_exists(DYNAMIC_ENV_VARS_FILE)) {

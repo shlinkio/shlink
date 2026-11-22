@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioApiTest\Shlink\Rest\Utils;
 
+use Override;
 use PHPUnit\Event\Code\TestMethod;
 use PHPUnit\Event\Test\PreparationStarted;
 use PHPUnit\Event\Test\PreparationStartedSubscriber;
@@ -21,6 +22,7 @@ use const ShlinkioTest\Shlink\DYNAMIC_ENV_VARS_FILE;
  */
 class EnvSpecificTestListener implements PreparationStartedSubscriber
 {
+    #[Override]
     public function notify(PreparationStarted $event): void
     {
         $test = $event->test();

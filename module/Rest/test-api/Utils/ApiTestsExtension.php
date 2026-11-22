@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ShlinkioApiTest\Shlink\Rest\Utils;
 
+use Override;
 use PHPUnit\Runner\Extension\Extension;
 use PHPUnit\Runner\Extension\Facade;
 use PHPUnit\Runner\Extension\ParameterCollection;
@@ -12,6 +13,7 @@ use Symfony\Component\Process\Process;
 
 class ApiTestsExtension implements Extension
 {
+    #[Override]
     public function bootstrap(Configuration $configuration, Facade $facade, ParameterCollection $parameters): void
     {
         $facade->registerSubscriber(new EnvSpecificTestListener());
