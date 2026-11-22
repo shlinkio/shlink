@@ -7,6 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 ## [Unreleased]
 ### Added
 * [#2671](https://github.com/shlinkio/shlink/issues/2671) Add support for Mercure 1.0.
+* [#2646](https://github.com/shlinkio/shlink/issues/2646) Add support for Cloudflare geolocation headers as an alternative or a complement to GeoLite2.
+
+  Now you can provide a new `GEOLOCATION_STRATEGIES` config option or env var which is a comma-separated list of strategies Shlink will use to try to geolocate visitors.
+
+  Supported values are `geolite2` and `cloudflare`, and the order they are set is the order in which they will be tried.
+
+  If this option is not set at all but a geolite license key was set, the `geolite2` strategy will be implicitly enabled, ensuring backwards compatibility.
+
+* [#2708](https://github.com/shlinkio/shlink/issues/2708) Allow visit type, visit domain and is_orphan flag to be sent to Matomo via custom dimensions.
+
+  You can now configure any of these custom dimensions in your Matomo instance, and provide the IDs to Shlink via config options or env vars.
 
 ### Changed
 * [#2666](https://github.com/shlinkio/shlink/pull/2666) Escape values that could be interpreted as spreadsheet formulas when exporting visits in CSV format.
