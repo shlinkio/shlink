@@ -20,7 +20,7 @@ readonly class MatomoTrackerBuilder implements MatomoTrackerBuilderInterface
     #[Override]
     public function buildMatomoTracker(): MatomoTracker
     {
-        $siteId = $this->options->siteId();
+        $siteId = $this->options->siteId;
         if ($siteId === null || $this->options->baseUrl === null || $this->options->apiToken === null) {
             throw new RuntimeException(
                 'Cannot create MatomoTracker. Either site ID, base URL or api token are not defined',
