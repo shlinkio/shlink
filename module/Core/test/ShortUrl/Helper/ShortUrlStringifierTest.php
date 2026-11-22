@@ -23,11 +23,13 @@ class ShortUrlStringifierTest extends TestCase
         string $schema,
         string $basePath,
         ShortUrl $shortUrl,
-        string $expected,
+        string $expectedUrl,
+        string|null $expectedDomain = null,
     ): void {
         $stringifier = new ShortUrlStringifier(new UrlShortenerOptions($defaultDomain, $schema), $basePath);
 
-        self::assertEquals($expected, $stringifier->stringify($shortUrl));
+        self::assertEquals($expectedUrl, $stringifier->stringify($shortUrl));
+        self::assertEquals($expectedDomain ?? $defaultDomain, $stringifier->domain($shortUrl));
     }
 
     public static function provideConfigAndShortUrls(): iterable
@@ -71,6 +73,7 @@ class ShortUrlStringifierTest extends TestCase
             '',
             $shortUrlWithShortCode('baz', 'mydom.es'),
             'https://mydom.es/baz',
+            'mydom.es',
         ];
         yield 'custom domain with base path' => [
             'foo.com',
@@ -78,6 +81,7 @@ class ShortUrlStringifierTest extends TestCase
             '/foo/bar',
             $shortUrlWithShortCode('baz', 'mydom.es'),
             'https://mydom.es/foo/bar/baz',
+            'mydom.es',
         ];
     }
 }
