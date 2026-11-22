@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Changed
 * [#2666](https://github.com/shlinkio/shlink/pull/2666) Escape values that could be interpreted as spreadsheet formulas when exporting visits in CSV format.
+* [#2707](https://github.com/shlinkio/shlink/pull/2707) Update to RoadRunner 3.
 
 ### Deprecated
 * *Nothing*
