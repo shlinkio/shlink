@@ -1,7 +1,7 @@
-FROM php:8.5-alpine3.24
+FROM php:8.6-alpine3.24
 MAINTAINER Alejandro Celaya <alejandro@alejandrocelaya.com>
 
-ENV PDO_SQLSRV_VERSION='5.13.0'
+ENV PDO_SQLSRV_VERSION='5.14.0'
 ENV MS_ODBC_DOWNLOAD='fae28b9a-d880-42fd-9b98-d779f0fdd77f'
 ENV MS_ODBC_SQL_VERSION='18_18.5.1.1'
 
@@ -38,8 +38,7 @@ RUN apk add --update linux-headers && \
     wget https://download.microsoft.com/download/${MS_ODBC_DOWNLOAD}/msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
     apk add --allow-untrusted msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk && \
     apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS unixodbc-dev && \
-    pecl install pdo_sqlsrv-${PDO_SQLSRV_VERSION} && \
-    docker-php-ext-enable pdo_sqlsrv && \
+    pie install microsoft/pdo_sqlsrv:${PDO_SQLSRV_VERSION} && \
     apk del .phpize-deps && \
     rm msodbcsql${MS_ODBC_SQL_VERSION}-1_amd64.apk
 
